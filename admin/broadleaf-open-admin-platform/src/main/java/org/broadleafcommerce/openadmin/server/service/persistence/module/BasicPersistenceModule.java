@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -57,12 +58,6 @@ import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 
-import javax.annotation.Resource;
-import javax.persistence.Embedded;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -86,6 +81,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.annotation.Resource;
+import javax.persistence.Embedded;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+
 /**
  * @author jfischer
  */
@@ -94,6 +95,8 @@ import java.util.StringTokenizer;
 public class BasicPersistenceModule implements PersistenceModule, RecordHelper, ApplicationContextAware {
     
     private static final Log LOG = LogFactory.getLog(BasicPersistenceModule.class);
+    
+    public static final String MAIN_ENTITY_NAME_PROPERTY = "MAIN_ENTITY_NAME";
 
     protected SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z");
     protected DecimalFormat decimalFormat;
@@ -355,6 +358,19 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (alternateMergedProperties != null) {
                 extractPropertiesFromPersistentEntity(alternateMergedProperties, recordEntity, props);
             }
+            
+            // Try to add the "main name" property. Log a debug message if we can't
+            try {
+                Property p = new Property();
+                p.setName(MAIN_ENTITY_NAME_PROPERTY);
+                String mainEntityName = (String) MethodUtils.invokeMethod(entity, "getMainEntityName");
+                p.setValue(mainEntityName);
+                props.add(p);
+            } catch (Exception e) {
+                LOG.debug(String.format("Could not execute the getMainEntityName() method for [%s]", 
+                        entity.getClass().getName()), e);
+            }
+            
             Property[] properties = new Property[props.size()];
             properties = props.toArray(properties);
             entityItem.setProperties(properties);
