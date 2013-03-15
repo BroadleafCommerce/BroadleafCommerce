@@ -79,13 +79,13 @@ input[type="text"], input[type="password"], input[type="date"], input[type="date
 }
 
 .foreign-key-value-container,
-.custom.dropdown,
+.entity-form .custom.dropdown,
 .indented-form-value,
-input[type="text"], input[type="password"], input[type="date"], input[type="datetime"], input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="time"], input[type="url"], textarea {
+.entity-form input[type="text"], .entity-form input[type="password"], .entity-form input[type="date"], .entity-form input[type="datetime"], .entity-form input[type="email"], .entity-form input[type="number"], .entity-form input[type="search"], .entity-form input[type="tel"], .entity-form input[type="time"], .entity-form input[type="url"], .entity-form textarea {
     margin: 7px 0 20px 20px;
 }
 
-.custom-checkbox {
+.entity-form .custom-checkbox {
 	margin-left: 20px;
 }
 

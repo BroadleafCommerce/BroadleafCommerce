@@ -7,17 +7,13 @@
 
 <form th:object="${entityForm}"
       method="POST"
-      class="twelve columns custom"
+      class="twelve columns custom entity-form"
       th:classappend="${additionalClasses}"
       th:action="@{${currentUrl}}">
       
     <input type="hidden" th:field="*{entityType}" />
     
-    <div th:each="dynamicForm : *{dynamicForms}">
-        <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
-    </div>
-    
-    <dl class="tabs vertical entity-form-tabs" th:if="${#sets.size(entityForm.tabs) > 1}">
+    <dl class="tabs vertical entity-form-tabs">
         <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'" th:inline="text">
             <a th:href="'#tab' + ${entityFormName} + ${tabStat.count}" th:text="${tab.title}" />
         </dd>
@@ -28,6 +24,13 @@
             th:class="${tabStat.first}? 'active'" 
             th:id="'tab' + ${entityFormName} + ${tabStat.count} + 'Tab'"
             th:inline="text">
+            
+            <div th:if="${tabStat.first}">
+                <div th:each="dynamicForm : *{dynamicForms}">
+                    <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
+                </div>
+            </div>
+            
             
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                 <legend th:text="#{${group.title}}" />
