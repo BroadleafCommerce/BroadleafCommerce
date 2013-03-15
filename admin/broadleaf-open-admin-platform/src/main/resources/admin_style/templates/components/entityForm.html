@@ -13,6 +13,10 @@
       
     <input type="hidden" th:field="*{entityType}" />
     
+    <div th:each="dynamicForm : *{dynamicForms}">
+        <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
+    </div>
+    
     <dl class="tabs" th:if="${#sets.size(entityForm.tabs) > 1}">
         <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'" th:inline="text">
             <a th:href="'#tab' + ${entityFormName} + ${tabStat.count}" th:text="${tab.title}" />

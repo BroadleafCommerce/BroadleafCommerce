@@ -33,6 +33,7 @@ public class Field {
     protected String foreignKeyDisplayValueProperty;
     protected String idOverride;
     protected Integer order;
+    protected String onChangeTrigger;
     
     /* ************ */
     /* WITH METHODS */
@@ -90,7 +91,7 @@ public class Field {
     public String getDisplayValue() {
         return displayValue == null ? value : displayValue;
     }
-
+    
     /* ************************** */
     /* STANDARD GETTERS / SETTERS */
     /* ************************** */
@@ -155,4 +156,12 @@ public class Field {
         this.order = order;
     }
 
+    public String getOnChangeTrigger() {
+        return onChangeTrigger;
+    }
+    
+    public void setOnChangeTrigger(String onChangeTrigger) {
+        this.onChangeTrigger = onChangeTrigger;
+    }
+    
 }

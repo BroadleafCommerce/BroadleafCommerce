@@ -22,14 +22,10 @@ import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.cms.structure.service.type.StructuredContentRuleType;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -39,16 +35,13 @@ import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
-import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
@@ -57,7 +50,6 @@ import org.hibernate.tool.hbm2x.StringUtils;
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 
 import java.io.Serializable;
@@ -124,6 +116,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
     protected synchronized void createModifiedProperties(DynamicEntityDao dynamicEntityDao, InspectHelper helper, PersistencePerspective persistencePerspective) throws InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, ServiceException, NoSuchFieldException {
         mergedProperties = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
 
+        /* APA 3/14/13 - Not needed for admin 3.0 I think.
         BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
         fieldMetadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
         fieldMetadata.setMutable(true);
@@ -203,6 +196,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
         contentTypeFieldMetadata.setRequiredOverride(true);
 
         mergedProperties.put("structuredContentType_Grid", contentTypeFieldMetadata);
+        */
 
         BasicFieldMetadata iconMetadata = new BasicFieldMetadata();
         iconMetadata.setFieldType(SupportedFieldType.ASSET);
@@ -279,6 +273,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
+            /*
             if (cto.get("structuredContentType_Grid").getFilterValues().length > 0) {
                 CriteriaTransferObject ctoCopy = new CriteriaTransferObject();
                 for (String prop : cto.getPropertyIdSet()) {
@@ -296,6 +291,7 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
                 }
                 cto = ctoCopy;
             }
+            */
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(StructuredContent.class.getName(), persistencePerspective);
             BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, StructuredContent.class.getName(), originalProps);
@@ -317,13 +313,20 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
                     property.setName("locked");
                     property.setValue("[ISOMORPHIC]/../admin/images/lock_page.png");
                     entity.addProperty(property);
+                } else {
+                    Property property = new Property();
+                    property.setName("locked");
+                    property.setValue(entity.findProperty("lockedFlag").getValue());
+                    entity.addProperty(property);
                 }
+                /*
                 if (entity.findProperty("structuredContentType") != null) {
                     Property property = new Property();
                     property.setName("structuredContentType_Grid");
                     property.setValue(entity.findProperty("structuredContentType").getValue());
                     entity.addProperty(property);
                 }
+                */
             }
 
             for (int j=0;j<structuredContentEntities.length;j++) {
@@ -385,12 +388,14 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
             Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
+            /*
             if (adminEntity.findProperty("structuredContentType") != null) {
                 Property property = new Property();
                 property.setName("structuredContentType_Grid");
                 property.setValue(adminEntity.findProperty("structuredContentType").getValue());
                 adminEntity.addProperty(property);
             }
+            */
 
             addRulesToEntity(adminInstance, adminEntity);
 
@@ -420,12 +425,14 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
 
             Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
+            /*
             if (adminEntity.findProperty("structuredContentType") != null) {
                 Property property = new Property();
                 property.setName("structuredContentType_Grid");
                 property.setValue(adminEntity.findProperty("structuredContentType").getValue());
                 adminEntity.addProperty(property);
             }
+            */
 
             addRulesToEntity(adminInstance, adminEntity);
 

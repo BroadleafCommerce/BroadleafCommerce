@@ -37,6 +37,9 @@ import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
+import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.openadmin.web.handler.AdminNavigationHandlerMapping;
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -624,6 +627,60 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
      */
     protected String getDefaultEntityType() {
         return null;
+    }
+    
+    protected EntityForm getBlankDynamicFieldTemplateForm(String criteriaName, String propertyName, String ceilingClassName,
+            String propertyTypeId) throws ServiceException, ApplicationSecurityException {
+        // We need to inspect with the second custom criteria set to the id of
+        // the desired structured content type
+        PersistencePackageRequest ppr = PersistencePackageRequest.standard()
+                .withClassName(ceilingClassName)
+                .withCustomCriteria(new String[] { criteriaName,  propertyTypeId });
+        ClassMetadata cmd = service.getClassMetadata(ppr);
+        
+        EntityForm dynamicForm = formService.buildEntityForm(cmd);
+        
+        // Set the specialized name for these fields - we need to handle them separately
+        dynamicForm.clearFieldsMap();
+        for (Tab tab : dynamicForm.getTabs()) {
+            for (FieldGroup group : tab.getFieldGroups()) {
+                for (Field field : group.getFields()) {
+                    field.setName(propertyName + "|" + field.getName());
+                }
+            }
+        }
+    
+        return dynamicForm;
+    }
+    
+    protected EntityForm getDynamicFieldTemplateForm(String criteriaName, String propertyName, String ceilingClassName,
+            String propertyTypeId, String entityId) throws ServiceException, ApplicationSecurityException {
+        // We need to inspect with the second custom criteria set to the id of
+        // the desired structured content type
+        PersistencePackageRequest ppr = PersistencePackageRequest.standard()
+                .withClassName(ceilingClassName)
+                .withCustomCriteria(new String[] { criteriaName,  propertyTypeId });
+        ClassMetadata cmd = service.getClassMetadata(ppr);
+        
+        // However, when we fetch, the second custom criteria needs to be the id
+        // of this particular structured content entity
+        ppr.setCustomCriteria(new String[] { criteriaName, entityId });
+        Entity entity = service.getRecord(ppr, entityId);
+        
+        // Assemble the dynamic form for structured content type
+        EntityForm dynamicForm = formService.buildEntityForm(cmd, entity);
+        
+        // Set the specialized name for these fields - we need to handle them separately
+        dynamicForm.clearFieldsMap();
+        for (Tab tab : dynamicForm.getTabs()) {
+            for (FieldGroup group : tab.getFieldGroups()) {
+                for (Field field : group.getFields()) {
+                    field.setName(propertyName + "|" + field.getName());
+                }
+            }
+        }
+    
+        return dynamicForm;
     }
 
     protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, String id, Property collectionProperty)

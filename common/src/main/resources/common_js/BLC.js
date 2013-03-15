@@ -28,8 +28,9 @@ var BLC = (function($) {
     function ajax(options, callback) {
         var defaults = {
             success: function(data) {
-                if (!redirectIfNecessary($(data))) {
-                    var extraData = getExtraData($(data));
+            	var $data = $(data.trim());
+                if (!redirectIfNecessary($data)) {
+                    var extraData = getExtraData($data);
                     callback(data, extraData);
                 }
             }

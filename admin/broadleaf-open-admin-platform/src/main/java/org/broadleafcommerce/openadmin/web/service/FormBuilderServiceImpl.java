@@ -74,9 +74,17 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
                 if (fmd.isProminent() != null && fmd.isProminent()) {
-                    Field hf = new Field()
-                            .withName(p.getName())
-                            .withFriendlyName(fmd.getFriendlyName());
+                    Field hf;
+                    if (fmd.getFieldType().equals(SupportedFieldType.EXPLICIT_ENUMERATION)) {
+                        hf = new ComboField();
+                        ((ComboField) hf).setOptions(fmd.getEnumerationValues());
+                    } else {
+                        hf = new Field();
+                    }
+                    
+                    hf.setName(p.getName());
+                    hf.setFriendlyName(fmd.getFriendlyName());
+                    
                     headerFields.add(hf);
                 }
             }
@@ -194,14 +202,21 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         // that are used for the header fields.
         for (Entity e : entities) {
             ListGridRecord record = new ListGridRecord();
-            record.setId(e.findProperty("id").getValue());
+            if (e.findProperty("id") != null) {
+                record.setId(e.findProperty("id").getValue());
+            }
 
             for (Field headerField : headerFields) {
                 Property p = e.findProperty(headerField.getName());
                 if (p != null) {
-                    Field recordField = new Field()
-                            .withName(headerField.getName())
-                            .withValue(p.getValue());
+                    Field recordField = new Field().withName(headerField.getName());
+                    
+                    if (headerField instanceof ComboField) {
+                        recordField.setValue(((ComboField) headerField).getOption(p.getValue()));
+                    } else {
+                        recordField.setValue(p.getValue());
+                    }
+                    
                     record.getFields().add(recordField);
                 }
             }
@@ -211,8 +226,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         return listGrid;
     }
-
-
 
     protected void setEntityFormFields(EntityForm ef, List<Property> properties) {
         for (Property property : properties) {
@@ -227,9 +240,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 Field f;
                 if (fieldType.equals(SupportedFieldType.BROADLEAF_ENUMERATION.toString())) {
                     f = new ComboField();
-                    for (String[] option : fmd.getEnumerationValues()) {
-                        ((ComboField) f).putOption(option[0], option[1]);
-                    }
+                    ((ComboField) f).setOptions(fmd.getEnumerationValues());
                 } else {
                     f = new Field();
                 }
@@ -281,20 +292,16 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         // Set the appropriate property values
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
-                BasicFieldMetadata bFM = (BasicFieldMetadata) p.getMetadata();
-            	//Check for visibility again, so that the field isn't attempted to be populated with a value on the form
-                if (!(VisibilityEnum.HIDDEN_ALL.equals(bFM.getVisibility())
-                || VisibilityEnum.FORM_HIDDEN.equals(bFM.getVisibility()))) {
+                Property entityProp = entity.findProperty(p.getName());
 
-	                Property entityProp = entity.findProperty(p.getName());
-	
-	                if (entityProp == null) {
-	                    ef.removeField(p.getName());
-	                } else {
-	                    Field field = ef.findField(p.getName());
-	                    field.setValue(entityProp.getValue());
-	                    field.setDisplayValue(entityProp.getDisplayValue());
-	                }
+                if (entityProp == null) {
+                    ef.removeField(p.getName());
+                } else {
+                    Field field = ef.findField(p.getName());
+                    if (field != null) {
+                        field.setValue(entityProp.getValue());
+                        field.setDisplayValue(entityProp.getDisplayValue());
+                    }
                 }
             }
         }
@@ -426,9 +433,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         if (mapMd.getKeys() != null) {
             // The keys can be explicitly set in the annotation...
-            for (String[] key : mapMd.getKeys()) {
-                keyField.putOption(key[0], key[1]);
-            }
+            keyField.setOptions(mapMd.getKeys());
         } else {
             // Or they could be based on a different entity
             PersistencePackageRequest ppr = PersistencePackageRequest.standard()

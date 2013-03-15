@@ -95,8 +95,26 @@ $(document).ready(function() {
     		var $this = $(this);
     		var displayValueProp = $this.find('input.display-value-property').val();
     		
-    		$this.find('input.value').val(fields['id']);
+    		var $valueField = $this.find('input.value');
+    		$valueField.val(fields['id']);
     		$this.find('span.display-value').html(fields[displayValueProp]);
+    		
+    		// To-one fields potentially trigger a dynamicform. We test to see if this field should
+    		// trigger a form, and bind the necessary event if it should.
+    		var onChangeTrigger = $valueField.data('onchangetrigger');
+    		if (onChangeTrigger) {
+    			var trigger = onChangeTrigger.split("-");
+    			if (trigger[0] == 'dynamicForm') {
+	    			var $fieldSet = $("fieldset[data-dynamicpropertyname='" + trigger[1] + "']");
+	    			var url = $fieldSet.data('currenturl') + '/dynamicForm?propertyName=' + trigger[1] + '&propertyTypeId=' + fields['id'];
+	    			
+					$.get(url, function(data) {
+						var dynamicPropertyName = $(data.trim()).find('fieldset').data('dynamicpropertyname');
+						var $oldForm = $('fieldset[data-dynamicpropertyname="' + dynamicPropertyName + '"]');
+						$oldForm.replaceWith($(data.trim()).find('fieldset'));
+					});
+    			}
+    		}
     		
 			BLCAdmin.hideCurrentModal();
     	});
@@ -107,7 +125,7 @@ $(document).ready(function() {
     	
 		return false;
     });
-	
+    
 	$('body').on('click', 'a.sub-list-grid-add', function() {
     	BLCAdmin.showLinkAsModal($(this).attr('href'));
 		return false;

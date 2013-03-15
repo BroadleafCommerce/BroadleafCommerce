@@ -5,11 +5,11 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -35,6 +35,11 @@ public class EntityForm {
 
     // This is used to data-bind when this entity form is submitted
     protected Map<String, Field> fields = null;
+    
+    // This is used in cases where there is a sub-form on this page that is dynamically
+    // rendered based on other values on this entity form. It is keyed by the name of the
+    // property that drives the dynamic form.
+    protected Map<String, EntityForm> dynamicForms = new HashMap<String, EntityForm>();
 
     /**
      * @return a flattened, field name keyed representation of all of 
@@ -52,8 +57,17 @@ public class EntityForm {
             }
             fields = map;
         }
+        
+        for (Entry<String, EntityForm> entry : dynamicForms.entrySet()) {
+            Map<String, Field> dynamicFormFields = entry.getValue().getFields();
+            fields.putAll(dynamicFormFields);
+        }
 
         return fields;
+    }
+    
+    public void clearFieldsMap() {
+        fields = null;
     }
 
     public Tab findTab(String tabTitle) {
@@ -78,7 +92,7 @@ public class EntityForm {
         return null;
     }
 
-    public void removeField(String fieldName) {
+    public Field removeField(String fieldName) {
         Field fieldToRemove = null;
         FieldGroup containingGroup = null;
 
@@ -99,6 +113,12 @@ public class EntityForm {
         if (fieldToRemove != null) {
             containingGroup.getFields().remove(fieldToRemove);
         }
+        
+        if (fields != null) {
+            fields.remove(fieldName);
+        }
+        
+        return fieldToRemove;
     }
 
     public void addHiddenField(Field field) {
@@ -165,6 +185,14 @@ public class EntityForm {
 
         tab.getRuleBuilders().add(ruleBuilder);
     }
+    
+    public EntityForm getDynamicForm(String name) {
+        return getDynamicForms().get(name);
+    }
+    
+    public void putDynamicForm(String name, EntityForm ef) {
+        getDynamicForms().put(name, ef);
+    }
 
     public String getId() {
         return id;
@@ -190,4 +218,12 @@ public class EntityForm {
         this.tabs = tabs;
     }
 
+    public Map<String, EntityForm> getDynamicForms() {
+        return dynamicForms;
+    }
+
+    public void setDynamicForms(Map<String, EntityForm> dynamicForms) {
+        this.dynamicForms = dynamicForms;
+    }
+    
 }

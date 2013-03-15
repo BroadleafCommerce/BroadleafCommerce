@@ -34,6 +34,20 @@ public class ComboField extends Field {
     public void putOption(String key, String value) {
         options.put(key, value);
     }
+    
+    /* ************************** */
+    /* CUSTOM GETTERS / SETTERS */
+    /* ************************** */
+    
+    public void setOptions(String[][] options) {
+        for (String[] option : options) {
+            putOption(option[0], option[1]);
+        }
+    }
+    
+    public String getOption(String optionKey) {
+        return getOptions().get(optionKey);
+    }
 
     /* ************************** */
     /* STANDARD GETTERS / SETTERS */
