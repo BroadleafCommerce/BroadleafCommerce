@@ -21,7 +21,7 @@
     $.fn.broadleafAccordion         ? $doc.broadleafAccordion() : null;
     $.fn.broadleafListgrid          ? $doc.broadleafListgrid() : null;
     
-    $('#redactor').redactor();
+    $('.redactor').redactor();
     $("#featured").orbit();
   });
 
