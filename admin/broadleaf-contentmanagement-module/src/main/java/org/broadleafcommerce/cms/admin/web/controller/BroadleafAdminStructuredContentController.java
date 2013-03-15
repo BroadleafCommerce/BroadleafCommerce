@@ -17,13 +17,14 @@
 package org.broadleafcommerce.cms.admin.web.controller;
 
 import org.broadleafcommerce.cms.admin.client.datasource.EntityImplementations;
+import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.entity.BroadleafAdminAbstractEntityController;
+import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,21 +37,86 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Handles admin operations for the {@link StructuredContent} entity. This entity has fields that are 
+ * dependent on the value of the {@link StructuredContent#getStructuredContentType()} field, and as such,
+ * it deviates from the typical {@link BroadleafAdminAbstractEntityController}.
+ * 
  * @author Andre Azzolini (apazzolini)
  */
 @Controller("blAdminStructuredContentController")
 @RequestMapping("/structured-content")
 public class BroadleafAdminStructuredContentController extends BroadleafAdminAbstractEntityController {
     
+    /* ****************** */
+    /* INTERESTING THINGS */
+    /* ****************** */
+    
     protected static final String SECTION_KEY = "structured-content";
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String id) throws Exception {
+        // Get the normal entity form for this item
+        String returnPath = super.viewEntityForm(request, response, model, SECTION_KEY, id);
+        EntityForm ef = (EntityForm) model.asMap().get("entityForm");
+        
+        // Attach the dynamic fields to the form
+        DynamicEntityFormInfo info = new DynamicEntityFormInfo()
+            .withCeilingClassName(StructuredContentType.class.getName())
+            .withCriteriaName("constructForm")
+            .withPropertyName("structuredContentType")
+            .withPropertyValue(ef.findField("structuredContentType").getValue());
+        EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id);
+        ef.putDynamicFormInfo("structuredContentType", info);
+        ef.putDynamicForm("structuredContentType", dynamicForm);
+        
+        // Mark the field that will drive this dynamic form
+        ef.findField("structuredContentType").setOnChangeTrigger("dynamicForm-structuredContentType");
+        
+        return returnPath;
+    }
+    
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
+    public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String id,
+            @ModelAttribute EntityForm entityForm, BindingResult result,
+            RedirectAttributes ra) throws Exception {
+        // Attach the dynamic form info so that the update service will know how to split up the fields
+        DynamicEntityFormInfo info = new DynamicEntityFormInfo()
+            .withCeilingClassName(StructuredContentType.class.getName())
+            .withCriteriaName("constructForm")
+            .withPropertyName("structuredContentType");
+        entityForm.putDynamicFormInfo("structuredContentType", info);
+        
+        return super.saveEntity(request, response, model, SECTION_KEY, id, entityForm, result, ra);
+    }
+    
+    @RequestMapping(value = "/{propertyName}/dynamicForm", method = RequestMethod.GET)
+    public String getDynamicForm(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable("propertyName") String propertyName,
+            @RequestParam("propertyTypeId") String propertyTypeId) throws Exception {
+        DynamicEntityFormInfo info = new DynamicEntityFormInfo()
+            .withCeilingClassName(StructuredContentType.class.getName())
+            .withCriteriaName("constructForm")
+            .withPropertyName(propertyName)
+            .withPropertyValue(propertyTypeId);
+        
+        return super.getDynamicForm(request, response, model, SECTION_KEY, info);
+    }
+    
+    @Override
+    protected void attachSectionSpecificInfo(PersistencePackageRequest ppr) {
+        ppr.addAdditionalForeignKey(new ForeignKey("structuredContentType", EntityImplementations.STRUCTUREDCONTENTTYPEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "name"));
+        ppr.addAdditionalForeignKey(new ForeignKey("locale", EntityImplementations.LOCALEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "friendlyName"));
+    }
+    
+    /* ***************** */
+    /* BOILERPLATE CALLS */
+    /* ***************** */
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
@@ -69,109 +135,13 @@ public class BroadleafAdminStructuredContentController extends BroadleafAdminAbs
         return super.addEntity(request, response, model, SECTION_KEY, entityForm, result);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable String id) throws Exception {
-        // Hardcoded values - may be extracted to annotation eventually
-        String criteriaName = "constructForm";
-        String propertyName = "structuredContentType";
-        String ceilingClassName = StructuredContentType.class.getName();
-        
-        String returnPath = super.viewEntityForm(request, response, model, SECTION_KEY, id);
-        
-        EntityForm ef = (EntityForm) model.asMap().get("entityForm");
-        
-        EntityForm dynamicForm = getDynamicFieldTemplateForm(criteriaName, propertyName, ceilingClassName, 
-                ef.findField(propertyName).getValue(), id);
-        ef.findField(propertyName).setOnChangeTrigger("dynamicForm-" + propertyName);
-
-        ef.putDynamicForm(propertyName, dynamicForm);
-        
-        return returnPath;
-    }
-    
-    @RequestMapping(value = "/{id}/dynamicForm", method = RequestMethod.GET)
-    public String getDynamicForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable String id,
-            @RequestParam("propertyName") String propertyName,
-            @RequestParam("propertyTypeId") String propertyTypeId) throws Exception {
-        // Hardcoded values - may be extracted to annotation eventually
-        String criteriaName = "constructForm";
-        String ceilingClassName = StructuredContentType.class.getName();
-        
-        EntityForm blankFormContainer = new EntityForm();
-        EntityForm dynamicForm = getBlankDynamicFieldTemplateForm(criteriaName, propertyName, ceilingClassName, 
-                propertyTypeId);
-
-        blankFormContainer.putDynamicForm(propertyName, dynamicForm);
-        model.addAttribute("entityForm", blankFormContainer);
-        
-        String reqUrl = request.getRequestURL().toString();
-        reqUrl = reqUrl.substring(0, reqUrl.indexOf("/dynamicForm"));
-        model.addAttribute("currentUrl", reqUrl);
-        
-        return "views/dynamicFormPartial";
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
-    public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable String id,
-            @ModelAttribute EntityForm entityForm, BindingResult result,
-            RedirectAttributes ra) throws Exception {
-        // Update the normal form
-        String returnPath = super.saveEntity(request, response, model, SECTION_KEY, id, entityForm, result, ra);
-        
-        // Hardcoded values - may be extracted to annotation eventually
-        String criteriaName = "constructForm";
-        String propertyName = "structuredContentType";
-        String ceilingClassName = StructuredContentType.class.getName();
-        
-        Map<String, Field> dynamicFields = new HashMap<String, Field>();
-        
-        // Find all of the dynamic form fields
-        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
-            if (entry.getKey().contains("|")) { 
-                dynamicFields.put(entry.getKey(), entry.getValue());
-            }
-        }
-        
-        // Remove the dynamic form fields from the main entity - they are persisted separately
-        for (Entry<String, Field> entry : dynamicFields.entrySet()) {
-            entityForm.removeField(entry.getKey());
-        }
-        
-        // Find the appropriate type that we need for this dynamic form field
-        // TODO APA - this is how to get it dynamically. but we need the interface anyways and not the impl.
-        //PersistencePackageRequest ppr = getSectionPersistencePackageRequest(getClassNameForSection(SECTION_KEY));
-        //ClassMetadata cmd = service.getClassMetadata(ppr);
-        //BasicFieldMetadata fmd = (BasicFieldMetadata) cmd.getPMap().get(propertyName).getMetadata();
-        //String dynamicFieldClass = fmd.getForeignKeyClass();
-        
-        // Create the entity form for the dynamic form, as it needs to be persisted separately
-        EntityForm dynamicForm = new EntityForm();
-        dynamicForm.setEntityType(ceilingClassName);
-        for (Entry<String, Field> entry : dynamicFields.entrySet()) {
-            String[] fieldName = entry.getKey().split("\\|");
-            if (!fieldName[0].equals(propertyName)) {
-                throw new RuntimeException("Unknown field - we only support one dynamic form per page currently.");
-            }
-            entry.getValue().setName(fieldName[1]);
-            dynamicForm.addField(entry.getValue());
-        }
-        
-        // Update the dynamic form
-        service.updateEntity(dynamicForm, new String[] { criteriaName,  id });
-        
-        return returnPath;
-    }
-
     @RequestMapping(value = "/{id}/delete", method = RequestMethod.POST)
     public String removeEntity(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String id,
             @ModelAttribute EntityForm entityForm, BindingResult result) throws Exception {
         return super.removeEntity(request, response, model, SECTION_KEY, id, entityForm, result);
     }
-
+    
     @RequestMapping(value = "/{collectionField}/select", method = RequestMethod.GET)
     public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String collectionField) throws Exception {
@@ -222,12 +192,6 @@ public class BroadleafAdminStructuredContentController extends BroadleafAdminAbs
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         super.initBinder(binder);
-    }
-    
-    @Override
-    protected void attachSectionSpecificInfo(PersistencePackageRequest ppr) {
-        ppr.addAdditionalForeignKey(new ForeignKey("structuredContentType", EntityImplementations.STRUCTUREDCONTENTTYPEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "name"));
-        ppr.addAdditionalForeignKey(new ForeignKey("locale", EntityImplementations.LOCALEIMPL, null, ForeignKeyRestrictionType.ID_EQ, "friendlyName"));
     }
     
 }

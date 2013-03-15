@@ -40,6 +40,10 @@ public class EntityForm {
     // rendered based on other values on this entity form. It is keyed by the name of the
     // property that drives the dynamic form.
     protected Map<String, EntityForm> dynamicForms = new HashMap<String, EntityForm>();
+    
+    // These values are used when dynamic forms are in play. They are not rendered to the client,
+    // but they can be used when performing actions on the submit event
+    protected Map<String, DynamicEntityFormInfo> dynamicFormInfos = new HashMap<String, DynamicEntityFormInfo>();
 
     /**
      * @return a flattened, field name keyed representation of all of 
@@ -193,6 +197,14 @@ public class EntityForm {
     public void putDynamicForm(String name, EntityForm ef) {
         getDynamicForms().put(name, ef);
     }
+    
+    public DynamicEntityFormInfo getDynamicFormInfo(String name) {
+        return getDynamicFormInfos().get(name);
+    }
+    
+    public void putDynamicFormInfo(String name, DynamicEntityFormInfo info) {
+        getDynamicFormInfos().put(name, info);
+    }
 
     public String getId() {
         return id;
@@ -226,4 +238,12 @@ public class EntityForm {
         this.dynamicForms = dynamicForms;
     }
     
+    public Map<String, DynamicEntityFormInfo> getDynamicFormInfos() {
+        return dynamicFormInfos;
+    }
+
+    public void setDynamicFormInfos(Map<String, DynamicEntityFormInfo> dynamicFormInfos) {
+        this.dynamicFormInfos = dynamicFormInfos;
+    }
+
 }

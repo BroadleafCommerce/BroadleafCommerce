@@ -33,9 +33,11 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
+import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -96,10 +98,25 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public Entity updateEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException, ApplicationSecurityException {
         PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
-        return update(ppr);
+        
+        Entity returnEntity = update(ppr);
+        
+        // If the entity form has dynamic forms inside of it, we need to persist those as well.
+        // They are typically done in their own custom persistence handlers, which will get triggered
+        // based on the criteria specific in the PersistencePackage.
+        for (Entry<String, EntityForm> entry : entityForm.getDynamicForms().entrySet()) {
+            DynamicEntityFormInfo info = entityForm.getDynamicFormInfo(entry.getKey());
+            
+            customCriteria = new String[] { info.getCriteriaName(), entityForm.getId() };
+            ppr = getRequestForEntityForm(entry.getValue(), customCriteria);
+            update(ppr);
+        }
+        
+        return returnEntity;
     }
 
     @Override

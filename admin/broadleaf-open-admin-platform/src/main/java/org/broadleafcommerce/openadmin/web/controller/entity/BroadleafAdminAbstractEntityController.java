@@ -35,6 +35,7 @@ import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.controller.BroadleafAdminAbstractController;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
@@ -51,14 +52,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
 import java.net.URLDecoder;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * An abstract controller that provides sensible operations for admin actions. It is very dynamic in nature and does
+ * not have any custom-tailored logic for any one given screen.
+ * 
  * @author Andre Azzolini (apazzolini)
  */
 public abstract class BroadleafAdminAbstractEntityController extends BroadleafAdminAbstractController {
@@ -153,9 +159,6 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
             model.addAttribute("viewType", "modal/entityAdd");
         }
 
-        //Entity entity = service.getRecord(sectionClassName, id);
-        //Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(sectionClassName, id);
-
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", "addEntity");
         setModelAttributes(model, sectionKey);
@@ -244,12 +247,41 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
             EntityForm entityForm, BindingResult result,
             RedirectAttributes ra) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
-
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
 
-        Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria());
-        entityValidator.validate(entityForm, entity, result);
+        Map<String, Field> dynamicFields = new HashMap<String, Field>();
+        
+        // Find all of the dynamic form fields
+        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
+            if (entry.getKey().contains("|")) { 
+                dynamicFields.put(entry.getKey(), entry.getValue());
+            }
+        }
+        
+        // Remove the dynamic form fields from the main entity - they are persisted separately
+        for (Entry<String, Field> entry : dynamicFields.entrySet()) {
+            entityForm.removeField(entry.getKey());
+        }
+        
+        // Create the entity form for the dynamic form, as it needs to be persisted separately
+        for (Entry<String, Field> entry : dynamicFields.entrySet()) {
+            String[] fieldName = entry.getKey().split("\\|");
+            DynamicEntityFormInfo info = entityForm.getDynamicFormInfo(fieldName[0]);
+                    
+            EntityForm dynamicForm = entityForm.getDynamicForm(fieldName[0]);
+            if (dynamicForm == null) {
+                dynamicForm = new EntityForm();
+                dynamicForm.setEntityType(info.getCeilingClassName());
+                entityForm.putDynamicForm(fieldName[0], dynamicForm);
+            }
+            
+            entry.getValue().setName(fieldName[1]);
+            dynamicForm.addField(entry.getValue());
+        }
 
+        Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria());
+        /*
+        entityValidator.validate(entityForm, entity, result);
         if (result.hasErrors()) {
             ClassMetadata cmd = service.getClassMetadata(ppr);
             Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, id);
@@ -264,7 +296,8 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
             setModelAttributes(model, sectionKey);
             return "modules/defaultContainer";
         }
-
+        */
+        
         ra.addFlashAttribute("headerFlash", "save.successful");
         
         return "redirect:/" + sectionKey + "/" + id;
@@ -288,6 +321,40 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         service.removeEntity(entityForm, getSectionCustomCriteria());
 
         return "redirect:/" + sectionKey;
+    }
+
+    /**
+     * Returns a partial representing a dynamic form. An example of this is the dynamic fields that render
+     * on structured content, which are determined by the currently selected structured content type. This 
+     * method is typically only invoked through Javascript and used to replace the current dynamic form with
+     * the one for the newly selected type.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param id
+     * @param propertyName
+     * @param propertyTypeId
+     * @param criteriaName
+     * @param ceilingClassName
+     * @return the return view path
+     * @throws Exception
+     */
+    public String getDynamicForm(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey,
+            DynamicEntityFormInfo info) throws Exception {
+        EntityForm blankFormContainer = new EntityForm();
+        EntityForm dynamicForm = getBlankDynamicFieldTemplateForm(info);
+
+        blankFormContainer.putDynamicForm(info.getPropertyName(), dynamicForm);
+        model.addAttribute("entityForm", blankFormContainer);
+        
+        String reqUrl = request.getRequestURL().toString();
+        reqUrl = reqUrl.substring(0, reqUrl.indexOf("/dynamicForm"));
+        model.addAttribute("currentUrl", reqUrl);
+        
+        setModelAttributes(model, sectionKey);
+        return "views/dynamicFormPartial";
     }
 
     /**
@@ -326,7 +393,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         setModelAttributes(model, sectionKey);
         return "modules/modalContainer";
     }
-
+    
     /**
      * Shows the modal dialog that is used to add an item to a given collection. There are several possible outcomes
      * of this call depending on the type of the specified collection field.
@@ -442,13 +509,6 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
             String id,
             String collectionField,
             String collectionItemId) throws Exception {
-        /*
-         * TODO APA
-         * also refactor the list grid html stuff to load one that loads the toolbar included
-         * basic collection persist, same form 
-         * adorned collection with form 
-         * map collections
-         */
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
@@ -629,13 +689,13 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         return null;
     }
     
-    protected EntityForm getBlankDynamicFieldTemplateForm(String criteriaName, String propertyName, String ceilingClassName,
-            String propertyTypeId) throws ServiceException, ApplicationSecurityException {
+    protected EntityForm getBlankDynamicFieldTemplateForm(DynamicEntityFormInfo info) 
+            throws ServiceException, ApplicationSecurityException {
         // We need to inspect with the second custom criteria set to the id of
         // the desired structured content type
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
-                .withClassName(ceilingClassName)
-                .withCustomCriteria(new String[] { criteriaName,  propertyTypeId });
+                .withClassName(info.getCeilingClassName())
+                .withCustomCriteria(new String[] { info.getCriteriaName(),  info.getPropertyValue() });
         ClassMetadata cmd = service.getClassMetadata(ppr);
         
         EntityForm dynamicForm = formService.buildEntityForm(cmd);
@@ -645,7 +705,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         for (Tab tab : dynamicForm.getTabs()) {
             for (FieldGroup group : tab.getFieldGroups()) {
                 for (Field field : group.getFields()) {
-                    field.setName(propertyName + "|" + field.getName());
+                    field.setName(info.getPropertyName() + "|" + field.getName());
                 }
             }
         }
@@ -653,18 +713,18 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         return dynamicForm;
     }
     
-    protected EntityForm getDynamicFieldTemplateForm(String criteriaName, String propertyName, String ceilingClassName,
-            String propertyTypeId, String entityId) throws ServiceException, ApplicationSecurityException {
+    protected EntityForm getDynamicFieldTemplateForm(DynamicEntityFormInfo info, String entityId) 
+            throws ServiceException, ApplicationSecurityException {
         // We need to inspect with the second custom criteria set to the id of
         // the desired structured content type
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
-                .withClassName(ceilingClassName)
-                .withCustomCriteria(new String[] { criteriaName,  propertyTypeId });
+                .withClassName(info.getCeilingClassName())
+                .withCustomCriteria(new String[] { info.getCriteriaName(),  info.getPropertyValue() });
         ClassMetadata cmd = service.getClassMetadata(ppr);
         
         // However, when we fetch, the second custom criteria needs to be the id
         // of this particular structured content entity
-        ppr.setCustomCriteria(new String[] { criteriaName, entityId });
+        ppr.setCustomCriteria(new String[] { info.getCriteriaName(), entityId });
         Entity entity = service.getRecord(ppr, entityId);
         
         // Assemble the dynamic form for structured content type
@@ -675,7 +735,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         for (Tab tab : dynamicForm.getTabs()) {
             for (FieldGroup group : tab.getFieldGroups()) {
                 for (Field field : group.getFields()) {
-                    field.setName(propertyName + "|" + field.getName());
+                    field.setName(info.getPropertyName() + "|" + field.getName());
                 }
             }
         }

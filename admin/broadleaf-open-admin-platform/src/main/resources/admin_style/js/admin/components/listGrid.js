@@ -106,12 +106,14 @@ $(document).ready(function() {
     			var trigger = onChangeTrigger.split("-");
     			if (trigger[0] == 'dynamicForm') {
 	    			var $fieldSet = $("fieldset[data-dynamicpropertyname='" + trigger[1] + "']");
-	    			var url = $fieldSet.data('currenturl') + '/dynamicForm?propertyName=' + trigger[1] + '&propertyTypeId=' + fields['id'];
+	    			var url = $fieldSet.data('currenturl') + '?propertyTypeId=' + fields['id'];
 	    			
 					$.get(url, function(data) {
 						var dynamicPropertyName = $(data.trim()).find('fieldset').data('dynamicpropertyname');
-						var $oldForm = $('fieldset[data-dynamicpropertyname="' + dynamicPropertyName + '"]');
-						$oldForm.replaceWith($(data.trim()).find('fieldset'));
+						var $oldFieldset = $('fieldset[data-dynamicpropertyname="' + dynamicPropertyName + '"]');
+						var $newFieldset = $(data.trim()).find('fieldset');
+						$newFieldset.find('.redactor').redactor();
+						$oldFieldset.replaceWith($newFieldset);
 					});
     			}
     		}

@@ -1,6 +1,5 @@
 <form th:object="${entityForm}"
-      th:remove="tag"
-      th:action="@{${currentUrl}}">
+      th:remove="tag">
       
     <div th:include="components/dynamicForm" th:with="dynamicPropertyName='structuredContentType'" />
     

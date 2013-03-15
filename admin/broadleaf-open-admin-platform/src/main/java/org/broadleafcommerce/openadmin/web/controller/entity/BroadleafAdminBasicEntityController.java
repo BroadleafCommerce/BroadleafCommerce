@@ -33,6 +33,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to 
+ * super and does not provide any custom-tailored functionality. It is responsible for rendering the admin for every
+ * entity that is not explicitly customized by its own controller.
+ * 
  * @author Andre Azzolini (apazzolini)
  */
 @Controller("blAdminBasicEntityController")

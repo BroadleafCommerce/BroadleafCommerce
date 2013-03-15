@@ -1,6 +1,7 @@
 <!-- Required Parameters: -->
 <!--    dynamicPropertyName: the name of the field representing the dynamic form -->
-<fieldset th:attr="data-dynamicpropertyname=${dynamicPropertyName},data-currenturl=${currentUrl}">
+<fieldset th:attr="data-dynamicpropertyname=${dynamicPropertyName},
+        data-currenturl=@{${'/' + sectionKey + '/' + dynamicPropertyName + '/dynamicForm'}}">
     <legend>Dynamic</legend>
 
     <div th:each="field : ${entityForm.dynamicForms['__${dynamicPropertyName}__'].fields}" th:if="${field.value.name}">
