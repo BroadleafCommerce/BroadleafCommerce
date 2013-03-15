@@ -3,16 +3,19 @@
     <input type="hidden" class="value" th:field="*{fields['__${field.name}__'].value}" th:attr="data-onchangetrigger=${field.onChangeTrigger}" />
     
     <label th:for="${field.name}" th:text="#{${field.friendlyName}}" />
-    <span
-        class="display-value"
-        style="line-height: 23px; vertical-align: bottom"
-        th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}"
-        th:text="*{fields['__${field.name}__'].displayValue}" />
     
-    <button 
-        class="to-one-lookup tiny button hover-cursor"
-        value="Lookup"
-        th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}">
-        Select
-    </button>
+    <div class="foreign-key-value-container">
+        <span
+            class="display-value"
+            style="line-height: 23px; vertical-align: bottom"
+            th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}"
+            th:text="*{fields['__${field.name}__'].displayValue}" />
+        
+        <button 
+            class="to-one-lookup tiny button hover-cursor"
+            value="Lookup"
+            th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}">
+            Select
+        </button>
+    </div>
 </div>

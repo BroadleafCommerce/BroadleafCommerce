@@ -1,2 +1,4 @@
 <label th:for="${field.name}" th:text="#{${field.friendlyName}}" />
-<textarea class="redactor" name="content" th:field="*{fields['__${field.name}__'].value}"/>
+<div class="ten indented-form-value">
+    <textarea class="redactor" name="content" th:field="*{fields['__${field.name}__'].value}"/>
+</div>

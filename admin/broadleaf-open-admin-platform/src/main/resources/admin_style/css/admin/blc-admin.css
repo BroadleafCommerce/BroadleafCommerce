@@ -65,11 +65,87 @@ span.error {
     padding-left: 5px;
 }
 
+/* --------------------------------------------------
+  Foundation Overrides
+----------------------------------------------------- */
+
+fieldset, 
+fieldset legend,
+.tabs, 
+.tabs dd.active a, .tabs li.active a, 
+div.custom.dropdown
+input[type="text"], input[type="password"], input[type="date"], input[type="datetime"], input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="time"], input[type="url"], textarea {
+	border-color: #B8B8B8;
+}
+
+.foreign-key-value-container,
+.custom.dropdown,
+.indented-form-value,
+input[type="text"], input[type="password"], input[type="date"], input[type="datetime"], input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="time"], input[type="url"], textarea {
+    margin: 7px 0 20px 20px;
+}
+
+.custom-checkbox {
+	margin-left: 20px;
+}
+
+.indented-form-value {
+	display: block;
+	font-size: 12px;
+}
+
+fieldset {
+	background-color: #FAFAFA;
+	margin: 0 0 25px 0;
+}
+
+fieldset legend {
+	background-color: #FAFAFA;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 3px;
+}
+
+label {
+	font-weight: 600;
+}
+
+.entity-form-tabs {
+	float: left;
+	width: 220px;
+}
+
+.tabs.vertical dd.active, .tabs.vertical li.active {
+	border: 1px solid #E6E6E6;
+}
+
+.tabs.vertical dd, .tabs.vertical li {
+	border-left: 1px solid #E6E6E6;
+}
+
+.tabs.vertical dd.active a, .tabs.vertical li.active a {
+	border-left: 4px solid #1A1A1A;
+}
+
+.tabs.vertical dd a, .tabs.vertical li a {
+	border-left: 4px solid #CCC;
+}
+
+.tabs.vertical dd.active a, .tabs.vertical li.active a,
+.tabs.vertical dd a, .tabs.vertical li a {
+	background: white;
+	color: #4D4D4D;
+}
+
+h2#mainEntityName {
+	margin-bottom: 30px;
+	color: #98B30A;
+}
 
 /* --------------------------------------------------
   Top Bar
------------------------------------------------------
-*/
+----------------------------------------------------- */
+
 .top-bar {
     margin: 0 0 8px 0;
 }
