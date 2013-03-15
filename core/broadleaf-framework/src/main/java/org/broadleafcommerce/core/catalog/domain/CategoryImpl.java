@@ -26,8 +26,11 @@ import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -51,6 +54,16 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -67,23 +80,12 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
-import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+
 
 /**
  * @author bTaylor
@@ -157,32 +159,32 @@ public class CategoryImpl implements Category, Status {
 
     @Column(name = "NAME", nullable=false)
     @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Name", order=1, group = "CategoryImpl_Description", prominent=true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Name", order=1, group = "CategoryImpl_Description", prominent=true, groupOrder = 1, largeEntry=true)
     protected String name;
 
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order=5, group = "Seo_Group", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order=1, group = "CategoryImpl_Description", groupOrder = 1)
     protected String url;
 
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key", order=6, group = "Seo_Group", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key", order=6, tab = "Seo_Tab", group ="Seo_Group",groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected String urlKey;
 
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Description", order=2, group = "CategoryImpl_Description", largeEntry=true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Description", order=2, group = "CategoryImpl_Description", largeEntry=true, groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected String description;
 
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order=11, group = "CategoryImpl_Active_Date_Range", groupOrder = 4)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order=11, group = "CategoryImpl_Active_Date_Range", groupOrder = 2)
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order=12, group = "CategoryImpl_Active_Date_Range", groupOrder = 4)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order=12, group = "CategoryImpl_Active_Date_Range", groupOrder = 2)
     protected Date activeEndDate;
 
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Display_Template", order=3, group = "CategoryImpl_Description", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Display_Template",tab = "advancedTab", order=3, group = "CategoryImpl_Description", groupOrder = 2)
     protected String displayTemplate;
 
     @Lob
@@ -232,22 +234,49 @@ public class CategoryImpl implements Category, Status {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationMap(
+            friendlyName = "SkuImpl_Sku_Media",
+            targetUIElementId = "productSkuMediaLayout",
+            tab = "categoryMediaTab",
+            dataSourceName = "productMediaMapDS",
+            keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
+            deleteEntityUponRemove = true,
+            mediaField = "url",
+            keys = {
+                    @AdminPresentationMapKey(keyName = "primary", friendlyKeyName = "mediaPrimary"),
+                    @AdminPresentationMapKey(keyName = "alt1", friendlyKeyName = "mediaAlternate1"),
+                    @AdminPresentationMapKey(keyName = "alt2", friendlyKeyName = "mediaAlternate2"),
+                    @AdminPresentationMapKey(keyName = "alt3", friendlyKeyName = "mediaAlternate3"),
+                    @AdminPresentationMapKey(keyName = "alt4", friendlyKeyName = "mediaAlternate4"),
+                    @AdminPresentationMapKey(keyName = "alt5", friendlyKeyName = "mediaAlternate5"),
+                    @AdminPresentationMapKey(keyName = "alt6", friendlyKeyName = "mediaAlternate6")
+            }
+    )
     protected Map<String, Media> categoryMedia = new HashMap<String , Media>(10);
 
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "product", friendlyName = "featuredProductsTitle",
+    	tab = "productMarketingTab", tabOrder = 200, sortProperty = "sequence", dataSourceName = "featuredProductsDS",
+    	maintainedAdornedTargetFields = { "promotionMessage" }, gridVisibleFields = { "defaultSku.name", "promotionMessage" })
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>(10);
     
     @OneToMany(mappedBy = "category", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "crossSaleProductsTitle",
+    	tab = "productMarketingTab", tabOrder = 200, sortProperty = "sequence", dataSourceName = "crossSaleProductsDS",
+    	maintainedAdornedTargetFields = { "promotionMessage" }, gridVisibleFields = { "defaultSku.name", "promotionMessage" })
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
     @OneToMany(mappedBy = "category", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "upsaleProductsTitle",
+    	tab = "productMarketingTab", tabOrder = 200, sortProperty = "sequence", dataSourceName = "upSaleProductsDS",
+    	maintainedAdornedTargetFields = { "promotionMessage" }, gridVisibleFields = { "defaultSku.name", "promotionMessage" })
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
     
     @OneToMany(mappedBy = "category", targetEntity = CategorySearchFacetImpl.class, cascade = {CascadeType.ALL})
@@ -266,7 +295,7 @@ public class CategoryImpl implements Category, Status {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "categoryAttributesTitle", dataSourceName = "categoryAttributeDS", order = 87)
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "categoryAttributesTitle", dataSourceName = "categoryAttributeDS", order = 87, tab = "advancedTab")
     protected List<CategoryAttribute> categoryAttributes  = new ArrayList<CategoryAttribute>();
 
     @Column(name = "INVENTORY_TYPE")
