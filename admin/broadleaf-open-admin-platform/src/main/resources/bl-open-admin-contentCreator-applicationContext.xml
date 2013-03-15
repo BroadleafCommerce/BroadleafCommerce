@@ -63,18 +63,6 @@
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
         <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
     </bean>
-    
-    <bean id="blSendAdminUsernameEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
-        <property name="fromAddress" value="${adminUserNameEmail.fromAddress}"/>
-        <property name="emailTemplate" value="${adminUserNameEmail.emailTemplate}"/>
-        <property name="subject" value="${adminUserNameEmail.subject}"/>
-    </bean>
-    
-    <bean id="blSendAdminResetPasswordEmail" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
-        <property name="fromAddress" value="${adminResetPassword.fromAddress}"/>
-        <property name="emailTemplate" value="${adminResetPassword.emailTemplate}"/>
-        <property name="subject" value="${adminResetPassword.subject}"/>
-    </bean>
 
     <bean id="blEJB3ConfigurationDao" class="org.broadleafcommerce.openadmin.server.dao.EJB3ConfigurationDaoImpl">
         <property name="persistenceUnitInfo">

@@ -69,4 +69,15 @@
         </tx:attributes>
     </tx:advice>-->
 
+    <bean id="blSendAdminUsernameEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
+        <property name="fromAddress" value="${adminUserNameEmail.fromAddress}"/>
+        <property name="emailTemplate" value="${adminUserNameEmail.emailTemplate}"/>
+        <property name="subject" value="${adminUserNameEmail.subject}"/>
+    </bean>
+
+    <bean id="blSendAdminResetPasswordEmail" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
+        <property name="fromAddress" value="${adminResetPassword.fromAddress}"/>
+        <property name="emailTemplate" value="${adminResetPassword.emailTemplate}"/>
+        <property name="subject" value="${adminResetPassword.subject}"/>
+    </bean>
 </beans>
