@@ -82,7 +82,8 @@ public class StructuredContentCustomPersistenceHandler extends CustomPersistence
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        return StructuredContent.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return StructuredContent.class.getName().equals(ceilingEntityFullyQualifiedClassname) ||
+                StructuredContentImpl.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override

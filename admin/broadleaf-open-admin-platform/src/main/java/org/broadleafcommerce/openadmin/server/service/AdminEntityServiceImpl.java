@@ -127,6 +127,15 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     protected PersistencePackageRequest getRequestForEntityForm(EntityForm entityForm, String[] customCriteria) {
+        // Ensure the ID property is on the form
+        Field idField = entityForm.findField("id");
+        if (idField == null) {
+            idField = new Field();
+            idField.setName("id");
+            idField.setValue(entityForm.getId());
+            entityForm.getFields().put("id", idField);
+        }
+        
         // Build the property array from the field map
         Property[] properties = new Property[entityForm.getFields().size()];
         int i = 0;

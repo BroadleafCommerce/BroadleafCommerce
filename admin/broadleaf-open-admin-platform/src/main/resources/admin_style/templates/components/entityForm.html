@@ -12,6 +12,7 @@
       th:action="@{${currentUrl}}">
       
     <input type="hidden" th:field="*{entityType}" />
+    <input type="hidden" th:field="*{id}" />
     
     <dl class="tabs vertical entity-form-tabs">
         <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'" th:inline="text">
