@@ -510,7 +510,7 @@ table.list-grid-table thead tr th {
     list-style: none;
 }
 
-.listgrid-headerBtn.dropdown > ul li a, .listgrid-headerBtn.dropdown > ul li button {
+.listgrid-headerBtn.dropdown > ul li a.sort {
     display: block;
     color: #555;
     font-size: 13px;
@@ -780,7 +780,7 @@ table.list-grid-table thead tr th {
     padding: 8px 40px 8px 10px;
 }
 
-.listgrid-headerBtn.dropdown > ul > li > form {
+.listgrid-headerBtn.dropdown > ul > li > div.filter-fields {
     padding: 10px;
 }
 
@@ -788,7 +788,7 @@ input[type="text"].listgrid-criteria-input {
     margin: 0px;
 }
 
-input[type="submit"].listgrid-filter {
+a.listgrid-filter {
     margin-top:5px;
 }
 

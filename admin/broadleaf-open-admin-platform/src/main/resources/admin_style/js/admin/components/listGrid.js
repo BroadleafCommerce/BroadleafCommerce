@@ -171,27 +171,45 @@ $(document).ready(function() {
 		return false;
 	});
 	
+	/**
+	 * Handler that fires whenever a sorting link is clicked, sort ascending or descending. This will also modify the
+	 * sort value input for the closet sort input for this list grid header
+	 */
 	$('body').on('click', 'a.sort', function() {
 		//reset any of the currently active sorts on all the fields in the grid
 		$(this).closest('thead').find('i.sort-icon').removeClass('listgrid-icon-down').removeClass('listgrid-icon-up');
-		$(this).closest('thead').find('input#sort').val('');
+		$(this).closest('thead').find('input.property-sort').val('');
 		
 		//apply the sort to the current field
 		var ascending = $(this).hasClass('down');
 		var sortValue = (ascending) ? 'ASCENDING' : 'DESCENDING';
-		$(this).parents('ul').find('input#sort').val(sortValue);
+		$(this).parents('ul').find('input.property-sort').val(sortValue);
 	    //update the header icon for this field
 		var icon = $(this).parents('.listgrid-headerBtn').find('div i');
 		icon.toggleClass('listgrid-icon-down', ascending);
 		icon.toggleClass('listgrid-icon-up', !ascending);
 
 		//submit the form just for this particular field since this is the only sort that changed
-		$(this).closest('ul').find('form.filter-form').submit();
+		$(this).closest('ul').find('div.filter-fields .listgrid-filter').click();
 		return false;
 	});
 
+	/**
+	 * Intercepts the enter keypress from the listgrid criteria input (since it is not apart of a form) and clicks the
+	 * closest filter button
+	 */
+	$('body').on('keypress', 'input.listgrid-criteria-input', function(event) {
+		if (event.which == 13) {
+			$(this).closest('.filter-fields').find('a.listgrid-filter').click();
+		}
+	});
 	
-	$('body').on('submit', 'form.filter-form', function(event) {
+	/**
+	 * Intercepts click events on the 'filter' button for the list grid headers. This will execute an AJAX call after
+	 * serializing all of the inputs for all of the list grid header fields so that criteria on multiple fields can
+	 * be sent to the server
+	 */
+	$('body').on('click', 'div.filter-fields a.listgrid-filter', function(event) {
 		//Serialize all of the filter-forms in this particular list grid since it's possible that criteria could be set
 		//for multiple fields at the same time
 		var toReplace = $(this).closest('.list-grid-table').find('tbody');
@@ -199,7 +217,7 @@ $(document).ready(function() {
 		BLC.ajax({
 			url: this.action,
 			type: "GET",
-			data: $(this).closest('thead').find('form.filter-form').serialize()
+			data: $(this).closest('thead').find('div.filter-fields :input').serialize()
 		}, function(data) {
 			updateListGrid(data, toReplace);
 	    });
@@ -247,8 +265,11 @@ $(document).ready(function() {
 		return fields;
 	}
 	
-	var updateListGrid = function(data, tableToReplace) {
-		tableToReplace.replaceWith($(data).find('tbody'))
+	/**
+	 * Convenience method to update a table body from a list grid
+	 */
+	var updateListGrid = function(data, tableBodyToReplace) {
+		tableBodyToReplace.replaceWith($(data).find('tbody'))
 	}
 	
 	var replaceRelatedListGrid = function(data) {

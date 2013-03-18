@@ -56,13 +56,15 @@
         $('.listgrid-headerBtn.dropdown > ul', this).addClass('no-hover');
 
         // Prevent event propagation on the dropdown form
-        $('.listgrid-headerBtn.dropdown').find('form').click(function (e) {
-            e.stopPropagation();
+        $('.listgrid-headerBtn.dropdown div.filter-fields').click(function (e) {
+        	if (!$(e.target).is('a')) {
+            	e.stopPropagation();
+        	}
         });
 
         $('.listgrid-headerBtn.dropdown .add-filter').click(function (e) {
             var $el = $(this),
-                $form = $el.closest('form'),
+                $form = $el.closest('div.filter-fields'),
                 criteria = $form.find('.listgrid-criteria');
 
             $(criteria).append(createCriteria);
