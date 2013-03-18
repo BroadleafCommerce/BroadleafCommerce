@@ -13,21 +13,12 @@
                         <li class="divider"></li>
                         <li>
                             <form>
-                                <label>Filter: <a class="add-filter" href="#">Add Criteria</a></label>
+                                <label>Filter:</label>
                                 <div class="listgrid-criteria">
                                     <div class="listgrid-criteria-container">
                                         <input class="listgrid-criteria-input" type="text" placeholder="criteria"/>
-                                        <a class="remove-filter" href="#">Remove</a>
                                     </div>
                                 </div>
-                                <!-- TODO PJV - currently not supported in backend
-                                <div class="listgrid-operators" style="display:none">
-                                    <select>
-                                        <option>Match All</option>
-                                        <option>Match Any</option>
-                                    </select>
-                                </div>
-                                -->
                                 <a href="#">SORT</a>
                             </form>
                         </li>
@@ -58,23 +49,14 @@
                                 
                                 <input type="hidden"
                                     th:name="${'criteria[' + headerFieldStat.index + '].propertyId'}" th:value="${headerField.name}" />
-                                <input type="hidden" id="sort" th:name="${'criteria[' + headerFieldStat.index + '].sortAscending'}" />
-                                <label>Filter: <a class="add-filter" href="#">Add Criteria</a></label>
+                                <input type="hidden" id="sort" th:name="${'criteria[' + headerFieldStat.index + '].sortType'}" />
+                                <label>Filter:</label>
                                 <div class="listgrid-criteria" th:attr="data-field-index=${headerFieldStat.index}">
                                     <div class="listgrid-criteria-container">
                                         <input th:name="${'criteria[' + headerFieldStat.index + '].filterValues'}"
                                             class="listgrid-criteria-input" type="text" placeholder="criteria"/>
-                                        <a class="remove-filter" href="#">Remove</a>
                                     </div>
                                 </div>
-                                <!-- TODO PJV - currently not supported in backend
-                                <div class="listgrid-operators" style="display:none">
-                                    <select>
-                                        <option>Match All</option>
-                                        <option>Match Any</option>
-                                    </select>
-                                </div>
-                                -->
                                 <input type="submit" class="listgrid-filter button small radius" value="Filter" />
                             </form>
                         </li>

@@ -390,11 +390,6 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
                 criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]));
         model.addAttribute("listGrid", listGrid);
 
-        //FIXME PJV: don't just fake this
-        EntityForm entityForm = new EntityForm();
-        entityForm.setId(id);
-        model.addAttribute("entityForm", entityForm);
-
         // We return the new list grid so that it can replace the currently visible one
         setModelAttributes(model, sectionKey);
         return "views/standaloneListGrid";
