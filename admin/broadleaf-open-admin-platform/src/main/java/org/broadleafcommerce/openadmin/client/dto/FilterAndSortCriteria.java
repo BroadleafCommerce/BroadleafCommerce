@@ -59,14 +59,24 @@ import java.util.List;
  */
 public class FilterAndSortCriteria implements IsSerializable, Serializable {
 
-    private static final long serialVersionUID = -593864722147943119L;
-    
+    private static final long serialVersionUID = 1L;
+
+    protected enum SortType {
+        ASCENDING, DESCENDING
+    }
+
     protected String propertyId;
     protected List<String> filterValues = new ArrayList<String>();
     
-    protected Boolean sortAscending;
     protected Boolean ignoreCase;
-    
+    protected SortType sortType;
+
+    /**
+     * @deprecated use sortType instead
+     */
+    @Deprecated
+    protected Boolean sortAscending;
+
     /**
      * Creates a new persistent entity criteria
      * (for deserialization purposes only).
@@ -149,18 +159,28 @@ public class FilterAndSortCriteria implements IsSerializable, Serializable {
      * the sorting functionality.
      */
     public Boolean getSortAscending() {
-        return sortAscending;
+        return (sortType == null) ? null : SortType.ASCENDING.equals(sortType);
     }
-    
-    /**
-     * @param sortAscending <tt>true</tt> for ascending,
-     * <tt>false</tt> for descending sort order or <tt>null</tt>
-     * to disable the sorting functionality.
-     */
+
+    @Deprecated
     public void setSortAscending(Boolean sortAscending) {
         this.sortAscending = sortAscending;
     }
     
+    /**
+     * @return the sortType
+     */
+    public SortType getSortType() {
+        return sortType;
+    }
+
+    /**
+     * @param sortType the sortType to set
+     */
+    public void setSortType(SortType sortType) {
+        this.sortType = sortType;
+    }
+
     /**
      * @return <tt>true</tt> for case-insensitive sorting,
      * <tt>false</tt> for case-sensitive sorting (applicable
@@ -179,5 +199,5 @@ public class FilterAndSortCriteria implements IsSerializable, Serializable {
     public void setIgnoreCase(Boolean ignoreCase) {
         this.ignoreCase = ignoreCase;
     }
-    
+
 }

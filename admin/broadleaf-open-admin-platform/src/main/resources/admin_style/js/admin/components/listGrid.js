@@ -178,7 +178,8 @@ $(document).ready(function() {
 		
 		//apply the sort to the current field
 		var ascending = $(this).hasClass('down');
-		$(this).parents('ul').find('input#sort').val(ascending);
+		var sortValue = (ascending) ? 'ASCENDING' : 'DESCENDING';
+		$(this).parents('ul').find('input#sort').val(sortValue);
 	    //update the header icon for this field
 		var icon = $(this).parents('.listgrid-headerBtn').find('div i');
 		icon.toggleClass('listgrid-icon-down', ascending);
@@ -224,7 +225,7 @@ $(document).ready(function() {
 	var replaceRelatedListGrid = function(data) {
 		var $table = $(data);
 		var tableId = $table.attr('id');
-		$('#' + tableId).replaceWith($table);
+		$('#' + tableId + ' > tbody').replaceWith($table.find('tbody'));
     	BLCAdmin.hideCurrentModal();
 	}
 	
