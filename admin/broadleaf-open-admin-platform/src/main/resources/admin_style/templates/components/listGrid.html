@@ -41,12 +41,7 @@
                         <li><a class="sort up" href="#">Sort Z - A</a></li>
                         <li class="divider"></li>
                         <li>                                  
-                            <form class="filter-form"
-                                  th:action="@{${listGrid.subCollectionFieldName == null 
-                                                   ? currentUrl
-                                                   : '/' + sectionKey + '/' + entityForm.id + '/' + listGrid.subCollectionFieldName}}"
-                                  method="GET">
-                                
+                            <form class="filter-form" blc_admin:list_grid_link="${sectionKey},${listGrid},,'action'" method="GET">
                                 <input type="hidden"
                                     th:name="${'criteria[' + headerFieldStat.index + '].propertyId'}" th:value="${headerField.name}" />
                                 <input type="hidden" id="sort" th:name="${'criteria[' + headerFieldStat.index + '].sortType'}" />

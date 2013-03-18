@@ -54,7 +54,13 @@ public class AdminListGridLinkProcessor extends AbstractAttributeModifierAttrPro
         
         String sectionKey = (String) StandardExpressionProcessor.processExpression(arguments, expressions[0]);
         ListGrid listGrid = (ListGrid) StandardExpressionProcessor.processExpression(arguments, expressions[1]);
-        ListGridRecord record = (ListGridRecord) StandardExpressionProcessor.processExpression(arguments, expressions[2]);
+
+        //link could be used for a data-link in a list grid record or as the form action for filtering a list grid
+        ListGridRecord record = null;
+        if (StringUtils.isNotEmpty(expressions[2])) {
+            record = (ListGridRecord) StandardExpressionProcessor.processExpression(arguments, expressions[2]);
+        }
+
         String attr = (String) StandardExpressionProcessor.processExpression(arguments, expressions[3]);
 
         String link = "/" + sectionKey + "/";
@@ -64,8 +70,9 @@ public class AdminListGridLinkProcessor extends AbstractAttributeModifierAttrPro
         if (listGrid.getContainingEntityId() != null && StringUtils.isNotBlank(listGrid.getSubCollectionFieldName())) {
             link += listGrid.getContainingEntityId() + "/" + listGrid.getSubCollectionFieldName() + "/";
         }
-
-        link += record.getId();
+        if (record != null) {
+            link += record.getId();
+        }
 
         Map<String, String> attrs = new HashMap<String, String>();
         attrs.put(attr, link);
