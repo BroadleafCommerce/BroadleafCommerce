@@ -70,7 +70,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     protected AdminNavigationService navigationService;
 
     @Override
-    public ListGrid buildMainListGrid(Entity[] entities, ClassMetadata cmd)
+    public ListGrid buildMainListGrid(Entity[] entities, ClassMetadata cmd, String sectionKey)
             throws ServiceException, ApplicationSecurityException {
 
         List<Field> headerFields = new ArrayList<Field>();
@@ -96,11 +96,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
 
-        return createListGrid(cmd.getCeilingType(), headerFields, type, entities);
+        return createListGrid(cmd.getCeilingType(), headerFields, type, entities, sectionKey);
     }
 
     @Override
-    public ListGrid buildCollectionListGrid(String containingEntityId, Entity[] entities, Property field)
+    public ListGrid buildCollectionListGrid(String containingEntityId, Entity[] entities, Property field, String sectionKey)
             throws ServiceException, ApplicationSecurityException {
         FieldMetadata fmd = field.getMetadata();
         // Get the class metadata for this particular field
@@ -188,7 +188,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             editable = true;
         }
 
-        ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, entities);
+        ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, entities, sectionKey);
         listGrid.setSubCollectionFieldName(field.getName());
         listGrid.setFriendlyName(field.getMetadata().getFriendlyName());
         if (StringUtils.isEmpty(listGrid.getFriendlyName())) {
@@ -200,16 +200,18 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return listGrid;
     }
 
-    protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, Entity[] entities) {
+    protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, Entity[] entities, 
+            String sectionKey) {
         // Create the list grid and set some basic attributes
         ListGrid listGrid = new ListGrid();
         listGrid.setClassName(className);
         listGrid.setHeaderFields(headerFields);
         listGrid.setListGridType(type);
+        listGrid.setSectionKey(sectionKey);
         
         AdminSection section = navigationService.findAdminSectionByClass(className);
         if (section != null) {
-            listGrid.setSectionUrl(section.getUrl());
+            listGrid.setExternalEntitySectionKey(section.getUrl());
         }
 
         // For each of the entities (rows) in the list grid, we need to build the associated
@@ -217,6 +219,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         // that are used for the header fields.
         for (Entity e : entities) {
             ListGridRecord record = new ListGridRecord();
+            record.setListGrid(listGrid);
+            
             if (e.findProperty("id") != null) {
                 record.setId(e.findProperty("id").getValue());
             }
@@ -293,7 +297,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         
         AdminSection section = navigationService.findAdminSectionByClass(cmd.getCeilingType());
         if (section != null) {
-            ef.setSectionUrl(section.getUrl());
+            ef.setSectionKey(section.getUrl());
         }
 
         setEntityFormFields(ef, Arrays.asList(cmd.getProperties()));
@@ -349,7 +353,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             Entity[] subCollectionEntities = collectionRecords.get(p.getName());
             String containingEntityId = entity.getPMap().get("id").getValue();
-            ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p);
+            ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p, ef.getSectionKey());
             listGrid.setListGridType(ListGrid.Type.INLINE);
 
             CollectionMetadata md = ((CollectionMetadata) p.getMetadata());

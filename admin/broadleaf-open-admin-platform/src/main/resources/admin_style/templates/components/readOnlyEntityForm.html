@@ -42,7 +42,8 @@
             </fieldset>
 
             <div th:each="collectionListGrid : ${tab.listGrids}" class="listgrid-container">
-            
+                <label th:text="#{${collectionListGrid.friendlyName}}" />
+                
                 <div th:include="components/listGridToolbar" 
                     th:with="listGrid=${collectionListGrid},hideActionButtons='true'" 
                     th:remove="tag" />

@@ -40,8 +40,6 @@
             <set>
                 <ref bean="blAdminUserProcessor"/>
                 <ref bean="blAdminComponentIdProcessor"/>
-                <ref bean="blAdminListGridLinkProcessor"/>
-                <ref bean="blAdminListGridRecordLinkProcessor"/>
                 <ref bean="blAdminModuleProcessor"/>
                 <ref bean="blAdminSectionHrefProcessor"/>
                 <ref bean="blAdminFieldBuilderProcessor"/>

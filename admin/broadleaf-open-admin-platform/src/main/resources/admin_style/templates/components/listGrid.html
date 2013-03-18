@@ -1,13 +1,12 @@
+<comment th:remove="all">
 <!-- This component represents a list grid toolbar -->
 <!-- Additional parameters that can be specified include: -->
 <!--    hideActionButtons - if set to true, will not render the sort/filter buttons -->
+</comment>
 
-<div th:if="${#lists.isEmpty(listGrid.records)}" class="list-grid-no-results">
-    (No records found)
-</div>
 
-<table class="list-grid-table table-hover responsive twelve"
-       th:if="${! #lists.isEmpty(listGrid.records)}"
+<table class="list-grid-table responsive twelve"
+       th:classappend="${listGrid.listGridType != 'inline'}? 'table-hover'"
        th:attr="data-listgridtype=${listGrid.listGridType},data-currenturl=${currentUrl}"
        blc_admin:component_id="${listGrid}">
     <thead>
@@ -57,7 +56,7 @@
                         <li><a class="sort up" href="#">Sort Z - A</a></li>
                         <li class="divider"></li>
                         <li>                                  
-                            <div class="filter-fields" blc_admin:list_grid_link="${sectionKey},${listGrid},,'data-action'">
+                            <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}">
                                 <input type="hidden" class="property-name"
                                     th:name="${'criteria[' + headerFieldStat.index + '].propertyId'}" th:value="${headerField.name}" />
                                 <input type="hidden" class="property-sort" th:name="${'criteria[' + headerFieldStat.index + '].sortType'}" />
@@ -77,13 +76,21 @@
         </tr>
     </thead>
     <tbody>
+    
+        <tr th:if="${#lists.isEmpty(listGrid.records)}">
+            <td th:colspan="${#lists.size(listGrid.headerFields) + 2}" class="list-grid-no-results">
+                (No records found)
+            </td>
+        </tr>
+    
         <tr th:each="record : ${listGrid.records}"
+            th:unless="${#lists.isEmpty(listGrid.records)}"
             th:classappend="${listGrid.listGridType != 'main'}? 'clickable'"
-            blc_admin:list_grid_link="${sectionKey},${listGrid},${record},'data-link'">
+            th:attr="data-link=@{${record.path}}">
             
-            <td>
-                <i class="foundicon-edit"></i>
-                <i class="foundicon-trash"></i>
+            <td style="font-size: 20px;">
+                <a th:href="@{${record.path}}" class="sub-list-grid-update"><i class="foundicon-edit"></i></a>
+                <a th:href="@{${record.path + '/delete'}}" class="sub-list-grid-remove"><i class="foundicon-trash"></i></a>
             </td>
             
             <td data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
@@ -95,19 +102,19 @@
                 
                 <span th:case="'main'" th:remove="tag">
                     <a th:if="${fieldStat.first}" 
-                        blc_admin:list_grid_link="${sectionKey},${listGrid},${record},'href'"
+                        th:href="@{${record.path}}"
                         th:text="${field.value}" />
                         
-                    <span th:unless="${fieldStat.first}" th:remove="tag" th:text="${field.value}" />
+                    <span th:unless="${fieldStat.first}" th:remove="tag" th:text="${field.displayValue}" />
                 </span>
                 
                 <span th:case="*" th:remove="tag" th:inline="text">
-                    <a th:if="${fieldStat.first and listGrid.sectionUrl != null}" 
-                        blc_admin:list_grid_record_link="${listGrid},${record},'href'"
+                    <a th:if="${fieldStat.first and record.canLinkToExternalEntity}" 
+                        th:href="@{${record.externalEntityPath}}"
                         class="modal-view"
                         th:text="${field.value}" />
                         
-                    <span th:unless="${fieldStat.first and listGrid.sectionUrl != null}" 
+                    <span th:unless="${fieldStat.first and record.canLinkToExternalEntity}" 
                         th:remove="tag" 
                         th:text="${field.value}" />
                 </span>

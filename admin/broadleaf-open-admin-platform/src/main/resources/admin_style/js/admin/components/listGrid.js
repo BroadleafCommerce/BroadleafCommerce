@@ -24,14 +24,6 @@ $(document).ready(function() {
 	});
 	
 	/**
-	 * The rowSelected handler for the inline list grid ...
-	 */
-	$('body').on('listGrid-inline-rowSelected', function(event, link, fields, currentUrl) {
-		var $tr = $('tr[data-link="' + link + '"]');
-		$tr.toggleClass("selected");
-	});
-	
-	/**
 	 * The rowSelected handler for a toOne list grid needs to trigger the specific valueSelected handler 
 	 * for the field that we are performing the to-one lookup on.
 	 */
@@ -52,7 +44,7 @@ $(document).ready(function() {
 		}	
 		
 		$.post(currentUrl, postData, function(data) {
-			replaceListGrid(data);
+			replaceRelatedListGrid(data);
 		})
 		.fail(function(data) {
 			alert('failed ' + data);
@@ -135,28 +127,25 @@ $(document).ready(function() {
 	
 	$('body').on('click', 'a.sub-list-grid-remove', function() {
 		var $container = $(this).closest('.listgrid-container');
-		var $selectedRows = $container.find('table tr.selected');
+		var link = $(this).attr('href');
+		var rowFields = getRowFields($(this).closest('tr'));
 		
-		var link = $selectedRows.attr('data-link') + '/delete';
+		debugger;
 		
 		$.ajax({
 			url: link,
-			data: getRowFields($selectedRows),
+			data: rowFields,
 			type: "POST"
 		}).done(function(data) {
-			replaceListGrid(data);
+			replaceRelatedListGrid(data);
 		});
 		
 		return false;
 	});
 	
 	$('body').on('click', 'a.sub-list-grid-update', function() {
-		var $container = $(this).closest('.listgrid-container');
-		var $selectedRows = $container.find('table tr.selected');
-		
-		var link = $selectedRows.attr('data-link');
+		var link = $(this).attr('href');
     	BLCAdmin.showLinkAsModal(link);
-    	
 		return false;
 	});
 	
@@ -273,7 +262,8 @@ $(document).ready(function() {
 	}
 	
 	var replaceRelatedListGrid = function(data) {
-		var $table = $(data);
+		debugger;
+		var $table = $(data.trim());
 		var tableId = $table.attr('id');
 		$('#' + tableId + ' > tbody').replaceWith($table.find('tbody'));
     	BLCAdmin.hideCurrentModal();

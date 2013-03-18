@@ -191,7 +191,7 @@ public class ProductImpl implements Product, Status {
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order=4, group = "ProductImpl_Product_Description", requiredOverride = RequiredOverride.REQUIRED, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order=4, group = "ProductImpl_Product_Description", requiredOverride = RequiredOverride.REQUIRED, groupOrder=1, prominent=true)
     @AdminPresentationToOneLookup()
     protected Category defaultCategory;
 

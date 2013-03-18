@@ -5,7 +5,7 @@
             <span th:case="'viewEntity'" th:remove="tag">
                 [[${entityForm.mainEntityName}]]
                 <small>
-                    <a th:href="@{${entityForm.sectionUrl + '/' + entityForm.id}}" target="_blank">(Edit)</a>
+                    <a th:href="@{${entityForm.sectionKey + '/' + entityForm.id}}" target="_blank">(Edit)</a>
                 </small>
             </span>
             

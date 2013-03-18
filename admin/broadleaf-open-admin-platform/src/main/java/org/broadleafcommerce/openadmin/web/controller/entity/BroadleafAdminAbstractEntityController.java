@@ -106,7 +106,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         ClassMetadata cmd = service.getClassMetadata(ppr);
         Entity[] rows = service.getRecords(ppr);
 
-        ListGrid listGrid = formService.buildMainListGrid(rows, cmd);
+        ListGrid listGrid = formService.buildMainListGrid(rows, cmd, sectionKey);
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("listGrid", listGrid);
@@ -422,7 +422,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
 
         // Next, we must get the new list grid that represents this collection
         ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty,
-                criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]));
+                criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]), sectionKey);
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
@@ -454,7 +454,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         if (md instanceof BasicFieldMetadata) {
             Entity[] rows = service.getRecords(ppr);
 
-            ListGrid listGrid = formService.buildCollectionListGrid(null, rows, collectionProperty);
+            ListGrid listGrid = formService.buildCollectionListGrid(null, rows, collectionProperty, sectionKey);
 
             model.addAttribute("listGrid", listGrid);
             model.addAttribute("viewType", "modal/simpleSelectEntity");
@@ -532,7 +532,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
                 model.addAttribute("viewType", "modal/simpleAddEntity");
             } else {
                 Entity[] rows = service.getRecords(ppr);
-                ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty);
+                ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty, sectionKey);
 
                 model.addAttribute("listGrid", listGrid);
                 model.addAttribute("viewType", "modal/simpleSelectEntity");
@@ -548,7 +548,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
 
             Entity[] rows = service.getRecords(ppr);
-            ListGrid listGrid = formService.buildMainListGrid(rows, collectionMetadata);
+            ListGrid listGrid = formService.buildMainListGrid(rows, collectionMetadata, sectionKey);
             listGrid.setSubCollectionFieldName(collectionField);
             EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
 
@@ -659,7 +659,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, id);
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty, null);
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty, null, sectionKey);
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
@@ -694,7 +694,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, id, collectionItemId);
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty, null);
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty, null, sectionKey);
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
@@ -733,7 +733,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         service.removeSubCollectionEntity(mainMetadata, collectionProperty, id, collectionItemId, priorKey);
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty, null);
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty, null, sectionKey);
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
@@ -824,16 +824,17 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
      * @param id foreign key from the root entity for <b>collectionProperty</b>
      * @param collectionProperty property that this collection should be based on from the root entity
      * @param criteria criteria to filter the subcollection list by, can be null
+     * @param sectionKey the current main section key
      * @return
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
     protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, String id, Property collectionProperty,
-            FilterAndSortCriteria[] criteria)
+            FilterAndSortCriteria[] criteria, String sectionKey)
             throws ServiceException, ApplicationSecurityException {
         Entity[] rows = service.getRecordsForCollection(mainMetadata, id, collectionProperty, criteria);
 
-        ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty);
+        ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty, sectionKey);
         listGrid.setListGridType(ListGrid.Type.INLINE);
 
         return listGrid;

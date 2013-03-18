@@ -25,7 +25,7 @@ public class EntityForm {
     protected String id;
     protected String entityType;
     protected String mainEntityName;
-    protected String sectionUrl;
+    protected String sectionKey;
     protected Set<Tab> tabs = new TreeSet<Tab>(new Comparator<Tab>() {
         public int compare(Tab o1, Tab o2) {
             return new CompareToBuilder()
@@ -207,6 +207,14 @@ public class EntityForm {
     public void putDynamicFormInfo(String name, DynamicEntityFormInfo info) {
         getDynamicFormInfos().put(name, info);
     }
+    
+    public void propagateSectionKey() {
+        for (Tab tab : tabs) {
+            for (ListGrid lg : tab.getListGrids()) {
+                lg.setSectionKey(sectionKey);
+            }
+        }
+    }
 
     public String getId() {
         return id;
@@ -231,15 +239,15 @@ public class EntityForm {
     public void setMainEntityName(String mainEntityName) {
         this.mainEntityName = mainEntityName;
     }
-    
-    public String getSectionUrl() {
-        return sectionUrl;
-    }
-    
-    public void setSectionUrl(String sectionUrl) {
-        this.sectionUrl = sectionUrl;
-    }
 
+    public String getSectionKey() {
+        return sectionKey;
+    }
+    
+    public void setSectionKey(String sectionKey) {
+        this.sectionKey = sectionKey;
+    }
+    
     public Set<Tab> getTabs() {
         return tabs;
     }

@@ -25,7 +25,6 @@ import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -45,11 +44,12 @@ public interface FormBuilderService {
      * 
      * @param entities
      * @param cmd
+     * @param sectionKey
      * @return the ListGrid
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public ListGrid buildMainListGrid(Entity[] entities, ClassMetadata cmd)
+    public ListGrid buildMainListGrid(Entity[] entities, ClassMetadata cmd, String sectionKey)
             throws ServiceException, ApplicationSecurityException;
 
     /**
@@ -61,11 +61,12 @@ public interface FormBuilderService {
      * @param containingEntityId
      * @param entities
      * @param field
+     * @param sectionKey
      * @return the ListGrid
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public ListGrid buildCollectionListGrid(String containingEntityId, Entity[] entities, Property field)
+    public ListGrid buildCollectionListGrid(String containingEntityId, Entity[] entities, Property field, String sectionKey)
             throws ServiceException, ApplicationSecurityException;
 
     /**

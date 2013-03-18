@@ -792,9 +792,8 @@ a.listgrid-filter {
     margin-top:5px;
 }
 
-div.list-grid-no-results {
+td.list-grid-no-results {
 	margin-bottom: 18px;
-	border: 1px solid #DDD;
 	text-align: center;
 	padding: 5px;
 }

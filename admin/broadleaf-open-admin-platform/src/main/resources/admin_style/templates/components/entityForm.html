@@ -1,26 +1,31 @@
+<comment th:remove="all">
 <!-- This component represents a tabbed entity form with collections -->
 <!-- Additional parameters that can be specified include: -->
 <!--    additionalClasses - any additional CSS classes to apply to the form -->
+<!--    additionalTabClasses - any additional CSS classes to apply to the tabs -->
 <!--    additionalSubmitClasses - any additional CSS classes to apply to the submit button on this form -->
 <!--    entityFormName - a unique name for this form used in specifying tab names -->
 <!--    deleteButton - boolean value determining whether or not to show the delete button -->
+<!--    showSingleTab - boolean value determining whether or not to show tabs if there is only one -->
+</comment>
 
 <form th:object="${entityForm}"
       method="POST"
       class="twelve columns custom entity-form"
       th:classappend="${additionalClasses}"
-      th:action="@{${currentUrl}}">
+      th:action="@{${currentUrl}}"
+      th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
       
     <input type="hidden" th:field="*{entityType}" />
     <input type="hidden" th:field="*{id}" />
     
-    <dl class="tabs vertical entity-form-tabs">
+    <dl class="tabs" th:classappend="${additionalTabClasses}" th:if="${renderTabs}">
         <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'" th:inline="text">
             <a th:href="'#tab' + ${entityFormName} + ${tabStat.count}" th:text="${tab.title}" />
         </dd>
     </dl> 
 
-    <ul class="tabs-content" style="margin-left: 250px;">
+    <ul class="tabs-content" th:style="${renderTabs}? 'margin-left: 250px;'">
         <li th:each="tab : ${entityForm.tabs}" 
             th:class="${tabStat.first}? 'active'" 
             th:id="'tab' + ${entityFormName} + ${tabStat.count} + 'Tab'"
@@ -43,6 +48,7 @@
             </fieldset>
 
             <div th:each="collectionListGrid : ${tab.listGrids}" class="listgrid-container">
+                <label th:text="#{${collectionListGrid.friendlyName}}" />
                 <div th:include="components/listGridToolbar" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
                 <div th:include="components/listGrid" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
             </div>
