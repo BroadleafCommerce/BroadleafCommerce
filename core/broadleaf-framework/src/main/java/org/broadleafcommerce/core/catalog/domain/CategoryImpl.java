@@ -211,6 +211,13 @@ public class CategoryImpl implements Category, Status {
     @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationAdornedTargetCollection(
+            targetObjectProperty = "categoryXrefPK.subCategory",
+            parentObjectProperty = "categoryXrefPK.category",
+            friendlyName = "allParentCategoriesTitle",
+            sortProperty = "displayOrder",
+            tab = "advancedTab",
+            gridVisibleFields = { "name" })
     protected List<CategoryXref> allParentCategories = new ArrayList<CategoryXref>(10);
 
     @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "categoryProductXref.category")
@@ -218,6 +225,13 @@ public class CategoryImpl implements Category, Status {
     @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationAdornedTargetCollection(
+            targetObjectProperty = "categoryProductXref.product",
+            parentObjectProperty = "categoryProductXref.category",
+            friendlyName = "allProductsTitle",
+            sortProperty = "displayOrder",
+            tab = "productsTab",
+            gridVisibleFields = { "defaultSku.name" })
     protected List<CategoryProductXref> allProducts = new ArrayList<CategoryProductXref>(10);
 
     @ElementCollection
