@@ -29,6 +29,10 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -42,9 +46,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * 
@@ -87,23 +88,27 @@ public class AdminRoleImpl implements AdminRole {
     @JoinTable(name = "BLC_ADMIN_ROLE_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "adminPermissionsTitle", manyToField = "allRoles",
+    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "permissionListTitle", manyToField = "allRoles",
             operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected Set<AdminPermission> allPermissions= new HashSet<AdminPermission>();
 
 
+    @Override
     public Set<AdminPermission> getAllPermissions() {
         return allPermissions;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -112,14 +117,17 @@ public class AdminRoleImpl implements AdminRole {
         return allUsers;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }

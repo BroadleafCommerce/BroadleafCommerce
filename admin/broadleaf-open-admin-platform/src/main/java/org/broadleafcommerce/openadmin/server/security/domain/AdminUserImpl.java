@@ -36,6 +36,10 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,9 +56,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * 
@@ -94,7 +95,7 @@ public class AdminUserImpl implements AdminUser {
 
     @Column(name = "PASSWORD", nullable=false)
     @AdminPresentation(
-        friendlyName = "Admin Password",
+            friendlyName = "AdminUserImpl_Admin_Password",
         order=3, 
         group = "AdminUserImpl_User", 
             fieldType = SupportedFieldType.PASSWORD
@@ -131,7 +132,7 @@ public class AdminUserImpl implements AdminUser {
     @JoinTable(name = "BLC_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "adminRolesTitle", manyToField = "allUsers",
+    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "roleListTitle", manyToField = "allUsers",
                 operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
 
@@ -139,7 +140,7 @@ public class AdminUserImpl implements AdminUser {
     @JoinTable(name = "BLC_ADMIN_USER_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "adminPermissionsTitle", manyToField = "allUsers",
+    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "permissionListTitle", manyToField = "allUsers",
                 operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
 
@@ -166,6 +167,7 @@ public class AdminUserImpl implements AdminUser {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
