@@ -206,6 +206,35 @@ $(document).ready(function() {
 		return false;
 	});
 	
+	/**
+	 * Intercepts the form submission for a top-level entity search. This search is only available on a main entity page
+	 * (like Products)
+	 */
+	$('body').on('submit', 'form.custom-entity-search', function(event) {
+		$('body').find('.custom-entity-search a').click();
+		return false;
+	});
+	
+	/**
+	 * Intercepts the button click for the main entity search. This will look at the first field in the main list grid (of
+	 * which there is only 1 on the page) and replace the criteria value for that field with whatever was typed into the
+	 * search box.
+	 */
+	$('body').on('click', '.custom-entity-search a', function(event) {
+		//this takes place on the main list grid screen so there should be a single list grid
+		var search = $('body').find('input').val();
+		var $firstHeader = $('body').find('.list-grid-table th.th1');
+		$firstHeader.find('input.listgrid-criteria-input').val(search);
+		BLC.ajax({
+			url: $(this).closest('form').action,
+			type: "GET",
+			data: $firstHeader.find('div.filter-fields :input').serialize()
+		}, function(data) {
+			updateListGrid(data, $('body').find('.list-grid-table tbody'));
+	    });
+		return false;
+	});
+	
 	var getRowFields = function($tr) {
 		var fields = {};
 		
