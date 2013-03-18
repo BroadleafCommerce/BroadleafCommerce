@@ -209,9 +209,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Override
     public Entity[] getRecordsForCollection(ClassMetadata containingClassMetadata, String containingEntityId,
-            Property collectionProperty)
+            Property collectionProperty, FilterAndSortCriteria[] criteria)
             throws ServiceException, ApplicationSecurityException {
-        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata());
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata())
+                .withFilterAndSortCriteria(criteria);
         FilterAndSortCriteria fasc;
 
         FieldMetadata md = collectionProperty.getMetadata();
@@ -241,7 +242,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         ClassMetadata cmd = getClassMetadata(ppr);
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof CollectionMetadata) {
-                Entity[] rows = getRecordsForCollection(cmd, containingEntityId, p);
+                Entity[] rows = getRecordsForCollection(cmd, containingEntityId, p, null);
 
                 //TODO APA Figure out where else to do this
                 //String collectionClass = ((CollectionMetadata) p.getMetadata()).getCollectionCeilingEntity();

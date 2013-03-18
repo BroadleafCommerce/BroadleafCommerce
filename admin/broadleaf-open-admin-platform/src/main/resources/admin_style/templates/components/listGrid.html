@@ -6,31 +6,33 @@
             <th>
                 <div class="listgrid-headerBtn split dropdown">
                     <div class="listgrid-title"><i class="listgrid-icon-down"></i>&nbsp;id</div>
-                    <!-- This is commented out because tab switching is slow with it. -->
-                    <!-- TODO: APA Fix this so it's fast -->
-<!--                     <span class="hide-for-small"></span> -->
-<!--                     <ul> -->
-<!--                         <li><a href="#">Sort A Z</a></li> -->
-<!--                         <li><a href="#">Sort Z A</a></li> -->
-<!--                         <li class="divider"></li> -->
-<!--                         <li> -->
-<!--                             <label>Filter: <a class="add-filter" href="#">Add Criteria</a></label> -->
-<!--                             <div class="listgrid-criteria"> -->
-<!--                                 <div class="listgrid-criteria-container"> -->
-<!--                                     <input class="listgrid-criteria-input" type="text" placeholder="criteria"/> -->
-<!--                                     <a class="remove-filter" href="#">Remove</a> -->
-<!--                                 </div> -->
-<!--                             </div> -->
-<!--                             <div class="listgrid-operators" style="display:none"> -->
-<!--                                 <select> -->
-<!--                                     <option>Match All</option> -->
-<!--                                     <option>Match Any</option> -->
-<!--                                 </select> -->
-<!--                             </div> -->
-<!--                             <a href="#">SORT</a> -->
-<!--                         </li> -->
-<!--                     </ul> -->
-                </div>
+                    <span class="hide-for-small"></span>
+                    <ul>
+                        <li><a href="#">Sort A - Z</a></li>
+                        <li><a href="#">Sort Z - A</a></li>
+                        <li class="divider"></li>
+                        <li>
+                            <form>
+                                <label>Filter: <a class="add-filter" href="#">Add Criteria</a></label>
+                                <div class="listgrid-criteria">
+                                    <div class="listgrid-criteria-container">
+                                        <input class="listgrid-criteria-input" type="text" placeholder="criteria"/>
+                                        <a class="remove-filter" href="#">Remove</a>
+                                    </div>
+                                </div>
+                                <!-- TODO PJV - currently not supported in backend
+                                <div class="listgrid-operators" style="display:none">
+                                    <select>
+                                        <option>Match All</option>
+                                        <option>Match Any</option>
+                                    </select>
+                                </div>
+                                -->
+                                <a href="#">SORT</a>
+                            </form>
+                        </li>
+                    </ul>
+               </div>
             </th>
             <th th:each="headerField : ${listGrid.headerFields}"
                 th:class="${'th' + headerFieldStat.count}"
@@ -38,55 +40,69 @@
                 scope="col">
 
                 <div href="#" class="listgrid-headerBtn split dropdown">
-                    <div class="listgrid-title">[[#{${headerField.friendlyName}}]]</div>
-                    <!-- This is commented out because tab switching is slow with it. -->
-                    <!-- TODO: APA Fix this so it's fast -->
-<!--                     <span class="hide-for-small"></span> -->
-<!--                     <ul th:class="${headerFieldStat.last}? 'end'"> -->
-<!--                         <li><a href="#">Sort A → Z</a></li> -->
-<!--                         <li><a href="#">Sort Z → A</a></li> -->
-<!--                         <li class="divider"></li> -->
-<!--                         <li> -->
-<!--                             <label>Filter: <a class="add-filter" href="#">Add Criteria</a></label> -->
-<!--                             <div class="listgrid-criteria"> -->
-<!--                                 <div class="listgrid-criteria-container"> -->
-<!--                                     <input class="listgrid-criteria-input" type="text" placeholder="criteria"/> -->
-<!--                                     <a class="remove-filter" href="#">Remove</a> -->
-<!--                                 </div> -->
-<!--                             </div> -->
-<!--                             <div class="listgrid-operators" style="display:none"> -->
-<!--                                 <select> -->
-<!--                                     <option>Match All</option> -->
-<!--                                     <option>Match Any</option> -->
-<!--                                 </select> -->
-<!--                             </div> -->
-<!--                             <a href="#">SUBMIT</a> -->
-<!--                         </li> -->
-<!--                     </ul> -->
+                    <div class="listgrid-title">
+                        <i class="sort-icon"></i>&nbsp;[[#{${headerField.friendlyName}}]]
+                    </div>
+
+                    <span class="hide-for-small"></span>
+                    <ul th:class="${headerFieldStat.last}? 'end'">
+                        <li><a class="sort down" href="#">Sort A - Z</a></li>
+                        <li><a class="sort up" href="#">Sort Z - A</a></li>
+                        <li class="divider"></li>
+                        <li>                                  
+                            <form class="filter-form"
+                                  th:action="@{${listGrid.subCollectionFieldName == null 
+                                                   ? currentUrl
+                                                   : '/' + sectionKey + '/' + entityForm.id + '/' + listGrid.subCollectionFieldName}}"
+                                  method="GET">
+                                
+                                <input type="hidden"
+                                    th:name="${'criteria[' + headerFieldStat.index + '].propertyId'}" th:value="${headerField.name}" />
+                                <input type="hidden" id="sort" th:name="${'criteria[' + headerFieldStat.index + '].sortAscending'}" />
+                                <label>Filter: <a class="add-filter" href="#">Add Criteria</a></label>
+                                <div class="listgrid-criteria" th:attr="data-field-index=${headerFieldStat.index}">
+                                    <div class="listgrid-criteria-container">
+                                        <input th:name="${'criteria[' + headerFieldStat.index + '].filterValues'}"
+                                            class="listgrid-criteria-input" type="text" placeholder="criteria"/>
+                                        <a class="remove-filter" href="#">Remove</a>
+                                    </div>
+                                </div>
+                                <!-- TODO PJV - currently not supported in backend
+                                <div class="listgrid-operators" style="display:none">
+                                    <select>
+                                        <option>Match All</option>
+                                        <option>Match Any</option>
+                                    </select>
+                                </div>
+                                -->
+                                <input type="submit" class="listgrid-filter button small radius" value="Filter" />
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             </th>
         </tr>
     </thead>
     <tbody>
-    <tr th:each="record : ${listGrid.records}"
-        th:classappend="${listGrid.listGridType != 'main'}? 'clickable'"
-        blc_admin:list_grid_link="${sectionKey},${listGrid},${record},'data-link'">
-        <td data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
-        <td th:each="field : ${record.fields}"
-            th:class="${'td' + fieldStat.count}"
-            th:switch="${listGrid.listGridType}"
-            th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}">
-            
-            <span th:case="'main'" th:remove="tag">
-                <a th:if="${fieldStat.first}" blc_admin:list_grid_link="${sectionKey},${listGrid},${record},'href'"
-                    th:text="${field.value}" />
-                    
-                <span th:unless="${fieldStat.first}" th:remove="tag" th:text="${field.value}" />
-            </span>
-            
-            <span th:case="*" th:remove="tag" th:text="${field.value}" />
-            
-        </td>
+        <tr th:each="record : ${listGrid.records}"
+            th:classappend="${listGrid.listGridType != 'main'}? 'clickable'"
+            blc_admin:list_grid_link="${sectionKey},${listGrid},${record},'data-link'">
+            <td data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
+            <td th:each="field : ${record.fields}"
+                th:class="${'td' + fieldStat.count}"
+                th:switch="${listGrid.listGridType}"
+                th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}">
+                
+                <span th:case="'main'" th:remove="tag">
+                    <a th:if="${fieldStat.first}" blc_admin:list_grid_link="${sectionKey},${listGrid},${record},'href'"
+                        th:text="${field.value}" />
+                        
+                    <span th:unless="${fieldStat.first}" th:remove="tag" th:text="${field.value}" />
+                </span>
+                
+                <span th:case="*" th:remove="tag" th:text="${field.value}" />
+                
+            </td>
         </tr>
     </tbody>
 </table>

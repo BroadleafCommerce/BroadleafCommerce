@@ -36,7 +36,9 @@
 
             createCriteria = function () {
                 var fContainer = $("<div class=\"listgrid-criteria-container\">");
-                var fInput = $("<input class=\"listgrid-criteria-input\" type=\"text\" placeholder=\"criteria\" />");
+                var fieldIdx = $(this).data('fieldIndex');
+                var fInput = $("<input class=\"listgrid-criteria-input\"" +
+                		" name=\"criteria[" + fieldIdx + "].filterValues\"type=\"text\" placeholder=\"criteria\" />");
                 var lRemove = $("<a class=\"remove-filter\" href=\"#\">Remove</a>");
                 lRemove.click(removeFilter);
                 fContainer.append(fInput);

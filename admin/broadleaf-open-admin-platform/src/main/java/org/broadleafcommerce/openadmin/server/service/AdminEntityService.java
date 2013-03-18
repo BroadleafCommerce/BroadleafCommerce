@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.server.service;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -128,7 +129,7 @@ public interface AdminEntityService {
      * @throws ApplicationSecurityException
      */
     public Entity[] getRecordsForCollection(ClassMetadata containingClassMetadata, String containingEntityId,
-            Property collectionProperty)
+            Property collectionProperty, FilterAndSortCriteria[] criteria)
             throws ServiceException, ApplicationSecurityException;
 
     /**

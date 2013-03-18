@@ -27,6 +27,7 @@ import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
@@ -34,6 +35,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.controller.BroadleafAdminAbstractController;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
+import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -93,14 +95,20 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
      */
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey) throws Exception {
+        return viewEntityList(request, response, model, sectionKey, new CriteriaForm());
+    }
+    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey, CriteriaForm criteriaForm) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, 
+                criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]));
         ClassMetadata cmd = service.getClassMetadata(ppr);
         Entity[] rows = service.getRecords(ppr);
 
         ListGrid listGrid = formService.buildMainListGrid(rows, cmd);
 
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("listGrid", listGrid);
         model.addAttribute("viewType", "entityList");
 
@@ -358,6 +366,41 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
     }
 
     /**
+     * Returns the records for a given collectionField filtered by a particular criteria
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param sectionKey
+     * @param collectionField
+     * @param criteriaForm
+     * @return
+     * @throws Exception
+     */
+    public String getCollectionFieldRecords(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey,
+            String id,
+            String collectionField, CriteriaForm criteriaForm) throws Exception {
+        String mainClassName = getClassNameForSection(sectionKey);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+
+        // Next, we must get the new list grid that represents this collection
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty,
+                criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]));
+        model.addAttribute("listGrid", listGrid);
+
+        //FIXME PJV: don't just fake this
+        EntityForm entityForm = new EntityForm();
+        entityForm.setId(id);
+        model.addAttribute("entityForm", entityForm);
+
+        // We return the new list grid so that it can replace the currently visible one
+        setModelAttributes(model, sectionKey);
+        return "views/standaloneListGrid";
+    }
+
+    /**
      * Shows the modal dialog that is used to select a "to-one" collection item. For example, this could be used to show
      * a list of categories for the ManyToOne field "defaultCategory" in Product.
      * 
@@ -586,7 +629,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, id);
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty);
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty, null);
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
@@ -621,7 +664,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, id, collectionItemId);
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty);
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty, null);
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
@@ -660,7 +703,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         service.removeSubCollectionEntity(mainMetadata, collectionProperty, id, collectionItemId, priorKey);
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty);
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty, null);
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
@@ -743,9 +786,22 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         return dynamicForm;
     }
 
-    protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, String id, Property collectionProperty)
+    /**
+     * Convenience method for obtaining a ListGrid DTO object for a collection. Note that if no <b>criteria</b> is
+     * available, then this should be null (or empty)
+     * 
+     * @param mainMetadata class metadata for the root entity that this <b>collectionProperty</b> relates to
+     * @param id foreign key from the root entity for <b>collectionProperty</b>
+     * @param collectionProperty property that this collection should be based on from the root entity
+     * @param criteria criteria to filter the subcollection list by, can be null
+     * @return
+     * @throws ServiceException
+     * @throws ApplicationSecurityException
+     */
+    protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, String id, Property collectionProperty,
+            FilterAndSortCriteria[] criteria)
             throws ServiceException, ApplicationSecurityException {
-        Entity[] rows = service.getRecordsForCollection(mainMetadata, id, collectionProperty);
+        Entity[] rows = service.getRecordsForCollection(mainMetadata, id, collectionProperty, criteria);
 
         ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty);
         listGrid.setListGridType(ListGrid.Type.INLINE);
@@ -776,6 +832,11 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         attachSectionSpecificInfo(ppr);
         
         return ppr;
+    }
+
+    protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName,
+            FilterAndSortCriteria[] filterAndSortCriteria) {
+        return getSectionPersistencePackageRequest(sectionClassName).withFilterAndSortCriteria(filterAndSortCriteria);
     }
 
     protected String[] getSectionCustomCriteria() {

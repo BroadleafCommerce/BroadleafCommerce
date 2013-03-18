@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
+import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,12 +44,15 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/{sectionKey}")
 public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractEntityController {
 
+    @Override
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable String sectionKey) throws Exception {
-        return super.viewEntityList(request, response, model, sectionKey);
+            @PathVariable String sectionKey,
+            @ModelAttribute CriteriaForm criteriaForm) throws Exception {
+        return super.viewEntityList(request, response, model, sectionKey, criteriaForm);
     }
 
+    @Override
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String viewAddEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
@@ -56,6 +60,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
         return super.viewAddEntityForm(request, response, model, sectionKey, entityType);
     }
 
+    @Override
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String addEntity(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
@@ -63,6 +68,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
         return super.addEntity(request, response, model, sectionKey, entityForm, result);
     }
 
+    @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
@@ -70,6 +76,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
         return super.viewEntityForm(request, response, model, sectionKey, id);
     }
 
+    @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
@@ -79,6 +86,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
         return super.saveEntity(request, response, model, sectionKey, id, entityForm, result, ra);
     }
 
+    @Override
     @RequestMapping(value = "/{id}/delete", method = RequestMethod.POST)
     public String removeEntity(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
@@ -87,6 +95,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
         return super.removeEntity(request, response, model, sectionKey, id, entityForm, result);
     }
 
+    @Override
     @RequestMapping(value = "/{collectionField}/select", method = RequestMethod.GET)
     public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
@@ -94,6 +103,16 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
         return super.showSelectCollectionItem(request, response, model, sectionKey, collectionField);
     }
 
+    @Override
+    @RequestMapping(value = "/{id}/{collectionField}", method = RequestMethod.GET)
+    public String getCollectionFieldRecords(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String sectionKey,
+            @PathVariable String id,
+            @PathVariable String collectionField, @ModelAttribute CriteriaForm criteriaForm) throws Exception {
+        return super.getCollectionFieldRecords(request, response, model, sectionKey, id, collectionField, criteriaForm);
+    }
+
+    @Override
     @RequestMapping(value = "/{id}/{collectionField}/add", method = RequestMethod.GET)
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
@@ -102,6 +121,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
         return super.showAddCollectionItem(request, response, model, sectionKey, id, collectionField);
     }
 
+    @Override
     @RequestMapping(value = "/{id}/{collectionField}/{collectionItemId}", method = RequestMethod.GET)
     public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
@@ -111,6 +131,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
         return super.showUpdateCollectionItem(request, response, model, sectionKey, id, collectionField, collectionItemId);
     }
 
+    @Override
     @RequestMapping(value = "/{id}/{collectionField}/add", method = RequestMethod.POST)
     public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
@@ -120,6 +141,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
         return super.addCollectionItem(request, response, model, sectionKey, id, collectionField, entityForm);
     }
 
+    @Override
     @RequestMapping(value = "/{id}/{collectionField}/{collectionItemId}", method = RequestMethod.POST)
     public String updateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
@@ -131,6 +153,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
                 entityForm);
     }
 
+    @Override
     @RequestMapping(value = "/{id}/{collectionField}/{collectionItemId}/delete", method = RequestMethod.POST)
     public String removeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
@@ -140,6 +163,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
         return super.removeCollectionItem(request, response, model, sectionKey, id, collectionField, collectionItemId);
     }
     
+    @Override
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         super.initBinder(binder);

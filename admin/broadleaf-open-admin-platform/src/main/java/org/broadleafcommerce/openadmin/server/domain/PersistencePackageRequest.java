@@ -242,7 +242,7 @@ public class PersistencePackageRequest {
     }
 
     public void setFilterAndSortCriteria(FilterAndSortCriteria[] filterAndSortCriteria) {
-        this.filterAndSortCriteria = Arrays.asList(filterAndSortCriteria);
+        this.filterAndSortCriteria.addAll(Arrays.asList(filterAndSortCriteria));
     }
 
     /* ************************** */

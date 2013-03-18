@@ -166,7 +166,40 @@ $(document).ready(function() {
 			type: "POST",
 			data: $(this).serialize()
 		}, function(data) {
-			replaceListGrid(data);
+			replaceRelatedListGrid(data);
+	    });
+		return false;
+	});
+	
+	$('body').on('click', 'a.sort', function() {
+		//reset any of the currently active sorts on all the fields in the grid
+		$(this).closest('thead').find('i.sort-icon').removeClass('listgrid-icon-down').removeClass('listgrid-icon-up');
+		$(this).closest('thead').find('input#sort').val('');
+		
+		//apply the sort to the current field
+		var ascending = $(this).hasClass('down');
+		$(this).parents('ul').find('input#sort').val(ascending);
+	    //update the header icon for this field
+		var icon = $(this).parents('.listgrid-headerBtn').find('div i');
+		icon.toggleClass('listgrid-icon-down', ascending);
+		icon.toggleClass('listgrid-icon-up', !ascending);
+
+		//submit the form just for this particular field since this is the only sort that changed
+		$(this).closest('ul').find('form.filter-form').submit();
+		return false;
+	});
+
+	
+	$('body').on('submit', 'form.filter-form', function(event) {
+		//Serialize all of the filter-forms in this particular list grid since it's possible that criteria could be set
+		//for multiple fields at the same time
+		var toReplace = $(this).closest('.list-grid-table').find('tbody');
+		BLC.ajax({
+			url: this.action,
+			type: "GET",
+			data: $(this).closest('thead').find('form.filter-form').serialize()
+		}, function(data) {
+			updateListGrid(data, toReplace);
 	    });
 		return false;
 	});
@@ -183,7 +216,11 @@ $(document).ready(function() {
 		return fields;
 	}
 	
-	var replaceListGrid = function(data) {
+	var updateListGrid = function(data, tableToReplace) {
+		tableToReplace.replaceWith($(data).find('tbody'))
+	}
+	
+	var replaceRelatedListGrid = function(data) {
 		var $table = $(data);
 		var tableId = $table.attr('id');
 		$('#' + tableId).replaceWith($table);
