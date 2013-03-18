@@ -194,6 +194,7 @@ $(document).ready(function() {
 		//Serialize all of the filter-forms in this particular list grid since it's possible that criteria could be set
 		//for multiple fields at the same time
 		var toReplace = $(this).closest('.list-grid-table').find('tbody');
+		$(this).closest('ul').removeClass('show-dropdown');
 		BLC.ajax({
 			url: this.action,
 			type: "GET",
