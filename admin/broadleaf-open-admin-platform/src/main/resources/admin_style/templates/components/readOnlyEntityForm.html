@@ -1,0 +1,72 @@
+<!-- This component represents a tabbed entity form with collections -->
+<!-- Additional parameters that can be specified include: -->
+<!--    additionalClasses - any additional CSS classes to apply to the form -->
+<!--    additionalSubmitClasses - any additional CSS classes to apply to the submit button on this form -->
+<!--    entityFormName - a unique name for this form used in specifying tab names -->
+<!--    deleteButton - boolean value determining whether or not to show the delete button -->
+
+<form th:object="${entityForm}"
+      method="POST"
+      class="twelve columns custom entity-form"
+      th:classappend="${additionalClasses}"
+      th:action="@{${currentUrl}}">
+      
+    <input type="hidden" th:field="*{entityType}" />
+    <input type="hidden" th:field="*{id}" />
+    
+    <dl class="tabs">
+        <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'" th:inline="text">
+            <a th:href="'#tab' + ${entityFormName} + ${tabStat.count}" th:text="${tab.title}" />
+        </dd>
+    </dl> 
+
+    <ul class="tabs-content">
+        <li th:each="tab : ${entityForm.tabs}" 
+            th:class="${tabStat.first}? 'active'" 
+            th:id="'tab' + ${entityFormName} + ${tabStat.count} + 'Tab'"
+            th:inline="text">
+            
+            <div th:if="${tabStat.first}">
+                <div th:each="dynamicForm : *{dynamicForms}">
+                    <div th:include="components/readOnlyDynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
+                </div>
+            </div>
+            
+            <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
+                <legend th:text="#{${group.title}}" />
+
+                <div th:each="field : ${group.fields}" th:if="${field.name}">
+                    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+                    <div th:substituteby="fields/readonly" />
+                </div>
+            </fieldset>
+
+            <div th:each="collectionListGrid : ${tab.listGrids}" class="listgrid-container">
+            
+                <div th:include="components/listGridToolbar" 
+                    th:with="listGrid=${collectionListGrid},hideActionButtons='true'" 
+                    th:remove="tag" />
+                    
+                <div th:include="components/listGrid" 
+                    th:with="listGrid=${collectionListGrid}" 
+                    th:remove="tag" />
+            </div>
+
+             <div th:each="collectionRuleBuilder : ${tab.ruleBuilders}" class="rulebuilder-container">
+                 <h4 th:text="${collectionRuleBuilder.friendlyName}"/>
+                 <blc_admin:admin_field_builder
+                         fieldBuilder="${collectionRuleBuilder.fieldBuilder}" />
+
+                 <div th:include="components/ruleBuilder"
+                      th:with="ruleBuilder=${collectionRuleBuilder},fw=${fieldWrapper},dw=${dataWrapper}"
+                      th:remove="tag" />
+             </div>
+
+        </li>
+    </ul>
+    
+    <input type="submit" class="button right" value="Save" th:classappend="${additionalSubmitClasses}" />
+    
+    <button th:if="${deleteButton}" class="button right alert delete-button">Delete</button>
+    
+</form>

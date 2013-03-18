@@ -25,6 +25,7 @@ public class EntityForm {
     protected String id;
     protected String entityType;
     protected String mainEntityName;
+    protected String sectionUrl;
     protected Set<Tab> tabs = new TreeSet<Tab>(new Comparator<Tab>() {
         public int compare(Tab o1, Tab o2) {
             return new CompareToBuilder()
@@ -229,6 +230,14 @@ public class EntityForm {
     
     public void setMainEntityName(String mainEntityName) {
         this.mainEntityName = mainEntityName;
+    }
+    
+    public String getSectionUrl() {
+        return sectionUrl;
+    }
+    
+    public void setSectionUrl(String sectionUrl) {
+        this.sectionUrl = sectionUrl;
     }
 
     public Set<Tab> getTabs() {

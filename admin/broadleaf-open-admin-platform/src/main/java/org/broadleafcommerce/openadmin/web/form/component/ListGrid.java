@@ -15,6 +15,8 @@ public class ListGrid {
     protected int startIndex = 0;
     protected AddMethodType addMethodType;
     protected String listGridType;
+    
+    protected String sectionUrl;
 
     protected boolean editable = false;
 
@@ -112,5 +114,13 @@ public class ListGrid {
         this.friendlyName = friendlyName;
     }
 
+    public String getSectionUrl() {
+        return sectionUrl;
+    }
+    
+    public void setSectionUrl(String sectionUrl) {
+        this.sectionUrl = sectionUrl;
+    }
+    
 }
 

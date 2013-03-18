@@ -32,6 +32,8 @@ public interface AdminNavigationDao {
     public List<AdminModule> readAllAdminModules();
 
     public List<AdminSection> readAllAdminSections();
+    
+    public AdminSection readAdminSectionByClass(String className);
 
     public AdminSection readAdminSectionByURI(String uri);
 

@@ -21,13 +21,14 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import java.util.List;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -55,6 +56,32 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_SECTIONS");
         List<AdminSection> sections = query.getResultList();
         return sections;
+    }
+    
+    @Override
+    public AdminSection readAdminSectionByClass(String className) {
+        try {
+            TypedQuery<AdminSection> q = em.createQuery(
+                "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
+            q.setParameter("className", className);
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            // Do nothing -- we'll try without "Impl"
+        }
+        
+        if (className.endsWith("Impl")) {
+            try {
+                className = className.substring(0, className.length() - 4);
+                TypedQuery<AdminSection> q = em.createQuery(
+                    "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
+                q.setParameter("className", className);
+                return q.getSingleResult();
+            } catch (NoResultException e) {
+                // Do nothing -- we'll return null
+            }
+        }
+        
+        return null;
     }
 
     @Override

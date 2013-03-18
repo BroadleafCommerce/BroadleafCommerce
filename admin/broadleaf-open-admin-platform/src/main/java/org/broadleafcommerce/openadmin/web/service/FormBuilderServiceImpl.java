@@ -36,6 +36,8 @@ import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.broadleafcommerce.openadmin.server.security.service.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -63,6 +65,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Resource(name = "blAdminEntityService")
     protected AdminEntityService adminEntityService;
+    
+    @Resource (name = "blAdminNavigationService")
+    protected AdminNavigationService navigationService;
 
     @Override
     public ListGrid buildMainListGrid(Entity[] entities, ClassMetadata cmd)
@@ -201,6 +206,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         listGrid.setClassName(className);
         listGrid.setHeaderFields(headerFields);
         listGrid.setListGridType(type);
+        
+        AdminSection section = navigationService.findAdminSectionByClass(className);
+        if (section != null) {
+            listGrid.setSectionUrl(section.getUrl());
+        }
 
         // For each of the entities (rows) in the list grid, we need to build the associated
         // ListGridRecord and set the required fields on the record. These fields are the same ones
@@ -280,6 +290,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     public EntityForm buildEntityForm(ClassMetadata cmd) {
         EntityForm ef = new EntityForm();
         ef.setEntityType(cmd.getCeilingType());
+        
+        AdminSection section = navigationService.findAdminSectionByClass(cmd.getCeilingType());
+        if (section != null) {
+            ef.setSectionUrl(section.getUrl());
+        }
 
         setEntityFormFields(ef, Arrays.asList(cmd.getProperties()));
 

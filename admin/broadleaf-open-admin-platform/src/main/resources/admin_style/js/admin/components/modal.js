@@ -12,4 +12,9 @@ $(document).ready(function() {
 		$("body").css({ overflow: 'inherit' });
 	});
 	
+	$('body').on('click', 'a.modal-view', function() {
+    	BLCAdmin.showLinkAsModal($(this).attr('href'));
+		return false;
+	});
+	
 });

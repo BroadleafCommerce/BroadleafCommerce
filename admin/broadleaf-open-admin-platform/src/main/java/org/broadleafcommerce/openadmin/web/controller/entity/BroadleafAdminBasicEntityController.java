@@ -75,6 +75,14 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
             @PathVariable String id) throws Exception {
         return super.viewEntityForm(request, response, model, sectionKey, id);
     }
+    
+    @Override
+    @RequestMapping(value = "/{id}/view", method = RequestMethod.GET)
+    public String viewModalEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String sectionKey,
+            @PathVariable String id) throws Exception {
+        return super.viewModalEntityForm(request, response, model, sectionKey, id);
+    }
 
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)

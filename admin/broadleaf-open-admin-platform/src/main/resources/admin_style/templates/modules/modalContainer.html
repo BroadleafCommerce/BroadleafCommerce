@@ -2,6 +2,13 @@
     <div class="modal-header">
     
         <h3 id="myModalLabel" th:inline="text" th:switch="${modalHeaderType}">
+            <span th:case="'viewEntity'" th:remove="tag">
+                [[${entityForm.mainEntityName}]]
+                <small>
+                    <a th:href="@{${entityForm.sectionUrl + '/' + entityForm.id}}" target="_blank">(Edit)</a>
+                </small>
+            </span>
+            
             <span th:case="'addEntity'" th:remove="tag">
                 Add New [[${currentAdminSection.name}]]
             </span>

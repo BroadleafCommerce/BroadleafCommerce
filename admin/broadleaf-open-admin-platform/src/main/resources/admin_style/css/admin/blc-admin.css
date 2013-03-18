@@ -365,7 +365,7 @@ table.table-hover tbody tr.clickable:hover {
 
 .listgrid-toolbar {
     margin: 0;
-    padding: 10px;
+    padding: 3px 10px;
     background: #f1f1f1;
     background: -moz-linear-gradient(top,  #f1f1f1 0%, #e2e2e2 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f1f1f1), color-stop(100%,#e2e2e2));
@@ -762,13 +762,22 @@ table.list-grid-table thead tr th {
     background-color: #d0d0d0;
 }
 
+.listgrid-headerBtn.nosplit {
+	padding: 0;
+}
+
+.listgrid-headerBtn.nosplit > .listgrid-title {
+    color: #222;
+    display: block;
+    padding: 8px 10px;
+    cursor: default;
+}
+
 .listgrid-headerBtn.dropdown.split > .listgrid-title {
     color: #222;
     display: block;
-    padding: 10px 50px 11px 20px;
-    padding-left: 20px;
-    padding-right: 50px;
     cursor: default;
+    padding: 8px 40px 8px 10px;
 }
 
 .listgrid-headerBtn.dropdown > ul > li > form {
@@ -781,6 +790,13 @@ input[type="text"].listgrid-criteria-input {
 
 input[type="submit"].listgrid-filter {
     margin-top:5px;
+}
+
+div.list-grid-no-results {
+	margin-bottom: 18px;
+	border: 1px solid #DDD;
+	text-align: center;
+	padding: 5px;
 }
 
 /* -----------------------------------------

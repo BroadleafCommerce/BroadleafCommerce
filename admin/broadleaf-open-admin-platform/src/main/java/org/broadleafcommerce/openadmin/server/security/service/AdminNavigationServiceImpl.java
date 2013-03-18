@@ -20,14 +20,19 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminNavigationDao;
-import org.broadleafcommerce.openadmin.server.security.domain.*;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * This service is used to build the left hand navigation for the admin
@@ -77,6 +82,11 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     @Override
     public AdminSection findAdminSectionByURI(String uri) {
         return adminNavigationDao.readAdminSectionByURI(uri);
+    }
+    
+    @Override
+    public AdminSection findAdminSectionByClass(String className) {
+        return adminNavigationDao.readAdminSectionByClass(className);
     }
 
     @Override

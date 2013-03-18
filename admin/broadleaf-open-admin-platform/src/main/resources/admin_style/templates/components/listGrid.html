@@ -1,9 +1,24 @@
+<!-- This component represents a list grid toolbar -->
+<!-- Additional parameters that can be specified include: -->
+<!--    hideActionButtons - if set to true, will not render the sort/filter buttons -->
+
+<div th:if="${#lists.isEmpty(listGrid.records)}" class="list-grid-no-results">
+    (No records found)
+</div>
+
 <table class="list-grid-table table-hover responsive twelve"
+       th:if="${! #lists.isEmpty(listGrid.records)}"
        th:attr="data-listgridtype=${listGrid.listGridType},data-currenturl=${currentUrl}"
        blc_admin:component_id="${listGrid}">
     <thead>
         <tr>
-            <th>
+            <th width="70">
+                <div class="listgrid-headerBtn nosplit">
+                    <div class="listgrid-title"></div>
+               </div>
+            </th>
+            
+            <th width="90">
                 <div class="listgrid-headerBtn split dropdown">
                     <div class="listgrid-title"><i class="listgrid-icon-down"></i>&nbsp;id</div>
                     <span class="hide-for-small"></span>
@@ -25,6 +40,7 @@
                     </ul>
                </div>
             </th>
+            
             <th th:each="headerField : ${listGrid.headerFields}"
                 th:class="${'th' + headerFieldStat.count}"
                 th:inline="text"
@@ -64,20 +80,37 @@
         <tr th:each="record : ${listGrid.records}"
             th:classappend="${listGrid.listGridType != 'main'}? 'clickable'"
             blc_admin:list_grid_link="${sectionKey},${listGrid},${record},'data-link'">
+            
+            <td>
+                <i class="foundicon-edit"></i>
+                <i class="foundicon-trash"></i>
+            </td>
+            
             <td data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
+            
             <td th:each="field : ${record.fields}"
                 th:class="${'td' + fieldStat.count}"
                 th:switch="${listGrid.listGridType}"
                 th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}">
                 
                 <span th:case="'main'" th:remove="tag">
-                    <a th:if="${fieldStat.first}" blc_admin:list_grid_link="${sectionKey},${listGrid},${record},'href'"
+                    <a th:if="${fieldStat.first}" 
+                        blc_admin:list_grid_link="${sectionKey},${listGrid},${record},'href'"
                         th:text="${field.value}" />
                         
                     <span th:unless="${fieldStat.first}" th:remove="tag" th:text="${field.value}" />
                 </span>
                 
-                <span th:case="*" th:remove="tag" th:text="${field.value}" />
+                <span th:case="*" th:remove="tag" th:inline="text">
+                    <a th:if="${fieldStat.first and listGrid.sectionUrl != null}" 
+                        blc_admin:list_grid_record_link="${listGrid},${record},'href'"
+                        class="modal-view"
+                        th:text="${field.value}" />
+                        
+                    <span th:unless="${fieldStat.first and listGrid.sectionUrl != null}" 
+                        th:remove="tag" 
+                        th:text="${field.value}" />
+                </span>
                 
             </td>
         </tr>

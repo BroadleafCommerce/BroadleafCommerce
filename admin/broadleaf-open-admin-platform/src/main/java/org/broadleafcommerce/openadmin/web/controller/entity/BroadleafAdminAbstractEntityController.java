@@ -234,6 +234,41 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         setModelAttributes(model, sectionKey);
         return "modules/defaultContainer";
     }
+    
+    /**
+     * Renders a read-only modal view of the given entity
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param sectionKey
+     * @param id
+     * @return the return view path
+     * @throws Exception
+     */
+    public String viewModalEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey,
+            String id) throws Exception {
+        String sectionClassName = getClassNameForSection(sectionKey);
+
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
+
+        ClassMetadata cmd = service.getClassMetadata(ppr);
+        Entity entity = service.getRecord(ppr, id);
+
+        Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, id);
+
+        EntityForm entityForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
+
+        model.addAttribute("entity", entity);
+        model.addAttribute("entityForm", entityForm);
+        model.addAttribute("viewType", "modal/entityView");
+        model.addAttribute("modalHeaderType", "viewEntity");
+
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
+        setModelAttributes(model, sectionKey);
+        return "modules/modalContainer";
+    }
 
     /**
      * Attempts to save the given entity. If validation is unsuccessful, it will re-render the entity form with

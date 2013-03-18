@@ -1,20 +1,28 @@
+<!-- This component represents a list grid toolbar -->
+<!-- Additional parameters that can be specified include: -->
+<!--    hideActionButtons - if set to true, will not render the add/update/delete buttons -->
+
+<label th:text="#{${listGrid.friendlyName}}" />
 <div class="listgrid-toolbar">
-    <ul class="inline-list" th:if="${listGrid.subCollectionFieldName != null}">
-        <li class="list-title" th:text="#{${listGrid.friendlyName}}">Sub-collection Field Name</li>
         
-        <li>
-            <a class="sub-list-grid-add"
-                th:href="@{${'/' + sectionKey + '/' + entityForm.id + '/' + listGrid.subCollectionFieldName + '/add'}}">
-                <i class="foundicon-plus"></i>&nbsp;Add
-            </a>
-        </li>
+    <div th:remove="tag"
+        th:if="${(hideActionButtons == null or hideActionButtons == 'false') and (listGrid.subCollectionFieldName != null)}">
         
-        <li>
-            <a href="#" class="alert sub-list-grid-remove"><i class="foundicon-minus"></i>&nbsp;Remove</a>
-        </li>
-        
-        <li th:if="${listGrid.editable}">
-            <a href="#" class="alert sub-list-grid-update"><i class="foundicon-edit"></i>&nbsp;Update</a>
-        </li>
-    </ul>
+        <ul class="inline-list">
+            <li>
+                <a class="sub-list-grid-add"
+                    th:href="@{${'/' + sectionKey + '/' + entityForm.id + '/' + listGrid.subCollectionFieldName + '/add'}}">
+                    <i class="foundicon-add-doc"></i>&nbsp;Add
+                </a>
+            </li>
+            
+<!--             <li> -->
+<!--                 <a href="#" class="alert sub-list-grid-remove"><i class="foundicon-minus"></i>&nbsp;Remove</a> -->
+<!--             </li> -->
+            
+<!--             <li th:if="${listGrid.editable}"> -->
+<!--                 <a href="#" class="alert sub-list-grid-update"><i class="foundicon-edit"></i>&nbsp;Update</a> -->
+<!--             </li> -->
+        </ul>
+    </div>
 </div>

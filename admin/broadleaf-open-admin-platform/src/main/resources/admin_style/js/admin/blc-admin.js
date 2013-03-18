@@ -50,7 +50,9 @@ var BLCAdmin = (function($) {
 	
 	// Convenience function for hiding the replacing the current modal with the given link
 	function modalNavigateTo(link) {
-		currentModal().modal('hide');
+		if (currentModal()) {
+			currentModal().modal('hide');
+		}
 		showLinkAsModal(link);
 	};
 	
