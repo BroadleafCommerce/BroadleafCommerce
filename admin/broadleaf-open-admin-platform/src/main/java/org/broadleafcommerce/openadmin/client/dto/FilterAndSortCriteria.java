@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Basic client-side persistent entity criteria
@@ -61,18 +61,17 @@ public class FilterAndSortCriteria implements IsSerializable, Serializable {
 
     private static final long serialVersionUID = -593864722147943119L;
     
-    private String propertyId;
+    protected String propertyId;
+    protected List<String> filterValues = new ArrayList<String>();
     
-    private List<String> filterValues = new ArrayList<String>();
-    
-    private Boolean sortAscending;
-    private Boolean ignoreCase;
+    protected Boolean sortAscending;
+    protected Boolean ignoreCase;
     
     /**
      * Creates a new persistent entity criteria
      * (for deserialization purposes only).
      */
-    protected FilterAndSortCriteria() {
+    public FilterAndSortCriteria() {
         // nothing to do here
     }
     
@@ -93,6 +92,13 @@ public class FilterAndSortCriteria implements IsSerializable, Serializable {
         return propertyId;
     }
     
+    /**
+     * @param propertyId the propertyId to set
+     */
+    public void setPropertyId(String propertyId) {
+        this.propertyId = propertyId;
+    }
+
     /**
      * @return Array of string-based filter values.
      */
@@ -130,6 +136,13 @@ public class FilterAndSortCriteria implements IsSerializable, Serializable {
         filterValues.addAll(Arrays.asList(values));
     }
     
+    /**
+     * @param filterValues the filterValues to set
+     */
+    public void setFilterValues(List<String> filterValues) {
+        this.filterValues = filterValues;
+    }
+
     /**
      * @return <tt>true</tt> for ascending, <tt>false</tt>
      * for descending sort order or <tt>null</tt> to disable
