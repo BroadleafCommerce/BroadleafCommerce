@@ -20,6 +20,7 @@ public class ListGrid {
 
     protected String containingEntityId = null;
     protected String subCollectionFieldName = null;
+    protected String friendlyName = null;
 
     public enum Type {
         MAIN,
@@ -101,6 +102,14 @@ public class ListGrid {
 
     public void setSubCollectionFieldName(String subCollectionFieldName) {
         this.subCollectionFieldName = subCollectionFieldName;
+    }
+
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
     }
 
 }

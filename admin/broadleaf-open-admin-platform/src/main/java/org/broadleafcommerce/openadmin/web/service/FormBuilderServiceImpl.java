@@ -185,6 +185,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, entities);
         listGrid.setSubCollectionFieldName(field.getName());
+        listGrid.setFriendlyName(field.getMetadata().getFriendlyName());
+        if (StringUtils.isEmpty(listGrid.getFriendlyName())) {
+            listGrid.setFriendlyName(field.getName());
+        }
         listGrid.setContainingEntityId(containingEntityId);
         listGrid.setEditable(editable);
 
