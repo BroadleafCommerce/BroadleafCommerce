@@ -91,6 +91,7 @@ public class FieldMetadataOverride {
     private VisibilityEnum visibility;
     private String group;
     private Integer groupOrder;
+    protected Integer gridOrder;
     private String tab;
     private Integer tabOrder;
     private Boolean groupCollapsed;
@@ -324,6 +325,14 @@ public class FieldMetadataOverride {
 
     public void setGroupOrder(Integer groupOrder) {
         this.groupOrder = groupOrder;
+    }
+    
+    public Integer getGridOrder() {
+        return gridOrder;
+    }
+
+    public void setGridOrder(Integer gridOrder) {
+        this.gridOrder = gridOrder;
     }
 
     public Map<String, Map<String, String>> getValidationConfigurations() {

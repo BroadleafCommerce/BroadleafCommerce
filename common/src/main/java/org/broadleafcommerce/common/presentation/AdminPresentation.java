@@ -64,6 +64,14 @@ public @interface AdminPresentation {
      * @return the display order
      */
     int order() default 99999;
+    
+    /**
+     * Optional - required only if you want to order the appearance of this field as it relates to other fields in a
+     * Note that this field will only be relevant if {@link #prominent()} is also set to true.
+     * 
+     * @return
+     */
+    int gridOrder() default 9999;
 
     /**
      * Optional - only required if you want to restrict the visibility of this field in the admin tool

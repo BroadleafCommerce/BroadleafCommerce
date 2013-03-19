@@ -128,6 +128,7 @@
             <xsd:enumeration value="securityLevel"/>
             <xsd:enumeration value="visibility"/>
             <xsd:enumeration value="order"/>
+            <xsd:enumeration value="gridOrder"/>
             <xsd:enumeration value="explicitFieldType"/>
             <xsd:enumeration value="excluded"/>
             <xsd:enumeration value="group"/>

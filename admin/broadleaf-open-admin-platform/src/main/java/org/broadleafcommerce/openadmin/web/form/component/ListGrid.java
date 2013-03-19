@@ -2,17 +2,31 @@
 package org.broadleafcommerce.openadmin.web.form.component;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ListGrid {
 
     protected String className;
     protected String friendlyName = null;
-    protected List<Field> headerFields = new ArrayList<Field>();
+    protected Set<Field> headerFields = new TreeSet<Field>(new Comparator<Field>() {
+
+        @Override
+        public int compare(Field o1, Field o2) {
+            return new CompareToBuilder()
+                    .append(o1.getOrder(), o2.getOrder())
+                    .append(o1.getFriendlyName(), o2.getFriendlyName())
+                    .append(o1.getName(), o2.getName())
+                    .toComparison();
+        }
+    });
     protected List<ListGridRecord> records = new ArrayList<ListGridRecord>();
     protected int startIndex = 0;
     
@@ -63,11 +77,11 @@ public class ListGrid {
         this.className = className;
     }
 
-    public List<Field> getHeaderFields() {
+    public Set<Field> getHeaderFields() {
         return headerFields;
     }
 
-    public void setHeaderFields(List<Field> headerFields) {
+    public void setHeaderFields(Set<Field> headerFields) {
         this.headerFields = headerFields;
     }
 

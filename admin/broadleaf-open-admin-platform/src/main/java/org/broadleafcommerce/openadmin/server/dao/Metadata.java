@@ -459,6 +459,7 @@ public class Metadata {
             override.setFriendlyName(annot.friendlyName());
             override.setSecurityLevel(annot.securityLevel());
             override.setOrder(annot.order());
+            override.setGridOrder(annot.gridOrder());
             override.setVisibility(annot.visibility());
             override.setProminent(annot.prominent());
             override.setReadOnly(annot.readOnly());
@@ -544,6 +545,9 @@ public class Metadata {
         }
         if (basicFieldMetadata.getOrder() != null) {
             metadata.setOrder(basicFieldMetadata.getOrder());
+        }
+        if (basicFieldMetadata.getGridOrder() != null) {
+            metadata.setGridOrder(basicFieldMetadata.getGridOrder());
         }
         if (basicFieldMetadata.getExplicitFieldType() != null) {
             metadata.setExplicitFieldType(basicFieldMetadata.getExplicitFieldType());

@@ -89,9 +89,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         hf = new Field();
                     }
                     
-                    hf.setName(p.getName());
-                    hf.setFriendlyName(fmd.getFriendlyName());
-                    hf.setForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
+                    hf.withName(p.getName())
+                      .withFriendlyName(fmd.getFriendlyName())
+                      .withOrder(fmd.getGridOrder())
+                      .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
                     String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
                     hf.setFieldType(fieldType);
                     
@@ -125,7 +126,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         Field hf = new Field()
                                 .withName(p.getName())
                                 .withFriendlyName(fmd.getFriendlyName())
-                                .withForeignKeyDisplayValueProperty(md.getForeignKeyDisplayValueProperty());
+                                .withForeignKeyDisplayValueProperty(md.getForeignKeyDisplayValueProperty())
+                                .withOrder(md.getGridOrder());
                         String fieldType = md.getFieldType() == null ? null : md.getFieldType().toString();
                         hf.setFieldType(fieldType);
                         headerFields.add(hf);
@@ -141,7 +143,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     if (md.isProminent() != null && md.isProminent()) {
                         Field hf = new Field()
                                 .withName(p.getName())
-                                .withFriendlyName(md.getFriendlyName());
+                                .withFriendlyName(md.getFriendlyName())
+                                .withOrder(md.getGridOrder());
                         String fieldType = md.getFieldType() == null ? null : md.getFieldType().toString();
                         hf.setFieldType(fieldType);
                         headerFields.add(hf);
@@ -162,6 +165,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 Field hf = new Field()
                         .withName(p.getName())
                         .withFriendlyName(p.getMetadata().getFriendlyName());
+                if (p.getMetadata() instanceof BasicFieldMetadata) {
+                    hf.setOrder(((BasicFieldMetadata) p.getMetadata()).getGridOrder());
+                }
                 //TODO FIXME: PJV
                 String fieldType = "default";
                 hf.setFieldType(fieldType);
@@ -179,7 +185,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             Property p2 = cmd.getPMap().get("key");
             Field hf = new Field()
                     .withName(p2.getName())
-                    .withFriendlyName(p2.getMetadata().getFriendlyName());
+                    .withFriendlyName(p2.getMetadata().getFriendlyName())
+                    .withOrder(p2.getMetadata().getOrder());
             //TODO FIXME : PJV
             String fieldType = "default";
             hf.setFieldType(fieldType);
@@ -192,7 +199,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         if (md.isProminent() != null && md.isProminent()) {
                             hf = new Field()
                                     .withName(p.getName())
-                                    .withFriendlyName(md.getFriendlyName());
+                                    .withFriendlyName(md.getFriendlyName())
+                                    .withOrder(md.getGridOrder());
                             //TODO FIXME: PJV
                             fieldType = "default";
                             hf.setFieldType(fieldType);
@@ -223,7 +231,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         // Create the list grid and set some basic attributes
         ListGrid listGrid = new ListGrid();
         listGrid.setClassName(className);
-        listGrid.setHeaderFields(headerFields);
+        listGrid.getHeaderFields().addAll(headerFields);
         listGrid.setListGridType(type);
         listGrid.setSectionKey(sectionKey);
         
@@ -246,7 +254,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             for (Field headerField : headerFields) {
                 Property p = e.findProperty(headerField.getName());
                 if (p != null) {
-                    Field recordField = new Field().withName(headerField.getName());
+                    Field recordField = new Field().withName(headerField.getName())
+                                                   .withFriendlyName(headerField.getFriendlyName())
+                                                   .withOrder(p.getMetadata().getOrder());
                     
                     if (headerField instanceof ComboField) {
                         recordField.setValue(((ComboField) headerField).getOption(p.getValue()));
@@ -273,31 +283,31 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (property.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) property.getMetadata();
                 // Depending on visibility, field for the particular property is not created on the form
-                if (!(VisibilityEnum.HIDDEN_ALL.equals(fmd.getVisibility())
-                || VisibilityEnum.FORM_HIDDEN.equals(fmd.getVisibility()))) {
+                if (!(VisibilityEnum.HIDDEN_ALL.equals(fmd.getVisibility()) 
+                      || VisibilityEnum.FORM_HIDDEN.equals(fmd.getVisibility()))) {
                 	
                 	String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
-                // Create the field and set some basic attributes
-                Field f;
-                if (fieldType.equals(SupportedFieldType.BROADLEAF_ENUMERATION.toString())) {
-                    f = new ComboField();
-                    ((ComboField) f).setOptions(fmd.getEnumerationValues());
-                } else {
-                    f = new Field();
-                }
-
-                f.withName(property.getName())
-                        .withFieldType(fieldType)
-                        .withOrder(fmd.getOrder())
-                        .withFriendlyName(fmd.getFriendlyName())
-                        .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
-
-                if (StringUtils.isBlank(f.getFriendlyName())) {
-                    f.setFriendlyName(f.getName());
-                }
-
-                // Add the field to the appropriate FieldGroup
-                ef.addField(f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
+                    // Create the field and set some basic attributes
+                    Field f;
+                    if (fieldType.equals(SupportedFieldType.BROADLEAF_ENUMERATION.toString())) {
+                        f = new ComboField();
+                        ((ComboField) f).setOptions(fmd.getEnumerationValues());
+                    } else {
+                        f = new Field();
+                    }
+    
+                    f.withName(property.getName())
+                     .withFieldType(fieldType)
+                     .withOrder(fmd.getOrder())
+                     .withFriendlyName(fmd.getFriendlyName())
+                     .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
+    
+                    if (StringUtils.isBlank(f.getFriendlyName())) {
+                        f.setFriendlyName(f.getName());
+                    }
+    
+                    // Add the field to the appropriate FieldGroup
+                    ef.addField(f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
                 }
             }
         }

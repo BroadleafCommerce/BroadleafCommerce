@@ -11,7 +11,7 @@ public class FieldGroup {
 
     protected String title;
     protected Integer order;
-    Set<Field> fields = new TreeSet<Field>(new Comparator<Field>() {
+    protected Set<Field> fields = new TreeSet<Field>(new Comparator<Field>() {
 
         @Override
         public int compare(Field o1, Field o2) {

@@ -102,26 +102,27 @@
                 <a th:href="@{${record.path + '/delete'}}" class="sub-list-grid-remove"><i class="foundicon-trash"></i></a>
             </td>
                         
-            <td th:each="field : ${record.fields}"
-                th:class="${'td' + fieldStat.count}"
+            <td th:each="headerField : ${record.listGrid.headerFields}"
+                th:class="${'td' + headerFieldStat.count}"
                 th:switch="${listGrid.listGridType}"
+                th:with="field=${record.getField(headerField.name)}"
                 th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}">
                 
                 <span th:case="'main'" th:remove="tag">
-                    <a th:if="${fieldStat.first}" 
+                    <a th:if="${headerFieldStat.first}" 
                         th:href="@{${record.path}}"
                         th:text="${field.value}" />
                         
-                    <span th:unless="${fieldStat.first}" th:remove="tag" th:text="${field.displayValue}" />
+                    <span th:unless="${headerFieldStat.first}" th:remove="tag" th:text="${field.displayValue}" />
                 </span>
                 
                 <span th:case="*" th:remove="tag" th:inline="text">
-                    <a th:if="${fieldStat.first and record.canLinkToExternalEntity}" 
+                    <a th:if="${headerFieldStat.first and record.canLinkToExternalEntity}" 
                         th:href="@{${record.externalEntityPath}}"
                         class="modal-view"
                         th:text="${field.value}" />
                         
-                    <span th:unless="${fieldStat.first and record.canLinkToExternalEntity}" 
+                    <span th:unless="${headerFieldStat.first and record.canLinkToExternalEntity}" 
                         th:remove="tag" 
                         th:text="${field.value}" />
                 </span>

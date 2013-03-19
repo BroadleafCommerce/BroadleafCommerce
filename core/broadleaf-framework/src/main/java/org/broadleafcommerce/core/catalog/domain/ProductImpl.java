@@ -124,7 +124,7 @@ public class ProductImpl implements Product, Status {
     protected Long id;
     
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=1, group = "Seo_Group",groupOrder=2, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", gridOrder=3, order = 1, group = "Seo_Group", groupOrder = 2, prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected String url;
 
     @Column(name = "URL_KEY")
@@ -137,12 +137,12 @@ public class ProductImpl implements Product, Status {
 
     /** The product model number */
     @Column(name = "MODEL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Model", order=7, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Model", order = 7, group = "ProductImpl_Product_Description", groupOrder = 1)
     protected String model;
 
     /** The manufacture name */
     @Column(name = "MANUFACTURE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", order=6, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", gridOrder = 4, order=6, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
     protected String manufacturer;
     
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
@@ -191,7 +191,7 @@ public class ProductImpl implements Product, Status {
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order=4, group = "ProductImpl_Product_Description", requiredOverride = RequiredOverride.REQUIRED, groupOrder=1, prominent=true)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", gridOrder = 2, order=4, group = "ProductImpl_Product_Description", requiredOverride = RequiredOverride.REQUIRED, groupOrder=1, prominent=true)
     @AdminPresentationToOneLookup()
     protected Category defaultCategory;
 

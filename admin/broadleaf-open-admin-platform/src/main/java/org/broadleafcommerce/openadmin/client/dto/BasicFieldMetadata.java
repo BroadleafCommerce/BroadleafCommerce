@@ -58,6 +58,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     private SupportedFieldType explicitFieldType;
     private Boolean largeEntry;
     private Boolean prominent;
+    protected Integer gridOrder;
     private String columnWidth;
     private String broadleafEnumeration;
     private Boolean readOnly;
@@ -269,6 +270,14 @@ public class BasicFieldMetadata extends FieldMetadata {
     public void setGroupOrder(Integer groupOrder) {
         this.groupOrder = groupOrder;
     }
+    
+    public Integer getGridOrder() {
+        return gridOrder;
+    }
+
+    public void setGridOrder(Integer gridOrder) {
+        this.gridOrder = gridOrder;
+    }
 
     /**
      * @return the validation configurations for this property keyed by the fully-qualified name of the
@@ -453,6 +462,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.explicitFieldType = explicitFieldType;
         metadata.largeEntry = largeEntry;
         metadata.prominent = prominent;
+        metadata.gridOrder = gridOrder;        
         metadata.columnWidth = columnWidth;
         metadata.broadleafEnumeration = broadleafEnumeration;
         metadata.readOnly = readOnly;
@@ -590,6 +600,9 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (prominent != null ? !prominent.equals(metadata.prominent) : metadata.prominent != null) {
             return false;
         }
+        if (gridOrder != null ? !gridOrder.equals(metadata.gridOrder) : metadata.gridOrder != null) {
+            return false;
+        }
         if (readOnly != null ? !readOnly.equals(metadata.readOnly) : metadata.readOnly != null) {
             return false;
         }
@@ -649,6 +662,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (explicitFieldType != null ? explicitFieldType.hashCode() : 0);
         result = 31 * result + (largeEntry != null ? largeEntry.hashCode() : 0);
         result = 31 * result + (prominent != null ? prominent.hashCode() : 0);
+        result = 31 * result + (gridOrder != null ? gridOrder.hashCode() : 0);
         result = 31 * result + (columnWidth != null ? columnWidth.hashCode() : 0);
         result = 31 * result + (broadleafEnumeration != null ? broadleafEnumeration.hashCode() : 0);
         result = 31 * result + (readOnly != null ? readOnly.hashCode() : 0);

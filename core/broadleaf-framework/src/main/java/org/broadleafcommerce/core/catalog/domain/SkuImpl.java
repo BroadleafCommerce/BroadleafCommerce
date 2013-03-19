@@ -131,14 +131,14 @@ public class SkuImpl implements Sku {
      * The sale price.
      */
     @Column(name = "SALE_PRICE", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price", order = 2, group = "SkuImpl_Price", prominent = true, fieldType = SupportedFieldType.MONEY, groupOrder = 3)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price", gridOrder = 6, order = 2, group = "SkuImpl_Price", prominent = true, fieldType = SupportedFieldType.MONEY, groupOrder = 3)
     protected BigDecimal salePrice;
 
     /**
      * The retail price.
      */
     @Column(name = "RETAIL_PRICE", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Retail_Price", order = 1, group = "SkuImpl_Price", prominent = true, fieldType = SupportedFieldType.MONEY, groupOrder = 3)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Retail_Price", gridOrder = 5, order = 1, group = "SkuImpl_Price", prominent = true, fieldType = SupportedFieldType.MONEY, groupOrder = 3)
     protected BigDecimal retailPrice;
 
     /**
@@ -146,7 +146,7 @@ public class SkuImpl implements Sku {
      */
     @Column(name = "NAME")
     @Index(name = "SKU_NAME_INDEX", columnNames = {"NAME"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order = 1, group = "ProductImpl_Product_Description", prominent = true, columnWidth = "200", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", gridOrder=1, order = 1, group = "ProductImpl_Product_Description", prominent = true, columnWidth = "200", groupOrder = 1)
     protected String name;
 
     /**
