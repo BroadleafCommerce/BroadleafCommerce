@@ -32,6 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -48,28 +50,46 @@ public class AdminSandBoxFilter extends OncePerRequestFilter {
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
 
+    protected List<String> ignoreRegexPatterns = new ArrayList<String>();
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
-        if (adminUser == null) {
-            //clear any sandbox
-            session.removeAttribute(SANDBOX_ADMIN_ID_VAR);
-            SandBoxContext.setSandBoxContext(null);
-        } else {
-            SandBox sandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
-            session.setAttribute(SANDBOX_ADMIN_ID_VAR, sandBox.getId());
-            session.removeAttribute(SANDBOX_ID_VAR);
-            AdminSandBoxContext context = new AdminSandBoxContext();
-            context.setSandBoxId(sandBox.getId());
-            context.setSandBoxMode(SandBoxMode.IMMEDIATE_COMMIT);
-            context.setAdminUser(adminUser);
-            SandBoxContext.setSandBoxContext(context);
+        checkIgnore: {
+            String uri = request.getRequestURI();
+            for (String pattern : ignoreRegexPatterns) {
+                if (uri.matches(pattern)) {
+                    break checkIgnore;
+                }
+            }
+            HttpSession session = request.getSession();
+            AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
+            if (adminUser == null) {
+                //clear any sandbox
+                session.removeAttribute(SANDBOX_ADMIN_ID_VAR);
+                SandBoxContext.setSandBoxContext(null);
+            } else {
+                SandBox sandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
+                session.setAttribute(SANDBOX_ADMIN_ID_VAR, sandBox.getId());
+                session.removeAttribute(SANDBOX_ID_VAR);
+                AdminSandBoxContext context = new AdminSandBoxContext();
+                context.setSandBoxId(sandBox.getId());
+                context.setSandBoxMode(SandBoxMode.IMMEDIATE_COMMIT);
+                context.setAdminUser(adminUser);
+                SandBoxContext.setSandBoxContext(context);
+            }
         }
         try {
             filterChain.doFilter(request, response);
         } finally {
             SandBoxContext.setSandBoxContext(null);
         }
+    }
+
+    public List<String> getIgnoreRegexPatterns() {
+        return ignoreRegexPatterns;
+    }
+
+    public void setIgnoreRegexPatterns(List<String> ignoreRegexPatterns) {
+        this.ignoreRegexPatterns = ignoreRegexPatterns;
     }
 }

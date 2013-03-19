@@ -26,20 +26,17 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Resource;
 
 /**
  * This service is used to build the left hand navigation for the admin
  * @author elbertbautista
  */
 @Service("blAdminNavigationService")
-@Transactional("blTransactionManager")
 public class AdminNavigationServiceImpl implements AdminNavigationService {
 
     private static final Log LOG = LogFactory.getLog(AdminNavigationServiceImpl.class);
