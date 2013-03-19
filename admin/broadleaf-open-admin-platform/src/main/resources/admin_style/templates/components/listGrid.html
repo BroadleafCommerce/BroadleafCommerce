@@ -16,30 +16,7 @@
                     <div class="listgrid-title"></div>
                </div>
             </th>
-            
-            <th width="90">
-                <div class="listgrid-headerBtn split dropdown">
-                    <div class="listgrid-title"><i class="listgrid-icon-down"></i>&nbsp;id</div>
-                    <span class="hide-for-small"></span>
-                    <ul>
-                        <li><a href="#">Sort A - Z</a></li>
-                        <li><a href="#">Sort Z - A</a></li>
-                        <li class="divider"></li>
-                        <li>
-                            <form>
-                                <label>Filter:</label>
-                                <div class="listgrid-criteria">
-                                    <div class="listgrid-criteria-container">
-                                        <input class="listgrid-criteria-input" type="text" placeholder="criteria"/>
-                                    </div>
-                                </div>
-                                <a href="#">SORT</a>
-                            </form>
-                        </li>
-                    </ul>
-               </div>
-            </th>
-            
+                        
             <th th:each="headerField : ${listGrid.headerFields}"
                 th:class="${'th' + headerFieldStat.count}"
                 th:inline="text"
@@ -51,7 +28,7 @@
                     </div>
 
                     <span class="hide-for-small"></span>
-                    <ul th:class="${headerFieldStat.last}? 'end'">
+                    <ul>
                         <li><a class="sort down" href="#">Sort A - Z</a></li>
                         <li><a class="sort up" href="#">Sort Z - A</a></li>
                         <li class="divider"></li>
@@ -73,6 +50,38 @@
                     </ul>
                 </div>
             </th>
+            
+            <th width="90">
+                <div class="listgrid-headerBtn split dropdown">
+                    <div class="listgrid-title">
+                        <i class="sort-icon"></i>&nbsp;Id
+                    </div>
+                    
+                    <span class="hide-for-small"></span>
+                    <ul class="end">
+                        <li><a class="sort down" href="#">Sort A - Z</a></li>
+                        <li><a class="sort up" href="#">Sort Z - A</a></li>
+                        <li class="divider"></li>
+                        <li>                                  
+                            <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}">
+                                <input type="hidden" class="property-name"
+                                    th:name="${'criteria[' + #lists.size(listGrid.headerFields) + '].propertyId'}" value="id" />
+                                <input type="hidden" class="property-sort" th:name="${'criteria[' + #lists.size(listGrid.headerFields) + '].sortType'}" />
+                                <label>Filter:</label>
+                                <div class="listgrid-criteria" th:attr="data-field-index=${#lists.size(listGrid.headerFields)}">
+                                    <div class="listgrid-criteria-container">
+                                        <div th:remove="element" 
+                                        th:substituteby="${'fields/filter/id'}" />
+                                    </div>
+                                </div>
+                                <a href="#" class="listgrid-filter button small radius">Filter</a>
+                            </div>
+                        </li>
+                    </ul>
+                    
+               </div>
+            </th>
+            
         </tr>
     </thead>
     <tbody>
@@ -92,9 +101,7 @@
                 <a th:href="@{${record.path}}" class="sub-list-grid-update"><i class="foundicon-edit"></i></a>
                 <a th:href="@{${record.path + '/delete'}}" class="sub-list-grid-remove"><i class="foundicon-trash"></i></a>
             </td>
-            
-            <td data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
-            
+                        
             <td th:each="field : ${record.fields}"
                 th:class="${'td' + fieldStat.count}"
                 th:switch="${listGrid.listGridType}"
@@ -120,6 +127,9 @@
                 </span>
                 
             </td>
+            
+            <td data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
+            
         </tr>
     </tbody>
 </table>
