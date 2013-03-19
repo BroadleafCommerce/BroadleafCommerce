@@ -129,9 +129,7 @@ $(document).ready(function() {
 		var $container = $(this).closest('.listgrid-container');
 		var link = $(this).attr('href');
 		var rowFields = getRowFields($(this).closest('tr'));
-		
-		debugger;
-		
+				
 		$.ajax({
 			url: link,
 			data: rowFields,
