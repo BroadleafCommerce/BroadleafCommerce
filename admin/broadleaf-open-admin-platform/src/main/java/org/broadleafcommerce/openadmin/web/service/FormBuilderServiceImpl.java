@@ -251,7 +251,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     if (headerField instanceof ComboField) {
                         recordField.setValue(((ComboField) headerField).getOption(p.getValue()));
                     } else {
-                        recordField.setValue(p.getValue());
+                        String value = p.getValue();
+                        if (p.getDisplayValue() != null) {
+                            value = p.getDisplayValue();
+                        }
+                        recordField.setValue(value);
                     }
                     
                     record.getFields().add(recordField);
