@@ -70,6 +70,7 @@ public class BroadleafRequestContext {
     protected java.util.Locale javaLocale;
     protected Currency javaCurrency;
     protected Catalog currentCatalog;
+    protected Boolean ignoreSite = false;
 
     /**
      * Gets the current request on the context
@@ -271,4 +272,11 @@ public class BroadleafRequestContext {
         return getBroadleafRequestContext().getRequest().getParameterMap();
     }
 
+    public Boolean getIgnoreSite() {
+        return ignoreSite;
+    }
+
+    public void setIgnoreSite(Boolean ignoreSite) {
+        this.ignoreSite = ignoreSite;
+    }
 }
