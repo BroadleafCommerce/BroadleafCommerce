@@ -128,8 +128,8 @@ $(document).ready(function() {
 	$('body').on('click', 'a.sub-list-grid-remove', function() {
 		var $container = $(this).closest('.listgrid-container');
 		var link = $(this).attr('href');
-		var rowFields = getRowFields($(this).closest('tr'));
-				
+		var rowFields = getRowFields($(this).closest('tr'));	
+
 		$.ajax({
 			url: link,
 			data: rowFields,
@@ -260,7 +260,6 @@ $(document).ready(function() {
 	}
 	
 	var replaceRelatedListGrid = function(data) {
-		debugger;
 		var $table = $(data.trim());
 		var tableId = $table.attr('id');
 		$('#' + tableId + ' > tbody').replaceWith($table.find('tbody'));

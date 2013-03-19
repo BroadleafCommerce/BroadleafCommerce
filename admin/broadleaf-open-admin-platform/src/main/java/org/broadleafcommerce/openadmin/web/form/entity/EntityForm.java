@@ -5,9 +5,11 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -74,6 +76,16 @@ public class EntityForm {
     
     public void clearFieldsMap() {
         fields = null;
+    }
+    
+    public List<ListGrid> getAllListGrids() {
+        List<ListGrid> list = new ArrayList<ListGrid>();
+        for (Tab tab : tabs) {
+            for (ListGrid lg : tab.getListGrids()) {
+                list.add(lg);
+            }
+        }
+        return list;
     }
 
     public Tab findTab(String tabTitle) {
@@ -206,14 +218,6 @@ public class EntityForm {
     
     public void putDynamicFormInfo(String name, DynamicEntityFormInfo info) {
         getDynamicFormInfos().put(name, info);
-    }
-    
-    public void propagateSectionKey() {
-        for (Tab tab : tabs) {
-            for (ListGrid lg : tab.getListGrids()) {
-                lg.setSectionKey(sectionKey);
-            }
-        }
     }
 
     public String getId() {

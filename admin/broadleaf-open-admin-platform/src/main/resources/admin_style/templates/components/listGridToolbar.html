@@ -10,20 +10,12 @@
         th:if="${(hideActionButtons == null or hideActionButtons == 'false') and (listGrid.subCollectionFieldName != null)}">
         
         <ul class="inline-list">
-            <li>
-                <a class="sub-list-grid-add"
-                    th:href="@{${'/' + sectionKey + '/' + entityForm.id + '/' + listGrid.subCollectionFieldName + '/add'}}">
-                    <i class="foundicon-add-doc"></i>&nbsp;Add
+            <li th:each="action : ${listGrid.toolbarActions}">
+                <a th:class="${action.anchorClass}"
+                    th:href="@{${listGrid.path + action.urlPostfix}}">
+                    <i th:class="${action.iconClass}" style="font-size: 16px;"></i>&nbsp;<span th:text="${action.displayText}" th:remove="tag" />
                 </a>
             </li>
-            
-<!--             <li> -->
-<!--                 <a href="#" class="alert sub-list-grid-remove"><i class="foundicon-minus"></i>&nbsp;Remove</a> -->
-<!--             </li> -->
-            
-<!--             <li th:if="${listGrid.editable}"> -->
-<!--                 <a href="#" class="alert sub-list-grid-update"><i class="foundicon-edit"></i>&nbsp;Update</a> -->
-<!--             </li> -->
         </ul>
     </div>
 </div>

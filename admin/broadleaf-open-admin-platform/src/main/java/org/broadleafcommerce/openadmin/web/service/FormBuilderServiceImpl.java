@@ -40,6 +40,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.service.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
+import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
@@ -221,7 +222,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             listGrid.setFriendlyName(field.getName());
         }
         listGrid.setContainingEntityId(containingEntityId);
-        listGrid.setEditable(editable);
+        
+        listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
+        if (editable) {
+            listGrid.getRowActions().add(DefaultListGridActions.UPDATE);
+        }
 
         return listGrid;
     }
@@ -391,6 +396,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             CollectionMetadata md = ((CollectionMetadata) p.getMetadata());
             ef.addListGrid(listGrid, md.getTab(), md.getTabOrder());
         }
+        
+        for (ListGrid lg : ef.getAllListGrids()) {
+            lg.getToolbarActions().add(DefaultListGridActions.ADD);
+        }
 
         return ef;
     }
@@ -453,6 +462,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         List<Property> entityFormProperties = new ArrayList<Property>();
         for (String targetFieldName : adornedMd.getMaintainedAdornedTargetFields()) {
             Property p = collectionMetadata.getPMap().get(targetFieldName);
+            ((BasicFieldMetadata) p.getMetadata()).setVisibility(VisibilityEnum.VISIBLE_ALL);
             entityFormProperties.add(p);
         }
 

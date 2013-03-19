@@ -97,9 +97,12 @@
             th:classappend="${listGrid.listGridType != 'main'}? 'clickable'"
             th:attr="data-link=@{${record.path}}">
             
-            <td style="font-size: 20px;">
-                <a th:href="@{${record.path}}" class="sub-list-grid-update"><i class="foundicon-edit"></i></a>
-                <a th:href="@{${record.path + '/delete'}}" class="sub-list-grid-remove"><i class="foundicon-trash"></i></a>
+            <td style="font-size: 18px;">
+                <a th:each="action : ${listGrid.rowActions}"
+                    th:href="@{${record.path + action.urlPostfix}}" 
+                    th:class="${action.anchorClass}">
+                    <i th:class="${action.iconClass}"></i>
+                </a>
             </td>
                         
             <td th:each="headerField : ${record.listGrid.headerFields}"

@@ -28,6 +28,8 @@ public class ListGrid {
         }
     });
     protected List<ListGridRecord> records = new ArrayList<ListGridRecord>();
+    protected List<ListGridAction> toolbarActions = new ArrayList<ListGridAction>();
+    protected List<ListGridAction> rowActions = new ArrayList<ListGridAction>();
     protected int startIndex = 0;
     
     protected AddMethodType addMethodType;
@@ -35,9 +37,6 @@ public class ListGrid {
     
     // The section url that maps to this particular list grid
     protected String sectionKey;
-
-    // Whether or not individual rows inside this list grid can be updated.
-    protected boolean editable = false;
 
     // If this list grid is a sublistgrid, meaning it is rendered as part of a different entity, these properties
     // help identify the parent entity.
@@ -92,6 +91,22 @@ public class ListGrid {
     public void setRecords(List<ListGridRecord> records) {
         this.records = records;
     }
+    
+    public List<ListGridAction> getToolbarActions() {
+        return toolbarActions;
+    }
+    
+    public void setToolbarActions(List<ListGridAction> toolbarActions) {
+        this.toolbarActions = toolbarActions;
+    }
+    
+    public List<ListGridAction> getRowActions() {
+        return rowActions;
+    }
+    
+    public void setRowActions(List<ListGridAction> rowActions) {
+        this.rowActions = rowActions;
+    }
 
     public int getStartIndex() {
         return startIndex;
@@ -115,14 +130,6 @@ public class ListGrid {
 
     public void setListGridType(Type listGridType) {
         this.listGridType = listGridType.toString().toLowerCase();
-    }
-
-    public boolean isEditable() {
-        return editable;
-    }
-
-    public void setEditable(boolean editable) {
-        this.editable = editable;
     }
 
     public String getContainingEntityId() {

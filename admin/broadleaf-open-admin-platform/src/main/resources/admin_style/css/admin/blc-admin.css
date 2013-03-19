@@ -142,6 +142,15 @@ h2#mainEntityName {
 	color: #98B30A;
 }
 
+[class*="foundicon-"] {
+	color: #6F6F6F;
+}
+
+[class*="foundicon-"]:hover {
+	color: #8EAA2B;
+}
+
+
 /* --------------------------------------------------
   Top Bar
 ----------------------------------------------------- */
