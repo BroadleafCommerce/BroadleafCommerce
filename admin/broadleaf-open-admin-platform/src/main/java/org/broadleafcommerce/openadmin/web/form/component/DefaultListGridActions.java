@@ -7,17 +7,19 @@ public class DefaultListGridActions {
     public static final ListGridAction ADD = new ListGridAction()
         .withAnchorClass("sub-list-grid-add")
         .withUrlPostfix("/add")
-        .withIconClass("foundicon-add-doc")
+        .withIconClass("icon-plus")
         .withDisplayText("Add");
 
     // Actions for row-level
     public static final ListGridAction REMOVE = new ListGridAction()
         .withAnchorClass("sub-list-grid-remove")
         .withUrlPostfix("/delete")
-        .withIconClass("foundicon-trash");
+        .withIconClass("icon-remove")
+        .withDisplayText("Delete");
     
     public static final ListGridAction UPDATE = new ListGridAction()
         .withAnchorClass("sub-list-grid-update")
-        .withIconClass("foundicon-edit");
+        .withIconClass("icon-pencil")
+        .withDisplayText("Edit");
     
 }

@@ -142,15 +142,6 @@ h2#mainEntityName {
 	color: #98B30A;
 }
 
-[class*="foundicon-"] {
-	color: #6F6F6F;
-}
-
-[class*="foundicon-"]:hover {
-	color: #8EAA2B;
-}
-
-
 /* --------------------------------------------------
   Top Bar
 ----------------------------------------------------- */
@@ -374,7 +365,7 @@ table.table-hover tbody tr.clickable:hover {
 
 .listgrid-toolbar {
     margin: 0;
-    padding: 3px 10px;
+    padding: 5px 10px;
     background: #f1f1f1;
     background: -moz-linear-gradient(top,  #f1f1f1 0%, #e2e2e2 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f1f1f1), color-stop(100%,#e2e2e2));
@@ -802,6 +793,18 @@ td.list-grid-no-results {
 	padding: 5px;
 }
 
+.button.listgrid, .button.listgrid[disabled]:hover, .button.listgrid[disabled]:focus { 
+	background-color: #424242;
+	color: #F0F0F0;
+	border: 0;
+	box-shadow: none;
+}
+
+.button.listgrid:hover, .button.listgrid:focus { 
+	background-color: #006969; 
+}
+
+
 /* -----------------------------------------
    Magellan toolbar
 ----------------------------------------- */
@@ -832,7 +835,6 @@ ul.magellan-toolbar > li.divider {
     width: 1px;
 }
 
-
 .listgrid-toolbar a.alert, ul.magellan-toolbar a.alert {
     color: #c60f13;
 }
@@ -842,11 +844,19 @@ ul.magellan-toolbar > li.divider {
 }
 
 table.list-grid-table tr.clickable.selected {
-	background-color: #C4DFE6;
+	background-color: #C5F3FF;
 }
 
 table.list-grid-table tr.clickable.selected:hover {
-	background-color: #B3D4DD;
+	background-color: #A3E7F8;
+}
+
+ul.inline-list.small-spacing li:first-child {
+	margin-left: 22px;
+}
+
+ul.inline-list.small-spacing li {
+	margin-left: 4px;
 }
 
 /* -----------------------------------------

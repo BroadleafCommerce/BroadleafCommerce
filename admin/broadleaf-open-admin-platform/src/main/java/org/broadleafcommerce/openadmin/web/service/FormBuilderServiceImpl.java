@@ -223,10 +223,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         listGrid.setContainingEntityId(containingEntityId);
         
-        listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
         if (editable) {
             listGrid.getRowActions().add(DefaultListGridActions.UPDATE);
         }
+        listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
 
         return listGrid;
     }

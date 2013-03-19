@@ -22,6 +22,24 @@ $(document).ready(function() {
 	 */
 	$('body').on('listGrid-main-rowSelected', function(event, link, fields, currentUrl) {
 	});
+
+	/**
+	 * The rowSelected handler for the inline list grid ...
+	 */
+	$('body').on('listGrid-inline-rowSelected', function(event, link, fields, currentUrl) {
+		var $tr = $('tr[data-link="' + link + '"]');
+		var currentlySelected = $tr.hasClass('selected');
+		var $listGridContainer = $tr.closest('.listgrid-container');
+		
+		$tr.closest('tbody').find('tr').removeClass('selected');
+		
+		if (!currentlySelected) {
+			$tr.addClass("selected");
+			enableRowToolbarButtons($listGridContainer);
+		} else {
+			disableRowToolbarButtons($listGridContainer);
+		}
+	});
 	
 	/**
 	 * The rowSelected handler for a toOne list grid needs to trigger the specific valueSelected handler 
@@ -120,16 +138,18 @@ $(document).ready(function() {
 		return false;
     });
     
-	$('body').on('click', 'a.sub-list-grid-add', function() {
-    	BLCAdmin.showLinkAsModal($(this).attr('href'));
+	$('body').on('click', 'button.sub-list-grid-add', function() {
+    	BLCAdmin.showLinkAsModal($(this).attr('data-actionurl'));
 		return false;
 	});
 	
-	$('body').on('click', 'a.sub-list-grid-remove', function() {
+	$('body').on('click', 'button.sub-list-grid-remove', function() {
+		var link = getButtonLink($(this));
+		
 		var $container = $(this).closest('.listgrid-container');
-		var link = $(this).attr('href');
-		var rowFields = getRowFields($(this).closest('tr'));	
-
+		var $selectedRows = $container.find('table tr.selected');
+		var rowFields = getRowFields($selectedRows);
+		
 		$.ajax({
 			url: link,
 			data: rowFields,
@@ -141,9 +161,11 @@ $(document).ready(function() {
 		return false;
 	});
 	
-	$('body').on('click', 'a.sub-list-grid-update', function() {
-		var link = $(this).attr('href');
+	$('body').on('click', 'button.sub-list-grid-update', function() {
+		var link = getButtonLink($(this));
+		
     	BLCAdmin.showLinkAsModal(link);
+    	
 		return false;
 	});
 	
@@ -240,6 +262,26 @@ $(document).ready(function() {
 		return false;
 	});
 	
+	$('body').on('mouseover', 'td.row-action-selector', function(event) {
+		$(this).find('ul.row-actions').show();
+	});
+	
+	$('body').on('mouseout', 'td.row-action-selector', function(event) {
+		$(this).find('ul.row-actions').hide();
+	});
+	
+	var getButtonLink = function($button) {
+		var $container = $button.closest('.listgrid-container');
+		var $selectedRows = $container.find('table tr.selected');
+		var link = $selectedRows.attr('data-link');
+		
+		if ($button.attr('data-urlpostfix')) {
+			link += $button.attr('data-urlpostfix');
+		}
+		
+		return link;
+	}
+	
 	var getRowFields = function($tr) {
 		var fields = {};
 		
@@ -252,6 +294,14 @@ $(document).ready(function() {
 		return fields;
 	}
 	
+	var enableRowToolbarButtons = function($listGridContainer) {
+		$listGridContainer.find('button.row-action').removeAttr('disabled');
+	}
+	
+	var disableRowToolbarButtons = function($listGridContainer) {
+		$listGridContainer.find('button.row-action').attr('disabled', 'disabled');
+	}
+	
 	/**
 	 * Convenience method to update a table body from a list grid
 	 */
@@ -262,7 +312,11 @@ $(document).ready(function() {
 	var replaceRelatedListGrid = function(data) {
 		var $table = $(data.trim());
 		var tableId = $table.attr('id');
-		$('#' + tableId + ' > tbody').replaceWith($table.find('tbody'));
+		var $oldTable = $('#' + tableId);
+		
+		disableRowToolbarButtons($oldTable.closest('.listgrid-container'));
+		
+		$oldTable.find('tbody').replaceWith($table.find('tbody'));
     	BLCAdmin.hideCurrentModal();
 	}
 	

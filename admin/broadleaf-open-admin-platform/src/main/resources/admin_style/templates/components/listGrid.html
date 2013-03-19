@@ -5,18 +5,13 @@
 </comment>
 
 
-<table class="list-grid-table responsive twelve"
+<table class="list-grid-table responsive twelve table-hover"
        th:classappend="${listGrid.listGridType != 'inline'}? 'table-hover'"
        th:attr="data-listgridtype=${listGrid.listGridType},data-currenturl=${currentUrl}"
        blc_admin:component_id="${listGrid}">
     <thead>
         <tr>
-            <th width="70">
-                <div class="listgrid-headerBtn nosplit">
-                    <div class="listgrid-title"></div>
-               </div>
-            </th>
-                        
+            
             <th th:each="headerField : ${listGrid.headerFields}"
                 th:class="${'th' + headerFieldStat.count}"
                 th:inline="text"
@@ -87,7 +82,7 @@
     <tbody>
     
         <tr th:if="${#lists.isEmpty(listGrid.records)}">
-            <td th:colspan="${#lists.size(listGrid.headerFields) + 2}" class="list-grid-no-results">
+            <td th:colspan="${#lists.size(listGrid.headerFields) + 1}" class="list-grid-no-results">
                 (No records found)
             </td>
         </tr>
@@ -97,14 +92,9 @@
             th:classappend="${listGrid.listGridType != 'main'}? 'clickable'"
             th:attr="data-link=@{${record.path}}">
             
-            <td style="font-size: 18px;">
-                <a th:each="action : ${listGrid.rowActions}"
-                    th:href="@{${record.path + action.urlPostfix}}" 
-                    th:class="${action.anchorClass}">
-                    <i th:class="${action.iconClass}"></i>
-                </a>
-            </td>
-                        
+            
+            
+            
             <td th:each="headerField : ${record.listGrid.headerFields}"
                 th:class="${'td' + headerFieldStat.count}"
                 th:switch="${listGrid.listGridType}"
