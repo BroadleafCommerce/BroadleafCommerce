@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import java.io.Serializable;
+
 /**
  * Implementations of this interface are used to hold data about the many-to-many relationship between
  * the Category table and the Product table.  This entity is only used for executing a named
@@ -30,7 +32,7 @@ package org.broadleafcommerce.core.catalog.domain;
  *  @author btaylor
  * 
  */
-public interface CategoryProductXref {
+public interface CategoryProductXref extends Serializable {
 
     /**
      * Gets the category.

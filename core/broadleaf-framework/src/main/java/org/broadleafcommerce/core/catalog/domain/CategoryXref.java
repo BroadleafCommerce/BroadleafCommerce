@@ -16,7 +16,9 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-public interface CategoryXref {
+import java.io.Serializable;
+
+public interface CategoryXref extends Serializable {
 
     public Long getDisplayOrder();
 
