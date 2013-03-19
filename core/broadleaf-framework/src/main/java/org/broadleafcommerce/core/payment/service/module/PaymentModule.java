@@ -38,6 +38,8 @@ public interface PaymentModule {
 
     public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException;
 
+    public PaymentResponseItem partialPayment(PaymentContext paymentContext) throws PaymentException;
+
     public Boolean isValidCandidate(PaymentInfoType paymentType);
 
     public PaymentResponseItem processReverseAuthorize(PaymentContext paymentContext, Money amountToReverseAuthorize, PaymentResponseItem responseItem) throws PaymentException;
@@ -53,4 +55,6 @@ public interface PaymentModule {
     public PaymentResponseItem processVoidPayment(PaymentContext paymentContext, Money amountToVoid, PaymentResponseItem responseItem) throws PaymentException;
 
     public PaymentResponseItem processBalance(PaymentContext paymentContext, PaymentResponseItem responseItem) throws PaymentException;
+
+    public PaymentResponseItem processPartialPayment(PaymentContext paymentContext, Money amountToCredit, PaymentResponseItem responseItem) throws PaymentException;
 }

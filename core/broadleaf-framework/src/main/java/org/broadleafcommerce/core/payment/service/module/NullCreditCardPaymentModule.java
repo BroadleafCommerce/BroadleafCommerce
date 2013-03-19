@@ -106,6 +106,11 @@ public class NullCreditCardPaymentModule extends AbstractModule {
     }
 
     @Override
+    public PaymentResponseItem processPartialPayment(PaymentContext paymentContext, Money amountToCredit, PaymentResponseItem responseItem) throws PaymentException {
+        throw new PaymentException("partial payment not implemented.");
+    }
+
+    @Override
     public Boolean isValidCandidate(PaymentInfoType paymentType) {
         return PaymentInfoType.CREDIT_CARD.equals(paymentType);
     }

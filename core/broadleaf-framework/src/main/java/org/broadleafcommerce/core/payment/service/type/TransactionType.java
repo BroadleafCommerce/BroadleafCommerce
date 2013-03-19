@@ -16,11 +16,10 @@
 
 package org.broadleafcommerce.core.payment.service.type;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of payment transaction types.
@@ -41,6 +40,7 @@ public class TransactionType implements Serializable, BroadleafEnumerationType {
     public static final TransactionType VOIDPAYMENT = new TransactionType("VOIDPAYMENT", "Void Payment");
     public static final TransactionType BALANCE = new TransactionType("BALANCE", "Balance");
     public static final TransactionType REVERSEAUTHORIZE = new TransactionType("REVERSEAUTHORIZE", "Reverse Authorize");
+    public static final TransactionType PARTIALPAYMENT = new TransactionType("PARTIALPAYMENT", "Partial Payment");
 
     public static TransactionType getInstance(final String type) {
         return TYPES.get(type);

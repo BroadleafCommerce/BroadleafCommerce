@@ -100,6 +100,18 @@ public abstract class AbstractModule implements PaymentModule {
         return processBalance(paymentContext, getNewResponseItem());
     }
 
+    @Override
+    public PaymentResponseItem partialPayment(PaymentContext paymentContext) throws PaymentException {
+        Money amountAvailableToDebit = getAmountAvailableToDebit(paymentContext);
+        PaymentInfo paymentInfo = findPaymentInfoFromContext(paymentContext);
+
+        PaymentResponseItem responseItem = getNewResponseItem(amountAvailableToDebit, paymentInfo.getCurrency());
+        //Add PaymentInfoDetail - Capture
+        paymentInfo.getPaymentInfoDetails().add(getNewCapturePaymentInfoDetail(paymentInfo, amountAvailableToDebit));
+
+        return processPartialPayment(paymentContext, amountAvailableToDebit, responseItem);
+    }
+
     protected PaymentResponseItem getNewResponseItem() {
         return getNewResponseItem(null, null);
     }

@@ -16,11 +16,10 @@
 
 package org.broadleafcommerce.core.payment.service.workflow;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of payment action types.
@@ -41,6 +40,7 @@ public class PaymentActionType implements Serializable, BroadleafEnumerationType
     public static final PaymentActionType VOID = new PaymentActionType("VOID", "Void");
     public static final PaymentActionType BALANCE = new PaymentActionType("BALANCE", "Check Balance");
     public static final PaymentActionType REVERSEAUTHORIZE = new PaymentActionType("REVERSEAUTHORIZE", "Reverse Authorize");
+    public static final PaymentActionType PARTIALPAYMENT = new PaymentActionType("PARTIALPAYMENT", "Partial Payment");
 
     public static PaymentActionType getInstance(final String type) {
         return TYPES.get(type);
