@@ -709,14 +709,21 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             case ADDITIONAL_FOREIGN_KEY:
                 if (cto.get(propertyName).getFilterValues().length > 0) {
                     int additionalForeignKeyIndexPosition = Arrays.binarySearch(persistencePerspective.getAdditionalForeignKeys(), new ForeignKey(propertyName, null, null), new Comparator<ForeignKey>() {
+
                         @Override
                         public int compare(ForeignKey o1, ForeignKey o2) {
                             return o1.getManyToField().compareTo(o2.getManyToField());
                         }
                     });
-                    ForeignKey foreignKey = persistencePerspective.getAdditionalForeignKeys()[additionalForeignKeyIndexPosition];
+                    ForeignKey foreignKey = null;
+                    if (additionalForeignKeyIndexPosition >= 0) {
+                        foreignKey = persistencePerspective.getAdditionalForeignKeys()[additionalForeignKeyIndexPosition];
+                    }
+                    //in the case of a to-one lookup, an explicit ForeignKey is not passed in. The system should then default
+                    //to just using a ForeignKeyRestrictionType.ID_EQ
                     if (metadata.getForeignKeyCollection()) {
-                        if (ForeignKeyRestrictionType.COLLECTION_SIZE_EQ.toString().equals(foreignKey.getRestrictionType().toString())) {
+                        if (foreignKey != null &&
+                                ForeignKeyRestrictionType.COLLECTION_SIZE_EQ.toString().equals(foreignKey.getRestrictionType().toString())) {
                             ctoConverter.addCollectionSizeEqMapping(ceilingEntityFullyQualifiedClassname, propertyName, AssociationPath.ROOT, propertyName);
                         } else {
                             AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));

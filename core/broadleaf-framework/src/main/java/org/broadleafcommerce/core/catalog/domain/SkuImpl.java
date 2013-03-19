@@ -749,6 +749,7 @@ public class SkuImpl implements Sku {
         return isMachineSortable == null ? false : isMachineSortable;
     }
 
+    @Override
     public Boolean getIsMachineSortable() {
         if (isMachineSortable == null && hasDefaultSku()) {
             return lookupDefaultSku().getIsMachineSortable();
@@ -762,6 +763,7 @@ public class SkuImpl implements Sku {
         this.isMachineSortable = isMachineSortable;
     }
 
+    @Override
     public void setIsMachineSortable(Boolean isMachineSortable) {
         this.isMachineSortable = isMachineSortable;
     }

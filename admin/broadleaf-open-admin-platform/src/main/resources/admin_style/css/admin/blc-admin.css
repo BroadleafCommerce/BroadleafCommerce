@@ -542,11 +542,6 @@ table.list-grid-table thead tr th {
 }
 
 .listgrid-headerBtn.dropdown > ul li button {
-    width: 100%;
-    border: inherit;
-    background: inherit;
-    font-family: inherit;
-    margin: inherit;
     -webkit-font-smoothing: antialiased;
 }
 

@@ -63,8 +63,8 @@
                                 <label>Filter:</label>
                                 <div class="listgrid-criteria" th:attr="data-field-index=${headerFieldStat.index}">
                                     <div class="listgrid-criteria-container">
-                                        <input th:name="${'criteria[' + headerFieldStat.index + '].filterValues'}"
-                                            class="listgrid-criteria-input" type="text" placeholder="criteria"/>
+                                        <div th:remove="element" 
+                                        th:substituteby="${'fields/filter/' + #strings.toLowerCase(headerField.fieldType)}" />
                                     </div>
                                 </div>
                                 <a href="#" class="listgrid-filter button small radius">Filter</a>

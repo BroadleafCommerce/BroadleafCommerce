@@ -97,6 +97,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
             String sectionKey) throws Exception {
         return viewEntityList(request, response, model, sectionKey, new CriteriaForm());
     }
+
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey, CriteriaForm criteriaForm) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);

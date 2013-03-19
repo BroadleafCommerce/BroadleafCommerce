@@ -1,0 +1,20 @@
+<div class="additional-foreign-key-container">
+    <input type="hidden" class="display-value-property" th:value="${headerField.foreignKeyDisplayValueProperty}"  />
+    <input type="hidden" class="listgrid-criteria-input value" th:name="${'criteria[' + headerFieldStat.index + '].filterValues'}"
+            th:attr="data-onchangetrigger=${headerField.onChangeTrigger}" />
+        
+    <div class="foreign-key-value-container">
+        <span
+            class="display-value"
+            style="color:#222; line-height: 23px; vertical-align: bottom"
+            th:attr="data-select-url=@{${'/' + sectionKey + '/' + headerField.name + '/select'}}"
+            th:text="${headerField.displayValue}" />
+        
+        <button 
+            class="to-one-lookup tiny button hover-cursor"
+            value="Lookup"
+            th:attr="data-select-url=@{${'/' + sectionKey + '/' + headerField.name + '/select'}}">
+            Select
+        </button>
+    </div>
+</div>

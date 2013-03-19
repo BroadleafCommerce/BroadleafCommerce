@@ -81,7 +81,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
                 if (fmd.isProminent() != null && fmd.isProminent()) {
                     Field hf;
-                    if (fmd.getFieldType().equals(SupportedFieldType.EXPLICIT_ENUMERATION)) {
+                    if (fmd.getFieldType().equals(SupportedFieldType.EXPLICIT_ENUMERATION) ||
+                            fmd.getFieldType().equals(SupportedFieldType.BROADLEAF_ENUMERATION)) {
                         hf = new ComboField();
                         ((ComboField) hf).setOptions(fmd.getEnumerationValues());
                     } else {
@@ -90,6 +91,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     
                     hf.setName(p.getName());
                     hf.setFriendlyName(fmd.getFriendlyName());
+                    hf.setForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
+                    String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
+                    hf.setFieldType(fieldType);
                     
                     headerFields.add(hf);
                 }
@@ -120,7 +124,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     if (md.isProminent() != null && md.isProminent()) {
                         Field hf = new Field()
                                 .withName(p.getName())
-                                .withFriendlyName(fmd.getFriendlyName());
+                                .withFriendlyName(fmd.getFriendlyName())
+                                .withForeignKeyDisplayValueProperty(md.getForeignKeyDisplayValueProperty());
+                        String fieldType = md.getFieldType() == null ? null : md.getFieldType().toString();
+                        hf.setFieldType(fieldType);
                         headerFields.add(hf);
                     }
                 }
@@ -135,6 +142,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         Field hf = new Field()
                                 .withName(p.getName())
                                 .withFriendlyName(md.getFriendlyName());
+                        String fieldType = md.getFieldType() == null ? null : md.getFieldType().toString();
+                        hf.setFieldType(fieldType);
                         headerFields.add(hf);
                     }
                 }
@@ -153,6 +162,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 Field hf = new Field()
                         .withName(p.getName())
                         .withFriendlyName(p.getMetadata().getFriendlyName());
+                //TODO FIXME: PJV
+                String fieldType = "default";
+                hf.setFieldType(fieldType);
                 headerFields.add(hf);
             }
 
@@ -168,6 +180,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             Field hf = new Field()
                     .withName(p2.getName())
                     .withFriendlyName(p2.getMetadata().getFriendlyName());
+            //TODO FIXME : PJV
+            String fieldType = "default";
+            hf.setFieldType(fieldType);
             headerFields.add(hf);
 
             for (Property p : cmd.getProperties()) {
@@ -178,6 +193,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             hf = new Field()
                                     .withName(p.getName())
                                     .withFriendlyName(md.getFriendlyName());
+                            //TODO FIXME: PJV
+                            fieldType = "default";
+                            hf.setFieldType(fieldType);
                             headerFields.add(hf);
                         }
                     }
