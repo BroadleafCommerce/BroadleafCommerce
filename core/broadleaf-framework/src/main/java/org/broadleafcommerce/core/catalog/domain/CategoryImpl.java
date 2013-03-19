@@ -134,7 +134,7 @@ public class CategoryImpl implements Category, Status {
         newCategoryList.add(category.getId());
 
         categoryUrlMap.put(currentPath, newCategoryList);
-        for (CategoryXref currentCategory : category.getChildCategories()) {
+        for (CategoryXref currentCategory : category.getChildCategoryXrefs()) {
             fillInURLMapForCategory(categoryUrlMap, currentCategory.getCategory(), currentPath, newCategoryList);
         }
     }
@@ -204,7 +204,7 @@ public class CategoryImpl implements Category, Status {
     @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    protected List<CategoryXref> allChildCategories = new ArrayList<CategoryXref>(10);
+    protected List<CategoryXref> allChildCategoryXrefs = new ArrayList<CategoryXref>(10);
 
     @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "categoryXrefPK.subCategory")
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
@@ -218,7 +218,7 @@ public class CategoryImpl implements Category, Status {
             sortProperty = "displayOrder",
             tab = "advancedTab",
             gridVisibleFields = { "name" })
-    protected List<CategoryXref> allParentCategories = new ArrayList<CategoryXref>(10);
+    protected List<CategoryXref> allParentCategoryXrefs = new ArrayList<CategoryXref>(10);
 
     @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "categoryProductXref.category")
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
@@ -232,7 +232,7 @@ public class CategoryImpl implements Category, Status {
             sortProperty = "displayOrder",
             tab = "productsTab",
             gridVisibleFields = { "defaultSku.name" })
-    protected List<CategoryProductXref> allProducts = new ArrayList<CategoryProductXref>(10);
+    protected List<CategoryProductXref> allProductXrefs = new ArrayList<CategoryProductXref>(10);
 
     @ElementCollection
     @MapKeyColumn(name="NAME")
@@ -328,7 +328,13 @@ public class CategoryImpl implements Category, Status {
     protected Map<String, List<Long>> childCategoryURLMap;        
 
     @Transient
-    protected List<CategoryXref> childCategories = new ArrayList<CategoryXref>(50);
+    protected List<CategoryXref> childCategoryXrefs = new ArrayList<CategoryXref>(50);
+
+    @Transient
+    protected List<Category> legacyChildCategories = new ArrayList<Category>(50);
+
+    @Transient
+    protected List<Category> allLegacyChildCategories = new ArrayList<Category>(50);
 
     @Transient
     protected List<FeaturedProduct> filteredFeaturedProducts = null;
@@ -475,46 +481,82 @@ public class CategoryImpl implements Category, Status {
     }
 
     @Override
-    public List<CategoryXref> getAllChildCategories(){
-        return allChildCategories;
+    public List<CategoryXref> getAllChildCategoryXrefs(){
+        return allChildCategoryXrefs;
+    }
+
+    @Override
+    public List<CategoryXref> getChildCategoryXrefs() {
+        if (childCategoryXrefs.isEmpty()) {
+            for (CategoryXref category : allChildCategoryXrefs) {
+                if (category.getSubCategory().isActive()) {
+                    childCategoryXrefs.add(category);
+                }
+            }
+        }
+        return Collections.unmodifiableList(childCategoryXrefs);
+    }
+
+    @Override
+    public void setChildCategoryXrefs(List<CategoryXref> childCategories) {
+        this.childCategoryXrefs.clear();
+        for(CategoryXref category : childCategories){
+            this.childCategoryXrefs.add(category);
+        }
+    }
+
+    @Override
+    public void setAllChildCategoryXrefs(List<CategoryXref> childCategories){
+        allChildCategoryXrefs.clear();
+        for(CategoryXref category : childCategories){
+            allChildCategoryXrefs.add(category);
+        }
+    }
+
+    @Override
+    @Deprecated
+    public List<Category> getAllChildCategories(){
+        if (allLegacyChildCategories.isEmpty()) {
+            for (CategoryXref category : allChildCategoryXrefs) {
+                allLegacyChildCategories.add(category.getSubCategory());
+            }
+        }
+        return Collections.unmodifiableList(allLegacyChildCategories);
     }
 
     @Override
     public boolean hasAllChildCategories(){
-        return !allChildCategories.isEmpty();
+        return !allChildCategoryXrefs.isEmpty();
     }
 
     @Override
-    public void setAllChildCategories(List<CategoryXref> childCategories){
-        allChildCategories.clear();
-        for(CategoryXref category : childCategories){
-            allChildCategories.add(category);
-        }       
+    @Deprecated
+    public void setAllChildCategories(List<Category> childCategories){
+        throw new UnsupportedOperationException("Not Supported - Use setAllChildCategoryXrefs()");
     }
 
     @Override
-    public List<CategoryXref> getChildCategories() {
-        if (childCategories.isEmpty()) {
-            for (CategoryXref category : allChildCategories) {
+    @Deprecated
+    public List<Category> getChildCategories() {
+        if (legacyChildCategories.isEmpty()) {
+            for (CategoryXref category : allChildCategoryXrefs) {
                 if (category.getSubCategory().isActive()) {
-                    childCategories.add(category);
+                    legacyChildCategories.add(category.getSubCategory());
                 }
             }
         }
-        return childCategories;
+        return Collections.unmodifiableList(legacyChildCategories);
     }
 
     @Override
     public boolean hasChildCategories() {
-        return !getChildCategories().isEmpty();
+        return !getChildCategoryXrefs().isEmpty();
     }
 
     @Override
-    public void setChildCategories(List<CategoryXref> childCategories) {
-        this.childCategories.clear();
-        for(CategoryXref category : childCategories){
-            this.childCategories.add(category);
-        }
+    @Deprecated
+    public void setChildCategories(List<Category> childCategories) {
+        throw new UnsupportedOperationException("Not Supported - Use setChildCategoryXrefs()");
     }
 
     @Override
@@ -572,8 +614,8 @@ public class CategoryImpl implements Category, Status {
         if (defaultParentCategory != null) {
             myParentCategories.add(defaultParentCategory);
         }
-        if (allParentCategories != null && allParentCategories.size() > 0) {
-            for (CategoryXref parent : allParentCategories) {
+        if (allParentCategoryXrefs != null && allParentCategoryXrefs.size() > 0) {
+            for (CategoryXref parent : allParentCategoryXrefs) {
                 myParentCategories.add(parent.getCategory());
             }
         }
@@ -602,19 +644,30 @@ public class CategoryImpl implements Category, Status {
     }
 
     @Override
-    public List<CategoryXref> getAllParentCategories() {
-        for (CategoryXref xref : allParentCategories) {
-            ((CategoryXrefImpl) xref).setChildOriented(false);
-        }
-        return allParentCategories;
+    public List<CategoryXref> getAllParentCategoryXrefs() {
+        return allParentCategoryXrefs;
     }
 
     @Override
-    public void setAllParentCategories(List<CategoryXref> allParentCategories) {
-        this.allParentCategories.clear();
-        for(CategoryXref category : allParentCategories){
-            this.allParentCategories.add(category);
+    public void setAllParentCategoryXrefs(List<CategoryXref> allParentCategories) {
+        this.allParentCategoryXrefs.clear();
+        allParentCategoryXrefs.addAll(allParentCategories);
+    }
+
+    @Override
+    @Deprecated
+    public List<Category> getAllParentCategories() {
+        List<Category> parents = new ArrayList<Category>(allParentCategoryXrefs.size());
+        for (CategoryXref xref : allParentCategoryXrefs) {
+            parents.add(xref.getCategory());
         }
+        return Collections.unmodifiableList(parents);
+    }
+
+    @Override
+    @Deprecated
+    public void setAllParentCategories(List<Category> allParentCategories) {
+        throw new UnsupportedOperationException("Not Supported - Use setAllParentCategoryXrefs()");
     }
 
     @Override
@@ -721,27 +774,53 @@ public class CategoryImpl implements Category, Status {
     }
 
     @Override
-    public List<CategoryProductXref> getActiveProducts() {
+    public List<CategoryProductXref> getActiveProductXrefs() {
         List<CategoryProductXref> result = new ArrayList<CategoryProductXref>();
-        for (CategoryProductXref product : allProducts) {
+        for (CategoryProductXref product : allProductXrefs) {
             if (product.getProduct().isActive()) {
                 result.add(product);
             }
         }
-        return result;
-    }
-    
-    @Override
-    public List<CategoryProductXref> getAllProducts() {
-        return allProducts;
+        return Collections.unmodifiableList(result);
     }
 
     @Override
-    public void setAllProducts(List<CategoryProductXref> allProducts) {
-        this.allProducts.clear();
-        for(CategoryProductXref product : allProducts){
-            this.allProducts.add(product);
+    public List<CategoryProductXref> getAllProductXrefs() {
+        return allProductXrefs;
+    }
+
+    @Override
+    public void setAllProductXrefs(List<CategoryProductXref> allProducts) {
+        this.allProductXrefs.clear();
+        allProductXrefs.addAll(allProducts);
+    }
+
+    @Override
+    @Deprecated
+    public List<Product> getActiveProducts() {
+        List<Product> result = new ArrayList<Product>();
+        for (CategoryProductXref product : allProductXrefs) {
+            if (product.getProduct().isActive()) {
+                result.add(product.getProduct());
+            }
         }
+        return Collections.unmodifiableList(result);
+    }
+    
+    @Override
+    @Deprecated
+    public List<Product> getAllProducts() {
+        List<Product> result = new ArrayList<Product>();
+        for (CategoryProductXref product : allProductXrefs) {
+            result.add(product.getProduct());
+        }
+        return Collections.unmodifiableList(result);
+    }
+
+    @Override
+    @Deprecated
+    public void setAllProducts(List<Product> allProducts) {
+        throw new UnsupportedOperationException("Not Supported - Use setAllProductXrefs()");
     }
     
     @Override

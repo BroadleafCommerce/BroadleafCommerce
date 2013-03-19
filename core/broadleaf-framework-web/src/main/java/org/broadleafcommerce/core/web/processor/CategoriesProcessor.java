@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,7 +64,7 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
         List<Category> categories = catalogService.findCategoriesByName(parentCategory);
         if (categories != null && categories.size() > 0) {
             // gets child categories in order ONLY if they are in the xref table and active
-            List<CategoryXref> subcategories = categories.get(0).getChildCategories();
+            List<CategoryXref> subcategories = categories.get(0).getChildCategoryXrefs();
             if (subcategories != null && !subcategories.isEmpty()) {
                 if (StringUtils.isNotEmpty(unparsedMaxResults)) {
                     int maxResults = Integer.parseInt(unparsedMaxResults);
@@ -72,8 +73,12 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
                     }
                 }
             }
+            List<Category> results = new ArrayList<Category>(subcategories.size());
+            for (CategoryXref xref : subcategories) {
+                results.add(xref.getSubCategory());
+            }
             
-            addToModel(arguments, resultVar, subcategories);
+            addToModel(arguments, resultVar, results);
         }
     }
 }

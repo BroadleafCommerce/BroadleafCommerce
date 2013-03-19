@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.web.api.endpoint.catalog;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -489,7 +490,11 @@ public class CatalogEndpoint implements ApplicationContextAware {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             CategoriesWrapper wrapper = (CategoriesWrapper)context.getBean(CategoriesWrapper.class.getName());
-            wrapper.wrap(product.getAllParentCategories(), request);
+            List<Category> categories = new ArrayList<Category>();
+            for (CategoryProductXref categoryXref : product.getAllParentCategoryXrefs()) {
+                categories.add(categoryXref.getCategory());
+            }
+            wrapper.wrap(categories, request);
             return wrapper;
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND);

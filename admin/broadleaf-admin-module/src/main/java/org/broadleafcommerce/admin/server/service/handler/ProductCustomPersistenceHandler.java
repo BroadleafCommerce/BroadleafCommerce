@@ -20,6 +20,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
@@ -32,7 +34,6 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
 import javax.annotation.Resource;
-
 import java.util.Map;
 
 /**
@@ -66,8 +67,11 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-            if (adminInstance.getDefaultCategory() != null && !adminInstance.getAllParentCategories().contains(adminInstance.getDefaultCategory())) {
-                adminInstance.getAllParentCategories().add(adminInstance.getDefaultCategory());
+            CategoryProductXref categoryXref = new CategoryProductXrefImpl();
+            categoryXref.setCategory(adminInstance.getDefaultCategory());
+            categoryXref.setProduct(adminInstance);
+            if (adminInstance.getDefaultCategory() != null && !adminInstance.getAllParentCategories().contains(categoryXref)) {
+                adminInstance.getAllParentCategoryXrefs().add(categoryXref);
             }
 
             adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
@@ -101,8 +105,11 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-            if (adminInstance.getDefaultCategory() != null && !adminInstance.getAllParentCategories().contains(adminInstance.getDefaultCategory())) {
-                adminInstance.getAllParentCategories().add(adminInstance.getDefaultCategory());
+            CategoryProductXref categoryXref = new CategoryProductXrefImpl();
+            categoryXref.setCategory(adminInstance.getDefaultCategory());
+            categoryXref.setProduct(adminInstance);
+            if (adminInstance.getDefaultCategory() != null && !adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
+                adminInstance.getAllParentCategoryXrefs().add(categoryXref);
             }
 
             adminInstance = (Product) dynamicEntityDao.merge(adminInstance);

@@ -29,6 +29,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -91,21 +93,6 @@ public interface Category extends Serializable {
      * @param defaultParentCategory the new default parent category
      */
     public void setDefaultParentCategory(@Nullable Category defaultParentCategory);
-
-    /**
-     * Retrieve all parent categories
-     *
-     * @return the list of parent categories
-     */
-    @Nonnull
-    public List<CategoryXref> getAllParentCategories();
-
-    /**
-     * Sets the list of parent categories
-     *
-     * @param allParentCategories the list of parent categories
-     */
-    public void setAllParentCategories(@Nonnull List<CategoryXref> allParentCategories);
 
     /**
      * Gets the url. The url represents the presentation layer destination for
@@ -264,53 +251,6 @@ public interface Category extends Serializable {
     public void setChildCategoryURLMap(@Nonnull Map<String, List<Long>> childCategoryURLMap);
 
     /**
-     * Gets the child categories. This list includes all categories, regardless
-     * of whether or not they are active.
-     * 
-     * @return the list of active and inactive child categories.
-     */
-    @Nonnull
-    public List<CategoryXref> getAllChildCategories();
-
-    /**
-     * Checks for child categories.
-     *
-     * @return true, if this category has any children (active or not)
-     */
-    public boolean hasAllChildCategories();
-
-    /**
-     * Sets the list of child categories (active and inactive)
-     * 
-     * @param childCategories the list of child categories
-     */
-    public void setAllChildCategories(@Nonnull List<CategoryXref> childCategories);
-
-    /**
-     * Gets the child categories. If child categories has not been previously
-     * set, then the list of active only categories will be returned.
-     * 
-     * @return the list of active child categories
-     */
-    @Nonnull
-    public List<CategoryXref> getChildCategories();
-
-    /**
-     * Checks for child categories.
-     * 
-     * @return true, if this category contains any active child categories.
-     */
-    public boolean hasChildCategories();
-
-    /**
-     * Sets the all child categories. This should be a list
-     * of active only child categories.
-     * 
-     * @param childCategories the list of active child categories.
-     */
-    public void setChildCategories(@Nonnull List<CategoryXref> childCategories);
-
-    /**
      * Gets the category images.
      * @deprecated replaced by {@link #getCategoryMedia()}
      * 
@@ -390,35 +330,6 @@ public interface Category extends Serializable {
      * @param featuredProducts the featured products
      */
     public void setFeaturedProducts(@Nonnull List<FeaturedProduct> featuredProducts);
-
-    /**
-     * Convenience method to retrieve all of this {@link Category}'s {@link Product}s filtered by
-     * active. If you want all of the {@link Product}s (whether inactive or not) consider using
-     * {@link #getAllProducts()}.
-     * 
-     * @return the list of active {@link Product}s for this {@link Category}
-     * @see {@link Product#isActive()}
-     */
-    public List<CategoryProductXref> getActiveProducts();
-    
-    /**
-     * Retrieve all the {@code Product} instances associated with this
-     * category.
-     * <br />
-     * <b>Note:</b> this method does not take into account whether or not the {@link Product}s are active or not. If
-     * you need this functionality, use {@link #getActiveProducts()}
-     * @return the list of products associated with this category.
-     */
-    @Nonnull
-    public List<CategoryProductXref> getAllProducts();
-
-    /**
-     * Set all the {@code Product} instances associated with this
-     * category.
-     *
-     * @param allProducts the list of products to associate with this category
-     */
-    public void setAllProducts(@Nonnull List<CategoryProductXref> allProducts);
 
     /**
      * Returns a list of cross sale products that are related to this category.
@@ -590,4 +501,131 @@ public interface Category extends Serializable {
      */
     public void setFulfillmentType(FulfillmentType fulfillmentType);
 
+    /**
+     * Gets the child categories. This list includes all categories, regardless
+     * of whether or not they are active.
+     *
+     * @deprecated use getAllChildCategoryXrefs() instead.
+     * @return the list of active and inactive child categories.
+     */
+    @Nonnull
+    @Deprecated
+    public List<Category> getAllChildCategories();
+
+    /**
+     * Checks for child categories.
+     *
+     * @return true, if this category has any children (active or not)
+     */
+    public boolean hasAllChildCategories();
+
+    /**
+     * Sets the list of child categories (active and inactive)
+     *
+     * @deprecated Use setAllChildCategoryXrefs() instead.
+     * @param childCategories the list of child categories
+     */
+    @Deprecated
+    public void setAllChildCategories(@Nonnull List<Category> childCategories);
+
+    /**
+     * Gets the child categories. If child categories has not been previously
+     * set, then the list of active only categories will be returned.
+     *
+     * @deprecated Use getChildCategoryXrefs() instead.
+     * @return the list of active child categories
+     */
+    @Deprecated
+    @Nonnull
+    public List<Category> getChildCategories();
+
+    /**
+     * Checks for child categories.
+     *
+     * @return true, if this category contains any active child categories.
+     */
+    public boolean hasChildCategories();
+
+    /**
+     * Sets the all child categories. This should be a list
+     * of active only child categories.
+     *
+     * @deprecated Use setChildCategoryXrefs() instead.
+     * @param childCategories the list of active child categories.
+     */
+    @Deprecated
+    public void setChildCategories(@Nonnull List<Category> childCategories);
+
+    public List<CategoryXref> getAllChildCategoryXrefs();
+
+    public List<CategoryXref> getChildCategoryXrefs();
+
+    public void setChildCategoryXrefs(List<CategoryXref> childCategories);
+
+    public void setAllChildCategoryXrefs(List<CategoryXref> childCategories);
+
+
+    public List<CategoryXref> getAllParentCategoryXrefs();
+
+    public void setAllParentCategoryXrefs(List<CategoryXref> allParentCategories);
+
+    /**
+     * Retrieve all parent categories
+     *
+     * @deprecated Use getAllParentCategoryXrefs() instead.
+     * @return the list of parent categories
+     */
+    @Deprecated
+    @Nonnull
+    public List<Category> getAllParentCategories();
+
+    /**
+     * Sets the list of parent categories
+     *
+     * @deprecated Use setAllParentCategoryXrefs() instead.
+     * @param allParentCategories the list of parent categories
+     */
+    @Deprecated
+    public void setAllParentCategories(@Nonnull List<Category> allParentCategories);
+
+    public List<CategoryProductXref> getActiveProductXrefs();
+
+    public List<CategoryProductXref> getAllProductXrefs();
+
+    public void setAllProductXrefs(List<CategoryProductXref> allProducts);
+
+    /**
+     * Convenience method to retrieve all of this {@link Category}'s {@link Product}s filtered by
+     * active. If you want all of the {@link Product}s (whether inactive or not) consider using
+     * {@link #getAllProducts()}.
+     *
+     * @deprecated Use getActiveProductXrefs() instead.
+     * @return the list of active {@link Product}s for this {@link Category}
+     * @see {@link Product#isActive()}
+     */
+    @Deprecated
+    public List<Product> getActiveProducts();
+
+    /**
+     * Retrieve all the {@code Product} instances associated with this
+     * category.
+     * <br />
+     * <b>Note:</b> this method does not take into account whether or not the {@link Product}s are active or not. If
+     * you need this functionality, use {@link #getActiveProducts()}
+     * @deprecated Use getAllProductXrefs() instead.
+     * @return the list of products associated with this category.
+     */
+    @Deprecated
+    @Nonnull
+    public List<Product> getAllProducts();
+
+    /**
+     * Set all the {@code Product} instances associated with this
+     * category.
+     *
+     * @deprecated Use setAllProductXrefs() instead.
+     * @param allProducts the list of products to associate with this category
+     */
+    @Deprecated
+    public void setAllProducts(@Nonnull List<Product> allProducts);
 }

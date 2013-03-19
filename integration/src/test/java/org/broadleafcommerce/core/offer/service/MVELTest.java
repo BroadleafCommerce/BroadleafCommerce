@@ -17,8 +17,9 @@
 package org.broadleafcommerce.core.offer.service;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
@@ -75,9 +76,12 @@ public class MVELTest extends BaseTest {
         category.setName("t-shirt");
         DiscreteOrderItemImpl orderItem = new DiscreteOrderItemImpl();
         ProductImpl product = new ProductImpl();
-        ArrayList<Category> categories = new ArrayList<Category>();
-        categories.add(category);
-        product.setAllParentCategories(categories);
+        ArrayList<CategoryProductXref> categories = new ArrayList<CategoryProductXref>();
+        CategoryProductXref categoryXref = new CategoryProductXrefImpl();
+        categoryXref.setProduct(product);
+        categoryXref.setCategory(category);
+        categories.add(categoryXref);
+        product.setAllParentCategoryXrefs(categories);
         orderItem.setProduct(product);
         order.getOrderItems().add(orderItem);
         order.setSubTotal(new Money(110D));

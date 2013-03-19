@@ -294,20 +294,6 @@ public interface Product extends Serializable {
      * @return all of the Media for all of the Skus for this Product
      */
     public Map<String, Media> getAllSkuMedia();
-
-    /**
-     * Returns all parent {@link Category}(s) this product is associated with.
-     *
-     * @return the all parent categories for this product
-     */
-    public List<Category> getAllParentCategories();
-
-    /**
-     * Sets all parent {@link Category}s this product is associated with.
-     *
-     * @param allParentCategories - a List of all parent {@link Category}(s) to associate this product with
-     */
-    public void setAllParentCategories(List<Category> allParentCategories);
      
     /**
      * Returns the default {@link Category} this product is associated with.
@@ -714,4 +700,25 @@ public interface Product extends Serializable {
      */
     public void clearDynamicPrices();
 
+    public List<CategoryProductXref> getAllParentCategoryXrefs();
+
+    public void setAllParentCategoryXrefs(List<CategoryProductXref> allParentCategories);
+
+    /**
+     * Returns all parent {@link Category}(s) this product is associated with.
+     *
+     * @deprecated Use getAllParentCategoryXrefs() instead.
+     * @return the all parent categories for this product
+     */
+    @Deprecated
+    public List<Category> getAllParentCategories();
+
+    /**
+     * Sets all parent {@link Category}s this product is associated with.
+     *
+     * @deprecated Use setAllParentCategoryXrefs() instead.
+     * @param allParentCategories - a List of all parent {@link Category}(s) to associate this product with
+     */
+    @Deprecated
+    public void setAllParentCategories(List<Category> allParentCategories);
 }

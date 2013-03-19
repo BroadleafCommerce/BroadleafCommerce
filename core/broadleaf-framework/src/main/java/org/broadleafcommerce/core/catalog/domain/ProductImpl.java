@@ -48,14 +48,6 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -74,6 +66,14 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -195,9 +195,9 @@ public class ProductImpl implements Product, Status {
     @AdminPresentationToOneLookup()
     protected Category defaultCategory;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable=true))
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
+    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "categoryProductXref.product")
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(joinEntityClass = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl",
@@ -206,7 +206,7 @@ public class ProductImpl implements Product, Status {
             friendlyName = "allParentCategoriesTitle",
             sortProperty = "displayOrder",
             gridVisibleFields = { "name" })
-    protected List<Category> allParentCategories = new ArrayList<Category>();
+    protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
     
     @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
@@ -419,7 +419,7 @@ public class ProductImpl implements Product, Status {
         Map<String, Media> result = new HashMap<String, Media>();
         result.putAll(getMedia());
         for (Sku additionalSku : getAdditionalSkus()) {
-            if (additionalSku.getId() != getDefaultSku().getId()) {
+            if (!additionalSku.getId().equals(getDefaultSku().getId())) {
                 result.putAll(additionalSku.getSkuMedia());
             }
         }
@@ -432,16 +432,30 @@ public class ProductImpl implements Product, Status {
     }
 
     @Override
-    public List<Category> getAllParentCategories() {
-        return allParentCategories;
+    public List<CategoryProductXref> getAllParentCategoryXrefs() {
+        return allParentCategoryXrefs;
     }
 
     @Override
-    public void setAllParentCategories(List<Category> allParentCategories) {        
-        this.allParentCategories.clear();
-        for(Category category : allParentCategories){
-            this.allParentCategories.add(category);
+    public void setAllParentCategoryXrefs(List<CategoryProductXref> allParentCategories) {
+        this.allParentCategoryXrefs.clear();
+        allParentCategoryXrefs.addAll(allParentCategories);
+    }
+
+    @Override
+    @Deprecated
+    public List<Category> getAllParentCategories() {
+        List<Category> parents = new ArrayList<Category>();
+        for (CategoryProductXref xref : allParentCategoryXrefs) {
+            parents.add(xref.getCategory());
         }
+        return Collections.unmodifiableList(parents);
+    }
+
+    @Override
+    @Deprecated
+    public void setAllParentCategories(List<Category> allParentCategories) {
+        throw new UnsupportedOperationException("Not Supported - Use setAllParentCategoryXrefs()");
     }
 
     @Override

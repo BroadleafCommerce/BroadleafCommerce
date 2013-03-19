@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
@@ -347,18 +348,26 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         document.addField(shs.getIdFieldName(), product.getId());
 
         // The explicit categories are the ones defined by the product itself
-        for (Category category : product.getAllParentCategories()) {
-            document.addField(shs.getExplicitCategoryFieldName(), category.getId());
+        for (CategoryProductXref categoryXref : product.getAllParentCategoryXrefs()) {
+            document.addField(shs.getExplicitCategoryFieldName(), categoryXref.getCategory().getId());
 
-            String categorySortFieldName = shs.getCategorySortFieldName(category);
-            int listIndex = category.getAllProducts().indexOf(product);
-            document.addField(categorySortFieldName, listIndex);
+            String categorySortFieldName = shs.getCategorySortFieldName(categoryXref.getCategory());
+            int index = -1;
+            int count = 0;
+            for (CategoryProductXref productXref : categoryXref.getCategory().getAllProductXrefs()) {
+                if (productXref.getProduct().equals(product)) {
+                    index = count;
+                    break;
+                }
+                count++;
+            }
+            document.addField(categorySortFieldName, index);
         }
 
         // This is the entire tree of every category defined on the product
         Set<Category> fullCategoryHierarchy = new HashSet<Category>();
-        for (Category category : product.getAllParentCategories()) {
-            fullCategoryHierarchy.addAll(category.buildFullCategoryHierarchy(null));
+        for (CategoryProductXref categoryXref : product.getAllParentCategoryXrefs()) {
+            fullCategoryHierarchy.addAll(categoryXref.getCategory().buildFullCategoryHierarchy(null));
         }
         for (Category category : fullCategoryHierarchy) {
             document.addField(shs.getCategoryFieldName(), category.getId());

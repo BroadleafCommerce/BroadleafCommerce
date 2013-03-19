@@ -226,7 +226,7 @@ public class OfferDataItemProvider {
         xref1.setProduct(product1);
         xref1.setCategory(category1);
 
-        category1.getAllProducts().add(xref1);
+        category1.getAllProductXrefs().add(xref1);
         
         Category category2 = new CategoryImpl();
         category2.setName("test2");
@@ -245,7 +245,7 @@ public class OfferDataItemProvider {
         xref2.setProduct(product2);
         xref2.setCategory(category2);
         
-        category2.getAllProducts().add(xref2);
+        category2.getAllProductXrefs().add(xref2);
         
         DiscreteOrderItem orderItem1 = new DiscreteOrderItemImpl();
         orderItem1.setCategory(category1);

@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-public interface CategoryXref extends Category {
+public interface CategoryXref {
 
     public Long getDisplayOrder();
 

@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
@@ -53,8 +54,11 @@ public class ChildCategoriesCustomPersistenceHandler extends CustomPersistenceHa
         
         Category parent = (Category) dynamicEntityDao.retrieve(CategoryImpl.class, parentId);
         Category child = (Category) dynamicEntityDao.retrieve(CategoryImpl.class, childId);
-        
-        if (parent.getAllChildCategories().contains(child)) {
+
+        CategoryXref categoryXref = new CategoryXrefImpl();
+        categoryXref.setSubCategory(child);
+        categoryXref.setCategory(parent);
+        if (parent.getAllChildCategoryXrefs().contains(categoryXref)) {
             throw new ServiceException("Add unsuccessful. Cannot add a duplicate child category.");
         }
 
@@ -67,8 +71,8 @@ public class ChildCategoriesCustomPersistenceHandler extends CustomPersistenceHa
         if (child.getId().equals(parent.getId())) {
             throw new ServiceException("Add unsuccessful. Cannot add a category to itself.");
         }
-        for (CategoryXref category : parent.getAllParentCategories()) {
-            if (!CollectionUtils.isEmpty(category.getCategory().getAllParentCategories())) {
+        for (CategoryXref category : parent.getAllParentCategoryXrefs()) {
+            if (!CollectionUtils.isEmpty(category.getCategory().getAllParentCategoryXrefs())) {
                 checkParents(child, category.getCategory());
             }
         }

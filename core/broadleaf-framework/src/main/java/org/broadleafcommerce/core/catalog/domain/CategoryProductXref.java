@@ -30,7 +30,7 @@ package org.broadleafcommerce.core.catalog.domain;
  *  @author btaylor
  * 
  */
-public interface CategoryProductXref extends Product {
+public interface CategoryProductXref {
 
     /**
      * Gets the category.

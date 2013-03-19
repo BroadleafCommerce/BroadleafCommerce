@@ -61,11 +61,11 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
             adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-            if (adminInstance.getDefaultParentCategory() != null && !adminInstance.getAllParentCategories().contains(adminInstance.getDefaultParentCategory())) {
-                CategoryXref categoryXref = new CategoryXrefImpl();
-                categoryXref.setCategory(adminInstance.getDefaultParentCategory());
-                categoryXref.setSubCategory(adminInstance);
-                adminInstance.getAllParentCategories().add(categoryXref);
+            CategoryXref categoryXref = new CategoryXrefImpl();
+            categoryXref.setCategory(adminInstance.getDefaultParentCategory());
+            categoryXref.setSubCategory(adminInstance);
+            if (adminInstance.getDefaultParentCategory() != null && !adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
+                adminInstance.getAllParentCategoryXrefs().add(categoryXref);
             }
 
             adminInstance = (Category) dynamicEntityDao.merge(adminInstance);
