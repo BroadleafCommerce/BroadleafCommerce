@@ -1,6 +1,7 @@
 <select class="listgrid-criteria-input" th:name="${'criteria[' + headerFieldStat.index + '].filterValues'}">
     <option value="" text="" />
-    <option th:each="entry : ${headerField.options}"
+    <!--This doesn't work right now -->
+    <!--<option th:each="entry : ${headerField.options}"
             th:value="${entry.key}"
-            th:text="${entry.value}" />
+            th:text="${entry.value}" />-->
 </select>
