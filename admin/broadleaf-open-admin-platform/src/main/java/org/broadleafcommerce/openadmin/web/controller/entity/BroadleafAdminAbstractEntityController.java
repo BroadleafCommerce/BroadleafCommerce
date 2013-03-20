@@ -441,6 +441,33 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
     }
     
     /**
+     * Shows the modal popup for the current selected "to-one" field. For instance, if you are viewing a list of products
+     * then this method is invoked when a user clicks on the name of the default category field.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param sectionKey
+     * @param collectionField
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public String viewCollectionItemDetails(HttpServletRequest request, HttpServletResponse response, Model model,
+            String sectionKey,
+            String collectionField,
+            String id) throws Exception {
+        String mainClassName = getClassNameForSection(sectionKey);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        BasicFieldMetadata md = (BasicFieldMetadata) collectionProperty.getMetadata();
+
+        AdminSection section = adminNavigationService.findAdminSectionByClass(md.getForeignKeyClass());
+        String sectionUrlKey = (section.getUrl().startsWith("/")) ? section.getUrl().substring(1) : section.getUrl();
+        return viewEntityForm(request, response, model, sectionUrlKey, id);
+    }
+    
+    /**
      * Shows the modal dialog that is used to add an item to a given collection. There are several possible outcomes
      * of this call depending on the type of the specified collection field.
      * 

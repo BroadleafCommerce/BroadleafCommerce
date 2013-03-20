@@ -101,18 +101,37 @@
                 <span th:case="'main'" th:remove="tag">
                     <a th:if="${headerFieldStat.first}" 
                         th:href="@{${record.path}}"
-                        th:text="${field.value}" />
+                        th:text="${field.displayValue}" />
                         
-                    <span th:unless="${headerFieldStat.first}" th:remove="tag" th:text="${field.displayValue}" />
+                    <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
+                       <span th:remove="tag" th:text="${field.displayValue}" />
+                       <a th:href="@{${listGrid.path + '/' + field.entityViewPath}}" class="modal-view">
+                            <i class="icon-external-link"></i>
+                       </a>
+                    </span>
+                        
+                    <span th:unless="${headerFieldStat.first or headerField.canLinkToExternalEntity}"
+                          th:remove="tag" th:text="${field.displayValue}" />
                 </span>
                 
-                <span th:case="*" th:inline="text">
-                    [[${field.value}]]
-                    <a th:if="${headerFieldStat.first and record.canLinkToExternalEntity}" 
-                        th:href="@{${record.externalEntityPath}}"
-                        class="modal-view">
-                        <i class="icon-external-link"></i>
-                    </a>
+                <span th:case="*">                    
+                    <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
+                       <span th:remove="tag" th:text="${field.displayValue}" />
+                       <a th:href="@{${listGrid.path + '/' + field.entityViewPath}}" class="modal-view">
+                            <i class="icon-external-link"></i>
+                       </a>
+                    </span>
+                    
+                    <span th:if="${headerFieldStat.first and record.canLinkToExternalEntity}" th:remove="tag">
+                       <span th:remove="tag" th:text="${field.displayValue}" />
+                       <a th:href="@{${record.externalEntityPath}}" class="modal-view">
+                             <i class="icon-external-link"></i>
+                       </a>
+                    </span>
+                    
+                    <span th:unless="${(headerFieldStat.first and record.canLinkToExternalEntity)
+                                             or headerField.canLinkToExternalEntity}"
+                          th:remove="tag" th:text="${field.displayValue}" />
                 </span>
                 
             </td>

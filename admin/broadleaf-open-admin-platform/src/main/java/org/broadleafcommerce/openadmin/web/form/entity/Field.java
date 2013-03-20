@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.web.controller.entity.BroadleafAdminBasicEntityController;
 
 
 
@@ -90,6 +91,31 @@ public class Field {
 
     public String getDisplayValue() {
         return displayValue == null ? value : displayValue;
+    }
+
+    /**
+     * Used to build a link for this particular field value to be displayed in a modal. This is used to build the link for
+     * a 'to-one-lookup' field inside of a list grid. This is only the second part of the link. This needs to be prepended
+     * with the url path for the listgrid itself.
+     * 
+     * @return
+     * @see {@link BroadleafAdminBasicEntityController#viewCollectionItemDetails(javax.servlet.http.HttpServletRequest,
+     *                                                                           javax.servlet.http.HttpServletResponse,
+     *                                                                           org.springframework.ui.Model,
+     *                                                                           String,
+     *                                                                           String,
+     *                                                                           String)
+     */
+    public String getEntityViewPath() {
+        return getName() + "/" + getValue() + "/view";
+    }
+    
+    /**
+     * Used for linking in toOneLookup fields as well as linking to the entity via a 'name' field
+     * @return
+     */
+    public boolean getCanLinkToExternalEntity() {
+        return SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString().equals(fieldType);
     }
     
     /* ************************** */

@@ -68,6 +68,7 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
         return super.addEntity(request, response, model, sectionKey, entityForm, result);
     }
 
+    @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
@@ -100,6 +101,15 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
             @PathVariable String sectionKey,
             @PathVariable String collectionField) throws Exception {
         return super.showSelectCollectionItem(request, response, model, sectionKey, collectionField);
+    }
+    
+    @Override
+    @RequestMapping(value = "/{collectionField}/{id}/view", method = RequestMethod.GET)
+    public String viewCollectionItemDetails(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String sectionKey,
+            @PathVariable String collectionField,
+            @PathVariable String id) throws Exception {
+        return super.viewCollectionItemDetails(request, response, model, sectionKey, collectionField, id);
     }
 
     @Override
