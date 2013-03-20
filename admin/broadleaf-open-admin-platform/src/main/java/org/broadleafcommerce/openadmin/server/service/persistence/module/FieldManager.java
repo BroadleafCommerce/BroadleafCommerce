@@ -27,7 +27,9 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 /**
@@ -168,7 +170,7 @@ public class FieldManager {
                     //configured entity for this class
                     try {
                         Object newEntity = entityConfiguration.createEntityInstance(field.getType().getName());
-                        SortableValue val = new SortableValue((Serializable) newEntity, j);
+                        SortableValue val = new SortableValue((Serializable) newEntity, j, field.getName());
                         middleFields.add(val);
                         field.set(value, newEntity);
                         componentClass = newEntity.getClass();
@@ -178,7 +180,7 @@ public class FieldManager {
                         Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(field.getType());
                         if (!ArrayUtils.isEmpty(entities)) {
                             Object newEntity = entities[0].newInstance();
-                            SortableValue val = new SortableValue((Serializable) newEntity, j);
+                            SortableValue val = new SortableValue((Serializable) newEntity, j, field.getName());
                             middleFields.add(val);
                             field.set(value, newEntity);
                             componentClass = newEntity.getClass();
@@ -202,11 +204,16 @@ public class FieldManager {
 
     }
     
-    public void persistMiddleEntities() {
+    public Map<String, Serializable> persistMiddleEntities() {
+        Map<String, Serializable> persistedEntities = new HashMap<String, Serializable>();
+        
         Collections.sort(middleFields);
         for (SortableValue val : middleFields) {
-            dynamicEntityDao.merge(val.entity);
+            Serializable s = dynamicEntityDao.merge(val.entity);
+            persistedEntities.put(val.getContainingPropertyName(), s);
         }
+        
+        return persistedEntities;
     }
 
     public EntityConfiguration getEntityConfiguration() {
@@ -218,15 +225,21 @@ public class FieldManager {
         private Integer pos;
         private Serializable entity;
         private Class<?> entityClass;
+        private String containingPropertyName;
         
-        public SortableValue(Serializable entity, Integer pos) {
+        public SortableValue(Serializable entity, Integer pos, String containingPropertyName) {
             this.entity = entity;
             this.pos = pos;
             this.entityClass = entity.getClass();
+            this.containingPropertyName = containingPropertyName;
         }
 
         public int compareTo(SortableValue o) {
             return pos.compareTo(o.pos) * -1;
+        }
+        
+        public String getContainingPropertyName() {
+            return containingPropertyName;
         }
 
         @Override

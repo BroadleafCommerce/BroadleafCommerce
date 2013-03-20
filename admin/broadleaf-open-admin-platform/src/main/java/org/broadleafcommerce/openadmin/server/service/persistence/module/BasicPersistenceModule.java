@@ -79,6 +79,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -298,7 +299,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 }
             }
         }
-        fieldManager.persistMiddleEntities();
+        Map<String, Serializable> persistedEntities = fieldManager.persistMiddleEntities();
+        for (Entry<String, Serializable> entry : persistedEntities.entrySet()) {
+            fieldManager.setFieldValue(instance, entry.getKey(), entry.getValue());
+        }
         return instance;
     }
 
