@@ -92,9 +92,6 @@
             th:classappend="${listGrid.listGridType != 'main'}? 'clickable'"
             th:attr="data-link=@{${record.path}}">
             
-            
-            
-            
             <td th:each="headerField : ${record.listGrid.headerFields}"
                 th:class="${'td' + headerFieldStat.count}"
                 th:switch="${listGrid.listGridType}"
@@ -110,14 +107,12 @@
                 </span>
                 
                 <span th:case="*" th:remove="tag" th:inline="text">
+                    [[${field.value}]]
                     <a th:if="${headerFieldStat.first and record.canLinkToExternalEntity}" 
                         th:href="@{${record.externalEntityPath}}"
-                        class="modal-view"
-                        th:text="${field.value}" />
-                        
-                    <span th:unless="${headerFieldStat.first and record.canLinkToExternalEntity}" 
-                        th:remove="tag" 
-                        th:text="${field.value}" />
+                        class="modal-view">
+                        <i class="icon-external-link"></i>
+                    </a>
                 </span>
                 
             </td>

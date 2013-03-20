@@ -844,11 +844,11 @@ ul.magellan-toolbar > li.divider {
 }
 
 table.list-grid-table tr.clickable.selected {
-	background-color: #C5F3FF;
+	background-color: #CCDADD;
 }
 
 table.list-grid-table tr.clickable.selected:hover {
-	background-color: #A3E7F8;
+	background-color: #C0DAE0;
 }
 
 ul.inline-list.small-spacing li:first-child {
