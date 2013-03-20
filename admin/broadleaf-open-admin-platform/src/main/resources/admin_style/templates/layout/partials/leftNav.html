@@ -6,7 +6,10 @@
         <ul class="blc-accordion">
             <li class="blc-module" th:each="module : ${modules22}" th:inline="text">
                 <div class="title">
-                    <h5>[[#{${module.moduleKey}}]]</h5>
+                    <h5>
+                        <i th:class="${module.icon}"></i>
+                        [[#{${module.moduleKey}}]]
+                    </h5>
                 </div>
                 <div class="content">
                     <ul>
