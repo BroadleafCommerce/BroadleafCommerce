@@ -67,6 +67,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import javax.annotation.Resource;
+
 /**
  * @author apazzolini
  */
@@ -499,6 +501,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {AddToCartException.class})
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
+        // Don't allow overrides from this method.
+        orderItemRequestDTO.setOverrideRetailPrice(null);
+        orderItemRequestDTO.setOverrideSalePrice(null);
+        return addItemWithPriceOverrides(orderId, orderItemRequestDTO, priceOrder);
+    }
+
+    @Override
+    @Transactional(value = "blTransactionManager", rollbackFor = { AddToCartException.class })
+    public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
+
+
         Order order = findOrderById(orderId);
         if (automaticallyMergeLikeItems) {
             OrderItem item = findMatchingItem(order, orderItemRequestDTO);
@@ -514,9 +527,8 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
-
         try {
-            CartOperationRequest cartOpRequest = new CartOperationRequest(order, orderItemRequestDTO, priceOrder);
+            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
             CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {

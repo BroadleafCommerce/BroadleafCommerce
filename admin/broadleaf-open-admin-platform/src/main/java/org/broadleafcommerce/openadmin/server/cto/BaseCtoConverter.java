@@ -56,4 +56,8 @@ public interface BaseCtoConverter extends CriteriaTransferObjectConverter {
     void addCollectionSizeEqMapping(String mappingGroupName, String propertyId,
                                     AssociationPath associationPath, String targetPropertyName);
 
+    public FilterCriterionProviders getFilterCriterionProviders();
+
+    public void setFilterCriterionProviders(FilterCriterionProviders filterCriterionProviders);
+
 }

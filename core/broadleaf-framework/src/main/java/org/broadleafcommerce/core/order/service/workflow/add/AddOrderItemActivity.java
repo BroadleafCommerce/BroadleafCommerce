@@ -79,6 +79,8 @@ public class AddOrderItemActivity extends BaseActivity {
             itemRequest.setQuantity(orderItemRequestDTO.getQuantity());
             itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
             itemRequest.setOrder(order);
+            itemRequest.setSalePriceOverride(orderItemRequestDTO.getOverrideSalePrice());
+            itemRequest.setRetailPriceOverride(orderItemRequestDTO.getOverrideRetailPrice());
             item = orderItemService.createDiscreteOrderItem(itemRequest);
         } else {
             ProductBundleOrderItemRequest bundleItemRequest = new ProductBundleOrderItemRequest();
@@ -89,6 +91,8 @@ public class AddOrderItemActivity extends BaseActivity {
             bundleItemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
             bundleItemRequest.setName(product.getName());
             bundleItemRequest.setOrder(order);
+            bundleItemRequest.setSalePriceOverride(orderItemRequestDTO.getOverrideSalePrice());
+            bundleItemRequest.setRetailPriceOverride(orderItemRequestDTO.getOverrideRetailPrice());
             item = orderItemService.createBundleOrderItem(bundleItemRequest);
         }
         

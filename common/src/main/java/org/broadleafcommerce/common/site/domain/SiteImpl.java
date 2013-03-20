@@ -20,8 +20,10 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -62,6 +64,7 @@ public class SiteImpl implements Site {
 
     @Column (name = "SITE_IDENTIFIER_VALUE")
     @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Value", order=3, group = "SiteImpl_Site")
+    @Index(name = "BLC_SITE_ID_VAL_INDEX", columnNames = { "SITE_IDENTIFIER_VALUE" })
     protected String siteIdentifierValue;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
@@ -117,6 +120,16 @@ public class SiteImpl implements Site {
     @Override
     public void setProductionSandbox(SandBox productionSandbox) {
         this.productionSandbox = productionSandbox;
+    }
+
+    @Override
+    public SiteResolutionType getSiteResolutionType() {
+        return SiteResolutionType.getInstance(siteIdentifierType);
+    }
+
+    @Override
+    public void setSiteResolutionType(SiteResolutionType siteResolutionType) {
+        this.siteIdentifierType = siteResolutionType.getType();
     }
 }
 

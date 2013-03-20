@@ -31,11 +31,12 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.ui.Model;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * In charge of performing the various modify cart operations
@@ -97,6 +98,42 @@ public class BroadleafCartController extends AbstractCartController {
         return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
     }
     
+    /**
+     * Takes in an item request, adds the item to the customer's current cart, and returns.
+     * 
+     * Calls the addWithOverrides method on the orderService which will honor the override
+     * prices on the AddToCartItem request object.
+     * 
+     * Implementors must secure this method to avoid accidentally exposing the ability for 
+     * malicious clients to override prices by hacking the post parameters.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param itemRequest
+     * @throws IOException
+     * @throws AddToCartException 
+     * @throws PricingException
+     */
+    public String addWithPriceOverride(HttpServletRequest request, HttpServletResponse response, Model model,
+            AddToCartItem itemRequest) throws IOException, AddToCartException, PricingException {
+        Order cart = CartState.getCart();
+
+        // If the cart is currently empty, it will be the shared, "null" cart. We must detect this
+        // and provision a fresh cart for the current customer upon the first cart add
+        if (cart == null || cart instanceof NullOrderImpl) {
+            cart = orderService.createNewCartForCustomer(CustomerState.getCustomer(request));
+        }
+
+        updateCartService.validateCart(cart);
+
+        cart = orderService.addItemWithPriceOverrides(cart.getId(), itemRequest, false);
+        cart = orderService.save(cart, true);
+        CartState.setCart(cart);
+
+        return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
+    }
+
     /**
      * Takes in an item request and updates the quantity of that item in the cart. If the quantity
      * was passed in as 0, it will remove the item.

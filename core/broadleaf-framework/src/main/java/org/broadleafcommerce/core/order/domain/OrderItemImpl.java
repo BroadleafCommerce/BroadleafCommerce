@@ -526,6 +526,8 @@ public class OrderItemImpl implements OrderItem, Cloneable {
             clonedOrderItem.retailPrice = retailPrice;
             clonedOrderItem.salePrice = salePrice;
             clonedOrderItem.discountsAllowed = discountsAllowed;
+            clonedOrderItem.salePriceOverride = salePriceOverride;
+            clonedOrderItem.retailPriceOverride = retailPriceOverride;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -637,11 +639,8 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     public void setTaxable(Boolean taxable) {
         this.itemTaxable = taxable;
     }
+    
 
-    @Override
-    public List<OrderItemPriceDetail> getOrderItemPriceDetails() {
-        return orderItemPriceDetails;
-    }
 
     @Override
     public void setOrderItemPriceDetails(List<OrderItemPriceDetail> orderItemPriceDetails) {
@@ -735,6 +734,11 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         } else {
             return salePriceOverride.booleanValue();
         }
+    }
+
+    @Override
+    public List<OrderItemPriceDetail> getOrderItemPriceDetails() {
+        return orderItemPriceDetails;
     }
 
 }

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -33,6 +34,8 @@ public class ProductBundleOrderItemRequest {
     protected int quantity;
     protected ProductBundle productBundle;
     private Map<String,String> itemAttributes = new HashMap<String,String>();
+    protected Money salePriceOverride;
+    protected Money retailPriceOverride;
 
     public ProductBundleOrderItemRequest() {}
     
@@ -98,5 +101,21 @@ public class ProductBundleOrderItemRequest {
         this.itemAttributes = itemAttributes;
         return this;
     }
-    
+
+    public Money getSalePriceOverride() {
+        return salePriceOverride;
+    }
+
+    public void setSalePriceOverride(Money salePriceOverride) {
+        this.salePriceOverride = salePriceOverride;
+    }
+
+    public Money getRetailPriceOverride() {
+        return retailPriceOverride;
+    }
+
+    public void setRetailPriceOverride(Money retailPriceOverride) {
+        this.retailPriceOverride = retailPriceOverride;
+    }
+
 }
