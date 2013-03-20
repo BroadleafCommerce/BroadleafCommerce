@@ -30,6 +30,7 @@ import org.springframework.web.context.request.WebRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -71,6 +72,7 @@ public class BroadleafRequestContext {
     protected Currency javaCurrency;
     protected Catalog currentCatalog;
     protected Boolean ignoreSite = false;
+    protected Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * Gets the current request on the context
@@ -278,5 +280,13 @@ public class BroadleafRequestContext {
 
     public void setIgnoreSite(Boolean ignoreSite) {
         this.ignoreSite = ignoreSite;
+    }
+
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
+    }
+
+    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
     }
 }

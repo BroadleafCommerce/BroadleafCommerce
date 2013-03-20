@@ -46,6 +46,11 @@ public class BroadleafAdminRequestProcessor implements BroadleafWebRequestProces
         BroadleafRequestContext brc = new BroadleafRequestContext();
         brc.setSite(site);
         brc.setWebRequest(request);
+
+        if (site == null) {
+            brc.setIgnoreSite(true);
+        }
+
         BroadleafRequestContext.setBroadleafRequestContext(brc);
     }
 

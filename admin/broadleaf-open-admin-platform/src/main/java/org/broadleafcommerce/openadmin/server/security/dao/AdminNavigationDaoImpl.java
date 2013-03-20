@@ -19,9 +19,8 @@ package org.broadleafcommerce.openadmin.server.security.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.hibernate.annotations.QueryHints;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -29,6 +28,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.List;
 
 /**
  *
@@ -64,6 +64,7 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
             TypedQuery<AdminSection> q = em.createQuery(
                 "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
             q.setParameter("className", className);
+            q.setHint(QueryHints.CACHEABLE, true);
             return q.getSingleResult();
         } catch (NoResultException e) {
             return null;
@@ -73,6 +74,7 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     @Override
     public AdminSection readAdminSectionByURI(String uri) {
         Query query = em.createNamedQuery("BC_READ_ADMIN_SECTION_BY_URI");
+        query.setHint(QueryHints.CACHEABLE, true);
         query.setParameter("uri", uri);
         AdminSection adminSection = null;
         try {
@@ -86,6 +88,7 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     @Override
     public AdminSection readAdminSectionBySectionKey(String sectionKey) {
         Query query = em.createNamedQuery("BC_READ_ADMIN_SECTION_BY_SECTION_KEY");
+        query.setHint(QueryHints.CACHEABLE, true);
         query.setParameter("sectionKey", sectionKey);
         AdminSection adminSection = null;
         try {

@@ -80,6 +80,11 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
         brc.setWebRequest(request);
         brc.setSandbox(currentSandbox);
         brc.setTheme(theme);
+
+        if (site == null) {
+            brc.setIgnoreSite(true);
+        }
+
         BroadleafRequestContext.setBroadleafRequestContext(brc);
 
         Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute("blRuleMap", WebRequest.SCOPE_REQUEST);

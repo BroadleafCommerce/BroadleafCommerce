@@ -45,7 +45,7 @@ public class BroadleafAdminRequestFilter extends OncePerRequestFilter {
     private Set<String> ignoreSuffixes;
 
     @Resource(name = "blAdminRequestProcessor")
-    protected BroadleafAdminRequestProcessor requestProcessor;
+    protected BroadleafWebRequestProcessor requestProcessor;
 
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
