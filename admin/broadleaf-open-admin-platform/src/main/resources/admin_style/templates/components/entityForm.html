@@ -16,6 +16,7 @@
       th:action="@{${currentUrl}}"
       th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
       
+    <input type="hidden" th:field="*{ceilingEntityClassname}" />
     <input type="hidden" th:field="*{entityType}" />
     <input type="hidden" th:field="*{id}" />
     

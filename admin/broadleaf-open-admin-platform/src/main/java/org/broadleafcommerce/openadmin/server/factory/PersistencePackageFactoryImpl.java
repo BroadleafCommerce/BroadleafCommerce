@@ -73,7 +73,7 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
         }
 
         PersistencePackage pp = new PersistencePackage();
-        pp.setCeilingEntityFullyQualifiedClassname(request.getClassName());
+        pp.setCeilingEntityFullyQualifiedClassname(request.getCeilingEntityClassname());
         pp.setFetchTypeFullyQualifiedClassname(null);
         pp.setPersistencePerspective(persistencePerspective);
         pp.setCustomCriteria(request.getCustomCriteria());

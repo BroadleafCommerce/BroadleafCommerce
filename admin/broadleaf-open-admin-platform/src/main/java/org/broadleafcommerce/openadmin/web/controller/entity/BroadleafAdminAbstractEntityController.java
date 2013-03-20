@@ -158,6 +158,11 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         } else {
             ClassMetadata specificTypeMd = service.getClassMetadata(getSectionPersistencePackageRequest(entityType));
             EntityForm entityForm = formService.buildEntityForm(specificTypeMd);
+            
+            // We need to make sure that the ceiling entity is set to the interface and the specific entity type
+            // is set to the type we're going to be creating.
+            entityForm.setCeilingEntityClassname(cmd.getCeilingType());
+            entityForm.setEntityType(specificTypeMd.getCeilingType());
 
             // When we initially build the class metadata (and thus, the entity form), we had all of the possible
             // polymorphic fields built out. Now that we have a concrete entity type to render, we can remove the
@@ -224,7 +229,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         ClassMetadata cmd = service.getClassMetadata(ppr);
         Entity entity = service.getRecord(ppr, id);
 
-        Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, id);
+        Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
 
         EntityForm entityForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
         
@@ -392,9 +397,12 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
+        Entity entity = service.getRecord(ppr, id);
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty,
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty,
                 criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]), sectionKey);
         model.addAttribute("listGrid", listGrid);
 
@@ -514,6 +522,8 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
+        
+        //service.getContextSpecificRelationshipId(mainMetadata, entity, prefix);
 
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
 
@@ -587,7 +597,10 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
-        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
+        Entity parentEntity = service.getRecord(ppr, id);
+        
+        ppr = PersistencePackageRequest.fromMetadata(md);
 
         if (md instanceof BasicCollectionMetadata &&
                 ((BasicCollectionMetadata) md).getAddMethodType().equals(AddMethodType.PERSIST)) {
@@ -606,7 +619,8 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
             AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) md;
 
             EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
-            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, id, collectionProperty, collectionItemId);
+            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty, 
+                    collectionItemId);
 
             formService.populateEntityFormFields(entityForm, entity);
             formService.populateAdornedEntityFormFields(entityForm, entity, ppr.getAdornedList());
@@ -617,7 +631,8 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
             MapMetadata fmd = (MapMetadata) md;
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, id, collectionProperty, collectionItemId);
+            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty, 
+                    collectionItemId);
             EntityForm entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
 
             formService.populateEntityFormFields(entityForm, entity);
@@ -655,11 +670,14 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
 
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
+        Entity entity = service.getRecord(ppr, id);
+        
         // First, we must save the collection entity
-        service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, id);
+        service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity);
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty, null, sectionKey);
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey);
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
@@ -690,11 +708,14 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
 
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
+        Entity entity = service.getRecord(ppr, id);
+        
         // First, we must save the collection entity
-        service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, id, collectionItemId);
+        service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, collectionItemId);
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty, null, sectionKey);
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey);
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
@@ -728,12 +749,15 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
 
         String priorKey = request.getParameter("key");
+        
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
+        Entity entity = service.getRecord(ppr, id);
 
         // First, we must remove the collection entity
-        service.removeSubCollectionEntity(mainMetadata, collectionProperty, id, collectionItemId, priorKey);
+        service.removeSubCollectionEntity(mainMetadata, collectionProperty, entity, collectionItemId, priorKey);
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, id, collectionProperty, null, sectionKey);
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey);
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
@@ -767,7 +791,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         // We need to inspect with the second custom criteria set to the id of
         // the desired structured content type
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
-                .withClassName(info.getCeilingClassName())
+                .withCeilingEntityClassname(info.getCeilingClassName())
                 .withCustomCriteria(new String[] { info.getCriteriaName(),  info.getPropertyValue() });
         ClassMetadata cmd = service.getClassMetadata(ppr);
         
@@ -791,7 +815,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
         // We need to inspect with the second custom criteria set to the id of
         // the desired structured content type
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
-                .withClassName(info.getCeilingClassName())
+                .withCeilingEntityClassname(info.getCeilingClassName())
                 .withCustomCriteria(new String[] { info.getCriteriaName(),  info.getPropertyValue() });
         ClassMetadata cmd = service.getClassMetadata(ppr);
         
@@ -829,12 +853,13 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, String id, Property collectionProperty,
+    protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, Entity entity, Property collectionProperty,
             FilterAndSortCriteria[] criteria, String sectionKey)
             throws ServiceException, ApplicationSecurityException {
-        Entity[] rows = service.getRecordsForCollection(mainMetadata, id, collectionProperty, criteria);
+        Entity[] rows = service.getRecordsForCollection(mainMetadata, entity, collectionProperty, criteria);
 
-        ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty, sectionKey);
+        ListGrid listGrid = formService.buildCollectionListGrid(entity.findProperty("id").getValue(), rows, 
+                collectionProperty, sectionKey);
         listGrid.setListGridType(ListGrid.Type.INLINE);
 
         return listGrid;
@@ -857,7 +882,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
 
     protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName) {
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
-                .withClassName(sectionClassName)
+                .withCeilingEntityClassname(sectionClassName)
                 .withCustomCriteria(getSectionCustomCriteria());
         
         attachSectionSpecificInfo(ppr);

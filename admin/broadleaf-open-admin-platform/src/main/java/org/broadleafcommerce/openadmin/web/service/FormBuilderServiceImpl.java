@@ -327,7 +327,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     @Override
     public EntityForm buildEntityForm(ClassMetadata cmd) {
         EntityForm ef = new EntityForm();
-        ef.setEntityType(cmd.getCeilingType());
+        ef.setCeilingEntityClassname(cmd.getCeilingType());
         
         AdminSection section = navigationService.findAdminSectionByClass(cmd.getCeilingType());
         if (section != null) {
@@ -451,7 +451,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         // Get the metadata for this adorned field
         PersistencePackageRequest request = PersistencePackageRequest.adorned()
-                .withClassName(adornedMd.getCollectionCeilingEntity())
+                .withCeilingEntityClassname(adornedMd.getCollectionCeilingEntity())
                 .withAdornedList(adornedList);
         ClassMetadata collectionMetadata = adminEntityService.getClassMetadata(request);
 
@@ -505,7 +505,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         } else {
             // Or they could be based on a different entity
             PersistencePackageRequest ppr = PersistencePackageRequest.standard()
-                    .withClassName(mapMd.getMapKeyOptionEntityClass());
+                    .withCeilingEntityClassname(mapMd.getMapKeyOptionEntityClass());
 
             Entity[] rows = adminEntityService.getRecords(ppr);
 
@@ -530,13 +530,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         setEntityFormFields(ef, mapFormProperties);
 
         // Add the symbolicId field required for persistence
-        Field f = new Field()
-                .withName("symbolicId")
-                .withFieldType(SupportedFieldType.HIDDEN.toString())
-                .withValue(parentId);
-        ef.addHiddenField(f);
+//        Field f = new Field()
+//                .withName("symbolicId")
+//                .withFieldType(SupportedFieldType.HIDDEN.toString())
+//                .withValue(parentId);
+//        ef.addHiddenField(f);
 
-        f = new Field()
+        Field f = new Field()
                 .withName("priorKey")
                 .withFieldType(SupportedFieldType.HIDDEN.toString());
         ef.addHiddenField(f);

@@ -106,14 +106,14 @@ public interface AdminEntityService {
      * Gets an Entity representing a specific collection item
      * 
      * @param containingClassMetadata
-     * @param containingEntityId
+     * @param containingEntity
      * @param collectionProperty
      * @param collectionItemId
      * @return the Entity
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public Entity getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, String containingEntityId,
+    public Entity getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, String collectionItemId)
             throws ServiceException, ApplicationSecurityException;
 
@@ -122,13 +122,13 @@ public interface AdminEntityService {
      * given containingClass and the primary key for the containingClass
      * 
      * @param containingClassMetadata
-     * @param containingEntityId
+     * @param containingEntity
      * @param collectionProperty
      * @return the Entity[]
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public Entity[] getRecordsForCollection(ClassMetadata containingClassMetadata, String containingEntityId,
+    public Entity[] getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, FilterAndSortCriteria[] criteria)
             throws ServiceException, ApplicationSecurityException;
 
@@ -136,14 +136,14 @@ public interface AdminEntityService {
      * Returns all records for all subcollections of the specified request and its primary key
      * 
      * @param ppr
-     * @param containingEntityId
+     * @param containingEntity
      * @return all Entity[] for all collections for the specified containingClass
      * @throws ServiceException
      * @throws ApplicationSecurityException
      * 
      * @see #getRecordsForCollection(ClassMetadata, String, Property)
      */
-    public Map<String, Entity[]> getRecordsForAllSubCollections(PersistencePackageRequest ppr, String containingEntityId)
+    public Map<String, Entity[]> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity)
             throws ServiceException, ApplicationSecurityException;
 
     /**
@@ -152,13 +152,14 @@ public interface AdminEntityService {
      * @param entityForm
      * @param mainMetadata
      * @param field
-     * @param parentId
+     * @param parentEntity
      * @return the persisted Entity
      * @throws ServiceException
      * @throws ApplicationSecurityException
      * @throws ClassNotFoundException
      */
-    public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, String parentId)
+    public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, 
+            Entity parentEntity)
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException;
 
     /**
@@ -167,7 +168,7 @@ public interface AdminEntityService {
      * @param entityForm
      * @param mainMetadata
      * @param field
-     * @param parentId
+     * @param parentEntity
      * @param collectionItemId
      * @return the persisted Entity
      * @throws ServiceException
@@ -175,7 +176,7 @@ public interface AdminEntityService {
      * @throws ClassNotFoundException
      */
     public Entity updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
-            String parentId, String collectionItemId)
+            Entity parentEntity, String collectionItemId)
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException;
 
     /**
@@ -189,9 +190,21 @@ public interface AdminEntityService {
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, String parentId, String itemId,
+    public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity, String itemId,
             String priorKey)
             throws ServiceException, ApplicationSecurityException;
 
+    /**
+     * Returns the appropriate id to use for the given entity/metadata and prefix when dealing with collections. For
+     * example, on the Product screen, we display associated media. However, this media is actually owned by the Sku entity,
+     * which means its property name is "defaultSku.skuMedia". In this case, when wanting to look up media for this product,
+     * we cannot use the id of the product. Instead, we need to use the id of the sku.
+     * 
+     * @param cmd
+     * @param entity
+     * @param propertyName
+     * @return the id to be used for this relationship
+     */
+    public String getContextSpecificRelationshipId(ClassMetadata cmd, Entity entity, String propertyName);
 
 }

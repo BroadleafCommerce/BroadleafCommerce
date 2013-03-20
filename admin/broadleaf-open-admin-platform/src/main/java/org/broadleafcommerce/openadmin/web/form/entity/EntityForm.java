@@ -25,6 +25,7 @@ public class EntityForm {
     public static final Integer DEFAULT_TAB_ORDER = 100;
 
     protected String id;
+    protected String ceilingEntityClassname;
     protected String entityType;
     protected String mainEntityName;
     protected String sectionKey;
@@ -226,6 +227,14 @@ public class EntityForm {
 
     public void setId(String id) {
         this.id = id;
+    }
+    
+    public String getCeilingEntityClassname() {
+        return ceilingEntityClassname;
+    }
+
+    public void setCeilingEntityClassname(String ceilingEntityClassname) {
+        this.ceilingEntityClassname = ceilingEntityClassname;
     }
 
     public String getEntityType() {

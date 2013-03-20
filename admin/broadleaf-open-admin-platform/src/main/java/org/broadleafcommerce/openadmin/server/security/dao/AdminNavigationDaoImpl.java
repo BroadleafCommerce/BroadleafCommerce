@@ -66,22 +66,8 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
             q.setParameter("className", className);
             return q.getSingleResult();
         } catch (NoResultException e) {
-            // Do nothing -- we'll try without "Impl"
+            return null;
         }
-        
-        if (className.endsWith("Impl")) {
-            try {
-                className = className.substring(0, className.length() - 4);
-                TypedQuery<AdminSection> q = em.createQuery(
-                    "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
-                q.setParameter("className", className);
-                return q.getSingleResult();
-            } catch (NoResultException e) {
-                // Do nothing -- we'll return null
-            }
-        }
-        
-        return null;
     }
 
     @Override

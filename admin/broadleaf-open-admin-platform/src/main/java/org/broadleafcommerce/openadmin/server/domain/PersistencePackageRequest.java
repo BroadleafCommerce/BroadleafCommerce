@@ -28,7 +28,7 @@ import java.util.List;
 public class PersistencePackageRequest {
 
     protected Type type;
-    protected String className;
+    protected String ceilingEntityClassname;
     protected String configKey;
     protected AdornedTargetList adornedList;
     protected MapStructure mapStructure;
@@ -81,7 +81,7 @@ public class PersistencePackageRequest {
             @Override
             public void visit(BasicFieldMetadata fmd) {
                 request.setType(Type.STANDARD);
-                request.setClassName(fmd.getForeignKeyClass());
+                request.setCeilingEntityClassname(fmd.getForeignKeyClass());
             }
 
             @Override
@@ -90,7 +90,7 @@ public class PersistencePackageRequest {
                         .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
 
                 request.setType(Type.STANDARD);
-                request.setClassName(fmd.getCollectionCeilingEntity());
+                request.setCeilingEntityClassname(fmd.getCollectionCeilingEntity());
                 request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.setForeignKey(foreignKey);
             }
@@ -101,7 +101,7 @@ public class PersistencePackageRequest {
                         .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
 
                 request.setType(Type.ADORNED);
-                request.setClassName(fmd.getCollectionCeilingEntity());
+                request.setCeilingEntityClassname(fmd.getCollectionCeilingEntity());
                 request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.setAdornedList(adornedList);
             }
@@ -115,7 +115,7 @@ public class PersistencePackageRequest {
                         getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
 
                 request.setType(Type.MAP);
-                request.setClassName(fmd.getTargetClass());
+                request.setCeilingEntityClassname(fmd.getTargetClass());
                 request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.setMapStructure(mapStructure);
                 request.setForeignKey(foreignKey);
@@ -146,8 +146,8 @@ public class PersistencePackageRequest {
         return this;
     }
 
-    public PersistencePackageRequest withClassName(String className) {
-        setClassName(className);
+    public PersistencePackageRequest withCeilingEntityClassname(String className) {
+        setCeilingEntityClassname(className);
         return this;
     }
 
@@ -265,15 +265,14 @@ public class PersistencePackageRequest {
     public void setType(Type type) {
         this.type = type;
     }
-
-    public String getClassName() {
-        return className;
+    
+    public String getCeilingEntityClassname() {
+        return ceilingEntityClassname;
     }
-
-    public void setClassName(String className) {
-        this.className = className;
+    
+    public void setCeilingEntityClassname(String ceilingEntityClassname) {
+        this.ceilingEntityClassname = ceilingEntityClassname;
     }
-
 
     public String getConfigKey() {
         return configKey;

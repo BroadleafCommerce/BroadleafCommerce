@@ -17,9 +17,11 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
@@ -67,7 +69,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     public ClassMetadata getClassMetadata(PersistencePackageRequest request)
             throws ServiceException, ApplicationSecurityException {
         ClassMetadata cmd = inspect(request).getClassMetaData();
-        cmd.setCeilingType(request.getClassName());
+        cmd.setCeilingType(request.getCeilingEntityClassname());
         return cmd;
     }
 
@@ -153,18 +155,20 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withEntity(entity)
                 .withCustomCriteria(customCriteria)
-                .withClassName(entityForm.getEntityType());
+                .withCeilingEntityClassname(entityForm.getCeilingEntityClassname());
 
         return ppr;
     }
 
     @Override
-    public Entity getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, String containingEntityId,
+    public Entity getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, String collectionItemId)
             throws ServiceException, ApplicationSecurityException {
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata());
 
         FieldMetadata md = collectionProperty.getMetadata();
+        String containingEntityId = getContextSpecificRelationshipId(containingClassMetadata, containingEntity, 
+                collectionProperty.getName());
 
         Entity entity = null;
 
@@ -208,7 +212,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity[] getRecordsForCollection(ClassMetadata containingClassMetadata, String containingEntityId,
+    public Entity[] getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, FilterAndSortCriteria[] criteria)
             throws ServiceException, ApplicationSecurityException {
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata())
@@ -228,26 +232,22 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                     "collection field.", collectionProperty.getName(), containingClassMetadata.getCeilingType()));
         }
 
-        fasc.setFilterValue(containingEntityId);
+        String id = getContextSpecificRelationshipId(containingClassMetadata, containingEntity, collectionProperty.getName());
+        fasc.setFilterValue(id);
         ppr.addFilterAndSortCriteria(fasc);
 
         return fetch(ppr).getRecords();
     }
 
     @Override
-    public Map<String, Entity[]> getRecordsForAllSubCollections(PersistencePackageRequest ppr, String containingEntityId)
+    public Map<String, Entity[]> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity) 
             throws ServiceException, ApplicationSecurityException {
         Map<String, Entity[]> map = new HashMap<String, Entity[]>();
 
         ClassMetadata cmd = getClassMetadata(ppr);
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof CollectionMetadata) {
-                Entity[] rows = getRecordsForCollection(cmd, containingEntityId, p, null);
-
-                //TODO APA Figure out where else to do this
-                //String collectionClass = ((CollectionMetadata) p.getMetadata()).getCollectionCeilingEntity();
-                //ClassMetadata collectionMd = getClassMetadata(collectionClass);
-
+                Entity[] rows = getRecordsForCollection(cmd, containingEntity, p, null);
                 map.put(p.getName(), rows);
             }
         }
@@ -256,7 +256,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, String parentId)
+    public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, 
+            Entity parentEntity)
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException {
         // Assemble the properties from the entity form
         List<Property> properties = new ArrayList<Property>();
@@ -278,18 +279,23 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
             Property fp = new Property();
             fp.setName(ppr.getForeignKey().getManyToField());
-            fp.setValue(parentId);
+            fp.setValue(getContextSpecificRelationshipId(mainMetadata, parentEntity, field.getName()));
             properties.add(fp);
         } else if (md instanceof AdornedTargetCollectionMetadata) {
             ppr.getEntity().setType(new String[] { ppr.getAdornedList().getAdornedTargetEntityClassname() });
         } else if (md instanceof MapMetadata) {
             ppr.getEntity().setType(new String[] { entityForm.getEntityType() });
+            
+            Property p = new Property();
+            p.setName("symbolicId");
+            p.setValue(getContextSpecificRelationshipId(mainMetadata, parentEntity, field.getName()));
+            properties.add(p);
         } else {
             throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was" +
                     " not a collection field.", field.getName(), mainMetadata.getCeilingType()));
         }
 
-        ppr.setClassName(ppr.getEntity().getType()[0]);
+        ppr.setCeilingEntityClassname(ppr.getEntity().getType()[0]);
 
         Property[] propArr = new Property[properties.size()];
         properties.toArray(propArr);
@@ -300,7 +306,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Override
     public Entity updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
-            String parentId, String collectionItemId)
+            Entity parentEntity, String collectionItemId)
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException {
         // Assemble the properties from the entity form
         List<Property> properties = new ArrayList<Property>();
@@ -322,18 +328,23 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
             Property fp = new Property();
             fp.setName(ppr.getForeignKey().getManyToField());
-            fp.setValue(parentId);
+            fp.setValue(getContextSpecificRelationshipId(mainMetadata, parentEntity, field.getName()));
             properties.add(fp);
         } else if (md instanceof AdornedTargetCollectionMetadata) {
             ppr.getEntity().setType(new String[] { ppr.getAdornedList().getAdornedTargetEntityClassname() });
         } else if (md instanceof MapMetadata) {
             ppr.getEntity().setType(new String[] { entityForm.getEntityType() });
+            
+            Property p = new Property();
+            p.setName("symbolicId");
+            p.setValue(getContextSpecificRelationshipId(mainMetadata, parentEntity, field.getName()));
+            properties.add(p);
         } else {
             throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was" +
                     " not a collection field.", field.getName(), mainMetadata.getCeilingType()));
         }
 
-        ppr.setClassName(ppr.getEntity().getType()[0]);
+        ppr.setCeilingEntityClassname(ppr.getEntity().getType()[0]);
 
         Property p = new Property();
         p.setName("id");
@@ -348,12 +359,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, String parentId, String itemId,
+    public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity, String itemId,
             String priorKey)
             throws ServiceException, ApplicationSecurityException {
         List<Property> properties = new ArrayList<Property>();
 
         Property p;
+        String parentId = getContextSpecificRelationshipId(mainMetadata, parentEntity, field.getName());
 
         Entity entity = new Entity();
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(field.getMetadata())
@@ -392,7 +404,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
             p = new Property();
             p.setName("symbolicId");
-            p.setValue(parentId);
+            p.setValue(getContextSpecificRelationshipId(mainMetadata, parentEntity, field.getName()));
             properties.add(p);
 
             p = new Property();
@@ -408,6 +420,45 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         ppr.getEntity().setProperties(propArr);
 
         remove(ppr);
+    }
+
+    @Override
+    public String getContextSpecificRelationshipId(ClassMetadata cmd, Entity entity, String propertyName) {
+        String prefix;
+        if (propertyName.contains(".")) {
+            prefix = propertyName.substring(0, propertyName.lastIndexOf("."));
+        } else {
+            prefix = "";
+        }
+                
+        if (prefix.equals("")) {
+            return entity.findProperty("id").getValue();
+        } else {
+            //we need to check all the parts of the prefix. For example, the prefix could include an @Embedded class like
+            //defaultSku.dimension. In this case, we want the id from the defaultSku property, since the @Embedded does
+            //not have an id property - nor should it.
+            String[] prefixParts = prefix.split("\\.");
+            for (int j = 0; j < prefixParts.length; j++) {
+                StringBuilder sb = new StringBuilder();
+                for (int x = 0; x < prefixParts.length - j; x++) {
+                    sb.append(prefixParts[x]);
+                    if (x < prefixParts.length - j - 1) {
+                        sb.append(".");
+                    }
+                }
+                String tempPrefix = sb.toString();
+                
+                for (Property property : entity.getProperties()) {
+                    if (property.getName().startsWith(tempPrefix)) {
+                        BasicFieldMetadata md = (BasicFieldMetadata) cmd.getPMap().get(property.getName()).getMetadata();
+                        if (md.getFieldType().equals(SupportedFieldType.ID)) {
+                            return property.getValue();
+                        }
+                    }
+                }
+            }
+        }
+        throw new RuntimeException("Unable to establish a relationship id");
     }
 
     protected Entity add(PersistencePackageRequest request)
