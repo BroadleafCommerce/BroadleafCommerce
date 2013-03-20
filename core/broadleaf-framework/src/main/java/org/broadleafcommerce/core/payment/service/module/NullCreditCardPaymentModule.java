@@ -106,7 +106,7 @@ public class NullCreditCardPaymentModule extends AbstractModule {
     }
 
     @Override
-    public PaymentResponseItem processPartialPayment(PaymentContext paymentContext, Money amountToCredit, PaymentResponseItem responseItem) throws PaymentException {
+    public PaymentResponseItem processPartialPayment(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
         throw new PaymentException("partial payment not implemented.");
     }
 

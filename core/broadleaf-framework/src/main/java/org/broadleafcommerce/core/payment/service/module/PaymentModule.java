@@ -56,5 +56,5 @@ public interface PaymentModule {
 
     public PaymentResponseItem processBalance(PaymentContext paymentContext, PaymentResponseItem responseItem) throws PaymentException;
 
-    public PaymentResponseItem processPartialPayment(PaymentContext paymentContext, Money amountToCredit, PaymentResponseItem responseItem) throws PaymentException;
+    public PaymentResponseItem processPartialPayment(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException;
 }
