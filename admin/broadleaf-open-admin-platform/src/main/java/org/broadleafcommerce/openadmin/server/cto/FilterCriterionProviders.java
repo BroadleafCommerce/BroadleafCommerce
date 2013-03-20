@@ -21,6 +21,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Component;
 
+import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.criteria.FilterCriterionProvider;
 import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
 import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider.FilterDataStrategy;
@@ -95,31 +96,31 @@ public class FilterCriterionProviders {
         }
     };
     
-    public FilterCriterionProvider getLikeProvider() {
+    public FilterCriterionProvider getLikeProvider(AssociationPath path) {
         return LIKE;
     }
 
-    public FilterCriterionProvider getEqProvider() {
+    public FilterCriterionProvider getEqProvider(AssociationPath path) {
         return EQ;
     }
 
-    public FilterCriterionProvider getIsNullProvider() {
+    public FilterCriterionProvider getIsNullProvider(AssociationPath path) {
         return ISNULL;
     }
 
-    public FilterCriterionProvider getLessThanOrEqualProvider() {
+    public FilterCriterionProvider getLessThanOrEqualProvider(AssociationPath path) {
         return LE;
     }
 
-    public FilterCriterionProvider getBetweenProvider() {
+    public FilterCriterionProvider getBetweenProvider(AssociationPath path) {
         return BETWEEN;
     }
 
-    public FilterCriterionProvider getBetweenDateProvider() {
+    public FilterCriterionProvider getBetweenDateProvider(AssociationPath path) {
         return BETWEEN_DATE;
     }
 
-    public FilterCriterionProvider getCollectionSizeEqualsProvider() {
+    public FilterCriterionProvider getCollectionSizeEqualsProvider(AssociationPath path) {
         return COLLECTION_SIZE_EQ;
     }
 

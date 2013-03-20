@@ -397,8 +397,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     protected Criteria getSkuCriteria(PersistentEntityCriteria criteria, Class entityClass, DynamicEntityDao deDao) {
         Criteria hibernateCriteria = deDao.createCriteria(entityClass);
         //Join these with left joins so that I get default Skus (that do not have this relationship) back as well
-        hibernateCriteria.createAlias("product", "prod", CriteriaSpecification.LEFT_JOIN)
-                .createAlias("prod.defaultSku", "defaultSku", CriteriaSpecification.LEFT_JOIN);
+        hibernateCriteria.createAlias("product", "product", CriteriaSpecification.LEFT_JOIN)
+                .createAlias("product.defaultSku", "defaultSku", CriteriaSpecification.LEFT_JOIN);
         criteria.apply(hibernateCriteria);
         return hibernateCriteria;
     }
