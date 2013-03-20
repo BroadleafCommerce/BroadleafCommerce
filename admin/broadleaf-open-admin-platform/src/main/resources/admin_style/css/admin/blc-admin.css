@@ -82,11 +82,10 @@ input[type="text"], input[type="password"], input[type="date"], input[type="date
 .entity-form .custom.dropdown,
 .indented-form-value,
 .entity-form input[type="text"], .entity-form input[type="password"], .entity-form input[type="date"], .entity-form input[type="datetime"], .entity-form input[type="email"], .entity-form input[type="number"], .entity-form input[type="search"], .entity-form input[type="tel"], .entity-form input[type="time"], .entity-form input[type="url"], .entity-form textarea {
-    margin: 7px 0 20px 20px;
+    margin: 7px 0 20px 0px;
 }
 
 .entity-form .custom-checkbox {
-	margin-left: 20px;
 }
 
 .indented-form-value {

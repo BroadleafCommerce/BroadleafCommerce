@@ -106,7 +106,7 @@
                     <span th:unless="${headerFieldStat.first}" th:remove="tag" th:text="${field.displayValue}" />
                 </span>
                 
-                <span th:case="*" th:remove="tag" th:inline="text">
+                <span th:case="*" th:inline="text">
                     [[${field.value}]]
                     <a th:if="${headerFieldStat.first and record.canLinkToExternalEntity}" 
                         th:href="@{${record.externalEntityPath}}"
