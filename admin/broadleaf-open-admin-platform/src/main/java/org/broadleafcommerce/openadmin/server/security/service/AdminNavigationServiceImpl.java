@@ -27,10 +27,11 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * This service is used to build the left hand navigation for the admin
@@ -83,7 +84,17 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     
     @Override
     public AdminSection findAdminSectionByClass(String className) {
-        return adminNavigationDao.readAdminSectionByClass(className);
+        try {
+            return findAdminSectionByClass(Class.forName(className));
+        } catch (ClassNotFoundException e) {
+            LOG.warn("Invalid classname received. This likely points to a configuration error.");
+            return null;
+        }
+    }
+    
+    @Override
+    public AdminSection findAdminSectionByClass(Class<?> clazz) {
+        return adminNavigationDao.readAdminSectionByClass(clazz);
     }
 
     @Override

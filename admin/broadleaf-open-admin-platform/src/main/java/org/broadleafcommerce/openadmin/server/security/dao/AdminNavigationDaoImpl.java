@@ -22,13 +22,14 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.hibernate.annotations.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.List;
 
 /**
  *
@@ -59,7 +60,29 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     }
     
     @Override
-    public AdminSection readAdminSectionByClass(String className) {
+    public AdminSection readAdminSectionByClass(Class<?> clazz) {
+        String className = clazz.getName();
+        
+        // Try to find a section for the exact input received
+        AdminSection section = readAdminSectionForClassName(className);
+        if (section != null) return section;
+        
+        // If we didn't find a section, and this class ends in Impl, try again without the Impl.
+        // Most of the sections should match to the interface
+        if (className.endsWith("Impl")) {
+            className = className.substring(0, className.length() - 4);
+            section = readAdminSectionForClassName(className);
+        }
+        if (section != null) return section;
+        
+        // If we still didn't find a section, we should walk up the inheritance hierarchy tree looking for
+        // implemented interfaces or extensions of those interfaces.
+        // TODO: APA
+        
+        return null;
+    }
+    
+    protected AdminSection readAdminSectionForClassName(String className) {
         try {
             TypedQuery<AdminSection> q = em.createQuery(
                 "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);

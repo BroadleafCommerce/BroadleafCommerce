@@ -35,5 +35,8 @@ public interface AdminNavigationService {
     public AdminSection findAdminSectionBySectionKey(String sectionKey);
 
     public AdminSection findAdminSectionByClass(String className);
+    public AdminSection findAdminSectionByClass(Class<?> clazz);
+
+
 
 }
