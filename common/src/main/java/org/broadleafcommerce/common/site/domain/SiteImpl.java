@@ -76,21 +76,21 @@ public class SiteImpl implements Site {
     protected Long id;
 
     @Column (name = "NAME")
-    @AdminPresentation(friendlyName = "SiteImpl_Site_Name", order=1, group = "SiteImpl_Site", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "SiteImpl_Site_Name", order=1, gridOrder = 1, group = "SiteImpl_Site", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected String name;
 
     @Column (name = "SITE_IDENTIFIER_TYPE")
-    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Type", order=2, group = "SiteImpl_Site", prominent = true, broadleafEnumeration = "org.broadleafcommerce.common.site.service.type.SiteResolutionType", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Type", order=2, gridOrder = 2, group = "SiteImpl_Site", prominent = true, broadleafEnumeration = "org.broadleafcommerce.common.site.service.type.SiteResolutionType", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, requiredOverride = RequiredOverride.REQUIRED)
     protected String siteIdentifierType;
 
     @Column (name = "SITE_IDENTIFIER_VALUE")
-    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Value", order=3, group = "SiteImpl_Site", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Value", order=3, gridOrder = 3, group = "SiteImpl_Site", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     @Index(name = "BLC_SITE_ID_VAL_INDEX", columnNames = { "SITE_IDENTIFIER_VALUE" })
     protected String siteIdentifierValue;
 
     @ManyToOne(targetEntity = SandBoxImpl.class)
     @JoinColumn(name = "PRODUCTION_SANDBOX_ID")
-    @AdminPresentation(friendlyName = "SiteImpl_Production_SandBox", order=4, group = "SiteImpl_Site", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "SiteImpl_Production_SandBox", visibility = VisibilityEnum.HIDDEN_ALL)
     protected SandBox productionSandbox;
 
     @ManyToMany(targetEntity = CatalogImpl.class, cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
