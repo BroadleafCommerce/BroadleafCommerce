@@ -19,6 +19,12 @@ package org.broadleafcommerce.common.site.domain;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
@@ -57,6 +63,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SITE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@AdminPresentationClass(friendlyName = "baseSite")
 public class SiteImpl implements Site {
 
     private static final long serialVersionUID = 1L;
@@ -69,15 +76,15 @@ public class SiteImpl implements Site {
     protected Long id;
 
     @Column (name = "NAME")
-    @AdminPresentation(friendlyName = "SiteImpl_Site_Name", order=1, group = "SiteImpl_Site")
+    @AdminPresentation(friendlyName = "SiteImpl_Site_Name", order=1, group = "SiteImpl_Site", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected String name;
 
     @Column (name = "SITE_IDENTIFIER_TYPE")
-    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Type", order=2, group = "SiteImpl_Site")
+    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Type", order=2, group = "SiteImpl_Site", prominent = true, broadleafEnumeration = "org.broadleafcommerce.common.site.service.type.SiteResolutionType", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, requiredOverride = RequiredOverride.REQUIRED)
     protected String siteIdentifierType;
 
     @Column (name = "SITE_IDENTIFIER_VALUE")
-    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Value", order=3, group = "SiteImpl_Site")
+    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Value", order=3, group = "SiteImpl_Site", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     @Index(name = "BLC_SITE_ID_VAL_INDEX", columnNames = { "SITE_IDENTIFIER_VALUE" })
     protected String siteIdentifierValue;
 
@@ -89,6 +96,7 @@ public class SiteImpl implements Site {
     @ManyToMany(targetEntity = CatalogImpl.class, cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "BLC_SITE_CATALOG", joinColumns = @JoinColumn(name = "SITE_ID"), inverseJoinColumns = @JoinColumn(name = "CATALOG_ID"))
     @BatchSize(size = 50)
+    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "siteCatalogTitle", dataSourceName = "siteCatalogDS", manyToField = "sites")
     protected List<Catalog> catalogs = new ArrayList<Catalog>();
 
     @Override
