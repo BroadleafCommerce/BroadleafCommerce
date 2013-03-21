@@ -103,6 +103,13 @@ public class BroadleafAdminProductController extends BroadleafAdminAbstractEntit
             @PathVariable String collectionField) throws Exception {
         return super.showSelectCollectionItem(request, response, model, SECTION_KEY, collectionField);
     }
+    
+    @RequestMapping(value = "/{collectionField}/{id}/view", method = RequestMethod.GET)
+    public String viewCollectionItemDetails(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String collectionField,
+            @PathVariable String id) throws Exception {
+        return super.viewCollectionItemDetails(request, response, model, SECTION_KEY, collectionField, id);
+    }
 
     @RequestMapping(value = "/{id}/{collectionField}/add", method = RequestMethod.GET)
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
