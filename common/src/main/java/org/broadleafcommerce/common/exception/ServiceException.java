@@ -29,6 +29,7 @@ public class ServiceException extends Exception implements IsSerializable {
     
     // for serialization purposes
     protected ServiceException() {
+        super();
     }
     
     public ServiceException(String message, Throwable cause) {

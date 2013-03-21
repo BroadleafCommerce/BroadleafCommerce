@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 import net.entropysoft.transmorph.cache.LRUMap;
-
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
@@ -42,16 +42,15 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-
+import javax.annotation.Resource;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * @author jfischer
@@ -128,6 +127,23 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         }
     }
 
+    protected ServiceException recreateSpecificServiceException(ServiceException e, String message, Throwable cause) {
+        try {
+            ServiceException newException;
+            if (cause == null) {
+                Constructor constructor = e.getClass().getConstructor(String.class);
+                newException = (ServiceException) constructor.newInstance(message);
+            } else {
+                Constructor constructor = e.getClass().getConstructor(String.class, Throwable.class);
+                newException = (ServiceException) constructor.newInstance(message, cause);
+            }
+
+            return newException;
+        } catch (Exception e1) {
+            throw new RuntimeException(e1);
+        }
+    }
+
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
@@ -139,11 +155,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             return persistenceManager.inspect(persistencePackage);
         } catch (ServiceException e) {
             String message = exploitProtectionService.cleanString(e.getMessage());
-            if (e.getCause() == null) {
-                throw new ServiceException(message);
-            } else {
-                throw new ServiceException(message, e.getCause());
-            }
+            throw recreateSpecificServiceException(e, message, e.getCause());
         } catch (Exception e) {
             LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
             throw new ServiceException(exploitProtectionService.cleanString("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname), e);
@@ -162,11 +174,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             return persistenceManager.fetch(persistencePackage, targetCto);
         } catch (ServiceException e) {
             String message = exploitProtectionService.cleanString(e.getMessage());
-            if (e.getCause() == null) {
-                throw new ServiceException(message);
-            } else {
-                throw new ServiceException(message, e.getCause());
-            }
+            throw recreateSpecificServiceException(e, message, e.getCause());
         }
     }
 
@@ -224,11 +232,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             return persistenceManager.add(persistencePackage);
         } catch (ServiceException e) {
             String message = exploitProtectionService.cleanString(e.getMessage());
-            if (e.getCause() == null) {
-                throw new ServiceException(message);
-            } else {
-                throw new ServiceException(message, e.getCause());
-            }
+            throw recreateSpecificServiceException(e, message, e.getCause());
         }
     }
 
@@ -246,11 +250,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             return persistenceManager.update(persistencePackage);
         } catch (ServiceException e) {
             String message = exploitProtectionService.cleanString(e.getMessage());
-            if (e.getCause() == null) {
-                throw new ServiceException(message);
-            } else {
-                throw new ServiceException(message, e.getCause());
-            }
+            throw recreateSpecificServiceException(e, message, e.getCause());
         }
     }
 
@@ -264,11 +264,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             persistenceManager.remove(persistencePackage);
         } catch (ServiceException e) {
             String message = exploitProtectionService.cleanString(e.getMessage());
-            if (e.getCause() == null) {
-                throw new ServiceException(message);
-            } else {
-                throw new ServiceException(message, e.getCause());
-            }
+            throw recreateSpecificServiceException(e, message, e.getCause());
         }
     }
 
