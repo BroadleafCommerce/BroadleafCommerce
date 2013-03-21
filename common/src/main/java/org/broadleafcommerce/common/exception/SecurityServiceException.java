@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  *
  * @author Jeff Fischer
  */
-@ResponseStatus(value= HttpStatus.FORBIDDEN, reason="Unable to perform operation with current credentials")
+@ResponseStatus(value= HttpStatus.FORBIDDEN, reason="Access is denied")
 public class SecurityServiceException extends ServiceException {
 
     public SecurityServiceException() {

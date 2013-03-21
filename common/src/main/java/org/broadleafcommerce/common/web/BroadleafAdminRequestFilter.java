@@ -61,7 +61,7 @@ public class BroadleafAdminRequestFilter extends OncePerRequestFilter {
             requestProcessor.process(new ServletWebRequest(request, response));
             filterChain.doFilter(request, response);
         } catch (SiteNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_FOUND);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
    
