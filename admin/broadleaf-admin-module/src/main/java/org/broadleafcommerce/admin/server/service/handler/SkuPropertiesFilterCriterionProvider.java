@@ -77,15 +77,15 @@ public class SkuPropertiesFilterCriterionProvider extends FilterCriterionProvide
         if (!path.equals(AssociationPath.ROOT)) {
             return super.getEqProvider(path);
         }
-            return new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 1) {
+        return new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 1) {
 
-                @Override
-                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-                    return buildCriterion(targetPropertyName,
-                            Restrictions.eq(targetPropertyName, directValues[0]),
-                            Restrictions.eq(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0]));
-                }
-            };
+            @Override
+            public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+                return buildCriterion(targetPropertyName,
+                        Restrictions.eq(targetPropertyName, directValues[0]),
+                        Restrictions.eq(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0]));
+            }
+        };
 
     }
 
@@ -94,15 +94,15 @@ public class SkuPropertiesFilterCriterionProvider extends FilterCriterionProvide
         if (!path.equals(AssociationPath.ROOT)) {
             return super.getIsNullProvider(path);
         }
-            return new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 1) {
+        return new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 1) {
 
-                @Override
-                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-                    return buildCriterion(targetPropertyName,
-                            Restrictions.isNull(targetPropertyName),
-                            Restrictions.isNull(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName));
-                }
-            };
+            @Override
+            public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+                return buildCriterion(targetPropertyName,
+                        Restrictions.isNull(targetPropertyName),
+                        Restrictions.isNull(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName));
+            }
+        };
 
     }
 
@@ -111,15 +111,15 @@ public class SkuPropertiesFilterCriterionProvider extends FilterCriterionProvide
         if (!path.equals(AssociationPath.ROOT)) {
             return super.getLessThanOrEqualProvider(path);
         }
-            return new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, 1) {
+        return new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, 1) {
 
-                @Override
-                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-                    return buildCriterion(targetPropertyName,
-                            Restrictions.le(targetPropertyName, directValues[0]),
-                            Restrictions.le(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0]));
-                }
-            };
+            @Override
+            public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+                return buildCriterion(targetPropertyName,
+                        Restrictions.le(targetPropertyName, directValues[0]),
+                        Restrictions.le(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0]));
+            }
+        };
 
     }
 
@@ -128,21 +128,21 @@ public class SkuPropertiesFilterCriterionProvider extends FilterCriterionProvide
         if (!path.equals(AssociationPath.ROOT)) {
             return super.getBetweenProvider(path);
         }
-            return new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 2) {
+        return new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 2) {
 
-                @Override
-                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-                    if (directValues.length > 1) {
-                        return buildCriterion(targetPropertyName,
-                                Restrictions.between(targetPropertyName, directValues[0], directValues[1]),
-                                Restrictions.between(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0], directValues[1]));
-                    } else {
-                        return buildCriterion(targetPropertyName,
-                                Restrictions.eq(targetPropertyName, directValues[0]),
-                                Restrictions.eq(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0]));
-                    }
+            @Override
+            public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+                if (directValues.length > 1) {
+                    return buildCriterion(targetPropertyName,
+                            Restrictions.between(targetPropertyName, directValues[0], directValues[1]),
+                            Restrictions.between(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0], directValues[1]));
+                } else {
+                    return buildCriterion(targetPropertyName,
+                            Restrictions.eq(targetPropertyName, directValues[0]),
+                            Restrictions.eq(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0]));
                 }
-            };
+            }
+        };
 
     }
 
@@ -151,29 +151,29 @@ public class SkuPropertiesFilterCriterionProvider extends FilterCriterionProvide
         if (!path.equals(AssociationPath.ROOT)) {
             return super.getBetweenDateProvider(path);
         }
-            return new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 2) {
+        return new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 2) {
 
-                @Override
-                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-                    if (directValues.length > 2) {
-                        return buildCriterion(targetPropertyName,
-                                Restrictions.between(skuPropertyPrefix + targetPropertyName, directValues[0], directValues[2]),
-                                Restrictions.between(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0], directValues[2]));
-                    } else if (directValues[0] == null) {
-                        return buildCriterion(targetPropertyName,
-                                Restrictions.lt(skuPropertyPrefix + targetPropertyName, directValues[1]),
-                                Restrictions.lt(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[1]));
-                    } else if (directValues[1] == null) {
-                        return buildCriterion(targetPropertyName,
-                                Restrictions.ge(targetPropertyName, directValues[0]),
-                                Restrictions.ge(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0]));
-                    } else {
-                        return buildCriterion(targetPropertyName,
-                                Restrictions.eq(targetPropertyName, directValues[0]),
-                                Restrictions.eq(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0]));
-                    }
+            @Override
+            public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+                if (directValues.length > 2) {
+                    return buildCriterion(targetPropertyName,
+                            Restrictions.between(skuPropertyPrefix + targetPropertyName, directValues[0], directValues[2]),
+                            Restrictions.between(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0], directValues[2]));
+                } else if (directValues[0] == null) {
+                    return buildCriterion(targetPropertyName,
+                            Restrictions.lt(skuPropertyPrefix + targetPropertyName, directValues[1]),
+                            Restrictions.lt(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[1]));
+                } else if (directValues[1] == null) {
+                    return buildCriterion(targetPropertyName,
+                            Restrictions.ge(targetPropertyName, directValues[0]),
+                            Restrictions.ge(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0]));
+                } else {
+                    return buildCriterion(targetPropertyName,
+                            Restrictions.eq(targetPropertyName, directValues[0]),
+                            Restrictions.eq(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, directValues[0]));
                 }
-            };
+            }
+        };
 
     }
 
@@ -182,15 +182,15 @@ public class SkuPropertiesFilterCriterionProvider extends FilterCriterionProvide
         if (!path.equals(AssociationPath.ROOT)) {
             return super.getCollectionSizeEqualsProvider(path);
         }
-            return new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, 1) {
+        return new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, 1) {
 
-                @Override
-                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-                    return buildCriterion(targetPropertyName,
-                            Restrictions.sizeEq(targetPropertyName, (Integer) directValues[0]),
-                            Restrictions.sizeEq(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, (Integer) directValues[0]));
-                }
-            };
+            @Override
+            public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+                return buildCriterion(targetPropertyName,
+                        Restrictions.sizeEq(targetPropertyName, (Integer) directValues[0]),
+                        Restrictions.sizeEq(skuPropertyPrefix + DEFAULT_SKU_PATH_PREFIX + targetPropertyName, (Integer) directValues[0]));
+            }
+        };
 
     }
 
