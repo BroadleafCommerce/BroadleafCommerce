@@ -20,12 +20,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
+import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.stereotype.Service;
@@ -149,6 +151,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
+    public String getSolrDocumentId(SolrInputDocument document, Product product) {
+        return String.valueOf(product.getId());
+    }
+    
+    @Override
     public String getNamespaceFieldName() {
         return "namespace";
     }
@@ -156,6 +163,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public String getIdFieldName() {
         return "id";
+    }
+    
+    @Override
+    public String getProductIdFieldName() {
+        return "productId";
     }
 
     @Override

@@ -16,9 +16,11 @@
 
 package org.broadleafcommerce.core.search.service.solr;
 
+import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
@@ -94,6 +96,12 @@ public interface SolrHelperService {
      * @return the property name for the facet type of this field
      */
     public String getPropertyNameForFieldFacet(Field field);
+    
+    /**
+     * @param product
+     * @return the Solr id of this product
+     */
+    public String getSolrDocumentId(SolrInputDocument document, Product product);
 
     /**
      * @return the name of the field that keeps track what namespace this document belongs to
@@ -104,6 +112,11 @@ public interface SolrHelperService {
      * @return the id field name, with the global prefix as appropriate
      */
     public String getIdFieldName();
+    
+    /**
+     * @return the productId field name
+     */
+    public String getProductIdFieldName();
 
     /**
      * @return the category field name, with the global prefix as appropriate
@@ -159,5 +172,6 @@ public interface SolrHelperService {
      * @return the default locale
      */
     public Locale getDefaultLocale();
+
 
 }

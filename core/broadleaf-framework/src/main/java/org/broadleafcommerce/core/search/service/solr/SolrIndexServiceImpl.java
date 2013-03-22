@@ -45,7 +45,6 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -56,6 +55,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -143,7 +144,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     protected void deleteAllDocuments() throws ServiceException {
         try {
-            String deleteQuery = shs.getNamespaceFieldName() + ":" + shs.getCurrentNamespace();
+            String deleteQuery = "*:*";
             LOG.debug("Deleting by query: " + deleteQuery);
             SolrContext.getReindexServer().deleteByQuery(deleteQuery);
             SolrContext.getReindexServer().commit();
@@ -345,7 +346,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     protected void attachBasicDocumentFields(Product product, SolrInputDocument document) {
         // Add the namespace and ID fields for this product
         document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
-        document.addField(shs.getIdFieldName(), product.getId());
+        document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
+        document.addField(shs.getProductIdFieldName(), product.getId());
 
         // The explicit categories are the ones defined by the product itself
         for (CategoryProductXref categoryXref : product.getAllParentCategoryXrefs()) {

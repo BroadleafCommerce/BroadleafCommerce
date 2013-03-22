@@ -54,8 +54,6 @@ import org.broadleafcommerce.core.search.service.SearchService;
 import org.springframework.beans.factory.DisposableBean;
 import org.xml.sax.SAXException;
 
-import javax.annotation.Resource;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -73,6 +71,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * An implementation of SearchService that uses Solr.
@@ -265,7 +266,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // Build the basic query
         SolrQuery solrQuery = new SolrQuery()
                 .setQuery(qualifiedSolrQuery)
-                .setFields(shs.getIdFieldName())
+                .setFields(shs.getProductIdFieldName())
                 .setRows(searchCriteria.getPageSize())
                 .setFilterQueries(shs.getNamespaceFieldName() + ":" + shs.getCurrentNamespace())
                 .setStart((searchCriteria.getPage() - 1) * searchCriteria.getPageSize());
@@ -286,6 +287,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // Query solr
         QueryResponse response;
         try {
+            //solrQuery = new SolrQuery().setQuery("*:*");
+            
             response = SolrContext.getServer().query(solrQuery);
             if (LOG.isTraceEnabled()) {
                 LOG.trace(response.toString());
@@ -528,12 +531,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         final List<Long> productIds = new ArrayList<Long>();
         SolrDocumentList docs = response.getResults();
         for (SolrDocument doc : docs) {
-            Object temp = doc.getFieldValue(shs.getIdFieldName());
-            if (temp instanceof String) {
-                productIds.add(Long.parseLong((String) temp));
-            } else {
-                productIds.add((Long) temp);
-            }
+            productIds.add((Long) doc.getFieldValue(shs.getProductIdFieldName()));
         }
 
         List<Product> products = productDao.readProductsByIds(productIds);
