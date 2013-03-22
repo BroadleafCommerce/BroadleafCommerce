@@ -85,11 +85,16 @@ var BLC = (function($) {
         return document.location.search = params;
     };
     
+    function getThemeVariables() {
+        return //BLC-THEME-VARIABLES
+    }
+    
     return {
         redirectIfNecessary : redirectIfNecessary,
         getExtraData : getExtraData,
         ajax : ajax,
         serializeObject : serializeObject,
-        addUrlParam : addUrlParam
+        addUrlParam : addUrlParam,
+        getThemeVariables : getThemeVariables
     }
 })($);
