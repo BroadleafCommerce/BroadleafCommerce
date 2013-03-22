@@ -55,6 +55,13 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKeyManyToMany;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -75,13 +82,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class })
@@ -135,7 +135,7 @@ public class OrderImpl implements Order {
 
     @Column(name = "TOTAL_SHIPPING", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Shipping", group = "OrderImpl_Order", order=10, fieldType=SupportedFieldType.MONEY)
-    protected BigDecimal totalShipping;
+    protected BigDecimal totalFulfillmentCharges;
 
     @Column(name = "ORDER_SUBTOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = "OrderImpl_Order", order=3, fieldType=SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode")
@@ -168,8 +168,7 @@ public class OrderImpl implements Order {
     @OrderBy("id")
     protected List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
 
-    @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
 
@@ -178,12 +177,11 @@ public class OrderImpl implements Order {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<OfferCode> addedOfferCodes = new ArrayList<OfferCode>();
 
-    @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<CandidateOrderOffer> candidateOrderOffers = new ArrayList<CandidateOrderOffer>();
 
-    @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
 
@@ -194,8 +192,7 @@ public class OrderImpl implements Order {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected Map<Offer, OfferInfo> additionalOfferInformation = new HashMap<Offer, OfferInfo>();
 
-    @OneToMany(mappedBy = "order", targetEntity = OrderAttributeImpl.class, cascade = { CascadeType.ALL })
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "order", targetEntity = OrderAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="name")
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<String,OrderAttribute>();
@@ -241,20 +238,10 @@ public class OrderImpl implements Order {
     }
 
     @Override
-    public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
+    public Money calculateSubTotal() {
         Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(getCurrency());
         for (OrderItem orderItem : orderItems) {
-            Money price;
-            if (includeNonTaxableItems) {
-                price = orderItem.getPrice();
-            } else {
-                price = orderItem.getTaxablePrice();
-            }
-            if (orderItem instanceof BundleOrderItem) {
-                calculatedSubTotal = calculatedSubTotal.add(price);
-            } else {
-                calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
-            }
+            calculatedSubTotal = calculatedSubTotal.add(orderItem.getTotalPrice());
         }
         return calculatedSubTotal;
     }
@@ -378,12 +365,22 @@ public class OrderImpl implements Order {
 
     @Override
     public Money getTotalShipping() {
-        return totalShipping == null ? null : BroadleafCurrencyUtils.getMoney(totalShipping, getCurrency());
+        return getTotalFulfillmentCharges();
     }
 
     @Override
     public void setTotalShipping(Money totalShipping) {
-        this.totalShipping = Money.toAmount(totalShipping);
+        setTotalFulfillmentCharges(totalShipping);
+    }
+
+    @Override
+    public Money getTotalFulfillmentCharges() {
+        return totalFulfillmentCharges == null ? null : BroadleafCurrencyUtils.getMoney(totalFulfillmentCharges, getCurrency());
+    }
+
+    @Override
+    public void setTotalFulfillmentCharges(Money totalFulfillmentCharges) {
+        this.totalFulfillmentCharges = Money.toAmount(totalFulfillmentCharges);
     }
 
     @Override
@@ -495,7 +492,7 @@ public class OrderImpl implements Order {
     public Money getItemAdjustmentsValue() {
         Money itemAdjustmentsValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderItem orderItem : orderItems) {
-            itemAdjustmentsValue = itemAdjustmentsValue.add(orderItem.getAdjustmentValue().multiply(orderItem.getQuantity()));
+            itemAdjustmentsValue = itemAdjustmentsValue.add(orderItem.getTotalAdjustmentValue());
         }
         return itemAdjustmentsValue;
     }
@@ -530,9 +527,18 @@ public class OrderImpl implements Order {
     public boolean updatePrices() {
         boolean updated = false;
         for (OrderItem orderItem : orderItems) {
-            if (orderItem.updatePrices()) {
+            if (orderItem.updateSaleAndRetailPrices()) {
                 updated = true;
             }
+        }
+        return updated;
+    }
+
+    @Override
+    public boolean finalizeItemPrices() {
+        boolean updated = false;
+        for (OrderItem orderItem : orderItems) {
+            orderItem.finalizePrice();
         }
         return updated;
     }
@@ -584,6 +590,15 @@ public class OrderImpl implements Order {
             count += doi.getQuantity();
         }
         return count;
+    }
+
+    @Override
+    public boolean getHasOrderAdjustments() {
+        Money orderAdjustmentsValue = getOrderAdjustmentsValue();
+        if (orderAdjustmentsValue != null) {
+            return (orderAdjustmentsValue.compareTo(BigDecimal.ZERO) != 0);
+        }
+        return false;
     }
 
     @Override

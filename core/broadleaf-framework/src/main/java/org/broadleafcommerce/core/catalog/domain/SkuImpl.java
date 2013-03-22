@@ -537,7 +537,7 @@ public class SkuImpl implements Sku {
             if (hasDefaultSku()) {
                 return lookupDefaultSku().isDiscountable();
             }
-            return null;
+            return Boolean.FALSE;
         }
         return discountable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }

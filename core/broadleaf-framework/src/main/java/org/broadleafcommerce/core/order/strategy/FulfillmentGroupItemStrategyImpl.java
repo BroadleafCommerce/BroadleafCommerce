@@ -33,14 +33,14 @@ import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -115,7 +115,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                     order.getFulfillmentGroups().add(fulfillmentGroup);
                 }
                 
-                fulfillmentGroup = addItemToFulfillmentGroup(order, doi, fulfillmentGroup);
+                fulfillmentGroup = addItemToFulfillmentGroup(order, doi, doi.getQuantity() * orderItem.getQuantity(), fulfillmentGroup);
                 order = fulfillmentGroup.getOrder();
             }
         } else {
@@ -165,10 +165,14 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     }
     
     protected FulfillmentGroup addItemToFulfillmentGroup(Order order, DiscreteOrderItem orderItem, FulfillmentGroup fulfillmentGroup) throws PricingException {
+        return this.addItemToFulfillmentGroup(order, orderItem, orderItem.getQuantity(), fulfillmentGroup);
+    }
+
+    protected FulfillmentGroup addItemToFulfillmentGroup(Order order, DiscreteOrderItem orderItem, int quantity, FulfillmentGroup fulfillmentGroup) throws PricingException {
         FulfillmentGroupItemRequest fulfillmentGroupItemRequest = new FulfillmentGroupItemRequest();
         fulfillmentGroupItemRequest.setOrder(order);
         fulfillmentGroupItemRequest.setOrderItem(orderItem);
-        fulfillmentGroupItemRequest.setQuantity(orderItem.getQuantity());
+        fulfillmentGroupItemRequest.setQuantity(quantity);
         fulfillmentGroupItemRequest.setFulfillmentGroup(fulfillmentGroup);
         return fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, false);
     }

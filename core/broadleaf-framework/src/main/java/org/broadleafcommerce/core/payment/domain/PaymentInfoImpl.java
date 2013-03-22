@@ -29,6 +29,8 @@ import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
+import org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.hibernate.annotations.CollectionOfElements;
@@ -106,6 +108,11 @@ public class PaymentInfoImpl implements PaymentInfo {
 
     @Transient
     protected Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
+
+    @ManyToOne(targetEntity = CustomerPaymentImpl.class)
+    @JoinColumn(name = "CUSTOMER_PAYMENT_ID")
+    @Index(name="CUSTOMER_PAYMENT", columnNames={"CUSTOMER_PAYMENT_ID"})
+    protected CustomerPayment customerPayment;
 
     @Override
     public Money getAmount() {
@@ -215,6 +222,16 @@ public class PaymentInfoImpl implements PaymentInfo {
     @Override
     public void setRequestParameterMap(Map<String, String[]> requestParameterMap) {
         this.requestParameterMap = requestParameterMap;
+    }
+
+    @Override
+    public CustomerPayment getCustomerPayment() {
+        return customerPayment;
+    }
+
+    @Override
+    public void setCustomerPayment(CustomerPayment customerPayment) {
+        this.customerPayment = customerPayment;
     }
 
     @Override

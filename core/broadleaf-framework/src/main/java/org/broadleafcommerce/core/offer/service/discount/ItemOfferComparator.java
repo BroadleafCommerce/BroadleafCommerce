@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.offer.service.discount;
 
-import java.util.Comparator;
-
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
+
+import java.util.Comparator;
 
 /**
  * 
@@ -39,9 +39,8 @@ public class ItemOfferComparator implements Comparator<PromotableCandidateItemOf
         if (result == 0) {
             // highest potential savings wins
             return p2.getPotentialSavings().compareTo(p1.getPotentialSavings());
-        } else {
-            return result;
         }
+        return result;
     }
 
 }

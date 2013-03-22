@@ -20,15 +20,22 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.ProductBundleImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
+import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
+import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.domain.OfferRuleImpl;
+import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
+import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderImpl;
@@ -37,6 +44,8 @@ import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -46,6 +55,10 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
@@ -81,7 +94,12 @@ public class OfferDataItemProvider {
 
     public static Long orderItemId = 1L;
     public static Long orderId = 1L;
+    public static Long offerId = 1L;
     
+    public static Long getOfferId() {
+        return offerId++;
+    }
+
     public static Long getOrderItemId() {
         return orderItemId++;
     }
@@ -117,6 +135,48 @@ public class OfferDataItemProvider {
         };
     }
     
+    public static IAnswer<OrderItemPriceDetailAdjustment> getCreateOrderItemPriceDetailAdjustmentAnswer() {
+        return new IAnswer<OrderItemPriceDetailAdjustment>() {
+
+            @Override
+            public OrderItemPriceDetailAdjustment answer() throws Throwable {
+                return new OrderItemPriceDetailAdjustmentImpl();
+            }
+        };
+    }
+
+    public static IAnswer<OrderItemPriceDetail> getCreateOrderItemPriceDetailAnswer() {
+        return new IAnswer<OrderItemPriceDetail>() {
+
+            @Override
+            public OrderItemPriceDetail answer() throws Throwable {
+                return new OrderItemPriceDetailImpl();
+            }
+        };
+    }
+
+    public static IAnswer<OrderItemQualifier> getCreateOrderItemQualifierAnswer() {
+        return new IAnswer<OrderItemQualifier>() {
+
+            @Override
+            public OrderItemQualifier answer() throws Throwable {
+                return new OrderItemQualifierImpl();
+            }
+        };
+    }
+
+    
+    
+    public static IAnswer<FulfillmentGroupAdjustment> getCreateFulfillmentGroupAdjustmentAnswer() {
+        return new IAnswer<FulfillmentGroupAdjustment>() {
+
+            @Override
+            public FulfillmentGroupAdjustment answer() throws Throwable {
+                return new FulfillmentGroupAdjustmentImpl();
+            }
+        };
+    }
+
     public static IAnswer<OrderItem> getAddOrderItemToOrderAnswer() {
         return new IAnswer<OrderItem>() {
             @Override
@@ -175,6 +235,7 @@ public class OfferDataItemProvider {
         };
     }
     
+
     public static IAnswer<Order> getRemoveItemFromOrderAnswer() {
         return new IAnswer<Order>() {
             @Override
@@ -203,7 +264,13 @@ public class OfferDataItemProvider {
         };
     }
     
-    public PromotableOrder createBasicOrder() {
+    public PromotableOrder createBasicPromotableOrder() {
+        Order order = createBasicOrder();
+        PromotableOrder promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl(), false);
+        return promotableOrder;
+    }
+
+    public Order createBasicOrder() {
         Order order = new OrderImpl();
         order.setId(getOrderId());
         
@@ -245,10 +312,13 @@ public class OfferDataItemProvider {
         orderItem1.setProduct(product1);
         orderItem1.setQuantity(2);
         orderItem1.setSku(sku1);
-        orderItem1.setRetailPrice(new Money(19.99D));
-        orderItem1.setPrice(new Money(19.99D));
         orderItem1.setId(getOrderItemId());
         orderItem1.setOrder(order);
+        
+        OrderItemPriceDetail priceDetail1 = new OrderItemPriceDetailImpl();
+        priceDetail1.setOrderItem(orderItem1);
+        priceDetail1.setQuantity(2);
+        orderItem1.getOrderItemPriceDetails().add(priceDetail1);
         
         order.getOrderItems().add(orderItem1);
         
@@ -260,10 +330,13 @@ public class OfferDataItemProvider {
         orderItem2.setProduct(product2);
         orderItem2.setQuantity(3);
         orderItem2.setSku(sku2);
-        orderItem2.setRetailPrice(new Money(29.99D));
-        orderItem2.setPrice(new Money(29.99D));
         orderItem2.setId(getOrderItemId());
         orderItem2.setOrder(order);
+        
+        OrderItemPriceDetail priceDetail2 = new OrderItemPriceDetailImpl();
+        priceDetail2.setOrderItem(orderItem2);
+        priceDetail2.setQuantity(3);
+        orderItem2.getOrderItemPriceDetails().add(priceDetail2);
         
         order.getOrderItems().add(orderItem2);
         
@@ -367,12 +440,208 @@ public class OfferDataItemProvider {
         order.setSubTotal(new Money((2 * 19.99D) + (3 * 29.99D)));
         
         orders.put(order.getId(), order);
-        
-        PromotableOrder promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl());
-        
-        return promotableOrder;
+        return order;
     }
     
+    /**
+     * Create order with a bundle with two items.  Bundle has a quantity of 2.   
+     * Bundle item 1 has quantity of 2, bundle item 2 has quantity of 3
+     * @return
+     */
+    public Order createOrderWithBundle() {
+        Order order = new OrderImpl();
+        order.setId(getOrderId());
+
+        Category category1 = new CategoryImpl();
+        category1.setName("test1");
+        category1.setId(1L);
+
+        Product product1 = new ProductImpl();
+
+        Sku sku1 = new SkuImpl();
+        sku1.setName("test1");
+        sku1.setId(1L);
+        sku1.setDiscountable(true);
+        sku1.setRetailPrice(new Money(10D));
+        product1.setDefaultSku(sku1);
+
+        category1.getAllProducts().add(product1);
+
+        Category category2 = new CategoryImpl();
+        category2.setName("test2");
+        category2.setId(2L);
+
+        Product product2 = new ProductImpl();
+
+        Sku sku2 = new SkuImpl();
+        sku2.setName("test2");
+        sku2.setId(2L);
+        sku2.setDiscountable(true);
+        sku2.setRetailPrice(new Money(10D));
+        product2.setDefaultSku(sku2);
+
+        category2.getAllProducts().add(product2);
+
+        ProductBundle pb = new ProductBundleImpl();
+        pb.setPricingModel(ProductBundlePricingModelType.ITEM_SUM);
+
+        BundleOrderItem bundleOrderItem = new BundleOrderItemImpl();
+        bundleOrderItem.setCategory(category1);
+        bundleOrderItem.setName("test1");
+        bundleOrderItem.setOrder(order);
+        bundleOrderItem.setOrderItemType(OrderItemType.DISCRETE);
+        bundleOrderItem.setQuantity(2);
+        bundleOrderItem.setId(getOrderItemId());
+        bundleOrderItem.setOrder(order);
+        bundleOrderItem.setRetailPrice(new Money(10D));
+        bundleOrderItem.setProductBundle(pb);
+
+        OrderItemPriceDetail priceDetail = new OrderItemPriceDetailImpl();
+        priceDetail.setOrderItem(bundleOrderItem);
+        priceDetail.setQuantity(2);
+        bundleOrderItem.getOrderItemPriceDetails().add(priceDetail);
+
+        order.getOrderItems().add(bundleOrderItem);
+
+        DiscreteOrderItem orderItem1 = new DiscreteOrderItemImpl();
+        orderItem1.setCategory(category1);
+        orderItem1.setName("test1");
+        orderItem1.setOrder(order);
+        orderItem1.setOrderItemType(OrderItemType.DISCRETE);
+        orderItem1.setProduct(product1);
+        orderItem1.setQuantity(2);
+        orderItem1.setSku(sku1);
+        orderItem1.setId(getOrderItemId());
+        orderItem1.setOrder(order);
+
+        OrderItemPriceDetail priceDetail1 = new OrderItemPriceDetailImpl();
+        priceDetail1.setOrderItem(orderItem1);
+        priceDetail1.setQuantity(2);
+        orderItem1.getOrderItemPriceDetails().add(priceDetail1);
+
+        bundleOrderItem.getDiscreteOrderItems().add(orderItem1);
+
+        DiscreteOrderItem orderItem2 = new DiscreteOrderItemImpl();
+        orderItem2.setCategory(category2);
+        orderItem2.setName("test2");
+        orderItem2.setOrder(order);
+        orderItem2.setOrderItemType(OrderItemType.DISCRETE);
+        orderItem2.setProduct(product2);
+        orderItem2.setQuantity(3);
+        orderItem2.setSku(sku2);
+        orderItem2.setId(getOrderItemId());
+        orderItem2.setOrder(order);
+
+        OrderItemPriceDetail priceDetail2 = new OrderItemPriceDetailImpl();
+        priceDetail2.setOrderItem(orderItem2);
+        priceDetail2.setQuantity(3);
+        orderItem2.getOrderItemPriceDetails().add(priceDetail2);
+
+        bundleOrderItem.getDiscreteOrderItems().add(orderItem2);
+
+        Customer customer = new CustomerImpl();
+        customer.setEmailAddress("test@test.com");
+        customer.setFirstName("John");
+        customer.setLastName("Tester");
+        customer.setReceiveEmail(true);
+        customer.setRegistered(true);
+
+        order.setCustomer(customer);
+
+        order.setEmailAddress("test@test.com");
+
+        FulfillmentGroup fg1 = new FulfillmentGroupImpl();
+        fg1.setId(1L);
+        Address address1 = new AddressImpl();
+        address1.setAddressLine1("123 Test Road");
+        address1.setCity("Dallas");
+
+        Country country = new CountryImpl();
+        country.setAbbreviation("US");
+        country.setName("United States");
+
+        address1.setCountry(country);
+        address1.setDefault(true);
+        address1.setFirstName("John");
+        address1.setLastName("Tester");
+        address1.setPostalCode("75244");
+
+        Phone primary = new PhoneImpl();
+        primary.setPhoneNumber("972-976-1234");
+        address1.setPhonePrimary(primary);
+
+        State state = new StateImpl();
+        state.setAbbreviation("TX");
+        state.setCountry(country);
+        state.setName("Texas");
+
+        address1.setState(state);
+        fg1.setAddress(address1);
+        fg1.setOrder(order);
+        fg1.setPrimary(true);
+        fg1.setRetailShippingPrice(new Money(10D));
+        fg1.setShippingPrice(new Money(10D));
+        fg1.setType(FulfillmentType.SHIPPING);
+        fg1.setOrder(order);
+
+        FulfillmentGroupItem fgItem1 = new FulfillmentGroupItemImpl();
+        fgItem1.setFulfillmentGroup(fg1);
+        fgItem1.setOrderItem(orderItem1);
+        fgItem1.setQuantity(2);
+        //fgItem1.setRetailPrice(new Money(19.99D));
+        fg1.getFulfillmentGroupItems().add(fgItem1);
+
+        order.getFulfillmentGroups().add(fg1);
+
+        FulfillmentGroup fg2 = new FulfillmentGroupImpl();
+        fg2.setId(2L);
+        Address address2 = new AddressImpl();
+        address2.setAddressLine1("124 Test Road");
+        address2.setCity("Dallas");
+
+        Country country2 = new CountryImpl();
+        country2.setAbbreviation("US");
+        country2.setName("United States");
+
+        address2.setCountry(country2);
+        address2.setDefault(true);
+        address2.setFirstName("John");
+        address2.setLastName("Tester");
+        address2.setPostalCode("75244");
+
+        Phone primary2 = new PhoneImpl();
+        primary2.setPhoneNumber("972-976-1234");
+        address2.setPhonePrimary(primary2);
+
+        State state2 = new StateImpl();
+        state2.setAbbreviation("TX");
+        state2.setCountry(country2);
+        state2.setName("Texas");
+
+        address2.setState(state2);
+        fg2.setAddress(address2);
+        fg2.setOrder(order);
+        fg2.setPrimary(true);
+        fg2.setRetailShippingPrice(new Money(20D));
+        fg2.setShippingPrice(new Money(20D));
+        fg2.setType(FulfillmentType.SHIPPING);
+        fg2.setOrder(order);
+
+        FulfillmentGroupItem fgItem2 = new FulfillmentGroupItemImpl();
+        fgItem2.setFulfillmentGroup(fg2);
+        fgItem2.setOrderItem(orderItem2);
+        fgItem2.setQuantity(3);
+        //fgItem2.setRetailPrice(new Money(29.99D));
+        fg2.getFulfillmentGroupItems().add(fgItem2);
+
+        order.getFulfillmentGroups().add(fg2);
+
+        order.setSubTotal(new Money((2 * 19.99D) + (3 * 29.99D)));
+
+        orders.put(order.getId(), order);
+        return order;
+    }
+
     public Offer createOffer(
         String appliesToCustomerRules, 
         String appliesToFulfillmentGroupRules, 
@@ -421,7 +690,7 @@ public class OfferDataItemProvider {
         offer.setType(offerType);
         offer.setValue(value);
         offer.setTreatAsNewFormat(true);
-        
+        offer.setId(getOfferId());
         return offer;
     }
     

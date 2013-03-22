@@ -92,11 +92,6 @@ public class NullOrderImpl implements Order {
     }
 
     @Override
-    public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
-        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
-    }
-
-    @Override
     public Money getTotal() {
         return null;
     }
@@ -316,16 +311,15 @@ public class NullOrderImpl implements Order {
         return 0;
     }
 
-       @Override
-        public BroadleafCurrency getCurrency() {
-              return null;
-        }
+    @Override
+    public BroadleafCurrency getCurrency() {
+        return null;
+    }
 
-        @Override
-        public void setCurrency(BroadleafCurrency currency) {
-            throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
-        }
-
+    @Override
+    public void setCurrency(BroadleafCurrency currency) {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
 
     @Override
     public Locale getLocale() {
@@ -335,4 +329,30 @@ public class NullOrderImpl implements Order {
     @Override
     public void setLocale(Locale locale) {
     }
+
+    @Override
+    public Money calculateSubTotal() {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+
+    @Override
+    public Money getTotalFulfillmentCharges() {
+        return null;
+    }
+
+    @Override
+    public void setTotalFulfillmentCharges(Money totalFulfillmentCharges) {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+
+    @Override
+    public boolean finalizeItemPrices() {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+
+    @Override
+    public boolean getHasOrderAdjustments() {
+        return false;
+    }
+
 }

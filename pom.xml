@@ -1119,7 +1119,7 @@
                 <artifactId>hsqldb</artifactId>
                 <version>2.2.4</version>
                 <type>jar</type>
-                <scope>compile</scope>
+                <scope>test</scope>
             </dependency>
 
             <!--Other-->

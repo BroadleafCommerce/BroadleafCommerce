@@ -123,9 +123,6 @@ public class OrderItemServiceImpl implements OrderItemService {
         for (DiscreteOrderItemFeePrice feePrice : item.getDiscreteOrderItemFeePrices()) {
             feePrice.setDiscreteOrderItem(item);
         }
-
-        item.updatePrices();
-        item.assignFinalPrice();
         
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 
@@ -137,20 +134,9 @@ public class OrderItemServiceImpl implements OrderItemService {
         populateDiscreteOrderItem(item, itemRequest);
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
+        // item.updatePrices();
+        item.updateSaleAndRetailPrices();
 
-        if (itemRequest.getSalePriceOverride() != null) {
-            item.setSalePriceOverride(Boolean.TRUE);
-            item.setSalePrice(itemRequest.getSalePriceOverride());
-            item.setBaseSalePrice(itemRequest.getSalePriceOverride());
-        }
-
-        if (itemRequest.getRetailPriceOverride() != null) {
-            item.setRetailPriceOverride(Boolean.TRUE);
-            item.setRetailPrice(itemRequest.getRetailPriceOverride());
-            item.setBaseRetailPrice(itemRequest.getRetailPriceOverride());
-        }
-
-        item.updatePrices();
         item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 
@@ -187,7 +173,6 @@ public class OrderItemServiceImpl implements OrderItemService {
             item.setRetailPrice(item.getRetailPrice().add(fee.getAmount()));
         }
 
-        item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 
         return item;
@@ -218,7 +203,8 @@ public class OrderItemServiceImpl implements OrderItemService {
             item.setBaseRetailPrice(itemRequest.getRetailPriceOverride());
         }
 
-        item.updatePrices();
+        //item.updatePrices();
+        item.updateSaleAndRetailPrices();
         item.assignFinalPrice();
         item.getWrappedItems().addAll(itemRequest.getWrappedItems());
         for (OrderItem orderItem : item.getWrappedItems()) {
@@ -258,7 +244,6 @@ public class OrderItemServiceImpl implements OrderItemService {
                 discreteOrderItem = createDiscreteOrderItem(discreteItemRequest);
             }
             item.getDiscreteOrderItems().add(discreteOrderItem);
-            item.assignFinalPrice();
         }
 
         return item;
@@ -313,9 +298,6 @@ public class OrderItemServiceImpl implements OrderItemService {
             bundleDiscreteItem.setSkuBundleItem(skuBundleItem);
             bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
         }
-
-        bundleOrderItem.updatePrices();
-        bundleOrderItem.assignFinalPrice();
         
         bundleOrderItem = (BundleOrderItem) saveOrderItem(bundleOrderItem);
         return bundleOrderItem;

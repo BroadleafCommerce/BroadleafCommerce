@@ -66,8 +66,18 @@ public interface Offer extends Serializable {
 
     public void setEndDate(Date endDate);
 
+    /**
+     * @deprecated
+     * Use isCombinable instead.
+     * @return
+     */
     public boolean isStackable();
 
+    /**
+     * @deprecated
+     * calls {@link #setCombinableWithOtherOffers(boolean)}
+     * @param stackable
+     */
     public void setStackable(boolean stackable);
 
     public String getTargetSystem();
@@ -104,6 +114,13 @@ public interface Offer extends Serializable {
 
     public void setOfferItemTargetRuleType(OfferItemRestrictionRuleType restrictionRuleType);
 
+    /**
+     * Returns false if this offer is not combinable with other offers of the same type.
+     * For example, if this is an Item offer it could be combined with other Order or FG offers
+     * but it cannot be combined with other Item offers.
+     * 
+     * @return
+     */
     public boolean isCombinableWithOtherOffers();
 
     public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers);
@@ -196,5 +213,9 @@ public interface Offer extends Serializable {
     public Money getQualifyingItemSubTotal();
     
     public void setQualifyingItemSubTotal(Money qualifyingItemSubtotal);
+
+    void setMarketingMessage(String marketingMessage);
+
+    String getMarketingMessage();
 
 }

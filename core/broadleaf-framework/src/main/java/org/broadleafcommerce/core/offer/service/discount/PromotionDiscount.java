@@ -84,6 +84,23 @@ public class PromotionDiscount implements Serializable{
         this.candidateItemOffer = candidateItemOffer;
     }
 
+    public PromotionDiscount split(int splitQty) {
+        PromotionDiscount returnDiscount = copy();
+        int originalQty = finalizedQuantity;
+
+        setFinalizedQuantity(splitQty);
+        setQuantity(splitQty);
+
+        int newDiscountQty = originalQty - splitQty;
+        if (newDiscountQty == 0) {
+            return null;
+        } else {
+            returnDiscount.setQuantity(newDiscountQty);
+            returnDiscount.setFinalizedQuantity(newDiscountQty);
+        }
+        return returnDiscount;
+    }
+
     public PromotionDiscount copy() {
         PromotionDiscount pd = new PromotionDiscount();
         pd.setItemCriteria(itemCriteria);

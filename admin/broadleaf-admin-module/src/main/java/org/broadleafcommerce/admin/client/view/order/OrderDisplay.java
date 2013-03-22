@@ -51,7 +51,7 @@ public interface OrderDisplay extends DynamicEditDisplay {
     public GridStructureDisplay getOrderAdjustmentDisplay();
     
     public GridStructureDisplay getOrderItemAdjustmentDisplay();
-    
+
     public GridStructureDisplay getFulfillmentGroupAdjustmentDisplay();
     
     public GridStructureView getOrderItemFeeDisplay();
@@ -61,5 +61,7 @@ public interface OrderDisplay extends DynamicEditDisplay {
     public GridStructureView getPaymentResponseDisplay();
     
     public ToolStripButton getExportOrdersButton();
+
+    public GridStructureDisplay getOrderItemPriceDetailDisplay();
     
 }

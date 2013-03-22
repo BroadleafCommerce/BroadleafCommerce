@@ -18,10 +18,10 @@ package org.broadleafcommerce.core.offer.service.processor;
 
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.service.OrderItemMergeService;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactory;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
+import org.broadleafcommerce.core.order.dao.OrderItemDao;
 
 import java.util.List;
 import java.util.Map;
@@ -33,11 +33,7 @@ import java.util.Map;
  */
 public interface OrderOfferProcessor extends BaseProcessor {
 
-    public void filterOrderLevelOffer(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer);
-
-    public OfferDao getOfferDao();
-
-    public void setOfferDao(OfferDao offerDao);
+    public void filterOrderLevelOffer(PromotableOrder promotableOrder, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer);
     
     public Boolean executeExpression(String expression, Map<String, Object> vars);
     
@@ -49,7 +45,7 @@ public interface OrderOfferProcessor extends BaseProcessor {
      * @param order
      * @return true if offer can be applied, otherwise false
      */
-    public boolean couldOfferApplyToOrder(Offer offer, PromotableOrder order);
+    public boolean couldOfferApplyToOrder(Offer offer, PromotableOrder promotableOrder);
     
     public List<PromotableCandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<PromotableCandidateOrderOffer> candidateOffers);
     
@@ -62,18 +58,28 @@ public interface OrderOfferProcessor extends BaseProcessor {
      *
      * @param orderOffers a sorted list of CandidateOrderOffer
      * @param order       the Order to apply the CandidateOrderOffers
-     * @return true if order offer applied; otherwise false
      */
-    public boolean applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder order);
-    
-    public void compileOrderTotal(PromotableOrder order);
+    public void applyAllOrderOffers(List<PromotableCandidateOrderOffer> orderOffers, PromotableOrder promotableOrder);
     
     public PromotableItemFactory getPromotableItemFactory();
 
     public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory);
 
-    public OrderItemMergeService getOrderItemMergeService();
+    /**
+     * Takes the adjustments and PriceDetails from the passed in PromotableOrder and transfers them to the 
+     * actual order first checking to see if they already exist.
+     * 
+     * @param promotableOrder
+     */
+    public void synchronizeAdjustmentsAndPrices(PromotableOrder promotableOrder);
 
-    public void setOrderItemMergeService(OrderItemMergeService orderItemMergeService);
-    
+    /**
+     * Set the offerDao (primarily for unit testing)
+     */
+    public void setOfferDao(OfferDao offerDao);
+
+    /**
+     * Set the orderItemDao (primarily for unit testing)
+     */
+    public void setOrderItemDao(OrderItemDao orderItemDao);
 }

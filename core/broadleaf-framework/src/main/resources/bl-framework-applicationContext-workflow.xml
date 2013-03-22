@@ -28,8 +28,9 @@
         </property>
         <property name="activities">
             <list>
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity" />
+                <bean class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity" />                
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.ConsolidateFulfillmentFeesActivity" />
+                <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentItemPricingActivity" />                                       
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupMerchandiseTotalActivity"/>
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity" />
                 <bean class="org.broadleafcommerce.core.pricing.service.workflow.ShippingOfferActivity"/>
@@ -263,6 +264,23 @@
                 </bean>
                 <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
                     <property name="paymentService" ref="blAccountPaymentService"/>
+                    <property name="userName" value="web"/>
+                </bean>
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+
+    <bean id="blPartialPaymentWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentProcessContextFactory">
+                <property name="paymentActionType" value="PARTIALPAYMENT"/>
+            </bean>
+        </property>
+        <property name="activities">
+            <list>
+                <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+                    <property name="paymentService" ref="blCreditCardService"/>
                     <property name="userName" value="web"/>
                 </bean>
             </list>

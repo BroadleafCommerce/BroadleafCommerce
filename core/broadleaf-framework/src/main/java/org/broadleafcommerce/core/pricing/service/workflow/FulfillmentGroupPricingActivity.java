@@ -24,9 +24,9 @@ import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
-import javax.annotation.Resource;
-
 import java.math.BigDecimal;
+
+import javax.annotation.Resource;
 
 /**
  * Called during the pricing workflow to compute all of the fulfillment costs
@@ -55,16 +55,16 @@ public class FulfillmentGroupPricingActivity extends BaseActivity {
          * 3. add FG back to order
          */
 
-        Money totalShipping = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
+        Money totalFulfillmentCharges = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             if (fulfillmentGroup != null) {
                 fulfillmentGroup = fulfillmentPricingService.calculateCostForFulfillmentGroup(fulfillmentGroup);
-                if (fulfillmentGroup.getShippingPrice() != null) {
-                    totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
+                if (fulfillmentGroup.getFulfillmentPrice() != null) {
+                    totalFulfillmentCharges = totalFulfillmentCharges.add(fulfillmentGroup.getFulfillmentPrice());
                 }
             }
         }
-        order.setTotalShipping(totalShipping);
+        order.setTotalFulfillmentCharges(totalFulfillmentCharges);
         context.setSeedData(order);
         return context;
     }
