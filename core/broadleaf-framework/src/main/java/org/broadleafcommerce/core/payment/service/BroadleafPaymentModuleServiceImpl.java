@@ -19,7 +19,7 @@ public class BroadleafPaymentModuleServiceImpl implements BroadleafPaymentModule
     }
 
     @Override
-    public void manualPayment(String transactionID) {
+    public void manualPayment(PaymentSeed paymentSeed, String transactionID) {
         LOG.warn("Manual payment has not been implemented.");
     }
 

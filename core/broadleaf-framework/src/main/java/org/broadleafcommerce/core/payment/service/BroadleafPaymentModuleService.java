@@ -42,5 +42,5 @@ public interface BroadleafPaymentModuleService {
      *
      * @param transactionID
      */
-    public void manualPayment(String transactionID);
+    public void manualPayment(PaymentSeed paymentSeed, String transactionID);
 }
