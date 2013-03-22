@@ -28,7 +28,12 @@ var BLC = (function($) {
     function ajax(options, callback) {
         var defaults = {
             success: function(data) {
-            	var $data = $(data.trim());
+                var $data;
+                if (data.trim) {
+                    $data = $(data.trim());
+                } else {
+                    $data = $(data);
+                }
                 if (!redirectIfNecessary($data)) {
                     var extraData = getExtraData($data);
                     callback(data, extraData);
