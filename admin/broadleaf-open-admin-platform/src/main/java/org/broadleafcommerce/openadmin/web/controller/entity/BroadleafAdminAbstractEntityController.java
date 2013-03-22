@@ -292,7 +292,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
             EntityForm dynamicForm = entityForm.getDynamicForm(fieldName[0]);
             if (dynamicForm == null) {
                 dynamicForm = new EntityForm();
-                dynamicForm.setEntityType(info.getCeilingClassName());
+                dynamicForm.setCeilingEntityClassname(info.getCeilingClassName());
                 entityForm.putDynamicForm(fieldName[0], dynamicForm);
             }
             
@@ -369,6 +369,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
 
         blankFormContainer.putDynamicForm(info.getPropertyName(), dynamicForm);
         model.addAttribute("entityForm", blankFormContainer);
+        model.addAttribute("dynamicPropertyName", info.getPropertyName());
         
         String reqUrl = request.getRequestURL().toString();
         reqUrl = reqUrl.substring(0, reqUrl.indexOf("/dynamicForm"));
