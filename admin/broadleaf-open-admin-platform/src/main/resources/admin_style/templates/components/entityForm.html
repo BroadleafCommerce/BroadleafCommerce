@@ -32,13 +32,6 @@
             th:id="'tab' + ${entityFormName} + ${tabStat.count} + 'Tab'"
             th:inline="text">
             
-            <div th:if="${tabStat.first}">
-                <div th:each="dynamicForm : *{dynamicForms}">
-                    <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
-                </div>
-            </div>
-            
-            
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                 <legend th:text="#{${group.title}}" />
 
@@ -47,6 +40,12 @@
                     <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
                 </div>
             </fieldset>
+            
+            <div th:if="${tabStat.first}">
+                <div th:each="dynamicForm : *{dynamicForms}">
+                    <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
+                </div>
+            </div>
 
             <div th:each="collectionListGrid : ${tab.listGrids}" class="listgrid-container">
                 <label th:text="#{${collectionListGrid.friendlyName}}" />
