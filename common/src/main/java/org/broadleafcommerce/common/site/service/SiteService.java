@@ -19,6 +19,8 @@ package org.broadleafcommerce.common.site.service;
 import org.broadleafcommerce.common.site.dao.SiteDaoImpl;
 import org.broadleafcommerce.common.site.domain.Site;
 
+import java.util.List;
+
 public interface SiteService {
 
     /**
@@ -51,4 +53,9 @@ public interface SiteService {
      * @return
      */
     public Site retrieveDefaultSite();
+
+    /**
+     * @return a List of all sites in the system
+     */
+    public List<Site> findAllSites();
 }

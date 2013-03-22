@@ -21,6 +21,8 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 @Service("blSiteService")
@@ -68,6 +70,11 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public Site retrieveDefaultSite() {
         return siteDao.retrieveDefaultSite();
+    }
+    
+    @Override
+    public List<Site> findAllSites() {
+        return siteDao.readAllSites();
     }
 
 }

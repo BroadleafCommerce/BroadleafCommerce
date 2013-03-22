@@ -23,6 +23,9 @@ import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,8 +33,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
 
 @Repository("blSiteDao")
 public class SiteDaoImpl implements SiteDao {
@@ -45,6 +46,19 @@ public class SiteDaoImpl implements SiteDao {
     @Override
     public Site retrieve(Long id) {
         return em.find(SiteImpl.class, id);
+    }
+    
+    @Override
+    public List<Site> readAllSites() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Site> criteria = builder.createQuery(Site.class);
+        Root<SiteImpl> site = criteria.from(SiteImpl.class);
+        criteria.select(site);
+        
+        TypedQuery<Site> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        
+        return query.getResultList();
     }
 
     @Override

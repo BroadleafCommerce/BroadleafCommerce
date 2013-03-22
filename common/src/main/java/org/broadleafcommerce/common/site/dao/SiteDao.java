@@ -18,6 +18,8 @@ package org.broadleafcommerce.common.site.dao;
 
 import org.broadleafcommerce.common.site.domain.Site;
 
+import java.util.List;
+
 public interface SiteDao {
 
     /**
@@ -49,4 +51,9 @@ public interface SiteDao {
      * @return
      */
     public Site retrieveDefaultSite();
+
+    /**
+     * @return a List of all sites in the system
+     */
+    public List<Site> readAllSites();
 }
