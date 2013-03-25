@@ -52,9 +52,6 @@
             e.preventDefault();
         });
 
-
-        $('.listgrid-headerBtn.dropdown > ul', this).addClass('no-hover');
-
         // Prevent event propagation on the dropdown form
         $('.listgrid-headerBtn.dropdown div.filter-fields').click(function (e) {
         	if (!$(e.target).is('a') && !$(e.target).is('button')) {
