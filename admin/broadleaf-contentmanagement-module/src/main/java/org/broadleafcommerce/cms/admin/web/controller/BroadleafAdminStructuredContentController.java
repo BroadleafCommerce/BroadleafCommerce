@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionTyp
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.entity.BroadleafAdminAbstractEntityController;
+import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.springframework.stereotype.Controller;
@@ -119,8 +120,9 @@ public class BroadleafAdminStructuredContentController extends BroadleafAdminAbs
     /* ***************** */
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
-        return super.viewEntityList(request, response, model, SECTION_KEY);
+    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
+            @ModelAttribute CriteriaForm criteriaForm) throws Exception {
+        return super.viewEntityList(request, response, model, SECTION_KEY, criteriaForm);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
@@ -196,6 +198,7 @@ public class BroadleafAdminStructuredContentController extends BroadleafAdminAbs
         return super.removeCollectionItem(request, response, model, SECTION_KEY, id, collectionField, collectionItemId);
     }
     
+    @Override
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         super.initBinder(binder);

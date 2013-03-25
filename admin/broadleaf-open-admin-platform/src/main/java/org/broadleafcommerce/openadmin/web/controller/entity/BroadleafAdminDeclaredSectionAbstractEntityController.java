@@ -1,5 +1,6 @@
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
+import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,8 +20,9 @@ public class BroadleafAdminDeclaredSectionAbstractEntityController extends Broad
         this.sectionKey = sectionKey;
     }
 
-    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
-        return super.viewEntityList(request, response, model, sectionKey);
+    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
+            CriteriaForm criteriaForm) throws Exception {
+        return super.viewEntityList(request, response, model, sectionKey, criteriaForm);
     }
 
     public String viewAddEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,

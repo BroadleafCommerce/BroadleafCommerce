@@ -18,6 +18,7 @@ package org.broadleafcommerce.admin.web.controller.entity;
 
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.web.controller.entity.BroadleafAdminAbstractEntityController;
+import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
@@ -37,9 +38,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -88,8 +90,9 @@ public class BroadleafAdminOfferController extends BroadleafAdminAbstractEntityC
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
-        return super.viewEntityList(request, response, model, "offer");
+    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
+            @ModelAttribute CriteriaForm criteriaForm) throws Exception {
+        return super.viewEntityList(request, response, model, "offer", criteriaForm);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)

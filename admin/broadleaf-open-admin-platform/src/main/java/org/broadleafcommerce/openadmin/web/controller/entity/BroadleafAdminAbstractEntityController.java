@@ -84,26 +84,29 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
     protected EntityFormValidator entityValidator;
 
     /**
-     * Renders the main entity listing for the specified class, which is based on the current sectionKey
+     * Renders the main entity listing for the specified class, which is based on the current sectionKey with some optional
+     * criteria.
      * 
      * @param request
      * @param response
      * @param model
      * @param sectionKey
+     * @param criteriaForm criteria from the frontend; can be null
      * @return the return view path
      * @throws Exception
      */
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
-            String sectionKey) throws Exception {
-        return viewEntityList(request, response, model, sectionKey, new CriteriaForm());
-    }
-
-    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey, CriteriaForm criteriaForm) throws Exception {
         String sectionClassName = getClassNameForSection(sectionKey);
 
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, 
-                criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]));
+        PersistencePackageRequest ppr;
+        if (criteriaForm == null) {
+            ppr = getSectionPersistencePackageRequest(sectionClassName);
+        } else {
+            ppr = getSectionPersistencePackageRequest(sectionClassName, 
+                    criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]));
+        }
+
         ClassMetadata cmd = service.getClassMetadata(ppr);
         Entity[] rows = service.getRecords(ppr);
 

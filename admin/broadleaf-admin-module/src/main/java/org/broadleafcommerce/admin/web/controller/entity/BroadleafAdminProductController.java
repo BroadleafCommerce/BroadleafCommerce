@@ -18,6 +18,7 @@ package org.broadleafcommerce.admin.web.controller.entity;
 
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.openadmin.web.controller.entity.BroadleafAdminAbstractEntityController;
+import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,8 +76,9 @@ public class BroadleafAdminProductController extends BroadleafAdminAbstractEntit
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
-        return super.viewEntityList(request, response, model, SECTION_KEY);
+    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
+            @ModelAttribute CriteriaForm criteriaForm) throws Exception {
+        return super.viewEntityList(request, response, model, SECTION_KEY, criteriaForm);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
@@ -152,6 +154,7 @@ public class BroadleafAdminProductController extends BroadleafAdminAbstractEntit
         return super.removeCollectionItem(request, response, model, SECTION_KEY, id, collectionField, collectionItemId);
     }
     
+    @Override
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         super.initBinder(binder);
