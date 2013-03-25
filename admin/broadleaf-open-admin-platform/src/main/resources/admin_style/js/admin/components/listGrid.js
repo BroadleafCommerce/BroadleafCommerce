@@ -224,7 +224,7 @@ $(document).ready(function() {
         var toReplace = $(this).closest('.list-grid-table').find('tbody');
         $(this).closest('ul').removeClass('show-dropdown');
         BLC.ajax({
-            url: this.action,
+            url: $(this).closest('.filter-fields').data('action'),
             type: "GET",
             data: $(this).closest('thead').find('div.filter-fields :input').serialize()
         }, function(data) {

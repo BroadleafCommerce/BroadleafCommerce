@@ -210,6 +210,16 @@ public class PersistencePackageRequest {
         this.filterAndSortCriteria.add(filterAndSortCriteria);
         return this;
     }
+    
+    public PersistencePackageRequest addFilterAndSortCriteria(FilterAndSortCriteria[] filterAndSortCriteria) {
+        this.filterAndSortCriteria.addAll(Arrays.asList(filterAndSortCriteria));
+        return this;
+    }
+    
+    public PersistencePackageRequest addFilterAndSortCriteria(List<FilterAndSortCriteria> filterAndSortCriteria) {
+        this.filterAndSortCriteria.addAll(filterAndSortCriteria);
+        return this;
+    }
 
     /* ************************ */
     /* CUSTOM GETTERS / SETTERS */

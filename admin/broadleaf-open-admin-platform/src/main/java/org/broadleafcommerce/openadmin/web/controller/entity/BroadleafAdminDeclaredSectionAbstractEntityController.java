@@ -53,8 +53,8 @@ public class BroadleafAdminDeclaredSectionAbstractEntityController extends Broad
     }
 
     public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            String collectionField) throws Exception {
-        return super.showSelectCollectionItem(request, response, model, sectionKey, collectionField);
+            String collectionField, CriteriaForm criteriaForm) throws Exception {
+        return super.showSelectCollectionItem(request, response, model, sectionKey, collectionField, criteriaForm);
     }
 
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,

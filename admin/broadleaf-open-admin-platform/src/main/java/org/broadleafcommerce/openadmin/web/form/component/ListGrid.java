@@ -62,9 +62,20 @@ public class ListGrid {
         }
         
         sb.append(getSectionKey());
-        if (getContainingEntityId() != null && StringUtils.isNotBlank(getSubCollectionFieldName())) {
-            sb.append("/").append(getContainingEntityId()).append("/").append(getSubCollectionFieldName());
+        if (getContainingEntityId() != null) {
+            sb.append("/").append(getContainingEntityId());
         }
+        
+        if (StringUtils.isNotBlank(getSubCollectionFieldName())) {
+            sb.append("/").append(getSubCollectionFieldName());
+        }
+        
+        //to-one grids need a slightly different grid URL; these need to be appended with 'select'
+        //TODO: surely there's a better way to do this besides just hardcoding the 'select'?
+        if (Type.TO_ONE.toString().toLowerCase().equals(listGridType)) {
+            sb.append("/select");
+        }
+        
         return sb.toString();
     }
 

@@ -99,8 +99,9 @@ public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractE
     @RequestMapping(value = "/{collectionField}/select", method = RequestMethod.GET)
     public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String sectionKey,
-            @PathVariable String collectionField) throws Exception {
-        return super.showSelectCollectionItem(request, response, model, sectionKey, collectionField);
+            @PathVariable String collectionField,
+            @ModelAttribute CriteriaForm criteriaForm) throws Exception {
+        return super.showSelectCollectionItem(request, response, model, sectionKey, collectionField, criteriaForm);
     }
     
     @Override

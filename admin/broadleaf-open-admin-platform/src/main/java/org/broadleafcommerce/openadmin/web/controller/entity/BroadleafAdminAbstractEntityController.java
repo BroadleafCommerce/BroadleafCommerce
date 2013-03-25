@@ -429,16 +429,21 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
      */
     public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             String sectionKey,
-            String collectionField) throws Exception {
+            String collectionField,
+            CriteriaForm criteriaForm) throws Exception {
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
+        
+        if (criteriaForm != null) {
+            ppr.addFilterAndSortCriteria(criteriaForm.getCriteria());
+        }
+        
         if (md instanceof BasicFieldMetadata) {
             Entity[] rows = service.getRecords(ppr);
-
             ListGrid listGrid = formService.buildCollectionListGrid(null, rows, collectionProperty, sectionKey);
 
             model.addAttribute("listGrid", listGrid);

@@ -146,8 +146,9 @@ public class BroadleafAdminStructuredContentController extends BroadleafAdminAbs
     
     @RequestMapping(value = "/{collectionField}/select", method = RequestMethod.GET)
     public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable String collectionField) throws Exception {
-        return super.showSelectCollectionItem(request, response, model, SECTION_KEY, collectionField);
+            @PathVariable String collectionField,
+            @ModelAttribute CriteriaForm criteriaForm) throws Exception {
+        return super.showSelectCollectionItem(request, response, model, SECTION_KEY, collectionField, criteriaForm);
     }
     
     @RequestMapping(value = "/{collectionField}/{id}/view", method = RequestMethod.GET)
