@@ -32,10 +32,10 @@ public interface BroadleafThemeResolver {
     
     /**
      * 
-     * @deprecated Use {@link #resolveTheme(WebRequest, Site)} instead
+     * @deprecated Use {@link #resolveTheme(WebRequest)} instead
      */
     @Deprecated
     public Theme resolveTheme(HttpServletRequest request, Site site);
     
-    public Theme resolveTheme(WebRequest request, Site site);
+    public Theme resolveTheme(WebRequest request);
 }

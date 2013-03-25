@@ -27,10 +27,10 @@ import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.annotation.Resource;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -63,7 +63,6 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
         Site site = siteResolver.resolveSite(request);
         Locale locale = localeResolver.resolveLocale(request);
         BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
-        Theme theme = themeResolver.resolveTheme(request, site);
 
         SandBox currentSandbox = sandboxResolver.resolveSandBox(request, site);
         if (currentSandbox != null) {
@@ -74,18 +73,21 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
         }
 
         BroadleafRequestContext brc = new BroadleafRequestContext();
+        
         brc.setSite(site);
         brc.setLocale(locale);
         brc.setBroadleafCurrency(currency);
         brc.setWebRequest(request);
         brc.setSandbox(currentSandbox);
-        brc.setTheme(theme);
-
         if (site == null) {
             brc.setIgnoreSite(true);
         }
-
+        
         BroadleafRequestContext.setBroadleafRequestContext(brc);
+        
+        // Note that this must happen after the request context is set up as resolving a theme is dependent on site
+        Theme theme = themeResolver.resolveTheme(request);
+        brc.setTheme(theme);
 
         Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute("blRuleMap", WebRequest.SCOPE_REQUEST);
         if (ruleMap == null) {

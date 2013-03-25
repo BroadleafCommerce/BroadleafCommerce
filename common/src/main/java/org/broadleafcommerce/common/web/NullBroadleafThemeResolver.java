@@ -37,11 +37,11 @@ public class NullBroadleafThemeResolver implements BroadleafThemeResolver {
 
     @Override
     public Theme resolveTheme(HttpServletRequest request, Site site) {
-        return resolveTheme(new ServletWebRequest(request), site);
+        return resolveTheme(new ServletWebRequest(request));
     }
     
     @Override
-    public Theme resolveTheme(WebRequest request, Site site) {
+    public Theme resolveTheme(WebRequest request) {
         return theme;
     }
 }
