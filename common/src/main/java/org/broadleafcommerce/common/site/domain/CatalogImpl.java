@@ -18,16 +18,16 @@ package org.broadleafcommerce.common.site.domain;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.CascadeType;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,9 +38,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -70,7 +67,7 @@ public class CatalogImpl implements Catalog {
     @Column(name = "CATALOG_ID")
     protected Long id;
 
-    @Column(name = "NAME", unique = true)
+    @Column(name = "NAME")
     @AdminPresentation(friendlyName = "Catalog_Name", order=1, prominent = true)
     protected String name;
 
