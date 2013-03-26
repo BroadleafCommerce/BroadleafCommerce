@@ -27,10 +27,9 @@ import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -61,6 +60,17 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
     @Override
     public void process(WebRequest request) throws SiteNotFoundException {
         Site site = siteResolver.resolveSite(request);
+
+        BroadleafRequestContext brc = new BroadleafRequestContext();
+        
+        brc.setSite(site);
+        brc.setWebRequest(request);
+        if (site == null) {
+            brc.setIgnoreSite(true);
+        }
+        
+        BroadleafRequestContext.setBroadleafRequestContext(brc);
+
         Locale locale = localeResolver.resolveLocale(request);
         BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
 
@@ -71,22 +81,11 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
             previewSandBoxContext.setPreviewMode(true);
             SandBoxContext.setSandBoxContext(previewSandBoxContext);
         }
-
-        BroadleafRequestContext brc = new BroadleafRequestContext();
-        
-        brc.setSite(site);
-        brc.setLocale(locale);
-        brc.setBroadleafCurrency(currency);
-        brc.setWebRequest(request);
-        brc.setSandbox(currentSandbox);
-        if (site == null) {
-            brc.setIgnoreSite(true);
-        }
-        
-        BroadleafRequestContext.setBroadleafRequestContext(brc);
-        
         // Note that this must happen after the request context is set up as resolving a theme is dependent on site
         Theme theme = themeResolver.resolveTheme(request);
+        brc.setLocale(locale);
+        brc.setBroadleafCurrency(currency);
+        brc.setSandbox(currentSandbox);
         brc.setTheme(theme);
 
         Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute("blRuleMap", WebRequest.SCOPE_REQUEST);
