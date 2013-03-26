@@ -21,9 +21,9 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service("blSiteService")
 public class SiteServiceImpl implements SiteService {
@@ -64,17 +64,24 @@ public class SiteServiceImpl implements SiteService {
     @Override
     @Transactional("blTransactionManager")
     public Site save(Site site) {
-        return siteDao.save(site);
+        return siteDao.save(site).clone();
     }
 
     @Override
+    @Transactional(value = "blTransactionManager", readOnly = true)
     public Site retrieveDefaultSite() {
-        return siteDao.retrieveDefaultSite();
+        return siteDao.retrieveDefaultSite().clone();
     }
     
     @Override
+    @Transactional(value = "blTransactionManager", readOnly = true)
     public List<Site> findAllSites() {
-        return siteDao.readAllSites();
+        List<Site> response = new ArrayList<Site>();
+        List<Site> sites = siteDao.readAllSites();
+        for (Site site : sites) {
+            response.add(site.clone());
+        }
+        return response;
     }
 
 }
