@@ -264,12 +264,18 @@ $(document).ready(function() {
         return false;
     });
     
-    $('body').on('click', 'a.clear-foreign-key', function(event) {
+    /**
+     * Clears out a previously-selected foreign key on both a form and listgrid criteria
+     */
+    $('body').on('click', 'a.clear-foreign-key', function(event) {        
         //remove the current display value
         $(this).next().text('');
         //remove the criteria input val
         $(this).closest('.additional-foreign-key-container').find('.value').val('');
         $(this).toggle();
+        
+        //don't follow the link; prevents page jumping
+        return false;
     });
     
     $('body').on('mouseover', 'td.row-action-selector', function(event) {
