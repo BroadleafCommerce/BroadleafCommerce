@@ -33,7 +33,6 @@ import org.broadleafcommerce.core.order.service.exception.RemoveFromCartExceptio
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.BaseActivity;
-import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,7 +53,7 @@ import javax.annotation.Resource;
  * This only occurs if the ProductBundle is set to "automatically" bundle.
  *
  */
-public class AutoBundleActivity extends BaseActivity {
+public class AutoBundleActivity extends BaseActivity<PricingContext> {
     @Resource(name="blCatalogService")
     protected CatalogService catalogService;
 
@@ -67,8 +66,8 @@ public class AutoBundleActivity extends BaseActivity {
     @Resource(name="blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
 
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        Order order = ((PricingContext)context).getSeedData();
+    public PricingContext execute(PricingContext context) throws Exception {
+        Order order = context.getSeedData();
         order = handleAutomaticBundling(order);
         context.setSeedData(order);
         return context;
@@ -245,7 +244,7 @@ public class AutoBundleActivity extends BaseActivity {
                 // Re-associate fulfillment group item to newOrderItem
                 FulfillmentGroupItem fulfillmentGroupItem = skuIdFulfillmentGroupMap.get(newSkuBundleItem.getSku().getId());
                 if (fulfillmentGroupItem != null) {
-                    FulfillmentGroupItem newFulfillmentGroupItem = (FulfillmentGroupItem) fulfillmentGroupItem.clone();
+                    FulfillmentGroupItem newFulfillmentGroupItem = fulfillmentGroupItem.clone();
                     newFulfillmentGroupItem.setOrderItem(newOrderItem);
                     newFulfillmentGroupItem.setQuantity(newOrderItem.getQuantity());
                     newFulfillmentGroupItem = fulfillmentGroupItemDao.save(newFulfillmentGroupItem);
@@ -275,7 +274,7 @@ public class AutoBundleActivity extends BaseActivity {
                     // Re-associate fulfillment group item to newly created skuBundles
                     FulfillmentGroupItem fulfillmentGroupItem = skuIdFulfillmentGroupMap.get(discreteOrderItem.getSku().getId());
                     if (fulfillmentGroupItem != null) {
-                        FulfillmentGroupItem newFulfillmentGroupItem = (FulfillmentGroupItem) fulfillmentGroupItem.clone();
+                        FulfillmentGroupItem newFulfillmentGroupItem = fulfillmentGroupItem.clone();
                         newFulfillmentGroupItem.setOrderItem(discreteOrderItem);
                         newFulfillmentGroupItem.setQuantity(discreteOrderItem.getQuantity());
 

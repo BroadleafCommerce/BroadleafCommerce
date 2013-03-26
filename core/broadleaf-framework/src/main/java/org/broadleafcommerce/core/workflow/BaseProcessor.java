@@ -42,7 +42,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
 
     private BeanFactory beanFactory;
     private String beanName;
-    private List<Activity> activities;
+    private List<Activity<ProcessContext>> activities;
     private ErrorHandler defaultErrorHandler;
 
     @Value("${workflow.auto.rollback.on.error}")
@@ -53,6 +53,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
      * (non-Javadoc)
      * @see org.springframework.beans.factory.BeanNameAware#setBeanName(java.lang.String)
      */
+    @Override
     public void setBeanName(String beanName) {
         this.beanName = beanName;
 
@@ -62,6 +63,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
      * (non-Javadoc)
      * @see org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.springframework.beans.factory.BeanFactory)
      */
+    @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactory = beanFactory;
     }
@@ -95,6 +97,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
          *
          * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
          */
+    @Override
     public void afterPropertiesSet() throws Exception {
 
         if(!(beanFactory instanceof ListableBeanFactory)) {
@@ -108,11 +111,11 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
             "No activities were wired for this workflow");
         }
 
-        for (Iterator<Activity> iter = activities.iterator(); iter.hasNext();) {
-            Activity activitiy = iter.next();
-            if( !supports(activitiy))
+        for (Iterator<Activity<ProcessContext>> iter = activities.iterator(); iter.hasNext();) {
+            Activity<? extends ProcessContext> activity = iter.next();
+            if( !supports(activity))
                 throw new BeanInitializationException("The workflow processor ["+beanName+"] does " +
-                        "not support the activity of type"+activitiy.getClass().getName());
+                        "not support the activity of type"+activity.getClass().getName());
         }
 
     }
@@ -132,15 +135,17 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
      * 
      * @param activities ordered collection (List) of activities to be executed by the processor
      */
-    public void setActivities(List<Activity> activities) {
+    @Override
+    public void setActivities(List<Activity<ProcessContext>> activities) {
         this.activities = activities;
     }
 
+    @Override
     public void setDefaultErrorHandler(ErrorHandler defaultErrorHandler) {
         this.defaultErrorHandler = defaultErrorHandler;
     }
 
-    public List<Activity> getActivities() {
+    public List<Activity<ProcessContext>> getActivities() {
         return activities;
     }
 

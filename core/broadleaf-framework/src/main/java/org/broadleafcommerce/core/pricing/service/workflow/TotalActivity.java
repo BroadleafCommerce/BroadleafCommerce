@@ -24,7 +24,6 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.TaxDetail;
 import org.broadleafcommerce.core.workflow.BaseActivity;
-import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.math.BigDecimal;
 
@@ -36,11 +35,11 @@ import java.math.BigDecimal;
  * @author aazzolini
  *
  */
-public class TotalActivity extends BaseActivity {
+public class TotalActivity extends BaseActivity<PricingContext> {
 
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        Order order = ((PricingContext) context).getSeedData();
+    public PricingContext execute(PricingContext context) throws Exception {
+        Order order = context.getSeedData();
         
         setTaxSums(order);
         

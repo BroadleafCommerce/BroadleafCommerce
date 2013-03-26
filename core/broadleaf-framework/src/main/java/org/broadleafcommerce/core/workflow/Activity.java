@@ -21,7 +21,7 @@ import org.springframework.beans.factory.BeanNameAware;
 
 import java.util.Map;
 
-public interface Activity extends BeanNameAware{
+public interface Activity<T extends ProcessContext> extends BeanNameAware{
 
     /**
      * Called by the encompassing processor to activate
@@ -31,7 +31,7 @@ public interface Activity extends BeanNameAware{
      * @return resulting process context
      * @throws Exception
      */
-    public ProcessContext execute(ProcessContext context) throws Exception;
+    public T execute(T context) throws Exception;
 
     /**
      * Get the fine-grained error handler wired up for this Activity

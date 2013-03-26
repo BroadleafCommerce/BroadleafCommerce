@@ -16,20 +16,20 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.offer.service.ShippingOfferService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.BaseActivity;
-import org.broadleafcommerce.core.workflow.ProcessContext;
 
-public class ShippingOfferActivity extends BaseActivity {
+import javax.annotation.Resource;
+
+public class ShippingOfferActivity extends BaseActivity<PricingContext> {
 
     @Resource(name="blShippingOfferService")
     private ShippingOfferService shippingOfferService;
 
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        Order order = ((PricingContext)context).getSeedData();
+    @Override
+    public PricingContext execute(PricingContext context) throws Exception {
+        Order order = context.getSeedData();
         shippingOfferService.reviewOffers(order);
         context.setSeedData(order);
 

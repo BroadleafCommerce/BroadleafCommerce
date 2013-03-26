@@ -20,7 +20,7 @@ import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 
 import java.util.Map;
 
-public abstract class BaseActivity implements Activity {
+public abstract class BaseActivity<T extends ProcessContext> implements Activity<T> {
     
     private ErrorHandler errorHandler;
     private String beanName;
