@@ -33,8 +33,9 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
-import javax.annotation.Resource;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
@@ -70,7 +71,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             CategoryProductXref categoryXref = new CategoryProductXrefImpl();
             categoryXref.setCategory(adminInstance.getDefaultCategory());
             categoryXref.setProduct(adminInstance);
-            if (adminInstance.getDefaultCategory() != null && !adminInstance.getAllParentCategories().contains(categoryXref)) {
+            if (adminInstance.getDefaultCategory() != null && !adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
                 adminInstance.getAllParentCategoryXrefs().add(categoryXref);
             }
 

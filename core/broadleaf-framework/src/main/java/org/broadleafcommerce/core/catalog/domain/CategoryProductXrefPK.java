@@ -1,9 +1,12 @@
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
+import java.io.Serializable;
+
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.io.Serializable;
 
 /**
  * @author Jeff Fischer
@@ -46,10 +49,14 @@ public class CategoryProductXrefPK implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) return false;
-        else if (!(obj instanceof CategoryProductXrefPK)) return false;
-
-        return category.getId().equals(((CategoryProductXrefPK) obj).category.getId())
-        && product.getId().equals(((CategoryProductXrefPK) obj).product.getId());
+        if (obj instanceof CategoryProductXrefPK) {
+            CategoryProductXrefPK that = (CategoryProductXrefPK) obj;
+            return new EqualsBuilder()
+                .append(category.getId(), that.category.getId())
+                .append(product.getId(), that.product.getId())
+                .build();
+        }
+        return false;
     }
+    
 }

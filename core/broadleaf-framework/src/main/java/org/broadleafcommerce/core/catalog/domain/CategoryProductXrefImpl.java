@@ -16,27 +16,16 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
-import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
-import org.broadleafcommerce.core.media.domain.Media;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -128,23 +117,18 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CategoryProductXrefImpl)) return false;
-
-        CategoryProductXrefImpl that = (CategoryProductXrefImpl) o;
-
-        if (categoryProductXref != null ? !categoryProductXref.equals(that.categoryProductXref) : that
-                .categoryProductXref != null)
-            return false;
-        if (displayOrder != null ? !displayOrder.equals(that.displayOrder) : that.displayOrder != null) return false;
-
-        return true;
+        if (o instanceof CategoryProductXrefImpl) {
+            CategoryProductXrefImpl that = (CategoryProductXrefImpl) o;
+            return new EqualsBuilder()
+                .append(categoryProductXref, that.categoryProductXref)
+                .build();
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
         int result = categoryProductXref != null ? categoryProductXref.hashCode() : 0;
-        result = 31 * result + (displayOrder != null ? displayOrder.hashCode() : 0);
         return result;
     }
 
