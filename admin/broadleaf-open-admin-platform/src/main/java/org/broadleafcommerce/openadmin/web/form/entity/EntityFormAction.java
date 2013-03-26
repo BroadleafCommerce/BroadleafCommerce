@@ -1,45 +1,42 @@
-package org.broadleafcommerce.openadmin.web.form.component;
+package org.broadleafcommerce.openadmin.web.form.entity;
 
 
 
-public class ListGridAction {
+public class EntityFormAction {
     
-    protected String anchorClass = "";
+    protected String buttonClass = "";
     protected String urlPostfix = "";
     protected String iconClass = "";
     protected String displayText = "";
     
-    public ListGridAction() {
-    }
-    
-    public ListGridAction withAnchorClass(String anchorClass) {
-        setAnchorClass(anchorClass);
+    public EntityFormAction withButtonClass(String buttonClass) {
+        setButtonClass(buttonClass);
         return this;
     }
     
-    public ListGridAction withUrlPostfix(String urlPostfix) {
+    public EntityFormAction withUrlPostfix(String urlPostfix) {
         setUrlPostfix(urlPostfix);
         return this;
     }
     
-    public ListGridAction withIconClass(String iconClass) {
+    public EntityFormAction withIconClass(String iconClass) {
         setIconClass(iconClass);
         return this;
     }
     
-    public ListGridAction withDisplayText(String displayText) {
+    public EntityFormAction withDisplayText(String displayText) {
         setDisplayText(displayText);
         return this;
     }
 
-    public String getAnchorClass() {
-        return anchorClass;
+    public String getButtonClass() {
+        return buttonClass;
     }
     
-    public void setAnchorClass(String anchorClass) {
-        this.anchorClass = anchorClass;
+    public void setButtonClass(String buttonClass) {
+        this.buttonClass = buttonClass;
     }
-    
+
     public String getUrlPostfix() {
         return urlPostfix;
     }

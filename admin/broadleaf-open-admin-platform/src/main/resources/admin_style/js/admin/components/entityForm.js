@@ -10,4 +10,8 @@ $(document).ready(function() {
 		$form.submit();
 	});
 	
+	$('body').on('click', 'button.submit-button', function(event) {
+		$(this).closest('form').submit();
+	});
+	    
 });

@@ -44,6 +44,7 @@ import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
+import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Service;
@@ -397,6 +398,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         for (ListGrid lg : ef.getAllListGrids()) {
             lg.getToolbarActions().add(DefaultListGridActions.ADD);
         }
+        
+        ef.addAction(DefaultEntityFormActions.SAVE);
+        ef.addAction(DefaultEntityFormActions.DELETE);
 
         return ef;
     }

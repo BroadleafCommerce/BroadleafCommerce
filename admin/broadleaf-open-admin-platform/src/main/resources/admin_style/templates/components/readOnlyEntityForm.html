@@ -1,9 +1,7 @@
 <!-- This component represents a tabbed entity form with collections -->
 <!-- Additional parameters that can be specified include: -->
 <!--    additionalClasses - any additional CSS classes to apply to the form -->
-<!--    additionalSubmitClasses - any additional CSS classes to apply to the submit button on this form -->
 <!--    entityFormName - a unique name for this form used in specifying tab names -->
-<!--    deleteButton - boolean value determining whether or not to show the delete button -->
 
 <form th:object="${entityForm}"
       method="POST"
@@ -65,9 +63,5 @@
 
         </li>
     </ul>
-    
-    <input type="submit" class="button right" value="Save" th:classappend="${additionalSubmitClasses}" />
-    
-    <button th:if="${deleteButton}" class="button right alert delete-button">Delete</button>
     
 </form>

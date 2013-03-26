@@ -49,6 +49,8 @@ public class EntityForm {
     // These values are used when dynamic forms are in play. They are not rendered to the client,
     // but they can be used when performing actions on the submit event
     protected Map<String, DynamicEntityFormInfo> dynamicFormInfos = new HashMap<String, DynamicEntityFormInfo>();
+    
+    protected List<EntityFormAction> actions = new ArrayList<EntityFormAction>();
 
     /**
      * @return a flattened, field name keyed representation of all of 
@@ -205,6 +207,10 @@ public class EntityForm {
         tab.getRuleBuilders().add(ruleBuilder);
     }
     
+    public void addAction(EntityFormAction action) {
+        getActions().add(action);
+    }
+    
     public EntityForm getDynamicForm(String name) {
         return getDynamicForms().get(name);
     }
@@ -220,6 +226,10 @@ public class EntityForm {
     public void putDynamicFormInfo(String name, DynamicEntityFormInfo info) {
         getDynamicFormInfos().put(name, info);
     }
+    
+    /* *********************** */
+    /* GENERIC GETTERS/SETTERS */
+    /* *********************** */
 
     public String getId() {
         return id;
@@ -285,4 +295,12 @@ public class EntityForm {
         this.dynamicFormInfos = dynamicFormInfos;
     }
 
+    public List<EntityFormAction> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<EntityFormAction> actions) {
+        this.actions = actions;
+    }
+    
 }
