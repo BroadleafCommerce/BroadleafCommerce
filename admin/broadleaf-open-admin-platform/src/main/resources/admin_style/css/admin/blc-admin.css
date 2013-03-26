@@ -69,6 +69,11 @@ span.error {
   Foundation Overrides
 ----------------------------------------------------- */
 
+input[type="search"] {
+    -webkit-appearance: none;
+    padding: 0px;
+}
+
 fieldset, 
 fieldset legend,
 .tabs, 

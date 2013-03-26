@@ -71,7 +71,7 @@
         $('.listgrid-headerBtn.dropdown .remove-filter').click(removeFilter);
 
         // reset other active states
-        $doc.on('click.fndtn', '.listgrid-headerBtn.dropdown:not(.split), .listgrid-headerBtn.dropdown.split span', function (e) {
+        $doc.on('click.fndtn', '.listgrid-headerBtn.dropdown:not(.split), .listgrid-headerBtn.dropdown.split span, .listgrid-criteria-input', function (e) {
             var $el = $(this),
                 button = $el.closest('.listgrid-headerBtn.dropdown'),
                 dropdown = $('> ul', button);
@@ -97,7 +97,7 @@
         $doc.on('click.fndtn', 'body, html', function (e) {
             if (undefined == e.originalEvent) { return; }
             // check original target instead of stopping event propagation to play nice with other events
-            if (!$(e.originalEvent.target).is('.listgrid-headerBtn.dropdown:not(.split), .listgrid-headerBtn.dropdown.split span')) {
+            if (!$(e.originalEvent.target).parents().is('.filter-fields')) {
                 closeDropdowns();
                 if (config.dropdownAsToggle) {
                     resetToggles();

@@ -108,6 +108,8 @@ $(document).ready(function() {
             var $valueField = $this.find('input.value');
             $valueField.val(fields['id']);
             $this.find('span.display-value').html(fields[displayValueProp]);
+            //ensure that the clear button shows up after selecting a value
+            $this.find('a.clear-foreign-key').show();
             
             // To-one fields potentially trigger a dynamicform. We test to see if this field should
             // trigger a form, and bind the necessary event if it should.
@@ -260,6 +262,14 @@ $(document).ready(function() {
             updateListGrid(data, $('body').find('.list-grid-table tbody'));
         });
         return false;
+    });
+    
+    $('body').on('click', 'a.clear-foreign-key', function(event) {
+        //remove the current display value
+        $(this).next().text('');
+        //remove the criteria input val
+        $(this).closest('.additional-foreign-key-container').find('.value').val('');
+        $(this).toggle();
     });
     
     $('body').on('mouseover', 'td.row-action-selector', function(event) {

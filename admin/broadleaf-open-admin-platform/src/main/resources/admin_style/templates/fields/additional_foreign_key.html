@@ -5,6 +5,8 @@
     <label th:for="${field.name}" th:text="#{${field.friendlyName}}" />
     
     <div class="foreign-key-value-container">
+        <a href="#" class="clear-foreign-key"
+           th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">[X]</a>
         <span
             class="display-value"
             style="line-height: 23px; vertical-align: bottom"
