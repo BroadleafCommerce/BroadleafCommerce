@@ -26,7 +26,10 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.core.OrderComparator;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,17 +43,22 @@ import java.util.List;
  */
 public abstract class BaseProcessor implements InitializingBean, BeanNameAware, BeanFactoryAware, Processor {
 
-    private BeanFactory beanFactory;
-    private String beanName;
-    private List<Activity<ProcessContext>> activities;
-    private ErrorHandler defaultErrorHandler;
+    protected BeanFactory beanFactory;
+    protected String beanName;
+    protected List<Activity<ProcessContext>> activities = new ArrayList<Activity<ProcessContext>>();
+    protected ErrorHandler defaultErrorHandler;
 
     @Value("${workflow.auto.rollback.on.error}")
     private boolean autoRollbackOnError = true;
+    
+    /**
+     * If set to true, this will allow an empty set of activities, thus creating a 'do-nothing' workflow
+     */
+    protected boolean allowEmptyActivities = false;
 
-    /* Sets name of the spring bean in the application context that this
+    /**
+     * Sets name of the spring bean in the application context that this
      * processor is configured under
-     * (non-Javadoc)
      * @see org.springframework.beans.factory.BeanNameAware#setBeanName(java.lang.String)
      */
     @Override
@@ -59,8 +67,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
 
     }
 
-    /* Sets the spring bean factroy bean that is responsible for this processor.
-     * (non-Javadoc)
+    /** Sets the spring bean factroy bean that is responsible for this processor.
      * @see org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.springframework.beans.factory.BeanFactory)
      */
     @Override
@@ -89,35 +96,55 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
     public void setAutoRollbackOnError(boolean autoRollbackOnError) {
         this.autoRollbackOnError = autoRollbackOnError;
     }
+    
+    /**
+     * Defaults to 'false'. This will prevent an exception from being thrown when no activities have been configured
+     * for a processor, and thus will create a 'do-nothing' workflow.
+     * @return the allowEmptyActivities
+     */
+    public boolean isAllowEmptyActivities() {
+        return allowEmptyActivities;
+    }
+    
+    /**
+     * @param allowEmptyActivities the allowEmptyActivities to set
+     */
+    public void setAllowEmptyActivities(boolean allowEmptyActivities) {
+        this.allowEmptyActivities = allowEmptyActivities;
+    }
 
-    /*
-         * Called after the properties have been set, Ensures the list of activities
-         *  is not empty and each activity is supported by this Workflow Processor
-         * (non-Javadoc)
-         *
-         * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-         */
+    /**
+     * Called after the properties have been set, Ensures the list of activities
+     *  is not empty and each activity is supported by this Workflow Processor
+     *
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
     @Override
     public void afterPropertiesSet() throws Exception {
 
-        if(!(beanFactory instanceof ListableBeanFactory)) {
+        if (!(beanFactory instanceof ListableBeanFactory)) {
             throw new BeanInitializationException("The workflow processor ["+beanName+"] " +
                     "is not managed by a ListableBeanFactory, please re-deploy using some derivative of ListableBeanFactory such as" +
             "ClassPathXmlApplicationContext ");
         }
 
-        if (activities == null || activities.isEmpty()) {
+        if (CollectionUtils.isEmpty(activities) && !isAllowEmptyActivities()) {
             throw new UnsatisfiedDependencyException(getBeanDesc(), beanName, "activities",
             "No activities were wired for this workflow");
         }
+        
+        //sort the activities based on their configured order
+        OrderComparator.sort(activities);
 
+        //TODO: check to see if a module has modified this workflow, add support-level logging
+        
         for (Iterator<Activity<ProcessContext>> iter = activities.iterator(); iter.hasNext();) {
             Activity<? extends ProcessContext> activity = iter.next();
             if( !supports(activity))
                 throw new BeanInitializationException("The workflow processor ["+beanName+"] does " +
                         "not support the activity of type"+activity.getClass().getName());
         }
-
+        
     }
 
     /**

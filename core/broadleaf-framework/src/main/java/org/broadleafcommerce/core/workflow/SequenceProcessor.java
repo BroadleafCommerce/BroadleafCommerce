@@ -126,7 +126,7 @@ public class SequenceProcessor extends BaseProcessor {
      * @param activity
      *            the current activity in the iteration
      */
-    private boolean processShouldStop(ProcessContext context, Activity<? extends ProcessContext> activity) {
+    protected boolean processShouldStop(ProcessContext context, Activity<? extends ProcessContext> activity) {
         if (context != null && context.isStopped()) {
             LOG.info("Interrupted workflow as requested by:" + activity.getBeanName());
             return true;
@@ -134,7 +134,7 @@ public class SequenceProcessor extends BaseProcessor {
         return false;
     }
 
-    private ProcessContext createContext(Object seedData) throws WorkflowException {
+    protected ProcessContext createContext(Object seedData) throws WorkflowException {
         return processContextFactory.createContext(seedData);
     }
 

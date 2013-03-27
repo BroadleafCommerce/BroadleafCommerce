@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
     
@@ -11,8 +12,10 @@
     
     <bean id="blFulfillmentLocationResolver" class="org.broadleafcommerce.core.pricing.service.fulfillment.SimpleFulfillmentLocationResolver" />
 
-    <bean id="blFixedPriceFulfillmentPricingProvider" class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.FixedPriceFulfillmentPricingProvider" />
-    <bean id="blBandedFulfillmentPricingProvider" class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider" />
+    <bean id="blFixedPriceFulfillmentPricingProvider"
+            class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.FixedPriceFulfillmentPricingProvider" />
+    <bean id="blBandedFulfillmentPricingProvider"
+            class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider" />
     <bean id="blFulfillmentPricingProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
@@ -21,6 +24,19 @@
             </list>
         </property>
     </bean>
+    
+    <bean p:order="1000" id="blOfferActivity"
+            class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity" />
+    <bean p:order="2000" id="blConsolidateFulfillmentFeesActivity"
+            class="org.broadleafcommerce.core.pricing.service.workflow.ConsolidateFulfillmentFeesActivity" />
+    <bean p:order="3000" id="blFulfillmentItemPricingActivity" class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentItemPricingActivity" />
+    <bean p:order="4000" id="blFulfillmentGroupMerchandiseTotalActivity" class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupMerchandiseTotalActivity" />
+    <bean p:order="5000" id="blFulfillmentGroupPricingActivity" class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity" />
+    <bean p:order="6000" id="blShippingOfferActivity" class="org.broadleafcommerce.core.pricing.service.workflow.ShippingOfferActivity" />
+    <bean p:order="7000" id="blTaxActivity" class="org.broadleafcommerce.core.pricing.service.workflow.TaxActivity">
+        <property name="taxModule" ref="blTaxModule"/>
+    </bean>
+    <bean p:order="8000" id="blTotalActivity" class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity" />
 
     <bean id="blPricingWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
@@ -28,16 +44,14 @@
         </property>
         <property name="activities">
             <list>
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity" />                
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.ConsolidateFulfillmentFeesActivity" />
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentItemPricingActivity" />                                       
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupMerchandiseTotalActivity"/>
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity" />
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.ShippingOfferActivity"/>
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.TaxActivity">
-                    <property name="taxModule" ref="blTaxModule"/>
-                </bean>
-                <bean class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity"/>
+                <ref bean="blOfferActivity" />                
+                <ref bean="blConsolidateFulfillmentFeesActivity" />
+                <ref bean="blFulfillmentItemPricingActivity" />                                       
+                <ref bean="blFulfillmentGroupMerchandiseTotalActivity" />
+                <ref bean="blFulfillmentGroupPricingActivity" />
+                <ref bean="blShippingOfferActivity" />
+                <ref bean="blTaxActivity" />
+                <ref bean="blTotalActivity"/>
             </list>
         </property>
         <property name="defaultErrorHandler">
@@ -51,6 +65,11 @@
         </property>
     </bean>
     
+    <bean p:order="1000" id="blValidateAddRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity"/>
+    <bean p:order="2000" id="blAddOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
+    <bean p:order="3000" id="blAddFulfillmentGroupItemActivity" class="org.broadleafcommerce.core.order.service.workflow.add.AddFulfillmentGroupItemActivity"/>
+    <bean p:order="4000" id="blAddWorkflowPriceOrderIfNecessaryActivity" class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
+    <bean p:order="5000" id="blAddWorkflowVerifyFulfillmentGroupItemsActivity" class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
     
     <bean id="blAddItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
@@ -58,15 +77,22 @@
         </property>
         <property name="activities">
             <list>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.add.AddFulfillmentGroupItemActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
+                <ref bean="blValidateAddRequestActivity" />
+                <ref bean="blAddOrderItemActivity" />
+                <ref bean="blAddFulfillmentGroupItemActivity" />
+                <ref bean="blAddWorkflowPriceOrderIfNecessaryActivity" />
+                <ref bean="blAddWorkflowVerifyFulfillmentGroupItemsActivity" />
             </list>
         </property>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
+
+    <bean p:order="1000" id="blValidateUpdateRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.update.ValidateUpdateRequestActivity"/>
+    <bean p:order="2000" id="blUpdateOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderItemActivity"/>
+    <bean p:order="3000" id="blUdateOrderMultishipOptionActivity" class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderMultishipOptionActivity"/>
+    <bean p:order="4000" id="blUpdateFulfillmentGroupItemActivity" class="org.broadleafcommerce.core.order.service.workflow.update.UpdateFulfillmentGroupItemActivity"/>
+    <bean p:order="5000" id="blUpdateWorkflowPriceOrderIfNecessaryActivity" class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
+    <bean p:order="6000" id="blUpdateWorkflowVerifyFulfillmentGroupItemsActivity" class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
     
     <bean id="blUpdateItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
@@ -74,16 +100,23 @@
         </property>
         <property name="activities">
             <list>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.update.ValidateUpdateRequestActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderItemActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderMultishipOptionActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.update.UpdateFulfillmentGroupItemActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
+                <ref bean="blValidateUpdateRequestActivity" />
+                <ref bean="blUpdateOrderItemActivity" />
+                <ref bean="blUdateOrderMultishipOptionActivity" />
+                <ref bean="blUpdateFulfillmentGroupItemActivity" />
+                <ref bean="blUpdateWorkflowPriceOrderIfNecessaryActivity" />
+                <ref bean="blUpdateWorkflowVerifyFulfillmentGroupItemsActivity" />
             </list>
         </property>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
+    
+    <bean p:order="1000" id="blValidateRemoveRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.ValidateRemoveRequestActivity"/>
+    <bean p:order="2000" id="blRemoveOrderMultishipOptionActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderMultishipOptionActivity"/>
+    <bean p:order="3000" id="blRemoveFulfillmentGroupItemActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveFulfillmentGroupItemActivity"/>
+    <bean p:order="4000" id="blRemoveOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderItemActivity"/>
+    <bean p:order="5000" id="blRemoveWorkflowPriceOrderIfNecessaryActivity" class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
+    <bean p:order="6000" id="blRemoveWorkflowVerifyFulfillmentGroupItemsActivity" class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
     
     <bean id="blRemoveItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
@@ -91,30 +124,22 @@
         </property>
         <property name="activities">
             <list>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.remove.ValidateRemoveRequestActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderMultishipOptionActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveFulfillmentGroupItemActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderItemActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
-                <bean class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
+                <ref bean="blValidateRemoveRequestActivity" />
+                <ref bean="blRemoveOrderMultishipOptionActivity" />
+                <ref bean="blRemoveFulfillmentGroupItemActivity" />
+                <ref bean="blRemoveOrderItemActivity" />
+                <ref bean="blRemoveWorkflowPriceOrderIfNecessaryActivity" />
+                <ref bean="blRemoveWorkflowVerifyFulfillmentGroupItemsActivity" />
             </list>
         </property>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
 
-    <bean id="blPaymentWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
-        <property name="processContextFactory">
-            <bean class="org.broadleafcommerce.core.payment.service.workflow.SimplePaymentProcessContextFactory"/>
-        </property>
-        <property name="activities">
-            <list>
-                <bean class="org.broadleafcommerce.core.payment.service.workflow.CompositeActivity">
-                    <property name="workflow" ref="blAuthorizeAndDebitWorkflow"/>
-                </bean>
-            </list>
-        </property>
-        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
-    </bean>
+    <bean p:order="1000" id="blVerifyCustomerMaxOfferUsesActivity" class="org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity"/>
+    <!-- For all payment workflow configurations, see bl-framework-applicationContext-workflow.xml -->
+    <bean p:order="2000" id="blPaymentServiceActivity" class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
+    <bean p:order="3000" id="blRecordOfferUsageActivity" class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity"/>
+    <bean p:order="4000" id="blCompleteOrderActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
 
     <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
@@ -122,10 +147,10 @@
         </property>
         <property name="activities">
             <list>
-                <bean class="org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity"/>
-                <bean class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
-                <bean class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity"/>
-                <bean class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
+                <ref bean="blVerifyCustomerMaxOfferUsesActivity" />
+                <ref bean="blPaymentServiceActivity" />
+                <ref bean="blRecordOfferUsageActivity" />
+                <ref bean="blCompleteOrderActivity" />
             </list>
         </property>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>

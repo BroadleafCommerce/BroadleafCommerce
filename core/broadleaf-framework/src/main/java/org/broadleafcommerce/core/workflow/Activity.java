@@ -18,10 +18,11 @@ package org.broadleafcommerce.core.workflow;
 
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.core.Ordered;
 
 import java.util.Map;
 
-public interface Activity<T extends ProcessContext> extends BeanNameAware{
+public interface Activity<T extends ProcessContext> extends BeanNameAware, Ordered {
 
     /**
      * Called by the encompassing processor to activate
