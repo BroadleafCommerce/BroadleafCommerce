@@ -16,6 +16,12 @@
 
 package org.broadleafcommerce.core.workflow;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
+import org.broadleafcommerce.common.logging.LifeCycleEvent;
+import org.broadleafcommerce.common.logging.SupportLogManager;
+import org.broadleafcommerce.common.logging.SupportLogger;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -27,9 +33,9 @@ import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.OrderComparator;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,6 +61,8 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
      * If set to true, this will allow an empty set of activities, thus creating a 'do-nothing' workflow
      */
     protected boolean allowEmptyActivities = false;
+    
+    protected SupportLogger supportLogger = SupportLogManager.getLogger("Workflows", BaseProcessor.class);
 
     /**
      * Sets name of the spring bean in the application context that this
@@ -137,12 +145,37 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
         OrderComparator.sort(activities);
 
         //TODO: check to see if a module has modified this workflow, add support-level logging
-        
+        List<String> modifyingModules = new ArrayList<String>();
         for (Iterator<Activity<ProcessContext>> iter = activities.iterator(); iter.hasNext();) {
             Activity<? extends ProcessContext> activity = iter.next();
-            if( !supports(activity))
+            if ( !supports(activity)) {
                 throw new BeanInitializationException("The workflow processor ["+beanName+"] does " +
                         "not support the activity of type"+activity.getClass().getName());
+            }
+            
+            if (activity instanceof ModuleActivity) {
+                modifyingModules.add(((ModuleActivity) activity).getModuleName());
+            }
+        }
+        
+        if (!CollectionUtils.isNotEmpty(modifyingModules)) {
+            //log the fact that we've got some modifications to the workflow
+            StringBuffer message = new StringBuffer();
+            message.append("The following modules have made changes to the " + getBeanName() + " workflow: ");
+            message.append(Arrays.toString(modifyingModules.toArray()));
+            message.append("\n");            
+            message.append("The final ordering of activities for the " + getBeanName() + " workflow is: \n");
+            ArrayList<String> activityNames = new ArrayList<String>();
+            CollectionUtils.collect(activities, new Transformer() {
+
+                @Override
+                public Object transform(Object input) {
+                    return ((ProductOptionValue) input).getAttributeValue();
+                }
+            }, activityNames);
+            message.append(Arrays.toString(activityNames.toArray()));
+
+            supportLogger.lifecycle(LifeCycleEvent.CONFIG, message.toString());
         }
         
     }
