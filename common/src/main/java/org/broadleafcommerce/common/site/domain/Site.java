@@ -139,4 +139,8 @@ public interface Site extends Serializable {
      * @return a deep copy of this site
      */
     public Site clone();
+
+    public boolean isDeactivated();
+
+    public void setDeactivated(boolean deactivated);
 }

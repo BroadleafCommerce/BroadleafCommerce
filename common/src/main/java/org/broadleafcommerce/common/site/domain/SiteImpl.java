@@ -18,6 +18,8 @@ package org.broadleafcommerce.common.site.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -29,14 +31,17 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
+import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -64,7 +69,8 @@ import java.util.List;
 @Table(name = "BLC_SITE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationClass(friendlyName = "baseSite")
-public class SiteImpl implements Site {
+@SQLDelete(sql="UPDATE BLC_SITE SET ARCHIVED = 'Y' WHERE SITE_ID = ?")
+public class SiteImpl implements Site, Status {
 
     private static final long serialVersionUID = 1L;
     private static final Log LOG = LogFactory.getLog(SiteImpl.class);
@@ -98,6 +104,13 @@ public class SiteImpl implements Site {
     @BatchSize(size = 50)
     @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "siteCatalogTitle", dataSourceName = "siteCatalogDS", manyToField = "sites")
     protected List<Catalog> catalogs = new ArrayList<Catalog>();
+
+    @Column(name = "DEACTIVATED")
+    @AdminPresentation(friendlyName = "SiteImpl_Deactivated", order=4, gridOrder = 4, group = "SiteImpl_Site")
+    protected Boolean deactivated = false;
+
+    @Embedded
+    protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
     @Override
     public Long getId() {
@@ -169,6 +182,49 @@ public class SiteImpl implements Site {
         this.catalogs = catalogs;
     }
 
+    @Override
+    public Character getArchived() {
+       if (archiveStatus == null) {
+           archiveStatus = new ArchiveStatus();
+       }
+       return archiveStatus.getArchived();
+    }
+
+    @Override
+    public void setArchived(Character archived) {
+       if (archiveStatus == null) {
+           archiveStatus = new ArchiveStatus();
+       }
+       archiveStatus.setArchived(archived);
+    }
+
+    @Override
+    public boolean isActive() {
+        if (LOG.isDebugEnabled()) {
+            if (isDeactivated()) {
+                LOG.debug("site, " + id + ", inactive due to deactivated property");
+            }
+            if ('Y'==getArchived()) {
+                LOG.debug("site, " + id + ", inactive due to archived status");
+            }
+        }
+        return !isDeactivated() && 'Y'!=getArchived();
+    }
+
+    @Override
+    public boolean isDeactivated() {
+        if (deactivated == null) {
+            return false;
+        } else {
+            return deactivated;
+        }
+    }
+
+    @Override
+    public void setDeactivated(boolean deactivated) {
+        this.deactivated = deactivated;
+    }
+
     public void checkCloneable(Site site) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = site.getClass().getMethod("clone", new Class[]{});
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !site.getClass().getName().startsWith("org.broadleafcommerce")) {
@@ -189,6 +245,8 @@ public class SiteImpl implements Site {
             }
             clone.setId(id);
             clone.setName(name);
+            clone.setDeactivated(isDeactivated());
+            ((Status) clone).setArchived(getArchived());
 
             for (Catalog catalog : getCatalogs()) {
                 Catalog cloneCatalog = new CatalogImpl();
