@@ -31,6 +31,11 @@ public abstract class BaseActivity<T extends ProcessContext> implements Activity
     private boolean automaticallyRegisterRollbackHandler = true;
 
     @Override
+    public boolean shouldExecute(T context) {
+        return true;
+    }
+    
+    @Override
     public ErrorHandler getErrorHandler() {
         return errorHandler;
     }

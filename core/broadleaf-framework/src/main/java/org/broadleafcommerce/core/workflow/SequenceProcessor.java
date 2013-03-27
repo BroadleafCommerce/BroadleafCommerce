@@ -70,36 +70,40 @@ public class SequenceProcessor extends BaseProcessor {
             context = createContext(seedData);
 
             for (Activity<ProcessContext> activity : activities) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("running activity:" + activity.getBeanName() + " using arguments:" + context);
-                }
-
-                try {
-                    context = activity.execute(context);
-                } catch (Throwable th) {
-                    if (getAutoRollbackOnError()) {
-                        LOG.info("Automatically rolling back state for any previously registered RollbackHandlers. RollbackHandlers may be registered for workflow activities in appContext.");
-                        ActivityStateManagerImpl.getStateManager().rollbackAllState();
+                if (activity.shouldExecute(context)) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("running activity:" + activity.getBeanName() + " using arguments:" + context);
                     }
-                    ErrorHandler errorHandler = activity.getErrorHandler();
-                    if (errorHandler == null) {
-                        LOG.info("no error handler for this action, run default error" + "handler and abort processing ");
-                        getDefaultErrorHandler().handleError(context, th);
+    
+                    try {
+                        context = activity.execute(context);
+                    } catch (Throwable th) {
+                        if (getAutoRollbackOnError()) {
+                            LOG.info("Automatically rolling back state for any previously registered RollbackHandlers. RollbackHandlers may be registered for workflow activities in appContext.");
+                            ActivityStateManagerImpl.getStateManager().rollbackAllState();
+                        }
+                        ErrorHandler errorHandler = activity.getErrorHandler();
+                        if (errorHandler == null) {
+                            LOG.info("no error handler for this action, run default error" + "handler and abort processing ");
+                            getDefaultErrorHandler().handleError(context, th);
+                            break;
+                        } else {
+                            LOG.info("run error handler and continue");
+                            errorHandler.handleError(context, th);
+                        }
+                    }
+    
+                    //ensure its ok to continue the process
+                    if (processShouldStop(context, activity)) {
                         break;
-                    } else {
-                        LOG.info("run error handler and continue");
-                        errorHandler.handleError(context, th);
                     }
-                }
-
-                //ensure its ok to continue the process
-                if (processShouldStop(context, activity)) {
-                    break;
-                }
-
-                //register the RollbackHandler
-                if (activity.getRollbackHandler() != null && activity.getAutomaticallyRegisterRollbackHandler()) {
-                    ActivityStateManagerImpl.getStateManager().registerState(activity, context, activity.getRollbackRegion(), activity.getRollbackHandler(), activity.getStateConfiguration());
+    
+                    //register the RollbackHandler
+                    if (activity.getRollbackHandler() != null && activity.getAutomaticallyRegisterRollbackHandler()) {
+                        ActivityStateManagerImpl.getStateManager().registerState(activity, context, activity.getRollbackRegion(), activity.getRollbackHandler(), activity.getStateConfiguration());
+                    }
+                } else {
+                    LOG.debug("Not executing activity: " + activity.getBeanName() + " based on the context: " + context);
                 }
             }
         } finally {

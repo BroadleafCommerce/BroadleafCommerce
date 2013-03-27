@@ -34,6 +34,17 @@ public interface Activity<T extends ProcessContext> extends BeanNameAware{
     public T execute(T context) throws Exception;
 
     /**
+     * Determines if an activity should execute based on the current values in the {@link ProcessContext}. For example, a
+     * context might have both an {@link Order} as well as a String 'status' of what the order should be changed to. It is
+     * possible that an activity in a workflow could only deal with a particular status change, and thus could return false
+     * from this method.
+     * 
+     * @param context
+     * @return
+     */
+    public boolean shouldExecute(T context);
+
+    /**
      * Get the fine-grained error handler wired up for this Activity
      * @return
      */
