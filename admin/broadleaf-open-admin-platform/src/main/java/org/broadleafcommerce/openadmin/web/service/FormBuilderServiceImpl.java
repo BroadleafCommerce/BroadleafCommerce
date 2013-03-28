@@ -341,7 +341,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Override
     public EntityForm buildEntityForm(ClassMetadata cmd) {
-        EntityForm ef = new EntityForm();
+        EntityForm ef = createStandardEntityForm();
         ef.setCeilingEntityClassname(cmd.getCeilingType());
         
         AdminSection section = navigationService.findAdminSectionByClass(cmd.getCeilingType());
@@ -413,7 +413,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             lg.addToolbarAction(DefaultListGridActions.ADD);
         }
         
-        ef.addAction(DefaultEntityFormActions.SAVE);
         ef.addAction(DefaultEntityFormActions.DELETE);
 
         return ef;
@@ -464,7 +463,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
             String parentId)
             throws ServiceException, ApplicationSecurityException {
-        EntityForm ef = new EntityForm();
+        EntityForm ef = createStandardEntityForm();
         ef.setEntityType(adornedList.getAdornedTargetEntityClassname());
 
         // Get the metadata for this adorned field
@@ -549,13 +548,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         setEntityFormFields(ef, mapFormProperties);
 
-        // Add the symbolicId field required for persistence
-//        Field f = new Field()
-//                .withName("symbolicId")
-//                .withFieldType(SupportedFieldType.HIDDEN.toString())
-//                .withValue(parentId);
-//        ef.addHiddenField(f);
-
         Field f = new Field()
                 .withName("priorKey")
                 .withFieldType(SupportedFieldType.HIDDEN.toString());
@@ -563,5 +555,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         return ef;
     }
+    
+    protected EntityForm createStandardEntityForm() {
+        EntityForm ef = new EntityForm();
+        ef.addAction(DefaultEntityFormActions.SAVE);
+        return ef;
+    }
+    
 
 }

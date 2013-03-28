@@ -37,7 +37,6 @@ import org.broadleafcommerce.openadmin.web.controller.BroadleafAdminAbstractCont
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
 import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
@@ -168,8 +167,6 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
             entityForm.setCeilingEntityClassname(cmd.getCeilingType());
             entityForm.setEntityType(specificTypeMd.getCeilingType());
             
-            entityForm.addAction(DefaultEntityFormActions.SAVE);
-
             // When we initially build the class metadata (and thus, the entity form), we had all of the possible
             // polymorphic fields built out. Now that we have a concrete entity type to render, we can remove the
             // fields that are not applicable for this given entity type.
