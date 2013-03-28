@@ -116,7 +116,7 @@ public class PersistencePackageRequest {
                         getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
 
                 request.setType(Type.MAP);
-                request.setCeilingEntityClassname(fmd.getTargetClass());
+                request.setCeilingEntityClassname(foreignKey.getForeignKeyClass());
                 request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.setMapStructure(mapStructure);
                 request.setForeignKey(foreignKey);

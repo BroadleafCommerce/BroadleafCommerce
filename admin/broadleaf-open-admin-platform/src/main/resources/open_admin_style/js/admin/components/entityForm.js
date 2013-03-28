@@ -12,6 +12,7 @@ $(document).ready(function() {
 	
 	$('body').on('click', 'button.submit-button', function(event) {
 		$(this).closest('form').submit();
+		event.preventDefault();
 	});
 	    
 });

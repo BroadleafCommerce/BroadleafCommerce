@@ -22,6 +22,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
@@ -32,6 +33,7 @@ import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.Property;
@@ -506,8 +508,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     @Override
     public EntityForm buildMapForm(MapMetadata mapMd, final MapStructure mapStructure, ClassMetadata cmd, String parentId)
             throws ServiceException, ApplicationSecurityException {
-        EntityForm ef = new EntityForm();
-        ef.setEntityType(mapMd.getTargetClass());
+        EntityForm ef = createStandardEntityForm();
+        ForeignKey foreignKey = (ForeignKey) mapMd.getPersistencePerspective()
+                .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+        ef.setEntityType(foreignKey.getForeignKeyClass());
 
         // We will use a combo field to render the key choices
         ComboField keyField = new ComboField();
