@@ -29,6 +29,10 @@ public class ListGrid {
     });
     protected List<ListGridRecord> records = new ArrayList<ListGridRecord>();
     protected List<ListGridAction> toolbarActions = new ArrayList<ListGridAction>();
+    
+    /**
+     * These actions will start greyed out and unable to be clicked until a specific row has been selected
+     */
     protected List<ListGridAction> rowActions = new ArrayList<ListGridAction>();
     protected int startIndex = 0;
     
@@ -77,6 +81,14 @@ public class ListGrid {
         }
         
         return sb.toString();
+    }
+    
+    public void addRowAction(ListGridAction action) {
+        getRowActions().add(action);
+    }
+    
+    public void addToolbarAction(ListGridAction action) {
+        getToolbarActions().add(action);
     }
 
     public String getClassName() {

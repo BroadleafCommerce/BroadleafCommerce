@@ -83,15 +83,15 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/resources/admin_style</directory>
+                <directory>src/main/resources/open_admin_style</directory>
                 <filtering>false</filtering>
-                <targetPath>admin_style</targetPath>
+                <targetPath>open_admin_style</targetPath>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <excludes>
-                    <exclude>admin_style/**</exclude>
+                    <exclude>open_admin_style/**</exclude>
                 </excludes>
             </resource>
             <resource>

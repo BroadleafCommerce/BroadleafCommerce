@@ -66,7 +66,16 @@
         </plugins>
         <resources>
             <resource>
+                <directory>src/main/resources/admin_style</directory>
+                <filtering>false</filtering>
+                <targetPath>admin_style</targetPath>
+            </resource>
+            <resource>
                 <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>open_admin_style/**</exclude>
+                </excludes>
             </resource>
             <resource>
                 <directory>src/main/java</directory>

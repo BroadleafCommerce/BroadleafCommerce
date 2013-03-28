@@ -408,7 +408,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         
         for (ListGrid lg : ef.getAllListGrids()) {
-            lg.getToolbarActions().add(DefaultListGridActions.ADD);
+            lg.addToolbarAction(DefaultListGridActions.ADD);
         }
         
         ef.addAction(DefaultEntityFormActions.SAVE);

@@ -60,7 +60,7 @@
     </bean>
     
     <bean id="blAdminWebClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
-        <property name="prefix" value="/admin_style/templates/" />
+        <property name="prefix" value="/open_admin_style/templates/" />
         <property name="suffix" value=".html" />
         <property name="templateMode" value="HTML5" />        
         <property name="characterEncoding" value="UTF-8" />

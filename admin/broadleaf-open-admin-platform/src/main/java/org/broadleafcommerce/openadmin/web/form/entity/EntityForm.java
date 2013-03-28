@@ -30,6 +30,7 @@ public class EntityForm {
     protected String mainEntityName;
     protected String sectionKey;
     protected Set<Tab> tabs = new TreeSet<Tab>(new Comparator<Tab>() {
+        @Override
         public int compare(Tab o1, Tab o2) {
             return new CompareToBuilder()
                     .append(o1.getOrder(), o2.getOrder())
@@ -89,6 +90,22 @@ public class EntityForm {
             }
         }
         return list;
+    }
+    
+    /**
+     * Convenience method for grabbing a grid by its collection field name. This is very similar to {@link #findField(String)}
+     * but differs in that this only searches through the sub collections for the current entity
+     * 
+     * @param collectionFieldName the field name of the collection on the top-level entity
+     * @return
+     */
+    public ListGrid findListGrid(String collectionFieldName) {
+        for (ListGrid grid : getAllListGrids()) {
+            if (grid.getSubCollectionFieldName().equals(collectionFieldName)) {
+                return grid;
+            }
+        }
+        return null;
     }
 
     public Tab findTab(String tabTitle) {
