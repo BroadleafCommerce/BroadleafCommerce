@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.admin.server.service;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.client.service.AdminCatalogService;
@@ -26,24 +28,24 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 
  * @author Phillip Verheyden
  *
  */
-@Service("blAdminCatalogRemoteService")
-public class AdminCatalogRemoteService implements AdminCatalogService {
+@Service("blAdminCatalogService")
+public class AdminCatalogServiceImpl implements AdminCatalogService {
     
-    private static final Log LOG = LogFactory.getLog(AdminCatalogRemoteService.class);
+    private static final Log LOG = LogFactory.getLog(AdminCatalogServiceImpl.class);
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
@@ -58,23 +60,41 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
     public Integer generateSkusFromProduct(Long productId) {
         Product product = catalogService.findProductById(productId);
         
-        if (product.getProductOptions() == null || product.getProductOptions().size() == 0) {
+        if (CollectionUtils.isEmpty(product.getProductOptions())) {
             return -1;
-        }
-        
-        if (product.getAdditionalSkus().size() > 0) {
-            for (Sku sku : product.getAdditionalSkus()) {
-                skuDao.delete(sku);
-            }
-            product.getAdditionalSkus().clear();
         }
         
         List<List<ProductOptionValue>> allPermutations = generatePermutations(0, new ArrayList<ProductOptionValue>(), product.getProductOptions());
         LOG.info("Total number of permutations: " + allPermutations.size());
         LOG.info(allPermutations);
         
-        //For each permutation, I need them to map to a specific Sku
+        //determine the permutations that I already have Skus for
+        List<List<ProductOptionValue>> previouslyGeneratedPermutations = new ArrayList<List<ProductOptionValue>>();
+        if (CollectionUtils.isNotEmpty(product.getAdditionalSkus())) {
+            for (Sku additionalSku : product.getAdditionalSkus()) {
+                if (CollectionUtils.isNotEmpty(additionalSku.getProductOptionValues())) {
+                    previouslyGeneratedPermutations.add(additionalSku.getProductOptionValues());
+                }
+            }
+        }
+        
+        List<List<ProductOptionValue>> permutationsToGenerate = new ArrayList<List<ProductOptionValue>>();
         for (List<ProductOptionValue> permutation : allPermutations) {
+            boolean previouslyGenerated = false;
+            for (List<ProductOptionValue> generatedPermutation : previouslyGeneratedPermutations) {
+                if (isSamePermutation(permutation, generatedPermutation)) {
+                    previouslyGenerated = true;
+                    break;
+                }
+            }
+            
+            if (!previouslyGenerated) {
+                permutationsToGenerate.add(permutation);
+            }
+        }
+        
+        //For each permutation, I need them to map to a specific Sku
+        for (List<ProductOptionValue> permutation : permutationsToGenerate) {
             Sku permutatedSku = catalogService.createSku();
             permutatedSku.setProduct(product);
             permutatedSku.setProductOptionValues(permutation);
@@ -84,7 +104,28 @@ public class AdminCatalogRemoteService implements AdminCatalogService {
         
         catalogService.saveProduct(product);
         
-        return allPermutations.size();
+        return permutationsToGenerate.size();
+    }
+    
+    protected boolean isSamePermutation(List<ProductOptionValue> perm1, List<ProductOptionValue> perm2) {
+        if (perm1.size() == perm2.size()) {
+            
+            Collection perm1Ids = CollectionUtils.collect(perm1, new Transformer() {
+                @Override
+                public Object transform(Object input) {
+                    return ((ProductOptionValue) input).getId();
+                }
+            });
+            
+            Collection perm2Ids = CollectionUtils.collect(perm2, new Transformer() {
+                @Override
+                public Object transform(Object input) {
+                    return ((ProductOptionValue) input).getId();
+                }
+            });
+            return perm1Ids.containsAll(perm2Ids);
+        }
+        return false;
     }
     
     /**

@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.admin.web.controller.entity;
 
-import org.broadleafcommerce.cms.structure.domain.StructuredContent;
+import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.openadmin.web.controller.entity.BroadleafAdminAbstractEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
@@ -39,11 +39,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Handles admin operations for the {@link StructuredContent} entity. This entity has fields that are 
- * dependent on the value of the {@link StructuredContent#getStructuredContentType()} field, and as such,
- * it deviates from the typical {@link BroadleafAdminAbstractEntityController}.
+ * Handles admin operations for the {@link Product} entity. Editing a product requires custom criteria in order to properly
+ * invoke the {@link ProductCustomPersistenceHandler}
  * 
  * @author Andre Azzolini (apazzolini)
+ * @see {@link ProductCustomPersistenceHandler}
  */
 @Controller("blAdminProductController")
 @RequestMapping("/product")
@@ -73,7 +73,8 @@ public class BroadleafAdminProductController extends BroadleafAdminAbstractEntit
         EntityForm form = (EntityForm) model.asMap().get("entityForm");
         ListGridAction generateSkusAction = new ListGridAction().withDisplayText("Generate Skus")
                                                                 .withIconClass("icon-fighter-jet")
-                                                                .withButtonClass("generate-skus");
+                                                                .withButtonClass("generate-skus")
+                                                                .withUrlPostfix("/generate-skus");
         
         ListGrid skusGrid = form.findListGrid("additionalSkus");
         skusGrid.addToolbarAction(generateSkusAction);

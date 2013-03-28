@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.admin.client.service;
 
-import org.springframework.security.access.annotation.Secured;
-
-import com.google.gwt.user.client.rpc.RemoteService;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
 /**
@@ -26,7 +23,7 @@ import com.gwtincubator.security.exception.ApplicationSecurityException;
  * @author Phillip Verheyden
  *
  */
-public interface AdminCatalogService extends RemoteService {
+public interface AdminCatalogService {
     
     /**
      * Clear out any Skus that are already attached to the Product
@@ -36,8 +33,7 @@ public interface AdminCatalogService extends RemoteService {
      * @param productId - the Product to generate Skus from
      * @return the number of generated Skus from the ProductOption permutations
      */
-    @Secured("PERMISSION_OTHER_DEFAULT")
-    public Integer generateSkusFromProduct(Long productId) throws ApplicationSecurityException;
+    public Integer generateSkusFromProduct(Long productId);
 
     /**
      * This will create a new product along with a new Sku for the defaultSku, along with new
@@ -52,7 +48,6 @@ public interface AdminCatalogService extends RemoteService {
      * @return
      * @throws ApplicationSecurityException
      */
-    @Secured("PERMISSION_OTHER_DEFAULT")
-    public Boolean cloneProduct(Long productId) throws ApplicationSecurityException;
+    public Boolean cloneProduct(Long productId);
 
 }
