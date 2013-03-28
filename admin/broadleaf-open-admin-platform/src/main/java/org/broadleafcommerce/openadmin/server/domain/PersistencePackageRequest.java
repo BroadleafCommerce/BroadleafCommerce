@@ -7,6 +7,7 @@ import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadat
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
@@ -121,6 +122,10 @@ public class PersistencePackageRequest {
                 request.setForeignKey(foreignKey);
             }
         });
+        
+        if (md instanceof CollectionMetadata) {
+            request.setCustomCriteria(((CollectionMetadata) md).getCustomCriteria());
+        }
 
         return request;
     }
