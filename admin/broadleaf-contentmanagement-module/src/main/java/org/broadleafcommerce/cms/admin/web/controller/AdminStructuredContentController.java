@@ -22,7 +22,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
-import org.broadleafcommerce.openadmin.web.controller.entity.BroadleafAdminAbstractEntityController;
+import org.broadleafcommerce.openadmin.web.controller.entity.AdminAbstractEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -44,13 +44,13 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Handles admin operations for the {@link StructuredContent} entity. This entity has fields that are 
  * dependent on the value of the {@link StructuredContent#getStructuredContentType()} field, and as such,
- * it deviates from the typical {@link BroadleafAdminAbstractEntityController}.
+ * it deviates from the typical {@link AdminAbstractEntityController}.
  * 
  * @author Andre Azzolini (apazzolini)
  */
 @Controller("blAdminStructuredContentController")
 @RequestMapping("/structured-content")
-public class BroadleafAdminStructuredContentController extends BroadleafAdminAbstractEntityController {
+public class AdminStructuredContentController extends AdminAbstractEntityController {
     
     /* ****************** */
     /* INTERESTING THINGS */

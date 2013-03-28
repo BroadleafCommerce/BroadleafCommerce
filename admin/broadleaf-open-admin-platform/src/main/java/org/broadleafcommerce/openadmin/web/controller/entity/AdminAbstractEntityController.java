@@ -33,7 +33,7 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
-import org.broadleafcommerce.openadmin.web.controller.BroadleafAdminAbstractController;
+import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
 import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -69,7 +69,7 @@ import javax.servlet.http.HttpServletResponse;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public abstract class BroadleafAdminAbstractEntityController extends BroadleafAdminAbstractController {
+public abstract class AdminAbstractEntityController extends AdminAbstractController {
 
     @Resource(name = "blAdminEntityService")
     protected AdminEntityService service;

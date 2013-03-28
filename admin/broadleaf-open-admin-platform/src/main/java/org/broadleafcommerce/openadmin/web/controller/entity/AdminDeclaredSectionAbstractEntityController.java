@@ -12,11 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author Jeff Fischer
  */
-public class BroadleafAdminDeclaredSectionAbstractEntityController extends BroadleafAdminAbstractEntityController {
+public class AdminDeclaredSectionAbstractEntityController extends AdminAbstractEntityController {
 
     protected String sectionKey;
 
-    public BroadleafAdminDeclaredSectionAbstractEntityController(String sectionKey) {
+    public AdminDeclaredSectionAbstractEntityController(String sectionKey) {
         this.sectionKey = sectionKey;
     }
 

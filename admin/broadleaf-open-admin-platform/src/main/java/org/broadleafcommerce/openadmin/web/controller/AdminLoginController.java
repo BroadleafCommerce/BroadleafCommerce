@@ -52,7 +52,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  */
 @Controller("blAdminLoginController")
-public class BroadleafAdminLoginController extends BroadleafAbstractController {
+public class AdminLoginController extends BroadleafAbstractController {
 
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
 
@@ -210,7 +210,7 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     }
 
     public static void setLoginView(String loginView) {
-        BroadleafAdminLoginController.loginView = loginView;
+        AdminLoginController.loginView = loginView;
     }
 
     public static String getForgotPasswordView() {
@@ -218,7 +218,7 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     }
 
     public static void setForgotPasswordView(String forgotPasswordView) {
-        BroadleafAdminLoginController.forgotPasswordView = forgotPasswordView;
+        AdminLoginController.forgotPasswordView = forgotPasswordView;
     }
 
     public static String getForgotUsernameView() {
@@ -226,7 +226,7 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     }
 
     public static void setForgotUsernameView(String forgotUsernameView) {
-        BroadleafAdminLoginController.forgotUsernameView = forgotUsernameView;
+        AdminLoginController.forgotUsernameView = forgotUsernameView;
     }
 
     public static String getResetPasswordView() {
@@ -234,7 +234,7 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     }
 
     public static void setResetPasswordView(String resetPasswordView) {
-        BroadleafAdminLoginController.resetPasswordView = resetPasswordView;
+        AdminLoginController.resetPasswordView = resetPasswordView;
     }
 
     public static String getChangePasswordView() {
@@ -242,7 +242,7 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     }
 
     public static void setChangePasswordView(String changePasswordView) {
-        BroadleafAdminLoginController.changePasswordView = changePasswordView;
+        AdminLoginController.changePasswordView = changePasswordView;
     }
     
     public AdminSecurityService getAdminSecurityService() {
@@ -258,7 +258,7 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     }
 
     public static void setLoginRedirect(String loginRedirect) {
-        BroadleafAdminLoginController.loginRedirect = loginRedirect;
+        AdminLoginController.loginRedirect = loginRedirect;
     }
 
     public static String getResetPasswordRedirect() {
@@ -266,7 +266,7 @@ public class BroadleafAdminLoginController extends BroadleafAbstractController {
     }
 
     public static void setResetPasswordRedirect(String resetPasswordRedirect) {
-        BroadleafAdminLoginController.resetPasswordRedirect = resetPasswordRedirect;
+        AdminLoginController.resetPasswordRedirect = resetPasswordRedirect;
     }
 
 }

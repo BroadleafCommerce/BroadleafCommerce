@@ -17,7 +17,7 @@
 package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.web.controller.entity.BroadleafAdminBasicEntityController;
+import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 
 
 
@@ -99,7 +99,7 @@ public class Field {
      * with the url path for the listgrid itself.
      * 
      * @return
-     * @see {@link BroadleafAdminBasicEntityController#viewCollectionItemDetails(javax.servlet.http.HttpServletRequest,
+     * @see {@link AdminBasicEntityController#viewCollectionItemDetails(javax.servlet.http.HttpServletRequest,
      *                                                                           javax.servlet.http.HttpServletResponse,
      *                                                                           org.springframework.ui.Model,
      *                                                                           String,

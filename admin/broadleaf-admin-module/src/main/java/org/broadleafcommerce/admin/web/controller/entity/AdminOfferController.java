@@ -17,7 +17,7 @@
 package org.broadleafcommerce.admin.web.controller.entity;
 
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.web.controller.entity.BroadleafAdminAbstractEntityController;
+import org.broadleafcommerce.openadmin.web.controller.entity.AdminAbstractEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -48,7 +48,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("blAdminOfferController")
 @RequestMapping("offer")
-public class BroadleafAdminOfferController extends BroadleafAdminAbstractEntityController {
+public class AdminOfferController extends AdminAbstractEntityController {
 
     @Override
     public String[] getSectionCustomCriteria() {

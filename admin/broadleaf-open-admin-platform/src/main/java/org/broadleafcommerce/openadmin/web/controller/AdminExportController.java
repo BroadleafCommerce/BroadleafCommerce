@@ -19,20 +19,20 @@ package org.broadleafcommerce.openadmin.web.controller;
 import org.broadleafcommerce.openadmin.server.service.export.AdminExporter;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 /**
  * 
  * @author Phillip Verheyden
  */
-public class BroadleafAdminExportController {
+public class AdminExportController extends AdminAbstractController {
     
     @Resource(name = "blAdminExporters")
     protected List<AdminExporter> exporters;

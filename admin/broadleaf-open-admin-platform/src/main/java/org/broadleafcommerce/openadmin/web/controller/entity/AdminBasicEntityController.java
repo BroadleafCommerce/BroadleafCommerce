@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("blAdminBasicEntityController")
 @RequestMapping("/{sectionKey}")
-public class BroadleafAdminBasicEntityController extends BroadleafAdminAbstractEntityController {
+public class AdminBasicEntityController extends AdminAbstractEntityController {
 
     @Override
     @RequestMapping(value = "", method = RequestMethod.GET)

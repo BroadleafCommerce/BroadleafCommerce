@@ -23,7 +23,7 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
-import org.broadleafcommerce.openadmin.web.controller.entity.BroadleafAdminAbstractEntityController;
+import org.broadleafcommerce.openadmin.web.controller.entity.AdminAbstractEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
@@ -54,7 +54,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("blAdminProductController")
 @RequestMapping("/product")
-public class BroadleafAdminProductController extends BroadleafAdminAbstractEntityController {
+public class AdminProductController extends AdminAbstractEntityController {
     
     /* ****************** */
     /* INTERESTING THINGS */

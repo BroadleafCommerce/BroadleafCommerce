@@ -23,7 +23,6 @@ import javax.annotation.Resource;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for the Admin
- * All Admin controllers must extend this class in order to be registered with the Left-hand Navigation.
  *
  * Operations that are shared between all admin controllers belong here.
  *
@@ -31,31 +30,9 @@ import javax.annotation.Resource;
  * @author elbertbautista
  * @author apazzolini
  */
-public abstract class BroadleafAdminAbstractController extends BroadleafAbstractController {
-
-    protected String currentSectionKey;
+public abstract class AdminAbstractController extends BroadleafAbstractController {
 
     @Resource(name = "blAdminNavigationService")
     protected AdminNavigationService adminNavigationService;
-
-    /*
-    @ModelAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME)
-    public AdminModule getCurrentAdminModule() {
-        AdminSection section = getCurrentAdminSection();
-
-        if (section != null) {
-            return section.getModule();
-        }
-
-        return null;
-    }
-
-    @ModelAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME)
-    public AdminSection getCurrentAdminSection() {
-        return adminNavigationService.findAdminSectionBySectionKey(getCurrentSectionKey());
-    }
-
-    public abstract String getCurrentSectionKey();
-    */
 
 }

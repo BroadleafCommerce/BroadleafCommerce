@@ -1,7 +1,7 @@
 package org.broadleafcommerce.admin.web.controller.action;
 
 import org.broadleafcommerce.admin.client.service.AdminCatalogService;
-import org.broadleafcommerce.admin.web.controller.entity.BroadleafAdminProductController;
+import org.broadleafcommerce.admin.web.controller.entity.AdminProductController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,13 +34,13 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Controller that responds to custom catalog actions. These would normally be hooked up in customized controllers like 
- * {@link BroadleafAdminProductController}
+ * {@link AdminProductController}
  * 
  * @author Phillip Verheyden (phillipuniverse)
- * @see {@link BroadleafAdminProductController}
+ * @see {@link AdminProductController}
  */
-@Controller("blCatalogActionsController")
-public class BroadleafCatalogActionsController {
+@Controller("blAdminCatalogActionsController")
+public class AdminCatalogActionsController {
     
     @Resource(name = "blAdminCatalogService")
     protected AdminCatalogService adminCatalogService;
