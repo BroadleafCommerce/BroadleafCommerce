@@ -17,8 +17,11 @@
 package org.broadleafcommerce.admin.web.controller.entity;
 
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.openadmin.web.controller.entity.BroadleafAdminAbstractEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
+import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,7 +67,18 @@ public class BroadleafAdminProductController extends BroadleafAdminAbstractEntit
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable String id) throws Exception {
-        return super.viewEntityForm(request, response, model, SECTION_KEY, id);
+        String view = super.viewEntityForm(request, response, model, SECTION_KEY, id);
+        
+        //Skus have a specific toolbar action to generate Skus based on permutations
+        EntityForm form = (EntityForm) model.asMap().get("entityForm");
+        ListGridAction generateSkusAction = new ListGridAction().withDisplayText("Generate Skus")
+                                                                .withIconClass("icon-fighter-jet")
+                                                                .withButtonClass("generate-skus");
+        
+        ListGrid skusGrid = form.findListGrid("additionalSkus");
+        skusGrid.addToolbarAction(generateSkusAction);
+        
+        return view;
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)

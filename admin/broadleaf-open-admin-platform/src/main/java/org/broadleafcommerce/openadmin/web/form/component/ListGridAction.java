@@ -11,7 +11,7 @@ package org.broadleafcommerce.openadmin.web.form.component;
  */
 public class ListGridAction {
     
-    protected String anchorClass = "";
+    protected String buttonClass = "";
     protected String urlPostfix = "";
     protected String iconClass = "";
     protected String displayText = "";
@@ -19,44 +19,69 @@ public class ListGridAction {
     public ListGridAction() {
     }
     
-    public ListGridAction withAnchorClass(String anchorClass) {
-        setAnchorClass(anchorClass);
+    /**
+     * @see {@link #setButtonClass(String)}
+     */
+    public ListGridAction withButtonClass(String buttonClass) {
+        setButtonClass(buttonClass);
         return this;
     }
     
+    /**
+     * @see {@link #setUrlPostfix(String)}
+     */
     public ListGridAction withUrlPostfix(String urlPostfix) {
         setUrlPostfix(urlPostfix);
         return this;
     }
     
+    /**
+     * @see {@link #setIconClass(String)}
+     */
     public ListGridAction withIconClass(String iconClass) {
         setIconClass(iconClass);
         return this;
     }
     
+    /**
+     * @see {@link #setDisplayText(String)}
+     */
     public ListGridAction withDisplayText(String displayText) {
         setDisplayText(displayText);
         return this;
     }
 
-    public String getAnchorClass() {
-        return anchorClass;
+    public String getButtonClass() {
+        return buttonClass;
     }
     
     /**
-     * Main intent is for the anchor class to be used in a JQuery selector for giving this button a click action. You could
+     * Main intent is for the button class to be used in a JQuery selector for giving this button a click action. You could
      * technically also apply additional styling to this anchor but is not usually recommended.
-     * 
-     * @param anchorClass
+     * <p>
+     * An example JQuery selector would look like:
+     *   $('body').on('click', 'button.some-class', function() {
+     *       doSomeFunction()
+     *   });
+     * </p>
+     * @param buttonClass
      */
-    public void setAnchorClass(String anchorClass) {
-        this.anchorClass = anchorClass;
+    public void setButtonClass(String buttonClass) {
+        this.buttonClass = buttonClass;
     }
     
     public String getUrlPostfix() {
         return urlPostfix;
     }
-    
+    /**
+     * This means different things depending on where this action is on the list grid.
+     * <ul>
+     *  <li>If this is a toolbar action: this postfix will be appended onto the end of {@link ListGrid#getPath()} and 
+     *  presented as a 'data-actionurl' attribute for the button</li>
+     *  <li>If this is a row action: this postfix will be presented as a 'data-urlpostfix' attribute on the button</li>
+     * </ul>
+     * @param urlPostfix
+     */
     public void setUrlPostfix(String urlPostfix) {
         this.urlPostfix = urlPostfix;
     }
