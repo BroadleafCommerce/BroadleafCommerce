@@ -48,7 +48,7 @@ public class SiteDaoImpl implements SiteDao {
     }
     
     @Override
-    public List<Site> readAllSites() {
+    public List<Site> readAllActiveSites() {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Site> criteria = builder.createQuery(Site.class);
         Root<SiteImpl> site = criteria.from(SiteImpl.class);

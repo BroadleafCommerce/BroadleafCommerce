@@ -57,5 +57,5 @@ public interface SiteService {
     /**
      * @return a List of all sites in the system
      */
-    public List<Site> findAllSites();
+    public List<Site> findAllActiveSites();
 }

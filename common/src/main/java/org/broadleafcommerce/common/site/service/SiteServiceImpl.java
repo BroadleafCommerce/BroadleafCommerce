@@ -75,9 +75,9 @@ public class SiteServiceImpl implements SiteService {
     
     @Override
     @Transactional(value = "blTransactionManager", readOnly = true)
-    public List<Site> findAllSites() {
+    public List<Site> findAllActiveSites() {
         List<Site> response = new ArrayList<Site>();
-        List<Site> sites = siteDao.readAllSites();
+        List<Site> sites = siteDao.readAllActiveSites();
         for (Site site : sites) {
             response.add(site.clone());
         }

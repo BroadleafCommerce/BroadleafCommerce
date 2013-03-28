@@ -55,5 +55,5 @@ public interface SiteDao {
     /**
      * @return a List of all sites in the system
      */
-    public List<Site> readAllSites();
+    public List<Site> readAllActiveSites();
 }
