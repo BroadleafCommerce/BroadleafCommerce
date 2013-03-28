@@ -81,7 +81,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
-                if (fmd.isProminent() != null && fmd.isProminent()) {
+                if (fmd.isProminent() != null && fmd.isProminent() 
+                        && !VisibilityEnum.HIDDEN_ALL.equals(fmd.getVisibility())
+                        && !VisibilityEnum.GRID_HIDDEN.equals(fmd.getVisibility())) {
+                    
                     Field hf;
                     if (fmd.getFieldType().equals(SupportedFieldType.EXPLICIT_ENUMERATION) ||
                             fmd.getFieldType().equals(SupportedFieldType.BROADLEAF_ENUMERATION)) {
@@ -124,7 +127,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             for (Property p : cmd.getProperties()) {
                 if (p.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
-                    if (md.isProminent() != null && md.isProminent()) {
+                    if (md.isProminent() != null && md.isProminent() 
+                            && !VisibilityEnum.HIDDEN_ALL.equals(md.getVisibility())
+                            && !VisibilityEnum.GRID_HIDDEN.equals(md.getVisibility())) {
                         Field hf = new Field()
                                 .withName(p.getName())
                                 .withFriendlyName(fmd.getFriendlyName())
@@ -142,7 +147,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             for (Property p : cmd.getProperties()) {
                 if (p.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
-                    if (md.isProminent() != null && md.isProminent()) {
+                    if (md.isProminent() != null && md.isProminent() 
+                            && !VisibilityEnum.HIDDEN_ALL.equals(md.getVisibility())
+                            && !VisibilityEnum.GRID_HIDDEN.equals(md.getVisibility())) {
                         Field hf = new Field()
                                 .withName(p.getName())
                                 .withFriendlyName(md.getFriendlyName())
@@ -198,7 +205,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 if (p.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
                     if (md.getTargetClass().equals(mmd.getValueClassName())) {
-                        if (md.isProminent() != null && md.isProminent()) {
+                        if (md.isProminent() != null && md.isProminent() 
+                                && !VisibilityEnum.HIDDEN_ALL.equals(md.getVisibility())
+                                && !VisibilityEnum.GRID_HIDDEN.equals(md.getVisibility())) {
                             hf = new Field()
                                     .withName(p.getName())
                                     .withFriendlyName(md.getFriendlyName())
