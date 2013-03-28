@@ -619,8 +619,7 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-            PersistencePackageRequest ppr2 = getSectionPersistencePackageRequest(fmd.getCollectionCeilingEntity());
-            Entity entity = service.getRecord(ppr2, collectionItemId);
+            Entity entity = service.getRecord(ppr, collectionItemId);
 
             EntityForm entityForm = formService.buildEntityForm(collectionMetadata, entity);
 
