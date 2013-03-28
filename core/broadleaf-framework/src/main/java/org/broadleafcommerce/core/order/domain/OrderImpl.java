@@ -279,6 +279,15 @@ public class OrderImpl implements Order {
     }
 
     @Override
+    public Money getCapturedTotal() {
+        Money totalCaptured = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
+        for (PaymentInfo pi : getPaymentInfos()) {
+            totalCaptured = totalCaptured.add(pi.getPaymentCapturedAmount());
+        }
+        return totalCaptured;
+    }
+
+    @Override
     public Date getSubmitDate() {
         return submitDate;
     }

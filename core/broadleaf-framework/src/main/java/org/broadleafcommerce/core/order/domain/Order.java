@@ -141,6 +141,14 @@ public interface Order extends Serializable {
     public Money getRemainingTotal();
 
     /**
+     * Convenience method for determining how much of the order total has been captured. This takes the {@link PaymentInfo}s
+     * and checks the {@link org.broadleafcommerce.core.payment.domain.PaymentInfoDetailType} for captured records.
+     *
+     * @return
+     */
+    public Money getCapturedTotal();
+
+    /**
      * Gets the {@link Customer} for this {@link Order}.
      * 
      * @return

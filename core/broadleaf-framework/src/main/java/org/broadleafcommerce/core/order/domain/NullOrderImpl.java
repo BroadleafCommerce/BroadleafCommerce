@@ -102,6 +102,11 @@ public class NullOrderImpl implements Order {
     }
 
     @Override
+    public Money getCapturedTotal() {
+        return null;
+    }
+
+    @Override
     public void setTotal(Money orderTotal) {
         throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
     }
