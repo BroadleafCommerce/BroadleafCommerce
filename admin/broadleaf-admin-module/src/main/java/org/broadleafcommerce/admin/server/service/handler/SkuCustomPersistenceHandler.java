@@ -166,33 +166,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             List<ProductOption> options = catalogService.readAllProductOptions();
             int order = 0;
             for (ProductOption option : options) {
-                BasicFieldMetadata metadata = new BasicFieldMetadata();
-                metadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
-                metadata.setMutable(true);
-                metadata.setInheritedFromType(SkuImpl.class.getName());
-                metadata.setAvailableToTypes(new String[]{SkuImpl.class.getName()});
-                metadata.setForeignKeyCollection(false);
-                metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
-                
-                //Set up the enumeration based on the product option values
-                String[][] optionValues = new String[option.getAllowedValues().size()][2];
-                for (int i = 0; i < option.getAllowedValues().size(); i++) {
-                    ProductOptionValue value = option.getAllowedValues().get(i);
-                    optionValues[i][0] = value.getId().toString();
-                    optionValues[i][1] = value.getAttributeValue();
-                }
-                metadata.setEnumerationValues(optionValues);
-
-                metadata.setName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
-                metadata.setFriendlyName(option.getLabel());
-                metadata.setGroup("");
-                metadata.setOrder(order);
-                metadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-                metadata.setProminent(true);
-                metadata.setBroadleafEnumeration("");
-                metadata.setReadOnly(false);
-                metadata.setRequiredOverride(BooleanUtils.isFalse(option.getRequired()));
-                
                 //add this to the built Sku properties
                 properties.put("productOption" + option.getId(), createIndividualOptionField(option, order));
             }
@@ -317,11 +290,12 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
         metadata.setName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
         metadata.setFriendlyName(option.getLabel());
-        metadata.setGroup("");
+        metadata.setGroup("Options");
+        metadata.setGroupOrder(-1);
         metadata.setOrder(order);
         metadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-        metadata.setProminent(true);
-        metadata.setVisibility(VisibilityEnum.HIDDEN_ALL);
+        metadata.setProminent(false);
+        metadata.setVisibility(VisibilityEnum.GRID_HIDDEN);
         metadata.setBroadleafEnumeration("");
         metadata.setReadOnly(false);
         metadata.setRequiredOverride(BooleanUtils.isFalse(option.getRequired()));
