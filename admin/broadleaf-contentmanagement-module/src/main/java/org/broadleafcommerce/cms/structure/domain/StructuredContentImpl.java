@@ -20,11 +20,11 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
@@ -32,6 +32,11 @@ import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -53,11 +58,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Created by bpolster.
  */
@@ -76,7 +76,8 @@ import java.util.Set;
             @AdminPresentationOverride(name="locale.id", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="locale.localeCode", value=@AdminPresentation(excluded = true)),
             @AdminPresentationOverride(name="locale.friendlyName", value=@AdminPresentation(excluded = true)),
-            @AdminPresentationOverride(name="locale.defaultFlag", value=@AdminPresentation(excluded = true))
+            @AdminPresentationOverride(name="locale.defaultFlag", value=@AdminPresentation(excluded = true)),
+            @AdminPresentationOverride(name="locale.defaultCurrency", value=@AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL))
         }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentImpl_baseStructuredContent")
@@ -288,14 +289,17 @@ public class StructuredContentImpl implements StructuredContent {
         this.archivedFlag = archivedFlag;
     }
 
+    @Override
     public AdminAuditable getAuditable() {
         return auditable;
     }
 
+    @Override
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
     }
 
+    @Override
     public Boolean getLockedFlag() {
         if (lockedFlag == null) {
             return Boolean.FALSE;
@@ -304,30 +308,37 @@ public class StructuredContentImpl implements StructuredContent {
         }
     }
 
+    @Override
     public void setLockedFlag(Boolean lockedFlag) {
         this.lockedFlag = lockedFlag;
     }
 
+    @Override
     public SandBox getOriginalSandBox() {
         return originalSandBox;
     }
 
+    @Override
     public void setOriginalSandBox(SandBox originalSandBox) {
         this.originalSandBox = originalSandBox;
     }
 
+    @Override
     public Map<String, StructuredContentRule> getStructuredContentMatchRules() {
         return structuredContentMatchRules;
     }
 
+    @Override
     public void setStructuredContentMatchRules(Map<String, StructuredContentRule> structuredContentMatchRules) {
         this.structuredContentMatchRules = structuredContentMatchRules;
     }
 
+    @Override
     public Set<StructuredContentItemCriteria> getQualifyingItemCriteria() {
         return qualifyingItemCriteria;
     }
 
+    @Override
     public void setQualifyingItemCriteria(Set<StructuredContentItemCriteria> qualifyingItemCriteria) {
         this.qualifyingItemCriteria = qualifyingItemCriteria;
     }
