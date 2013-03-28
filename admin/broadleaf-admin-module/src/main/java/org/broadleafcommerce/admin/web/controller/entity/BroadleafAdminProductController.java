@@ -18,6 +18,11 @@ package org.broadleafcommerce.admin.web.controller.entity;
 
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.entity.BroadleafAdminAbstractEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -34,6 +39,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,6 +65,52 @@ public class BroadleafAdminProductController extends BroadleafAdminAbstractEntit
     @Override
     public String[] getSectionCustomCriteria() {
         return new String[]{"productDirectEdit"};
+    }
+    
+    public String showUpdateAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String id,
+            @PathVariable String collectionItemId) throws Exception {
+        String collectionField = "additionalSkus";
+        
+        // Find out metadata for the additionalSkus property
+        String mainClassName = getClassNameForSection(SECTION_KEY);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        FieldMetadata md = collectionProperty.getMetadata();
+        
+        // Find the metadata and the entity for the selected sku
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
+        ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
+        Entity entity = service.getRecord(ppr, collectionItemId);
+        
+        // Find the records for all subcollections of Sku
+        Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
+        
+        // Build the entity form for the modal that includes the subcollections
+        EntityForm entityForm = formService.buildEntityForm(collectionMetadata, entity, subRecordsMap);
+        
+        for (ListGrid lg : entityForm.getAllListGrids()) {
+            lg.setSectionKey("org.broadleafcommerce.core.catalog.domain.Sku");
+        }
+
+        model.addAttribute("entityForm", entityForm);
+        model.addAttribute("viewType", "modal/simpleEditEntity");
+
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
+        model.addAttribute("modalHeaderType", "updateCollectionItem");
+        setModelAttributes(model, SECTION_KEY);
+        return "modules/modalContainer";
+    }
+
+    @RequestMapping(value = "/{id}/{collectionField}/{collectionItemId}", method = RequestMethod.GET)
+    public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable String id,
+            @PathVariable String collectionField,
+            @PathVariable String collectionItemId) throws Exception {
+        if ("additionalSkus".equals(collectionField)) {
+            return showUpdateAdditionalSku(request, response, model, id, collectionItemId);
+        }
+        return super.showUpdateCollectionItem(request, response, model, SECTION_KEY, id, collectionField, collectionItemId);
     }
     
     /* ***************** */
@@ -134,14 +187,6 @@ public class BroadleafAdminProductController extends BroadleafAdminAbstractEntit
             @PathVariable String id,
             @PathVariable String collectionField) throws Exception {
         return super.showAddCollectionItem(request, response, model, SECTION_KEY, id, collectionField);
-    }
-
-    @RequestMapping(value = "/{id}/{collectionField}/{collectionItemId}", method = RequestMethod.GET)
-    public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable String id,
-            @PathVariable String collectionField,
-            @PathVariable String collectionItemId) throws Exception {
-        return super.showUpdateCollectionItem(request, response, model, SECTION_KEY, id, collectionField, collectionItemId);
     }
 
     @RequestMapping(value = "/{id}/{collectionField}/add", method = RequestMethod.POST)

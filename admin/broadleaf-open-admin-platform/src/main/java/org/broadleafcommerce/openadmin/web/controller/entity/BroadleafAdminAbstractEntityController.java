@@ -874,18 +874,18 @@ public abstract class BroadleafAdminAbstractEntityController extends BroadleafAd
     }
 
     protected String getClassNameForSection(String sectionKey) {
-        sectionKey = "/" + sectionKey;
-        AdminSection section = adminNavigationService.findAdminSectionByURI(sectionKey);
-        String className = section.getCeilingEntity();
-        return className;
+        AdminSection section = adminNavigationService.findAdminSectionByURI("/" + sectionKey);
+        return (section == null) ? sectionKey : section.getCeilingEntity();
     }
 
     protected void setModelAttributes(Model model, String sectionKey) {
         AdminSection section = adminNavigationService.findAdminSectionByURI("/" + sectionKey);
 
-        model.addAttribute("sectionKey", sectionKey);
-        model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME, section.getModule());
-        model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME, section);
+        if (section != null) {
+            model.addAttribute("sectionKey", sectionKey);
+            model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME, section.getModule());
+            model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME, section);
+        }
     }
 
     protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName) {
