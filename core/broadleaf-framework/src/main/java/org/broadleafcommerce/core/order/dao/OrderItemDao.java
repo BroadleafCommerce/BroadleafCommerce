@@ -43,6 +43,6 @@ public interface OrderItemDao {
     /**
      * Sets the initial orderItemPriceDetail for the item.
      */
-    void initializeOrderItemPriceDetails(OrderItem item);
+    OrderItemPriceDetail initializeOrderItemPriceDetails(OrderItem item);
 
 }

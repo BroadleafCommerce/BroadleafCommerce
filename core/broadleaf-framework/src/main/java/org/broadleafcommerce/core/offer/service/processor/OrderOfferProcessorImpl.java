@@ -390,6 +390,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         Iterator<OrderItemPriceDetail> unmatchedDetailsIterator = unmatchedDetailsMap.values().iterator();
 
         for (PromotableOrderItemPriceDetail priceDetail : promotableDetailsMap.values()) {
+            priceDetail.chooseSaleOrRetailAdjustments();
             if (unmatchedDetailsIterator.hasNext()) {
                 // Reuse an existing priceDetail
                 OrderItemPriceDetail existingDetail = unmatchedDetailsIterator.next();
@@ -397,10 +398,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                 unmatchedDetailsIterator.remove();
             } else {
                 // Create a new priceDetail
-                OrderItemPriceDetail newPriceDetail = orderItemDao.createOrderItemPriceDetail();
-                newPriceDetail.setOrderItem(orderItem);
+                OrderItemPriceDetail newPriceDetail = orderItemDao.initializeOrderItemPriceDetails(orderItem);
                 updatePriceDetail(newPriceDetail, priceDetail);
-                orderItem.getOrderItemPriceDetails().add(newPriceDetail);
             }
         }
 

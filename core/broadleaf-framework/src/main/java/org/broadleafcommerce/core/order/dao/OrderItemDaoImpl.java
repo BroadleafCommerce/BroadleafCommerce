@@ -87,11 +87,12 @@ public class OrderItemDaoImpl implements OrderItemDao {
         return new OrderItemQualifierImpl();
     }
 
-    public void initializeOrderItemPriceDetails(OrderItem item) {
+    public OrderItemPriceDetail initializeOrderItemPriceDetails(OrderItem item) {
         OrderItemPriceDetail detail = createOrderItemPriceDetail();
         detail.setOrderItem(item);
         detail.setQuantity(item.getQuantity());
         detail.setUseSalePrice(item.getIsOnSale());
         item.getOrderItemPriceDetails().add(detail);
+        return detail;
     }
 }
