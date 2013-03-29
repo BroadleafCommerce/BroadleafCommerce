@@ -64,6 +64,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
                 PromotableOrderItemPriceDetail poid =
                         itemFactory.createPromotableOrderItemPriceDetail(this, detail.getQuantity());
                 itemPriceDetails.add(poid);
+                poid.chooseSaleOrRetailAdjustments();
                 for (OrderItemPriceDetailAdjustment adjustment : detail.getOrderItemPriceDetailAdjustments()) {
                     PromotableOrderItemPriceDetailAdjustment poidAdj =
                             new PromotableOrderItemPriceDetailAdjustmentImpl(adjustment, poid);
