@@ -317,10 +317,10 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);
 
             //allow subclasses to provide additional criteria before executing the query
-            applyProductOptionValueCriteria(queryCriteria, cto, persistencePackage);
+            applyProductOptionValueCriteria(queryCriteria, cto, persistencePackage, null);
             applyAdditionalFetchCriteria(queryCriteria, cto, persistencePackage);
 
-            Criteria skuListCriteria = getSkuCriteria(queryCriteria, Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()), dynamicEntityDao);
+            Criteria skuListCriteria = getSkuCriteria(queryCriteria, Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()), dynamicEntityDao, null);
             List<Serializable> records = skuListCriteria.list();
             //Convert Skus into the client-side Entity representation
             Entity[] payload = helper.getRecords(originalProps, records);
@@ -328,10 +328,10 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             //grab back the total results
             PersistentEntityCriteria countCriteria = helper.getCountCriteria(persistencePackage, cto, ctoConverter);
             //again, apply the additional criteria if any to the count criteria as well
-            applyProductOptionValueCriteria(countCriteria, cto, persistencePackage);
+            applyProductOptionValueCriteria(countCriteria, cto, persistencePackage, null);
             applyAdditionalFetchCriteria(countCriteria, cto, persistencePackage);
 
-            Criteria skuCountCriteria = getSkuCriteria(countCriteria, Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()), dynamicEntityDao);
+            Criteria skuCountCriteria = getSkuCriteria(countCriteria, Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()), dynamicEntityDao, null);
             int totalRecords = dynamicEntityDao.rowCount(skuCountCriteria);
 
             //Communicate to the front-end to allow form editing for all of the product options available for the current
@@ -392,13 +392,28 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * Returns the Hibernate criteria with the proper table aliases based on the PersistentEntityCriteria representation.
      * Should be used in a fetch for both the row count criteria and actual fetch criteria. This will also apply the given
      * CTO onto returned Hibernate criteria
+     * 
+     * This can also be used if you are attempting to filter on an object that could contain a Sku 'ToOne'
+     * relationship that might need to be filtered on. For instance, InventoryImpl has a 'Sku' property called 'sku'. In
+     * this scenario, the <b>skuPropertyPrefix</b> would be 'sku'.
+     * 
      * @return
      */
-    protected Criteria getSkuCriteria(PersistentEntityCriteria criteria, Class entityClass, DynamicEntityDao deDao) {
+    public static Criteria getSkuCriteria(PersistentEntityCriteria criteria,
+                                      Class entityClass,
+                                      DynamicEntityDao deDao,
+                                      String skuPropertyPrefix) {
         Criteria hibernateCriteria = deDao.createCriteria(entityClass);
         //Join these with left joins so that I get default Skus (that do not have this relationship) back as well
-        hibernateCriteria.createAlias("product", "product", CriteriaSpecification.LEFT_JOIN)
-                .createAlias("product.defaultSku", "defaultSku", CriteriaSpecification.LEFT_JOIN);
+        if (StringUtils.isNotEmpty(skuPropertyPrefix)) {
+            hibernateCriteria.createAlias(skuPropertyPrefix, skuPropertyPrefix);
+            skuPropertyPrefix += ".";
+        }
+        if (skuPropertyPrefix == null) {
+            skuPropertyPrefix = "";
+        }
+        hibernateCriteria.createAlias(skuPropertyPrefix + "product", "product", CriteriaSpecification.LEFT_JOIN)
+                         .createAlias("product.defaultSku", "defaultSku", CriteriaSpecification.LEFT_JOIN);
         criteria.apply(hibernateCriteria);
         return hibernateCriteria;
     }
@@ -448,7 +463,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         return strVal;
     }
 
-    protected void applyProductOptionValueCriteria(PersistentEntityCriteria queryCriteria, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
+    public static void applyProductOptionValueCriteria(PersistentEntityCriteria queryCriteria, CriteriaTransferObject cto, PersistencePackage persistencePackage, String skuPropertyPrefix) {
 
         //if the front
         final List<Long> productOptionValueFilterIDs = new ArrayList<Long>();
@@ -466,10 +481,17 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             //the criteria in this case would be a semi-colon delimeter value list
             productOptionValueFilterValues.addAll(Arrays.asList(StringUtils.split(consolidatedCriteria.getFilterValues()[0], CONSOLIDATED_PRODUCT_OPTIONS_DELIMETER)));
         }
-
+        
+        AssociationPath path;
+        if (StringUtils.isNotEmpty(skuPropertyPrefix)) {
+            path = new AssociationPath(new AssociationPathElement(skuPropertyPrefix), new AssociationPathElement("productOptionValues"));
+        } else {
+            path = new AssociationPath(new AssociationPathElement("productOptionValues"));
+        }
+        
         if (productOptionValueFilterIDs.size() > 0) {
             ((NestedPropertyCriteria) queryCriteria).add(
-                    new FilterCriterion(new AssociationPath(new AssociationPathElement("productOptionValues")),
+                    new FilterCriterion(path,
                             "id",
                             productOptionValueFilterIDs,
                             false,
@@ -484,7 +506,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
         if (productOptionValueFilterValues.size() > 0) {
             ((NestedPropertyCriteria) queryCriteria).add(
-                    new FilterCriterion(new AssociationPath(new AssociationPathElement("productOptionValues")),
+                    new FilterCriterion(path,
                             "attributeValue",
                             productOptionValueFilterValues,
                             false,
@@ -523,7 +545,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
             //Verify that there isn't already a Sku for this particular product option value combo
             Entity errorEntity = validateUniqueProductOptionValueCombination(adminInstance.getProduct(),
-                    getProductOptionProperties(entity), null);
+                                                                             getProductOptionProperties(entity),
+                                                                             null);
             if (errorEntity != null) {
                 return errorEntity;
             }
@@ -562,7 +585,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
             //Verify that there isn't already a Sku for this particular product option value combo
             Entity errorEntity = validateUniqueProductOptionValueCombination(adminInstance.getProduct(),
-                    getProductOptionProperties(entity), adminInstance);
+                                                                            getProductOptionProperties(entity),
+                                                                            adminInstance);
             if (errorEntity != null) {
                 return errorEntity;
             }

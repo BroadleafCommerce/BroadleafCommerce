@@ -144,7 +144,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                      AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<String>(
                 propertyId, associationPath, targetPropertyName,
-                filterCriterionProviders.getLikeProvider(associationPath), FilterValueConverters.STRING));
+                filterCriterionProviders.getLikeProvider(associationPath, propertyId), FilterValueConverters.STRING));
     }
     
     @Override
@@ -152,7 +152,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                   AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<BigDecimal>(
                 propertyId, associationPath, targetPropertyName,
-                filterCriterionProviders.getBetweenProvider(associationPath), DECIMAL));
+                filterCriterionProviders.getBetweenProvider(associationPath, propertyId), DECIMAL));
     }
     
     @Override
@@ -160,7 +160,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Long>(
                 propertyId, associationPath, targetPropertyName,
-                filterCriterionProviders.getBetweenProvider(associationPath), FilterValueConverters.LONG));
+                filterCriterionProviders.getBetweenProvider(associationPath, propertyId), FilterValueConverters.LONG));
     }
     
     @Override
@@ -168,7 +168,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                  AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Long>(
                 propertyId, associationPath, targetPropertyName,
-                filterCriterionProviders.getEqProvider(associationPath), FilterValueConverters.LONG));
+                filterCriterionProviders.getEqProvider(associationPath, propertyId), FilterValueConverters.LONG));
     }
     
     @Override
@@ -176,7 +176,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                    AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<String>(
                 propertyId, associationPath, targetPropertyName,
-                filterCriterionProviders.getEqProvider(associationPath), FilterValueConverters.STRING));
+                filterCriterionProviders.getEqProvider(associationPath, propertyId), FilterValueConverters.STRING));
     }
     
     @Override
@@ -184,7 +184,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Long>(
                 propertyId, associationPath, targetPropertyName,
-                filterCriterionProviders.getIsNullProvider(associationPath), NULL_AWARE_LONG));
+                filterCriterionProviders.getIsNullProvider(associationPath, propertyId), NULL_AWARE_LONG));
     }
 
     @Override
@@ -197,7 +197,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                   AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Boolean>(
                 propertyId, associationPath, targetPropertyName,
-                filterCriterionProviders.getEqProvider(associationPath), FilterValueConverters.BOOLEAN));
+                filterCriterionProviders.getEqProvider(associationPath, propertyId), FilterValueConverters.BOOLEAN));
     }
 
     @Override
@@ -205,7 +205,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                     AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Character>(
                 propertyId, associationPath, targetPropertyName,
-                filterCriterionProviders.getEqProvider(associationPath), CHARACTER));
+                filterCriterionProviders.getEqProvider(associationPath, propertyId), CHARACTER));
     }
     
     @Override
@@ -213,7 +213,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Date>(
                 propertyId, associationPath, targetPropertyName,
-                filterCriterionProviders.getBetweenDateProvider(associationPath), new NullAwareDateConverter("yyyy-MM-dd'T'HH:mm:ss Z")));
+                filterCriterionProviders.getBetweenDateProvider(associationPath, propertyId), new NullAwareDateConverter("yyyy-MM-dd'T'HH:mm:ss Z")));
     }
     
     @Override
@@ -221,7 +221,7 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                                            AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Integer>(
                 propertyId, associationPath, targetPropertyName,
-                filterCriterionProviders.getCollectionSizeEqualsProvider(associationPath), FilterValueConverters.INTEGER));
+                filterCriterionProviders.getCollectionSizeEqualsProvider(associationPath, propertyId), FilterValueConverters.INTEGER));
     }
 
     public FilterCriterionProviders getFilterCriterionProviders() {
