@@ -17,8 +17,7 @@
 package org.broadleafcommerce.admin.web.controller.entity;
 
 import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.web.controller.entity.AdminAbstractEntityController;
-import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
+import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
@@ -29,16 +28,14 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,18 +44,26 @@ import javax.servlet.http.HttpServletResponse;
  * @author Elbert Bautista (elbertbautista)
  */
 @Controller("blAdminOfferController")
-@RequestMapping("offer")
-public class AdminOfferController extends AdminAbstractEntityController {
-
+@RequestMapping("/" + AdminOfferController.SECTION_KEY)
+public class AdminOfferController extends AdminBasicEntityController {
+    
+    protected static final String SECTION_KEY = "offer";
+    
     @Override
-    public String[] getSectionCustomCriteria() {
+    protected String getSectionKey(Map<String, String> pathVars) {
+        return SECTION_KEY;
+    }
+    
+    @Override
+    protected String[] getSectionCustomCriteria() {
         return new String[]{"Offer"};
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
             @PathVariable String id) throws Exception {
-        String view = super.viewEntityForm(request, response, model, "offer", id);
+        String view = super.viewEntityForm(request, response, model, pathVars, id);
         
         EntityForm entityForm = (EntityForm) model.asMap().get("entityForm");
         Entity entity = (Entity) model.asMap().get("entity");
@@ -89,43 +94,6 @@ public class AdminOfferController extends AdminAbstractEntityController {
         return view;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute CriteriaForm criteriaForm) throws Exception {
-        return super.viewEntityList(request, response, model, "offer", criteriaForm);
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
-    public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable String id,
-            @ModelAttribute EntityForm entityForm, BindingResult result,
-            RedirectAttributes ra) throws Exception {
-        return super.saveEntity(request, response, model, "offer", id, entityForm, result, ra);
-    }
-
-    @RequestMapping(value = "/{id}/{collectionField}/add", method = RequestMethod.GET)
-    public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable String id,
-            @PathVariable String collectionField) throws Exception {
-        return super.showAddCollectionItem(request, response, model, "offer", id, collectionField);
-    }
-
-    @RequestMapping(value = "/{id}/{collectionField}/add", method = RequestMethod.POST)
-    public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable String id,
-            @PathVariable String collectionField,
-            @ModelAttribute EntityForm entityForm) throws Exception {
-        return super.addCollectionItem(request, response, model, "offer", id, collectionField, entityForm);
-    }
-
-    @RequestMapping(value = "/{id}/{collectionField}/{collectionItemId}/delete", method = RequestMethod.POST)
-    public String removeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable String id,
-            @PathVariable String collectionField,
-            @PathVariable String collectionItemId) throws Exception {
-        return super.removeCollectionItem(request, response, model, "offer", id, collectionField, collectionItemId);
-    }
-    
     @Override
     @InitBinder
     public void initBinder(WebDataBinder binder) {
