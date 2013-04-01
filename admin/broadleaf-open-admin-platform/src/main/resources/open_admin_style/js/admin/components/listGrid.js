@@ -324,7 +324,7 @@ $(document).ready(function() {
      * Convenience method to update a table body from a list grid
      */
     var updateListGrid = function(data, tableBodyToReplace) {
-        tableBodyToReplace.replaceWith($(data).find('tbody'))
+        tableBodyToReplace.replaceWith($(data).find('tbody'));
     }
     
     var replaceRelatedListGrid = function(data) {

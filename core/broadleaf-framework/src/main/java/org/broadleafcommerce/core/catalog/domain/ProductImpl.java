@@ -186,7 +186,7 @@ public class ProductImpl implements Product, Status {
     @OneToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, mappedBy="product")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName="Additional Skus")
+    @AdminPresentationCollection(friendlyName="skusListTitle")
     protected List<Sku> additionalSkus = new ArrayList<Sku>();
 
     /** The default category. */

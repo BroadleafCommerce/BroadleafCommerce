@@ -12,9 +12,18 @@ $(document).ready(function() {
                 alert("This product has no Product Options configured to generate Skus from");
             } else {
                 alert(data.skusGenerated + " Skus have been generated from the configured product options");
-                //TODO: refresh the listgrid because now we have new Skus
+                var additionalSkusTable = $('body').find('#additionalSkus table');
+                var url = additionalSkusTable.data('currenturl');
+                url += "/additionalSkus";
+                BLC.ajax({
+                    url: url,
+                    type: "GET",
+                }, function(data) {
+                    additionalSkusTable.replaceWith($(data).find('tbody'));
+                });
             }
         });
+        return false;
     });
 
 });

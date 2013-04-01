@@ -45,7 +45,7 @@
                 </div>
             </div>
 
-            <div th:each="collectionListGrid : ${tab.listGrids}" class="listgrid-container">
+            <div th:each="collectionListGrid : ${tab.listGrids}" class="listgrid-container" th:id="${collectionListGrid.subCollectionFieldName}">
                 <label th:text="#{${collectionListGrid.friendlyName}}" />
                 <div th:include="components/listGridToolbar" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
                 <div th:include="components/listGrid" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
