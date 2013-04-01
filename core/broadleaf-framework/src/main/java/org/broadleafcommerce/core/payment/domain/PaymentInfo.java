@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.Phone;
 
 import java.io.Serializable;
@@ -87,4 +88,7 @@ public interface PaymentInfo extends Serializable {
 
     public BroadleafCurrency getCurrency();
 
+    public CustomerPayment getCustomerPayment();
+
+    public void setCustomerPayment(CustomerPayment customerPayment);
 }

@@ -27,17 +27,21 @@ import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
-import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
-import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOfferImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemImpl;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetailImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 
 import java.util.ArrayList;
@@ -52,18 +56,14 @@ public class CandidateItemOfferTest extends TestCase {
     
     private PromotableCandidateItemOffer promotableCandidate;
     private Offer offer;
+    private PromotableCandidateItemOffer candidateOffer;
     private PromotableOrderItem promotableOrderItem;
+    private PromotableOrder promotableOrder;
+    private PromotableOrderItemPriceDetail priceDetail;
 
     @Override
     protected void setUp() throws Exception {
         OfferDataItemProvider dataProvider = new OfferDataItemProvider();
-        
-        offer = dataProvider.createItemBasedOfferWithItemCriteria(
-            "order.subTotal.getAmount()>20", 
-            OfferDiscountType.PERCENT_OFF, 
-            "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))", 
-            "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
-        ).get(0);
         
         CandidateItemOfferImpl candidate = new CandidateItemOfferImpl();
         
@@ -110,26 +110,31 @@ public class CandidateItemOfferTest extends TestCase {
         orderItem1.setProduct(product1);
         orderItem1.setQuantity(2);
         orderItem1.setSku(sku1);
-        orderItem1.setRetailPrice(new Money(19.99D));
-        orderItem1.setPrice(new Money(19.99D));
         
         Order order = new OrderImpl();
         orderItem1.setOrder(order);
         
-        promotableOrderItem = new PromotableOrderItemImpl(orderItem1, null, new PromotableItemFactoryImpl());
+        promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl(), false);
+        offer = dataProvider.createItemBasedOfferWithItemCriteria(
+                "order.subTotal.getAmount()>20",
+                OfferDiscountType.PERCENT_OFF,
+                "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))",
+                "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
+                ).get(0);
+        candidateOffer = new PromotableCandidateItemOfferImpl(promotableOrder, offer);
+        
+        promotableOrderItem = new PromotableOrderItemImpl(orderItem1, null, new PromotableItemFactoryImpl(), false);
+        OrderItemPriceDetail pdetail = new OrderItemPriceDetailImpl();
+        pdetail.setOrderItem(orderItem1);
+        pdetail.setQuantity(2);
+        priceDetail = new PromotableOrderItemPriceDetailImpl(promotableOrderItem, 2);
         
         List<PromotableOrderItem> items = new ArrayList<PromotableOrderItem>();
         items.add(promotableOrderItem);
         
-        promotableCandidate = new PromotableCandidateItemOfferImpl(candidate);
+        promotableCandidate = new PromotableCandidateItemOfferImpl(promotableOrder, offer);
         
         promotableCandidate.getCandidateTargets().addAll(items);
-        promotableCandidate.setOffer(offer);
-    }
-    
-    public void testCalculatePotentialSavings() throws Exception {
-        Money savings = promotableCandidate.calculatePotentialSavings();
-        assertTrue(savings.equals(new Money(4D)));
     }
     
     public void testCalculateSavingsForOrderItem() throws Exception {
@@ -161,29 +166,5 @@ public class CandidateItemOfferTest extends TestCase {
             maxItemCriteriaUses = Math.min(maxItemCriteriaUses, temp);
         }
         assertTrue(maxItemCriteriaUses == 2);
-        
-        PromotionQualifier qualifier = new PromotionQualifier();
-        qualifier.setPromotion(offer);
-        qualifier.setQuantity(1);
-        promotableOrderItem.getPromotionQualifiers().add(qualifier);
-
-        maxItemCriteriaUses = 9999;
-        for (OfferItemCriteria targetCriteria : offer.getTargetItemCriteria()) {
-            int temp = promotableCandidate.calculateMaxUsesForItemCriteria(targetCriteria, offer);
-            maxItemCriteriaUses = Math.min(maxItemCriteriaUses, temp);
-        }
-        assertTrue(maxItemCriteriaUses == 1);
-        
-        PromotionDiscount discount = new PromotionDiscount();
-        discount.setPromotion(offer);
-        discount.setQuantity(1);
-        promotableOrderItem.getPromotionDiscounts().add(discount);
-
-        maxItemCriteriaUses = 9999;
-        for (OfferItemCriteria targetCriteria : offer.getTargetItemCriteria()) {
-            int temp = promotableCandidate.calculateMaxUsesForItemCriteria(targetCriteria, offer);
-            maxItemCriteriaUses = Math.min(maxItemCriteriaUses, temp);
-        }
-        assertTrue(maxItemCriteriaUses == 0);
     }
 }

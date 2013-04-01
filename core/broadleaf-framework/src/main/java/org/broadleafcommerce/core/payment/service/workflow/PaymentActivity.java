@@ -122,6 +122,13 @@ public class PaymentActivity extends BaseActivity {
                             referenced.setReferenceNumber(info.getReferenceNumber());
                             replaceItems.put(info, referenced);
                         }
+                    } else if (seed.getActionType().equals(PaymentActionType.PARTIALPAYMENT)) {
+                        try {
+                            paymentResponseItem = paymentService.partialPayment(paymentContext);
+                        } finally {
+                            referenced.setReferenceNumber(info.getReferenceNumber());
+                            replaceItems.put(info, referenced);
+                        }
                     } else {
                         referenced.setReferenceNumber(info.getReferenceNumber());
                         replaceItems.put(info, referenced);

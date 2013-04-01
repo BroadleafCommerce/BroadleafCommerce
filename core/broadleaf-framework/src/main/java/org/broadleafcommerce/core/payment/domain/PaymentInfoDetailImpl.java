@@ -23,9 +23,20 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 /**
  * @author Jerry Ocanas (jocanas)
@@ -48,11 +59,11 @@ public class PaymentInfoDetailImpl implements PaymentInfoDetail {
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected PaymentInfo paymentInfo;
 
-    @Column(name = "TYPE")
+    @Column(name = "PAYMENT_INFO_DETAIL_TYPE")
     @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Type")
     protected PaymentInfoDetailType type;
 
-    @Column
+    @Column(name = "PAYMENT_AMOUNT")
     @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Amount")
     protected BigDecimal amount;
 
@@ -61,7 +72,7 @@ public class PaymentInfoDetailImpl implements PaymentInfoDetail {
     @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Currency_Code")
     protected BroadleafCurrency currency;
 
-    @Column
+    @Column(name = "DATE_RECORDED")
     @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Date")
     protected Date date;
 

@@ -16,13 +16,12 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import java.util.HashMap;
-import java.util.List;
-
-import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
-import org.broadleafcommerce.common.money.Money;
+
+import java.util.HashMap;
+import java.util.List;
 
 public interface PromotableCandidateFulfillmentGroupOffer {
 
@@ -30,11 +29,7 @@ public interface PromotableCandidateFulfillmentGroupOffer {
 
     public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
 
-    public void computeDiscountedPriceAndAmount();
-
-    public void reset();
-
-    public CandidateFulfillmentGroupOffer getDelegate();
+    public Money computeDiscountedAmount();
 
     public Money getDiscountedPrice();
     

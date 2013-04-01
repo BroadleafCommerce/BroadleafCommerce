@@ -38,4 +38,6 @@ public interface PaymentService {
     
     public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException;
 
+    public PaymentResponseItem partialPayment (PaymentContext paymentContext) throws PaymentException;
+
 }

@@ -33,11 +33,12 @@ import org.broadleafcommerce.test.BaseTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 @SuppressWarnings("deprecation")
 public class CatalogTest extends BaseTest {
@@ -208,9 +209,8 @@ public class CatalogTest extends BaseTest {
         sku.setTaxable(false);
         assert sku.isTaxable() == false;
 
-        assert sku.isDiscountable() == null;
         sku.setDiscountable(null);
-        assert sku.isDiscountable() == null;
+        assert sku.isDiscountable() == false;
         sku.setDiscountable(true);
         assert sku.isDiscountable() == true;
         sku.setDiscountable(false);

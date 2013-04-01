@@ -16,27 +16,28 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
-public interface PromotableCandidateOrderOffer {
+public interface PromotableCandidateOrderOffer extends Serializable {
 
-    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
+    PromotableOrder getPromotableOrder();
 
-    public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
+    Offer getOffer();
 
-    public void computeDiscountedPriceAndAmount();
+    Money getPotentialSavings();
 
-    public void reset();
+    HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
     
-    public CandidateOrderOffer getDelegate();
-    
-    public PromotableOrder getOrder();
-    
-    public Offer getOffer();
-    
+    boolean isTotalitarian();
+
+    boolean isCombinable();
+
+    int getPriority();
+
 }

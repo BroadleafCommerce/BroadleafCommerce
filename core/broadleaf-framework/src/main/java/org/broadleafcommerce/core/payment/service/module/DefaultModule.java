@@ -60,6 +60,11 @@ public class DefaultModule extends AbstractModule {
     }
 
     @Override
+    public PaymentResponseItem processPartialPayment(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
+        throw new PaymentException("partial payment not implemented.");
+    }
+
+    @Override
     public Boolean isValidCandidate(PaymentInfoType paymentType) {
         return false;
     }

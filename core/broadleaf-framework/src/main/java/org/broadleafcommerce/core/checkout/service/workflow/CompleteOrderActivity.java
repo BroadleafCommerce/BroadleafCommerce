@@ -26,11 +26,12 @@ import java.util.Calendar;
 
 public class CompleteOrderActivity extends BaseActivity {
 
+    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
 
         seed.getOrder().setStatus(OrderStatus.SUBMITTED);
-        seed.getOrder().setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(SystemTime.asDate()));
+        seed.getOrder().setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(SystemTime.asDate()) + seed.getOrder().getId());
         seed.getOrder().setSubmitDate(Calendar.getInstance().getTime());
 
         return context;

@@ -17,12 +17,21 @@
 package org.broadleafcommerce.common.money;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 
 public final class BankersRounding {
 
     public static final int DEFAULT_SCALE = 2;
 
     public static final BigDecimal ZERO = setScale(0);
+
+    public static int getScaleForCurrency(Currency currency) {
+        if (currency != null) {
+            return currency.getDefaultFractionDigits();
+        } else {
+            return DEFAULT_SCALE;
+        }
+    }
 
     public static BigDecimal setScale(int scale, BigDecimal amount) {
         return amount.setScale(scale, BigDecimal.ROUND_HALF_EVEN);

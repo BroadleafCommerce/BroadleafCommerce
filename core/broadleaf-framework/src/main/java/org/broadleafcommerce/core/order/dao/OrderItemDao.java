@@ -17,6 +17,8 @@
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 
@@ -32,6 +34,15 @@ public interface OrderItemDao {
 
     OrderItem saveOrderItem(OrderItem orderItem);
     
-    public PersonalMessage createPersonalMessage();
+    PersonalMessage createPersonalMessage();
+
+    OrderItemPriceDetail createOrderItemPriceDetail();
+
+    OrderItemQualifier createOrderItemQualifier();
+
+    /**
+     * Sets the initial orderItemPriceDetail for the item.
+     */
+    OrderItemPriceDetail initializeOrderItemPriceDetails(OrderItem item);
 
 }

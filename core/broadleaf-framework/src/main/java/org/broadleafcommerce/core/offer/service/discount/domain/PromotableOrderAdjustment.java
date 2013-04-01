@@ -16,20 +16,38 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.Offer;
 
-public interface PromotableOrderAdjustment {
+import java.io.Serializable;
 
-    public void reset();
+public interface PromotableOrderAdjustment extends Serializable {
 
-    public OrderAdjustment getDelegate();
-
-    /*
-     * Calculates the value of the adjustment
+    /**
+     * Returns the associated promotableOrder
+     * @return
      */
-    public void computeAdjustmentValue();
+    public PromotableOrder getPromotableOrder();
 
-    public Money getValue();
-    
+    /**
+     * Returns the associated promotableCandidateOrderOffer
+     * @return
+     */
+    public Offer getOffer();
+
+    /**
+     * Returns the value of this adjustment
+     * @return
+     */
+    public Money getAdjustmentValue();
+
+    /**
+     * Returns true if this adjustment represents a combinable offer.
+     */
+    boolean isCombinable();
+
+    /**
+     * Returns true if this adjustment represents a totalitarian offer.
+     */
+    boolean isTotalitarian();
 }

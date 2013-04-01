@@ -52,12 +52,12 @@ import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.Resource;
 
 public class OfferServiceTest extends CommonSetupBaseTest {
 
@@ -246,7 +246,7 @@ public class OfferServiceTest extends CommonSetupBaseTest {
         }
         order = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(order, true);
 
-        assert order.getOrderItems().size() == 4;
+        assert order.getOrderItems().size() == 3;
         assert order.getTotalTax().equals(new Money("2.00"));
         assert order.getTotalShipping().equals(new Money("8.50"));
         assert order.getSubTotal().equals(new Money("40.00"));
@@ -255,7 +255,7 @@ public class OfferServiceTest extends CommonSetupBaseTest {
         boolean foundGiftItemAndCorrectQuantity = false;
 
         for (OrderItem orderItem : order.getOrderItems()) {
-            if (orderItem instanceof GiftWrapOrderItem && ((GiftWrapOrderItem) orderItem).getWrappedItems().size() == 2) {
+            if (orderItem instanceof GiftWrapOrderItem && ((GiftWrapOrderItem) orderItem).getWrappedItems().size() == 1) {
                 foundGiftItemAndCorrectQuantity = true;
                 break;
             }

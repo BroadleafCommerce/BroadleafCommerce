@@ -28,13 +28,15 @@ import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
+import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 @Repository("blOfferDao")
 public class OfferDaoImpl implements OfferDao {
@@ -67,6 +69,10 @@ public class OfferDaoImpl implements OfferDao {
 
     public OrderItemAdjustment createOrderItemAdjustment() {
         return ((OrderItemAdjustment) entityConfiguration.createEntityInstance(OrderItemAdjustment.class.getName()));
+    }
+
+    public OrderItemPriceDetailAdjustment createOrderItemPriceDetailAdjustment() {
+        return ((OrderItemPriceDetailAdjustment) entityConfiguration.createEntityInstance(OrderItemPriceDetailAdjustment.class.getName()));
     }
 
     public OrderAdjustment createOrderAdjustment() {

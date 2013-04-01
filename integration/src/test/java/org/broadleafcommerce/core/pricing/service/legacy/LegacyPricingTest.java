@@ -60,12 +60,12 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 @SuppressWarnings("deprecation")
 public class LegacyPricingTest extends BaseTest {
@@ -200,7 +200,8 @@ public class LegacyPricingTest extends BaseTest {
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
         assert (order.getTotal().greaterThan(order.getSubTotal()));
-        assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D))); // Shipping is not taxable
+        // Distribute Order Savings Activity is on.
+        assert (order.getTotalTax().equals((order.getSubTotal().subtract(order.getOrderAdjustmentsValue())).multiply(0.05D))); // Shipping is not taxable
         assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping()).subtract(order.getOrderAdjustmentsValue())));
     }
 
@@ -264,8 +265,6 @@ public class LegacyPricingTest extends BaseTest {
         order.setTotal(total);
 
         DiscreteOrderItem item = new DiscreteOrderItemImpl();
-        item.setPrice(new Money(10D));
-        item.setRetailPrice(new Money(15D));
         Sku sku = new SkuImpl();
         sku.setRetailPrice(new Money(15D));
         sku.setDiscountable(true);

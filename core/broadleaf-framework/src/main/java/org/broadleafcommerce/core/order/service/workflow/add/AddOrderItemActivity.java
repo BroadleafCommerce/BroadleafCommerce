@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.order.service.workflow.add;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -38,8 +36,6 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import javax.annotation.Resource;
 
 public class AddOrderItemActivity extends BaseActivity {
-
-    private static Log LOG = LogFactory.getLog(AddOrderItemActivity.class);
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;

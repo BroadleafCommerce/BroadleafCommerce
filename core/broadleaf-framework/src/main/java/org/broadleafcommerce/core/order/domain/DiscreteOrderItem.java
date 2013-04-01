@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import java.util.List;
 import java.util.Map;
 
-public interface DiscreteOrderItem extends OrderItem, SkuAccessor {
+public interface DiscreteOrderItem extends OrderItem, SkuAccessor, Cloneable {
 
     Sku getSku();
 
@@ -85,5 +85,13 @@ public interface DiscreteOrderItem extends OrderItem, SkuAccessor {
     public List<DiscreteOrderItemFeePrice> getDiscreteOrderItemFeePrices();
 
     public void setDiscreteOrderItemFeePrices(List<DiscreteOrderItemFeePrice> orderItemFeePrices);
+
+    /**
+     * For items that are part of a bundle, this method will return the parent bundle item.  Otherwise,
+     * returns null.
+     * 
+     * @return
+     */
+    public BundleOrderItem findParentItem();
 
 }

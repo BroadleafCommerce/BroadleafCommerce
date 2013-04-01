@@ -27,11 +27,11 @@ import org.broadleafcommerce.core.pricing.service.fulfillment.provider.Fulfillme
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentPricingProvider;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.Resource;
 
 @Service("blFulfillmentPricingService")
 public class FulfillmentPricingServiceImpl implements FulfillmentPricingService {
@@ -49,9 +49,9 @@ public class FulfillmentPricingServiceImpl implements FulfillmentPricingService 
 
         if (fulfillmentGroup.getFulfillmentOption() == null) {
             //There is no shipping option yet. We'll simply set the shipping price to zero for now, and continue.
-            fulfillmentGroup.setRetailShippingPrice(Money.ZERO);
-            fulfillmentGroup.setShippingPrice(Money.ZERO);
-            fulfillmentGroup.setSaleShippingPrice(Money.ZERO);
+            fulfillmentGroup.setRetailFulfillmentPrice(Money.ZERO);
+            fulfillmentGroup.setFulfillmentPrice(Money.ZERO);
+            fulfillmentGroup.setSaleFulfillmentPrice(Money.ZERO);
             return fulfillmentGroup;
         }
         

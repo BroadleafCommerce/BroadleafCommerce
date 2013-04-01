@@ -64,6 +64,11 @@ public class DummyCreditCardModule extends AbstractModule {
         return createResponse(paymentContext, responseItem);
     }
 
+    @Override
+    public PaymentResponseItem processPartialPayment(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
+        throw new PaymentException("partial payment not implemented.");
+    }
+
     private PaymentResponseItem createResponse(PaymentContext paymentContext, PaymentResponseItem responseItem) {
         paymentContext.getPaymentInfo().setReferenceNumber("abc123");
         responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());

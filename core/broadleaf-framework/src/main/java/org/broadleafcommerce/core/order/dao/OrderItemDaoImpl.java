@@ -16,17 +16,21 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Repository("blOrderItemDao")
 public class OrderItemDaoImpl implements OrderItemDao {
@@ -73,5 +77,22 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
     public OrderItem saveOrderItem(final OrderItem orderItem) {
         return em.merge(orderItem);
+    }
+
+    public OrderItemPriceDetail createOrderItemPriceDetail() {
+        return new OrderItemPriceDetailImpl();
+    }
+
+    public OrderItemQualifier createOrderItemQualifier() {
+        return new OrderItemQualifierImpl();
+    }
+
+    public OrderItemPriceDetail initializeOrderItemPriceDetails(OrderItem item) {
+        OrderItemPriceDetail detail = createOrderItemPriceDetail();
+        detail.setOrderItem(item);
+        detail.setQuantity(item.getQuantity());
+        detail.setUseSalePrice(item.getIsOnSale());
+        item.getOrderItemPriceDetails().add(detail);
+        return detail;
     }
 }

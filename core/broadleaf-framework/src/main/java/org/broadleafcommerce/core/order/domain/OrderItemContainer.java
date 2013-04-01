@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.offer.service.discount.domain;
+package org.broadleafcommerce.core.order.domain;
 
-import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.common.money.Money;
+import java.util.List;
 
-public interface PromotableOrderItemAdjustment {
 
-    public void reset();
+public interface OrderItemContainer {
 
-    public OrderItemAdjustment getDelegate();
+    List<? extends OrderItem> getOrderItems();
 
-    /*
-     * Calculates the value of the adjustment
+    /**
+     * Returns true if the contained items can be discounted.
+     * @return
      */
-    public void computeAdjustmentValues();
+    boolean getAllowDiscountsOnChildItems();
 
-    public Money getRetailPriceValue();
-
-    public Money getSalesPriceValue();
-
+    /**
+     * Returns true if pricing operations are at the container level (as opposed to being
+     * the sum of the contained items) 
+     * @return
+     */
+    boolean isPricingAtContainerLevel();
 }

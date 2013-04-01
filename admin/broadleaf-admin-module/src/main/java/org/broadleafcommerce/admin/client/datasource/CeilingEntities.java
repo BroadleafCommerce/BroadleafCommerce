@@ -40,6 +40,7 @@ public class CeilingEntities {
     public static final String OFFER_CODE = "org.broadleafcommerce.core.offer.domain.OfferCode";
     public static final String ORDER_ADJUSTMENT = "org.broadleafcommerce.core.offer.domain.OrderAdjustment";
     public static final String ORDER_ITEM_ADJUSTMENT = "org.broadleafcommerce.core.offer.domain.OrderItemAdjustment";
+    public static final String ORDER_ITEM_PRICE_DETAIL = "org.broadleafcommerce.core.order.domain.OrderItemPriceDetail";
     public static final String FULFILLMENT_GROUP_ADJUSTMENT = "org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment";
     public static final String CUSTOMER = "org.broadleafcommerce.profile.core.domain.Customer";
     public static final String CHALLENGE_QUESTION = "org.broadleafcommerce.profile.core.domain.ChallengeQuestion";
@@ -49,5 +50,6 @@ public class CeilingEntities {
     public static final String CUSTOMERADDRESS = "org.broadleafcommerce.profile.core.domain.CustomerAddress";
     public static final String PAYMENT_RESPONSE_ITEM = "org.broadleafcommerce.core.payment.domain.PaymentResponseItem";
     public static final String PAYMENT_LOG = "org.broadleafcommerce.core.payment.domain.PaymentLog";
+    public static final String ORDER_ITEM_PRICE_DETAIL_ADJUSTMENT = "org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment";
 
 }

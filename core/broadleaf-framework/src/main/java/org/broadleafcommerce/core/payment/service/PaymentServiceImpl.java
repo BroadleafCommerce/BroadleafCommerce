@@ -192,6 +192,27 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    public PaymentResponseItem partialPayment(PaymentContext paymentContext) throws PaymentException {
+        logPaymentStartEvent(paymentContext, TransactionType.PARTIALPAYMENT);
+        PaymentResponseItem response = null;
+        PaymentException paymentException = null;
+        try {
+            response = paymentModule.partialPayment(paymentContext);
+        } catch (PaymentException e) {
+            if (e instanceof PaymentProcessorException) {
+                response = ((PaymentProcessorException) e).getPaymentResponseItem();
+            }
+            paymentException = e;
+            throw e;
+        } finally {
+            logResponseItem(paymentContext, response, TransactionType.PARTIALPAYMENT);
+            logPaymentFinishEvent(paymentContext, TransactionType.PARTIALPAYMENT, paymentException);
+        }
+
+        return response;
+    }
+
+    @Override
     public Boolean isValidCandidate(PaymentInfoType paymentType) {
         return paymentModule.isValidCandidate(paymentType);
     }

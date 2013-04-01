@@ -60,13 +60,13 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
-import javax.annotation.Resource;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * This legacy implementation should no longer be used as of 2.0
@@ -414,7 +414,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         return false;
     }
 
-    protected OrderItem findLastMatchingDiscreteItem(Order order, DiscreteOrderItem itemToFind) {
+    protected OrderItem findMatchingDiscreteItem(Order order, DiscreteOrderItem itemToFind) {
         for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
             OrderItem currentItem = (order.getOrderItems().get(i));
             if (currentItem instanceof DiscreteOrderItem) {
@@ -470,7 +470,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         return skuMap.isEmpty();
     }
 
-    protected OrderItem findLastMatchingBundleItem(Order order, BundleOrderItem itemToFind) {
+    protected OrderItem findMatchingBundleItem(Order order, BundleOrderItem itemToFind) {
         for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
             OrderItem currentItem = (order.getOrderItems().get(i));
             if (currentItem instanceof BundleOrderItem) {
@@ -482,11 +482,11 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         return null;
     }
 
-    protected OrderItem findLastMatchingItem(Order order, OrderItem itemToFind) {
+    protected OrderItem findMatchingItem(Order order, OrderItem itemToFind) {
         if (itemToFind instanceof BundleOrderItem) {
-            return findLastMatchingBundleItem(order, (BundleOrderItem) itemToFind);
+            return findMatchingBundleItem(order, (BundleOrderItem) itemToFind);
         } else if (itemToFind instanceof DiscreteOrderItem) {
-            return findLastMatchingDiscreteItem(order, (DiscreteOrderItem) itemToFind);
+            return findMatchingDiscreteItem(order, (DiscreteOrderItem) itemToFind);
         } else {
             return null;
         }
@@ -500,7 +500,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
 
         order = updateOrder(order, priceOrder);
 
-        return findLastMatchingItem(order, bundle);
+        return findMatchingItem(order, bundle);
     }
     
     @Override
@@ -900,9 +900,6 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
                 bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
             }
 
-            bundleOrderItem.updatePrices();
-            bundleOrderItem.assignFinalPrice();
-
             List<OrderItem> orderItems = order.getOrderItems();
             orderItems.add(bundleOrderItem);
             return updateOrder(order, priceOrder);
@@ -969,11 +966,24 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
     @Override
     @Deprecated
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException {
+        if (automaticallyMergeLikeItems) {
+            OrderItem item = findMatchingItem(order, newOrderItem);
+            if (item != null) {
+                item.setQuantity(item.getQuantity() + newOrderItem.getQuantity());
+                try {
+                    updateItemQuantity(order, item, priceOrder);
+                } catch (ItemNotFoundException e) {
+                    LOG.error(e);
+                }
+                return findMatchingItem(order, newOrderItem);
+            }
+        }
+
         List<OrderItem> orderItems = order.getOrderItems();
         orderItems.add(newOrderItem);
         newOrderItem.setOrder(order);
         order = updateOrder(order, priceOrder);
-        return findLastMatchingItem(order, newOrderItem);
+        return findMatchingItem(order, newOrderItem);
     }
     
     @Override

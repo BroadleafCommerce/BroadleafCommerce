@@ -16,34 +16,40 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
-import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
-import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
-import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
-import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
-import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 
 public interface PromotableItemFactory {
 
-    public PromotableOrder createPromotableOrder(Order order);
+    PromotableOrder createPromotableOrder(Order order, boolean includeOrderAndItemAdjustments);
 
-    public PromotableCandidateOrderOffer createPromotableCandidateOrderOffer(CandidateOrderOffer candidateOrderOffer, PromotableOrder order);
+    PromotableCandidateOrderOffer createPromotableCandidateOrderOffer(PromotableOrder promotableOrder, Offer offer);
 
-    public PromotableOrderAdjustment createPromotableOrderAdjustment(OrderAdjustment orderAdjustment, PromotableOrder order);
+    PromotableOrderAdjustment createPromotableOrderAdjustment(
+            PromotableCandidateOrderOffer promotableCandidateOrderOffer,
+            PromotableOrder order);
 
-    public PromotableOrderItem createPromotableOrderItem(DiscreteOrderItem orderItem,PromotableOrder order);
+    PromotableOrderItem createPromotableOrderItem(OrderItem orderItem, PromotableOrder order,
+            boolean includeAdjustments);
 
-    public PromotableCandidateItemOffer createPromotableCandidateItemOffer(CandidateItemOffer candidateItemOffer);
+    PromotableOrderItemPriceDetail createPromotableOrderItemPriceDetail(PromotableOrderItem promotableOrderItem,
+            int quantity);
 
-    public PromotableOrderItemAdjustment createPromotableOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment,PromotableOrderItem orderItem);
+    PromotableCandidateItemOffer createPromotableCandidateItemOffer(PromotableOrder promotableOrder, Offer offer);
 
-    public PromotableFulfillmentGroup createPromotableFulfillmentGroup(FulfillmentGroup fulfillmentGroup, PromotableOrder order);
+    PromotableOrderItemPriceDetailAdjustment createPromotableOrderItemPriceDetailAdjustment(
+            PromotableCandidateItemOffer promotableCandidateItemOffer,
+            PromotableOrderItemPriceDetail promotableOrderItemPriceDetail);
 
-    public PromotableCandidateFulfillmentGroupOffer createPromotableCandidateFulfillmentGroupOffer(CandidateFulfillmentGroupOffer candidateFulfillmentGroupOffer, PromotableFulfillmentGroup fulfillmentGroup);
+    PromotableFulfillmentGroup createPromotableFulfillmentGroup(FulfillmentGroup fulfillmentGroup, PromotableOrder order);
+
+    PromotableCandidateFulfillmentGroupOffer createPromotableCandidateFulfillmentGroupOffer(
+            PromotableFulfillmentGroup fulfillmentGroup,
+            Offer offer);
     
-    public PromotableFulfillmentGroupAdjustment createPromotableFulfillmentGroupAdjustment(FulfillmentGroupAdjustment fulfillmentGroupAdjustment, PromotableFulfillmentGroup fulfillmentGroup);
-
+    PromotableFulfillmentGroupAdjustment createPromotableFulfillmentGroupAdjustment(
+            PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer,
+            PromotableFulfillmentGroup fulfillmentGroup);
 }
