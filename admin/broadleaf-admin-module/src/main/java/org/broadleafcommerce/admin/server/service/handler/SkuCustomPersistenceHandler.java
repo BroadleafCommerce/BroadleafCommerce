@@ -457,9 +457,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             } else if (Calendar.class.isAssignableFrom(value.getClass())) {
                 strVal = dateFormat.format(((Calendar) value).getTime());
             } else if (Double.class.isAssignableFrom(value.getClass())) {
-                strVal = dateFormat.format(value);
+                strVal = helper.getDecimalFormatter().format(value);
             } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
-                strVal = dateFormat.format(((BigDecimal) value).doubleValue());
+                strVal = helper.getDecimalFormatter().format(((BigDecimal) value).doubleValue());
             } else {
                 strVal = value.toString();
             }

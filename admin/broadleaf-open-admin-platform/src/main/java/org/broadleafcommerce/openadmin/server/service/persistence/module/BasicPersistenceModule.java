@@ -131,6 +131,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     protected Date parseDate(String value) throws ParseException {
         return dateFormat.parse(value);
     }
+    
+    @Override
+    public DecimalFormat getDecimalFormatter()  {
+        return decimalFormat;
+    }
 
     protected Map<String, FieldMetadata> filterOutCollectionMetadata(Map<String, FieldMetadata> metadata) {
         if (metadata == null) {
@@ -774,6 +779,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(StringUtils.isEmpty(persistencePackage.getFetchTypeFullyQualifiedClassname()) ? persistencePackage.getCeilingEntityFullyQualifiedClassname() : persistencePackage.getFetchTypeFullyQualifiedClassname()));
     }
 
+    @Override
     public PersistentEntityCriteria getCountCriteria(PersistencePackage persistencePackage, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
         PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), persistencePackage.getCeilingEntityFullyQualifiedClassname());
         Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));

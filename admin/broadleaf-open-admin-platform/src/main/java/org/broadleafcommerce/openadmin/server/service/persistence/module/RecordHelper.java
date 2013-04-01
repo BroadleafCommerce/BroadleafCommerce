@@ -28,16 +28,17 @@ import org.w3c.dom.DOMException;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Helper interface for serializing/deserializing the generic {@link Entity} DTO to/from its actual domain object
@@ -89,6 +90,8 @@ public interface RecordHelper {
 
     public PersistenceModule getCompatibleModule(OperationType operationType);
 
+    public DecimalFormat getDecimalFormatter();
+    
     /**
      * Validates the {@link Entity} based on the validators associated with each property
      * @param entity the instance that is attempted to be saved from. Implementers should set {@link Entity#isValidationFailure()}
