@@ -5,19 +5,21 @@
     <label th:for="${field.name}" th:text="#{${field.friendlyName}}" />
     
     <div class="foreign-key-value-container">
-        <a href="#" class="clear-foreign-key"
-           th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">[X]</a>
         <span
-            class="display-value"
-            style="line-height: 23px; vertical-align: bottom"
+            class="display-value read-only"
             th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}"
             th:text="*{fields['__${field.name}__'].displayValue}" />
-        
-        <button 
-            class="to-one-lookup tiny button hover-cursor"
-            value="Lookup"
+            
+        <button class="clear-foreign-key tiny radius dark button hover-cursor"
+            th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}"
             th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}">
-            Select
+            <i class="icon-remove"></i>
         </button>
+        
+        <button class="to-one-lookup tiny radius dark button hover-cursor"
+            th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}">
+            <i class="icon-search"></i>&nbsp;Lookup
+        </button>
+        
     </div>
 </div>

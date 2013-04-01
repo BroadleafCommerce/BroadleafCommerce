@@ -3,11 +3,11 @@
         <form class="custom-entity-search" th:action="${currentUrl}" method="GET">
             <label>Search</label>
             <div class="row">
-                <div class="four columns">
-                    <input type="search" placeholder="Name" />
+                <div class="six columns">
+                    <input style="height: 28px;" type="search" placeholder="Name" />
                 </div>
-                <div class="one columns">
-                    <a href="#" class="button small radius"><i class="icon-search"></i>&nbsp;Search</a>
+                <div class="four columns">
+                    <a href="#" class="button small dark radius"><i class="icon-search"></i>&nbsp;Search</a>
                 </div>
                 <div class="two columns">&nbsp;</div>
             </div>
@@ -16,7 +16,7 @@
     <div class="five columns" style="padding-top:17px;">
         <ul class="button-group" style="float: right;">
             <li>
-                <a th:href="@{${sectionKey} + '/add'}" class="button small add-main-entity" th:inline="text">
+                <a th:href="@{${sectionKey} + '/add'}" class="button small radius dark add-main-entity" th:inline="text">
                     <i class="icon-plus"></i> &nbsp; Add [[${currentAdminSection.name}]]
                 </a>
             </li>

@@ -64,7 +64,7 @@
         </li>
     </ul>
     
-        <button th:each="action : ${entityForm.actions}" class="button right" th:classappend="${action.buttonClass}">
+        <button th:each="action : ${entityForm.actions}" class="button radius dark right" th:classappend="${action.buttonClass}">
             <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="${action.displayText}" th:remove="tag" />
         </button>
     
