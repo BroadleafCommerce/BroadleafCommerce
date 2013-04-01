@@ -63,6 +63,7 @@ $(document).ready(function() {
         
         $.post(currentUrl, postData, function(data) {
             replaceRelatedListGrid(data);
+            BLCAdmin.hideCurrentModal();
         })
         .fail(function(data) {
             alert('failed ' + data);
@@ -178,6 +179,7 @@ $(document).ready(function() {
             data: $(this).serialize()
         }, function(data) {
             replaceRelatedListGrid(data);
+            BLCAdmin.hideCurrentModal();
         });
         return false;
     });
@@ -333,7 +335,6 @@ $(document).ready(function() {
         disableRowToolbarButtons($oldTable.closest('.listgrid-container'));
         
         $oldTable.find('tbody').replaceWith($table.find('tbody'));
-        BLCAdmin.hideCurrentModal();
     }
     
 });
