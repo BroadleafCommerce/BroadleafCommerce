@@ -13,7 +13,7 @@
     <aop:config/>
 
     <bean id="blStaticAssetURLHandlerMapping" class="org.broadleafcommerce.cms.web.BroadleafCmsSimpleUrlHandlerMapping">
-        <property name="order" value="0"/>
+        <property name="order" value="-1"/>
         <property name="alwaysUseFullPath" value="true"></property>
         <property name="mappings">
             <map>
