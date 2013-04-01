@@ -30,11 +30,13 @@
     </bean>
 
     <bean id="blStaticAssetURLHandlerMapping" class="org.broadleafcommerce.cms.web.BroadleafCmsSimpleUrlHandlerMapping">
-        <property name="order" value="0"/>
+        <!--  Before mvc:annotationdriven but after static content / resource filters -->
+        <property name="order" value="-1"/>
         <property name="alwaysUseFullPath" value="true"></property>
         <property name="mappings">
             <map>
                 <entry key="/**/${asset.server.url.prefix.internal}/**" value-ref="blStaticAssetViewController"/>
+                <entry key="/${asset.server.url.prefix.internal}/**" value-ref="blStaticAssetViewController"/>
             </map>
         </property>
     </bean>
