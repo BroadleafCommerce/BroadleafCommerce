@@ -11,7 +11,7 @@
         
         <ul class="inline-list small-spacing">
             <li th:each="action : ${listGrid.toolbarActions}">
-                <button class="tiny round listgrid button" th:classappend="${action.buttonClass}"
+                <button class="tiny radius dark button" th:classappend="${action.buttonClass}"
                     th:attr="data-actionurl=@{${listGrid.path + action.urlPostfix}}">
                     <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="${action.displayText}" th:remove="tag" />
                 </button>
@@ -20,7 +20,7 @@
             <li style="color: #8495A5">|</li>
         
             <li th:each="action : ${listGrid.rowActions}">
-                <button disabled="disabled" class="tiny round listgrid row-action button" th:classappend="${action.buttonClass}"
+                <button disabled="disabled" class="tiny radius dark row-action button" th:classappend="${action.buttonClass}"
                     th:attr="data-urlpostfix=${action.urlPostfix}">
                     <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="${action.displayText}" th:remove="tag" />
                 </button>

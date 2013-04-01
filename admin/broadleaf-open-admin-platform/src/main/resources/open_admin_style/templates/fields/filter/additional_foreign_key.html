@@ -4,17 +4,20 @@
             th:attr="data-onchangetrigger=${headerField.onChangeTrigger}" />
         
     <div class="foreign-key-value-container">
-        <a href="#" class="clear-foreign-key" style="display: none;">[X]</a>
         <span
-            class="display-value"
-            style="color:#222; line-height: 23px; vertical-align: bottom"
-            th:text="${headerField.displayValue}" />
+            class="display-value read-only"
+            th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}"
+            th:text="*{fields['__${field.name}__'].displayValue}" />
+            
+        <button class="clear-foreign-key tiny radius dark button hover-cursor"
+            th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}"
+            th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}">
+            <i class="icon-remove"></i>
+        </button>
         
-        <button 
-            class="to-one-lookup tiny button hover-cursor"
-            value="Lookup"
-            th:attr="data-select-url=@{${'/' + sectionKey + '/' + headerField.name + '/select'}}">
-            Select
+        <button class="to-one-lookup tiny radius dark button hover-cursor"
+            th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}">
+            <i class="icon-search"></i>&nbsp;Lookup
         </button>
     </div>
 </div>

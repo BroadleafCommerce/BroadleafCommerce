@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.cms.field.type.StorageType;
+import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
@@ -89,5 +91,17 @@ public interface StaticAsset extends Serializable {
     public SandBox getOriginalSandBox();
 
     public void setOriginalSandBox(SandBox originalSandBox);
+
+    /**
+     * Returns how the underlying BLOB is stored.  Typically on the FileSystem or the Database.
+     * 
+     * If null, this method returns <code>StorageType.DATABASE</code> for backwards compatibility.
+     * 
+     * @see {@link StaticAssetService}
+     * @return
+     */
+    public StorageType getStorageType();
+
+    public void setStorageType(StorageType storageType);
 
 }

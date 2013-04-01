@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -36,6 +37,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -54,8 +58,6 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -78,6 +80,8 @@ import java.util.Map;
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class StaticAssetImpl implements StaticAsset {
+
+    private static final long serialVersionUID = 6990685254640110350L;
 
     @Id
     @GeneratedValue(generator = "StaticAssetId", strategy = GenerationType.TABLE)
@@ -162,6 +166,10 @@ public class StaticAssetImpl implements StaticAsset {
     @AdminPresentation(friendlyName = "StaticAssetImpl_Original_Asset_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     @Index(name="ORIG_ASSET_ID_INDX", columnNames={"ORIG_ASSET_ID"})
     protected Long originalAssetId;
+
+    @Column(name = "STORAGE_TYPE")
+    @AdminPresentation(excluded = true)
+    protected String storageType;
 
     public String getFullUrl() {
         return fullUrl;
@@ -309,5 +317,20 @@ public class StaticAssetImpl implements StaticAsset {
         }
 
         return asset;
+    }
+
+    @Override
+    public StorageType getStorageType() {
+        StorageType st = StorageType.getInstance(storageType);
+        if (st == null) {
+            return StorageType.DATABASE;
+        } else {
+            return st;
+        }
+    }
+
+    @Override
+    public void setStorageType(StorageType storageType) {
+        this.storageType = storageType.getType();
     }
 }

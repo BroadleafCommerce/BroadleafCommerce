@@ -797,15 +797,34 @@ td.list-grid-no-results {
 	padding: 5px;
 }
 
-.button.listgrid, .button.listgrid[disabled]:hover, .button.listgrid[disabled]:focus { 
-	background-color: #424242;
-	color: #F0F0F0;
-	border: 0;
-	box-shadow: none;
+.button {
+	border: 0 !important;
+	box-shadow: none !important;
 }
 
-.button.listgrid:hover, .button.listgrid:focus { 
+.button.dark, .button.dark[disabled]:hover, .button.dark[disabled]:focus { 
+	background-color: #424242;
+	color: #F0F0F0;
+}
+
+.button.dark:hover, .button.dark:focus { 
 	background-color: #006969; 
+}
+
+span.read-only {
+	border: 1px solid #CCC;
+	padding: 2px 5px;
+	vertical-align: bottom;
+	
+	-webkit-border-radius: 2px; 
+	-moz-border-radius: 2px;
+	-ms-border-radius: 2px;
+	-o-border-radius: 2px;
+	border-radius: 2px;
+	
+	-webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 
