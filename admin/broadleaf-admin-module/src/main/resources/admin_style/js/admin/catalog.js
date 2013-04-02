@@ -19,7 +19,7 @@ $(document).ready(function() {
                     url: url,
                     type: "GET",
                 }, function(data) {
-                    additionalSkusTable.replaceWith($(data).find('tbody'));
+                    additionalSkusTable.find('tbody').replaceWith($(data.trim()).find('tbody'));
                 });
             }
         });
