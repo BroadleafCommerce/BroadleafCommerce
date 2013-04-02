@@ -49,6 +49,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -79,17 +80,30 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
         }
     }
 
-    protected Entity[] getMapRecords(Serializable record, MapStructure mapStructure, Map<String, FieldMetadata> valueMergedProperties, Property symbolicIdProperty) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException, IllegalArgumentException, ClassNotFoundException {
+    protected Entity[] getMapRecords(Serializable record, MapStructure mapStructure, Map<String, FieldMetadata> ceilingMergedProperties, Map<String, FieldMetadata> valueMergedProperties, Property symbolicIdProperty) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchFieldException {
+        //compile a list of mapKeys that were used as mapFields
+        List<String> mapFieldKeys = new ArrayList<String>();
+        String mapProperty = mapStructure.getMapProperty();
+        for (Map.Entry<String, FieldMetadata> entry : ceilingMergedProperties.entrySet()) {
+            if (entry.getKey().startsWith(mapProperty + "/")) {
+                mapFieldKeys.add(entry.getKey().substring(entry.getKey().indexOf("/") + 1, entry.getKey().length()));
+            }
+        }
+        Collections.sort(mapFieldKeys);
+
         FieldManager fieldManager = getFieldManager();
-        Map map = null;
+        Map map;
         try {
-            map = (Map) fieldManager.getFieldValue(record, mapStructure.getMapProperty());
+            map = (Map) fieldManager.getFieldValue(record, mapProperty);
         } catch (FieldNotAvailableException e) {
             throw new IllegalArgumentException(e);
         }
         Entity[] entities = new Entity[map.size()];
         int j=0;
         for (Object key : map.keySet()) {
+            if (key instanceof String && mapFieldKeys.contains(key)) {
+                continue;
+            }
             Entity entityItem = new Entity();
             entityItem.setType(new String[]{record.getClass().getName()});
             entities[j] = entityItem;
@@ -224,7 +238,14 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Entity entity = persistencePackage.getEntity();
             MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
-            
+
+            Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(entity.getType()[0],
+                persistencePerspective);
+            String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();
+            if (ceilingMergedProperties.containsKey(mapStructure.getMapProperty() + "/" + mapKey)) {
+                throw new ServiceException("\"" + mapKey + "\" is a reserved property name.");
+            }
+
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
             FieldManager fieldManager = getFieldManager();
             Map map = (Map) fieldManager.getFieldValue(instance, mapStructure.getMapProperty());
@@ -278,7 +299,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
             }
             
-            Entity[] responses = getMapRecords(instance, mapStructure, valueMergedProperties, entity.findProperty("symbolicId"));
+            Entity[] responses = getMapRecords(instance, mapStructure, ceilingMergedProperties, valueMergedProperties, entity.findProperty("symbolicId"));
             for (Entity response : responses) {
                 if (response.findProperty(mapStructure.getKeyPropertyName()).getValue().equals(persistencePackage.getEntity().findProperty(mapStructure.getKeyPropertyName()).getValue())) {
                     return response;
@@ -318,7 +339,14 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Entity entity = persistencePackage.getEntity();
             MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
-            
+
+            Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(entity.getType()[0],
+                persistencePerspective);
+            String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();
+            if (ceilingMergedProperties.containsKey(mapStructure.getMapProperty() + "/" + mapKey)) {
+                throw new ServiceException("\"" + mapKey + "\" is a reserved property name.");
+            }
+
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
             FieldManager fieldManager = getFieldManager();
             Map map = (Map) fieldManager.getFieldValue(instance, mapStructure.getMapProperty());
@@ -372,7 +400,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
             }
             
-            return getMapRecords(instance, mapStructure, valueMergedProperties, entity.findProperty("symbolicId"))[0];
+            return getMapRecords(instance, mapStructure, ceilingMergedProperties, valueMergedProperties, entity.findProperty("symbolicId"))[0];
         } catch (Exception e) {
             LOG.error("Problem editing entity", e);
             throw new ServiceException("Problem updating entity : " + e.getMessage(), e);
@@ -389,7 +417,14 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Entity entity = persistencePackage.getEntity();
             MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
-            
+
+            Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(entity.getType()[0],
+                persistencePerspective);
+            String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();
+            if (ceilingMergedProperties.containsKey(mapStructure.getMapProperty() + "/" + mapKey)) {
+                throw new ServiceException("\"" + mapKey + "\" is a reserved property name.");
+            }
+
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
             FieldManager fieldManager = getFieldManager();
             Map map = (Map) fieldManager.getFieldValue(instance, mapStructure.getMapProperty());
@@ -464,7 +499,9 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                 throw new ServiceException("Queries to retrieve an entity containing a MapStructure must return only 1 entity. Your query returned ("+totalRecords+") values.");
             }
             List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(persistencePackage.getFetchTypeFullyQualifiedClassname()));
-            payload = getMapRecords(records.get(0), mapStructure, valueMergedProperties, null);
+            Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(records.get(0).getClass().getName(),
+                            persistencePerspective);
+            payload = getMapRecords(records.get(0), mapStructure, ceilingMergedProperties, valueMergedProperties, null);
         } catch (ServiceException e) {
             LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
             throw e;

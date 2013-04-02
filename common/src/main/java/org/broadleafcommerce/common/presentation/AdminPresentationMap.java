@@ -307,9 +307,26 @@ public @interface AdminPresentationMap {
      * Optional - If you have FieldType set to SupportedFieldType.MONEY,      *
      * then you can specify a money currency property field.
      *
-     *
      * @return the currency property field
      */
     String currencyCodeField() default "";
 
+    /**
+     * Optional - members of this map can be displayed as form fields, rather than in a standard grid. When populated,
+     * mapDisplayFields informs the form building process to create the fields described here and persist those fields
+     * in this map structure.
+     *
+     * @return the fields to display that represent the members of this map
+     */
+    AdminPresentationMapField[] mapDisplayFields() default {};
+
+    /**
+     * <p>Optional - only applies when using the mapDisplayFields property. Controls whether or not a standard
+     * map grid is shown in the admin, in addition to the fields defined in mapDisplayFields. Presumably, the
+     * grid would be used to control any additional map values not covered by mapDisplayFields. Note, the map
+     * values covered by mapDisplayFields will be filtered out in this presentation.</p>
+     *
+     * @return whether or not fields other than those defined in mapDisplayFields are displayed in the admin
+     */
+    boolean allowMapFieldOverflowPresentation() default false;
 }

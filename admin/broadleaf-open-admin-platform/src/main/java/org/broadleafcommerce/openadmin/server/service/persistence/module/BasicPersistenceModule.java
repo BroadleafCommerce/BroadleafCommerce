@@ -16,6 +16,15 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.AssociationPathElement;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
@@ -50,19 +59,16 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.DOMException;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.AssociationPathElement;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
-
+import javax.annotation.Resource;
+import javax.persistence.Embedded;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -82,12 +88,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-import javax.persistence.Embedded;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 
 /**
  * @author jfischer
@@ -151,19 +151,68 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return newMap;
     }
 
+    protected Class<?> getBasicBroadleafType(SupportedFieldType fieldType) {
+        Class<?> response;
+        switch (fieldType) {
+            case BOOLEAN:
+                response = Boolean.TYPE;
+                break;
+            case DATE:
+                response = Date.class;
+                break;
+            case DECIMAL:
+                response = BigDecimal.class;
+                break;
+            case MONEY:
+                response = Money.class;
+                break;
+            case INTEGER:
+                response = Integer.TYPE;
+                break;
+            case UNKNOWN:
+                response = null;
+                break;
+            default:
+                response = String.class;
+                break;
+        }
+
+        return response;
+    }
+
     @Override
     public Serializable createPopulatedInstance(Serializable instance, Entity entity, Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ParseException, NumberFormatException, InstantiationException, ClassNotFoundException {
         Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(unfilteredProperties);
         FieldManager fieldManager = getFieldManager();
         for (Property property : entity.getProperties()) {
-            Field field = fieldManager.getField(instance.getClass(), property.getName());
-            if (field == null) {
-                LOG.debug("Unable to find a bean property for the reported property: " + property.getName() + ". Ignoring property.");
-                continue;
-            }
-            Class<?> returnType = field.getType();
-            String value = property.getValue();
             BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(property.getName());
+            Class<?> returnType;
+            if (!property.getName().contains("/")) {
+                Field field = fieldManager.getField(instance.getClass(), property.getName());
+                if (field == null) {
+                    LOG.debug("Unable to find a bean property for the reported property: " + property.getName() + ". Ignoring property.");
+                    continue;
+                }
+                returnType = field.getType();
+            } else {
+                returnType = getBasicBroadleafType(metadata.getFieldType());
+                if (returnType == null) {
+                    Field field = fieldManager.getField(instance.getClass(), property.getName().substring(0, property.getName().indexOf("/")));
+                    java.lang.reflect.Type type = field.getGenericType();
+                    if (type instanceof ParameterizedType) {
+                        ParameterizedType pType = (ParameterizedType) type;
+                        Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
+                        Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(clazz);
+                        if (!ArrayUtils.isEmpty(entities)) {
+                            returnType = entities[entities.length-1];
+                        }
+                    }
+                }
+            }
+            if (returnType == null) {
+                throw new IllegalAccessException("Unable to determine the value type for the property ("+property.getName()+")");
+            }
+            String value = property.getValue();
             if (metadata != null) {
                 Boolean mutable = metadata.getMutable();
                 Boolean readOnly = metadata.getReadOnly();

@@ -45,5 +45,6 @@ public enum SupportedFieldType implements IsSerializable {
     UPLOAD,
     HIDDEN,
     ASSET,
-    ASSET_URL
+    ASSET_URL,
+    RULE
 }

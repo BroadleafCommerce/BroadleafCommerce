@@ -128,18 +128,26 @@ public class FieldManager {
         Object value = bean;
 
         while (tokens.hasMoreTokens()) {
-            String token = tokens.nextToken();
-            field = getSingleField(componentClass, token);
+            String fieldNamePart = tokens.nextToken();
+            String mapKey = null;
+            if (fieldNamePart.contains("/")) {
+                mapKey = fieldNamePart.substring(fieldNamePart.indexOf("/") + 1, fieldNamePart.length());
+                fieldNamePart = fieldNamePart.substring(0, fieldNamePart.indexOf("/"));
+            }
+            field = getSingleField(componentClass, fieldNamePart);
             if (field != null) {
                 field.setAccessible(true);
                 value = field.get(value);
+                if (value != null && mapKey != null) {
+                    value = ((Map) value).get(mapKey);
+                }
                 if (value != null) {
                     componentClass = value.getClass();
                 } else {
                     break;
                 }
             } else {
-                throw new FieldNotAvailableException("Unable to find field (" + token + ") on the class (" + componentClass + ")");
+                throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart + ") on the class (" + componentClass + ")");
             }
         }
 
@@ -150,16 +158,32 @@ public class FieldManager {
     public Object setFieldValue(Object bean, String fieldName, Object newValue) throws IllegalAccessException, InstantiationException {
         StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
-        Field field = null;
+        Field field;
         Object value = bean;
         
         int count = tokens.countTokens();
         int j=0;
         while (tokens.hasMoreTokens()) {
-            field = getSingleField(componentClass, tokens.nextToken());
+            String fieldNamePart = tokens.nextToken();
+            String mapKey = null;
+            if (fieldNamePart.contains("/")) {
+                mapKey = fieldNamePart.substring(fieldNamePart.indexOf("/") + 1, fieldNamePart.length());
+                fieldNamePart = fieldNamePart.substring(0, fieldNamePart.indexOf("/"));
+            }
+
+            field = getSingleField(componentClass, fieldNamePart);
             field.setAccessible(true);
             if (j == count - 1) {
-                field.set(value, newValue);
+                if (mapKey != null) {
+                    Map map = (Map) field.get(value);
+                    if (newValue == null) {
+                        map.remove(mapKey);
+                    } else {
+                        map.put(mapKey, newValue);
+                    }
+                } else {
+                    field.set(value, newValue);
+                }
             } else {
                 Object myValue = field.get(value);
                 if (myValue != null) {

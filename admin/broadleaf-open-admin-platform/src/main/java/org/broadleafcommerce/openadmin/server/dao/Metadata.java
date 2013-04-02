@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
@@ -118,18 +119,31 @@ public class Metadata {
             AdminPresentationCollection annotColl = field.getAnnotation(AdminPresentationCollection.class);
             AdminPresentationAdornedTargetCollection adornedTargetCollection = field.getAnnotation(AdminPresentationAdornedTargetCollection.class);
             AdminPresentationMap map = field.getAnnotation(AdminPresentationMap.class);
+            FieldInfo info = buildFieldInfo(field);
             if (annot != null) {
                 FieldMetadataOverride override = constructBasicMetadataOverride(annot, field.getAnnotation(AdminPresentationToOneLookup.class), field.getAnnotation(AdminPresentationDataDrivenEnumeration.class));
-                buildBasicMetadata(parentClass, targetClass, attributes, field, override, dynamicEntityDao);
+                buildBasicMetadata(parentClass, targetClass, attributes, info, override, dynamicEntityDao);
             } else if (annotColl != null) {
                 FieldMetadataOverride override = constructBasicCollectionMetadataOverride(annotColl);
-                buildCollectionMetadata(parentClass, targetClass, attributes, field, override);
+                buildCollectionMetadata(parentClass, targetClass, attributes, info, override);
             } else if (adornedTargetCollection != null) {
                 FieldMetadataOverride override = constructAdornedTargetCollectionMetadataOverride(adornedTargetCollection);
-                buildAdornedTargetCollectionMetadata(parentClass, targetClass, attributes, field, override, dynamicEntityDao);
+                buildAdornedTargetCollectionMetadata(parentClass, targetClass, attributes, info, override, dynamicEntityDao);
             } else if (map != null) {
-                FieldMetadataOverride override = constructMapMetadataOverride(map);
-                buildMapMetadata(parentClass, targetClass, attributes, field, override, dynamicEntityDao, prefix);
+                if (!ArrayUtils.isEmpty(map.mapDisplayFields())) {
+                    for (AdminPresentationMapField mapField : map.mapDisplayFields()) {
+                        FieldMetadataOverride override = constructBasicMetadataOverride(mapField.fieldPresentation(), null, null);
+                        override.setFriendlyName(mapField.fieldName().friendlyKeyName());
+                        FieldInfo myInfo = new FieldInfo();
+                        myInfo.setName(field.getName() + "/" + mapField.fieldName().keyName());
+                        buildBasicMetadata(parentClass, targetClass, attributes, myInfo, override, dynamicEntityDao);
+                        setClassOwnership(parentClass, targetClass, attributes, myInfo);
+                    }
+                }
+                if (ArrayUtils.isEmpty(map.mapDisplayFields()) || map.allowMapFieldOverflowPresentation()) {
+                    FieldMetadataOverride override = constructMapMetadataOverride(map);
+                    buildMapMetadata(parentClass, targetClass, attributes, info, override, dynamicEntityDao, prefix);
+                }
             } else {
                 BasicFieldMetadata metadata = new BasicFieldMetadata();
                 metadata.setName(field.getName());
@@ -137,7 +151,14 @@ public class Metadata {
                 attributes.put(field.getName(), metadata);
             }
 
-            FieldMetadata metadata = attributes.get(field.getName());
+            setClassOwnership(parentClass, targetClass, attributes, info);
+        }
+        return attributes;
+    }
+
+    protected void setClassOwnership(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes, FieldInfo field) {
+        FieldMetadata metadata = attributes.get(field.getName());
+        if (metadata != null) {
             AdminPresentationClass adminPresentationClass;
             if (parentClass != null) {
                 metadata.setOwningClass(parentClass.getName());
@@ -152,9 +173,8 @@ public class Metadata {
                 }
             }
         }
-        return attributes;
     }
-    
+
     public Map<String, FieldMetadata> overrideMetadata(Class<?>[] entities, PropertyBuilder propertyBuilder, String prefix, Boolean isParentExcluded, String ceilingEntityFullyQualifiedClassname, String configurationKey, DynamicEntityDao dynamicEntityDao) {
         Boolean classAnnotatedPopulateManyToOneFields = null;
         Map<String, AdminPresentationOverride> presentationOverrides = new HashMap<String, AdminPresentationOverride>();
@@ -519,7 +539,7 @@ public class Metadata {
         throw new IllegalArgumentException("AdminPresentation annotation not found on field");
     }
 
-    protected void buildBasicMetadata(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride basicFieldMetadata, DynamicEntityDao dynamicEntityDao) {
+    protected void buildBasicMetadata(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes, FieldInfo field, FieldMetadataOverride basicFieldMetadata, DynamicEntityDao dynamicEntityDao) {
         BasicFieldMetadata serverMetadata = (BasicFieldMetadata) attributes.get(field.getName());
 
         BasicFieldMetadata metadata;
@@ -680,7 +700,7 @@ public class Metadata {
         attributes.put(field.getName(), metadata);
     }
 
-    protected void buildMapMetadata(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride map, DynamicEntityDao dynamicEntityDao, String prefix) {
+    protected void buildMapMetadata(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes, FieldInfo field, FieldMetadataOverride map, DynamicEntityDao dynamicEntityDao, String prefix) {
         MapMetadata serverMetadata = (MapMetadata) attributes.get(field.getName());
 
         Class<?> resolvedClass = parentClass==null?targetClass:parentClass;
@@ -805,9 +825,10 @@ public class Metadata {
             }
         }
         if (metadata.getValueClassName() == null) {
-            ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
-            if (manyToMany != null && !StringUtils.isEmpty(manyToMany.targetEntity().getName())) {
-                metadata.setValueClassName(manyToMany.mappedBy());
+            //ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
+            String manyToManyMappedBy = field.getManyToManyMappedBy();
+            if (!StringUtils.isEmpty(field.getManyToManyTargetEntity())) {
+                metadata.setValueClassName(field.getManyToManyMappedBy());
             }
         }
         if (metadata.getValueClassName() == null) {
@@ -828,8 +849,8 @@ public class Metadata {
             }
         }
         if (simpleValue==null) {
-            ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
-            if (manyToMany != null && !StringUtils.isEmpty(manyToMany.targetEntity().getName())) {
+            //ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
+            if (!StringUtils.isEmpty(field.getManyToManyTargetEntity())) {
                 simpleValue = false;
             }
         }
@@ -945,7 +966,7 @@ public class Metadata {
         attributes.put(field.getName(), metadata);
     }
 
-    protected void buildAdornedTargetCollectionMetadata(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride adornedTargetCollectionMetadata, DynamicEntityDao dynamicEntityDao) {
+    protected void buildAdornedTargetCollectionMetadata(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes, FieldInfo field, FieldMetadataOverride adornedTargetCollectionMetadata, DynamicEntityDao dynamicEntityDao) {
         AdornedTargetCollectionMetadata serverMetadata = (AdornedTargetCollectionMetadata) attributes.get(field.getName());
 
         Class<?> resolvedClass = parentClass==null?targetClass:parentClass;
@@ -993,8 +1014,8 @@ public class Metadata {
         }
 
         //try to inspect the JPA annotation
-        OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-        ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
+        //OneToMany oneToMany = field.getAnnotation(OneToMany.class);
+        //ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
         String parentObjectProperty = null;
         if (serverMetadata != null) {
             parentObjectProperty = ((AdornedTargetList) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getLinkedObjectPath();
@@ -1002,11 +1023,11 @@ public class Metadata {
         if (!StringUtils.isEmpty(adornedTargetCollectionMetadata.getParentObjectProperty())) {
             parentObjectProperty = adornedTargetCollectionMetadata.getParentObjectProperty();
         }
-        if (parentObjectProperty == null && oneToMany != null && !StringUtils.isEmpty(oneToMany.mappedBy())) {
-            parentObjectProperty = oneToMany.mappedBy();
+        if (parentObjectProperty == null && !StringUtils.isEmpty(field.getOneToManyMappedBy())) {
+            parentObjectProperty = field.getOneToManyMappedBy();
         }
-        if (parentObjectProperty == null && manyToMany != null && !StringUtils.isEmpty(manyToMany.mappedBy())) {
-            parentObjectProperty = manyToMany.mappedBy();
+        if (parentObjectProperty == null && !StringUtils.isEmpty(field.getManyToManyMappedBy())) {
+            parentObjectProperty = field.getManyToManyMappedBy();
         }
         if (StringUtils.isEmpty(parentObjectProperty)) {
             throw new IllegalArgumentException("Unable to infer a parentObjectProperty for the @AdminPresentationAdornedTargetCollection annotated field("+field.getName()+"). If not using the mappedBy property of @OneToMany or @ManyToMany, please make sure to explicitly define the parentObjectProperty property");
@@ -1051,22 +1072,22 @@ public class Metadata {
         }
 
         Class<?> collectionTarget = null;
-        checkCeiling: {
-            if (oneToMany != null && oneToMany.targetEntity() != void.class) {
-                collectionTarget = oneToMany.targetEntity();
-                break checkCeiling;
+        try {
+            checkCeiling: {
+                if (!StringUtils.isEmpty(field.getOneToManyTargetEntity()) && !void.class.getName().equals(field.getOneToManyTargetEntity())) {
+                    collectionTarget = Class.forName(field.getOneToManyTargetEntity());
+                    break checkCeiling;
+                }
+                if (!StringUtils.isEmpty(field.getManyToManyTargetEntity()) && !void.class.getName().equals(field.getManyToManyTargetEntity())) {
+                    collectionTarget = Class.forName(field.getManyToManyTargetEntity());
+                    break checkCeiling;
+                }
             }
-            if (manyToMany != null && manyToMany.targetEntity() != void.class) {
-                collectionTarget = manyToMany.targetEntity();
-                break checkCeiling;
-            }
-        }
-        if (StringUtils.isNotBlank(joinEntityClass)) {
-            try {
+            if (StringUtils.isNotBlank(joinEntityClass)) {
                 collectionTarget = Class.forName(joinEntityClass);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
             }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         if (collectionTarget == null) {
             throw new IllegalArgumentException("Unable to infer the type of the collection from the targetEntity property of a OneToMany or ManyToMany collection.");
@@ -1170,7 +1191,7 @@ public class Metadata {
         attributes.put(field.getName(), metadata);
     }
 
-    protected void buildCollectionMetadata(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes, Field field, FieldMetadataOverride collectionMetadata) {
+    protected void buildCollectionMetadata(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes, FieldInfo field, FieldMetadataOverride collectionMetadata) {
         BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) attributes.get(field.getName());
 
         Class<?> resolvedClass = parentClass==null?targetClass:parentClass;
@@ -1225,19 +1246,19 @@ public class Metadata {
 
         String foreignKeyName = null;
         //try to inspect the JPA annotation
-        OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-        ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
+        //OneToMany oneToMany = field.getAnnotation(OneToMany.class);
+        //ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
         if (serverMetadata != null) {
             foreignKeyName = ((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).getManyToField();
         }
         if (!StringUtils.isEmpty(collectionMetadata.getManyToField())) {
             foreignKeyName = collectionMetadata.getManyToField();
         }
-        if (foreignKeyName == null && oneToMany != null && !StringUtils.isEmpty(oneToMany.mappedBy())) {
-            foreignKeyName = oneToMany.mappedBy();
+        if (foreignKeyName == null && !StringUtils.isEmpty(field.getOneToManyMappedBy())) {
+            foreignKeyName = field.getOneToManyMappedBy();
         }
-        if (foreignKeyName == null && manyToMany != null && !StringUtils.isEmpty(manyToMany.mappedBy())) {
-            foreignKeyName = manyToMany.mappedBy();
+        if (foreignKeyName == null && !StringUtils.isEmpty(field.getManyToManyMappedBy())) {
+            foreignKeyName = field.getManyToManyMappedBy();
         }
         if (StringUtils.isEmpty(foreignKeyName)) {
             throw new IllegalArgumentException("Unable to infer a ManyToOne field name for the @AdminPresentationCollection annotated field("+field.getName()+"). If not using the mappedBy property of @OneToMany or @ManyToMany, please make sure to explicitly define the manyToField property");
@@ -1254,12 +1275,12 @@ public class Metadata {
 
         String ceiling = null;
         checkCeiling: {
-            if (oneToMany != null && oneToMany.targetEntity() != void.class) {
-                ceiling = oneToMany.targetEntity().getName();
+            if (!StringUtils.isEmpty(field.getOneToManyTargetEntity()) && !void.class.getName().equals(field.getOneToManyTargetEntity())) {
+                ceiling = field.getOneToManyTargetEntity();
                 break checkCeiling;
             }
-            if (manyToMany != null && manyToMany.targetEntity() != void.class) {
-                ceiling = manyToMany.targetEntity().getName();
+            if (!StringUtils.isEmpty(field.getManyToManyTargetEntity()) && !void.class.getName().equals(field.getManyToManyTargetEntity())) {
+                ceiling = field.getManyToManyTargetEntity();
                 break checkCeiling;
             }
         }
@@ -1344,7 +1365,8 @@ public class Metadata {
                                     Field field = dynamicEntityDao.getFieldManager().getField(targetClass, fieldName);
                                     Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
                                     temp.put(field.getName(), serverMetadata);
-                                    buildMapMetadata(parentClass, targetClass, temp, field, localMetadata, dynamicEntityDao, serverMetadata.getPrefix());
+                                    FieldInfo info = buildFieldInfo(field);
+                                    buildMapMetadata(parentClass, targetClass, temp, info, localMetadata, dynamicEntityDao, serverMetadata.getPrefix());
                                     serverMetadata = (MapMetadata) temp.get(field.getName());
                                     mergedProperties.put(key, serverMetadata);
                                     if (isParentExcluded) {
@@ -1362,6 +1384,23 @@ public class Metadata {
                 }
             }
         }
+    }
+
+    protected FieldInfo buildFieldInfo(Field field) {
+        FieldInfo info = new FieldInfo();
+        info.setName(field.getName());
+        info.setGenericType(field.getGenericType());
+        ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
+        if (manyToMany != null) {
+            info.setManyToManyMappedBy(manyToMany.mappedBy());
+            info.setManyToManyTargetEntity(manyToMany.targetEntity().getName());
+        }
+        OneToMany oneToMany = field.getAnnotation(OneToMany.class);
+        if (oneToMany != null) {
+            info.setOneToManyMappedBy(oneToMany.mappedBy());
+            info.setOneToManyTargetEntity(oneToMany.targetEntity().getName());
+        }
+        return info;
     }
 
     protected void applyAdornedTargetCollectionMetadataOverrides(String configurationKey, String ceilingEntityFullyQualifiedClassname, String prefix, final Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, DynamicEntityDao dynamicEntityDao) {
@@ -1384,7 +1423,8 @@ public class Metadata {
                                     Field field = dynamicEntityDao.getFieldManager().getField(targetClass, fieldName);
                                     Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
                                     temp.put(field.getName(), serverMetadata);
-                                    buildAdornedTargetCollectionMetadata(parentClass, targetClass, temp, field, localMetadata, dynamicEntityDao);
+                                    FieldInfo info = buildFieldInfo(field);
+                                    buildAdornedTargetCollectionMetadata(parentClass, targetClass, temp, info, localMetadata, dynamicEntityDao);
                                     serverMetadata = (AdornedTargetCollectionMetadata) temp.get(field.getName());
                                     mergedProperties.put(key, serverMetadata);
                                     if (isParentExcluded) {
@@ -1424,7 +1464,8 @@ public class Metadata {
                                     Field field = dynamicEntityDao.getFieldManager().getField(targetClass, fieldName);
                                     Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
                                     temp.put(field.getName(), serverMetadata);
-                                    buildCollectionMetadata(parentClass, targetClass, temp, field, localMetadata);
+                                    FieldInfo info = buildFieldInfo(field);
+                                    buildCollectionMetadata(parentClass, targetClass, temp, info, localMetadata);
                                     serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
                                     mergedProperties.put(key, serverMetadata);
                                     if (isParentExcluded) {
@@ -1464,7 +1505,9 @@ public class Metadata {
                                     Field field = dynamicEntityDao.getFieldManager().getField(targetClass, fieldName);
                                     Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
                                     temp.put(field.getName(), serverMetadata);
-                                    buildBasicMetadata(parentClass, targetClass, temp, field, localMetadata, dynamicEntityDao);
+                                    FieldInfo info = buildFieldInfo(field);
+                                    buildBasicMetadata(parentClass, targetClass, temp, info, localMetadata,
+                                            dynamicEntityDao);
                                     serverMetadata = (BasicFieldMetadata) temp.get(field.getName());
                                     mergedProperties.put(key, serverMetadata);
                                     if (isParentExcluded) {
@@ -1655,7 +1698,8 @@ public class Metadata {
                         FieldMetadataOverride localMetadata = constructBasicMetadataOverride(annot, null, null);
                         //do not include the previous metadata - we want to construct a fresh metadata from the override annotation
                         Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                        buildBasicMetadata(parentClass, targetClass, temp, field, localMetadata, dynamicEntityDao);
+                        FieldInfo info = buildFieldInfo(field);
+                        buildBasicMetadata(parentClass, targetClass, temp, info, localMetadata, dynamicEntityDao);
                         BasicFieldMetadata result = (BasicFieldMetadata) temp.get(field.getName());
                         result.setInheritedFromType(serverMetadata.getInheritedFromType());
                         result.setAvailableToTypes(serverMetadata.getAvailableToTypes());
@@ -1724,7 +1768,8 @@ public class Metadata {
                         FieldMetadataOverride localMetadata = constructMapMetadataOverride(annot);
                         //do not include the previous metadata - we want to construct a fresh metadata from the override annotation
                         Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                        buildMapMetadata(parentClass, targetClass, temp, field, localMetadata, dynamicEntityDao, serverMetadata.getPrefix());
+                        FieldInfo info = buildFieldInfo(field);
+                        buildMapMetadata(parentClass, targetClass, temp, info, localMetadata, dynamicEntityDao, serverMetadata.getPrefix());
                         MapMetadata result = (MapMetadata) temp.get(field.getName());
                         result.setInheritedFromType(serverMetadata.getInheritedFromType());
                         result.setAvailableToTypes(serverMetadata.getAvailableToTypes());
@@ -1782,7 +1827,8 @@ public class Metadata {
                         FieldMetadataOverride localMetadata = constructAdornedTargetCollectionMetadataOverride(annot);
                         //do not include the previous metadata - we want to construct a fresh metadata from the override annotation
                         Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                        buildAdornedTargetCollectionMetadata(parentClass, targetClass, temp, field, localMetadata, dynamicEntityDao);
+                        FieldInfo info = buildFieldInfo(field);
+                        buildAdornedTargetCollectionMetadata(parentClass, targetClass, temp, info, localMetadata, dynamicEntityDao);
                         AdornedTargetCollectionMetadata result = (AdornedTargetCollectionMetadata) temp.get(field.getName());
                         result.setInheritedFromType(serverMetadata.getInheritedFromType());
                         result.setAvailableToTypes(serverMetadata.getAvailableToTypes());
@@ -1840,7 +1886,8 @@ public class Metadata {
                         FieldMetadataOverride localMetadata = constructBasicCollectionMetadataOverride(annot);
                         //do not include the previous metadata - we want to construct a fresh metadata from the override annotation
                         Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                        buildCollectionMetadata(parentClass, targetClass, temp, field, localMetadata);
+                        FieldInfo info = buildFieldInfo(field);
+                        buildCollectionMetadata(parentClass, targetClass, temp, info, localMetadata);
                         BasicCollectionMetadata result = (BasicCollectionMetadata) temp.get(field.getName());
                         result.setInheritedFromType(serverMetadata.getInheritedFromType());
                         result.setAvailableToTypes(serverMetadata.getAvailableToTypes());
