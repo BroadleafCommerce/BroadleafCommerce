@@ -216,7 +216,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
 
         metadata.setName(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME);
-        metadata.setFriendlyName("Options");
+        metadata.setFriendlyName(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME);
         metadata.setGroup("");
         metadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         metadata.setProminent(true);
