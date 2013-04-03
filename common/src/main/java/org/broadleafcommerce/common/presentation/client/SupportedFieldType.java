@@ -46,5 +46,6 @@ public enum SupportedFieldType implements IsSerializable {
     HIDDEN,
     ASSET,
     ASSET_URL,
-    RULE
+    RULE_SIMPLE,
+    RULE_WITH_QUANTITY
 }

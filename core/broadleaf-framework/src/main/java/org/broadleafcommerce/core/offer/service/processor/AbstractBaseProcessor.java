@@ -188,10 +188,10 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     protected boolean couldOrderItemMeetOfferRequirement(OfferItemCriteria criteria, PromotableOrderItem orderItem) {
         boolean appliesToItem = false;
 
-        if (criteria.getOrderItemMatchRule() != null && criteria.getOrderItemMatchRule().trim().length() != 0) {
+        if (criteria.getMatchRule() != null && criteria.getMatchRule().trim().length() != 0) {
             HashMap<String, Object> vars = new HashMap<String, Object>();
             orderItem.updateRuleVariables(vars);
-            Boolean expressionOutcome = executeExpression(criteria.getOrderItemMatchRule(), vars);
+            Boolean expressionOutcome = executeExpression(criteria.getMatchRule(), vars);
             if (expressionOutcome != null && expressionOutcome) {
                 appliesToItem = true;
             }

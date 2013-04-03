@@ -78,6 +78,10 @@ public class BasicFieldMetadata extends FieldMetadata {
     private String[] customCriteria;
     private Boolean useServerSideInspectionCache;
     private Boolean toOneLookupCreatedViaAnnotation;
+    private String ruleIdentifier;
+
+    //for MapFields
+    private String mapFieldValueClass;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -427,6 +431,22 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.toOneLookupCreatedViaAnnotation = toOneLookupCreatedViaAnnotation;
     }
 
+    public String getRuleIdentifier() {
+        return ruleIdentifier;
+    }
+
+    public void setRuleIdentifier(String ruleIdentifier) {
+        this.ruleIdentifier = ruleIdentifier;
+    }
+
+    public String getMapFieldValueClass() {
+        return mapFieldValueClass;
+    }
+
+    public void setMapFieldValueClass(String mapFieldValueClass) {
+        this.mapFieldValueClass = mapFieldValueClass;
+    }
+
     @Override
     public FieldMetadata cloneFieldMetadata() {
         BasicFieldMetadata metadata = new BasicFieldMetadata();
@@ -494,6 +514,8 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.customCriteria = customCriteria;
         metadata.useServerSideInspectionCache = useServerSideInspectionCache;
         metadata.toOneLookupCreatedViaAnnotation = toOneLookupCreatedViaAnnotation;
+        metadata.ruleIdentifier = ruleIdentifier;
+        metadata.mapFieldValueClass = mapFieldValueClass;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 
@@ -633,6 +655,12 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (visibility != metadata.visibility) {
             return false;
         }
+        if (ruleIdentifier != null ? !ruleIdentifier.equals(metadata.ruleIdentifier) : metadata.ruleIdentifier != null) {
+            return false;
+        }
+        if (mapFieldValueClass != null ? !mapFieldValueClass.equals(metadata.mapFieldValueClass) : metadata.mapFieldValueClass != null) {
+            return false;
+        }
 
         return true;
     }
@@ -678,6 +706,8 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (optionValueFieldName != null ? optionValueFieldName.hashCode() : 0);
         result = 31 * result + (optionDisplayFieldName != null ? optionDisplayFieldName.hashCode() : 0);
         result = 31 * result + (optionCanEditValues != null ? optionCanEditValues.hashCode() : 0);
+        result = 31 * result + (ruleIdentifier != null ? ruleIdentifier.hashCode() : 0);
+        result = 31 * result + (mapFieldValueClass != null ? mapFieldValueClass.hashCode() : 0);
         return result;
     }
 

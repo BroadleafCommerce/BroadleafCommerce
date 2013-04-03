@@ -118,15 +118,15 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getOrderItemMatchRule()
      */
-    public String getOrderItemMatchRule() {
+    public String getMatchRule() {
         return orderItemMatchRule;
     }
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#setOrderItemMatchRule(java.lang.String)
      */
-    public void setOrderItemMatchRule(String orderItemMatchRule) {
-        this.orderItemMatchRule = orderItemMatchRule;
+    public void setMatchRule(String matchRule) {
+        this.orderItemMatchRule = matchRule;
     }
 
     public Offer getQualifyingOffer() {

@@ -85,8 +85,8 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
         List<String> mapFieldKeys = new ArrayList<String>();
         String mapProperty = mapStructure.getMapProperty();
         for (Map.Entry<String, FieldMetadata> entry : ceilingMergedProperties.entrySet()) {
-            if (entry.getKey().startsWith(mapProperty + "/")) {
-                mapFieldKeys.add(entry.getKey().substring(entry.getKey().indexOf("/") + 1, entry.getKey().length()));
+            if (entry.getKey().startsWith(mapProperty + FieldManager.MAPFIELDSEPARATOR)) {
+                mapFieldKeys.add(entry.getKey().substring(entry.getKey().indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(), entry.getKey().length()));
             }
         }
         Collections.sort(mapFieldKeys);
@@ -242,7 +242,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(entity.getType()[0],
                 persistencePerspective);
             String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();
-            if (ceilingMergedProperties.containsKey(mapStructure.getMapProperty() + "/" + mapKey)) {
+            if (ceilingMergedProperties.containsKey(mapStructure.getMapProperty() + FieldManager.MAPFIELDSEPARATOR + mapKey)) {
                 throw new ServiceException("\"" + mapKey + "\" is a reserved property name.");
             }
 
@@ -343,7 +343,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(entity.getType()[0],
                 persistencePerspective);
             String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();
-            if (ceilingMergedProperties.containsKey(mapStructure.getMapProperty() + "/" + mapKey)) {
+            if (ceilingMergedProperties.containsKey(mapStructure.getMapProperty() + FieldManager.MAPFIELDSEPARATOR + mapKey)) {
                 throw new ServiceException("\"" + mapKey + "\" is a reserved property name.");
             }
 
@@ -421,7 +421,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(entity.getType()[0],
                 persistencePerspective);
             String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();
-            if (ceilingMergedProperties.containsKey(mapStructure.getMapProperty() + "/" + mapKey)) {
+            if (ceilingMergedProperties.containsKey(mapStructure.getMapProperty() + FieldManager.MAPFIELDSEPARATOR + mapKey)) {
                 throw new ServiceException("\"" + mapKey + "\" is a reserved property name.");
             }
 

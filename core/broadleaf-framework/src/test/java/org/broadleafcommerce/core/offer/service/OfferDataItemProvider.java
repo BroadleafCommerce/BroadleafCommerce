@@ -755,7 +755,7 @@ public class OfferDataItemProvider {
             OfferItemCriteria targetCriteria = new OfferItemCriteriaImpl();
             targetCriteria.setQualifyingOffer(offers.get(0));
             targetCriteria.setQuantity(1);
-            targetCriteria.setOrderItemMatchRule(targetRule);
+            targetCriteria.setMatchRule(targetRule);
             targetSet.add(targetCriteria);
             
             offers.get(0).setTargetItemCriteria(targetSet);
@@ -770,7 +770,7 @@ public class OfferDataItemProvider {
         OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
         qualCriteria.setQualifyingOffer(offers.get(0));
         qualCriteria.setQuantity(1);
-        qualCriteria.setOrderItemMatchRule(orderItemMatchRule);
+        qualCriteria.setMatchRule(orderItemMatchRule);
         Set<OfferItemCriteria> criterias = new HashSet<OfferItemCriteria>();
         criterias.add(qualCriteria);
         
@@ -785,7 +785,7 @@ public class OfferDataItemProvider {
         OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
         qualCriteria.setQualifyingOffer(offers.get(0));
         qualCriteria.setQuantity(1);
-        qualCriteria.setOrderItemMatchRule(orderItemMatchRule);
+        qualCriteria.setMatchRule(orderItemMatchRule);
         Set<OfferItemCriteria> criterias = new HashSet<OfferItemCriteria>();
         criterias.add(qualCriteria);
         
@@ -801,7 +801,7 @@ public class OfferDataItemProvider {
             OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
             qualCriteria.setQualifyingOffer(offers.get(0));
             qualCriteria.setQuantity(1);
-            qualCriteria.setOrderItemMatchRule(qualRule);
+            qualCriteria.setMatchRule(qualRule);
             Set<OfferItemCriteria> criterias = new HashSet<OfferItemCriteria>();
             criterias.add(qualCriteria);
             

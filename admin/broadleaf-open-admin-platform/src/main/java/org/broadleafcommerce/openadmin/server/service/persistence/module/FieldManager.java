@@ -41,6 +41,8 @@ public class FieldManager {
     
     private static final Log LOG = LogFactory.getLog(FieldManager.class);
 
+    public static final String MAPFIELDSEPARATOR = "--";
+
     protected EntityConfiguration entityConfiguration;
     protected DynamicEntityDao dynamicEntityDao;
     protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
@@ -130,9 +132,9 @@ public class FieldManager {
         while (tokens.hasMoreTokens()) {
             String fieldNamePart = tokens.nextToken();
             String mapKey = null;
-            if (fieldNamePart.contains("/")) {
-                mapKey = fieldNamePart.substring(fieldNamePart.indexOf("/") + 1, fieldNamePart.length());
-                fieldNamePart = fieldNamePart.substring(0, fieldNamePart.indexOf("/"));
+            if (fieldNamePart.contains(FieldManager.MAPFIELDSEPARATOR)) {
+                mapKey = fieldNamePart.substring(fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(), fieldNamePart.length());
+                fieldNamePart = fieldNamePart.substring(0, fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR));
             }
             field = getSingleField(componentClass, fieldNamePart);
             if (field != null) {
@@ -166,9 +168,9 @@ public class FieldManager {
         while (tokens.hasMoreTokens()) {
             String fieldNamePart = tokens.nextToken();
             String mapKey = null;
-            if (fieldNamePart.contains("/")) {
-                mapKey = fieldNamePart.substring(fieldNamePart.indexOf("/") + 1, fieldNamePart.length());
-                fieldNamePart = fieldNamePart.substring(0, fieldNamePart.indexOf("/"));
+            if (fieldNamePart.contains(FieldManager.MAPFIELDSEPARATOR)) {
+                mapKey = fieldNamePart.substring(fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(), fieldNamePart.length());
+                fieldNamePart = fieldNamePart.substring(0, fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR));
             }
 
             field = getSingleField(componentClass, fieldNamePart);

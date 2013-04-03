@@ -286,4 +286,14 @@ public @interface AdminPresentation {
      */
     String currencyCodeField() default "";
 
+    /**
+     * <p>Optional - only required if the fieldType is SupportedFieldType.RULE_SIMPLE or SupportedFieldType.RULE_COMPLEX</p>
+     *
+     * <p>Identifies the type for which this rule builder is targeted. See <tt>RuleIdentifier</tt> for a list of
+     * identifier types supported out-of-the-box. Note - one of the main uses of this value is to help identify
+     * the proper <tt>RuleBuilderService</tt> instance to generate the correct field value options for this rule builder.</p>
+     *
+     * @return The identifier value that denotes what type of rule builder this is - especially influences the fields that are available in the UI
+     */
+    String ruleIdentifier() default "";
 }

@@ -33,7 +33,6 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
-import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
@@ -295,7 +294,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             Property[] properties = new Property[3];
             Property mvelProperty = new Property();
             mvelProperty.setName("orderItemMatchRule");
-            mvelProperty.setValue(oic.getOrderItemMatchRule());
+            mvelProperty.setValue(oic.getMatchRule());
             Property quantityProperty = new Property();
             quantityProperty.setName("quantity");
             quantityProperty.setValue(oic.getQuantity().toString());
@@ -548,7 +547,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                         for (OfferItemCriteria oic : criteriaList) {
                             if (dto.getId().equals(oic.getId())){
                                 oic.setQuantity(dto.getQuantity());
-                                oic.setOrderItemMatchRule(translator.createMVEL("discreteOrderItem", dto,
+                                oic.setMatchRule(translator.createMVEL("discreteOrderItem", dto,
                                         ruleBuilderFieldServiceFactory.createInstance("ORDER_ITEM_FIELDS")));
                                 updated.add(oic.getId());
                             }
@@ -558,7 +557,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                         OfferItemCriteria oic = (OfferItemCriteria) entityConfiguration.createEntityInstance(
                                 OfferItemCriteria.class.getName());
                         oic.setQuantity(dto.getQuantity());
-                        oic.setOrderItemMatchRule(translator.createMVEL("discreteOrderItem", dto,
+                        oic.setMatchRule(translator.createMVEL("discreteOrderItem", dto,
                                 ruleBuilderFieldServiceFactory.createInstance("ORDER_ITEM_FIELDS")));
                         if ("targetItemCriteriaJson".equals(itemCriteriaJson)) {
                             oic.setTargetOffer(offerInstance);

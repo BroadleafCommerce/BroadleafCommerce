@@ -37,6 +37,7 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.rule.SimpleRule;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -50,6 +51,17 @@ import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.cto.FilterCriterionProviders;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.EntityValidatorService;
+import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
+import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
+import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTOToMVELTranslator;
+import org.broadleafcommerce.openadmin.web.rulebuilder.MVELToDataWrapperTranslator;
+import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
+import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.module.SimpleModule;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.BeansException;
@@ -64,6 +76,7 @@ import javax.persistence.Embedded;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -83,6 +96,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -107,6 +121,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Resource(name = "blEntityValidatorService")
     protected EntityValidatorService entityValidatorService;
+
+    @Resource(name = "blRuleBuilderFieldServiceFactory")
+    protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
 
     public BasicPersistenceModule() {
         decimalFormat = (DecimalFormat) NumberFormat.getInstance(Locale.US);
@@ -180,14 +197,54 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return response;
     }
 
+    protected void convertMatchRuleJsonToMvel(DataDTOToMVELTranslator translator, String entityKey,
+                                                  String fieldService, Property jsonProperty, Property originalProperty) {
+        if (jsonProperty != null && originalProperty != null) {
+            DataWrapper dw = convertJsonToDataWrapper(jsonProperty.getValue());
+            //there can only be one DataDTO for an appliesTo* rule
+            if (dw != null && dw.getData().size() == 1) {
+                DataDTO dto = dw.getData().get(0);
+                String mvel;
+                try {
+                    mvel = translator.createMVEL(entityKey, dto,
+                            ruleBuilderFieldServiceFactory.createInstance(fieldService));
+                } catch (MVELTranslationException e) {
+                    throw new RuntimeException(e);
+                }
+                if (mvel != null) {
+                    originalProperty.setValue(mvel);
+                }
+            }
+        }
+    }
+
+    protected DataWrapper convertJsonToDataWrapper(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        DataDTODeserializer dtoDeserializer = new DataDTODeserializer();
+        SimpleModule module = new SimpleModule("DataDTODeserializerModule", new Version(1, 0, 0, null));
+        module.addDeserializer(DataDTO.class, dtoDeserializer);
+        mapper.registerModule(module);
+        if (json == null || "[]".equals(json)){
+            return null;
+        }
+
+        try {
+            return mapper.readValue(json, DataWrapper.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public Serializable createPopulatedInstance(Serializable instance, Entity entity, Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ParseException, NumberFormatException, InstantiationException, ClassNotFoundException {
         Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(unfilteredProperties);
         FieldManager fieldManager = getFieldManager();
+        filterRuleBuilderProperties(entity, mergedProperties);
+
         for (Property property : entity.getProperties()) {
             BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(property.getName());
             Class<?> returnType;
-            if (!property.getName().contains("/")) {
+            if (!property.getName().contains(FieldManager.MAPFIELDSEPARATOR)) {
                 Field field = fieldManager.getField(instance.getClass(), property.getName());
                 if (field == null) {
                     LOG.debug("Unable to find a bean property for the reported property: " + property.getName() + ". Ignoring property.");
@@ -195,18 +252,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 }
                 returnType = field.getType();
             } else {
+                if (metadata == null) {
+                    LOG.debug("Unable to find a metadata property for the reported property: " + property.getName() + ". Ignoring property.");
+                    continue;
+                }
                 returnType = getBasicBroadleafType(metadata.getFieldType());
                 if (returnType == null) {
-                    Field field = fieldManager.getField(instance.getClass(), property.getName().substring(0, property.getName().indexOf("/")));
-                    java.lang.reflect.Type type = field.getGenericType();
-                    if (type instanceof ParameterizedType) {
-                        ParameterizedType pType = (ParameterizedType) type;
-                        Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
-                        Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(clazz);
-                        if (!ArrayUtils.isEmpty(entities)) {
-                            returnType = entities[entities.length-1];
-                        }
-                    }
+                    returnType = getMapFieldType(instance, fieldManager, property);
                 }
             }
             if (returnType == null) {
@@ -294,7 +346,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                         collection.add(foreignInstance);
                                     }
                                 } else if (Map.class.isAssignableFrom(returnType)) {
-                                    throw new RuntimeException("Map structures are not supported for foreign key fields.");
+                                    throw new IllegalArgumentException("Map structures are not supported for foreign key fields.");
                                 } else {
                                     fieldManager.setFieldValue(instance, property.getName(), foreignInstance);
                                 }
@@ -313,7 +365,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                 }
 
                                 if (Collection.class.isAssignableFrom(returnType)) {
-                                    Collection collection = null;
+                                    Collection collection;
                                     try {
                                         collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
                                     } catch (FieldNotAvailableException e) {
@@ -323,7 +375,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                         collection.add(foreignInstance);
                                     }
                                 } else if (Map.class.isAssignableFrom(returnType)) {
-                                    throw new RuntimeException("Map structures are not supported for foreign key fields.");
+                                    throw new IllegalArgumentException("Map structures are not supported for foreign key fields.");
                                 } else {
                                     fieldManager.setFieldValue(instance, property.getName(), foreignInstance);
                                 }
@@ -338,6 +390,48 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                         case STRING:
                                             fieldManager.setFieldValue(instance, property.getName(), value);
                                             break;
+                                    }
+                                }
+                                break;
+                            case RULE_WITH_QUANTITY:
+                            case RULE_SIMPLE:
+                                Class<?> valueType = null;
+                                //is this a regular field?
+                                if (!property.getName().contains(FieldManager.MAPFIELDSEPARATOR)) {
+                                    valueType = returnType;
+                                } else {
+                                    String valueClassName = metadata.getMapFieldValueClass();
+                                    if (valueClassName != null) {
+                                        valueType = Class.forName(valueClassName);
+                                    }
+                                    if (valueType == null) {
+                                        //since not explicitly specified, try to figure out the class type from generics
+                                        valueType = getMapFieldType(instance, fieldManager, property);
+                                    }
+                                }
+                                if (valueType == null) {
+                                    throw new IllegalAccessException("Unable to determine the valueType for the rule field (" + property.getName() + ")");
+                                }
+                                //This is a simple String field (or String map field)
+                                if (String.class.isAssignableFrom(valueType)) {
+                                    fieldManager.setFieldValue(instance, property.getName(), value);
+                                }
+                                if (SimpleRule.class.isAssignableFrom(valueType)) {
+                                    //see if there's an existing rule
+                                    SimpleRule rule;
+                                    try {
+                                        rule = (SimpleRule) fieldManager.getFieldValue(instance, property.getName());
+                                    } catch (FieldNotAvailableException e) {
+                                        throw new IllegalArgumentException(e);
+                                    }
+                                    if (rule != null) {
+                                        rule.setMatchRule(value);
+                                    } else {
+                                        //create a new instance, persist and set
+                                        rule = (SimpleRule) valueType.newInstance();
+                                        rule.setMatchRule(value);
+                                        persistenceManager.getDynamicEntityDao().persist(rule);
+                                        fieldManager.setFieldValue(instance, property.getName(), rule);
                                     }
                                 }
                                 break;
@@ -359,6 +453,56 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             fieldManager.setFieldValue(instance, entry.getKey(), entry.getValue());
         }
         return instance;
+    }
+
+    protected Class<?> getMapFieldType(Serializable instance, FieldManager fieldManager, Property property) {
+        Class<?> returnType = null;
+        Field field = fieldManager.getField(instance.getClass(), property.getName().substring(0, property.getName().indexOf(FieldManager.MAPFIELDSEPARATOR)));
+        java.lang.reflect.Type type = field.getGenericType();
+        if (type instanceof ParameterizedType) {
+            ParameterizedType pType = (ParameterizedType) type;
+            Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
+            Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(clazz);
+            if (!ArrayUtils.isEmpty(entities)) {
+                returnType = entities[entities.length-1];
+            }
+        }
+        return returnType;
+    }
+
+    protected void filterRuleBuilderProperties(Entity entity, Map<String, FieldMetadata> mergedProperties) {
+        //This may contain rule Json fields - convert and filter out
+        DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
+        List<Property> propertyList = new ArrayList<Property>();
+        propertyList.addAll(Arrays.asList(entity.getProperties()));
+        Iterator<Property> itr = propertyList.iterator();
+        List<Property> additionalProperties = new ArrayList<Property>();
+        while(itr.hasNext()) {
+            Property prop = itr.next();
+            if (prop.getName().endsWith("Json")) {
+                for (Entry<String, FieldMetadata> entry : mergedProperties.entrySet()) {
+                    if (prop.getName().startsWith(entry.getKey())) {
+                        BasicFieldMetadata originalFM = (BasicFieldMetadata) entry.getValue();
+                        if (originalFM.getFieldType() == SupportedFieldType.RULE_SIMPLE) {
+                            Property orginalProp = entity.findProperty(originalFM.getName());
+                            if (orginalProp == null) {
+                                orginalProp = new Property();
+                                orginalProp.setName(originalFM.getName());
+                                additionalProperties.add(orginalProp);
+                            }
+
+                            convertMatchRuleJsonToMvel(translator, RuleIdentifier.ENTITY_KEY_MAP.get(originalFM.getRuleIdentifier()),
+                                    originalFM.getRuleIdentifier(), prop, orginalProp);
+
+                            itr.remove();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        propertyList.addAll(additionalProperties);
+        entity.setProperties(propertyList.toArray(new Property[propertyList.size()]));
     }
 
     @Override
@@ -441,6 +585,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     protected void extractPropertiesFromPersistentEntity(Map<String, FieldMetadata> mergedProperties, Serializable entity, List<Property> props) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException, IllegalArgumentException, ClassNotFoundException {
         FieldManager fieldManager = getFieldManager();
+        MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
+        ObjectMapper mapper = new ObjectMapper();
         for (Map.Entry<String, FieldMetadata> entry : mergedProperties.entrySet()) {
             String property = entry.getKey();
             BasicFieldMetadata metadata = (BasicFieldMetadata) entry.getValue();
@@ -484,7 +630,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 } catch (FieldNotAvailableException e) {
                     isFieldAccessible = false;
                 }
-                String strVal;
+                String strVal = null;
                 checkField:
                 {
                     if (isFieldAccessible) {
@@ -495,6 +641,32 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         }
                         props.add(propertyItem);
                         String displayVal = null;
+                        if (metadata.getFieldType()==SupportedFieldType.RULE_SIMPLE) {
+                            if (value != null) {
+                                if (value instanceof String) {
+                                    strVal = (String) value;
+                                    propertyItem.setValue(strVal);
+                                    propertyItem.setDisplayValue(displayVal);
+                                }
+                                if (value instanceof SimpleRule) {
+                                    SimpleRule simpleRule = (SimpleRule) value;
+                                    if (value != null) {
+                                        strVal = simpleRule.getMatchRule();
+                                        propertyItem.setValue(strVal);
+                                        propertyItem.setDisplayValue(displayVal);
+                                    }
+                                }
+                            }
+                            Property jsonProperty = convertMatchRuleToJson(translator, mapper, strVal,
+                                    metadata.getName() + "Json", metadata.getRuleIdentifier());
+                            props.add(jsonProperty);
+
+                            Property fieldServiceProperty = new Property();
+                            fieldServiceProperty.setName(metadata.getName() + "FieldService");
+                            fieldServiceProperty.setValue(metadata.getRuleIdentifier());
+                            props.add(fieldServiceProperty);
+                            break checkField;
+                        }
                         if (value != null) {
                             if (metadata.getForeignKeyCollection()) {
                                 ((BasicFieldMetadata) propertyItem.getMetadata()).setFieldType(metadata.getFieldType());
@@ -577,6 +749,33 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 }
             }
         }
+    }
+
+    protected Property convertMatchRuleToJson(MVELToDataWrapperTranslator translator, ObjectMapper mapper,
+                        String matchRule, String jsonProp, String fieldService) {
+        Entity[] matchCriteria = new Entity[1];
+        Property[] properties = new Property[1];
+        Property mvelProperty = new Property();
+        mvelProperty.setName("matchRule");
+        mvelProperty.setValue(matchRule == null?"":matchRule);
+        properties[0] = mvelProperty;
+        Entity criteria = new Entity();
+        criteria.setProperties(properties);
+        matchCriteria[0] = criteria;
+
+        String json;
+        try {
+            DataWrapper orderWrapper = translator.createRuleData(matchCriteria, "matchRule", null, null,
+                    ruleBuilderFieldServiceFactory.createInstance(fieldService));
+            json = mapper.writeValueAsString(orderWrapper);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Property p = new Property();
+        p.setName(jsonProp);
+        p.setValue(json);
+
+        return p;
     }
 
     protected Entity update(PersistencePackage persistencePackage, Object primaryKey) throws ServiceException {

@@ -936,7 +936,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             @Override
             public int compare(String o1, String o2) {
                 //check for property name equality and for map field properties
-                if (o1.equals(o2) || o1.startsWith(o2 + "/") || o2.startsWith(o1 + "/")) {
+                if (o1.equals(o2) || o1.startsWith(o2 + FieldManager.MAPFIELDSEPARATOR) || o2.startsWith(o1 + FieldManager.MAPFIELDSEPARATOR)) {
                     return 0;
                 }
                 return o1.compareTo(o2);
@@ -967,7 +967,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     AdminPresentationCollection collection = myField.getAnnotation(AdminPresentationCollection.class);
                     if (map != null && !ArrayUtils.isEmpty(map.mapDisplayFields())) {
                         for (Map.Entry<String, FieldMetadata> entry : presentationAttributes.entrySet()) {
-                            if (entry.getKey().startsWith(propertyName + "/")) {
+                            if (entry.getKey().startsWith(propertyName + FieldManager.MAPFIELDSEPARATOR)) {
                                 TypeLocatorImpl typeLocator = new TypeLocatorImpl(new TypeResolver());
 
                                 Type myType = null;

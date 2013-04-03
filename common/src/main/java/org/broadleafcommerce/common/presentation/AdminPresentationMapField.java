@@ -9,6 +9,8 @@ public @interface AdminPresentationMapField {
 
     AdminPresentation fieldPresentation() default @AdminPresentation();
 
+    Class<?> targetClass() default Void.class;
+
     //TODO support map fields with complex types and data driven enumerations. The complex type support should include either create or lookup
     //TODO add another property to contain the fully qualified type of the toOneLookup, if it can't be inferred from the map generic type
     /*AdminPresentationToOneLookup toOneLookup() default @AdminPresentationToOneLookup();

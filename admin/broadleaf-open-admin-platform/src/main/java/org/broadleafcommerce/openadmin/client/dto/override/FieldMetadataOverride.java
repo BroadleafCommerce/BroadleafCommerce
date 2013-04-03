@@ -115,6 +115,7 @@ public class FieldMetadataOverride {
     private Boolean optionCanEditValues;
     private Serializable[][] optionFilterValues;
     private String showIfProperty;
+    private String ruleIdentifier;
 
     //Not a user definable field
     private Boolean toOneLookupCreatedViaAnnotation;
@@ -453,6 +454,14 @@ public class FieldMetadataOverride {
 
     public void setOptionFilterValues(Serializable[][] optionFilterValues) {
         this.optionFilterValues = optionFilterValues;
+    }
+
+    public String getRuleIdentifier() {
+        return ruleIdentifier;
+    }
+
+    public void setRuleIdentifier(String ruleIdentifier) {
+        this.ruleIdentifier = ruleIdentifier;
     }
 
     //collection fields

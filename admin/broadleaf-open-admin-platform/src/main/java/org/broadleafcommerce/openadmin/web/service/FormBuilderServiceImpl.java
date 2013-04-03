@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.service;
 
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
@@ -45,21 +46,26 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPe
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
+import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Service;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-
+import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -298,11 +304,18 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         for (Property property : properties) {
             if (property.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) property.getMetadata();
-                // Depending on visibility, field for the particular property is not created on the form
-                if (!(VisibilityEnum.HIDDEN_ALL.equals(fmd.getVisibility()) 
-                      || VisibilityEnum.FORM_HIDDEN.equals(fmd.getVisibility()))) {
-                	
-                	String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
+
+                if (
+                    fmd.getFieldType()==SupportedFieldType.RULE_SIMPLE ||
+                    fmd.getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY
+                ) {
+                    //this field needs to be added to the rule builders list
+                    continue;
+                }
+                if (!(VisibilityEnum.HIDDEN_ALL.equals(fmd.getVisibility())
+                                      || VisibilityEnum.FORM_HIDDEN.equals(fmd.getVisibility()))) {
+                    // Depending on visibility, field for the particular property is not created on the form
+                    String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
                     // Create the field and set some basic attributes
                     Field f;
                     if (fieldType.equals(SupportedFieldType.BROADLEAF_ENUMERATION.toString())
@@ -313,17 +326,17 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     } else {
                         f = new Field();
                     }
-    
+
                     f.withName(property.getName())
                      .withFieldType(fieldType)
                      .withOrder(fmd.getOrder())
                      .withFriendlyName(fmd.getFriendlyName())
                      .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
-    
+
                     if (StringUtils.isBlank(f.getFriendlyName())) {
                         f.setFriendlyName(f.getName());
                     }
-    
+
                     // Add the field to the appropriate FieldGroup
                     ef.addField(f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
                 }
@@ -366,6 +379,15 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         // Set the appropriate property values
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
+                BasicFieldMetadata basicFM = (BasicFieldMetadata) p.getMetadata();
+                if (
+                    basicFM.getFieldType()==SupportedFieldType.RULE_SIMPLE ||
+                    basicFM.getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY
+                ) {
+                    //this field needs to be added to the rule builders list
+                    continue;
+                }
+
                 Property entityProp = entity.findProperty(p.getName());
 
                 if (entityProp == null) {
@@ -388,16 +410,69 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return ef;
     }
 
+    protected void constructRuleBuilder(EntityForm entityForm, Entity entity,
+            String fieldName, String friendlyName, String styleClass, String fieldService,
+            String fieldJson, String tab, Integer tabOrder) {
+        RuleBuilder ruleBuilder = new RuleBuilder();
+        ruleBuilder.setFieldName(fieldName);
+        ruleBuilder.setFriendlyName(friendlyName);
+        ruleBuilder.setStyleClass(styleClass);
+        ruleBuilder.setFieldBuilder(entity.getPMap().get(fieldService).getValue());
+        ruleBuilder.setJsonFieldName(fieldJson);
+        ruleBuilder.setDataWrapper(new DataWrapper());
+        if (entity.getPMap().get(fieldJson) != null) {
+            String json = entity.getPMap().get(fieldJson).getValue();
+            ruleBuilder.setJson(json);
+            DataWrapper dw = (convertJsonToDataWrapper(json) != null)? convertJsonToDataWrapper(json) : new DataWrapper();
+            ruleBuilder.setDataWrapper(dw);
+        }
+        entityForm.addRuleBuilder(ruleBuilder, tab, tabOrder);
+    }
+
+    /**
+     * When using Thymeleaf, we need to convert the JSON string back to
+     * a DataWrapper object because Thymeleaf escapes JSON strings.
+     * Thymeleaf uses it's own object de-serializer
+     * see: https://github.com/thymeleaf/thymeleaf/issues/84
+     * see: http://forum.thymeleaf.org/Spring-Javascript-and-escaped-JSON-td4024739.html
+     * @param json
+     * @return DataWrapper
+     * @throws IOException
+     */
+    protected DataWrapper convertJsonToDataWrapper(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        DataDTODeserializer dtoDeserializer = new DataDTODeserializer();
+        SimpleModule module = new SimpleModule("DataDTODeserializerModule", new Version(1, 0, 0, null));
+        module.addDeserializer(DataDTO.class, dtoDeserializer);
+        mapper.registerModule(module);
+        try {
+            return mapper.readValue(json, DataWrapper.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity, Map<String, Entity[]> collectionRecords)
             throws ServiceException, ApplicationSecurityException {
         // Get the form with values for this entity
         EntityForm ef = buildEntityForm(cmd, entity);
 
-        // Attach the sub-collection list grids
+        // Attach the sub-collection list grids and specialty UI support
         for (Property p : cmd.getProperties()) {
 
             if (p.getMetadata() instanceof BasicFieldMetadata) {
+                BasicFieldMetadata basicFieldMetadata = (BasicFieldMetadata) p.getMetadata();
+                if (basicFieldMetadata.getFieldType()==SupportedFieldType.RULE_SIMPLE) {
+                    constructRuleBuilder(ef, entity, basicFieldMetadata.getName(), basicFieldMetadata.getFriendlyName(),
+                            "rule-builder-simple",basicFieldMetadata.getName()+"FieldService",basicFieldMetadata.getName()+"Json",
+                            basicFieldMetadata.getTab(), basicFieldMetadata.getTabOrder());
+                }
+                if (basicFieldMetadata.getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY) {
+                    constructRuleBuilder(ef, entity, basicFieldMetadata.getName(), basicFieldMetadata.getFriendlyName(),
+                            "rule-builder-complex",basicFieldMetadata.getName()+"FieldService",basicFieldMetadata.getName()+"Json",
+                            basicFieldMetadata.getTab(), basicFieldMetadata.getTabOrder());
+                }
                 continue;
             }
 

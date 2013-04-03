@@ -61,6 +61,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
 import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitorAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.mapping.Column;
@@ -70,6 +71,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -81,11 +86,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import javax.annotation.Resource;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 /**
  * @author Jeff Fischer
@@ -135,7 +135,13 @@ public class Metadata {
                         FieldMetadataOverride override = constructBasicMetadataOverride(mapField.fieldPresentation(), null, null);
                         override.setFriendlyName(mapField.fieldName().friendlyKeyName());
                         FieldInfo myInfo = new FieldInfo();
-                        myInfo.setName(field.getName() + "/" + mapField.fieldName().keyName());
+                        myInfo.setName(field.getName() + FieldManager.MAPFIELDSEPARATOR + mapField.fieldName().keyName());
+                        if (!mapField.targetClass().equals(Void.class)) {
+                            if (mapField.targetClass().isInterface()) {
+                                throw new IllegalArgumentException("targetClass on @AdminPresentationMapField must be a concrete class");
+                            }
+                            override.setValueClass(mapField.targetClass().getName());
+                        }
                         buildBasicMetadata(parentClass, targetClass, attributes, myInfo, override, dynamicEntityDao);
                         setClassOwnership(parentClass, targetClass, attributes, myInfo);
                     }
@@ -472,6 +478,7 @@ public class Metadata {
             override.setGroupCollapsed(annot.groupCollapsed());
             override.setGroupOrder(annot.groupOrder());
             override.setTab(annot.tab());
+            override.setRuleIdentifier(annot.ruleIdentifier());
             override.setTabOrder(annot.tabOrder());
             override.setHelpText(annot.helpText());
             override.setHint(annot.hint());
@@ -485,6 +492,7 @@ public class Metadata {
             override.setReadOnly(annot.readOnly());
             override.setShowIfProperty(annot.showIfProperty());
             override.setCurrencyCodeField(annot.currencyCodeField());
+
             if (annot.validationConfigurations().length != 0) {
                 ValidationConfiguration[] configurations = annot.validationConfigurations();
                 for (ValidationConfiguration configuration : configurations) {
@@ -695,6 +703,12 @@ public class Metadata {
         }
         if (basicFieldMetadata.getValidationConfigurations()!=null) {
             metadata.setValidationConfigurations(basicFieldMetadata.getValidationConfigurations());
+        }
+        if (basicFieldMetadata.getRuleIdentifier()!=null) {
+            metadata.setRuleIdentifier(basicFieldMetadata.getRuleIdentifier());
+        }
+        if (basicFieldMetadata.getValueClass()!=null) {
+            metadata.setMapFieldValueClass(basicFieldMetadata.getValueClass());
         }
 
         attributes.put(field.getName(), metadata);
