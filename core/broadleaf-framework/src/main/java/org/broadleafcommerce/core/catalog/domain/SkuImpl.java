@@ -21,10 +21,8 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
@@ -133,14 +131,14 @@ public class SkuImpl implements Sku {
      * The sale price.
      */
     @Column(name = "SALE_PRICE", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price", gridOrder = 6, order = 2, group = "SkuImpl_Price", prominent = true, fieldType = SupportedFieldType.MONEY, groupOrder = 3)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price", gridOrder = 6, order = 2000, group = "SkuImpl_Price", prominent = true, fieldType = SupportedFieldType.MONEY, groupOrder = 2)
     protected BigDecimal salePrice;
 
     /**
      * The retail price.
      */
     @Column(name = "RETAIL_PRICE", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Retail_Price", gridOrder = 5, order = 1, group = "SkuImpl_Price", prominent = true, fieldType = SupportedFieldType.MONEY, groupOrder = 3)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Retail_Price", gridOrder = 5, order = 1000, group = "SkuImpl_Price", prominent = true, fieldType = SupportedFieldType.MONEY, groupOrder = 2)
     protected BigDecimal retailPrice;
 
     /**
@@ -148,14 +146,14 @@ public class SkuImpl implements Sku {
      */
     @Column(name = "NAME")
     @Index(name = "SKU_NAME_INDEX", columnNames = {"NAME"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", gridOrder=1, order = 1, group = "ProductImpl_Product_Description", prominent = true, columnWidth = "200", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", gridOrder=1, order = 1000, group = "ProductImpl_Product_Description", prominent = true, columnWidth = "200", groupOrder = 1)
     protected String name;
 
     /**
      * The description.
      */
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Description", order = 2, group = "ProductImpl_Product_Description", largeEntry = true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Description", order = 2, group = "ProductImpl_Product_Description", largeEntry = true, groupOrder = 1, tab = "ProductImpl_Advanced_Tab")
     protected String description;
 
     /**
@@ -164,7 +162,7 @@ public class SkuImpl implements Sku {
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description", order=3, group = "ProductImpl_Product_Description", largeEntry=true, groupOrder=1, fieldType=SupportedFieldType.HTML_BASIC)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description", order=3000, group = "ProductImpl_Product_Description", largeEntry=true, groupOrder=1, fieldType=SupportedFieldType.HTML_BASIC)
     protected String longDescription;
 
     /**
@@ -172,7 +170,7 @@ public class SkuImpl implements Sku {
      */
     @Column(name = "TAXABLE_FLAG")
     @Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Taxable", order=3, group = "SkuImpl_Price", groupOrder=4)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Taxable", order=3, group = "SkuImpl_Price", groupOrder=4, tab="ProductImpl_Advanced_Tab")
     protected Character taxable;
 
     /**
@@ -180,7 +178,7 @@ public class SkuImpl implements Sku {
      */
     @Column(name = "DISCOUNTABLE_FLAG")
     @Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable", order=4, group = "SkuImpl_Price", groupOrder=4)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable", order=4, group = "SkuImpl_Price", groupOrder=4, tab="ProductImpl_Advanced_Tab")
     protected Character discountable;
 
     /**
@@ -188,7 +186,7 @@ public class SkuImpl implements Sku {
      */
     @Column(name = "AVAILABLE_FLAG")
     @Index(name = "SKU_AVAILABLE_INDEX", columnNames = {"AVAILABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Available", group = "SkuImpl_Sku_Inventory", groupOrder = 5, order = 2)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Available", group = "SkuImpl_Sku_Inventory", groupOrder = 5, order = 2, tab="ProductImpl_Inventory_Tab")
     protected Character available;
 
     /**
@@ -223,7 +221,7 @@ public class SkuImpl implements Sku {
     protected DynamicSkuPrices dynamicPrices = null;
 
     @Column(name = "IS_MACHINE_SORTABLE")
-    @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable", order=19, group = "ProductWeight_Shipping", prominent=false)
+    @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable", order=19, group = "ProductWeight_Shipping", prominent=false, tab="ProductWeight_Shipping_Tab")
     protected Boolean isMachineSortable = true;
 
     /**
@@ -249,7 +247,8 @@ public class SkuImpl implements Sku {
                     @AdminPresentationMapKey(keyName = "alt4", friendlyKeyName = "mediaAlternate4"),
                     @AdminPresentationMapKey(keyName = "alt5", friendlyKeyName = "mediaAlternate5"),
                     @AdminPresentationMapKey(keyName = "alt6", friendlyKeyName = "mediaAlternate6")
-            }
+            },
+            tab = "SkuImpl_Media_Tab"
     )
     protected Map<String, Media> skuMedia = new HashMap<String, Media>();
 
@@ -274,7 +273,6 @@ public class SkuImpl implements Sku {
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "skuAttributesTitle")
     protected List<SkuAttribute> skuAttributes = new ArrayList<SkuAttribute>();
 
     @ManyToMany(targetEntity = ProductOptionValueImpl.class)
@@ -308,11 +306,11 @@ public class SkuImpl implements Sku {
     protected List<FulfillmentOption> excludedFulfillmentOptions = new ArrayList<FulfillmentOption>();
 
     @Column(name = "INVENTORY_TYPE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType", group = "SkuImpl_Sku_Inventory", order = 10, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType", group = "SkuImpl_Sku_Inventory", order = 10, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType", tab="ProductImpl_Inventory_Tab")
     protected String inventoryType;
 
     @Column(name = "FULFILLMENT_TYPE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_FulfillmentType", group = "SkuImpl_Sku_Inventory", order = 11, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_FulfillmentType", group = "SkuImpl_Sku_Inventory", order = 11, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType", tab="ProductImpl_Inventory_Tab")
     protected String fulfillmentType;
 
     @Override

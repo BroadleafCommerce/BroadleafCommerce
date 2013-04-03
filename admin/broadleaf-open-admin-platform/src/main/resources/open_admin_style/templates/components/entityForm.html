@@ -20,11 +20,11 @@
     
     <dl class="tabs" th:classappend="${additionalTabClasses}" th:if="${renderTabs}">
         <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'" th:inline="text">
-            <a th:href="'#tab' + ${entityFormName} + ${tabStat.count}" th:text="${tab.title}" />
+            <a th:href="'#tab' + ${entityFormName} + ${tabStat.count}" th:text="#{${tab.title}}" />
         </dd>
     </dl> 
 
-    <ul class="tabs-content" th:style="${renderTabs}? 'margin-left: 250px;'">
+    <ul class="tabs-content" th:style="${verticalTabs}? 'margin-left: 250px;'">
         <li th:each="tab : ${entityForm.tabs}" 
             th:class="${tabStat.first}? 'active'" 
             th:id="'tab' + ${entityFormName} + ${tabStat.count} + 'Tab'"

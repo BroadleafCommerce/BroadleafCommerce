@@ -791,6 +791,16 @@ a.listgrid-filter {
     margin-top:5px;
 }
 
+div.alert-box.list-grid-alert {
+	padding: 0 0 0 7px;
+	margin-bottom: 8px;
+	font-size: 13px;
+}
+
+div.alert-box.list-grid-alert a.close {
+	top: -5px;
+}
+
 td.list-grid-no-results {
 	margin-bottom: 18px;
 	text-align: center;

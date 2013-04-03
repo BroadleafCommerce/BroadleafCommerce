@@ -125,29 +125,29 @@ public class ProductImpl implements Product, Status {
     protected Long id;
     
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", gridOrder=3, order = 1, group = "Seo_Group", groupOrder = 2, prominent = true, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", gridOrder=3, order = 5000, group = "ProductImpl_Product_Description", groupOrder = 1, prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected String url;
 
     @Column(name = "URL_KEY")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order = 2, group = "Seo_Group", groupOrder = 2)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order = 2, group = "ProductImpl_Product_Description", groupOrder = 2, tab="ProductImpl_Advanced_Tab")
     protected String urlKey;
 
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template", order=9, group = "ProductImpl_Product_Description",groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template", order=9, group = "ProductImpl_Product_Description",groupOrder=1, tab="ProductImpl_Advanced_Tab")
     protected String displayTemplate;
 
     /** The product model number */
     @Column(name = "MODEL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Model", order = 7, group = "ProductImpl_Product_Description", groupOrder = 1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Model", order = 7, group = "ProductImpl_Product_Description", groupOrder = 1, tab="ProductImpl_Advanced_Tab")
     protected String model;
 
     /** The manufacture name */
     @Column(name = "MANUFACTURE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", gridOrder = 4, order=6, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", gridOrder = 4, order=2000, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
     protected String manufacturer;
     
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
-    @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=5, group = "ProductImpl_Product_Description", prominent=false, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=5, group = "ProductImpl_Product_Description", prominent=false, groupOrder=1, tab="ProductImpl_Marketing_Tab")
     protected Boolean isFeaturedProduct = false;
     
     @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL}, mappedBy = "defaultProduct")
@@ -155,7 +155,7 @@ public class ProductImpl implements Product, Status {
     protected Sku defaultSku;
     
     @Column(name = "CAN_SELL_WITHOUT_OPTIONS")
-    @AdminPresentation(friendlyName = "ProductImpl_Can_Sell_Without_Options", order=8, group = "ProductImpl_Product_Description", prominent=false, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Can_Sell_Without_Options", order=8, group = "ProductImpl_Product_Description", prominent=false, groupOrder=1, tab="ProductImpl_Advanced_Tab")
     protected Boolean canSellWithoutOptions = false;
     
     /** The skus. */
@@ -169,7 +169,7 @@ public class ProductImpl implements Product, Status {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "crossSaleProductsTitle",
-            tab = "productMarketingTab", tabOrder = 200, sortProperty = "sequence", dataSourceName = "crossSaleProductsDS",
+            tab = "ProductImpl_Marketing_Tab", tabOrder = 200, sortProperty = "sequence", dataSourceName = "crossSaleProductsDS",
             maintainedAdornedTargetFields = { "promotionMessage" }, gridVisibleFields = { "defaultSku.name", "promotionMessage" })
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
@@ -178,7 +178,7 @@ public class ProductImpl implements Product, Status {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "upsaleProductsTitle",
-            tab = "productMarketingTab", tabOrder = 200, sortProperty = "sequence", dataSourceName = "upSaleProductsDS",
+            tab = "ProductImpl_Marketing_Tab", tabOrder = 200, sortProperty = "sequence", dataSourceName = "upSaleProductsDS",
             maintainedAdornedTargetFields = { "promotionMessage" }, gridVisibleFields = { "defaultSku.name", "promotionMessage" })
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
 
@@ -186,14 +186,14 @@ public class ProductImpl implements Product, Status {
     @OneToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, mappedBy="product")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName="skusListTitle")
+    @AdminPresentationCollection(friendlyName="ProductImpl_Additional_Skus", tab="ProductImpl_Product_Options_Tab")
     protected List<Sku> additionalSkus = new ArrayList<Sku>();
 
     /** The default category. */
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", gridOrder = 2, order=4, group = "ProductImpl_Product_Description", requiredOverride = RequiredOverride.REQUIRED, groupOrder=1, prominent=true)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", gridOrder = 2, order=4000, group = "ProductImpl_Product_Description", requiredOverride = RequiredOverride.REQUIRED, groupOrder=1, prominent=true)
     @AdminPresentationToOneLookup()
     protected Category defaultCategory;
 
@@ -207,7 +207,8 @@ public class ProductImpl implements Product, Status {
             parentObjectProperty = "categoryProductXref.product",
             friendlyName = "allParentCategoriesTitle",
             sortProperty = "displayOrder",
-            gridVisibleFields = { "name" })
+            gridVisibleFields = { "name" },
+            tab="ProductImpl_Marketing_Tab")
     protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
     
     @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = {CascadeType.ALL})
@@ -222,7 +223,7 @@ public class ProductImpl implements Product, Status {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "productOptionsTitle", manyToField = "products",
-            operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
+            operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE), tab="ProductImpl_Product_Options_Tab")
     protected List<ProductOption> productOptions = new ArrayList<ProductOption>();
 
     @Embedded

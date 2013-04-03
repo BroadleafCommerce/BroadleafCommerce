@@ -66,13 +66,13 @@ var BLCAdmin = (function($) {
 			currentModal().modal('hide');
 		}
 	}
-
+	
 	// The publicly accessible functions provided by this module
     return {
     	showLinkAsModal : showLinkAsModal,
     	modalNavigateTo : modalNavigateTo,
     	currentModal : currentModal,
-    	hideCurrentModal : hideCurrentModal
+    	hideCurrentModal : hideCurrentModal,
     }
     
 })(jQuery);

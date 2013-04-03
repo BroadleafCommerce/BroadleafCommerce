@@ -16,6 +16,8 @@ public class ListGrid {
 
     protected String className;
     protected String friendlyName = null;
+    protected int order;
+    
     protected Set<Field> headerFields = new TreeSet<Field>(new Comparator<Field>() {
 
         @Override
@@ -90,13 +92,21 @@ public class ListGrid {
     public void addToolbarAction(ListGridAction action) {
         getToolbarActions().add(action);
     }
-
+    
     public String getClassName() {
         return className;
     }
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+    
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     public Set<Field> getHeaderFields() {

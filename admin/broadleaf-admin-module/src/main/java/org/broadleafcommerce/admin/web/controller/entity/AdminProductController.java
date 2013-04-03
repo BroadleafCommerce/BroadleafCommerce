@@ -26,11 +26,10 @@ import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
+import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -63,6 +62,32 @@ public class AdminProductController extends AdminBasicEntityController {
         return new String[]{"productDirectEdit"};
     }
     
+    protected String showAddAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
+            String id) throws Exception {
+        String collectionField = "additionalSkus";
+        String mainClassName = getClassNameForSection(SECTION_KEY);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        FieldMetadata md = collectionProperty.getMetadata();
+        
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md)
+                .withCustomCriteria(new String[] { id });
+
+        ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
+        EntityForm entityForm = formService.buildEntityForm(collectionMetadata);
+        
+        entityForm.getActions().remove(DefaultEntityFormActions.DELETE);
+
+        model.addAttribute("entityForm", entityForm);
+        model.addAttribute("viewType", "modal/simpleAddEntity");
+                
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
+        model.addAttribute("modalHeaderType", "addCollectionItem");
+        model.addAttribute("collectionProperty", collectionProperty);
+        setModelAttributes(model, SECTION_KEY);
+        return "modules/modalContainer";
+    }
+    
     protected String showUpdateAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
             String id,
             String collectionItemId) throws Exception {
@@ -85,6 +110,9 @@ public class AdminProductController extends AdminBasicEntityController {
         // Build the entity form for the modal that includes the subcollections
         EntityForm entityForm = formService.buildEntityForm(collectionMetadata, entity, subRecordsMap);
         
+        entityForm.getActions().remove(DefaultEntityFormActions.DELETE);
+        
+        // Ensure that operations on the Sku subcollections go to the proper URL
         for (ListGrid lg : entityForm.getAllListGrids()) {
             lg.setSectionKey("org.broadleafcommerce.core.catalog.domain.Sku");
         }
@@ -110,6 +138,17 @@ public class AdminProductController extends AdminBasicEntityController {
         return super.showUpdateCollectionItem(request, response, model, pathVars, id, collectionField, collectionItemId);
     }
     
+    @RequestMapping(value = "/{id}/{collectionField}/add", method = RequestMethod.GET)
+    public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable String id,
+            @PathVariable String collectionField) throws Exception {
+        if ("additionalSkus".equals(collectionField)) {
+            return showAddAdditionalSku(request, response, model, id);
+        } 
+        return super.showAddCollectionItem(request, response, model, pathVars, id, collectionField);
+    }
+    
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
@@ -127,12 +166,6 @@ public class AdminProductController extends AdminBasicEntityController {
         skusGrid.addToolbarAction(generateSkusAction);
         
         return view;
-    }
-    
-    @Override
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        super.initBinder(binder);
     }
     
 }

@@ -20,10 +20,11 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 /**
  * 
@@ -36,11 +37,11 @@ public class Weight implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "WEIGHT")
-    @AdminPresentation(friendlyName = "ProductWeight_Product_Weight", order=17, group = "ProductWeight_Shipping",groupOrder=4)
+    @AdminPresentation(friendlyName = "ProductWeight_Product_Weight", order=17, group = "ProductWeight_Shipping",groupOrder=4, tab="ProductWeight_Shipping_Tab")
     protected BigDecimal weight;
 
     @Column(name = "WEIGHT_UNIT_OF_MEASURE")
-    @AdminPresentation(friendlyName = "ProductWeight_Product_Weight_Units", order=18, group = "ProductWeight_Shipping", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.util.WeightUnitOfMeasureType",groupOrder=4)
+    @AdminPresentation(friendlyName = "ProductWeight_Product_Weight_Units", order=18, group = "ProductWeight_Shipping", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.util.WeightUnitOfMeasureType",groupOrder=4, tab="ProductWeight_Shipping_Tab")
     protected String weightUnitOfMeasure;
 
     public WeightUnitOfMeasureType getWeightUnitOfMeasure() {

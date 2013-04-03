@@ -109,7 +109,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
 
-        return createListGrid(cmd.getCeilingType(), headerFields, type, entities, sectionKey);
+        return createListGrid(cmd.getCeilingType(), headerFields, type, entities, sectionKey, 0);
     }
 
     @Override
@@ -228,7 +228,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             editable = true;
         }
 
-        ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, entities, sectionKey);
+        ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, entities, sectionKey, fmd.getOrder());
         listGrid.setSubCollectionFieldName(field.getName());
         listGrid.setFriendlyName(field.getMetadata().getFriendlyName());
         if (StringUtils.isEmpty(listGrid.getFriendlyName())) {
@@ -245,13 +245,14 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, Entity[] entities, 
-            String sectionKey) {
+            String sectionKey, int order) {
         // Create the list grid and set some basic attributes
         ListGrid listGrid = new ListGrid();
         listGrid.setClassName(className);
         listGrid.getHeaderFields().addAll(headerFields);
         listGrid.setListGridType(type);
         listGrid.setSectionKey(sectionKey);
+        listGrid.setOrder(order);
         
         AdminSection section = navigationService.findAdminSectionByClass(className);
         if (section != null) {

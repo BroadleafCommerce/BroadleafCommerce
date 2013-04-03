@@ -1,5 +1,7 @@
 package org.broadleafcommerce.openadmin.web.form.entity;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
 
 
 public class EntityFormAction {
@@ -8,6 +10,19 @@ public class EntityFormAction {
     protected String urlPostfix = "";
     protected String iconClass = "";
     protected String displayText = "";
+    
+    public boolean equals(Object obj) {
+        if (obj instanceof EntityFormAction) {
+            EntityFormAction that = (EntityFormAction) obj;
+            return new EqualsBuilder()
+                .append(buttonClass, that.buttonClass)
+                .append(urlPostfix, that.urlPostfix)
+                .append(iconClass, that.iconClass)
+                .append(displayText, that.displayText)
+                .build();
+        }
+        return false;
+    }
     
     public EntityFormAction withButtonClass(String buttonClass) {
         setButtonClass(buttonClass);

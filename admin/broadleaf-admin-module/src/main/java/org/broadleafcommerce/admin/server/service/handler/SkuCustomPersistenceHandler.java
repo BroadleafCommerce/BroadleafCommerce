@@ -23,7 +23,6 @@ package org.broadleafcommerce.admin.server.service.handler;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -145,7 +144,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         try {
 
             Class testClass = Class.forName(ceilingEntityFullyQualifiedClassname);
-            return Sku.class.isAssignableFrom(testClass) && ArrayUtils.isEmpty(persistencePackage.getCustomCriteria()) &&
+            return Sku.class.isAssignableFrom(testClass) && //ArrayUtils.isEmpty(persistencePackage.getCustomCriteria()) &&
                     OperationType.BASIC.equals(operationType);
         } catch (ClassNotFoundException e) {
             return false;
@@ -163,15 +162,23 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
             //Grab the default properties for the Sku
             Map<String, FieldMetadata> properties = helper.getSimpleMergedProperties(Sku.class.getName(), persistencePerspective);
-
-            //look up all the ProductOptions and then create new fields for each of them. Although
-            //all of the options might not be relevant for the current Product (and thus the Skus as well) we
-            //can hide the irrelevant fields in the fetch via a custom ClientEntityModule
-            List<ProductOption> options = catalogService.readAllProductOptions();
-            int order = 0;
-            for (ProductOption option : options) {
-                //add this to the built Sku properties
-                properties.put("productOption" + option.getId(), createIndividualOptionField(option, order));
+            
+            if (persistencePackage.getCustomCriteria() == null || persistencePackage.getCustomCriteria().length == 0) {
+                //look up all the ProductOptions and then create new fields for each of them. Although
+                //all of the options might not be relevant for the current Product (and thus the Skus as well) we
+                //can hide the irrelevant fields in the fetch via a custom ClientEntityModule
+                List<ProductOption> options = catalogService.readAllProductOptions();
+                int order = 0;
+                for (ProductOption option : options) {
+                    //add this to the built Sku properties
+                    properties.put("productOption" + option.getId(), createIndividualOptionField(option, order));
+                }
+            } else {
+                Long productId = Long.parseLong(persistencePackage.getCustomCriteria()[0]);
+                Product product = catalogService.findProductById(productId);
+                for (ProductOption option : product.getProductOptions()) {
+                    properties.put("productOption" + option.getId(), createIndividualOptionField(option, 0));
+                }
             }
 
             //also build the consolidated field; if using the SkuBasicClientEntityModule then this field will be
@@ -260,6 +267,16 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }, stringValues);
 
         optionValueProperty.setValue(StringUtils.join(stringValues, CONSOLIDATED_PRODUCT_OPTIONS_DELIMETER));
+        return optionValueProperty;
+    }
+    
+    /**
+     * @return a blank {@link Property} corresponding to the CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME
+     */
+    public static Property getBlankConsolidatedOptionProperty() {
+        Property optionValueProperty = new Property();
+        optionValueProperty.setName(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME);
+        optionValueProperty.setValue("");
         return optionValueProperty;
     }
 
@@ -383,6 +400,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
                 if (CollectionUtils.isNotEmpty(optionValues)) {
                     entity.addProperty(getConsolidatedOptionProperty(optionValues));
+                } else {
+                    entity.addProperty(getBlankConsolidatedOptionProperty());
                 }
             }
 

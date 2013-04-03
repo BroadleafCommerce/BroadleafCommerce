@@ -1,3 +1,77 @@
+(function($, BLCAdmin) {
+    
+    // Add utility functions for list grids to the BLCAdmin object
+    BLCAdmin.listGrid = {
+        replaceRelatedListGrid : function(data) {
+            var $table = $(data.trim());
+            var tableId = $table.attr('id');
+            var $oldTable = $('#' + tableId);
+            
+            var $listGridContainer = $oldTable.closest('.listgrid-container');
+            
+            $oldTable.find('tbody').replaceWith($table.find('tbody'));
+            
+            this.updateToolbarRowActionButtons($listGridContainer);
+        },
+        
+        getButtonLink : function($button) {
+            var $container = $button.closest('.listgrid-container');
+            var $selectedRows = $container.find('table tr.selected');
+            var link = $selectedRows.attr('data-link');
+            
+            if ($button.attr('data-urlpostfix')) {
+                link += $button.attr('data-urlpostfix');
+            }
+            
+            return link;
+        },
+        
+        getRowFields : function($tr) {
+            var fields = {};
+            
+            $tr.find('td').each(function() {
+                var fieldName = $(this).data('fieldname');
+                var value = $(this).data('fieldvalue');
+                fields[fieldName] = value;
+            });
+            
+            return fields;
+        },
+        
+        updateToolbarRowActionButtons : function($listGridContainer) {
+            var hasSelected = $listGridContainer.find('tr.selected').length > 0;
+            if (hasSelected) {
+                $listGridContainer.find('button.row-action').removeAttr('disabled');
+            } else {
+                $listGridContainer.find('button.row-action').attr('disabled', 'disabled');
+            }
+        },
+        
+        updateListGrid : function(data, tableBodyToReplace) {
+            tableBodyToReplace.replaceWith($(data).find('tbody'))
+        },
+        
+        showAlert : function($container, message, options) {
+    	    var alertType = options.alertType || '';
+    	    
+    	    var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass(alertType);
+    	    var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
+    	    
+    	    $alert.append(message);
+    	    $alert.append($closeLink);
+    	    
+    	    $container.children().first().after($alert);
+    	    
+    	    if (options.autoClose) {
+    	        setTimeout(function() {
+    	            $closeLink.click();
+    	        }, options.autoClose);
+    	    }
+        }
+    };
+    
+})(jQuery, BLCAdmin);
+
 $(document).ready(function() {
     
     /**
@@ -12,7 +86,7 @@ $(document).ready(function() {
         var link = $tr.data('link');
         var listGridType = $table.data('listgridtype');
         var currentUrl = $table.data('currenturl');
-        var fields = getRowFields($tr);
+        var fields = BLCAdmin.listGrid.getRowFields($tr);
         
         $('body').trigger('listGrid-' + listGridType + '-rowSelected', [link, fields, currentUrl]);
     });
@@ -35,10 +109,9 @@ $(document).ready(function() {
         
         if (!currentlySelected) {
             $tr.addClass("selected");
-            enableRowToolbarButtons($listGridContainer);
-        } else {
-            disableRowToolbarButtons($listGridContainer);
         }
+        
+        BLCAdmin.listGrid.updateToolbarRowActionButtons($listGridContainer);
     });
     
     /**
@@ -62,7 +135,7 @@ $(document).ready(function() {
         }   
         
         $.post(currentUrl, postData, function(data) {
-            replaceRelatedListGrid(data);
+            BLCAdmin.listGrid.replaceRelatedListGrid(data);
             BLCAdmin.hideCurrentModal();
         })
         .fail(function(data) {
@@ -147,25 +220,25 @@ $(document).ready(function() {
     });
     
     $('body').on('click', 'button.sub-list-grid-remove', function() {
-        var link = getButtonLink($(this));
+        var link = BLCAdmin.listGrid.getButtonLink($(this));
         
         var $container = $(this).closest('.listgrid-container');
         var $selectedRows = $container.find('table tr.selected');
-        var rowFields = getRowFields($selectedRows);
+        var rowFields = BLCAdmin.listGrid.getRowFields($selectedRows);
         
         $.ajax({
             url: link,
             data: rowFields,
             type: "POST"
         }).done(function(data) {
-            replaceRelatedListGrid(data);
+            BLCAdmin.listGrid.replaceRelatedListGrid(data);
         });
         
         return false;
     });
     
     $('body').on('click', 'button.sub-list-grid-update', function() {
-        var link = getButtonLink($(this));
+        var link = BLCAdmin.listGrid.getButtonLink($(this));
         
         BLCAdmin.showLinkAsModal(link);
         
@@ -178,7 +251,7 @@ $(document).ready(function() {
             type: "POST",
             data: $(this).serialize()
         }, function(data) {
-            replaceRelatedListGrid(data);
+            BLCAdmin.listGrid.replaceRelatedListGrid(data);
             BLCAdmin.hideCurrentModal();
         });
         return false;
@@ -232,7 +305,7 @@ $(document).ready(function() {
             type: "GET",
             data: $(this).closest('thead').find('div.filter-fields :input').serialize()
         }, function(data) {
-            updateListGrid(data, toReplace);
+            BLCAdmin.listGrid.updateListGrid(data.trim(), toReplace);
         });
         return false;
     });
@@ -261,7 +334,7 @@ $(document).ready(function() {
             type: "GET",
             data: $firstHeader.find('div.filter-fields :input').serialize()
         }, function(data) {
-            updateListGrid(data, $('body').find('.list-grid-table tbody'));
+            BLCAdmin.listGrid.updateListGrid(data.trim(), $('body').find('.list-grid-table tbody'));
         });
         return false;
     });
@@ -288,54 +361,6 @@ $(document).ready(function() {
         $(this).find('ul.row-actions').hide();
     });
     
-    var getButtonLink = function($button) {
-        var $container = $button.closest('.listgrid-container');
-        var $selectedRows = $container.find('table tr.selected');
-        var link = $selectedRows.attr('data-link');
-        
-        if ($button.attr('data-urlpostfix')) {
-            link += $button.attr('data-urlpostfix');
-        }
-        
-        return link;
-    }
-    
-    var getRowFields = function($tr) {
-        var fields = {};
-        
-        $tr.find('td').each(function() {
-            var fieldName = $(this).data('fieldname');
-            var value = $(this).data('fieldvalue');
-            fields[fieldName] = value;
-        });
-        
-        return fields;
-    }
-    
-    var enableRowToolbarButtons = function($listGridContainer) {
-        $listGridContainer.find('button.row-action').removeAttr('disabled');
-    }
-    
-    var disableRowToolbarButtons = function($listGridContainer) {
-        $listGridContainer.find('button.row-action').attr('disabled', 'disabled');
-    }
-    
-    /**
-     * Convenience method to update a table body from a list grid
-     */
-    var updateListGrid = function(data, tableBodyToReplace) {
-        tableBodyToReplace.replaceWith($(data).find('tbody'));
-    }
-    
-    var replaceRelatedListGrid = function(data) {
-        var $table = $(data.trim());
-        var tableId = $table.attr('id');
-        var $oldTable = $('#' + tableId);
-        
-        disableRowToolbarButtons($oldTable.closest('.listgrid-container'));
-        
-        $oldTable.find('tbody').replaceWith($table.find('tbody'));
-    }
     
 });
 

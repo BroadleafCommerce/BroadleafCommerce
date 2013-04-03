@@ -5,10 +5,8 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -18,7 +16,6 @@ public class Tab {
     protected Integer order;
 
     Set<FieldGroup> fieldGroups = new TreeSet<FieldGroup>(new Comparator<FieldGroup>() {
-
         @Override
         public int compare(FieldGroup o1, FieldGroup o2) {
             return new CompareToBuilder()
@@ -28,7 +25,16 @@ public class Tab {
         }
     });
 
-    Set<ListGrid> listGrids = new HashSet<ListGrid>();
+    Set<ListGrid> listGrids = new TreeSet<ListGrid>(new Comparator<ListGrid>() {
+        @Override
+        public int compare(ListGrid o1, ListGrid o2) {
+            return new CompareToBuilder()
+                    .append(o1.getOrder(), o2.getOrder())
+                    .append(o1.getSubCollectionFieldName(), o2.getSubCollectionFieldName())
+                    .toComparison();
+        }
+    });
+    
     Set<RuleBuilder> ruleBuilders = new HashSet<RuleBuilder>();
 
     public Boolean getIsVisible() {
