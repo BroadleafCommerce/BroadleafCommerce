@@ -65,7 +65,7 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
         
         if (StringUtils.isNotBlank(activeIdSessionValue) && request.isSecure()) {
             // The request is secure and and we've set a session fixation protection cookie
-            String activeIdCookieValue = SessionFixationProtectionCookie.readActiveID();
+            String activeIdCookieValue = SessionFixationProtectionCookie.readActiveID(request);
             String decryptedActiveIdValue = encryptionModule.decrypt(activeIdCookieValue);
             
             if (!activeIdSessionValue.equals(decryptedActiveIdValue)) {
