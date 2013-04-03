@@ -18,7 +18,9 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.hibernate.annotations.BatchSize;
@@ -90,6 +92,7 @@ public class ProductOptionImpl implements ProductOption {
     @OneToMany(mappedBy = "productOption", targetEntity = ProductOptionValueImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @OrderBy(value = "displayOrder")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "ProductOptionImpl_Allowed_Values")
     protected List<ProductOptionValue> allowedValues = new ArrayList<ProductOptionValue>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)

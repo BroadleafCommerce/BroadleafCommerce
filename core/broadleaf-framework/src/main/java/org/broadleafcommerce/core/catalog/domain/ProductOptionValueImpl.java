@@ -61,15 +61,15 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     protected Long id;
 
     @Column(name = "ATTRIBUTE_VALUE")
-    @AdminPresentation(friendlyName = "productOptionValue_attributeValue")
+    @AdminPresentation(friendlyName = "productOptionValue_attributeValue", prominent = true)
     protected String attributeValue;
 
     @Column(name = "DISPLAY_ORDER")
-    @AdminPresentation(friendlyName = "productOptionValue_displayOrder")
+    @AdminPresentation(friendlyName = "productOptionValue_displayOrder", prominent = true)
     protected Long displayOrder;
 
     @Column(name = "PRICE_ADJUSTMENT", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "productOptionValue_adjustment", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "productOptionValue_adjustment", fieldType = SupportedFieldType.MONEY, prominent = true)
     protected BigDecimal priceAdjustment;
 
     @ManyToOne(targetEntity = ProductOptionImpl.class)
