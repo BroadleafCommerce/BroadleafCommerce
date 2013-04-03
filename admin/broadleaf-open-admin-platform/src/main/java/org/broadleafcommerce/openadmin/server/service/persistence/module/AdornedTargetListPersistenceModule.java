@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,6 +40,15 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -239,18 +240,26 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             Map<String, FieldMetadata> mergedProperties = adornedTargetRetrieval.getMergedProperties();
             FieldManager fieldManager = getFieldManager();
             if (adornedTargetList.getSortField() != null && entity.findProperty(adornedTargetList.getSortField()).getValue() != null) {
-                Serializable myRecord = records.remove(index);
-                myRecord = createPopulatedInstance(myRecord, entity, mergedProperties, false);
-                Integer newPos = Integer.valueOf(entity.findProperty(adornedTargetList.getSortField()).getValue());
-                if (CollectionUtils.isEmpty(records)) {
-                    records.add(myRecord);
-                } else {
-                    records.add(newPos, myRecord);
-                }
-                index = 1;
-                for (Serializable record : records) {
-                    fieldManager.setFieldValue(record, adornedTargetList.getSortField(), Long.valueOf(index));
-                    index++;
+                Serializable myRecord = records.get(index);
+                
+                Integer requestedSequence = Integer.valueOf(entity.findProperty(adornedTargetList.getSortField()).getValue());
+                Integer previousSequence = Integer.parseInt(String.valueOf(getFieldManager().getFieldValue(myRecord, adornedTargetList.getSortField())));
+                
+                if (!previousSequence.equals(requestedSequence)) {
+                    // Sequence has changed. Rebalance the list
+                    myRecord = records.remove(index);
+                    myRecord = createPopulatedInstance(myRecord, entity, mergedProperties, false);
+                    if (CollectionUtils.isEmpty(records)) {
+                        records.add(myRecord);
+                    } else {
+                        records.add(requestedSequence - 1, myRecord);
+                    }
+                    
+                    index = 1;
+                    for (Serializable record : records) {
+                        fieldManager.setFieldValue(record, adornedTargetList.getSortField(), Long.valueOf(index));
+                        index++;
+                    }
                 }
             } else {
                 String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
