@@ -16,14 +16,14 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.rule.ComplexRule;
+import org.broadleafcommerce.common.rule.QuantityBasedRule;
 
 /**
  * 
  * @author jfischer
  *
  */
-public interface OfferItemCriteria extends ComplexRule {
+public interface OfferItemCriteria extends QuantityBasedRule {
 
     public Long getId();
 

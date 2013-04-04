@@ -132,6 +132,9 @@ public class Metadata {
             } else if (map != null) {
                 if (!ArrayUtils.isEmpty(map.mapDisplayFields())) {
                     for (AdminPresentationMapField mapField : map.mapDisplayFields()) {
+                        if (mapField.fieldPresentation().fieldType() == SupportedFieldType.UNKNOWN) {
+                            throw new IllegalArgumentException("fieldType property on AdminPresentation must be set for AdminPresentationMapField");
+                        }
                         FieldMetadataOverride override = constructBasicMetadataOverride(mapField.fieldPresentation(), null, null);
                         override.setFriendlyName(mapField.fieldName().friendlyKeyName());
                         FieldInfo myInfo = new FieldInfo();
@@ -704,6 +707,11 @@ public class Metadata {
         if (basicFieldMetadata.getValidationConfigurations()!=null) {
             metadata.setValidationConfigurations(basicFieldMetadata.getValidationConfigurations());
         }
+        if ((basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_SIMPLE ||
+                basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY)
+                && basicFieldMetadata.getRuleIdentifier() == null) {
+            throw new IllegalArgumentException("ruleIdentifier property must be set on AdminPresentation when the fieldType is RULE_SIMPLE or RULE_WITH_QUANTITY");
+        }
         if (basicFieldMetadata.getRuleIdentifier()!=null) {
             metadata.setRuleIdentifier(basicFieldMetadata.getRuleIdentifier());
         }
@@ -1027,9 +1035,6 @@ public class Metadata {
             metadata.setPersistencePerspective(persistencePerspective);
         }
 
-        //try to inspect the JPA annotation
-        //OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-        //ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
         String parentObjectProperty = null;
         if (serverMetadata != null) {
             parentObjectProperty = ((AdornedTargetList) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST)).getLinkedObjectPath();
@@ -1259,9 +1264,6 @@ public class Metadata {
         }
 
         String foreignKeyName = null;
-        //try to inspect the JPA annotation
-        //OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-        //ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
         if (serverMetadata != null) {
             foreignKeyName = ((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).getManyToField();
         }
