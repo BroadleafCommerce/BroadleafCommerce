@@ -162,6 +162,7 @@
                 <ref bean="blOrderFieldService"/>
                 <ref bean="blFulfillmentGroupFieldService"/>
                 <ref bean="blLocaleFieldService"/>
+                <ref bean="blSkuFieldService"/>
             </list>
         </property>
     </bean>
