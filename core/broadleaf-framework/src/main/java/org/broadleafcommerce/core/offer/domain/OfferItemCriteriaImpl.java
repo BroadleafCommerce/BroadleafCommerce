@@ -78,71 +78,29 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
     @Column(name = "ORDER_ITEM_MATCH_RULE")
     @AdminPresentation(friendlyName = "OfferItemCriteriaImpl_Order_Item_Match_Rule", group = "OfferItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected String orderItemMatchRule;
-    
-    @ManyToOne(targetEntity = OfferImpl.class)
-    @JoinTable(name = "BLC_QUAL_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ID"))
-    protected Offer qualifyingOffer;
 
-    @ManyToOne(targetEntity = OfferImpl.class)
-    @JoinTable(name = "BLC_TAR_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ID"))
-    protected Offer targetOffer;
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getId()
-     */
     public Long getId() {
         return id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#setId(java.lang.Long)
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getReceiveQuantity()
-     */
     public Integer getQuantity() {
         return quantity;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#setReceiveQuantity(java.lang.Integer)
-     */
     public void setQuantity(Integer receiveQuantity) {
         this.quantity = receiveQuantity;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getOrderItemMatchRule()
-     */
     public String getMatchRule() {
         return orderItemMatchRule;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#setOrderItemMatchRule(java.lang.String)
-     */
     public void setMatchRule(String matchRule) {
         this.orderItemMatchRule = matchRule;
-    }
-
-    public Offer getQualifyingOffer() {
-        return qualifyingOffer;
-    }
-
-    public void setQualifyingOffer(Offer offer) {
-        this.qualifyingOffer = offer;
-    }
-
-    public Offer getTargetOffer() {
-        return targetOffer;
-    }
-
-    public void setTargetOffer(Offer targetOffer) {
-        this.targetOffer = targetOffer;
     }
 
     @Override

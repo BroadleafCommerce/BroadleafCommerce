@@ -24,6 +24,8 @@ public class RuleIdentifier {
 
     public static final String CUSTOMER_FIELD_KEY = "CUSTOMER";
     public static final String LOCALE_FIELD_KEY = "LOCALE";
+    public static final String ORDER_FIELD_KEY = "ORDER";
+    public static final String FULFILLMENT_GROUP_FIELD_KEY = "FULFILLMENT_GROUP";
 
     public static Map<String, String> ENTITY_KEY_MAP = new HashMap<String, String>();
     static {

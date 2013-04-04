@@ -37,6 +37,7 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.rule.QuantityBasedRule;
 import org.broadleafcommerce.common.rule.SimpleRule;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
@@ -197,25 +198,92 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return response;
     }
 
-    protected void convertMatchRuleJsonToMvel(DataDTOToMVELTranslator translator, String entityKey,
-                                                  String fieldService, Property jsonProperty, Property originalProperty) {
-        if (jsonProperty != null && originalProperty != null) {
-            DataWrapper dw = convertJsonToDataWrapper(jsonProperty.getValue());
+    protected void populateQuantityBaseRuleCollection(DataDTOToMVELTranslator translator, String entityKey,
+                                                      String fieldService, String jsonPropertyValue,
+                                                      Collection<QuantityBasedRule> criteriaList, Class<?> memberType) {
+        if (!StringUtils.isEmpty(jsonPropertyValue)) {
+            DataWrapper dw = convertJsonToDataWrapper(jsonPropertyValue);
+            if (dw != null) {
+                List<QuantityBasedRule> updatedRules = new ArrayList<QuantityBasedRule>();
+                for (DataDTO dto : dw.getData()) {
+                    if (dto.getId() != null) {
+                        checkId: {
+                            //updates are comprehensive, even data that was not changed
+                            //is submitted here
+                            //Update Existing Criteria
+                            for (QuantityBasedRule quantityBasedRule : criteriaList) {
+                                if (dto.getId().equals(quantityBasedRule.getId())){
+                                    //don't update if the data has not changed
+                                    if (!quantityBasedRule.getQuantity().equals(dto.getQuantity())) {
+                                        quantityBasedRule.setQuantity(dto.getQuantity());
+                                    }
+                                    try {
+                                        String mvel = translator.createMVEL(entityKey, dto,
+                                                    ruleBuilderFieldServiceFactory.createInstance(fieldService));
+                                        if (!quantityBasedRule.getMatchRule().equals(mvel)) {
+                                            quantityBasedRule.setMatchRule(mvel);
+                                        }
+                                    } catch (MVELTranslationException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    updatedRules.add(quantityBasedRule);
+                                    break checkId;
+                                }
+                            }
+                            throw new IllegalArgumentException("Unable to update the rule of type (" + memberType.getName() +
+                                    ") because an update was requested for id (" + dto.getId() + "), which does not exist.");
+                        }
+                    } else {
+                        //Create a new Criteria
+                        QuantityBasedRule quantityBasedRule;
+                        try {
+                            quantityBasedRule = (QuantityBasedRule) memberType.newInstance();
+                            quantityBasedRule.setQuantity(dto.getQuantity());
+                            quantityBasedRule.setMatchRule(translator.createMVEL(entityKey, dto,
+                                    ruleBuilderFieldServiceFactory.createInstance(fieldService)));
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                        criteriaList.add(quantityBasedRule);
+                        updatedRules.add(quantityBasedRule);
+                    }
+                }
+                //if an item was not included in the comprehensive submit from the client, we can assume that the
+                //listing was deleted, so we remove it here.
+                Iterator<QuantityBasedRule> itr = criteriaList.iterator();
+                while(itr.hasNext()) {
+                    checkForRemove: {
+                        QuantityBasedRule original = itr.next();
+                        for (QuantityBasedRule quantityBasedRule : updatedRules) {
+                            if (original.equals(quantityBasedRule)) {
+                                break checkForRemove;
+                            }
+                        }
+                        itr.remove();
+                    }
+                }
+            }
+        }
+    }
+
+    protected String convertMatchRuleJsonToMvel(DataDTOToMVELTranslator translator, String entityKey,
+                                                  String fieldService, String jsonPropertyValue) {
+        String mvel = null;
+        if (jsonPropertyValue != null) {
+            DataWrapper dw = convertJsonToDataWrapper(jsonPropertyValue);
             //there can only be one DataDTO for an appliesTo* rule
             if (dw != null && dw.getData().size() == 1) {
                 DataDTO dto = dw.getData().get(0);
-                String mvel;
                 try {
                     mvel = translator.createMVEL(entityKey, dto,
                             ruleBuilderFieldServiceFactory.createInstance(fieldService));
                 } catch (MVELTranslationException e) {
                     throw new RuntimeException(e);
                 }
-                if (mvel != null) {
-                    originalProperty.setValue(mvel);
-                }
             }
         }
+
+        return mvel;
     }
 
     protected DataWrapper convertJsonToDataWrapper(String json) {
@@ -393,8 +461,27 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     }
                                 }
                                 break;
-                            case RULE_WITH_QUANTITY:
-                            case RULE_SIMPLE:
+                            case RULE_WITH_QUANTITY:{
+                                //currently, this only works with list fields
+                                Class<?> valueType = getListFieldType(instance, fieldManager, property);
+                                if (valueType == null) {
+                                    throw new IllegalAccessException("Unable to determine the valueType for the rule field (" + property.getName() + ")");
+                                }
+                                DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
+                                Collection<QuantityBasedRule> rules;
+                                try {
+                                    rules = (Collection<QuantityBasedRule>) fieldManager.getFieldValue(instance, property.getName());
+                                } catch (FieldNotAvailableException e) {
+                                    throw new IllegalArgumentException(e);
+                                }
+                                populateQuantityBaseRuleCollection(translator, RuleIdentifier.ENTITY_KEY_MAP.get(metadata.getRuleIdentifier()),
+                                        metadata.getRuleIdentifier(), value, rules, valueType);
+                                break;
+                            }
+                            case RULE_SIMPLE:{
+                                DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
+                                String mvel = convertMatchRuleJsonToMvel(translator, RuleIdentifier.ENTITY_KEY_MAP.get(metadata.getRuleIdentifier()),
+                                                    metadata.getRuleIdentifier(), value);
                                 Class<?> valueType = null;
                                 //is this a regular field?
                                 if (!property.getName().contains(FieldManager.MAPFIELDSEPARATOR)) {
@@ -414,7 +501,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                 }
                                 //This is a simple String field (or String map field)
                                 if (String.class.isAssignableFrom(valueType)) {
-                                    fieldManager.setFieldValue(instance, property.getName(), value);
+                                    fieldManager.setFieldValue(instance, property.getName(), mvel);
                                 }
                                 if (SimpleRule.class.isAssignableFrom(valueType)) {
                                     //see if there's an existing rule
@@ -425,16 +512,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                         throw new IllegalArgumentException(e);
                                     }
                                     if (rule != null) {
-                                        rule.setMatchRule(value);
+                                        rule.setMatchRule(mvel);
                                     } else {
                                         //create a new instance, persist and set
                                         rule = (SimpleRule) valueType.newInstance();
-                                        rule.setMatchRule(value);
+                                        rule.setMatchRule(mvel);
                                         persistenceManager.getDynamicEntityDao().persist(rule);
                                         fieldManager.setFieldValue(instance, property.getName(), rule);
                                     }
                                 }
                                 break;
+                            }
                         }
                     } else {
                         try {
@@ -453,6 +541,21 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             fieldManager.setFieldValue(instance, entry.getKey(), entry.getValue());
         }
         return instance;
+    }
+
+    protected Class<?> getListFieldType(Serializable instance, FieldManager fieldManager, Property property) {
+        Class<?> returnType = null;
+        Field field = fieldManager.getField(instance.getClass(), property.getName());
+        java.lang.reflect.Type type = field.getGenericType();
+        if (type instanceof ParameterizedType) {
+            ParameterizedType pType = (ParameterizedType) type;
+            Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[0];
+            Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(clazz);
+            if (!ArrayUtils.isEmpty(entities)) {
+                returnType = entities[entities.length-1];
+            }
+        }
+        return returnType;
     }
 
     protected Class<?> getMapFieldType(Serializable instance, FieldManager fieldManager, Property property) {
@@ -483,17 +586,15 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 for (Entry<String, FieldMetadata> entry : mergedProperties.entrySet()) {
                     if (prop.getName().startsWith(entry.getKey())) {
                         BasicFieldMetadata originalFM = (BasicFieldMetadata) entry.getValue();
-                        if (originalFM.getFieldType() == SupportedFieldType.RULE_SIMPLE) {
+                        if (originalFM.getFieldType() == SupportedFieldType.RULE_SIMPLE ||
+                                originalFM.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY) {
                             Property orginalProp = entity.findProperty(originalFM.getName());
                             if (orginalProp == null) {
                                 orginalProp = new Property();
                                 orginalProp.setName(originalFM.getName());
                                 additionalProperties.add(orginalProp);
                             }
-
-                            convertMatchRuleJsonToMvel(translator, RuleIdentifier.ENTITY_KEY_MAP.get(originalFM.getRuleIdentifier()),
-                                    originalFM.getRuleIdentifier(), prop, orginalProp);
-
+                            orginalProp.setValue(prop.getValue());
                             itr.remove();
                             break;
                         }
@@ -650,14 +751,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                 }
                                 if (value instanceof SimpleRule) {
                                     SimpleRule simpleRule = (SimpleRule) value;
-                                    if (value != null) {
+                                    if (simpleRule != null) {
                                         strVal = simpleRule.getMatchRule();
                                         propertyItem.setValue(strVal);
                                         propertyItem.setDisplayValue(displayVal);
                                     }
                                 }
                             }
-                            Property jsonProperty = convertMatchRuleToJson(translator, mapper, strVal,
+                            Property jsonProperty = convertSimpleRuleToJson(translator, mapper, strVal,
                                     metadata.getName() + "Json", metadata.getRuleIdentifier());
                             props.add(jsonProperty);
 
@@ -665,6 +766,28 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             fieldServiceProperty.setName(metadata.getName() + "FieldService");
                             fieldServiceProperty.setValue(metadata.getRuleIdentifier());
                             props.add(fieldServiceProperty);
+
+                            break checkField;
+                        }
+                        if (metadata.getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY) {
+                            if (value != null) {
+                                if (value instanceof Collection) {
+                                    //these quantity rules are in a list - this is a special, valid case for quantity rules
+                                    Property jsonProperty = convertQuantityBasedRuleToJson(translator, mapper, (Collection<QuantityBasedRule>) value,
+                                            metadata.getName() + "Json", metadata.getRuleIdentifier());
+                                    props.add(jsonProperty);
+
+                                    Property fieldServiceProperty = new Property();
+                                    fieldServiceProperty.setName(metadata.getName() + "FieldService");
+                                    fieldServiceProperty.setValue(metadata.getRuleIdentifier());
+                                    props.add(fieldServiceProperty);
+                                } else {
+                                    //TODO support a single quantity based rule
+                                    throw new UnsupportedOperationException("RULE_WITH_QUANTITY type is currently only supported" +
+                                            "on collection fields. A single field with this type is not currently supported.");
+                                }
+                            }
+
                             break checkField;
                         }
                         if (value != null) {
@@ -751,8 +874,48 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
     }
 
-    protected Property convertMatchRuleToJson(MVELToDataWrapperTranslator translator, ObjectMapper mapper,
-                        String matchRule, String jsonProp, String fieldService) {
+    protected Property convertQuantityBasedRuleToJson(MVELToDataWrapperTranslator translator, ObjectMapper mapper,
+                    Collection<QuantityBasedRule> quantityBasedRules, String jsonProp, String fieldService) {
+
+        int k=0;
+        Entity[] targetItemCriterias = new Entity[quantityBasedRules.size()];
+        for (QuantityBasedRule quantityBasedRule : quantityBasedRules) {
+            Property[] properties = new Property[3];
+            Property mvelProperty = new Property();
+            mvelProperty.setName("matchRule");
+            mvelProperty.setValue(quantityBasedRule.getMatchRule());
+            Property quantityProperty = new Property();
+            quantityProperty.setName("quantity");
+            quantityProperty.setValue(quantityBasedRule.getQuantity().toString());
+            Property idProperty = new Property();
+            idProperty.setName("id");
+            idProperty.setValue(quantityBasedRule.getId().toString());
+            properties[0] = mvelProperty;
+            properties[1] = quantityProperty;
+            properties[2] = idProperty;
+            Entity criteria = new Entity();
+            criteria.setProperties(properties);
+            targetItemCriterias[k] = criteria;
+            k++;
+        }
+
+        String json;
+        try {
+            DataWrapper oiWrapper = translator.createRuleData(targetItemCriterias, "matchRule", "quantity", "id",
+                    ruleBuilderFieldServiceFactory.createInstance(fieldService));
+            json = mapper.writeValueAsString(oiWrapper);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Property p = new Property();
+        p.setName(jsonProp);
+        p.setValue(json);
+
+        return p;
+    }
+
+    protected Property convertSimpleRuleToJson(MVELToDataWrapperTranslator translator, ObjectMapper mapper,
+                                               String matchRule, String jsonProp, String fieldService) {
         Entity[] matchCriteria = new Entity[1];
         Property[] properties = new Property[1];
         Property mvelProperty = new Property();

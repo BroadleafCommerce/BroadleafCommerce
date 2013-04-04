@@ -54,4 +54,18 @@ public interface QuantityBasedRule extends Serializable {
      */
     public void setMatchRule(String matchRule);
 
+    /**
+     * The primary key value for this rule object
+     *
+     * @return the primary key value
+     */
+    public Long getId();
+
+    /**
+     * The primary key value for this rule object
+     *
+     * @param id the primary key value
+     */
+    public void setId(Long id);
+
 }

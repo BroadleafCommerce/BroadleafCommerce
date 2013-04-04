@@ -209,7 +209,7 @@ public class LegacyOfferServiceTest extends LegacyCommonSetupBaseTest {
             "([MVEL.eval(\"toUpperCase()\",\"Test Sku\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.sku.name))",
             "([MVEL.eval(\"toUpperCase()\",\"Test Sku\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.sku.name))"
         );
-        for (Offer offer : offers) {
+        /*for (Offer offer : offers) {
             offer.setName("testOffer");
             //reset the offer is the targets and qualifiers, otherwise the reference is incorrect
             for (OfferItemCriteria criteria : offer.getTargetItemCriteria()) {
@@ -220,7 +220,7 @@ public class LegacyOfferServiceTest extends LegacyCommonSetupBaseTest {
             }
 
             offerService.save(offer);
-        }
+        }*/
         order = orderService.save(order, true);
 
         assert order.getTotalTax().equals(new Money("2.00"));

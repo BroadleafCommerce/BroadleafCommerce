@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -34,6 +35,7 @@ import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -149,12 +151,14 @@ public class OfferImpl implements Offer, Status {
     protected boolean applyToSalePrice;
 
     @Column(name = "APPLIES_TO_RULES")
+    @AdminPresentation(excluded = true)
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Deprecated
     protected String appliesToOrderRules;
 
     @Column(name = "APPLIES_WHEN_RULES")
+    @AdminPresentation(excluded = true)
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Deprecated
@@ -199,12 +203,14 @@ public class OfferImpl implements Offer, Status {
     @JoinTable(name = "BLC_QUAL_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentation(fieldType = SupportedFieldType.RULE_WITH_QUANTITY, ruleIdentifier = RuleIdentifier.ORDERITEM, friendlyName = "OfferImpl_Qualifying_Item_Rule")
     protected Set<OfferItemCriteria> qualifyingItemCriteria = new HashSet<OfferItemCriteria>();
     
     @OneToMany(fetch = FetchType.LAZY, targetEntity = OfferItemCriteriaImpl.class, cascade={CascadeType.ALL})
     @JoinTable(name = "BLC_TAR_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentation(fieldType = SupportedFieldType.RULE_WITH_QUANTITY, ruleIdentifier = RuleIdentifier.ORDERITEM, friendlyName = "OfferImpl_Target_Item_Rule")
     protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
     
     @Column(name = "TOTALITARIAN_OFFER")
@@ -216,6 +222,22 @@ public class OfferImpl implements Offer, Status {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationMap(
+        mapDisplayFields = {
+            @AdminPresentationMapField(
+                fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.CUSTOMER_FIELD_KEY, friendlyKeyName = "OfferImpl_Customer_Rule"),
+                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, ruleIdentifier = RuleIdentifier.CUSTOMER)
+            ),
+            @AdminPresentationMapField(
+                fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.ORDER_FIELD_KEY, friendlyKeyName = "OfferImpl_Order_Rule"),
+                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, ruleIdentifier = RuleIdentifier.ORDER)
+            ),
+            @AdminPresentationMapField(
+                fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.FULFILLMENT_GROUP_FIELD_KEY, friendlyKeyName = "OfferImpl_FG_Rule"),
+                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, ruleIdentifier = RuleIdentifier.FULFILLMENTGROUP)
+            )
+        }
+    )
     Map<String, OfferRule> offerMatchRules = new HashMap<String, OfferRule>();
     
     @Column(name = "USE_NEW_FORMAT")
@@ -223,7 +245,7 @@ public class OfferImpl implements Offer, Status {
     protected Boolean treatAsNewFormat;
     
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Qualifying Item Subtotal",group="OfferImpl_Advanced", groupOrder=5)
+    @AdminPresentation(friendlyName="OfferImpl_Qualifying_Item_Subtotal",group="OfferImpl_Advanced", groupOrder=5)
     protected BigDecimal qualifyingItemSubTotal;
     
     @Embedded
@@ -484,7 +506,6 @@ public class OfferImpl implements Offer, Status {
     public void setMaxUsesPerOrder(int maxUsesPerOrder) {
         this.maxUsesPerOrder = maxUsesPerOrder;
     }
-
 
     @Override
     public int getMaxUses() {

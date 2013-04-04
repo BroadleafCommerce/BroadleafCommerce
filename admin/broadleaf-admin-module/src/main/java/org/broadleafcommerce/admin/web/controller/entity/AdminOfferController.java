@@ -26,7 +26,6 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -34,17 +33,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.io.IOException;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-@Controller("blAdminOfferController")
-@RequestMapping("/" + AdminOfferController.SECTION_KEY)
+//@Controller("blAdminOfferController")
+//@RequestMapping("/" + AdminOfferController.SECTION_KEY)
 public class AdminOfferController extends AdminBasicEntityController {
     
     protected static final String SECTION_KEY = "offer";

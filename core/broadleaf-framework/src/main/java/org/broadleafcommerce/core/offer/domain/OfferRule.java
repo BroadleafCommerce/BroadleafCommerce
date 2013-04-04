@@ -16,14 +16,14 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import java.io.Serializable;
+import org.broadleafcommerce.common.rule.SimpleRule;
 
 /**
  * 
  * @author jfischer
  *
  */
-public interface OfferRule extends Serializable {
+public interface OfferRule extends SimpleRule {
 
     public Long getId();
 

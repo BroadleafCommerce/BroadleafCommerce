@@ -25,16 +25,6 @@ import org.broadleafcommerce.common.rule.QuantityBasedRule;
  */
 public interface OfferItemCriteria extends QuantityBasedRule {
 
-    public Long getId();
-
-    public void setId(Long id);
-
-    public Offer getQualifyingOffer();
-
-    public void setQualifyingOffer(Offer offer);
-
-    public Offer getTargetOffer();
-
-    public void setTargetOffer(Offer targetOffer);
+    //place abstract method definitions here
     
 }
