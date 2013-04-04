@@ -272,8 +272,8 @@ $(document).ready(function() {
         $(this).parents('ul').find('input.property-sort').val(sortValue);
         //update the header icon for this field
         var icon = $(this).parents('.listgrid-headerBtn').find('div i');
-        icon.toggleClass('listgrid-icon-down', ascending);
-        icon.toggleClass('listgrid-icon-up', !ascending);
+        icon.toggleClass('listgrid-icon-up', ascending);
+        icon.toggleClass('listgrid-icon-down', !ascending);
 
         //submit the form just for this particular field since this is the only sort that changed
         $(this).closest('ul').find('div.filter-fields .listgrid-filter').click();
@@ -344,7 +344,7 @@ $(document).ready(function() {
      */
     $('body').on('click', 'button.clear-foreign-key', function(event) {        
         //remove the current display value
-        $(this).prev().text('');
+        $(this).prev().html('&lt;No value selected&gt;');
         //remove the criteria input val
         $(this).closest('.additional-foreign-key-container').find('.value').val('');
         $(this).toggle();

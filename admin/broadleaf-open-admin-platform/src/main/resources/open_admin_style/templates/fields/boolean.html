@@ -1,6 +1,17 @@
-<label th:text="#{${field.friendlyName}}" />
+<div class="field-label" th:text="#{${field.friendlyName}}" />
 
-<label th:for="${field.name}" th:inline="text" class="custom-checkbox" style="font-weight: 400;">
-    <input type="checkbox" th:id="${field.name}" th:field="*{fields['__${field.name}__'].value}" th:value="${true}" style="display: none;" />
-    Yes
-</label>
+<div class="custom-checkbox">
+    <label th:for="${field.name + '-true'}" th:inline="text" style="font-weight: 400; display: inline-block;">
+        <input type="radio" th:id="${field.name + '-true'}" th:value="${true}" th:field="*{fields['__${field.name}__'].value}" /> 
+        <span style="margin-right: 10px;">
+            Yes
+        </span>
+    </label>
+        
+    <label th:for="${field.name + '-false'}" th:inline="text" style="font-weight: 400; display: inline-block;">
+        <input type="radio" th:id="${field.name + '-false'}" th:value="${false}" th:field="*{fields['__${field.name}__'].value}" />
+        <span style="margin-right: 10px;">
+            No
+        </span>
+    </label>
+</div>

@@ -37,11 +37,18 @@ public class Weight implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "WEIGHT")
-    @AdminPresentation(friendlyName = "ProductWeight_Product_Weight", order=17, group = "ProductWeight_Shipping",groupOrder=4, tab="ProductWeight_Shipping_Tab")
+    @AdminPresentation(friendlyName = "ProductWeight_Product_Weight", order = 8000,
+        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
+        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping)
     protected BigDecimal weight;
 
+        
     @Column(name = "WEIGHT_UNIT_OF_MEASURE")
-    @AdminPresentation(friendlyName = "ProductWeight_Product_Weight_Units", order=18, group = "ProductWeight_Shipping", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.util.WeightUnitOfMeasureType",groupOrder=4, tab="ProductWeight_Shipping_Tab")
+    @AdminPresentation(friendlyName = "ProductWeight_Product_Weight_Units", order = 9000,
+        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
+        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping,
+        fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, 
+        broadleafEnumeration="org.broadleafcommerce.common.util.WeightUnitOfMeasureType")
     protected String weightUnitOfMeasure;
 
     public WeightUnitOfMeasureType getWeightUnitOfMeasure() {

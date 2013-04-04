@@ -1,4 +1,5 @@
-<label th:for="${field.name}" th:text="#{${field.friendlyName}}" />
+<div class="field-label" th:text="#{${field.friendlyName}}" />
+
 <select class="six" th:field="*{fields['__${field.name}__'].value}">
     <option th:each="entry : *{fields['__${field.name}__'].options}"
             th:value="${entry.key}"

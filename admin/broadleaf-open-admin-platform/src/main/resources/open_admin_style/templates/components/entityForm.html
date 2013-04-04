@@ -33,7 +33,7 @@
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                 <legend th:text="#{${group.title}}" />
 
-                <div th:each="field : ${group.fields}" th:if="${field.name}">
+                <div th:each="field : ${group.fields}" th:if="${field.name}" class="field-box">
                     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
                     <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
                 </div>
@@ -64,8 +64,8 @@
         </li>
     </ul>
     
-        <button th:each="action : ${entityForm.actions}" class="button radius dark right" th:classappend="${action.buttonClass}">
-            <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="${action.displayText}" th:remove="tag" />
-        </button>
+    <button th:each="action : ${entityForm.actions}" class="button radius dark right" th:classappend="${action.buttonClass}">
+        <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="${action.displayText}" th:remove="tag" />
+    </button>
     
 </form>

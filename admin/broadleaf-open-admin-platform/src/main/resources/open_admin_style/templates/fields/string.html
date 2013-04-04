@@ -1,2 +1,2 @@
-<label th:for="${field.name}" th:text="#{${field.friendlyName}}" />
-<input type="text" class="ten" th:field="*{fields['__${field.name}__'].value}" />
+<div class="field-label" th:text="#{${field.friendlyName}}" />
+<input type="text" class="twelve" th:field="*{fields['__${field.name}__'].value}" />

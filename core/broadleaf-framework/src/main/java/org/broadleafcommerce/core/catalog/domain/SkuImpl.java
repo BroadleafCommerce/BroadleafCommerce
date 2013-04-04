@@ -99,16 +99,11 @@ import javax.persistence.Transient;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(friendlyName = "baseSku")
 public class SkuImpl implements Sku {
-
+    
     private static final Log LOG = LogFactory.getLog(SkuImpl.class);
-    /**
-     * The Constant serialVersionUID.
-     */
+    
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The id.
-     */
     @Id
     @GeneratedValue(generator = "SkuId")
     @GenericGenerator(
@@ -124,96 +119,85 @@ public class SkuImpl implements Sku {
             }
     )
     @Column(name = "SKU_ID")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_ID", group = "SkuImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    /**
-     * The sale price.
-     */
     @Column(name = "SALE_PRICE", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price", gridOrder = 6, order = 2000, group = "SkuImpl_Price", prominent = true, fieldType = SupportedFieldType.MONEY, groupOrder = 2)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price", order = 2000, 
+        group = ProductImpl.Presentation.Group.Name.Price, groupOrder = ProductImpl.Presentation.Group.Order.Price,
+        prominent = true, gridOrder = 6, 
+        fieldType = SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
-    /**
-     * The retail price.
-     */
     @Column(name = "RETAIL_PRICE", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Retail_Price", gridOrder = 5, order = 1000, group = "SkuImpl_Price", prominent = true, fieldType = SupportedFieldType.MONEY, groupOrder = 2)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Retail_Price", order = 1000, 
+        group = ProductImpl.Presentation.Group.Name.Price, groupOrder = ProductImpl.Presentation.Group.Order.Price,
+        prominent = true, gridOrder = 5, 
+        fieldType = SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
-    /**
-     * The name.
-     */
     @Column(name = "NAME")
     @Index(name = "SKU_NAME_INDEX", columnNames = {"NAME"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", gridOrder=1, order = 1000, group = "ProductImpl_Product_Description", prominent = true, columnWidth = "200", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order = 1000,
+        group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
+        prominent = true, gridOrder = 1)
     protected String name;
 
-    /**
-     * The description.
-     */
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Description", order = 2, group = "ProductImpl_Product_Description", largeEntry = true, groupOrder = 1, tab = "ProductImpl_Advanced_Tab")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Description", order = 2000, 
+        group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
+        largeEntry = true, 
+        excluded = true)
     protected String description;
 
-    /**
-     * The long description.
-     */
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description", order=3000, group = "ProductImpl_Product_Description", largeEntry=true, groupOrder=1, fieldType=SupportedFieldType.HTML_BASIC)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description", order=3000, 
+        group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
+        largeEntry = true, 
+        fieldType = SupportedFieldType.HTML_BASIC)
     protected String longDescription;
 
-    /**
-     * The taxable.
-     */
     @Column(name = "TAXABLE_FLAG")
     @Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Taxable", order=3, group = "SkuImpl_Price", groupOrder=4, tab="ProductImpl_Advanced_Tab")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Taxable", order = 1000,
+        tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced, 
+        group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced)
     protected Character taxable;
 
-    /**
-     * The discountable.
-     */
     @Column(name = "DISCOUNTABLE_FLAG")
     @Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable", order=4, group = "SkuImpl_Price", groupOrder=4, tab="ProductImpl_Advanced_Tab")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable", order = 2000, 
+        tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced, 
+        group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced)
     protected Character discountable;
 
-    /**
-     * The available.
-     */
     @Column(name = "AVAILABLE_FLAG")
     @Index(name = "SKU_AVAILABLE_INDEX", columnNames = {"AVAILABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Available", group = "SkuImpl_Sku_Inventory", groupOrder = 5, order = 2, tab="ProductImpl_Inventory_Tab")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Available", order = 2000,
+        tab = ProductImpl.Presentation.Tab.Name.Inventory, tabOrder = ProductImpl.Presentation.Tab.Order.Inventory,
+        group = ProductImpl.Presentation.Group.Name.Inventory, groupOrder = ProductImpl.Presentation.Group.Order.Inventory)
     protected Character available;
 
-    /**
-     * The active start date.
-     */
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order=7, group = "ProductImpl_Product_Active_Date_Range", tooltip="skuStartDateTooltip", groupOrder = 3)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order = 1000,
+        group = ProductImpl.Presentation.Group.Name.ActiveDateRange, 
+        groupOrder = ProductImpl.Presentation.Group.Order.ActiveDateRange,
+        tooltip = "skuStartDateTooltip")
     protected Date activeStartDate;
 
-    /**
-     * The active end date.
-     */
     @Column(name = "ACTIVE_END_DATE")
     @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order=8, group = "ProductImpl_Product_Active_Date_Range", tooltip="skuEndDateTooltip", groupOrder = 3)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order = 2000, 
+        group = ProductImpl.Presentation.Group.Name.ActiveDateRange, 
+        groupOrder = ProductImpl.Presentation.Group.Order.ActiveDateRange,
+        tooltip = "skuEndDateTooltip")
     protected Date activeEndDate;
 
-
-    /**
-     * The product dimensions *
-     */
     @Embedded
     protected Dimension dimension = new Dimension();
 
-    /**
-     * The product weight *
-     */
     @Embedded
     protected Weight weight = new Weight();
 
@@ -221,34 +205,33 @@ public class SkuImpl implements Sku {
     protected DynamicSkuPrices dynamicPrices = null;
 
     @Column(name = "IS_MACHINE_SORTABLE")
-    @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable", order=19, group = "ProductWeight_Shipping", prominent=false, tab="ProductWeight_Shipping_Tab")
+    @AdminPresentation(friendlyName = "ProductImpl_Is_Product_Machine_Sortable", order = 10000,
+        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
+        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping)
     protected Boolean isMachineSortable = true;
 
-    /**
-     * The sku media.
-     */
     @ManyToMany(targetEntity = MediaImpl.class)
-    @JoinTable(name = "BLC_SKU_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
+    @JoinTable(name = "BLC_SKU_MEDIA_MAP", 
+        inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
     @MapKeyColumn(name = "MAP_KEY")
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-    @AdminPresentationMap(
-            friendlyName = "SkuImpl_Sku_Media",
-            targetUIElementId = "productSkuMediaLayout",
-            dataSourceName = "productMediaMapDS",
-            keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
-            deleteEntityUponRemove = true,
-            mediaField = "url",
-            keys = {
-                    @AdminPresentationMapKey(keyName = "primary", friendlyKeyName = "mediaPrimary"),
-                    @AdminPresentationMapKey(keyName = "alt1", friendlyKeyName = "mediaAlternate1"),
-                    @AdminPresentationMapKey(keyName = "alt2", friendlyKeyName = "mediaAlternate2"),
-                    @AdminPresentationMapKey(keyName = "alt3", friendlyKeyName = "mediaAlternate3"),
-                    @AdminPresentationMapKey(keyName = "alt4", friendlyKeyName = "mediaAlternate4"),
-                    @AdminPresentationMapKey(keyName = "alt5", friendlyKeyName = "mediaAlternate5"),
-                    @AdminPresentationMapKey(keyName = "alt6", friendlyKeyName = "mediaAlternate6")
-            },
-            tab = "SkuImpl_Media_Tab"
+    @AdminPresentationMap(friendlyName = "SkuImpl_Sku_Media",
+        tab = ProductImpl.Presentation.Tab.Name.Media, tabOrder = ProductImpl.Presentation.Tab.Order.Media,
+        targetUIElementId = "productSkuMediaLayout",
+        dataSourceName = "productMediaMapDS",
+        keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
+        deleteEntityUponRemove = true,
+        mediaField = "url",
+        keys = {
+                @AdminPresentationMapKey(keyName = "primary", friendlyKeyName = "mediaPrimary"),
+                @AdminPresentationMapKey(keyName = "alt1", friendlyKeyName = "mediaAlternate1"),
+                @AdminPresentationMapKey(keyName = "alt2", friendlyKeyName = "mediaAlternate2"),
+                @AdminPresentationMapKey(keyName = "alt3", friendlyKeyName = "mediaAlternate3"),
+                @AdminPresentationMapKey(keyName = "alt4", friendlyKeyName = "mediaAlternate4"),
+                @AdminPresentationMapKey(keyName = "alt5", friendlyKeyName = "mediaAlternate5"),
+                @AdminPresentationMapKey(keyName = "alt6", friendlyKeyName = "mediaAlternate6")
+        }
     )
     protected Map<String, Media> skuMedia = new HashMap<String, Media>();
 
@@ -265,7 +248,9 @@ public class SkuImpl implements Sku {
      * additional Skus for a Product (for Skus based on ProductOptions)
      */
     @ManyToOne(optional = true, targetEntity = ProductImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"))
+    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", 
+        joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), 
+        inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     protected Product product;
 
@@ -276,7 +261,9 @@ public class SkuImpl implements Sku {
     protected List<SkuAttribute> skuAttributes = new ArrayList<SkuAttribute>();
 
     @ManyToMany(targetEntity = ProductOptionValueImpl.class)
-    @JoinTable(name = "BLC_SKU_OPTION_VALUE_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID", referencedColumnName = "PRODUCT_OPTION_VALUE_ID"))
+    @JoinTable(name = "BLC_SKU_OPTION_VALUE_XREF", 
+        joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), 
+        inverseJoinColumns = @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID",referencedColumnName = "PRODUCT_OPTION_VALUE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @BatchSize(size = 50)
     protected List<ProductOptionValue> productOptionValues = new ArrayList<ProductOptionValue>();
@@ -289,7 +276,8 @@ public class SkuImpl implements Sku {
     protected List<SkuFee> fees = new ArrayList<SkuFee>();
 
     @ElementCollection
-    @CollectionTable(name = "BLC_SKU_FULFILLMENT_FLAT_RATES", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true))
+    @CollectionTable(name = "BLC_SKU_FULFILLMENT_FLAT_RATES", 
+        joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true))
     @MapKeyJoinColumn(name = "FULFILLMENT_OPTION_ID", referencedColumnName = "FULFILLMENT_OPTION_ID")
     @MapKeyClass(FulfillmentOptionImpl.class)
     @Column(name = "RATE", precision = 19, scale = 5)
@@ -300,17 +288,25 @@ public class SkuImpl implements Sku {
     @ManyToMany(targetEntity = FulfillmentOptionImpl.class)
     @JoinTable(name = "BLC_SKU_FULFILLMENT_EXCLUDED",
             joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"),
-            inverseJoinColumns = @JoinColumn(name = "FULFILLMENT_OPTION_ID", referencedColumnName = "FULFILLMENT_OPTION_ID"))
+            inverseJoinColumns = @JoinColumn(name = "FULFILLMENT_OPTION_ID",referencedColumnName = "FULFILLMENT_OPTION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @BatchSize(size = 50)
     protected List<FulfillmentOption> excludedFulfillmentOptions = new ArrayList<FulfillmentOption>();
 
     @Column(name = "INVENTORY_TYPE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType", group = "SkuImpl_Sku_Inventory", order = 10, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType", tab="ProductImpl_Inventory_Tab")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType", order = 1000,
+        tab = ProductImpl.Presentation.Tab.Name.Inventory, tabOrder = ProductImpl.Presentation.Tab.Order.Inventory,
+        group = ProductImpl.Presentation.Group.Name.Inventory, groupOrder = ProductImpl.Presentation.Group.Order.Inventory,
+        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
+        broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")
     protected String inventoryType;
 
     @Column(name = "FULFILLMENT_TYPE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_FulfillmentType", group = "SkuImpl_Sku_Inventory", order = 11, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType", tab="ProductImpl_Inventory_Tab")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_FulfillmentType", order = 2000,
+        tab = ProductImpl.Presentation.Tab.Name.Inventory, tabOrder = ProductImpl.Presentation.Tab.Order.Inventory,
+        group = ProductImpl.Presentation.Group.Name.Inventory, groupOrder = ProductImpl.Presentation.Group.Order.Inventory,
+        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
+        broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
 
     @Override

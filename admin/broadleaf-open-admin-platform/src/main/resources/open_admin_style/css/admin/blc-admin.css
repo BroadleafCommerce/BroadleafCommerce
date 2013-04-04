@@ -31,7 +31,7 @@ body {
 }
 
 .row {
-    width: 1440px;
+    width: 1280px;
 }
 
 .content {
@@ -87,10 +87,18 @@ input[type="text"], input[type="password"], input[type="date"], input[type="date
 .entity-form .custom.dropdown,
 .indented-form-value,
 .entity-form input[type="text"], .entity-form input[type="password"], .entity-form input[type="date"], .entity-form input[type="datetime"], .entity-form input[type="email"], .entity-form input[type="number"], .entity-form input[type="search"], .entity-form input[type="tel"], .entity-form input[type="time"], .entity-form input[type="url"], .entity-form textarea {
-    margin: 7px 0 20px 0px;
+    margin: 7px 0 0px 0px;
 }
 
 .entity-form .custom-checkbox {
+}
+
+div.field-box {
+	margin-bottom: 20px;
+}
+
+fieldset div.field-box:last-child {
+	margin-bottom: 0;
 }
 
 .indented-form-value {
@@ -112,6 +120,12 @@ fieldset legend {
 
 label {
 	font-weight: 600;
+}
+
+div.field-label {
+	font-weight: 600;
+	margin-bottom: 3px;
+	color: #4D4D4D;
 }
 
 .entity-form-tabs {
@@ -161,7 +175,7 @@ h2#mainEntityName {
 
 .top-bar .attached {
     padding: 0 0 0 23px;
-    max-width: 1440px;
+    max-width: 1280px;
     z-index: 0 !important;
 }
 
@@ -493,12 +507,11 @@ table.list-grid-table thead tr th {
     position: absolute;
     left: -1px;
     background: #fff;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.98);
     list-style: none;
     margin: 0;
     padding: 0;
     border: 1px solid #cccccc;
-    border-top: none;
     min-width: 100%;
     z-index: 40;
 }
@@ -821,11 +834,19 @@ td.list-grid-no-results {
 	background-color: #006969; 
 }
 
+.button.secondary {
+    background-color: #DFDFDF !important;
+}
+
 span.read-only {
-	border: 1px solid #CCC;
-	padding: 2px 5px;
 	vertical-align: bottom;
+	height: 22px;
+	display: inline-block;
 	
+	/*
+	padding: 0 5px;
+	
+	background-color: #E9E9E9;
 	-webkit-border-radius: 2px; 
 	-moz-border-radius: 2px;
 	-ms-border-radius: 2px;
@@ -835,6 +856,7 @@ span.read-only {
 	-webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 	-moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+	*/
 }
 
 

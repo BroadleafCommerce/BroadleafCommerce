@@ -101,7 +101,7 @@
                 <span th:case="'main'" th:remove="tag">
                     <a th:if="${headerFieldStat.first}" 
                         th:href="@{${record.path}}"
-                        th:text="${field.displayValue}" />
+                        th:text="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}" />
                         
                     <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
                        <span th:remove="tag" th:text="${field.displayValue}" />

@@ -2,18 +2,13 @@ ul.entity-type-selection {
 	list-style-type: none;
 }
 
-span.custom.checkbox {
-	margin-bottom: 10px;
-}
-
-label.custom-checkbox {
-	vertical-align: top;
-}
-
 .hover-cursor:hover {
 	cursor: pointer;
 }
 
+form.custom div.custom.dropdown { 
+	margin-bottom: 2px !important;
+}
+
 div.additional-foreign-key-container {
-	margin-bottom: 15px;
 }
