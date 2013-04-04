@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
@@ -42,16 +43,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-
+import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -457,6 +455,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                     }
                 }
             }
+        }
+        if (!prefix.contains(".")) {
+            //this may be an embedded class directly on the root entity (e.g. embeddablePriceList.restrictedPriceLists on OfferImpl)
+            return entity.findProperty("id").getValue();
         }
         throw new RuntimeException("Unable to establish a relationship id");
     }

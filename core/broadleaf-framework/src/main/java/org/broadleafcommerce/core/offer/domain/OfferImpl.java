@@ -93,16 +93,16 @@ public class OfferImpl implements Offer, Status {
         }
     )
     @Column(name = "OFFER_ID")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Id", order=1, group = "OfferImpl_Description", groupOrder=1, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Id", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "OFFER_NAME", nullable=false)
     @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Name", order = 3, group = "OfferImpl_Description", prominent=true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Name", order = 1, gridOrder = 1, group = "OfferImpl_Description", prominent=true, groupOrder = 1)
     protected String name;
 
     @Column(name = "OFFER_DESCRIPTION")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = 4, group = "OfferImpl_Description", largeEntry=true, prominent=true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = 2, gridOrder = 2, group = "OfferImpl_Description", largeEntry=true, prominent=true, groupOrder = 1)
     protected String description;
 
     @Column(name = "MARKETING_MESSASGE")
@@ -112,7 +112,7 @@ public class OfferImpl implements Offer, Status {
 
     @Column(name = "OFFER_TYPE", nullable=false)
     @Index(name="OFFER_TYPE_INDEX", columnNames={"OFFER_TYPE"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order = 1, group = "OfferImpl_Description", prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferType", groupOrder = 1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order = 4, gridOrder = 3, group = "OfferImpl_Description", prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferType", groupOrder = 1)
     protected String type;
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
@@ -121,7 +121,7 @@ public class OfferImpl implements Offer, Status {
     protected String discountType;
 
     @Column(name = "OFFER_VALUE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order=6, group = "OfferImpl_Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order=6, gridOrder = 4, group = "OfferImpl_Description", prominent=true, groupOrder=1)
     protected BigDecimal value;
 
     @Column(name = "OFFER_PRIORITY")
