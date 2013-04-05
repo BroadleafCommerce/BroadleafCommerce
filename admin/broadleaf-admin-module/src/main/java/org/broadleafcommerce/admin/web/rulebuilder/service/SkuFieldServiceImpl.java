@@ -70,6 +70,27 @@ public class SkuFieldServiceImpl  extends AbstractRuleBuilderFieldService {
                 .type(SupportedFieldType.MONEY)
                 .build());
         fields.add(new FieldData.Builder()
+                .label("Sku - Fulfillment Type")
+                .name("fulfillmentType")
+                .operators("blcOperators_Enumeration")
+                .options("blcOptions_FulfillmentType")
+                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Inventory Type")
+                .name("inventoryType")
+                .operators("blcOperators_Enumeration")
+                .options("blcOptions_InventoryType")
+                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - taxable")
+                .name("taxable")
+                .operators("blcOperators_Boolean")
+                .options("[]")
+                .type(SupportedFieldType.BOOLEAN)
+                .build());
+        fields.add(new FieldData.Builder()
                 .label("Product - URL")
                 .name("product.url")
                 .operators("blcOperators_Text")
@@ -97,20 +118,7 @@ public class SkuFieldServiceImpl  extends AbstractRuleBuilderFieldService {
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Fulfillment Type")
-                .name("fulfillmentType")
-                .operators("blcOperators_Enumeration")
-                .options("blcOptions_FulfillmentType")
-                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Inventory Type")
-                .name("inventoryType")
-                .operators("blcOperators_Enumeration")
-                .options("blcOptions_InventoryType")
-                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
-                .build());
+
 
     }
 
