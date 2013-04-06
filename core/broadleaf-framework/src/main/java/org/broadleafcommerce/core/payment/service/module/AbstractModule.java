@@ -162,6 +162,15 @@ public abstract class AbstractModule implements PaymentModule {
         Money amountCaptured = paymentInfo.getPaymentCapturedAmount();
         Money amountAlreadyReversed = paymentInfo.getReverseAuthAmount();
         Money amount = paymentInfo.getAmount();
+
+        // Factor in credits that have been applied to the order through other different payment modules.
+        Money orderTotal = paymentInfo.getOrder().getTotal();
+        Money appliedCreditAdjustment = orderTotal.subtract(amount);
+        Money adjustedAmountToDebit = amountToDebit.subtract(appliedCreditAdjustment).abs();
+        if (adjustedAmountToDebit.lessThan(amountToDebit) && paymentInfo.getOrder().getCapturedTotal().equals(appliedCreditAdjustment)) {
+            amountToDebit = adjustedAmountToDebit;
+        }
+
         Money amountAvailableToDebit = amount.subtract(amountCaptured).subtract(amountAlreadyReversed);
         // Return the minimum of (amountToDebit, amountAvailableToDebit)
         if (amountAvailableToDebit.lessThan(amountToDebit)){

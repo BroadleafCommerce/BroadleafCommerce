@@ -68,8 +68,8 @@ public class PaymentServiceActivity extends BaseActivity<CheckoutContext> {
             }
         }
 
-        if (paidAmount.lessThan(seed.getOrder().getTotal())) {
-            throw new InsufficientFundsException(String.format("Order total was [%s] but paid amount was [%s]",
+        if (paidAmount.lessThan(seed.getOrder().getRemainingTotal())) {
+            throw new InsufficientFundsException(String.format("Order remaining total was [%s] but paid amount was [%s]",
                     seed.getOrder().getTotal(), paidAmount));
         }
 

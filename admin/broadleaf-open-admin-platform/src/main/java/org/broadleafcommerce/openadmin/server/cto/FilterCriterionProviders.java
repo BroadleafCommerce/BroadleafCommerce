@@ -96,31 +96,31 @@ public class FilterCriterionProviders {
         }
     };
     
-    public FilterCriterionProvider getLikeProvider(AssociationPath path) {
+    public FilterCriterionProvider getLikeProvider(AssociationPath path, String propertyId) {
         return LIKE;
     }
 
-    public FilterCriterionProvider getEqProvider(AssociationPath path) {
+    public FilterCriterionProvider getEqProvider(AssociationPath path, String propertyId) {
         return EQ;
     }
 
-    public FilterCriterionProvider getIsNullProvider(AssociationPath path) {
+    public FilterCriterionProvider getIsNullProvider(AssociationPath path, String propertyId) {
         return ISNULL;
     }
 
-    public FilterCriterionProvider getLessThanOrEqualProvider(AssociationPath path) {
+    public FilterCriterionProvider getLessThanOrEqualProvider(AssociationPath path, String propertyId) {
         return LE;
     }
 
-    public FilterCriterionProvider getBetweenProvider(AssociationPath path) {
+    public FilterCriterionProvider getBetweenProvider(AssociationPath path, String propertyId) {
         return BETWEEN;
     }
 
-    public FilterCriterionProvider getBetweenDateProvider(AssociationPath path) {
+    public FilterCriterionProvider getBetweenDateProvider(AssociationPath path, String propertyId) {
         return BETWEEN_DATE;
     }
 
-    public FilterCriterionProvider getCollectionSizeEqualsProvider(AssociationPath path) {
+    public FilterCriterionProvider getCollectionSizeEqualsProvider(AssociationPath path, String propertyId) {
         return COLLECTION_SIZE_EQ;
     }
 

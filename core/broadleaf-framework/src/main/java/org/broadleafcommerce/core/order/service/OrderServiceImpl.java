@@ -519,7 +519,7 @@ public class OrderServiceImpl implements OrderService {
                 orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
                 orderItemRequestDTO.setOrderItemId(item.getId());
                 try {
-                    return updateItemQuantity(orderId, orderItemRequestDTO, priceOrder);                    
+                    return updateItemQuantity(orderId, orderItemRequestDTO, priceOrder);
                 } catch (RemoveFromCartException e) {
                     throw new AddToCartException("Unexpected error - system tried to remove item while adding to cart", e);
                 } catch (UpdateCartException e) {
@@ -702,12 +702,12 @@ public class OrderServiceImpl implements OrderService {
         // Must match on SKU and options
         if (item1Sku != null && item2.getSkuId() != null) {
             if (item1Sku.getId().equals(item2.getSkuId())) {
-                return compareAttributes(item1Attributes, item2);
+                return true;
             }
         } else {
             if (item1Product != null && item2.getProductId() != null) {
                 if (item1Product.getId().equals(item2.getProductId())) {
-                    return true;
+                    return compareAttributes(item1Attributes, item2);
                 }
             }
         }
