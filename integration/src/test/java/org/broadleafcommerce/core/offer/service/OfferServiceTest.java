@@ -214,13 +214,13 @@ public class OfferServiceTest extends CommonSetupBaseTest {
         );
         for (Offer offer : offers) {
             offer.setName("testOffer");
-            //reset the offer is the targets and qualifiers, otherwise the reference is incorrect
-            for (OfferItemCriteria criteria : offer.getTargetItemCriteria()) {
-                criteria.setTargetOffer(null);
-            }
-            for (OfferItemCriteria criteria : offer.getQualifyingItemCriteria()) {
-                criteria.setQualifyingOffer(null);
-            }
+//            //reset the offer is the targets and qualifiers, otherwise the reference is incorrect
+//            for (OfferItemCriteria criteria : offer.getTargetItemCriteria()) {
+//                criteria.setTargetOffer(null);
+//            }
+//            for (OfferItemCriteria criteria : offer.getQualifyingItemCriteria()) {
+//                criteria.setQualifyingOffer(null);
+//            }
 
             offerService.save(offer);
         }
