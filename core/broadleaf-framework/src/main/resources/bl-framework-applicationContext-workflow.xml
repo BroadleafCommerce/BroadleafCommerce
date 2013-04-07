@@ -25,10 +25,9 @@
         </property>
     </bean>
     
-    <bean p:order="1000" id="blOfferActivity"
-            class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity" />
-    <bean p:order="2000" id="blConsolidateFulfillmentFeesActivity"
-            class="org.broadleafcommerce.core.pricing.service.workflow.ConsolidateFulfillmentFeesActivity" />
+    <!-- Pricing Workflow configuration -->
+    <bean p:order="1000" id="blOfferActivity" class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity" />
+    <bean p:order="2000" id="blConsolidateFulfillmentFeesActivity" class="org.broadleafcommerce.core.pricing.service.workflow.ConsolidateFulfillmentFeesActivity" />
     <bean p:order="3000" id="blFulfillmentItemPricingActivity" class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentItemPricingActivity" />
     <bean p:order="4000" id="blFulfillmentGroupMerchandiseTotalActivity" class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupMerchandiseTotalActivity" />
     <bean p:order="5000" id="blFulfillmentGroupPricingActivity" class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity" />
@@ -65,6 +64,7 @@
         </property>
     </bean>
     
+    <!-- Add Item Workflow Configuration -->
     <bean p:order="1000" id="blValidateAddRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity"/>
     <bean p:order="2000" id="blAddOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
     <bean p:order="3000" id="blAddFulfillmentGroupItemActivity" class="org.broadleafcommerce.core.order.service.workflow.add.AddFulfillmentGroupItemActivity"/>
@@ -87,6 +87,7 @@
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
 
+    <!-- Update Item Workflow Configuration -->
     <bean p:order="1000" id="blValidateUpdateRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.update.ValidateUpdateRequestActivity"/>
     <bean p:order="2000" id="blUpdateOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderItemActivity"/>
     <bean p:order="3000" id="blUdateOrderMultishipOptionActivity" class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderMultishipOptionActivity"/>
@@ -111,6 +112,7 @@
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
     
+    <!-- Remove Item Workflow Configuration -->
     <bean p:order="1000" id="blValidateRemoveRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.ValidateRemoveRequestActivity"/>
     <bean p:order="2000" id="blRemoveOrderMultishipOptionActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderMultishipOptionActivity"/>
     <bean p:order="3000" id="blRemoveFulfillmentGroupItemActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveFulfillmentGroupItemActivity"/>
@@ -135,6 +137,7 @@
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
 
+    <!-- Checkout Workflow Configuration -->
     <bean p:order="1000" id="blVerifyCustomerMaxOfferUsesActivity" class="org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity"/>
     <!-- For all payment workflow configurations, see bl-framework-applicationContext-workflow.xml -->
     <bean p:order="2000" id="blPaymentServiceActivity" class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>

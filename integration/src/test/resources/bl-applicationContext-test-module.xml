@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+
+    <!-- This applicationContext is used to test an additional merge that comes from a 3rd party module (for instance,
+        merging in an additional activity in a workflow along with any other additional ones added by
+        bl-applicationContext-test.xml -->
+        
+    <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="activities">
+            <list>
+                <!-- Since no order is configured, this should be thrown at the very end of the list -->
+                <bean class="org.broadleafcommerce.core.workflow.state.test.TestExampleModuleActivity" />
+            </list> 
+        </property>   
+    </bean>
+    
+</beans>

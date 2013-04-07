@@ -29,7 +29,7 @@ package org.broadleafcommerce.core.workflow;
 public interface ModuleActivity {
 
     /**
-     * The name of the module that this activity came from
+     * The name of the module that this activity came from (for instance: 'inventory')
      * @return
      */
     public String getModuleName();

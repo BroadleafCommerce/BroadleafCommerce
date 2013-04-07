@@ -21,7 +21,6 @@ import org.apache.commons.collections.Transformer;
 import org.broadleafcommerce.common.logging.LifeCycleEvent;
 import org.broadleafcommerce.common.logging.SupportLogManager;
 import org.broadleafcommerce.common.logging.SupportLogger;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -36,6 +35,7 @@ import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -52,6 +52,8 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
     protected BeanFactory beanFactory;
     protected String beanName;
     protected List<Activity<ProcessContext>> activities = new ArrayList<Activity<ProcessContext>>();
+    protected List<ModuleActivity> moduleActivities = new ArrayList<ModuleActivity>();
+    
     protected ErrorHandler defaultErrorHandler;
 
     @Value("${workflow.auto.rollback.on.error}")
@@ -144,8 +146,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
         //sort the activities based on their configured order
         OrderComparator.sort(activities);
 
-        //TODO: check to see if a module has modified this workflow, add support-level logging
-        List<String> modifyingModules = new ArrayList<String>();
+        HashSet<String> moduleNames = new HashSet<String>();
         for (Iterator<Activity<ProcessContext>> iter = activities.iterator(); iter.hasNext();) {
             Activity<? extends ProcessContext> activity = iter.next();
             if ( !supports(activity)) {
@@ -154,15 +155,16 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
             }
             
             if (activity instanceof ModuleActivity) {
-                modifyingModules.add(((ModuleActivity) activity).getModuleName());
+                moduleActivities.add((ModuleActivity) activity);
+                moduleNames.add(((ModuleActivity) activity).getModuleName());
             }
         }
         
-        if (!CollectionUtils.isNotEmpty(modifyingModules)) {
+        if (CollectionUtils.isNotEmpty(moduleActivities)) {
             //log the fact that we've got some modifications to the workflow
             StringBuffer message = new StringBuffer();
             message.append("The following modules have made changes to the " + getBeanName() + " workflow: ");
-            message.append(Arrays.toString(modifyingModules.toArray()));
+            message.append(Arrays.toString(moduleNames.toArray()));
             message.append("\n");            
             message.append("The final ordering of activities for the " + getBeanName() + " workflow is: \n");
             ArrayList<String> activityNames = new ArrayList<String>();
@@ -170,7 +172,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
 
                 @Override
                 public Object transform(Object input) {
-                    return ((ProductOptionValue) input).getAttributeValue();
+                    return ((Activity) input).getBeanName();
                 }
             }, activityNames);
             message.append(Arrays.toString(activityNames.toArray()));
@@ -207,6 +209,18 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
 
     public List<Activity<ProcessContext>> getActivities() {
         return activities;
+    }
+    
+    /**
+     * Returns a filtered set of {@link #getActivities()} that have implemented the {@link ModuleActivity} interface. This
+     * set of module activities is only set once during {@link #afterPropertiesSet()}, so if you invoke
+     * {@link #setActivities(List)} after the bean has been initialized you will need to manually reset the list of module
+     * activities as well (which could be achieved by manually invoking {@link #afterPropertiesSet()}).
+     * 
+     * @return
+     */
+    public List<ModuleActivity> getModuleActivities() {
+        return moduleActivities;
     }
 
     public String getBeanName() {

@@ -16,12 +16,29 @@
 
 package org.broadleafcommerce.core.workflow;
 
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.core.Ordered;
 
 import java.util.Map;
 
+/**
+ * <p>
+ * Interface to be used for workflows in Broadleaf. Usually implementations will subclass {@link BaseActivity}.
+ * </p>
+ * 
+ * Important note: if you are writing a 3rd-party integration module or adding a module outside of the Broadleaf core, your
+ * activity should implement the {@link ModuleActivity} interface as well. This ensures that there is proper logging
+ * for users that are using your module so that they know exactly what their final workflow configuration looks like.
+ *
+ * @author Phillip Verheyden (phillipuniverse)
+ * @param <T>
+ * @see {@link BaseActivity}
+ * @see {@link ModuleActivity}
+ * @see {@link BaseProcessor}
+ * @see {@link SequenceProcessor}
+ */
 public interface Activity<T extends ProcessContext> extends BeanNameAware, Ordered {
 
     /**
