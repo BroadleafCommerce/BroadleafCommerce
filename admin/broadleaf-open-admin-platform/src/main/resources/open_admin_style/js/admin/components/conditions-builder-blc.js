@@ -56,6 +56,7 @@
         init: function() {
             this.fields = this.options[0].fields;
             this.data = this.options[1].data;
+            this.shouldSubmit = true;
             var rules = this.buildRules(this.data);
             this.element.html(rules);
             this.element.find(".conditional-rules").unwrap();
@@ -123,20 +124,20 @@
         buildAddNewRule: function(rules) {
             var _this = this;
             var f = _this.fields[0];
-            var newField = {id:null, quantity:null, groupOperator: "AND", groups: [{name: f.value, operator: f.operators[0], value: null}]};
+            var newField = {id:null, quantity:null, groupOperator: "AND", groups: []};
             rules.append(_this.buildConditional(newField));
         },
 
         buildAddNewItemRule: function(rules) {
             var _this = this;
             var f = _this.fields[0];
-            var newField = {id:null, quantity:1, groupOperator: "AND", groups: [{name: f.value, operator: f.operators[0], value: null}]};
+            var newField = {id:null, quantity:1, groupOperator: "AND", groups: []};
             rules.append(_this.buildConditional(newField));
         },
 
-
         buildRules: function(ruleDataArray) {
             var container = $("<div>");
+            
             for (var i=0; i<ruleDataArray.length; i++) {
                 if (this.buildConditional(ruleDataArray[i])) {
                     container.append(this.buildConditional(ruleDataArray[i]));
@@ -144,9 +145,10 @@
                     return  this.buildRule(ruleDataArray[i]);
                 }
             }
+            
             return container;
         },
-
+        
         buildConditional: function(ruleData) {
             var output = $("<div>", {"class": "conditional-rules"});
             var kind;
@@ -171,6 +173,13 @@
                 var idHidden = $("<input>", {"class": "conditional-id", "type": "hidden", "value": id});
                 selectWrapper.append(idHidden);
             }
+            
+            var removeLink = $("<a>", {"class": "remove tiny secondary radius button remove-subcondition", "href": "#", "text": "X"});
+            removeLink.click(function(e) {
+                e.preventDefault();
+                $(this).parent().remove();
+            });
+            div.append(removeLink);
 
             var select = $("<select>", {"class": "all-any-none no-custom"});
             select.append($("<option>", {"value": "all", "text": "All", "selected": kind == "all"}));
@@ -180,7 +189,8 @@
             selectWrapper.append($("<span>", {text: "of the following rules:"}));
             div.append(selectWrapper);
 
-            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule", "text": "Add Rule"});
+            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule tiny secondary radius button", "text": "Rule"});
+            addRuleLink.prepend($('<i>', {'class' : 'icon-plus' }));
             var _this = this;
             addRuleLink.click(function(e) {
                 e.preventDefault();
@@ -190,7 +200,8 @@
             });
             div.append(addRuleLink);
 
-            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition", "text": "Add Sub-Condition"});
+            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition tiny secondary radius button", "text": "Sub-Condition"});
+            addConditionLink.prepend($('<i>', {'class' : 'icon-plus' }));
             addConditionLink.click(function(e) {
                 e.preventDefault();
                 var f = _this.fields[0];
@@ -199,24 +210,16 @@
             });
             div.append(addConditionLink);
 
-            var removeLink = $("<a>", {"class": "remove", "href": "#", "text": "Remove This Sub-Condition"});
-            removeLink.click(function(e) {
-                e.preventDefault();
-                $(this).parent().remove();
-            });
-            div.append(removeLink);
-
             var rules = ruleData.groups;
             for(var j=0; j<rules.length; j++) {
                 var ruleArray = [];
                 ruleArray.push(rules[j]);
                 div.append(this.buildRules(ruleArray));
             }
+            
             output.append(div);
-
-
+            
             return output;
-
         },
 
         buildRule: function(ruleData) {
@@ -226,9 +229,9 @@
 
             fieldSelect.change(onFieldSelectChanged.call(this, operatorSelect, ruleData));
 
+            ruleDiv.append(removeLink());
             ruleDiv.append(fieldSelect);
             ruleDiv.append(operatorSelect);
-            ruleDiv.append(removeLink());
 
             fieldSelect.change();
             ruleDiv.find(".value").val(ruleData.value);
@@ -265,9 +268,9 @@
         select.change(onOperatorSelectChange);
         return select;
     }
-
+    
     function removeLink() {
-        var removeLink = $("<a>", {"class": "remove", "href": "#", "text": "Remove"});
+        var removeLink = $("<a>", {"class": "remove tiny secondary radius button", "href": "#", "text": "X"});
         removeLink.click(onRemoveLinkClicked);
         return removeLink;
     }

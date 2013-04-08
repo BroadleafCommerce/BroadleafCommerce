@@ -340,12 +340,18 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     } else {
                         f = new Field();
                     }
+                    
+                    Boolean required = fmd.getRequiredOverride();
+                    if (required == null) {
+                        required = fmd.getRequired();
+                    }
 
                     f.withName(property.getName())
                          .withFieldType(fieldType)
                          .withOrder(fmd.getOrder())
                          .withFriendlyName(fmd.getFriendlyName())
-                         .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
+                         .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
+                         .withRequired(required);
 
                     if (StringUtils.isBlank(f.getFriendlyName())) {
                         f.setFriendlyName(f.getName());

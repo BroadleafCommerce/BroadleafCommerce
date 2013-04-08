@@ -30,12 +30,44 @@
                 return condition;
             },
             
-            getCondition : function(index) {
+            getConditionByIndex : function(index) {
                 return conditionsArray[index];
+            },
+            
+            getCondition : function(containerId) {
+                for (var i = 0; i < conditionsArray.length; i++) {
+                    if (containerId == conditionsArray[i].containerId) {
+                        return conditionsArray[i];
+                    }
+                }
+                
+                return null;
             },
             
             conditionCount : function() {
                 return conditionsArray.length;
+            },
+            
+            showOrCreateMainCondition : function($container, typeToCreate) {
+                var containerId = $container.attr("id");
+                var builder = this.getCondition(containerId).builder;
+                builder.shouldSubmit = true;
+                $container.show();
+                
+                if ($container.children().children().length == 0) {
+                    if (typeToCreate == 'add-main-rule') {
+                        builder.buildAddNewRule($container, builder.data);
+                    } else if (typeToCreate == 'add-main-item-rule') {
+                        builder.buildAddNewItemRule($container, builder.data);
+                    }
+                }
+            },
+            
+            hideMainCondition : function($container) {
+                var containerId = $container.attr("id");
+                var builder = this.getCondition(containerId).builder;
+                builder.shouldSubmit = false;
+                $container.hide();
             }
             
         }
@@ -46,42 +78,37 @@
 
 $(document).ready(function() {
     
-    $('body').on('click', 'a.add-item-rule', function(){
-        var container = $(this).next();
-        if (container) {
-            var containerId = $(container).attr("id");
-            for (var i = 0; i < BLCAdmin.conditions.conditionCount(); i++) {
-                if (containerId == BLCAdmin.conditions.getCondition(i).containerId) {
-                    var builder = BLCAdmin.conditions.getCondition(i).builder;
-                    builder.buildAddNewItemRule($(container), builder.data);
-    
-                }
-            }
-        }
-        return false;
+    $('.rule-builder-required-field').each(function(index, element) {
+        var $container = $($(this).next().next());
+        var ruleType = $(this).data('ruletype');
+        BLCAdmin.conditions.showOrCreateMainCondition($container, ruleType);
     });
     
-    $('body').on('click', 'a.add-rule', function(){
-        var container = $(this).next();
-        if (container) {
-            var containerId = $(container).attr("id");
-            for (var i = 0; i < BLCAdmin.conditions.conditionCount(); i++) {
-                if (containerId == BLCAdmin.conditions.getCondition(i).containerId) {
-                    var builder = BLCAdmin.conditions.getCondition(i).builder;
-                    builder.buildAddNewRule($(container), builder.data);
+    $('body').on('change', 'input.clear-rules', function(){
+        var $ruleTitle = $($(this).closest('.rule-builder-checkbox').next());
+        var $container = $($ruleTitle.next());
+        $ruleTitle.hide();
+        BLCAdmin.conditions.hideMainCondition($container, 'add-main-rule');
+    });
     
-                }
-            }
-        }
-        return false;
+    $('body').on('change', 'input.add-main-rule, input.add-main-item-rule', function(){
+        var $ruleTitle = $($(this).closest('.rule-builder-checkbox').next());
+        var $container = $($ruleTitle.next());
+        var ruleType = $(this).data('ruletype');
+        $ruleTitle.show();
+        BLCAdmin.conditions.showOrCreateMainCondition($container, ruleType);
     });
     
     //Intercept the form submission and update all the rule builder hidden fields
     $("form").submit(function () {
         for (var i = 0; i < BLCAdmin.conditions.conditionCount(); i++) {
-            var hiddenId = BLCAdmin.conditions.getCondition(i).hiddenId;
-            var builder = BLCAdmin.conditions.getCondition(i).builder;
-            $("#"+hiddenId).val(JSON.stringify(builder.collectData()));
+            var hiddenId = BLCAdmin.conditions.getConditionByIndex(i).hiddenId;
+            var builder = BLCAdmin.conditions.getConditionByIndex(i).builder;
+            if (builder.shouldSubmit) {
+                $("#"+hiddenId).val(JSON.stringify(builder.collectData()));
+            } else {
+                $('#' + hiddenId).val('');
+            }
         }
         return true;
     });

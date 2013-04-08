@@ -35,6 +35,7 @@ public class Field {
     protected String idOverride;
     protected Integer order;
     protected String onChangeTrigger;
+    protected Boolean required = false;
     
     /* ************ */
     /* WITH METHODS */
@@ -79,6 +80,11 @@ public class Field {
         setOrder(order);
         return this;
     }
+    
+    public Field withRequired(Boolean required) {
+        setRequired(required);
+        return this;
+    }
 
     /* ************************ */
     /* CUSTOM GETTERS / SETTERS */
@@ -99,12 +105,7 @@ public class Field {
      * with the url path for the listgrid itself.
      * 
      * @return
-     * @see {@link AdminBasicEntityController#viewCollectionItemDetails(javax.servlet.http.HttpServletRequest,
-     *                                                                           javax.servlet.http.HttpServletResponse,
-     *                                                                           org.springframework.ui.Model,
-     *                                                                           String,
-     *                                                                           String,
-     *                                                                           String)
+     * @see {@link AdminBasicEntityController#viewCollectionItemDetails()}
      */
     public String getEntityViewPath() {
         return getName() + "/" + getValue() + "/view";
@@ -188,6 +189,14 @@ public class Field {
     
     public void setOnChangeTrigger(String onChangeTrigger) {
         this.onChangeTrigger = onChangeTrigger;
+    }
+
+    public Boolean getRequired() {
+        return required == null ? false : required;
+    }
+    
+    public void setRequired(Boolean required) {
+        this.required = required;
     }
     
 }

@@ -917,29 +917,42 @@ ul.inline-list.small-spacing li {
 /* -----------------------------------------
    Rule Builder
 ----------------------------------------- */
+
 .conditional {
-    padding-left: 60px;
+    padding-left: 30px;
+}
+
+.conditional-rules-container >.conditional-rules > .conditional > .all-any-none-wrapper {
+	margin-left: -30px;
 }
 
 .conditional .all-any-none-wrapper {
-    margin: 5px 20px 5px -60px;
+    margin: 0 20px 5px 0;
     display: -moz-inline-stack;
     display: inline-block;
 }
 
-.conditional > .rule ~ .rule > .remove {
-    display: inline-block;
+.conditional .all-any-none-wrapper-removable {
+	margin-left: 0;
 }
 
 .conditional > .rule > .remove {
-    display: none;
+    display: inline-block;
 }
 
-/*
+a.remove-subcondition {
+	position: relative;
+	margin-left: -25px;
+}
+
+
 .rule-builder-simple > div > .conditional-rules > .conditional > .remove {
 	display: none;
 }
-*/
+
+.rule-builder-complex > div > .conditional-rules > .conditional > .remove {
+	display: none;
+}
 
 input[type="text"].conditional-qty {
     display: -moz-inline-stack;
@@ -948,7 +961,30 @@ input[type="text"].conditional-qty {
     width: 32px;
 }
 .conditional-spacer {
-		margin-right: 10px;
+	margin-right: 10px;
+}
+
+.conditional-rules-header {
+	background: #CCC;
+	margin-top: 10px;
+	padding-left: 10px;
+	margin-left: 10px;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+}
+
+.conditional-rules-container.required-conditional {
+	border: none;
+}
+
+.conditional-rules-container {
+	border: 1px solid #CCC;
+	margin-top: -3px;
+	margin-left: 10px;
+	padding-left: 10px;
+	padding-bottom: 10px;
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
 }
 
 .add-item-rule {
@@ -962,7 +998,7 @@ input[type="text"].conditional-qty {
 }
 
 .all-any-none-wrapper, .conditional, .rule {
-    margin: 10px 0;
+    margin: 10px 0 0;
 }
 
 .rule select,
@@ -975,6 +1011,8 @@ input[type="text"].conditional-qty {
 .rule input[type="time"],
 .rule input[type="url"],
 .rule textarea {
+	margin-top: 0;
+	height: 23px;
     margin-right: 10px;
     width: auto;
     display: -moz-inline-stack;
