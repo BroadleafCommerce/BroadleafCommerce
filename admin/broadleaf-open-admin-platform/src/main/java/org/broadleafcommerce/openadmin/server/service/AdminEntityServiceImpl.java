@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
@@ -43,13 +42,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import com.gwtincubator.security.exception.ApplicationSecurityException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -125,6 +127,19 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
         remove(ppr);
     }
+    
+    protected List<Property> getPropertiesFromEntityForm(EntityForm entityForm) {
+        List<Property> properties = new ArrayList<Property>(entityForm.getFields().size());
+        
+        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
+            Property p = new Property();
+            p.setName(entry.getKey());
+            p.setValue(entry.getValue().getValue());
+            properties.add(p);
+        }
+        
+        return properties;
+    }
 
     protected PersistencePackageRequest getRequestForEntityForm(EntityForm entityForm, String[] customCriteria) {
         // Ensure the ID property is on the form
@@ -136,15 +151,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             entityForm.getFields().put("id", idField);
         }
         
-        // Build the property array from the field map
-        Property[] properties = new Property[entityForm.getFields().size()];
-        int i = 0;
-        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
-            Property p = new Property();
-            p.setName(entry.getKey());
-            p.setValue(entry.getValue().getValue());
-            properties[i++] = p;
-        }
+        List<Property> propList = getPropertiesFromEntityForm(entityForm);
+        Property[] properties = new Property[propList.size()];
+        properties = propList.toArray(properties);
 
         Entity entity = new Entity();
         entity.setProperties(properties);
@@ -306,14 +315,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     public Entity updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
             Entity parentEntity, String collectionItemId)
             throws ServiceException, ApplicationSecurityException, ClassNotFoundException {
-        // Assemble the properties from the entity form
-        List<Property> properties = new ArrayList<Property>();
-        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
-            Property p = new Property();
-            p.setName(entry.getKey());
-            p.setValue(entry.getValue().getValue());
-            properties.add(p);
-        }
+        List<Property> properties = getPropertiesFromEntityForm(entityForm);
 
         FieldMetadata md = field.getMetadata();
 

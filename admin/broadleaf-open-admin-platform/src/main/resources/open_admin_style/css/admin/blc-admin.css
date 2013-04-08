@@ -381,7 +381,7 @@ table.table-hover tbody tr.clickable:hover {
     height: 17px;
 }
 
-.listgrid-toolbar {
+.listgrid-toolbar, .ui-widget-header {
     margin: 0;
     padding: 5px 10px;
     background: #f1f1f1;
