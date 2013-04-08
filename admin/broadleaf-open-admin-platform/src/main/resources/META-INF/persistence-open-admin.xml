@@ -15,7 +15,6 @@
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl</class>
         <class>org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl</class>
         <class>org.broadleafcommerce.openadmin.server.domain.SandBoxActionImpl</class>
-        <class>com.broadleafcommerce.openadmin.server.domain.CustomFieldImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="false"/>
