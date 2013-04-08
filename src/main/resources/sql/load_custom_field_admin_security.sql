@@ -39,7 +39,7 @@ INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_O
 --
 -- Create BLC SECTIONS (These modules are required for the admin left navigation)
 --
-INSERT INTO BLC_ADMIN_SECTION (ADMIN_SECTION_ID, ADMIN_MODULE_ID, NAME, SECTION_KEY, URL, USE_DEFAULT_HANDLER, CEILING_ENTITY) VALUES (1900,1900,'Custom Field Management','CustomFieldManagement','/custom-field-management',FALSE,'org.broadleafcommerce.openadmin.server.domain.CustomField');
+INSERT INTO BLC_ADMIN_SECTION (ADMIN_SECTION_ID, ADMIN_MODULE_ID, NAME, SECTION_KEY, URL, USE_DEFAULT_HANDLER, CEILING_ENTITY) VALUES (1900,1900,'Custom Field Management','CustomFieldManagement','/custom-field-management',FALSE,'com.broadleafcommerce.openadmin.server.domain.CustomField');
 
 --
 --
