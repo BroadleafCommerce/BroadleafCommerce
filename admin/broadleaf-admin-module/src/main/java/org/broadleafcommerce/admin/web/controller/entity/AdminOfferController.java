@@ -18,7 +18,6 @@ package org.broadleafcommerce.admin.web.controller.entity;
 
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
-import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
@@ -33,10 +32,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -65,14 +65,8 @@ public class AdminOfferController extends AdminBasicEntityController {
         
         EntityForm entityForm = (EntityForm) model.asMap().get("entityForm");
         Entity entity = (Entity) model.asMap().get("entity");
-        String additionalClasses = (String) model.asMap().get("additionalClasses");
-        
-        if (additionalClasses == null) {
-            additionalClasses = "";
-        }
-        additionalClasses = additionalClasses.concat(" rulebuilder-form ");
-        model.addAttribute("additionalClasses", additionalClasses);
 
+        /*
         //TODO support i18N
         constructRuleBuilder(entityForm, entity, "appliesToOrderRules","Order Qualification",
                 "rule-builder-simple","appliesToOrderRulesFieldService","appliesToOrderRulesJson");
@@ -88,6 +82,7 @@ public class AdminOfferController extends AdminBasicEntityController {
 
         constructRuleBuilder(entityForm, entity, "targetItemCriteria","Target Item Criteria",
                 "rule-builder-complex","targetItemCriteriaFieldService","targetItemCriteriaJson");
+        */
 
         return view;
     }
@@ -98,10 +93,11 @@ public class AdminOfferController extends AdminBasicEntityController {
         super.initBinder(binder);
     }
 
+    /*
     protected void constructRuleBuilder(EntityForm entityForm, Entity entity,
             String fieldName, String friendlyName, String styleClass, String fieldService, 
             String fieldJson) throws IOException {
-        RuleBuilder ruleBuilder = new RuleBuilder();
+        RuleBuilderField ruleBuilder = new RuleBuilderField();
         ruleBuilder.setFieldName(fieldName);
         ruleBuilder.setFriendlyName(friendlyName);
         ruleBuilder.setStyleClass(styleClass);
@@ -116,6 +112,7 @@ public class AdminOfferController extends AdminBasicEntityController {
         }
         entityForm.addRuleBuilder(ruleBuilder, null, null);
     }
+    */
 
     /**
      * When using Thymeleaf, we need to convert the JSON string back to

@@ -984,6 +984,10 @@ input[type="text"].conditional-qty {
     margin: auto 5px;
 }
 
+.add-rule, .add-condition, .remove, .add-item-rule {
+    font-size: 12px;
+}
+
 form.custom div.conditional div.custom.dropdown {
     display:inline-block;
     margin-right: 10px;

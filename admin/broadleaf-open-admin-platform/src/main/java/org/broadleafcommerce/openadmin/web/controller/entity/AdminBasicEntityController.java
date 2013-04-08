@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
@@ -280,18 +279,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("currentUrl", request.getRequestURL().toString());
 
-        for (Tab tab : entityForm.getTabs()) {
-            if (!CollectionUtils.isEmpty(tab.getRuleBuilders())) {
-                String additionalClasses = (String) model.asMap().get("additionalClasses");
-
-                if (additionalClasses == null) {
-                    additionalClasses = "";
-                }
-                additionalClasses = additionalClasses.concat(" rulebuilder-form ");
-                model.addAttribute("additionalClasses", additionalClasses);
-                break;
-            }
-        }
         setModelAttributes(model, sectionKey);
         
         if (isAjaxRequest(request)) {

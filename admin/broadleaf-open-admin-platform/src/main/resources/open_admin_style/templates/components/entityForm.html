@@ -51,16 +51,6 @@
                 <div th:include="components/listGrid" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
             </div>
 
-             <div th:each="collectionRuleBuilder : ${tab.ruleBuilders}" class="rulebuilder-container">
-                 <h4 th:text="${collectionRuleBuilder.friendlyName}"/>
-                 <blc_admin:admin_field_builder
-                         fieldBuilder="${collectionRuleBuilder.fieldBuilder}" />
-
-                 <div th:include="components/ruleBuilder"
-                      th:with="ruleBuilder=${collectionRuleBuilder},fw=${fieldWrapper},dw=${dataWrapper}"
-                      th:remove="tag" />
-             </div>
-
         </li>
     </ul>
     

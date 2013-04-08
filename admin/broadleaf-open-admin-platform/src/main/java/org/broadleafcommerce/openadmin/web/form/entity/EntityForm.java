@@ -3,7 +3,6 @@ package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -209,21 +208,6 @@ public class EntityForm {
         tab.getListGrids().add(listGrid);
     }
 
-    public void addRuleBuilder(RuleBuilder ruleBuilder, String tabName, Integer tabOrder) {
-        tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
-        tabOrder = tabOrder == null ? DEFAULT_TAB_ORDER : tabOrder;
-
-        Tab tab = findTab(tabName);
-        if (tab == null) {
-            tab = new Tab();
-            tab.setTitle(tabName);
-            tab.setOrder(tabOrder);
-            tabs.add(tab);
-        }
-
-        tab.getRuleBuilders().add(ruleBuilder);
-    }
-    
     public void addAction(EntityFormAction action) {
         getActions().add(action);
     }

@@ -1,32 +1,35 @@
-<div th:classappend="${ruleBuilder.styleClass}">
+<blc_admin:admin_field_builder fieldBuilder="${field.fieldBuilder}">
 
-    <input type="hidden"
-           th:id="${ruleBuilder.jsonFieldName}"
-           th:name="'fields[\&#39;'+${ruleBuilder.jsonFieldName}+'\&#39;].value'"
-           th:value="${ruleBuilder.json}"/>
-
-    <a class="add-rule" th:if="${ruleBuilder.styleClass == 'rule-builder-simple'}"
-       href="#" th:inline="text">Add [[${ruleBuilder.friendlyName}]] Rule</a>
-    <a class="add-item-rule" th:if="${ruleBuilder.styleClass == 'rule-builder-complex'}"
-       href="#" th:inline="text">Add [[${ruleBuilder.friendlyName}]] Rule</a>
-
-    <div th:id="${ruleBuilder.fieldName}"></div>
-
+    <div class="field-label" th:text="#{${field.friendlyName}}" />
+ 
+    <div th:classappend="${field.styleClass}">
+    
+        <input type="hidden"
+               th:id="${field.jsonFieldName}"
+               th:name="'fields[\&#39;'+${field.jsonFieldName}+'\&#39;].value'"
+               th:value="${field.json}"/>
+    
+        <a th:class="${field.styleClass == 'rule-builder-simple' ? 'add-rule' : 'add-item-rule'}" 
+           href="#" th:inline="text">Add [[#{${field.friendlyName}}]] Rule</a>
+    
+        <div th:id="${field.name}"></div>
+    
+    </div>
+    
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
-        var conditionsArray = Object.prototype.toString.call(conditionsArray) == "[object Array]" ? conditionsArray : [];
-
-        function Conditions() {
-            this.hiddenId = /*[[${ruleBuilder.jsonFieldName}]]*/ {};
-            this.containerId = /*[[${ruleBuilder.fieldName}]]*/ {};
-            this.fields = /*[[${fw}]]*/ {};
-            this.data = /*[[${ruleBuilder.dataWrapper}]]*/ {};
-            this.json = [];
-            this.json.push(this.fields);
-            this.json.push(this.data);
-        }
-
-        conditionsArray.push(new Conditions());
+        $(document).ready(function() {
+            var hiddenId = /*[[${field.jsonFieldName}]]*/ {};
+            var containerId = /*[[${field.name}]]*/ {};
+            var fields = /*[[${fieldWrapper}]]*/ {};
+            var data = /*[[${field.dataWrapper}]]*/ {};
+            
+            var condition = BLCAdmin.conditions.addCondition(hiddenId, containerId, fields, data);
+            
+            $('#' + condition.containerId).conditionsBuilder(condition.json);
+            condition.builder = $('#' + condition.containerId).conditionsBuilder('builder');
+        });
         /*]]>*/
     </script>
-</div>
+    
+</blc_admin:admin_field_builder>

@@ -45,7 +45,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPe
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
-import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
+import org.broadleafcommerce.openadmin.web.form.component.RuleBuilderField;
 import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -306,34 +306,46 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         for (Property property : properties) {
             if (property.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) property.getMetadata();
-
-                if (
-                    fmd.getFieldType()==SupportedFieldType.RULE_SIMPLE ||
-                    fmd.getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY
-                ) {
-                    //this field needs to be added to the rule builders list
-                    continue;
-                }
+                
                 if (!(VisibilityEnum.HIDDEN_ALL.equals(fmd.getVisibility())
                                       || VisibilityEnum.FORM_HIDDEN.equals(fmd.getVisibility()))) {
                     // Depending on visibility, field for the particular property is not created on the form
                     String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
+                    
                     // Create the field and set some basic attributes
                     Field f;
+                    
+                    // If we're dealing with fields that should render as drop-downs, set their possible values
                     if (fieldType.equals(SupportedFieldType.BROADLEAF_ENUMERATION.toString())
                             || fieldType.equals(SupportedFieldType.EXPLICIT_ENUMERATION.toString())
                             || fieldType.equals(SupportedFieldType.EMPTY_ENUMERATION.toString())) {
                         f = new ComboField();
                         ((ComboField) f).setOptions(fmd.getEnumerationValues());
+                        
+                    // If we're dealing with rule builders, we'll create those specialized fields
+                    } else if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())
+                            || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
+                        f = new RuleBuilderField();
+                        ((RuleBuilderField) f).setFieldService(fmd.getName() + "FieldService");
+                        ((RuleBuilderField) f).setJsonFieldName(fmd.getName() + "Json");
+                        ((RuleBuilderField) f).setDataWrapper(new DataWrapper());
+                        
+                        if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())) {
+                            ((RuleBuilderField) f).setStyleClass("rule-builder-simple");
+                        } else if (fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
+                            ((RuleBuilderField) f).setStyleClass("rule-builder-complex");
+                        }
+                        
+                    // The default field to create
                     } else {
                         f = new Field();
                     }
 
                     f.withName(property.getName())
-                     .withFieldType(fieldType)
-                     .withOrder(fmd.getOrder())
-                     .withFriendlyName(fmd.getFriendlyName())
-                     .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
+                         .withFieldType(fieldType)
+                         .withOrder(fmd.getOrder())
+                         .withFriendlyName(fmd.getFriendlyName())
+                         .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
 
                     if (StringUtils.isBlank(f.getFriendlyName())) {
                         f.setFriendlyName(f.getName());
@@ -382,13 +394,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata basicFM = (BasicFieldMetadata) p.getMetadata();
-                if (
-                    basicFM.getFieldType()==SupportedFieldType.RULE_SIMPLE ||
-                    basicFM.getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY
-                ) {
-                    //this field needs to be added to the rule builders list
-                    continue;
-                }
 
                 Property entityProp = entity.findProperty(p.getName());
 
@@ -397,8 +402,20 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 } else {
                     Field field = ef.findField(p.getName());
                     if (field != null) {
-                        field.setValue(entityProp.getValue());
-                        field.setDisplayValue(entityProp.getDisplayValue());
+                        if (basicFM.getFieldType()==SupportedFieldType.RULE_SIMPLE 
+                                || basicFM.getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY) {
+                            RuleBuilderField rbf = (RuleBuilderField) field;
+                            String json = entity.getPMap().get(rbf.getJsonFieldName()).getValue();
+                            rbf.setJson(json);
+                            DataWrapper dw = convertJsonToDataWrapper(json);
+                            if (dw != null) {
+                                rbf.setDataWrapper(dw);
+                            }
+                            rbf.setFieldBuilder(entity.getPMap().get(rbf.getFieldService()).getValue());
+                        } else {
+                            field.setValue(entityProp.getValue());
+                            field.setDisplayValue(entityProp.getDisplayValue());
+                        }
                     }
                 }
             }
@@ -410,25 +427,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
 
         return ef;
-    }
-
-    protected void constructRuleBuilder(EntityForm entityForm, Entity entity,
-            String fieldName, String friendlyName, String styleClass, String fieldService,
-            String fieldJson, String tab, Integer tabOrder) {
-        RuleBuilder ruleBuilder = new RuleBuilder();
-        ruleBuilder.setFieldName(fieldName);
-        ruleBuilder.setFriendlyName(friendlyName);
-        ruleBuilder.setStyleClass(styleClass);
-        ruleBuilder.setFieldBuilder(entity.getPMap().get(fieldService).getValue());
-        ruleBuilder.setJsonFieldName(fieldJson);
-        ruleBuilder.setDataWrapper(new DataWrapper());
-        if (entity.getPMap().get(fieldJson) != null) {
-            String json = entity.getPMap().get(fieldJson).getValue();
-            ruleBuilder.setJson(json);
-            DataWrapper dw = (convertJsonToDataWrapper(json) != null)? convertJsonToDataWrapper(json) : new DataWrapper();
-            ruleBuilder.setDataWrapper(dw);
-        }
-        entityForm.addRuleBuilder(ruleBuilder, tab, tabOrder);
     }
 
     /**
@@ -464,17 +462,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         for (Property p : cmd.getProperties()) {
 
             if (p.getMetadata() instanceof BasicFieldMetadata) {
-                BasicFieldMetadata basicFieldMetadata = (BasicFieldMetadata) p.getMetadata();
-                if (basicFieldMetadata.getFieldType()==SupportedFieldType.RULE_SIMPLE) {
-                    constructRuleBuilder(ef, entity, basicFieldMetadata.getName(), basicFieldMetadata.getFriendlyName(),
-                            "rule-builder-simple",basicFieldMetadata.getName()+"FieldService",basicFieldMetadata.getName()+"Json",
-                            basicFieldMetadata.getTab(), basicFieldMetadata.getTabOrder());
-                }
-                if (basicFieldMetadata.getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY) {
-                    constructRuleBuilder(ef, entity, basicFieldMetadata.getName(), basicFieldMetadata.getFriendlyName(),
-                            "rule-builder-complex",basicFieldMetadata.getName()+"FieldService",basicFieldMetadata.getName()+"Json",
-                            basicFieldMetadata.getTab(), basicFieldMetadata.getTabOrder());
-                }
                 continue;
             }
 

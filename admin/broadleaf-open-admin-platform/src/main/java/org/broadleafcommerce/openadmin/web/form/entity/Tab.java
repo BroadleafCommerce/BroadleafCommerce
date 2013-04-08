@@ -3,10 +3,8 @@ package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.component.RuleBuilder;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -35,8 +33,6 @@ public class Tab {
         }
     });
     
-    Set<RuleBuilder> ruleBuilders = new HashSet<RuleBuilder>();
-
     public Boolean getIsVisible() {
         if (listGrids.size() > 0) {
             return true;
@@ -91,12 +87,7 @@ public class Tab {
     public void setListGrids(Set<ListGrid> listGrids) {
         this.listGrids = listGrids;
     }
-
-    public Set<RuleBuilder> getRuleBuilders() {
-        return ruleBuilders;
-    }
-
-    public void setRuleBuilders(Set<RuleBuilder> ruleBuilders) {
-        this.ruleBuilders = ruleBuilders;
-    }
+    
 }
+
+

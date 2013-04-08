@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.web.processor;
 
-import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
@@ -24,16 +23,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
 import org.thymeleaf.spring3.context.SpringWebContext;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
 @Component("blAdminFieldBuilderProcessor")
-public class AdminFieldBuilderProcessor extends AbstractModelVariableModifierProcessor {
+public class AdminFieldBuilderProcessor extends AbstractLocalVariableDefinitionElementProcessor {
 
     private RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
 
@@ -46,11 +47,21 @@ public class AdminFieldBuilderProcessor extends AbstractModelVariableModifierPro
 
     @Override
     public int getPrecedence() {
-        return 10000;
+        return 100;
+    }
+
+    protected void initServices(Arguments arguments) {
+        final ApplicationContext applicationContext = ((SpringWebContext) arguments.getContext()).getApplicationContext();
+
+        if (ruleBuilderFieldServiceFactory == null) {
+            ruleBuilderFieldServiceFactory = (RuleBuilderFieldServiceFactory)
+                    applicationContext.getBean("blRuleBuilderFieldServiceFactory");
+        }
+
     }
 
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {
+    protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
         initServices(arguments);
         FieldWrapper fieldWrapper = new FieldWrapper();
 
@@ -63,17 +74,17 @@ public class AdminFieldBuilderProcessor extends AbstractModelVariableModifierPro
                 fieldWrapper = ruleBuilderFieldService.buildFields();
             }
         }
-
-        addToModel(arguments, "fieldWrapper", fieldWrapper);
+        
+        Map<String, Object> newVars = new HashMap<String, Object>();
+        
+        newVars.put("andre", "TEST");
+        newVars.put("fieldWrapper", fieldWrapper);
+        
+        return newVars;
     }
 
-    protected void initServices(Arguments arguments) {
-        final ApplicationContext applicationContext = ((SpringWebContext) arguments.getContext()).getApplicationContext();
-
-        if (ruleBuilderFieldServiceFactory == null) {
-            ruleBuilderFieldServiceFactory = (RuleBuilderFieldServiceFactory)
-                    applicationContext.getBean("blRuleBuilderFieldServiceFactory");
-        }
-
+    @Override
+    protected boolean removeHostElement(Arguments arguments, Element element) {
+        return false;
     }
 }

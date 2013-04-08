@@ -16,35 +16,27 @@
 
 package org.broadleafcommerce.openadmin.web.form.component;
 
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public class RuleBuilder {
+public class RuleBuilderField extends Field {
 
-    protected String fieldName;
-    protected String friendlyName;
+    protected String fieldService;
     protected String fieldBuilder;
     protected String styleClass;
     protected DataWrapper dataWrapper;
     protected String json;
     protected String jsonFieldName;
 
-    public String getFieldName() {
-        return fieldName;
+    public String getFieldService() {
+        return fieldService;
     }
-
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
-    }
-
-    public String getFriendlyName() {
-        return friendlyName;
-    }
-
-    public void setFriendlyName(String friendlyName) {
-        this.friendlyName = friendlyName;
+    
+    public void setFieldService(String fieldService) {
+        this.fieldService = fieldService;
     }
 
     public String getFieldBuilder() {
