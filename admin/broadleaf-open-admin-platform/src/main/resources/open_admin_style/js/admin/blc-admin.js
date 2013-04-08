@@ -11,8 +11,11 @@ var BLCAdmin = (function($) {
 			$data.attr('id', 'modal' + modals.length);
 			$('body').append($data);
 			
-			// Add foundation custom form elements for any existing ones
-			$data.find('input').foundationCustomForms();
+			// Trigger any necessary on-element-created functions
+            $data.find('.redactor').redactor();
+            $data.find('.datepicker').each(function(index, element) {
+                BLCAdmin.dates.onLive($(element));
+            });
 			
 			// If we already have an active modal, we don't need another backdrop on subsequent modals
 			$data.modal({

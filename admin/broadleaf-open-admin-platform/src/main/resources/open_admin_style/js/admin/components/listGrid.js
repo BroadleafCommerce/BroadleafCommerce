@@ -88,7 +88,9 @@ $(document).ready(function() {
         var currentUrl = $table.data('currenturl');
         var fields = BLCAdmin.listGrid.getRowFields($tr);
         
-        $('body').trigger('listGrid-' + listGridType + '-rowSelected', [link, fields, currentUrl]);
+        if ($tr.find('td.list-grid-no-results').length == 0) {
+            $('body').trigger('listGrid-' + listGridType + '-rowSelected', [link, fields, currentUrl]);
+        }
     });
     
     /**

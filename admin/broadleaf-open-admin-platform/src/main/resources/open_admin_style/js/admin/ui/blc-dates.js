@@ -8,6 +8,17 @@
         displayTimeFormat : 'HH:mm',
         
         /**
+         * This function should be called for any element that wants to be a rulebuilder
+         */
+        onLive : function($element) {
+            // Set the value of this datepicker to be the appropriately formatted one
+            $element.val(this.getDisplayDate($element.val()));
+          
+            // Make it a date-time picker
+            $element.datetimepicker();
+        },
+        
+        /**
          * serverDate should be in the Broadleaf datetime format, "yyyy.MM.dd HH:mm:ss Z" (Java spec)
          * returns the display format, "mm/dd/yy HH:mm" (JavaScript spec)
          */
@@ -69,11 +80,7 @@
 $(document).ready(function() {
     
   $('.datepicker').each(function(index, element) {
-      // Set the value of this datepicker to be the appropriately formatted one
-      $(this).val(BLCAdmin.dates.getDisplayDate($(this).val()));
-      
-      // Make it a date-time picker
-      $(this).datetimepicker();
+      BLCAdmin.dates.onLive($(element));
   });
   
   $('body').on('click', 'div.datepicker-container', function(event) {
