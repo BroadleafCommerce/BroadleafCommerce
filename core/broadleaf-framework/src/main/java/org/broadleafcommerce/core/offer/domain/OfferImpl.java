@@ -264,7 +264,7 @@ public class OfferImpl implements Offer, Status {
         group = Presentation.Group.Name.ItemTarget, groupOrder = Presentation.Group.Order.ItemTarget,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM, 
-        requiredOverride=RequiredOverride.REQUIRED)
+        requiredOverride = RequiredOverride.REQUIRED)
     protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
     
     @Column(name = "TOTALITARIAN_OFFER")
