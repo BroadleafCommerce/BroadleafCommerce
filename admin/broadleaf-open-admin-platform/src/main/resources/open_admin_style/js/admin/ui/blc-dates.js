@@ -76,9 +76,19 @@ $(document).ready(function() {
       $(this).datetimepicker();
   });
   
+  $('body').on('click', 'div.datepicker-container', function(event) {
+      $(this).find('input').datepicker('show');
+  });
+  
   $('body').on('submit', 'form', function(event) {
       $(this).find('.datepicker').each(function(index, element) {
-          $(this).val(BLCAdmin.dates.getServerDate($(this).val()));
+          var $hiddenClone = $('<input>', {
+              type: 'hidden',
+              name: $(this).attr('name'),
+              value: BLCAdmin.dates.getServerDate($(this).val())
+          });
+          
+          $(this).removeAttr('name').after($hiddenClone);
       });
   });
     

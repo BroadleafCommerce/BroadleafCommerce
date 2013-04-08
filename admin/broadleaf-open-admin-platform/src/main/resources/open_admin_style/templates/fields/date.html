@@ -1,3 +1,6 @@
 <div class="field-label" th:text="#{${field.friendlyName}}" />
 
-<input type="text" class="three datepicker" th:field="*{fields['__${field.name}__'].value}" />
+<div class="datepicker-container">
+    <input type="text" class="three datepicker" th:field="*{fields['__${field.name}__'].value}" />
+    <i class="icon-calendar"></i>
+</div>

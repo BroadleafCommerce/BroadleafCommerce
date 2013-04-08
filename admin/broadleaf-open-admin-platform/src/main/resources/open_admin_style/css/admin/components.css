@@ -13,6 +13,18 @@ form.custom div.custom.dropdown {
 div.additional-foreign-key-container {
 }
 
+input.datepicker {
+	display: inline-block;
+}
+
+.datepicker-container {
+	display: inline;
+}
+
+.datepicker-container:hover, input.datepicker:hover {
+	cursor: pointer;
+}
+
 .ui-datepicker-title,
 .ui-datepicker-calendar th,
 .ui-datepicker-calendar td {
