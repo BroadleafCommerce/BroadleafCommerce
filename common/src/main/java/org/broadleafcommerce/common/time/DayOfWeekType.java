@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.time;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ public class DayOfWeekType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, DayOfWeekType> TYPES = new HashMap<String, DayOfWeekType>();
+    private static final Map<String, DayOfWeekType> TYPES = new LinkedHashMap<String, DayOfWeekType>();
 
     public static final DayOfWeekType SUNDAY  = new DayOfWeekType("1", "Sunday");
     public static final DayOfWeekType MONDAY  = new DayOfWeekType("2", "Monday");

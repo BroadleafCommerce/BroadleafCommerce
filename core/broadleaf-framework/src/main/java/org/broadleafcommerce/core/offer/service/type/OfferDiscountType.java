@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.offer.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of discount types.
@@ -30,7 +30,7 @@ public class OfferDiscountType implements Serializable, BroadleafEnumerationType
     
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OfferDiscountType> TYPES = new HashMap<String, OfferDiscountType>();
+    private static final Map<String, OfferDiscountType> TYPES = new LinkedHashMap<String, OfferDiscountType>();
 
     public static final OfferDiscountType PERCENT_OFF = new OfferDiscountType("PERCENT_OFF", "Percent Off");
     public static final OfferDiscountType AMOUNT_OFF = new OfferDiscountType("AMOUNT_OFF", "Amount Off");

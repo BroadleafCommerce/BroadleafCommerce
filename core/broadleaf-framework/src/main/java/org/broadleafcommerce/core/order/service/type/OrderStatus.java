@@ -20,7 +20,7 @@ import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.core.order.domain.Order;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -39,7 +39,7 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OrderStatus> TYPES = new HashMap<String, OrderStatus>();
+    private static final Map<String, OrderStatus> TYPES = new LinkedHashMap<String, OrderStatus>();
 
     public static final OrderStatus NAMED = new OrderStatus("NAMED", "Named");
     public static final OrderStatus IN_PROCESS = new OrderStatus("IN_PROCESS", "In Process");

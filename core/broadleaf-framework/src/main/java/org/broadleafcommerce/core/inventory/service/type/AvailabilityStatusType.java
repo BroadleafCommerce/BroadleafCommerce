@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.inventory.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -33,7 +33,7 @@ import java.util.Map;
 public class AvailabilityStatusType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
-    private static final Map<String, AvailabilityStatusType> TYPES = new HashMap<String, AvailabilityStatusType>();
+    private static final Map<String, AvailabilityStatusType> TYPES = new LinkedHashMap<String, AvailabilityStatusType>();
 
     public static final AvailabilityStatusType AVAILABLE  = new AvailabilityStatusType("AVAILABLE", "Available");
     public static final AvailabilityStatusType UNAVAILABLE  = new AvailabilityStatusType("UNAVAILABLE", "Unavailable");

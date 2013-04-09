@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.common.vendor.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of container shape types.
@@ -31,7 +31,7 @@ public class ContainerShapeType implements Serializable, BroadleafEnumerationTyp
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ContainerShapeType> TYPES = new HashMap<String, ContainerShapeType>();
+    private static final Map<String, ContainerShapeType> TYPES = new LinkedHashMap<String, ContainerShapeType>();
 
     public static ContainerShapeType getInstance(final String type) {
         return TYPES.get(type);

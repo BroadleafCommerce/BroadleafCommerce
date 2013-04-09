@@ -21,7 +21,7 @@ package org.broadleafcommerce.openadmin.server.domain;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ public class SandBoxItemType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, SandBoxItemType> TYPES = new HashMap<String, SandBoxItemType>();
+    private static final Map<String, SandBoxItemType> TYPES = new LinkedHashMap<String, SandBoxItemType>();
 
     public static final SandBoxItemType PAGE  = new SandBoxItemType("PAGE", "Page");
     public static final SandBoxItemType STRUCTURED_CONTENT  = new SandBoxItemType("STRUCTURED_CONTENT", "Structured Content");

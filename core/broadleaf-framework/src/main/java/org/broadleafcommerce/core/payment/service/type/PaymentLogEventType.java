@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.payment.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of payment log types.
@@ -32,7 +32,7 @@ public class PaymentLogEventType implements Serializable, BroadleafEnumerationTy
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, PaymentLogEventType> TYPES = new HashMap<String, PaymentLogEventType>();
+    private static final Map<String, PaymentLogEventType> TYPES = new LinkedHashMap<String, PaymentLogEventType>();
 
     public static final PaymentLogEventType START  = new PaymentLogEventType("START", "Start");
     public static final PaymentLogEventType FINISHED = new PaymentLogEventType("FINISHED", "Finished");

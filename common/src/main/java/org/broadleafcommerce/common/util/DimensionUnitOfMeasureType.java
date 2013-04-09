@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.util;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -32,7 +32,7 @@ public class DimensionUnitOfMeasureType implements Serializable, BroadleafEnumer
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, DimensionUnitOfMeasureType> TYPES = new HashMap<String, DimensionUnitOfMeasureType>();
+    private static final Map<String, DimensionUnitOfMeasureType> TYPES = new LinkedHashMap<String, DimensionUnitOfMeasureType>();
 
     public static final DimensionUnitOfMeasureType CENTIMETERS  = new DimensionUnitOfMeasureType("CENTIMETERS", "Centimeters");
     public static final DimensionUnitOfMeasureType METERS  = new DimensionUnitOfMeasureType("METERS", "Meters");

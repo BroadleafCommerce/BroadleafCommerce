@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.site.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -44,7 +44,7 @@ public class SiteResolutionType implements Serializable, BroadleafEnumerationTyp
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, SiteResolutionType> TYPES = new HashMap<String, SiteResolutionType>();
+    private static final Map<String, SiteResolutionType> TYPES = new LinkedHashMap<String, SiteResolutionType>();
 
 
     public static final SiteResolutionType DOMAIN = new SiteResolutionType("DOMAIN", "Domain");

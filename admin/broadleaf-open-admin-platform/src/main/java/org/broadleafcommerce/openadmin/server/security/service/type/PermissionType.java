@@ -19,7 +19,7 @@ package org.broadleafcommerce.openadmin.server.security.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ public class PermissionType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, PermissionType> TYPES = new HashMap<String, PermissionType>();
+    private static final Map<String, PermissionType> TYPES = new LinkedHashMap<String, PermissionType>();
 
     public static final PermissionType READ  = new PermissionType("READ", "Read");
     public static final PermissionType CREATE  = new PermissionType("CREATE", "Create");

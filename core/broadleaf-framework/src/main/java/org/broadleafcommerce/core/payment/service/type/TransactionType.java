@@ -17,8 +17,9 @@
 package org.broadleafcommerce.core.payment.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +32,7 @@ public class TransactionType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, TransactionType> TYPES = new HashMap<String, TransactionType>();
+    private static final Map<String, TransactionType> TYPES = new LinkedHashMap<String, TransactionType>();
 
     public static final TransactionType AUTHORIZE = new TransactionType("AUTHORIZE", "Authorize");
     public static final TransactionType DEBIT = new TransactionType("DEBIT", "Debit");

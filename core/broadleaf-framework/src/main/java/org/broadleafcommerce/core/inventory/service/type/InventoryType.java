@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.inventory.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ public class InventoryType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, InventoryType> TYPES = new HashMap<String, InventoryType>();
+    private static final Map<String, InventoryType> TYPES = new LinkedHashMap<String, InventoryType>();
 
     public static final InventoryType NONE = new InventoryType("NONE", "None");
     public static final InventoryType BASIC = new InventoryType("BASIC", "Basic");

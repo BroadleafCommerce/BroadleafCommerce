@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.email.service.message;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -32,7 +32,7 @@ public class EmailPropertyType implements Serializable, BroadleafEnumerationType
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, EmailPropertyType> TYPES = new HashMap<String, EmailPropertyType>();
+    private static final Map<String, EmailPropertyType> TYPES = new LinkedHashMap<String, EmailPropertyType>();
 
     public static final EmailPropertyType USER = new EmailPropertyType("user", "User");
     public static final EmailPropertyType INFO = new EmailPropertyType("info", "Info");

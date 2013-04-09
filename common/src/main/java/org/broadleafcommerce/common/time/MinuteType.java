@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.time;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ public class MinuteType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, MinuteType> TYPES = new HashMap<String, MinuteType>();
+    private static final Map<String, MinuteType> TYPES = new LinkedHashMap<String, MinuteType>();
 
     public static final MinuteType ZERO  = new MinuteType("0", "00");
     public static final MinuteType ONE  = new MinuteType("1", "01");
@@ -93,7 +93,7 @@ public class MinuteType implements Serializable, BroadleafEnumerationType {
     public static final MinuteType FIFTYSEVEN  = new MinuteType("57", "57");
     public static final MinuteType FIFTYEIGHT  = new MinuteType("58", "58");
     public static final MinuteType FIFTYNINE  = new MinuteType("59", "59");
-
+    
     public static MinuteType getInstance(final String type) {
         return TYPES.get(type);
     }

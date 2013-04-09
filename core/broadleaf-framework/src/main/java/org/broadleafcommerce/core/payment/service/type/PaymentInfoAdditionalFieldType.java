@@ -20,14 +20,14 @@ package org.broadleafcommerce.core.payment.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class PaymentInfoAdditionalFieldType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, PaymentInfoAdditionalFieldType> TYPES = new HashMap<String, PaymentInfoAdditionalFieldType>();
+    private static final Map<String, PaymentInfoAdditionalFieldType> TYPES = new LinkedHashMap<String, PaymentInfoAdditionalFieldType>();
 
     public static final PaymentInfoAdditionalFieldType NAME_ON_CARD = new PaymentInfoAdditionalFieldType("NAME_ON_CARD", "Cardholders Name");
     public static final PaymentInfoAdditionalFieldType CARD_TYPE = new PaymentInfoAdditionalFieldType("CARD_TYPE", "Card Type");

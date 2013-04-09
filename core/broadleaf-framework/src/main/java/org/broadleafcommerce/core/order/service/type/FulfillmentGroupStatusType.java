@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.order.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of fulfillment group status types.
@@ -32,7 +32,7 @@ public class FulfillmentGroupStatusType implements Serializable, BroadleafEnumer
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, FulfillmentGroupStatusType> TYPES = new HashMap<String, FulfillmentGroupStatusType>();
+    private static final Map<String, FulfillmentGroupStatusType> TYPES = new LinkedHashMap<String, FulfillmentGroupStatusType>();
     
     /**
      * Use FULFILLED, PARTIALLY_FULFILLED, DELIVERED, or PARTIALLY_DELIVERED

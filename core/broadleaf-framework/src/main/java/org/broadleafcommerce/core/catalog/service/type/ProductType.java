@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.catalog.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ public class ProductType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ProductType> TYPES = new HashMap<String, ProductType>();
+    private static final Map<String, ProductType> TYPES = new LinkedHashMap<String, ProductType>();
 
     public static final ProductType PRODUCT  = new ProductType("org.broadleafcommerce.core.catalog.domain.Product", "Normal Product");
     public static final ProductType BUNDLE  = new ProductType("org.broadleafcommerce.core.catalog.domain.ProductBundle", "Product Bundle");

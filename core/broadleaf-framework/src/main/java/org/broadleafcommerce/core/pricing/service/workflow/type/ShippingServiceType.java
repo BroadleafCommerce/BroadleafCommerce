@@ -21,7 +21,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentPricingProvider;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -36,7 +36,7 @@ public class ShippingServiceType implements Serializable, BroadleafEnumerationTy
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ShippingServiceType> TYPES = new HashMap<String, ShippingServiceType>();
+    private static final Map<String, ShippingServiceType> TYPES = new LinkedHashMap<String, ShippingServiceType>();
 
     public static final ShippingServiceType BANDED_SHIPPING = new ShippingServiceType("BANDED_SHIPPING", "Banded Shipping");
     public static final ShippingServiceType USPS = new ShippingServiceType("USPS", "United States Postal Service");

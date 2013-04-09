@@ -19,7 +19,7 @@ package org.broadleafcommerce.openadmin.server.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -33,7 +33,7 @@ public class ContextType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ContextType> TYPES = new HashMap<String, ContextType>();
+    private static final Map<String, ContextType> TYPES = new LinkedHashMap<String, ContextType>();
 
     public static final ContextType GLOBAL = new ContextType("GLOBAL", "Global");
     public static final ContextType SITE = new ContextType("SITE", "Site");

@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.time;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ public class DayOfMonthType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, DayOfMonthType> TYPES = new HashMap<String, DayOfMonthType>();
+    private static final Map<String, DayOfMonthType> TYPES = new LinkedHashMap<String, DayOfMonthType>();
 
     public static final DayOfMonthType ONE  = new DayOfMonthType("1", "01");
     public static final DayOfMonthType TWO  = new DayOfMonthType("2", "02");

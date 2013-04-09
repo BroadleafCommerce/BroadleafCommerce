@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.order.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ public class FulfillmentBandResultAmountType implements Serializable, BroadleafE
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, FulfillmentBandResultAmountType> TYPES = new HashMap<String, FulfillmentBandResultAmountType>();
+    private static final Map<String, FulfillmentBandResultAmountType> TYPES = new LinkedHashMap<String, FulfillmentBandResultAmountType>();
 
     public static final FulfillmentBandResultAmountType RATE = new FulfillmentBandResultAmountType("RATE", "Rate");
     public static final FulfillmentBandResultAmountType PERCENTAGE = new FulfillmentBandResultAmountType("PERCENTAGE", "Percentage");

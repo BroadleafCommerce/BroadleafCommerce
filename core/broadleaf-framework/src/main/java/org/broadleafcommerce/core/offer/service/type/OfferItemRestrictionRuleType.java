@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.offer.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of offer item restriction types. Determines how items in the order can be used across multiple promotions
@@ -34,7 +34,7 @@ public class OfferItemRestrictionRuleType implements Serializable, BroadleafEnum
     
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OfferItemRestrictionRuleType> TYPES = new HashMap<String, OfferItemRestrictionRuleType>();
+    private static final Map<String, OfferItemRestrictionRuleType> TYPES = new LinkedHashMap<String, OfferItemRestrictionRuleType>();
 
     public static final OfferItemRestrictionRuleType NONE = new OfferItemRestrictionRuleType("NONE", "None");
     public static final OfferItemRestrictionRuleType QUALIFIER = new OfferItemRestrictionRuleType("QUALIFIER", "Qualifier Only");

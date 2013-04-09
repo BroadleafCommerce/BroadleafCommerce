@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.vendor.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ public class ContainerSizeType implements Serializable, BroadleafEnumerationType
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ContainerSizeType> TYPES = new HashMap<String, ContainerSizeType>();
+    private static final Map<String, ContainerSizeType> TYPES = new LinkedHashMap<String, ContainerSizeType>();
 
     public static ContainerSizeType getInstance(final String type) {
         return TYPES.get(type);

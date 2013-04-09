@@ -21,7 +21,7 @@ package org.broadleafcommerce.openadmin.server.domain;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ public class SandBoxActionType implements Serializable, BroadleafEnumerationType
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, SandBoxActionType> TYPES = new HashMap<String, SandBoxActionType>();
+    private static final Map<String, SandBoxActionType> TYPES = new LinkedHashMap<String, SandBoxActionType>();
 
     public static final SandBoxActionType EDIT     = new SandBoxActionType("EDIT", "Edit");
     public static final SandBoxActionType PROMOTE  = new SandBoxActionType("PROMOTE", "Promote");

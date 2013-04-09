@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.common.payment;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of credit card types.
@@ -32,7 +32,7 @@ public class CreditCardType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, CreditCardType> TYPES = new HashMap<String, CreditCardType>();
+    private static final Map<String, CreditCardType> TYPES = new LinkedHashMap<String, CreditCardType>();
 
     public static final CreditCardType MASTERCARD  = new CreditCardType("MASTERCARD", "Master Card");
     public static final CreditCardType VISA  = new CreditCardType("VISA", "Visa");

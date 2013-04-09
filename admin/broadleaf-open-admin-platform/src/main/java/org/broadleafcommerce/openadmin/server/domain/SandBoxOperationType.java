@@ -20,7 +20,7 @@ package org.broadleafcommerce.openadmin.server.domain;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -30,7 +30,7 @@ public class SandBoxOperationType implements Serializable, BroadleafEnumerationT
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, SandBoxOperationType> TYPES = new HashMap<String, SandBoxOperationType>();
+    private static final Map<String, SandBoxOperationType> TYPES = new LinkedHashMap<String, SandBoxOperationType>();
 
     public static final SandBoxOperationType ADD     = new SandBoxOperationType("ADD", "Add");
     public static final SandBoxOperationType UPDATE  = new SandBoxOperationType("UPDATE", "Update");

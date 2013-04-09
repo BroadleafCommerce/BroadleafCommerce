@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.order.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -32,7 +32,7 @@ public class FulfillmentType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, FulfillmentType> TYPES = new HashMap<String, FulfillmentType>();
+    private static final Map<String, FulfillmentType> TYPES = new LinkedHashMap<String, FulfillmentType>();
 
     public static final FulfillmentType DIGITAL = new FulfillmentType("DIGITAL", "Digital");
     public static final FulfillmentType PHYSICAL_SHIP = new FulfillmentType("PHYSICAL_SHIP", "Physical Ship");

@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.order.domain;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -32,7 +32,7 @@ public class TaxType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, TaxType> TYPES = new HashMap<String, TaxType>();
+    private static final Map<String, TaxType> TYPES = new LinkedHashMap<String, TaxType>();
 
     public static final TaxType CITY = new TaxType("CITY", "City");
     public static final TaxType STATE = new TaxType("STATE", "State");

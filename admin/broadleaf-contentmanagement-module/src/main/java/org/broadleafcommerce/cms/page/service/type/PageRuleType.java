@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.cms.page.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of offer rule types.<BR>
@@ -33,7 +33,7 @@ public class PageRuleType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, PageRuleType> TYPES = new HashMap<String, PageRuleType>();
+    private static final Map<String, PageRuleType> TYPES = new LinkedHashMap<String, PageRuleType>();
 
     public static final PageRuleType REQUEST = new PageRuleType("REQUEST", "Request");
     public static final PageRuleType TIME = new PageRuleType("TIME", "Time");

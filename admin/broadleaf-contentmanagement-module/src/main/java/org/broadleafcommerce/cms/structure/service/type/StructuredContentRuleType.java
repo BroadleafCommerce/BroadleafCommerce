@@ -19,7 +19,7 @@ package org.broadleafcommerce.cms.structure.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -33,7 +33,7 @@ public class StructuredContentRuleType implements Serializable, BroadleafEnumera
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, StructuredContentRuleType> TYPES = new HashMap<String, StructuredContentRuleType>();
+    private static final Map<String, StructuredContentRuleType> TYPES = new LinkedHashMap<String, StructuredContentRuleType>();
 
     public static final StructuredContentRuleType REQUEST = new StructuredContentRuleType("REQUEST", "Request");
     public static final StructuredContentRuleType TIME = new StructuredContentRuleType("TIME", "Time");

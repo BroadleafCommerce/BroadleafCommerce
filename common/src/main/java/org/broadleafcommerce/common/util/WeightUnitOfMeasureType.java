@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.util;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -32,7 +32,7 @@ public class WeightUnitOfMeasureType implements Serializable, BroadleafEnumerati
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, WeightUnitOfMeasureType> TYPES = new HashMap<String, WeightUnitOfMeasureType>();
+    private static final Map<String, WeightUnitOfMeasureType> TYPES = new LinkedHashMap<String, WeightUnitOfMeasureType>();
 
     public static final WeightUnitOfMeasureType POUNDS  = new WeightUnitOfMeasureType("POUNDS", "Pounds");
     public static final WeightUnitOfMeasureType KILOGRAMS  = new WeightUnitOfMeasureType("KILOGRAMS", "Kilograms");

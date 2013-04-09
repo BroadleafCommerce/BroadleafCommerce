@@ -19,7 +19,7 @@ package org.broadleafcommerce.profile.core.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -37,7 +37,7 @@ public class LocaleType implements Serializable, BroadleafEnumerationType {
     
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, LocaleType> TYPES = new HashMap<String, LocaleType>();
+    private static final Map<String, LocaleType> TYPES = new LinkedHashMap<String, LocaleType>();
 
     public static final LocaleType US_ENGLISH  = new LocaleType("en_US", "US English", Locale.US);
     public static final LocaleType CANADA  = new LocaleType("en_CA", "Canada English", Locale.CANADA);

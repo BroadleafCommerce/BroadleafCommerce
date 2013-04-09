@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.vendor.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -32,7 +32,7 @@ public class ServiceStatusType implements Serializable, BroadleafEnumerationType
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ServiceStatusType> TYPES = new HashMap<String, ServiceStatusType>();
+    private static final Map<String, ServiceStatusType> TYPES = new LinkedHashMap<String, ServiceStatusType>();
 
     public static final ServiceStatusType UP  = new ServiceStatusType("UP", "Up");
     public static final ServiceStatusType DOWN  = new ServiceStatusType("DOWN", "Down");

@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.order.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of order item types.
@@ -31,7 +31,7 @@ public class OrderItemType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OrderItemType> TYPES = new HashMap<String, OrderItemType>();
+    private static final Map<String, OrderItemType> TYPES = new LinkedHashMap<String, OrderItemType>();
 
     public static final OrderItemType DISCRETE  = new OrderItemType("org.broadleafcommerce.core.order.domain.DiscreteOrderItem", "Discrete Order Item");
     public static final OrderItemType EXTERNALLY_PRICED  = new OrderItemType("org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItem", "Externally Priced Discrete Order Item");

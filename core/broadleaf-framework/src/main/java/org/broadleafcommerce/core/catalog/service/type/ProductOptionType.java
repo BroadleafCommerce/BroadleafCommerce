@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.catalog.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -30,7 +30,7 @@ public class ProductOptionType implements Serializable, BroadleafEnumerationType
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ProductOptionType> TYPES = new HashMap<String, ProductOptionType>();
+    private static final Map<String, ProductOptionType> TYPES = new LinkedHashMap<String, ProductOptionType>();
 
     public static final ProductOptionType COLOR  = new ProductOptionType("COLOR","Color");
     public static final ProductOptionType SIZE  = new ProductOptionType("SIZE","Size");

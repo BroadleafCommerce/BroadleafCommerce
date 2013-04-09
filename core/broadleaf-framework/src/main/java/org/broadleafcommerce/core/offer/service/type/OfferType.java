@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.offer.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of offer types.
@@ -30,7 +30,7 @@ public class OfferType implements Serializable, BroadleafEnumerationType {
     
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OfferType> TYPES = new HashMap<String, OfferType>();
+    private static final Map<String, OfferType> TYPES = new LinkedHashMap<String, OfferType>();
 
     public static final OfferType ORDER = new OfferType("ORDER", "Order");
     public static final OfferType FULFILLMENT_GROUP = new OfferType("FULFILLMENT_GROUP", "Fulfillment Group");
