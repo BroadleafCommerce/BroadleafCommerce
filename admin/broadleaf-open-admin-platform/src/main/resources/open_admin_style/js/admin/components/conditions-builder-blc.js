@@ -181,7 +181,7 @@
             });
             div.append(removeLink);
 
-            var select = $("<select>", {"class": "all-any-none no-custom"});
+            var select = $("<select>", {"class": "all-any-none"});
             select.append($("<option>", {"value": "all", "text": "All", "selected": kind == "all"}));
             select.append($("<option>", {"value": "any", "text": "Any", "selected": kind == "any"}));
             select.append($("<option>", {"value": "none", "text": "None", "selected": kind == "none"}));
@@ -249,7 +249,7 @@
     };
 
     function getFieldSelect(fields, ruleData) {
-        var select = $("<select>", {"class": "field no-custom"});
+        var select = $("<select>", {"class": "field"});
         for(var i=0; i < fields.length; i++) {
             var field = fields[i];
             var option = $("<option>", {
@@ -264,7 +264,7 @@
     }
 
     function getOperatorSelect() {
-        var select = $("<select>", {"class": "operator no-custom"});
+        var select = $("<select>", {"class": "operator"});
         select.change(onOperatorSelectChange);
         return select;
     }

@@ -24,105 +24,105 @@ import org.springframework.stereotype.Service;
 /**
  * An implementation of a RuleBuilderFieldService
  * that constructs metadata necessary
- * to build the supported fields for a Sku entity
+ * to build the supported fields for a Product entity
  *
- * @author Priyesh Patel
+ * @author Andre Azzolini (apazzolini)
  */
-@Service("blSkuFieldService")
-public class SkuFieldServiceImpl  extends AbstractRuleBuilderFieldService {
-
+@Service("blProductFieldService")
+public class ProductFieldServiceImpl  extends AbstractRuleBuilderFieldService {
 
     {
         fields.add(new FieldData.Builder()
-                .label("Sku - Name")
-                .name("name")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Description")
-                .name("description")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Long Description")
-                .name("longDescription")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-
-        fields.add(new FieldData.Builder()
-                .label("Sku - Sale Price")
-                .name("salePrice")
-                .operators("blcOperators_Numeric")
-                .options("[]")
-                .type(SupportedFieldType.MONEY)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Retail Price")
-                .name("retailPrice")
-                .operators("blcOperators_Numeric")
-                .options("[]")
-                .type(SupportedFieldType.MONEY)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Fulfillment Type")
-                .name("fulfillmentType")
-                .operators("blcOperators_Enumeration")
-                .options("blcOptions_FulfillmentType")
-                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Inventory Type")
-                .name("inventoryType")
-                .operators("blcOperators_Enumeration")
-                .options("blcOptions_InventoryType")
-                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - taxable")
-                .name("taxable")
-                .operators("blcOperators_Boolean")
-                .options("[]")
-                .type(SupportedFieldType.BOOLEAN)
-                .build());
-        fields.add(new FieldData.Builder()
                 .label("Product - URL")
-                .name("product.url")
+                .name("url")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("Product - Is Featured Product")
-                .name("product.isFeaturedProduct")
+                .name("isFeaturedProduct")
                 .operators("blcOperators_Boolean")
                 .options("[]")
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("Product - Manufacturer")
-                .name("product.manufacturer")
+                .name("manufacturer")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("Product - Model")
-                .name("product.model")
+                .name("model")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
+                .build());
+        
+        
+        fields.add(new FieldData.Builder()
+                .label("Sku - Name")
+                .name("defaultSku.name")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Description")
+                .name("defaultSku.description")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Long Description")
+                .name("defaultSku.longDescription")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Sale Price")
+                .name("defaultSku.salePrice")
+                .operators("blcOperators_Numeric")
+                .options("[]")
+                .type(SupportedFieldType.MONEY)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Retail Price")
+                .name("defaultSku.retailPrice")
+                .operators("blcOperators_Numeric")
+                .options("[]")
+                .type(SupportedFieldType.MONEY)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Fulfillment Type")
+                .name("defaultSku.fulfillmentType")
+                .operators("blcOperators_Enumeration")
+                .options("blcOptions_FulfillmentType")
+                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Inventory Type")
+                .name("defaultSku.inventoryType")
+                .operators("blcOperators_Enumeration")
+                .options("blcOptions_InventoryType")
+                .type(SupportedFieldType.BROADLEAF_ENUMERATION)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - taxable")
+                .name("defaultSku.taxable")
+                .operators("blcOperators_Boolean")
+                .options("[]")
+                .type(SupportedFieldType.BOOLEAN)
                 .build());
     }
 
     @Override
     public String getName() {
-        return "SKU_FIELDS";
+        return "PRODUCT_FIELDS";
     }
 
 }

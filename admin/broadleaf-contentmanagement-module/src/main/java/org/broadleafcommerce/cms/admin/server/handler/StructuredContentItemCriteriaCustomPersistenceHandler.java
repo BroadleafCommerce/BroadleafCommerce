@@ -16,12 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
@@ -36,6 +30,13 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+
+import java.util.Map;
+
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * @author Jeff Fischer
@@ -114,9 +115,9 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
                     checkCriteria: {
                         StructuredContent myContent = scQuery.getSingleResult();
                         for (StructuredContentItemCriteria itemCriteria : myContent.getQualifyingItemCriteria()) {
-                            if (itemCriteria.getOrderItemMatchRule().equals(adminInstance.getOrderItemMatchRule()) && itemCriteria.getQuantity().equals(adminInstance.getQuantity())) {
+                            if (itemCriteria.getMatchRule().equals(adminInstance.getMatchRule()) && itemCriteria.getQuantity().equals(adminInstance.getQuantity())) {
                                 //manually set the values - otherwise unwanted properties will be set
-                                itemCriteria.setOrderItemMatchRule(entity.findProperty("orderItemMatchRule").getValue());
+                                itemCriteria.setMatchRule(entity.findProperty("orderItemMatchRule").getValue());
                                 itemCriteria.setQuantity(Integer.parseInt(entity.findProperty("quantity").getValue()));
                                 adminInstance = itemCriteria;
                                 break checkCriteria;
@@ -162,7 +163,7 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
                 try {
                     StructuredContent myContent = scQuery.getSingleResult();
                     for (StructuredContentItemCriteria itemCriteria : myContent.getQualifyingItemCriteria()) {
-                        if (itemCriteria.getOrderItemMatchRule().equals(adminInstance.getOrderItemMatchRule()) && itemCriteria.getQuantity().equals(adminInstance.getQuantity())) {
+                        if (itemCriteria.getMatchRule().equals(adminInstance.getMatchRule()) && itemCriteria.getQuantity().equals(adminInstance.getQuantity())) {
                             myContent.getQualifyingItemCriteria().remove(itemCriteria);
                             return;
                         }

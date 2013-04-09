@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,13 +34,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
 /**
  * 
@@ -108,18 +108,14 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
         this.quantity = receiveQuantity;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#getOrderItemMatchRule()
-     */
-    public String getOrderItemMatchRule() {
+    @Override
+    public String getMatchRule() {
         return orderItemMatchRule;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#setOrderItemMatchRule(java.lang.String)
-     */
-    public void setOrderItemMatchRule(String orderItemMatchRule) {
-        this.orderItemMatchRule = orderItemMatchRule;
+    @Override
+    public void setMatchRule(String matchRule) {
+        this.orderItemMatchRule = matchRule;
     }
 
     public StructuredContent getStructuredContent() {

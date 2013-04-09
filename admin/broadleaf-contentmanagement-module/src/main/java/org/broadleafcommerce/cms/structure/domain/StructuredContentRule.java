@@ -16,9 +16,12 @@
 
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.rule.SimpleRule;
+
+import java.io.Serializable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Serializable;
 
 /**
  * Implementations hold the values for a rule used to determine if a <code>StructuredContent</code>
@@ -34,7 +37,7 @@ import java.io.Serializable;
  * @author bpolster
  *
  */
-public interface StructuredContentRule extends Serializable {
+public interface StructuredContentRule extends SimpleRule, Serializable {
 
     /**
      * Gets the primary key.
@@ -51,20 +54,6 @@ public interface StructuredContentRule extends Serializable {
      * @param id the new primary key
      */
     public void setId(@Nullable Long id);
-
-    /**
-     *
-     * @return the rule as an MVEL string
-     */
-    @Nonnull
-    public String getMatchRule();
-
-    /**
-     * Sets the match rule used to test this item.
-     *
-     * @param matchRule
-     */
-    public void setMatchRule(@Nonnull String matchRule);
 
     /**
      * Builds a copy of this content rule.   Used by the content management system when an

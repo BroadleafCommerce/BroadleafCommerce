@@ -158,10 +158,23 @@
             <list>
                 <ref bean="blOrderItemFieldService"/>
                 <ref bean="blCustomerFieldService"/>
+                <ref bean="blTimeFieldService"/>
+                <ref bean="blRequestFieldService"/>
                 <ref bean="blOrderFieldService"/>
                 <ref bean="blFulfillmentGroupFieldService"/>
                 <ref bean="blLocaleFieldService"/>
                 <ref bean="blSkuFieldService"/>
+                <ref bean="blProductFieldService"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blRuleBuilderEnumOptionsExtensionManager" class="org.broadleafcommerce.openadmin.web.rulebuilder.enums.RuleBuilderEnumOptionsExtensionManager">
+        <property name="listeners">
+            <list>
+                <bean class="org.broadleafcommerce.admin.web.rulebuilder.service.options.TimeEnumOptionsExtensionListener" />
+                <bean class="org.broadleafcommerce.admin.web.rulebuilder.service.options.InventoryTypeEnumOptionsExtensionListener" />
+                <bean class="org.broadleafcommerce.admin.web.rulebuilder.service.options.FulfillmentTypeEnumOptionsExtensionListener" />
             </list>
         </property>
     </bean>

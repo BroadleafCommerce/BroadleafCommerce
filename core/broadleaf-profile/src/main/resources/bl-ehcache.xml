@@ -52,6 +52,13 @@
         overflowToDisk="true"
         timeToLiveSeconds="600"/>
         
+     <cache
+        name="generatedResourceCache"
+        maxElementsInMemory="100"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="600"/>
+        
      <!-- This is required by Hibernate to ensure that query caches return 
           corrrect results. It must contain at least as many entries as there are 
           DB tables. -->

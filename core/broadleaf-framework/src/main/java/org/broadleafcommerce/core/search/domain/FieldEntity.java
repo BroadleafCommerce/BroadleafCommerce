@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.search.domain;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, FieldEntity> TYPES = new HashMap<String, FieldEntity>();
+    private static final Map<String, FieldEntity> TYPES = new LinkedHashMap<String, FieldEntity>();
 
     public static final FieldEntity PRODUCT = new FieldEntity("PRODUCT", "product");
     public static final FieldEntity CUSTOMER = new FieldEntity("CUSTOMER", "customer");
