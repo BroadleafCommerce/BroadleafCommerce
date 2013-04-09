@@ -17,9 +17,14 @@
 package org.broadleafcommerce.common.util;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
@@ -105,6 +110,21 @@ public class BLCMapUtils {
         }
         
         return map;
+    }
+    
+    public static <K, V> Map<K, V> valueSortedMap(Map<K, V> map, Comparator<Entry<K, V>> comparator) {
+        Set<Entry<K, V>> valueSortedEntries = new TreeSet<Entry<K, V>>(comparator);
+        
+        for (Entry<K, V> entry : map.entrySet()) {
+            valueSortedEntries.add(entry);
+        }
+        
+        Map<K, V> sortedMap = new LinkedHashMap<K, V>(map.size());
+        for (Entry<K, V> entry : valueSortedEntries) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+        
+        return sortedMap;
     }
 
 }
