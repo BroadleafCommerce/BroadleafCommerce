@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -27,9 +28,16 @@ public interface PromotableItemFactory {
 
     PromotableCandidateOrderOffer createPromotableCandidateOrderOffer(PromotableOrder promotableOrder, Offer offer);
 
+    PromotableCandidateOrderOffer createPromotableCandidateOrderOffer(PromotableOrder promotableOrder,
+            Offer offer, Money potentialSavings);
+
     PromotableOrderAdjustment createPromotableOrderAdjustment(
             PromotableCandidateOrderOffer promotableCandidateOrderOffer,
             PromotableOrder order);
+
+    PromotableOrderAdjustment createPromotableOrderAdjustment(
+            PromotableCandidateOrderOffer promotableCandidateOrderOffer,
+            PromotableOrder order, Money value);
 
     PromotableOrderItem createPromotableOrderItem(OrderItem orderItem, PromotableOrder order,
             boolean includeAdjustments);
