@@ -505,14 +505,13 @@ table.list-grid-table thead tr th {
     box-sizing: content-box;
     display: none;
     position: absolute;
-    left: -1px;
+    right: 0;
     background: #fff;
     background: rgba(255, 255, 255, 0.98);
     list-style: none;
     margin: 0;
     padding: 0;
     border: 1px solid #cccccc;
-    min-width: 100%;
     z-index: 40;
 }
 
@@ -585,8 +584,8 @@ table.list-grid-table thead tr th {
     width: 255px;
 }
 
-.listgrid-headerBtn.dropdown ul.no-hover.show-dropdown.end {
-    width: 100%;
+.listgrid-headerBtn.dropdown ul.no-hover.show-dropdown.first {
+    left: 0;
 }
 
 .listgrid-headerBtn.dropdown:hover > ul.no-hover {
