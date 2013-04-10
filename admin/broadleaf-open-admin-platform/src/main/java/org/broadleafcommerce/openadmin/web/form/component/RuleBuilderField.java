@@ -24,20 +24,11 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
  */
 public class RuleBuilderField extends Field {
 
-    protected String fieldService;
     protected String fieldBuilder;
     protected String styleClass;
     protected DataWrapper dataWrapper;
     protected String json;
     protected String jsonFieldName;
-
-    public String getFieldService() {
-        return fieldService;
-    }
-    
-    public void setFieldService(String fieldService) {
-        this.fieldService = fieldService;
-    }
 
     public String getFieldBuilder() {
         return fieldBuilder;

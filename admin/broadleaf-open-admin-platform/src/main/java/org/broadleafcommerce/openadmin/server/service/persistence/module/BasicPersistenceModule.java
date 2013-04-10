@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.AssociationPathElement;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -72,11 +64,15 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.DOMException;
 
-import javax.annotation.Resource;
-import javax.persistence.Embedded;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.AssociationPathElement;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -103,6 +99,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+import javax.persistence.Embedded;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 /**
  * @author jfischer
@@ -762,11 +764,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     metadata.getName() + "Json", metadata.getRuleIdentifier());
                             props.add(jsonProperty);
 
-                            Property fieldServiceProperty = new Property();
-                            fieldServiceProperty.setName(metadata.getName() + "FieldService");
-                            fieldServiceProperty.setValue(metadata.getRuleIdentifier());
-                            props.add(fieldServiceProperty);
-
                             break checkField;
                         }
                         if (metadata.getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY) {
@@ -776,11 +773,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     Property jsonProperty = convertQuantityBasedRuleToJson(translator, mapper, (Collection<QuantityBasedRule>) value,
                                             metadata.getName() + "Json", metadata.getRuleIdentifier());
                                     props.add(jsonProperty);
-
-                                    Property fieldServiceProperty = new Property();
-                                    fieldServiceProperty.setName(metadata.getName() + "FieldService");
-                                    fieldServiceProperty.setValue(metadata.getRuleIdentifier());
-                                    props.add(fieldServiceProperty);
                                 } else {
                                     //TODO support a single quantity based rule
                                     throw new UnsupportedOperationException("RULE_WITH_QUANTITY type is currently only supported" +

@@ -83,7 +83,7 @@ $(document).ready(function() {
       $(this).find('input').datepicker('show');
   });
   
-  $('body').on('submit', 'form', function(event) {
+  BLCAdmin.addSubmitHandler(function() {
       $(this).find('.datepicker').each(function(index, element) {
           var $hiddenClone = $('<input>', {
               type: 'hidden',

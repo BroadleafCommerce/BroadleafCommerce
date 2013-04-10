@@ -114,18 +114,18 @@ $(document).ready(function() {
     });
     
     //Intercept the form submission and update all the rule builder hidden fields
-    $("form").submit(function () {
+    BLCAdmin.addSubmitHandler(function() {
         for (var i = 0; i < BLCAdmin.conditions.conditionCount(); i++) {
             var hiddenId = BLCAdmin.conditions.getConditionByIndex(i).hiddenId;
             
             var builder = BLCAdmin.conditions.getConditionByIndex(i).builder;
             if (!builder.shouldSubmit) {
-                $(this).find('div.conditional-rules').remove();
+                builder.element.find('div.conditional-rules').remove();
             }
             
-            $("#"+hiddenId).val(JSON.stringify(builder.collectData()));
+            var collectedData = builder.collectData();
+            $("#"+hiddenId).val(JSON.stringify(collectedData));
         }
-        return true;
     });
     
 });

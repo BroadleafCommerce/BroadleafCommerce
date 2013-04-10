@@ -2,12 +2,23 @@
 var BLCAdmin = (function($) {
 	
 	// This will keep track of our current active modals so that we are able to overlay them
-	var modals = new Array();
+	var modals = [];
+	var preFormSubmitHandlers = [];
 	var stackedModalOptions = {
 	    left: 20,
 	    top: 20
 	}
-    
+	
+	function addSubmitHandler(fn) {
+	    preFormSubmitHandlers.push(fn);
+	}
+	
+	function runSubmitHandlers($form) {
+        for (var i = 0; i < preFormSubmitHandlers.length; i++) {
+            preFormSubmitHandlers[i]($form);
+        }
+	}
+	
 	function showLinkAsModal(link, onModalHide, onModalHideArgs) {
 		$.get(link, function(data) {
 			// Create a modal out of the server response
@@ -110,6 +121,8 @@ var BLCAdmin = (function($) {
 	
 	// The publicly accessible functions provided by this module
     return {
+        addSubmitHandler : addSubmitHandler,
+        runSubmitHandlers : runSubmitHandlers,
     	showLinkAsModal : showLinkAsModal,
     	modalNavigateTo : modalNavigateTo,
     	currentModal : currentModal,

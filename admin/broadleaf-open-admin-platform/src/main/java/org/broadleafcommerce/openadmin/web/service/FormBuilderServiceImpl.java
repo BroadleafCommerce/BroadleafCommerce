@@ -327,9 +327,16 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     } else if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())
                             || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
                         f = new RuleBuilderField();
-                        ((RuleBuilderField) f).setFieldService(fmd.getName() + "FieldService");
                         ((RuleBuilderField) f).setJsonFieldName(fmd.getName() + "Json");
                         ((RuleBuilderField) f).setDataWrapper(new DataWrapper());
+                        ((RuleBuilderField) f).setFieldBuilder(fmd.getRuleIdentifier());
+                        
+                        String blankJsonString =  "{\"data\":[]}";
+                        ((RuleBuilderField) f).setJson(blankJsonString);
+                        DataWrapper dw = convertJsonToDataWrapper(blankJsonString);
+                        if (dw != null) {
+                            ((RuleBuilderField) f).setDataWrapper(dw);
+                        }
                         
                         if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())) {
                             ((RuleBuilderField) f).setStyleClass("rule-builder-simple");
@@ -418,7 +425,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             if (dw != null) {
                                 rbf.setDataWrapper(dw);
                             }
-                            rbf.setFieldBuilder(entity.getPMap().get(rbf.getFieldService()).getValue());
                         } else {
                             field.setValue(entityProp.getValue());
                             field.setDisplayValue(entityProp.getDisplayValue());

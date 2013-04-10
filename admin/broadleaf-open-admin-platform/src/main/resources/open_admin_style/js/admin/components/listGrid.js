@@ -250,6 +250,8 @@ $(document).ready(function() {
     });
     
     $('body').on('submit', 'form.modal-form', function(event) {
+        BLCAdmin.runSubmitHandlers($(this));
+        
         BLC.ajax({
             url: this.action,
             type: "POST",

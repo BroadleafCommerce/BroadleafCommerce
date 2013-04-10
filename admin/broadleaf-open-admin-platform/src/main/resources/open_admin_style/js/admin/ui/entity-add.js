@@ -11,6 +11,8 @@ $(document).ready(function() {
     });
     
 	$('body').on('submit', 'form.modal-add-entity-form', function(event) {
+        BLCAdmin.runSubmitHandlers($(this));
+        
 		BLC.ajax({
 			url: this.action,
 			type: "POST",
