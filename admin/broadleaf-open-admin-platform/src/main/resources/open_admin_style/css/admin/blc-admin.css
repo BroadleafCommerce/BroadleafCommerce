@@ -795,6 +795,13 @@ table.list-grid-table thead tr th {
     padding: 10px;
 }
 
+.table-width-container {
+	display: inline-block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 input[type="text"].listgrid-criteria-input {
     margin: 0px;
 }

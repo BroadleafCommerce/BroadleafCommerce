@@ -129,7 +129,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
     @Column(name = "URL")
     @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order = 5000, 
         group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General, 
-        prominent = true, gridOrder = 3, 
+        prominent = true, gridOrder = 3, columnWidth = "200px",
         requiredOverride = RequiredOverride.REQUIRED)
     protected String url;
 

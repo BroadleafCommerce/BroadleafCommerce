@@ -36,6 +36,7 @@ public class Field {
     protected Integer order;
     protected String onChangeTrigger;
     protected Boolean required = false;
+    protected String columnWidth;
     
     /* ************ */
     /* WITH METHODS */
@@ -83,6 +84,11 @@ public class Field {
     
     public Field withRequired(Boolean required) {
         setRequired(required);
+        return this;
+    }
+    
+    public Field withColumnWidth(String columnWidth) {
+        setColumnWidth(columnWidth);
         return this;
     }
 
@@ -197,6 +203,17 @@ public class Field {
     
     public void setRequired(Boolean required) {
         this.required = required;
+    }
+    
+    public String getColumnWidth() {
+        return columnWidth;
+    }
+    
+    public void setColumnWidth(String columnWidth) {
+        if ("*".equals(columnWidth)) {
+            columnWidth = null;
+        }
+        this.columnWidth = columnWidth;
     }
     
 }

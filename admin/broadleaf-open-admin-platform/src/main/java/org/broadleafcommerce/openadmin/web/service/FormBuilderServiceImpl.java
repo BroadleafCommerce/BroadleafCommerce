@@ -108,6 +108,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     hf.withName(p.getName())
                       .withFriendlyName(fmd.getFriendlyName())
                       .withOrder(fmd.getGridOrder())
+                      .withColumnWidth(fmd.getColumnWidth())
                       .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
                     String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
                     hf.setFieldType(fieldType);
