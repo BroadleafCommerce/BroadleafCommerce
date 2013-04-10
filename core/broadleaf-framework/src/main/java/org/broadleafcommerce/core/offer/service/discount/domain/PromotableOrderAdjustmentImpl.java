@@ -46,6 +46,14 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
         computeAdjustmentValue();
     }
     
+    public PromotableOrderAdjustmentImpl(PromotableCandidateOrderOffer promotableCandidateOrderOffer,
+            PromotableOrder promotableOrder, Money adjustmentValue) {
+        this(promotableCandidateOrderOffer, promotableOrder);
+        if (promotableOrder.isIncludeOrderAndItemAdjustments()) {
+            this.adjustmentValue = adjustmentValue;
+        }
+    }
+
     @Override
     public PromotableOrder getPromotableOrder() {
         return promotableOrder;

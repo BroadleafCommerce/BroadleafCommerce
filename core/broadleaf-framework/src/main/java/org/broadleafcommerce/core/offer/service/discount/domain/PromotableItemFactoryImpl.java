@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -35,11 +36,24 @@ public class PromotableItemFactoryImpl implements PromotableItemFactory {
     }
     
     @Override
+    public PromotableCandidateOrderOffer createPromotableCandidateOrderOffer(PromotableOrder promotableOrder,
+            Offer offer, Money potentialSavings) {
+        return new PromotableCandidateOrderOfferImpl(promotableOrder, offer, potentialSavings);
+    }
+
+    @Override
     public PromotableOrderAdjustment createPromotableOrderAdjustment(
             PromotableCandidateOrderOffer promotableCandidateOrderOffer, PromotableOrder order) {
         return new PromotableOrderAdjustmentImpl(promotableCandidateOrderOffer, order);
     }
     
+    @Override
+    public PromotableOrderAdjustment createPromotableOrderAdjustment(
+            PromotableCandidateOrderOffer promotableCandidateOrderOffer,
+            PromotableOrder order, Money adjustmentValue) {
+        return new PromotableOrderAdjustmentImpl(promotableCandidateOrderOffer, order, adjustmentValue);
+    }
+
     @Override
     public PromotableOrderItem createPromotableOrderItem(OrderItem orderItem, PromotableOrder order,
             boolean includeAdjustments) {
