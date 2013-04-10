@@ -51,16 +51,24 @@
             showOrCreateMainCondition : function($container, typeToCreate) {
                 var containerId = $container.attr("id");
                 var builder = this.getCondition(containerId).builder;
+                
                 builder.shouldSubmit = true;
                 $container.show();
                 
                 if ($container.children().children().length == 0) {
                     if (typeToCreate == 'add-main-rule') {
-                        builder.buildAddNewRule($container, builder.data);
+                        builder.buildAddNewRule($container);
                     } else if (typeToCreate == 'add-main-item-rule') {
-                        builder.buildAddNewItemRule($container, builder.data);
+                        builder.buildAddNewItemRule($container);
                     }
                 }
+            },
+            
+            addAdditionalMainCondition : function($container) {
+                var containerId = $container.attr("id");
+                var builder = this.getCondition(containerId).builder;
+                
+                builder.buildAddNewItemRule($container, true);
             },
             
             hideMainCondition : function($container) {
@@ -77,6 +85,12 @@
 })($, BLCAdmin);
 
 $(document).ready(function() {
+    
+    $('body').on('click', 'a.add-main-condition', function() {
+        var $container = $(this).parent();
+        BLCAdmin.conditions.addAdditionalMainCondition($container);
+        return false;
+    });
     
     $('.rule-builder-required-field').each(function(index, element) {
         var $container = $($(this).next().next());
@@ -103,12 +117,13 @@ $(document).ready(function() {
     $("form").submit(function () {
         for (var i = 0; i < BLCAdmin.conditions.conditionCount(); i++) {
             var hiddenId = BLCAdmin.conditions.getConditionByIndex(i).hiddenId;
+            
             var builder = BLCAdmin.conditions.getConditionByIndex(i).builder;
-            if (builder.shouldSubmit) {
-                $("#"+hiddenId).val(JSON.stringify(builder.collectData()));
-            } else {
-                $('#' + hiddenId).val('');
+            if (!builder.shouldSubmit) {
+                $(this).find('div.conditional-rules').remove();
             }
+            
+            $("#"+hiddenId).val(JSON.stringify(builder.collectData()));
         }
         return true;
     });

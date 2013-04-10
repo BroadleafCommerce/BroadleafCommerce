@@ -992,6 +992,11 @@ input[type="text"].conditional-qty {
 	display: block;
 }
 
+a.add-main-condition {
+	margin-top: 20px;
+	display: inline-block;
+}
+
 .all-any-none {
     margin-right: 10px;
     width: 52px;

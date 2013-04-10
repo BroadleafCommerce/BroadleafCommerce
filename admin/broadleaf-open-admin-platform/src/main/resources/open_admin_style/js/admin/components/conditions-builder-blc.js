@@ -60,6 +60,11 @@
             var rules = this.buildRules(this.data);
             this.element.html(rules);
             this.element.find(".conditional-rules").unwrap();
+            
+            if (this.data[0] != null && this.data[0].quantity != null) {
+                var addMainConditionLink = this.getAddMainConditionLink();
+                this.element.append(addMainConditionLink);
+            }
         },
 
         collectData: function() {
@@ -128,28 +133,37 @@
             rules.append(_this.buildConditional(newField));
         },
 
-        buildAddNewItemRule: function(rules) {
+        buildAddNewItemRule: function(rules, isAdditional) {
             var _this = this;
             var f = _this.fields[0];
             var newField = {id:null, quantity:1, groupOperator: "AND", groups: []};
-            rules.append(_this.buildConditional(newField));
+            
+            if (!isAdditional) {
+                rules.append(_this.buildConditional(newField, isAdditional));
+                
+                var addMainConditionLink = this.getAddMainConditionLink();
+                rules.append(addMainConditionLink);
+            } else {
+                rules.children(':last').before(_this.buildConditional(newField, isAdditional));
+            }
         },
 
         buildRules: function(ruleDataArray) {
             var container = $("<div>");
             
             for (var i=0; i<ruleDataArray.length; i++) {
-                if (this.buildConditional(ruleDataArray[i])) {
-                    container.append(this.buildConditional(ruleDataArray[i]));
+                var conditional = this.buildConditional(ruleDataArray[i], (i != 0));
+                if (conditional) {
+                    container.append(conditional);
                 } else {
-                    return  this.buildRule(ruleDataArray[i]);
+                    return this.buildRule(ruleDataArray[i]);
                 }
             }
             
             return container;
         },
         
-        buildConditional: function(ruleData) {
+        buildConditional: function(ruleData, isAdditional) {
             var output = $("<div>", {"class": "conditional-rules"});
             var kind;
             if(ruleData.groupOperator == "AND") { kind = "all"; }
@@ -200,7 +214,7 @@
             });
             div.append(addRuleLink);
 
-            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition tiny secondary radius button", "text": "Sub-Condition"});
+            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition tiny secondary radius button", "text": "Sub-condition"});
             addConditionLink.prepend($('<i>', {'class' : 'icon-plus' }));
             addConditionLink.click(function(e) {
                 e.preventDefault();
@@ -209,6 +223,16 @@
                 $(this).parent(".conditional").append(_this.buildConditional(newField));
             });
             div.append(addConditionLink);
+            
+            if (isAdditional) {
+                var removeMainConditionLink = $("<a>", {"href": "#", "class": "remove-main-condition tiny secondary radius button", "text": "Entire condition"});
+                removeMainConditionLink.prepend($('<i>', {'class' : 'icon-minus' }));
+                removeMainConditionLink.click(function(e) {
+                    e.preventDefault();
+                    $(this).parent().parent().remove();
+                });
+                div.append(removeMainConditionLink);
+            }
 
             var rules = ruleData.groups;
             for(var j=0; j<rules.length; j++) {
@@ -245,6 +269,18 @@
                     return window[field.operators];
                 }
             }
+        },
+        
+        getAddMainConditionLink : function() {
+            var addMainConditionLink = $("<a>", {
+                'href': "#", 
+                'class': "add-main-condition tiny secondary radius button", 
+                'text': "Add another condition"
+            });
+            
+            addMainConditionLink.prepend($('<i>', {'class' : 'icon-plus' }));
+            
+            return addMainConditionLink;
         }
     };
 
