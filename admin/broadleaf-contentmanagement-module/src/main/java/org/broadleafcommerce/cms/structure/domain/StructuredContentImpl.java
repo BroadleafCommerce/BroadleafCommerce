@@ -93,12 +93,12 @@ public class StructuredContentImpl implements StructuredContent {
     @Id
     @GeneratedValue(generator = "StructuredContentId", strategy = GenerationType.TABLE)
     @TableGenerator(
-            name = "StructuredContentId", 
-            table = "SEQUENCE_GENERATOR", 
-            pkColumnName = "ID_NAME", 
-            valueColumnName = "ID_VAL", 
-            pkColumnValue = "StructuredContentImpl", 
-            allocationSize = 10)
+        name = "StructuredContentId", 
+        table = "SEQUENCE_GENERATOR", 
+        pkColumnName = "ID_NAME", 
+        valueColumnName = "ID_VAL", 
+        pkColumnValue = "StructuredContentImpl", 
+        allocationSize = 10)
     @Column(name = "SC_ID")
     protected Long id;
 
@@ -131,7 +131,7 @@ public class StructuredContentImpl implements StructuredContent {
         mapDisplayFields = {
             @AdminPresentationMapField(
                 fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.CUSTOMER_FIELD_KEY, 
-                    friendlyKeyName = "StructuredContentImpl_Customer_Rule"),
+                    friendlyKeyName = "Generic_Customer_Rule"),
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 1,
                     tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
                     group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
@@ -139,7 +139,7 @@ public class StructuredContentImpl implements StructuredContent {
             ),
             @AdminPresentationMapField(
                 fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.TIME_FIELD_KEY,
-                    friendlyKeyName = "StructuredContentImpl_Time_Rule"),
+                    friendlyKeyName = "Generic_Time_Rule"),
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 2,
                     tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
                     group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
@@ -147,7 +147,7 @@ public class StructuredContentImpl implements StructuredContent {
             ),
             @AdminPresentationMapField(
                 fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.REQUEST_FIELD_KEY,
-                    friendlyKeyName = "StructuredContentImpl_Request_Rule"),
+                    friendlyKeyName = "Generic_Request_Rule"),
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 3,
                     tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
                     group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
@@ -155,7 +155,7 @@ public class StructuredContentImpl implements StructuredContent {
             ),
             @AdminPresentationMapField(
                 fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.PRODUCT_FIELD_KEY, 
-                    friendlyKeyName = "StructuredContentImpl_Product_Rule"),
+                    friendlyKeyName = "Generic_Product_Rule"),
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 4,
                     tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
                     group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
@@ -168,7 +168,7 @@ public class StructuredContentImpl implements StructuredContent {
     @OneToMany(fetch = FetchType.LAZY, targetEntity = StructuredContentItemCriteriaImpl.class, cascade={CascadeType.ALL})
     @JoinTable(name = "BLC_QUAL_CRIT_SC_XREF", joinColumns = @JoinColumn(name = "SC_ID"), inverseJoinColumns = @JoinColumn(name = "SC_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Item_Rule", order = 5,
+    @AdminPresentation(friendlyName = "Generic_Item_Rule", order = 5,
         tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
         group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 

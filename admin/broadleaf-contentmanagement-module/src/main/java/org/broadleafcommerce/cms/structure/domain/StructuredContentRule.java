@@ -18,8 +18,6 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.common.rule.SimpleRule;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -37,7 +35,7 @@ import javax.annotation.Nullable;
  * @author bpolster
  *
  */
-public interface StructuredContentRule extends SimpleRule, Serializable {
+public interface StructuredContentRule extends SimpleRule {
 
     /**
      * Gets the primary key.
@@ -46,7 +44,6 @@ public interface StructuredContentRule extends SimpleRule, Serializable {
      */
     @Nullable
     public Long getId();
-
 
     /**
      * Sets the primary key.

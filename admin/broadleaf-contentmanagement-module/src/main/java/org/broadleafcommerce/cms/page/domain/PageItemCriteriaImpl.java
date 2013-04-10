@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,13 +34,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
 /**
  * 
@@ -96,12 +96,12 @@ public class PageItemCriteriaImpl implements PageItemCriteria {
         this.quantity = receiveQuantity;
     }
 
-    public String getOrderItemMatchRule() {
+    public String getMatchRule() {
         return orderItemMatchRule;
     }
 
-    public void setOrderItemMatchRule(String orderItemMatchRule) {
-        this.orderItemMatchRule = orderItemMatchRule;
+    public void setMatchRule(String matchRule) {
+        this.orderItemMatchRule = matchRule;
     }
 
     public Page getPage() {

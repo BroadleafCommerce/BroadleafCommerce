@@ -52,13 +52,13 @@ import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * Created by bpolster.
@@ -379,7 +379,7 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
         List<ItemCriteriaDTO> itemCriteriaDTOList = new ArrayList<ItemCriteriaDTO>();
         for(PageItemCriteria criteria : page.getQualifyingItemCriteria()) {
             ItemCriteriaDTO criteriaDTO = new ItemCriteriaDTO();
-            criteriaDTO.setMatchRule(criteria.getOrderItemMatchRule());
+            criteriaDTO.setMatchRule(criteria.getMatchRule());
             criteriaDTO.setQty(criteria.getQuantity());
             itemCriteriaDTOList.add(criteriaDTO);
         }
