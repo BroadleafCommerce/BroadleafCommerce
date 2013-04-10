@@ -87,10 +87,16 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         List<Field> headerFields = new ArrayList<Field>();
         ListGrid.Type type = ListGrid.Type.MAIN;
+        String idProperty = "id";
 
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
+                
+                if (SupportedFieldType.ID.equals(fmd.getFieldType())) {
+                    idProperty = fmd.getName();
+                }
+                
                 if (fmd.isProminent() != null && fmd.isProminent() 
                         && !VisibilityEnum.HIDDEN_ALL.equals(fmd.getVisibility())
                         && !VisibilityEnum.GRID_HIDDEN.equals(fmd.getVisibility())) {
@@ -118,7 +124,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
 
-        return createListGrid(cmd.getCeilingType(), headerFields, type, entities, sectionKey, 0);
+        ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, entities, sectionKey, 0, idProperty);
+        return listGrid;
     }
 
     @Override
@@ -132,6 +139,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         List<Field> headerFields = new ArrayList<Field>();
         ListGrid.Type type = null;
         boolean editable = false;
+        String idProperty = "id";
 
         // Get the header fields for this list grid. Note that the header fields are different depending on the
         // kind of field this is.
@@ -139,12 +147,17 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             for (Property p : cmd.getProperties()) {
                 if (p.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+                    
+                    if (SupportedFieldType.ID.equals(md.getFieldType())) {
+                        idProperty = md.getName();
+                    }
+                    
                     if (md.isProminent() != null && md.isProminent() 
                             && !VisibilityEnum.HIDDEN_ALL.equals(md.getVisibility())
                             && !VisibilityEnum.GRID_HIDDEN.equals(md.getVisibility())) {
                         Field hf = new Field()
                                 .withName(p.getName())
-                                .withFriendlyName(fmd.getFriendlyName())
+                                .withFriendlyName(md.getFriendlyName())
                                 .withForeignKeyDisplayValueProperty(md.getForeignKeyDisplayValueProperty())
                                 .withOrder(md.getGridOrder());
                         String fieldType = md.getFieldType() == null ? null : md.getFieldType().toString();
@@ -237,7 +250,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             editable = true;
         }
 
-        ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, entities, sectionKey, fmd.getOrder());
+        ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, entities, sectionKey, fmd.getOrder(), idProperty);
         listGrid.setSubCollectionFieldName(field.getName());
         listGrid.setFriendlyName(field.getMetadata().getFriendlyName());
         if (StringUtils.isEmpty(listGrid.getFriendlyName())) {
@@ -254,7 +267,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, Entity[] entities, 
-            String sectionKey, int order) {
+            String sectionKey, int order, String idProperty) {
         // Create the list grid and set some basic attributes
         ListGrid listGrid = new ListGrid();
         listGrid.setClassName(className);
@@ -275,8 +288,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ListGridRecord record = new ListGridRecord();
             record.setListGrid(listGrid);
             
-            if (e.findProperty("id") != null) {
-                record.setId(e.findProperty("id").getValue());
+            if (e.findProperty(idProperty) != null) {
+                record.setId(e.findProperty(idProperty).getValue());
             }
 
             for (Field headerField : headerFields) {

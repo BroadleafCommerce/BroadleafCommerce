@@ -16,6 +16,7 @@ public class ListGrid {
 
     protected String className;
     protected String friendlyName = null;
+    protected String idProperty;
     protected int order;
     
     protected Set<Field> headerFields = new TreeSet<Field>(new Comparator<Field>() {
@@ -93,6 +94,14 @@ public class ListGrid {
         getToolbarActions().add(action);
     }
     
+    public String getIdProperty() {
+        return idProperty;
+    }
+
+    public void setIdProperty(String idProperty) {
+        this.idProperty = idProperty;
+    }
+
     public String getClassName() {
         return className;
     }

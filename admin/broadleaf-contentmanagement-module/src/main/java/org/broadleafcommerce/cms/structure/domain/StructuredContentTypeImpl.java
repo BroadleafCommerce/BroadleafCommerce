@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -59,7 +59,7 @@ public class StructuredContentTypeImpl implements StructuredContentType {
     protected String name;
 
     @Column (name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Description", order=2, group = "StructuredContentTypeImpl_Details",prominent=true)
+    @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Description", order=2, group = "StructuredContentTypeImpl_Details",prominent=false)
     protected String description;
 
     @ManyToOne(targetEntity = StructuredContentFieldTemplateImpl.class)

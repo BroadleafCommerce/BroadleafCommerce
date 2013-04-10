@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.common.locale.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -24,13 +31,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Created by jfischer
@@ -46,20 +46,28 @@ public class LocaleImpl implements Locale {
 
     @Id
     @Column (name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "LocaleImpl_Locale_Code", order=1, group = "LocaleImpl_Details", prominent=true)
+    @AdminPresentation(friendlyName = "LocaleImpl_Locale_Code", order = 1, 
+        group = "LocaleImpl_Details", 
+        prominent = true, gridOrder = 2)
     protected String localeCode;
 
     @Column (name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName = "LocaleImpl_Name", order=2, group = "LocaleImpl_Details", prominent=true)
+    @AdminPresentation(friendlyName = "LocaleImpl_Name", order = 2, 
+        group = "LocaleImpl_Details", 
+        prominent = true, gridOrder = 1)
     protected String friendlyName;
 
     @Column (name = "DEFAULT_FLAG")
-    @AdminPresentation(friendlyName = "LocaleImpl_Is_Default", order=3, group = "LocaleImpl_Details", prominent=true)
+    @AdminPresentation(friendlyName = "LocaleImpl_Is_Default", order = 3, 
+        group = "LocaleImpl_Details", 
+        prominent = true, gridOrder = 3)
     protected Boolean defaultFlag;
 
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "LocaleImpl_Currency", order=4, group = "LocaleImpl_Details", prominent=true)
+    @AdminPresentation(friendlyName = "LocaleImpl_Currency", order = 4, 
+        group = "LocaleImpl_Details", 
+        prominent = true)
     protected BroadleafCurrency defaultCurrency;
 
     @Override
