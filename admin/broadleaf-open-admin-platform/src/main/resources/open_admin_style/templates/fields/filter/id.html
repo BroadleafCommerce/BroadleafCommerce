@@ -1,4 +1,4 @@
-<input th:name="${'criteria[' + #lists.size(listGrid.headerFields)  + '].filterValues'}"
+<input th:attr="data-name=${'criteria[' + #lists.size(listGrid.headerFields)  + '].filterValues'}"
        class="listgrid-criteria-input"
        type="number"
        placeholder="criteria"/>

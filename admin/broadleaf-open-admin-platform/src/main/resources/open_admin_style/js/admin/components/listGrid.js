@@ -275,7 +275,7 @@ $(document).ready(function() {
         var sortValue = (ascending) ? 'ASCENDING' : 'DESCENDING';
         $(this).parents('ul').find('input.property-sort').val(sortValue);
         //update the header icon for this field
-        var icon = $(this).parents('.listgrid-headerBtn').find('div i');
+        var icon = $(this).parents('.listgrid-headerBtn').find('div i.sort-icon');
         icon.toggleClass('listgrid-icon-up', ascending);
         icon.toggleClass('listgrid-icon-down', !ascending);
 
@@ -304,13 +304,27 @@ $(document).ready(function() {
         //for multiple fields at the same time
         var toReplace = $(this).closest('.list-grid-table').find('tbody');
         $(this).closest('ul').removeClass('show-dropdown');
+        
+        var $inputs = $(this).closest('thead').find('div.filter-fields :input');
+        $inputs.each(function(index, element) {
+            $(element).attr('name', $(element).data('name'));
+            //toggle the filter for this field as active or not
+            var filterIcon = $(element).parents('.listgrid-headerBtn').find('div i.filter-icon');
+            filterIcon.toggleClass('icon-filter', !!$(element).val());
+        });
+                
         BLC.ajax({
             url: $(this).closest('.filter-fields').data('action'),
             type: "GET",
-            data: $(this).closest('thead').find('div.filter-fields :input').serialize()
+            data: $inputs.serialize()
         }, function(data) {
             BLCAdmin.listGrid.updateListGrid(data.trim(), toReplace);
         });
+        
+        $inputs.each(function(index, element) {
+            $(element).removeAttr('name');
+        });
+        
         return false;
     });
     

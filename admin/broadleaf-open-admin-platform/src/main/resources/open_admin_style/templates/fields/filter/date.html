@@ -1,9 +1,15 @@
-<input th:name="${'criteria[' + headerFieldStat.index  + '].filterValues'}"
-       class="listgrid-criteria-input"
-       type="datetime-local"
-       placeholder="start date"/>
+<div class="datepicker-container">
+    <input th:attr="data-name=${'criteria[' + headerFieldStat.index  + '].filterValues'}"
+           class="listgrid-criteria-input datepicker"
+           type="text"
+           placeholder="Start Date"/>
+    <i class="icon-calendar"></i>
+</div>
 <br />
-<input th:name="${'criteria[' + headerFieldStat.index  + '].filterValues'}"
-       class="listgrid-criteria-input"
-       type="datetime-local"
-       placeholder="end date"/>
+<div class="datepicker-container">
+    <input th:attr="data-name=${'criteria[' + headerFieldStat.index  + '].filterValues'}"
+           class="listgrid-criteria-input datepicker"
+           type="text"
+           placeholder="End Date"/>
+    <i class="icon-calendar"></i>
+</div>

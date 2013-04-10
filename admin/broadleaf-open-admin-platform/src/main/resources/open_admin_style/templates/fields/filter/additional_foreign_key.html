@@ -1,6 +1,6 @@
 <div class="additional-foreign-key-container">
     <input type="hidden" class="display-value-property" th:value="${headerField.foreignKeyDisplayValueProperty}"  />
-    <input type="hidden" class="listgrid-criteria-input value" th:name="${'criteria[' + headerFieldStat.index + '].filterValues'}"
+    <input type="hidden" class="listgrid-criteria-input value" th:attr="data-name=${'criteria[' + headerFieldStat.index + '].filterValues'}"
             th:attr="data-onchangetrigger=${headerField.onChangeTrigger}" />
         
     <div class="foreign-key-value-container">

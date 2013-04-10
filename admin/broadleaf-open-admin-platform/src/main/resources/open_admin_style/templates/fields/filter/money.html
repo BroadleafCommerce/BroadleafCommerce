@@ -1,4 +1,5 @@
-<input th:name="${'criteria[' + headerFieldStat.index  + '].filterValues'}"
+<input th:attr="data-name=${'criteria[' + headerFieldStat.index  + '].filterValues'}"
        class="listgrid-criteria-input money"
-       type="text"
+       type="integer"
+       step=".01"
        placeholder="criteria"/>
