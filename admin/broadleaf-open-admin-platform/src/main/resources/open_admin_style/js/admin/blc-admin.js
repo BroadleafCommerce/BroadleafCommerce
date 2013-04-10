@@ -3,6 +3,10 @@ var BLCAdmin = (function($) {
 	
 	// This will keep track of our current active modals so that we are able to overlay them
 	var modals = new Array();
+	var stackedModalOptions = {
+	    left: 20,
+	    top: 20
+	}
     
 	function showLinkAsModal(link, onModalHide, onModalHideArgs) {
 		$.get(link, function(data) {
@@ -22,6 +26,12 @@ var BLCAdmin = (function($) {
 			// hidden by the current backdrop
 			if (modals.length > 0) {
 				modals.last().css('z-index', '1040');
+				
+				var $backdrop = $('.modal-backdrop');
+				$backdrop.css('z-index', parseInt($backdrop.css('z-index')) + 1);
+				
+				$data.css('left', $data.position().left + (stackedModalOptions.left * modals.length) + 'px');
+				$data.css('top', $data.position().top + (stackedModalOptions.top * modals.length) + 'px');
 			}
 			
 			// Save our new modal into our stack
