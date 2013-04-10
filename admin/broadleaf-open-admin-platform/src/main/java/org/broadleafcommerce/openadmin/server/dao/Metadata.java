@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -67,14 +68,11 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Property;
 import org.hibernate.type.Type;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -87,6 +85,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.annotation.Resource;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
 /**
  * @author Jeff Fischer
  */
@@ -97,6 +100,9 @@ public class Metadata {
     private static final Log LOG = LogFactory.getLog(Metadata.class);
 
     protected Map<String, Map<String, FieldMetadataOverride>> metadataOverrides;
+    
+    @Resource(name = "blEntityConfiguration")
+    protected EntityConfiguration entityConfiguration;
 
     @Resource(name="blMetadataOverrides")
     public void setMetadataOverrides(Map metadataOverrides) {
@@ -1093,6 +1099,16 @@ public class Metadata {
         Class<?> collectionTarget = null;
         try {
             checkCeiling: {
+                try {
+                    ParameterizedType pt = (ParameterizedType) field.getGenericType();
+                    java.lang.reflect.Type collectionType = pt.getActualTypeArguments()[0];
+                    String ceilingEntityName = ((Class<?>) collectionType).getName();
+                    collectionTarget = entityConfiguration.lookupEntityClass(ceilingEntityName);
+                    break checkCeiling;
+                } catch (NoSuchBeanDefinitionException e) {
+                    // We weren't successful at looking at entity configuration to find the type of this collection.
+                    // We will continue and attempt to find it via the Hibernate annotations
+                }
                 if (!StringUtils.isEmpty(field.getOneToManyTargetEntity()) && !void.class.getName().equals(field.getOneToManyTargetEntity())) {
                     collectionTarget = Class.forName(field.getOneToManyTargetEntity());
                     break checkCeiling;
@@ -1291,6 +1307,18 @@ public class Metadata {
 
         String ceiling = null;
         checkCeiling: {
+            if (field.getGenericType() instanceof ParameterizedType) {
+                try {
+                    ParameterizedType pt = (ParameterizedType) field.getGenericType();
+                    java.lang.reflect.Type collectionType = pt.getActualTypeArguments()[0];
+                    String ceilingEntityName = ((Class<?>) collectionType).getName();
+                    ceiling = entityConfiguration.lookupEntityClass(ceilingEntityName).getName();
+                    break checkCeiling;
+                } catch (NoSuchBeanDefinitionException e) {
+                    // We weren't successful at looking at entity configuration to find the type of this collection.
+                    // We will continue and attempt to find it via the Hibernate annotations
+                }
+            }
             if (!StringUtils.isEmpty(field.getOneToManyTargetEntity()) && !void.class.getName().equals(field.getOneToManyTargetEntity())) {
                 ceiling = field.getOneToManyTargetEntity();
                 break checkCeiling;
