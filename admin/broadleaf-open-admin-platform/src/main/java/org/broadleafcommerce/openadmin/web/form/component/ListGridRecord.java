@@ -77,7 +77,15 @@ public class ListGridRecord {
                 fieldMap.put(field.getName(), field);
             }
         }
-        return fieldMap.get(fieldName);
+        Field field = fieldMap.get(fieldName);
+        
+        // We'll return a null field is this particular record doesn't have this polymorphic property.
+        // This prevents NPEs in list grids
+        if (field == null) {
+            field = new Field();
+        }
+        
+        return field;
     }
 
 }
