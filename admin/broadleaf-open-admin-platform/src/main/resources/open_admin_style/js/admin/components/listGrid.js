@@ -200,7 +200,9 @@ $(document).ready(function() {
                         var dynamicPropertyName = $(data.trim()).find('fieldset').data('dynamicpropertyname');
                         var $oldFieldset = $('fieldset[data-dynamicpropertyname="' + dynamicPropertyName + '"]');
                         var $newFieldset = $(data.trim()).find('fieldset');
-                        $newFieldset.find('.redactor').redactor();
+                        
+                        BLCAdmin.initializeFields($newFieldset);
+                        
                         $oldFieldset.replaceWith($newFieldset);
                     });
                 }
@@ -346,7 +348,8 @@ $(document).ready(function() {
      */
     $('body').on('click', 'button.clear-foreign-key', function(event) {        
         //remove the current display value
-        $(this).prev().html('&lt;No value selected&gt;');
+        $(this).prev().html($(this).prev().prev().html());
+        
         //remove the criteria input val
         $(this).closest('.additional-foreign-key-container').find('.value').val('');
         $(this).toggle();

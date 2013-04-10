@@ -5,6 +5,7 @@
     <label th:for="${field.name}" th:text="#{${field.friendlyName}}" />
     
     <div class="foreign-key-value-container">
+        <span class="display-value-none-selected" style="display: none;">&lt;No value selected&gt;</span>
         <span
             class="display-value read-only"
             th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}"

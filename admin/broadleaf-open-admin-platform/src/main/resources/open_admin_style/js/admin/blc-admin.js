@@ -11,11 +11,7 @@ var BLCAdmin = (function($) {
 			$data.attr('id', 'modal' + modals.length);
 			$('body').append($data);
 			
-			// Trigger any necessary on-element-created functions
-            $data.find('.redactor').redactor();
-            $data.find('.datepicker').each(function(index, element) {
-                BLCAdmin.dates.onLive($(element));
-            });
+			initializeFields($data);
 			
 			// If we already have an active modal, we don't need another backdrop on subsequent modals
 			$data.modal({
@@ -70,12 +66,31 @@ var BLCAdmin = (function($) {
 		}
 	}
 	
+	function initializeFields($container) {
+	    // Set up the rich-text HTML editor
+        $container.find('.redactor').redactor();
+        
+        // Set up the date-time picker
+        $container.find('.datepicker').each(function(index, element) {
+            BLCAdmin.dates.onLive($(element));
+        });
+        
+        // Set the blank value for foreign key lookups
+        $container.find('.foreign-key-value-container').each(function(index, element) {
+            var $displayValue = $(this).find('span.display-value');
+            if ($displayValue.text() == '') {
+                $displayValue.text($(this).find('span.display-value-none-selected').text());
+            }
+        });
+	}
+	
 	// The publicly accessible functions provided by this module
     return {
     	showLinkAsModal : showLinkAsModal,
     	modalNavigateTo : modalNavigateTo,
     	currentModal : currentModal,
     	hideCurrentModal : hideCurrentModal,
+    	initializeFields : initializeFields
     }
     
 })(jQuery);

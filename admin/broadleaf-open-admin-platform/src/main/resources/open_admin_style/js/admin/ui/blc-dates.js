@@ -78,10 +78,6 @@
 })(jQuery, BLCAdmin);
 
 $(document).ready(function() {
-    
-  $('.datepicker').each(function(index, element) {
-      BLCAdmin.dates.onLive($(element));
-  });
   
   $('body').on('click', 'div.datepicker-container', function(event) {
       $(this).find('input').datepicker('show');

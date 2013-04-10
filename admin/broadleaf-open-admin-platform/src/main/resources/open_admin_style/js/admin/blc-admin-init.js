@@ -20,8 +20,9 @@
     $.fn.broadleafAccordion         ? $doc.broadleafAccordion() : null;
     $.fn.broadleafListgrid          ? $doc.broadleafListgrid() : null;
     
-    $('.redactor').redactor();
     $("#featured").orbit();
+    
+    BLCAdmin.initializeFields($('body'));
   });
 
   // UNCOMMENT THE LINE YOU WANT BELOW IF YOU WANT IE8 SUPPORT AND ARE USING .block-grids
