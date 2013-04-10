@@ -61,9 +61,16 @@ var BLCAdmin = (function($) {
 	// Convenience function for hiding the replacing the current modal with the given link
 	function modalNavigateTo(link) {
 		if (currentModal()) {
-			currentModal().modal('hide');
+    		$.get(link, function(data) {
+    			// Create a modal out of the server response
+    			var $data = $(data);
+    			initializeFields($data);
+    			$data = $data.children();
+    		    currentModal().empty().append($data);
+    		});
+		} else {
+		    showLinkAsModal(link);
 		}
-		showLinkAsModal(link);
 	};
 	
 	// Convenience function for returning the current modal
