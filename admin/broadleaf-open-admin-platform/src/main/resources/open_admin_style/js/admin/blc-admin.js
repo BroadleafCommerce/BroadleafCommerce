@@ -30,6 +30,7 @@ var BLCAdmin = (function($) {
 				var $backdrop = $('.modal-backdrop');
 				$backdrop.css('z-index', parseInt($backdrop.css('z-index')) + 1);
 				
+				// We will also offset modals by the given option values
 				$data.css('left', $data.position().left + (stackedModalOptions.left * modals.length) + 'px');
 				$data.css('top', $data.position().top + (stackedModalOptions.top * modals.length) + 'px');
 			}
@@ -76,6 +77,12 @@ var BLCAdmin = (function($) {
 		}
 	}
 	
+	function focusOnTopModal() {
+	    if (currentModal()) {
+	        currentModal().focus();
+	    }
+	}
+	
 	function initializeFields($container) {
 	    // Set up the rich-text HTML editor
         $container.find('.redactor').redactor();
@@ -100,6 +107,7 @@ var BLCAdmin = (function($) {
     	modalNavigateTo : modalNavigateTo,
     	currentModal : currentModal,
     	hideCurrentModal : hideCurrentModal,
+    	focusOnTopModal : focusOnTopModal,
     	initializeFields : initializeFields
     }
     
