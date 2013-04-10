@@ -944,6 +944,7 @@ ul.inline-list.small-spacing li {
 
 .conditional > .rule > .remove {
     display: inline-block;
+    vertical-align: middle;
 }
 
 a.remove-subcondition {
@@ -1023,12 +1024,19 @@ a.add-main-condition {
 .rule input[type="url"],
 .rule textarea {
 	margin-top: 0;
-	height: 23px;
     margin-right: 10px;
     width: auto;
     display: -moz-inline-stack;
     display: inline-block;
+    padding: 0 3px;
 }
+
+.rule input[type="text"],
+.rule textarea {
+	height: 23px;
+    vertical-align: middle;
+}
+
 .add-rule, .add-condition, .remove {
     margin: auto 5px;
 }
