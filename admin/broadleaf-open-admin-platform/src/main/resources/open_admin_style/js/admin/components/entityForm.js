@@ -14,5 +14,9 @@ $(document).ready(function() {
 		$(this).closest('form').submit();
 		event.preventDefault();
 	});
+	
+	$('body').on('submit', 'form.entity-form', function(event) {
+        BLCAdmin.runSubmitHandlers($(this));
+	});
 	    
 });
