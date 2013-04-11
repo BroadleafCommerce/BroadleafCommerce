@@ -16,19 +16,23 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,9 +46,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "BLC_OFFER_CODE")
@@ -80,30 +81,32 @@ public class OfferCodeImpl implements OfferCode {
         }
     )
     @Column(name = "OFFER_CODE_ID")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code_Id", group = "OfferCodeImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code_Id")
     protected Long id;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     @Index(name="OFFERCODE_OFFER_INDEX", columnNames={"OFFER_ID"})
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer", group = "OfferCodeImpl_Description")
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer")
     protected Offer offer;
 
     @Column(name = "OFFER_CODE", nullable=false)
     @Index(name="OFFERCODE_CODE_INDEX", columnNames={"OFFER_CODE"})
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code", order=1, group = "OfferCodeImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code", order = 6000, 
+        group = OfferImpl.Presentation.Group.Name.Description, groupOrder = OfferImpl.Presentation.Group.Order.Description,
+        prominent = true)
     protected String offerCode;
 
     @Column(name = "START_DATE")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Start_Date", order=1, group = "OfferCodeImpl_Activity_Range")
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Start_Date")
     protected Date startDate;
 
     @Column(name = "END_DATE")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_End_Date", order=2, group = "OfferCodeImpl_Activity_Range")
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_End_Date")
     protected Date endDate;
 
     @Column(name = "MAX_USES")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Max_Uses", order=2, group = "OfferCodeImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Max_Uses")
     protected int maxUses;
 
     @Column(name = "USES")
@@ -112,7 +115,9 @@ public class OfferCodeImpl implements OfferCode {
     protected int uses;
     
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = OrderImpl.class)
-    @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", joinColumns = @JoinColumn(name = "OFFER_CODE_ID", referencedColumnName = "OFFER_CODE_ID"), inverseJoinColumns = @JoinColumn(name = "ORDER_ID", referencedColumnName = "ORDER_ID"))
+    @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", 
+        joinColumns = @JoinColumn(name = "OFFER_CODE_ID", referencedColumnName = "OFFER_CODE_ID"), 
+        inverseJoinColumns = @JoinColumn(name = "ORDER_ID", referencedColumnName = "ORDER_ID"))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<Order> orders = new ArrayList<Order>();
 

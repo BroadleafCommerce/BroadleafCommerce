@@ -34,7 +34,11 @@
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                 <legend th:text="#{${group.title}}" />
 
-                <div th:each="field : ${group.fields}" th:if="${field.name}" th:classappend="${!field.isVisible}? 'hidden'">
+
+                <div th:each="field : ${group.fields}" 
+                     th:if="${field.name}" 
+                     blc_admin:component_id="${field}"
+                     th:classappend="${!field.isVisible}? 'hidden'">
                     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
                     <div th:substituteby="fields/readonly" />
                 </div>

@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -51,16 +52,19 @@ public class AdminComponentIdProcessor extends AbstractAttributeModifierAttrProc
     protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
         Object component = StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
 
+        String fieldName = "";
         String id = "";
         
         if (component instanceof ListGrid) {
             ListGrid lg = (ListGrid) component;
-
-            String fieldName = lg.getSubCollectionFieldName();
-            if (StringUtils.isNotBlank(fieldName)) {
-                id = cleanCssIdString("listGrid-" + fieldName);
-            }
-
+            fieldName = "listGrid-" + lg.getSubCollectionFieldName();
+        } else if (component instanceof Field) {
+            Field field = (Field) component;
+            fieldName = "field-" + field.getName();
+        }
+        
+        if (StringUtils.isNotBlank(fieldName)) {
+            id = cleanCssIdString(fieldName);
         }
         
         Map<String, String> attrs = new HashMap<String, String>();

@@ -98,13 +98,13 @@ public class OfferImpl implements Offer, Status {
 
     @Column(name = "OFFER_NAME", nullable=false)
     @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Name", order = 1, 
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Name", order = 1000, 
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         prominent = true, gridOrder = 1)
     protected String name;
 
     @Column(name = "OFFER_DESCRIPTION")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = 2, 
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = 2000, 
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         prominent = true, gridOrder = 2,
         largeEntry = true)
@@ -112,13 +112,14 @@ public class OfferImpl implements Offer, Status {
 
     @Column(name = "MARKETING_MESSASGE")
     @Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnNames = { "MARKETING_MESSASGE" })
-    @AdminPresentation(friendlyName = "OfferImpl_marketingMessage", order = 3, 
-        group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
+    @AdminPresentation(friendlyName = "OfferImpl_marketingMessage", order = 4000, 
+        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+        group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
     protected String marketingMessage;
 
     @Column(name = "OFFER_TYPE", nullable=false)
     @Index(name="OFFER_TYPE_INDEX", columnNames={"OFFER_TYPE"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order = 4, 
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order = 3000, 
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         prominent =  true, gridOrder = 3,
         fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, 
@@ -127,15 +128,15 @@ public class OfferImpl implements Offer, Status {
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
     @Index(name="OFFER_DISCOUNT_INDEX", columnNames={"OFFER_DISCOUNT_TYPE"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type", order = 5, 
-        group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type", order = 1000, 
+        group = Presentation.Group.Name.Amount, groupOrder = Presentation.Group.Order.Amount,
         fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDiscountType")
     protected String discountType;
 
     @Column(name = "OFFER_VALUE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order = 6, 
-        group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order = 2000, 
+        group = Presentation.Group.Name.Amount, groupOrder = Presentation.Group.Order.Amount,
         prominent = true, gridOrder = 4)
     protected BigDecimal value;
 
@@ -168,8 +169,8 @@ public class OfferImpl implements Offer, Status {
     protected String targetSystem;
 
     @Column(name = "APPLY_TO_SALE_PRICE")
-    @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Sale_Price", order = 7,
-        group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
+    @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Sale_Price", order = 3000,
+        group = Presentation.Group.Name.Amount, groupOrder = Presentation.Group.Order.Amount)
     protected boolean applyToSalePrice;
 
     @Column(name = "APPLIES_TO_RULES")
@@ -203,7 +204,7 @@ public class OfferImpl implements Offer, Status {
     protected boolean combinableWithOtherOffers;  
 
     @Column(name = "OFFER_DELIVERY_TYPE", nullable=false)
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Delivery_Type", 
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Delivery_Type", order = 5000,
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDeliveryType")
@@ -300,7 +301,7 @@ public class OfferImpl implements Offer, Status {
                     friendlyKeyName = "OfferImpl_FG_Rule"),
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
                     group = Presentation.Group.Name.Qualifiers, groupOrder = Presentation.Group.Order.Qualifiers,
-                    ruleIdentifier = RuleIdentifier.FULFILLMENTGROUP, visibility = VisibilityEnum.HIDDEN_ALL)
+                    ruleIdentifier = RuleIdentifier.FULFILLMENTGROUP)
             )
         }
     )
@@ -775,21 +776,21 @@ public class OfferImpl implements Offer, Status {
         public static class Group {
             public static class Name {
                 public static final String Description = "OfferImpl_Description";
+                public static final String Amount = "OfferImpl_Amount";
                 public static final String ActivityRange = "OfferImpl_Activity_Range";
-                public static final String ItemTarget = "OfferImpl_Item_Target";
                 public static final String Qualifiers = "OfferImpl_Qualifiers";
+                public static final String ItemTarget = "OfferImpl_Item_Target";
                 public static final String Advanced = "OfferImpl_Advanced";
             }
             
             public static class Order {
                 public static final int Description = 1000;
-                public static final int ActivityRange = 2000;
-                public static final int ItemTarget = 3000;
+                public static final int Amount = 2000;
+                public static final int ActivityRange = 3000;
                 public static final int Qualifiers = 4000;
+                public static final int ItemTarget = 5000;
                 public static final int Advanced = 1000;
             }
         }
     }
-
-
 }

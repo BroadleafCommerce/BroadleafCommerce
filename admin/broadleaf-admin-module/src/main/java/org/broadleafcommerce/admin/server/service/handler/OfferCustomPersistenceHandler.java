@@ -21,7 +21,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
@@ -113,10 +112,8 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
             Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective);
             BasicFieldMetadata metadata = (BasicFieldMetadata) offerCodeMergedProperties.get("offerCode");
-            metadata.setVisibility(VisibilityEnum.HIDDEN_ALL);
             mergedProperties.put("offerCode.offerCode", metadata);
             BasicFieldMetadata metadata2 = (BasicFieldMetadata) offerCodeMergedProperties.get("id");
-            metadata2.setVisibility(VisibilityEnum.HIDDEN_ALL);
             mergedProperties.put("offerCode.id", metadata2);
 
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
@@ -187,6 +184,14 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                 Entity temp = new Entity();
                 temp.setType(offerCodeEntities[0].getType());
                 temp.setProperties(new Property[] {offerCodeEntities[0].findProperty("offerCode"), offerCodeEntities[0].findProperty("id")});
+                record.mergeProperties("offerCode", temp);
+            } else {
+                // If there are no offer codes, we should create placeholder properties in case the user wants to add a code
+                Entity temp = new Entity();
+                temp.setType(new String[] { OfferCode.class.getName() });
+                Property p1 = new Property();
+                p1.setName("offerCode");
+                temp.setProperties(new Property[] {p1});
                 record.mergeProperties("offerCode", temp);
             }
         }
