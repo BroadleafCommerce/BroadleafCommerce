@@ -6,7 +6,8 @@
 <form th:object="${entityForm}"
       method="POST"
       class="twelve columns custom entity-form"
-      th:classappend="${additionalClasses}"
+      th:classappend="${(additionalClasses == null ? '' : additionalClasses + ' ') 
+        + (additionalControllerClasses == null ? '' : additionalControllerClasses)}"
       th:action="@{${currentUrl}}">
       
     <input type="hidden" th:field="*{entityType}" />
@@ -33,7 +34,7 @@
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                 <legend th:text="#{${group.title}}" />
 
-                <div th:each="field : ${group.fields}" th:if="${field.name}">
+                <div th:each="field : ${group.fields}" th:if="${field.name}" th:classappend="${!field.isVisible}? 'hidden'">
                     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
                     <div th:substituteby="fields/readonly" />
                 </div>

@@ -40,6 +40,12 @@
     });
   }
   
+  if (!String.prototype.endsWith) {
+      String.prototype.endsWith = function(suffix) {
+          return this.indexOf(suffix, this.length - suffix.length) !== -1;
+      };
+  }
+  
   if (!Array.prototype.last) {
     Array.prototype.last = function() {
 	  return this[this.length - 1];

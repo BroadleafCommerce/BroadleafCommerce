@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.form.entity;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 
@@ -37,6 +38,7 @@ public class Field {
     protected String onChangeTrigger;
     protected Boolean required = false;
     protected String columnWidth;
+    protected Boolean isVisible;
     
     /* ************ */
     /* WITH METHODS */
@@ -97,8 +99,20 @@ public class Field {
     /* ************************ */
 
     public Boolean getIsVisible() {
-        return !(fieldType.equals(SupportedFieldType.ID.toString()) ||
-                fieldType.equals(SupportedFieldType.HIDDEN.toString()) || fieldType.equals(SupportedFieldType.FOREIGN_KEY.toString()));
+        String[] invisibleTypes = new String[] {
+                SupportedFieldType.ID.toString(),
+                SupportedFieldType.HIDDEN.toString(),
+                SupportedFieldType.FOREIGN_KEY.toString()
+        };
+        
+        return isVisible == null ? !ArrayUtils.contains(invisibleTypes, fieldType) : isVisible;
+    }
+    
+    public void setColumnWidth(String columnWidth) {
+        if ("*".equals(columnWidth)) {
+            columnWidth = null;
+        }
+        this.columnWidth = columnWidth;
     }
 
     public String getDisplayValue() {
@@ -208,12 +222,9 @@ public class Field {
     public String getColumnWidth() {
         return columnWidth;
     }
-    
-    public void setColumnWidth(String columnWidth) {
-        if ("*".equals(columnWidth)) {
-            columnWidth = null;
-        }
-        this.columnWidth = columnWidth;
+
+    public void setIsVisible(Boolean isVisible) {
+        this.isVisible = isVisible;
     }
     
 }

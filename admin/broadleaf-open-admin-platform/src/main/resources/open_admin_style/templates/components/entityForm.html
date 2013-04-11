@@ -10,7 +10,8 @@
 <form th:object="${entityForm}"
       method="POST"
       class="twelve columns custom entity-form"
-      th:classappend="${additionalClasses}"
+      th:classappend="${(additionalClasses == null ? '' : additionalClasses + ' ') 
+        + (additionalControllerClasses == null ? '' : additionalControllerClasses)}"
       th:action="@{${currentUrl}}"
       th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
       
@@ -33,7 +34,11 @@
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                 <legend th:text="#{${group.title}}" />
 
-                <div th:each="field : ${group.fields}" th:if="${field.name}" class="field-box">
+                <div th:each="field : ${group.fields}" 
+                     th:if="${field.name}" 
+                     class="field-box" 
+                     th:id="${'field-' + field.name}"
+                     th:classappend="${!field.isVisible}? 'hidden'">
                     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
                     <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
                 </div>
