@@ -48,10 +48,12 @@ import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.cto.FilterCriterionProviders;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.PersistenceProvider;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.EntityValidatorService;
-import org.broadleafcommerce.openadmin.web.rulebuilder.MVELToDataWrapperTranslator;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.BeansException;
@@ -189,13 +191,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         FieldManager fieldManager = getFieldManager();
         boolean handled = false;
         for (PersistenceProvider persistenceProvider : persistenceProviders) {
-            if (persistenceProvider.canHandleFilterProperties(entity, unfilteredProperties)) {
-                persistenceProvider.filterProperties(entity, unfilteredProperties);
+            if (persistenceProvider.canHandlePropertyFiltering(entity, unfilteredProperties)) {
+                persistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity, unfilteredProperties));
                 handled = true;
             }
         }
         if (!handled) {
-            defaultPersistenceProvider.filterProperties(entity, unfilteredProperties);
+            defaultPersistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity, unfilteredProperties));
         }
         try {
             for (Property property : entity.getProperties()) {
@@ -236,13 +238,15 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         if (value != null) {
                             handled = false;
                             for (PersistenceProvider persistenceProvider : persistenceProviders) {
-                                if (persistenceProvider.canHandlePersistence(instance, metadata)) {
-                                    persistenceProvider.populateValue(instance, setId, fieldManager, property, metadata, returnType, value, persistenceManager, this);
+                                if (persistenceProvider.canHandlePersistence(instance, property, metadata)) {
+                                    persistenceProvider.populateValue(new PopulateValueRequest(instance, setId,
+                                            fieldManager, property, metadata, returnType, value, persistenceManager, this));
                                     handled = true;
                                 }
                             }
                             if (!handled) {
-                                defaultPersistenceProvider.populateValue(instance, setId, fieldManager, property, metadata, returnType, value, persistenceManager, this);
+                                defaultPersistenceProvider.populateValue(new PopulateValueRequest(instance, setId,
+                                        fieldManager, property, metadata, returnType, value, persistenceManager, this));
                             }
                         } else {
                             try {
@@ -364,9 +368,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     protected void extractPropertiesFromPersistentEntity(Map<String, FieldMetadata> mergedProperties, Serializable entity, List<Property> props) {
         FieldManager fieldManager = getFieldManager();
-        MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
-        ObjectMapper mapper = new ObjectMapper();
-
         try {
             for (Entry<String, FieldMetadata> entry : mergedProperties.entrySet()) {
                 String property = entry.getKey();
@@ -411,7 +412,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     } catch (FieldNotAvailableException e) {
                         isFieldAccessible = false;
                     }
-                    String strVal = null;
                     checkField:
                     {
                         if (isFieldAccessible) {
@@ -424,20 +424,23 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             String displayVal = null;
                             boolean handled = false;
                             for (PersistenceProvider persistenceProvider : persistenceProviders) {
-                                if (persistenceProvider.canHandlePersistence(value, metadata)) {
-                                    persistenceProvider.extractValue(props, fieldManager, translator, mapper, metadata, value, strVal,
-                                                                    propertyItem, displayVal, persistenceManager, this);
+                                if (persistenceProvider.canHandlePersistence(value, propertyItem, metadata)) {
+                                    persistenceProvider.extractValue(
+                                            new ExtractValueRequest(props, fieldManager,
+                                                    metadata, value, propertyItem, displayVal, persistenceManager, this));
                                     handled = true;
                                 }
                             }
                             if (!handled) {
-                                defaultPersistenceProvider.extractValue(props, fieldManager, translator, mapper, metadata, value, strVal,
-                                                                    propertyItem, displayVal, persistenceManager, this);
+                                defaultPersistenceProvider.extractValue(
+                                        new ExtractValueRequest(props, fieldManager, metadata,
+                                                value, propertyItem, displayVal, persistenceManager, this));
                             }
                             break checkField;
                         }
                         //try a direct property acquisition via reflection
                         try {
+                            String strVal = null;
                             Method method;
                             try {
                                 //try a 'get' prefixed mutator first
@@ -579,18 +582,19 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (mergedProperties.containsKey(propertyId)) {
                 boolean handled = false;
                 for (PersistenceProvider persistenceProvider : persistenceProviders) {
-                    if (persistenceProvider.canHandleFilterMapping((BasicFieldMetadata) mergedProperties.get
+                    if (persistenceProvider.canHandleSearchMapping((BasicFieldMetadata) mergedProperties.get
                             (propertyId))) {
-                        persistenceProvider.addFilterMapping(persistencePerspective, cto,
-                                ceilingEntityFullyQualifiedClassname, mergedProperties,
-                                ctoConverter, propertyId, getFieldManager());
+                        persistenceProvider.addSearchMapping(
+                                new AddSearchMappingRequest(persistencePerspective, cto,
+                                        ceilingEntityFullyQualifiedClassname, mergedProperties, ctoConverter,
+                                        propertyId, getFieldManager()));
                         handled = true;
                     }
                 }
                 if (!handled) {
-                    defaultPersistenceProvider.addFilterMapping(persistencePerspective, cto,
-                            ceilingEntityFullyQualifiedClassname, mergedProperties,
-                            ctoConverter, propertyId, getFieldManager());
+                    defaultPersistenceProvider.addSearchMapping(
+                            new AddSearchMappingRequest(persistencePerspective, cto,
+                                    ceilingEntityFullyQualifiedClassname, mergedProperties, ctoConverter, propertyId, getFieldManager()));
                 }
             } else {
                 ctoConverter.addEmptyMapping(ceilingEntityFullyQualifiedClassname, propertyId);

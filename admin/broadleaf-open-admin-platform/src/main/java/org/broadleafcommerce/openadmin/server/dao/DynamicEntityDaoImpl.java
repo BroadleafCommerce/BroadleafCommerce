@@ -36,6 +36,7 @@ import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.dao.provider.property.PropertyProvider;
+import org.broadleafcommerce.openadmin.server.dao.provider.property.request.PropertyRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
@@ -360,18 +361,19 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                         boolean handled = false;
                         for (PropertyProvider provider : propertyProviders) {
                             if (provider.canHandleField(field)) {
-                                provider.buildProperty(field, targetClass, null, new ForeignKey[]{}, MergedPropertyType.PRIMARY,
-                                        null, mergedProperties, null, "", property, null, false, 0, attributesMap, presentationAttribute,
-                                        ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(), field.getType(), this);
+                                provider.buildProperty(
+                                        new PropertyRequest(field, targetClass, null, new ForeignKey[]{},
+                                                MergedPropertyType.PRIMARY, null, mergedProperties, null, "",
+                                                property, null, false, 0, attributesMap, presentationAttribute, ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(), field.getType(), this));
                                 handled = true;
                             }
                         }
                         if (!handled) {
                             //this provider is not included in the provider list on purpose - it is designed to handle basic
                             //AdminPresentation fields, and those fields not admin presentation annotated at all
-                            defaultPropertyProvider.buildProperty(field, targetClass, null, new ForeignKey[]{}, MergedPropertyType.PRIMARY,
-                                    null, mergedProperties, null, "", property, null, false, 0, attributesMap, presentationAttribute,
-                                    ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(), field.getType(), this);
+                            defaultPropertyProvider.buildProperty(
+                                    new PropertyRequest(field, targetClass, null, new ForeignKey[]{},
+                                            MergedPropertyType.PRIMARY, null, mergedProperties, null, "", property, null, false, 0, attributesMap, presentationAttribute, ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(), field.getType(), this));
                         }
                     }
                 }
@@ -920,10 +922,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                             if (presentationAttribute != null) {
                                 setExcludedBasedOnShowIfProperty(presentationAttribute);
                             }
-                            provider.buildProperty(myField, targetClass, foreignField, additionalForeignFields, mergedPropertyType,
-                                    componentProperties, fields, idProperty, prefix, propertyName, type, isPropertyForeignKey,
-                                    additionalForeignKeyIndexPosition, presentationAttributes, presentationAttribute,
-                                    null, type.getReturnedClass(), this);
+                            provider.buildProperty(
+                                    new PropertyRequest(myField, targetClass, foreignField, additionalForeignFields,
+                                            mergedPropertyType, componentProperties, fields, idProperty, prefix, propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition, presentationAttributes, presentationAttribute, null, type.getReturnedClass(), this));
                             handled = true;
                         }
                     }
@@ -1095,25 +1096,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         //Don't include this property if it failed manyToOne inclusion and is not a specified foreign key
         if (includeField || propertyForeignKey || additionalForeignKeyIndexPosition >= 0) {
             defaultPropertyProvider.buildProperty(
-                    field,
-                    targetClass,
-                    foreignField,
-                    additionalForeignFields,
-                    mergedPropertyType,
-                    componentProperties,
-                    fields,
-                    idProperty,
-                    prefix,
-                    propertyName,
-                    type,
-                    propertyForeignKey,
-                    additionalForeignKeyIndexPosition,
-                    presentationAttributes,
-                    presentationAttribute,
-                    explicitType,
-                    returnedClass,
-                    this
-            );
+                    new PropertyRequest(field, targetClass, foreignField, additionalForeignFields,
+                            mergedPropertyType, componentProperties, fields, idProperty, prefix, propertyName, type, propertyForeignKey, additionalForeignKeyIndexPosition, presentationAttributes, presentationAttribute, explicitType, returnedClass, this));
         }
     }
 

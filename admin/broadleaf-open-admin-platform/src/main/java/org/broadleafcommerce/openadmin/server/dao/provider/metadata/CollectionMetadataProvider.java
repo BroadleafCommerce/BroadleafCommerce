@@ -9,19 +9,18 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationCollectionOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
-import org.hibernate.mapping.Property;
-import org.hibernate.type.Type;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -29,7 +28,6 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,10 +35,11 @@ import java.util.Map;
  */
 @Component("blCollectionMetadataProvider")
 @Scope("prototype")
-public class CollectionMetadataProvider extends AbstractMetadataProvider {
+public class CollectionMetadataProvider extends MetadataProviderAdapter {
 
     private static final Log LOG = LogFactory.getLog(CollectionMetadataProvider.class);
 
+    @Override
     public boolean canHandleField(Field field) {
         AdminPresentationCollection annot = field.getAnnotation(AdminPresentationCollection.class);
         return annot != null;
@@ -57,21 +56,22 @@ public class CollectionMetadataProvider extends AbstractMetadataProvider {
         return true;
     }
 
-    public void addMetadata(Field field, Class<?> parentClass, Class<?> targetClass, Map<String,
-                FieldMetadata> attributes, DynamicEntityDao dynamicEntityDao, String prefix) {
-        AdminPresentationCollection annot = field.getAnnotation(AdminPresentationCollection.class);
-        FieldInfo info = buildFieldInfo(field);
+    @Override
+    public void addMetadata(AddMetadataRequest addMetadataRequest) {
+        AdminPresentationCollection annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationCollection
+                .class);
+        FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
         FieldMetadataOverride override = constructBasicCollectionMetadataOverride(annot);
-        buildCollectionMetadata(parentClass, targetClass, attributes, info, override);
-        setClassOwnership(parentClass, targetClass, attributes, info);
+        buildCollectionMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(),
+                addMetadataRequest.getRequestedMetadata(), info, override);
+        setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), info);
     }
 
     @Override
-    public void overrideViaAnnotation(Class<?> entity, Map<String, FieldMetadata> mergedProperties, Boolean
-            isParentExcluded, DynamicEntityDao dynamicEntityDao, String prefix) {
+    public void overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
         Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides = new HashMap<String, AdminPresentationCollectionOverride>();
 
-        AdminPresentationOverrides myOverrides = entity.getAnnotation(AdminPresentationOverrides.class);
+        AdminPresentationOverrides myOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationOverrides.class);
         if (myOverrides != null) {
             for (AdminPresentationCollectionOverride myOverride : myOverrides.collections()) {
                 presentationCollectionOverrides.put(myOverride.name(), myOverride);
@@ -79,27 +79,25 @@ public class CollectionMetadataProvider extends AbstractMetadataProvider {
         }
 
         for (String propertyName : presentationCollectionOverrides.keySet()) {
-            for (String key : mergedProperties.keySet()) {
+            for (String key : overrideViaAnnotationRequest.getRequestedMetadata().keySet()) {
                 if (key.startsWith(propertyName)) {
-                    buildAdminPresentationCollectionOverride(prefix, isParentExcluded, mergedProperties, presentationCollectionOverrides, propertyName, key, dynamicEntityDao);
+                    buildAdminPresentationCollectionOverride(overrideViaAnnotationRequest.getPrefix(), overrideViaAnnotationRequest.getParentExcluded(), overrideViaAnnotationRequest.getRequestedMetadata(), presentationCollectionOverrides, propertyName, key, overrideViaAnnotationRequest.getDynamicEntityDao());
                 }
             }
         }
     }
 
     @Override
-    public void overrideViaXml(String configurationKey, String ceilingEntityFullyQualifiedClassname, String prefix,
-                               Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties,
-                               DynamicEntityDao dynamicEntityDao) {
-        Map<String, FieldMetadataOverride> overrides = getTargetedOverride(configurationKey, ceilingEntityFullyQualifiedClassname);
+    public void overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
+        Map<String, FieldMetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
                 final FieldMetadataOverride localMetadata = overrides.get(propertyName);
-                for (String key : mergedProperties.keySet()) {
+                for (String key : overrideViaXmlRequest.getRequestedMetadata().keySet()) {
                     if (key.equals(propertyName)) {
                         try {
-                            if (mergedProperties.get(key) instanceof BasicCollectionMetadata) {
-                                BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) mergedProperties.get(key);
+                            if (overrideViaXmlRequest.getRequestedMetadata().get(key) instanceof BasicCollectionMetadata) {
+                                BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) overrideViaXmlRequest.getRequestedMetadata().get(key);
                                 if (serverMetadata.getTargetClass() != null)  {
                                     Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
                                     Class<?> parentClass = null;
@@ -107,14 +105,14 @@ public class CollectionMetadataProvider extends AbstractMetadataProvider {
                                         parentClass = Class.forName(serverMetadata.getOwningClass());
                                     }
                                     String fieldName = serverMetadata.getFieldName();
-                                    Field field = dynamicEntityDao.getFieldManager().getField(targetClass, fieldName);
+                                    Field field = overrideViaXmlRequest.getDynamicEntityDao().getFieldManager().getField(targetClass, fieldName);
                                     Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
                                     temp.put(field.getName(), serverMetadata);
                                     FieldInfo info = buildFieldInfo(field);
                                     buildCollectionMetadata(parentClass, targetClass, temp, info, localMetadata);
                                     serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
-                                    mergedProperties.put(key, serverMetadata);
-                                    if (isParentExcluded) {
+                                    overrideViaXmlRequest.getRequestedMetadata().put(key, serverMetadata);
+                                    if (overrideViaXmlRequest.getParentExcluded()) {
                                         if (LOG.isDebugEnabled()) {
                                             LOG.debug("applyCollectionMetadataOverrides:Excluding " + key + "because parent is marked as excluded.");
                                         }
@@ -129,11 +127,6 @@ public class CollectionMetadataProvider extends AbstractMetadataProvider {
                 }
             }
         }
-    }
-
-    @Override
-    public void addMetadataFromMappingData(FieldMetadata presentationAttribute, List<Property> componentProperties, SupportedFieldType type, SupportedFieldType secondaryType, Type entityType, String propertyName, MergedPropertyType mergedPropertyType, DynamicEntityDao dynamicEntityDao) {
-        //do nothing
     }
 
     protected void buildAdminPresentationCollectionOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides, String propertyName, String key, DynamicEntityDao dynamicEntityDao) {

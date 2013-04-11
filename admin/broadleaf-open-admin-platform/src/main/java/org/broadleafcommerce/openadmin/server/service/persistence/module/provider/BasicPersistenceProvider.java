@@ -2,26 +2,19 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 
 import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.criteria.AssociationPathElement;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
-import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
-import org.broadleafcommerce.openadmin.web.rulebuilder.MVELToDataWrapperTranslator;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -45,9 +38,10 @@ import java.util.StringTokenizer;
  */
 @Component("blBasicPersistenceProvider")
 @Scope("prototype")
-public class BasicPersistenceProvider extends AbstractPersistenceProvider {
+public class BasicPersistenceProvider extends PersistenceProviderAdapter {
 
-    public boolean canHandlePersistence(Object instance, BasicFieldMetadata metadata) {
+    @Override
+    public boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata) {
         return metadata.getFieldType() == SupportedFieldType.BOOLEAN ||
                 metadata.getFieldType() == SupportedFieldType.DATE ||
                 metadata.getFieldType() == SupportedFieldType.DECIMAL ||
@@ -60,128 +54,126 @@ public class BasicPersistenceProvider extends AbstractPersistenceProvider {
     }
 
     @Override
-    public boolean canHandleFilterMapping(BasicFieldMetadata metadata) {
-        return canHandlePersistence(null, metadata);
+    public boolean canHandleSearchMapping(BasicFieldMetadata metadata) {
+        return canHandlePersistence(null, null, metadata);
     }
 
     @Override
-    public boolean canHandleFilterProperties(Entity entity, Map<String, FieldMetadata> unfilteredProperties) {
-        return false;
-    }
-
-    public void populateValue(Serializable instance, Boolean setId, FieldManager fieldManager, Property property,
-                              BasicFieldMetadata metadata, Class<?> returnType, String value, PersistenceManager persistenceManager,
-                              DataFormatProvider dataFormatProvider) throws PersistenceException {
+    public void populateValue(PopulateValueRequest populateValueRequest) {
         try {
-            switch (metadata.getFieldType()) {
+            switch (populateValueRequest.getMetadata().getFieldType()) {
                 case BOOLEAN:
-                    boolean v = Boolean.valueOf(value);
+                    boolean v = Boolean.valueOf(populateValueRequest.getRequestedValue());
                     try {
-                        fieldManager.setFieldValue(instance, property.getName(), v);
+                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(),
+                                populateValueRequest.getProperty().getName(), v);
                     } catch (IllegalArgumentException e) {
                         char c = v ? 'Y' : 'N';
-                        fieldManager.setFieldValue(instance, property.getName(), c);
+                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(),
+                                populateValueRequest.getProperty().getName(), c);
                     }
                     break;
                 case DATE:
-                    fieldManager.setFieldValue(instance, property.getName(), dataFormatProvider.getSimpleDateFormatter().parse(value));
+                    populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(),
+                            populateValueRequest.getProperty().getName(), populateValueRequest.getDataFormatProvider().getSimpleDateFormatter().parse(populateValueRequest.getRequestedValue()));
                     break;
                 case DECIMAL:
-                    if (BigDecimal.class.isAssignableFrom(returnType)) {
-                        fieldManager.setFieldValue(instance, property.getName(), new BigDecimal(new Double(value)));
+                    if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(),
+                                populateValueRequest.getProperty().getName(), new BigDecimal(new Double(populateValueRequest.getRequestedValue())));
                     } else {
-                        fieldManager.setFieldValue(instance, property.getName(), new Double(value));
+                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), new Double(populateValueRequest.getRequestedValue()));
                     }
                     break;
                 case MONEY:
-                    if (BigDecimal.class.isAssignableFrom(returnType)) {
-                        fieldManager.setFieldValue(instance, property.getName(), new BigDecimal(new Double(value)));
-                    } else if (Double.class.isAssignableFrom(returnType)) {
-                        fieldManager.setFieldValue(instance, property.getName(), new Double(value));
+                    if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), new BigDecimal(new Double(populateValueRequest.getRequestedValue())));
+                    } else if (Double.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), new Double(populateValueRequest.getRequestedValue()));
                     } else {
-                        fieldManager.setFieldValue(instance, property.getName(), new Money(new Double(value)));
+                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), new Money(new Double(populateValueRequest.getRequestedValue())));
                     }
                     break;
                 case INTEGER:
-                    if (int.class.isAssignableFrom(returnType) || Integer.class.isAssignableFrom(returnType)) {
-                        fieldManager.setFieldValue(instance, property.getName(), Integer.valueOf(value));
-                    } else if (byte.class.isAssignableFrom(returnType) || Byte.class.isAssignableFrom(returnType)) {
-                        fieldManager.setFieldValue(instance, property.getName(), Byte.valueOf(value));
-                    } else if (short.class.isAssignableFrom(returnType) || Short.class.isAssignableFrom(returnType)) {
-                        fieldManager.setFieldValue(instance, property.getName(), Short.valueOf(value));
-                    } else if (long.class.isAssignableFrom(returnType) || Long.class.isAssignableFrom(returnType)) {
-                        fieldManager.setFieldValue(instance, property.getName(), Long.valueOf(value));
+                    if (int.class.isAssignableFrom(populateValueRequest.getReturnType()) || Integer.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), Integer.valueOf(populateValueRequest.getRequestedValue()));
+                    } else if (byte.class.isAssignableFrom(populateValueRequest.getReturnType()) || Byte.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), Byte.valueOf(populateValueRequest.getRequestedValue()));
+                    } else if (short.class.isAssignableFrom(populateValueRequest.getReturnType()) || Short.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), Short.valueOf(populateValueRequest.getRequestedValue()));
+                    } else if (long.class.isAssignableFrom(populateValueRequest.getReturnType()) || Long.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), Long.valueOf(populateValueRequest.getRequestedValue()));
                     }
                     break;
                 case EMAIL:
-                    fieldManager.setFieldValue(instance, property.getName(), value);
+                    populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), populateValueRequest.getRequestedValue());
                     break;
                 case FOREIGN_KEY: {
                     Serializable foreignInstance;
-                    if (StringUtils.isEmpty(value)) {
+                    if (StringUtils.isEmpty(populateValueRequest.getRequestedValue())) {
                         foreignInstance = null;
                     } else {
-                        if (SupportedFieldType.INTEGER.toString().equals(metadata.getSecondaryType().toString())) {
-                            foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(metadata.getForeignKeyClass()), Long.valueOf(value));
+                        if (SupportedFieldType.INTEGER.toString().equals(populateValueRequest.getMetadata().getSecondaryType().toString())) {
+                            foreignInstance = populateValueRequest.getPersistenceManager().getDynamicEntityDao().retrieve(Class.forName(populateValueRequest.getMetadata().getForeignKeyClass()), Long.valueOf(populateValueRequest.getRequestedValue()));
                         } else {
-                            foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(metadata.getForeignKeyClass()), value);
+                            foreignInstance = populateValueRequest.getPersistenceManager().getDynamicEntityDao().retrieve(Class.forName(populateValueRequest.getMetadata().getForeignKeyClass()), populateValueRequest.getRequestedValue());
                         }
                     }
 
-                    if (Collection.class.isAssignableFrom(returnType)) {
+                    if (Collection.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         Collection collection;
                         try {
-                            collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
+                            collection = (Collection) populateValueRequest.getFieldManager().getFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName());
                         } catch (FieldNotAvailableException e) {
                             throw new IllegalArgumentException(e);
                         }
                         if (!collection.contains(foreignInstance)) {
                             collection.add(foreignInstance);
                         }
-                    } else if (Map.class.isAssignableFrom(returnType)) {
+                    } else if (Map.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         throw new IllegalArgumentException("Map structures are not supported for foreign key fields.");
                     } else {
-                        fieldManager.setFieldValue(instance, property.getName(), foreignInstance);
+                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), foreignInstance);
                     }
                     break;
                 }
                 case ADDITIONAL_FOREIGN_KEY: {
                     Serializable foreignInstance;
-                    if (StringUtils.isEmpty(value)) {
+                    if (StringUtils.isEmpty(populateValueRequest.getRequestedValue())) {
                         foreignInstance = null;
                     } else {
-                        if (SupportedFieldType.INTEGER.toString().equals(metadata.getSecondaryType().toString())) {
-                            foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(metadata.getForeignKeyClass()), Long.valueOf(value));
+                        if (SupportedFieldType.INTEGER.toString().equals(populateValueRequest.getMetadata().getSecondaryType().toString())) {
+                            foreignInstance = populateValueRequest.getPersistenceManager().getDynamicEntityDao().retrieve(Class.forName(populateValueRequest.getMetadata().getForeignKeyClass()), Long.valueOf(populateValueRequest.getRequestedValue()));
                         } else {
-                            foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(metadata.getForeignKeyClass()), value);
+                            foreignInstance = populateValueRequest.getPersistenceManager().getDynamicEntityDao().retrieve(Class.forName(populateValueRequest.getMetadata().getForeignKeyClass()), populateValueRequest.getRequestedValue());
                         }
                     }
 
-                    if (Collection.class.isAssignableFrom(returnType)) {
+                    if (Collection.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         Collection collection;
                         try {
-                            collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
+                            collection = (Collection) populateValueRequest.getFieldManager().getFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName());
                         } catch (FieldNotAvailableException e) {
                             throw new IllegalArgumentException(e);
                         }
                         if (!collection.contains(foreignInstance)) {
                             collection.add(foreignInstance);
                         }
-                    } else if (Map.class.isAssignableFrom(returnType)) {
+                    } else if (Map.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         throw new IllegalArgumentException("Map structures are not supported for foreign key fields.");
                     } else {
-                        fieldManager.setFieldValue(instance, property.getName(), foreignInstance);
+                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), foreignInstance);
                     }
                     break;
                 }
                 case ID:
-                    if (setId) {
-                        switch (metadata.getSecondaryType()) {
+                    if (populateValueRequest.getSetId()) {
+                        switch (populateValueRequest.getMetadata().getSecondaryType()) {
                             case INTEGER:
-                                fieldManager.setFieldValue(instance, property.getName(), Long.valueOf(value));
+                                populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), Long.valueOf(populateValueRequest.getRequestedValue()));
                                 break;
                             case STRING:
-                                fieldManager.setFieldValue(instance, property.getName(), value);
+                                populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), populateValueRequest.getRequestedValue());
                                 break;
                         }
                     }
@@ -193,71 +185,76 @@ public class BasicPersistenceProvider extends AbstractPersistenceProvider {
     }
 
     @Override
-    public void extractValue(List<Property> props, FieldManager fieldManager, MVELToDataWrapperTranslator translator, ObjectMapper mapper, BasicFieldMetadata metadata, Object value, String strVal, Property propertyItem, String displayVal, PersistenceManager persistenceManager, DataFormatProvider dataFormatProvider) throws PersistenceException {
+    public void extractValue(ExtractValueRequest extractValueRequest) throws PersistenceException {
         try {
-            if (value != null) {
-                if (metadata.getForeignKeyCollection()) {
-                    ((BasicFieldMetadata) propertyItem.getMetadata()).setFieldType(metadata.getFieldType());
-                    strVal = null;
-                } else if (metadata.getFieldType().equals(SupportedFieldType.BOOLEAN) && value instanceof Character) {
-                    strVal = (value.equals('Y')) ? "true" : "false";
-                } else if (Date.class.isAssignableFrom(value.getClass())) {
-                    strVal = dataFormatProvider.getSimpleDateFormatter().format((Date) value);
-                } else if (Timestamp.class.isAssignableFrom(value.getClass())) {
-                    strVal = dataFormatProvider.getSimpleDateFormatter().format(new Date(((Timestamp) value).getTime()));
-                } else if (Calendar.class.isAssignableFrom(value.getClass())) {
-                    strVal = dataFormatProvider.getSimpleDateFormatter().format(((Calendar) value).getTime());
-                } else if (Double.class.isAssignableFrom(value.getClass())) {
-                    strVal = dataFormatProvider.getDecimalFormatter().format(value);
-                } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
-                    strVal = dataFormatProvider.getDecimalFormatter().format(((BigDecimal) value).doubleValue());
-                } else if (metadata.getForeignKeyClass() != null) {
+            if (extractValueRequest.getRequestedValue() != null) {
+                String val = null;
+                if (extractValueRequest.getMetadata().getForeignKeyCollection()) {
+                    ((BasicFieldMetadata) extractValueRequest.getRequestedProperty().getMetadata()).setFieldType(extractValueRequest.getMetadata().getFieldType());
+                } else if (extractValueRequest.getMetadata().getFieldType().equals(SupportedFieldType.BOOLEAN) && extractValueRequest.getRequestedValue() instanceof Character) {
+                    val = (extractValueRequest.getRequestedValue().equals('Y')) ? "true" : "false";
+                } else if (Date.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
+                    val = extractValueRequest.getDataFormatProvider().getSimpleDateFormatter
+                            ().format((Date) extractValueRequest.getRequestedValue());
+                } else if (Timestamp.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
+                    val = extractValueRequest.getDataFormatProvider().getSimpleDateFormatter
+                            ().format(new Date(((Timestamp) extractValueRequest.getRequestedValue()).getTime()));
+                } else if (Calendar.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
+                    val = extractValueRequest.getDataFormatProvider().getSimpleDateFormatter
+                            ().format(((Calendar) extractValueRequest.getRequestedValue()).getTime());
+                } else if (Double.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
+                    val = extractValueRequest.getDataFormatProvider().getDecimalFormatter().format(extractValueRequest.getRequestedValue());
+                } else if (BigDecimal.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
+                    val = extractValueRequest.getDataFormatProvider().getDecimalFormatter().format(((BigDecimal) extractValueRequest.getRequestedValue()).doubleValue());
+                } else if (extractValueRequest.getMetadata().getForeignKeyClass() != null) {
                     try {
-                        strVal = fieldManager.getFieldValue(value, metadata.getForeignKeyProperty()).toString();
+                        val = extractValueRequest.getFieldManager().getFieldValue
+                                (extractValueRequest.getRequestedValue(), extractValueRequest.getMetadata().getForeignKeyProperty()).toString();
                         //see if there's a name property and use it for the display value
                         Object temp = null;
                         try {
-                            temp = fieldManager.getFieldValue(value, metadata.getForeignKeyDisplayValueProperty());
+                            temp = extractValueRequest.getFieldManager().getFieldValue(extractValueRequest.getRequestedValue(), extractValueRequest.getMetadata().getForeignKeyDisplayValueProperty());
                         } catch (FieldNotAvailableException e) {
                             //do nothing
                         }
                         if (temp != null) {
-                            displayVal = temp.toString();
+                            extractValueRequest.setDisplayVal(temp.toString());
                         }
                     } catch (FieldNotAvailableException e) {
                         throw new IllegalArgumentException(e);
                     }
                 } else {
-                    strVal = value.toString();
+                    val = extractValueRequest.getRequestedValue().toString();
                 }
-                propertyItem.setValue(strVal);
-                propertyItem.setDisplayValue(displayVal);
+                extractValueRequest.getRequestedProperty().setValue(val);
+                extractValueRequest.getRequestedProperty().setDisplayValue(extractValueRequest.getDisplayVal());
             }
         } catch (IllegalAccessException e) {
             throw new PersistenceException(e);
         }
     }
 
-    public void addFilterMapping(PersistencePerspective persistencePerspective, CriteriaTransferObject cto,
-                                 String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedProperties,
-                                 BaseCtoConverter ctoConverter, String propertyName, FieldManager fieldManager) {
+    @Override
+    public void addSearchMapping(AddSearchMappingRequest addSearchMappingRequest) {
         AssociationPath associationPath;
-        int dotIndex = propertyName.lastIndexOf('.');
+        int dotIndex = addSearchMappingRequest.getPropertyName().lastIndexOf('.');
         StringBuilder property;
         Class clazz;
         try {
-            clazz = Class.forName(mergedProperties.get(propertyName).getInheritedFromType());
+            clazz = Class.forName(addSearchMappingRequest.getMergedProperties().get(addSearchMappingRequest
+                    .getPropertyName()).getInheritedFromType());
         } catch (ClassNotFoundException e) {
             throw new PersistenceException(e);
         }
-        Field field = fieldManager.getField(clazz, propertyName);
+        Field field = addSearchMappingRequest.getFieldManager().getField(clazz, addSearchMappingRequest.getPropertyName());
         Class<?> targetType = null;
         if (field != null) {
             targetType = field.getType();
         }
         if (dotIndex >= 0) {
-            property = new StringBuilder(propertyName.substring(dotIndex + 1, propertyName.length()));
-            String prefix = propertyName.substring(0, dotIndex);
+            property = new StringBuilder(addSearchMappingRequest.getPropertyName().substring(dotIndex + 1,
+                    addSearchMappingRequest.getPropertyName().length()));
+            String prefix = addSearchMappingRequest.getPropertyName().substring(0, dotIndex);
             StringTokenizer tokens = new StringTokenizer(prefix, ".");
             List<AssociationPathElement> elementList = new ArrayList<AssociationPathElement>(20);
             StringBuilder sb = new StringBuilder(150);
@@ -266,7 +263,7 @@ public class BasicPersistenceProvider extends AbstractPersistenceProvider {
                 String token = tokens.nextToken();
                 sb.append(token);
                 pathBuilder.append(token);
-                field = fieldManager.getField(clazz, pathBuilder.toString());
+                field = addSearchMappingRequest.getFieldManager().getField(clazz, pathBuilder.toString());
                 Embedded embedded = field.getAnnotation(Embedded.class);
                 if (embedded != null) {
                     sb.append('.');
@@ -284,65 +281,76 @@ public class BasicPersistenceProvider extends AbstractPersistenceProvider {
                 associationPath = AssociationPath.ROOT;
             }
         } else {
-            property = new StringBuilder(propertyName);
+            property = new StringBuilder(addSearchMappingRequest.getPropertyName());
             associationPath = AssociationPath.ROOT;
         }
         String convertedProperty = property.toString();
-        BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(propertyName);
+        BasicFieldMetadata metadata = (BasicFieldMetadata) addSearchMappingRequest.getMergedProperties().get(addSearchMappingRequest.getPropertyName());
         switch (metadata.getFieldType()) {
             case BOOLEAN:
                 if (targetType == null || targetType.equals(Boolean.class) || targetType.equals(boolean.class)) {
-                    ctoConverter.addBooleanMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
+                    addSearchMappingRequest.getRequestedCtoConverter().addBooleanMapping(addSearchMappingRequest
+                            .getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
                 } else {
-                    ctoConverter.addCharacterMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
+                    addSearchMappingRequest.getRequestedCtoConverter().addCharacterMapping(addSearchMappingRequest
+                            .getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
                 }
                 break;
             case DATE:
-                ctoConverter.addDateMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
+                addSearchMappingRequest.getRequestedCtoConverter().addDateMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
                 break;
             case DECIMAL:
-                ctoConverter.addDecimalMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
+                addSearchMappingRequest.getRequestedCtoConverter().addDecimalMapping(addSearchMappingRequest
+                        .getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(),
+                        associationPath, convertedProperty);
                 break;
             case MONEY:
-                ctoConverter.addDecimalMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
+                addSearchMappingRequest.getRequestedCtoConverter().addDecimalMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
                 break;
             case INTEGER:
-                ctoConverter.addLongMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
+                addSearchMappingRequest.getRequestedCtoConverter().addLongMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
                 break;
             default:
-                ctoConverter.addStringLikeMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
+                addSearchMappingRequest.getRequestedCtoConverter().addStringLikeMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
                 break;
             case EMAIL:
-                ctoConverter.addStringLikeMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
+                addSearchMappingRequest.getRequestedCtoConverter().addStringLikeMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
                 break;
             case FOREIGN_KEY:
-                if (cto.get(propertyName).getFilterValues().length > 0) {
-                    ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get
+                if (addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName()).getFilterValues().length > 0) {
+                    ForeignKey foreignKey = (ForeignKey) addSearchMappingRequest.getPersistencePerspective().getPersistencePerspectiveItems().get
                             (PersistencePerspectiveItemType.FOREIGNKEY);
                     if (metadata.getForeignKeyCollection()) {
-                        if (ForeignKeyRestrictionType.COLLECTION_SIZE_EQ.toString().equals(foreignKey.getRestrictionType().toString())) {
-                            ctoConverter.addCollectionSizeEqMapping(ceilingEntityFullyQualifiedClassname, propertyName, AssociationPath.ROOT, propertyName);
+                        if (ForeignKeyRestrictionType.COLLECTION_SIZE_EQ.toString().equals(foreignKey
+                                .getRestrictionType().toString())) {
+                            addSearchMappingRequest.getRequestedCtoConverter().addCollectionSizeEqMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), AssociationPath.ROOT, addSearchMappingRequest.getPropertyName());
                         } else {
-                            AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-                            ctoConverter.addLongMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, metadata.getForeignKeyProperty());
+                            AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement
+                                    (addSearchMappingRequest.getPropertyName()));
+                            addSearchMappingRequest.getRequestedCtoConverter().addLongMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), foreignCategory, metadata.getForeignKeyProperty());
+
                         }
-                    } else if (cto.get(propertyName).getFilterValues()[0] == null || "null".equals(cto.get(propertyName).getFilterValues()[0])) {
-                        ctoConverter.addNullMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, propertyName);
+                    } else if (addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName())
+                            .getFilterValues()[0] == null || "null".equals(addSearchMappingRequest.getRequestedCto().get
+                            (addSearchMappingRequest.getPropertyName()).getFilterValues()[0])) {
+                        addSearchMappingRequest.getRequestedCtoConverter().addNullMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, addSearchMappingRequest.getPropertyName());
+
                     } else if (metadata.getSecondaryType() == SupportedFieldType.STRING) {
-                        AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-                        ctoConverter.addStringEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, metadata.getForeignKeyProperty());
+                        AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(addSearchMappingRequest.getPropertyName()));
+                        addSearchMappingRequest.getRequestedCtoConverter().addStringEQMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), foreignCategory, metadata.getForeignKeyProperty());
                     } else {
-                        AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-                        ctoConverter.addLongEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, metadata.getForeignKeyProperty());
+                        AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(addSearchMappingRequest.getPropertyName()));
+                        addSearchMappingRequest.getRequestedCtoConverter().addLongEQMapping(addSearchMappingRequest
+                                .getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), foreignCategory, metadata.getForeignKeyProperty());
                     }
                 } else {
-                    ctoConverter.addEmptyMapping(ceilingEntityFullyQualifiedClassname, propertyName);
+                    addSearchMappingRequest.getRequestedCtoConverter().addEmptyMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName());
                 }
                 break;
             case ADDITIONAL_FOREIGN_KEY:
-                if (cto.get(propertyName).getFilterValues().length > 0) {
-                    int additionalForeignKeyIndexPosition = Arrays.binarySearch(persistencePerspective
-                            .getAdditionalForeignKeys(), new ForeignKey(propertyName, null, null),
+                if (addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName()).getFilterValues().length > 0) {
+                    int additionalForeignKeyIndexPosition = Arrays.binarySearch(addSearchMappingRequest.getPersistencePerspective()
+                            .getAdditionalForeignKeys(), new ForeignKey(addSearchMappingRequest.getPropertyName(), null, null),
                             new Comparator<ForeignKey>() {
 
                         @Override
@@ -352,46 +360,47 @@ public class BasicPersistenceProvider extends AbstractPersistenceProvider {
                     });
                     ForeignKey foreignKey = null;
                     if (additionalForeignKeyIndexPosition >= 0) {
-                        foreignKey = persistencePerspective.getAdditionalForeignKeys()[additionalForeignKeyIndexPosition];
+                        foreignKey = addSearchMappingRequest.getPersistencePerspective().getAdditionalForeignKeys()[additionalForeignKeyIndexPosition];
                     }
-                    //in the case of a to-one lookup, an explicit ForeignKey is not passed in. The system should then default
+                    //in the case of a to-one lookup, an explicit ForeignKey is not passed in. The system should then
+                    // default
                     //to just using a ForeignKeyRestrictionType.ID_EQ
                     if (metadata.getForeignKeyCollection()) {
                         if (foreignKey != null &&
                                 ForeignKeyRestrictionType.COLLECTION_SIZE_EQ.toString().equals(foreignKey.getRestrictionType().toString())) {
-                            ctoConverter.addCollectionSizeEqMapping(ceilingEntityFullyQualifiedClassname, propertyName, AssociationPath.ROOT, propertyName);
+                            addSearchMappingRequest.getRequestedCtoConverter().addCollectionSizeEqMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), AssociationPath.ROOT, addSearchMappingRequest.getPropertyName());
                         } else {
-                            AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-                            ctoConverter.addLongMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, metadata.getForeignKeyProperty());
+                            AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement
+                                    (addSearchMappingRequest.getPropertyName()));
+                            addSearchMappingRequest.getRequestedCtoConverter().addLongMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), foreignCategory, metadata.getForeignKeyProperty());
                         }
-                    } else if (cto.get(propertyName).getFilterValues()[0] == null || "null".equals(cto.get(propertyName).getFilterValues()[0])) {
-                        ctoConverter.addNullMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, propertyName);
+                    } else if (addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName()).getFilterValues()[0] == null || "null".equals(addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName()).getFilterValues()[0])) {
+                        addSearchMappingRequest.getRequestedCtoConverter().addNullMapping(addSearchMappingRequest
+                                .getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName()
+                                , associationPath, addSearchMappingRequest.getPropertyName());
                     } else if (metadata.getSecondaryType() == SupportedFieldType.STRING) {
-                        AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-                        ctoConverter.addStringEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, metadata.getForeignKeyProperty());
+                        AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(addSearchMappingRequest.getPropertyName()));
+                        addSearchMappingRequest.getRequestedCtoConverter().addStringEQMapping(addSearchMappingRequest
+                                .getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), foreignCategory, metadata.getForeignKeyProperty());
                     } else {
-                        AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(propertyName));
-                        ctoConverter.addLongEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, foreignCategory, metadata.getForeignKeyProperty());
+                        AssociationPath foreignCategory = new AssociationPath(new AssociationPathElement(addSearchMappingRequest.getPropertyName()));
+                        addSearchMappingRequest.getRequestedCtoConverter().addLongEQMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), foreignCategory, metadata.getForeignKeyProperty());
                     }
                 } else {
-                    ctoConverter.addEmptyMapping(ceilingEntityFullyQualifiedClassname, propertyName);
+                    addSearchMappingRequest.getRequestedCtoConverter().addEmptyMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName());
                 }
                 break;
             case ID:
                 switch (metadata.getSecondaryType()) {
                     case INTEGER:
-                        ctoConverter.addLongEQMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
+                        addSearchMappingRequest.getRequestedCtoConverter().addLongEQMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
                         break;
                     case STRING:
-                        ctoConverter.addStringLikeMapping(ceilingEntityFullyQualifiedClassname, propertyName, associationPath, convertedProperty);
+                        addSearchMappingRequest.getRequestedCtoConverter().addStringLikeMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
                         break;
                 }
                 break;
         }
     }
 
-    @Override
-    public void filterProperties(Entity entity, Map<String, FieldMetadata> mergedProperties) {
-        //do nothing
-    }
 }

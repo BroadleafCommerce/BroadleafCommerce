@@ -5,12 +5,9 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.dao.provider.property.request.PropertyRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.hibernate.internal.TypeLocatorImpl;
-import org.hibernate.mapping.Property;
 import org.hibernate.type.Type;
 import org.hibernate.type.TypeResolver;
 import org.springframework.context.annotation.Scope;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,28 +31,9 @@ public class MapFieldPropertyProvider extends BasicPropertyProvider {
     }
 
     @Override
-    public void buildProperty(
-            Field field,
-            Class<?> targetClass,
-            ForeignKey foreignField,
-            ForeignKey[] additionalForeignFields,
-            MergedPropertyType mergedPropertyType,
-            List<Property> componentProperties,
-            Map<String, FieldMetadata> fields,
-            String idProperty,
-            String prefix,
-            String propertyName,
-            Type type,
-            boolean isPropertyForeignKey,
-            int additionalForeignKeyIndexPosition,
-            Map<String, FieldMetadata> presentationAttributes,
-            FieldMetadata presentationAttribute,
-            SupportedFieldType explicitType,
-            Class<?> returnedClass,
-            DynamicEntityDao dynamicEntityDao
-    ) {
-        for (Map.Entry<String, FieldMetadata> entry : presentationAttributes.entrySet()) {
-            if (entry.getKey().startsWith(propertyName + FieldManager.MAPFIELDSEPARATOR)) {
+    public void buildProperty(PropertyRequest propertyRequest) {
+        for (Map.Entry<String, FieldMetadata> entry : propertyRequest.getPresentationAttributes().entrySet()) {
+            if (entry.getKey().startsWith(propertyRequest.getRequestedPropertyName() + FieldManager.MAPFIELDSEPARATOR)) {
                 TypeLocatorImpl typeLocator = new TypeLocatorImpl(new TypeResolver());
 
                 Type myType = null;
@@ -73,11 +50,11 @@ public class MapFieldPropertyProvider extends BasicPropertyProvider {
                     }
                 }
                 if (myType == null) {
-                    java.lang.reflect.Type genericType = field.getGenericType();
+                    java.lang.reflect.Type genericType = propertyRequest.getRequestedField().getGenericType();
                     if (genericType instanceof ParameterizedType) {
                         ParameterizedType pType = (ParameterizedType) genericType;
                         Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
-                        Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(clazz);
+                        Class<?>[] entities = propertyRequest.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(clazz);
                         if (!ArrayUtils.isEmpty(entities)) {
                             myType = typeLocator.entity(entities[entities.length-1]);
                         }
@@ -88,9 +65,13 @@ public class MapFieldPropertyProvider extends BasicPropertyProvider {
                            .getKey() + ")");
                 }
                 //add property for this map field as if it was a normal field
-                super.buildProperty(field, targetClass, foreignField, additionalForeignFields, mergedPropertyType, componentProperties,
-                        fields, idProperty, prefix, entry.getKey(), myType, isPropertyForeignKey, additionalForeignKeyIndexPosition,
-                        presentationAttributes, entry.getValue(), ((BasicFieldMetadata) entry.getValue()).getExplicitFieldType(), myType.getReturnedClass(), dynamicEntityDao);
+                super.buildProperty(new PropertyRequest(propertyRequest.getRequestedField(), propertyRequest.getTargetClass(),
+                        propertyRequest.getForeignField(), propertyRequest.getAdditionalForeignFields(),
+                        propertyRequest.getMergedPropertyType(), propertyRequest.getComponentProperties(),
+                        propertyRequest.getRequestedProperties(), propertyRequest.getIdProperty(), propertyRequest.getPrefix(),
+                        entry.getKey(), myType, propertyRequest.isPropertyForeignKey(), propertyRequest.getAdditionalForeignKeyIndexPosition(),
+                        propertyRequest.getPresentationAttributes(), entry.getValue(), ((BasicFieldMetadata) entry.getValue()).getExplicitFieldType(),
+                        myType.getReturnedClass(), propertyRequest.getDynamicEntityDao()));
             }
         }
     }

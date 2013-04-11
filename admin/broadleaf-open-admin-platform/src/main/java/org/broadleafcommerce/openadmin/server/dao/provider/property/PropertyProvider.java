@@ -1,42 +1,31 @@
 package org.broadleafcommerce.openadmin.server.dao.provider.property;
 
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.hibernate.mapping.Property;
-import org.hibernate.type.Type;
+import org.broadleafcommerce.openadmin.server.dao.provider.property.request.PropertyRequest;
 
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
 
 /**
+ * Classes implementing this interface are capable of manipulating properties resulting from the inspection
+ * phase for the admin. Providers are typically added in response to new admin presentation annotation support.
+ * Implementers should generally extend <tt>PropertyProviderAdapter</tt>.
+ *
  * @author Jeff Fischer
  */
 public interface PropertyProvider {
 
+    /**
+     * Whether or not this provider is qualified add properties for the specified field.
+     *
+     * @param field the <tt>Field</tt> instance to test
+     * @return whether or not this provider is qualified
+     */
     boolean canHandleField(Field field);
 
-    void buildProperty(
-            Field field,
-            Class<?> targetClass,
-            ForeignKey foreignField,
-            ForeignKey[] additionalForeignFields,
-            MergedPropertyType mergedPropertyType,
-            List<Property> componentProperties,
-            Map<String, FieldMetadata> fields,
-            String idProperty,
-            String prefix,
-            String propertyName,
-            Type type,
-            boolean isPropertyForeignKey,
-            int additionalForeignKeyIndexPosition,
-            Map<String, FieldMetadata> presentationAttributes,
-            FieldMetadata presentationAttribute,
-            SupportedFieldType explicitType,
-            Class<?> returnedClass,
-            DynamicEntityDao dynamicEntityDao
-    );
+    /**
+     * Contribute to property inspection for the <tt>Field</tt> instance in the request. Implementations should
+     * add values to the requestedProperties field of the request object.
+     *
+     * @param propertyRequest contains the requested field, properties, property name and support classes.
+     */
+    void buildProperty(PropertyRequest propertyRequest);
 }

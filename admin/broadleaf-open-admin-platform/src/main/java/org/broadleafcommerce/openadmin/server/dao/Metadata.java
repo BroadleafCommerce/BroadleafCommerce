@@ -23,7 +23,11 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.MetadataProvider;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
 import org.hibernate.mapping.Property;
 import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
@@ -58,14 +62,16 @@ public class Metadata {
             boolean foundOneOrMoreHandlers = false;
             for (MetadataProvider metadataProvider : metadataProviders) {
                 if (metadataProvider.canHandleField(field)) {
-                    metadataProvider.addMetadata(field, parentClass, targetClass, attributes, dynamicEntityDao, prefix);
+                    metadataProvider.addMetadata(new AddMetadataRequest(field, parentClass, targetClass, attributes,
+                            dynamicEntityDao, prefix));
                     if (!foundOneOrMoreHandlers) {
                         foundOneOrMoreHandlers = true;
                     }
                 }
             }
             if (!foundOneOrMoreHandlers) {
-                defaultMetadataProvider.addMetadata(field, parentClass, targetClass, attributes, dynamicEntityDao, prefix);
+                defaultMetadataProvider.addMetadata(new AddMetadataRequest(field, parentClass, targetClass,
+                        attributes, dynamicEntityDao, prefix));
             }
         }
         return attributes;
@@ -85,17 +91,20 @@ public class Metadata {
         for (int i = entities.length-1;i >= 0; i--) {
             for (MetadataProvider metadataProvider : metadataProviders) {
                 if (metadataProvider.canHandleAnnotationOverride(entities[i])) {
-                    metadataProvider.overrideViaAnnotation(entities[i], mergedProperties, isParentExcluded, dynamicEntityDao, prefix);
+                    metadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
+                            mergedProperties, isParentExcluded, dynamicEntityDao, prefix));
                 }
             }
         }
         //perform any standard overrides that are not specific to a module
-        defaultMetadataProvider.overrideViaXml(configurationKey, ceilingEntityFullyQualifiedClassname, prefix, isParentExcluded, mergedProperties, dynamicEntityDao);
+        defaultMetadataProvider.overrideViaXml(new OverrideViaXmlRequest(configurationKey,
+                ceilingEntityFullyQualifiedClassname, prefix, isParentExcluded, mergedProperties, dynamicEntityDao));
 
         for (MetadataProvider metadataProvider : metadataProviders) {
             if (metadataProvider.canHandleXmlOverride(ceilingEntityFullyQualifiedClassname, configurationKey)) {
-                metadataProvider.overrideViaXml(configurationKey, ceilingEntityFullyQualifiedClassname, prefix,
-                        isParentExcluded, mergedProperties, dynamicEntityDao);
+                metadataProvider.overrideViaXml(
+                        new OverrideViaXmlRequest(configurationKey, ceilingEntityFullyQualifiedClassname, prefix,
+                                isParentExcluded, mergedProperties, dynamicEntityDao));
             }
         }
 
@@ -135,7 +144,8 @@ public class Metadata {
         presentationAttribute.setInheritedFromType(targetClass.getName());
         presentationAttribute.setAvailableToTypes(new String[]{targetClass.getName()});
         for (MetadataProvider metadataProvider : metadataProviders) {
-            metadataProvider.addMetadataFromMappingData(presentationAttribute, componentProperties, type, secondaryType, entityType, propertyName, mergedPropertyType, dynamicEntityDao);
+            metadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(presentationAttribute,
+                    componentProperties, type, secondaryType, entityType, propertyName, mergedPropertyType, dynamicEntityDao));
         }
 
         return presentationAttribute;
