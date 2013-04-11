@@ -153,10 +153,11 @@ public class PaymentActivity extends BaseActivity {
                         seed.getPaymentResponse().addPaymentResponseItem(info, paymentResponseItem);
                         if (paymentResponseItem.getTransactionSuccess()) {
                             remainingTotal = remainingTotal.subtract(paymentResponseItem.getTransactionAmount());
-                        }
-                        if (paymentResponseItem.getTransactionAmount().lessThan(transactionTotal.getAmount())) {
-                            throw new InsufficientFundsException(String.format("Transaction amount was [%s] but paid amount was [%s]",
-                                    transactionTotal.getAmount(), paymentResponseItem.getTransactionAmount()));
+                        } else {
+                            if (paymentResponseItem.getTransactionAmount().lessThan(transactionTotal.getAmount())) {
+                                throw new InsufficientFundsException(String.format("Transaction amount was [%s] but paid amount was [%s]",
+                                        transactionTotal.getAmount(), paymentResponseItem.getTransactionAmount()));
+                            }
                         }
                     }
                 }
