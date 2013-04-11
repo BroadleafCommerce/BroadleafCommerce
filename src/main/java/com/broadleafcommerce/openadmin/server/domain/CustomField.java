@@ -114,7 +114,7 @@ public interface CustomField extends Serializable {
      * The field label that will be for the target entity attribute map key. Will also be used to derive
      * the label shown to the admin user for the field (using i18n).
      *
-     * @param label
+     * @param label the label for this field
      */
     void setLabel(String label);
 
@@ -135,14 +135,30 @@ public interface CustomField extends Serializable {
     /**
      * Whether or not this field is visible on the target entity form.
      *
-     * @return whether or not this field appears on the target entity form.
+     * @return whether or not this field appears on the target entity form
      */
     Boolean getShowFieldOnForm();
 
     /**
      * Whether or not this field is visible on the target entity form.
      *
-     * @param showFieldOnForm whether or not this field appears on the target entity form.
+     * @param showFieldOnForm whether or not this field appears on the target entity form
      */
     void setShowFieldOnForm(Boolean showFieldOnForm);
+
+    /**
+     * Whether or not the field is included in search engine indexing and is including in keyword searches
+     * performed on the site.
+     *
+     * @return Whether or not the field is available for search engine usage
+     */
+    Boolean getSearchable();
+
+    /**
+     * Whether or not the field is included in search engine indexing and is including in keyword searches
+     * performed on the site.
+     *
+     * @param searchable Whether or not the field is available for search engine usage
+     */
+    void setSearchable(Boolean searchable);
 }

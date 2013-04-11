@@ -88,6 +88,10 @@ public class CustomFieldImpl implements CustomField {
     @AdminPresentation(friendlyName = "CustomFieldImpl_Grid_Order", order = 7)
     protected Integer gridOrder;
 
+    @Column(name = "SEARCHABLE")
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Searchable", order = 8)
+    protected Boolean searchable;
+
     @Override
     public String getCustomFieldTarget() {
         return customFieldTarget;
@@ -166,5 +170,15 @@ public class CustomFieldImpl implements CustomField {
     @Override
     public void setShowFieldOnForm(Boolean showFieldOnForm) {
         this.showFieldOnForm = showFieldOnForm;
+    }
+
+    @Override
+    public Boolean getSearchable() {
+        return searchable;
+    }
+
+    @Override
+    public void setSearchable(Boolean searchable) {
+        this.searchable = searchable;
     }
 }
