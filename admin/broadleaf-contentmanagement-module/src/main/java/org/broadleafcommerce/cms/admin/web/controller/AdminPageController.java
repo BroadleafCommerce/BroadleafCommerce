@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.cms.admin.web.controller;
 
-import org.broadleafcommerce.cms.structure.domain.StructuredContent;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -37,17 +37,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Handles admin operations for the {@link StructuredContent} entity. This entity has fields that are 
- * dependent on the value of the {@link StructuredContent#getStructuredContentType()} field, and as such,
+ * Handles admin operations for the {@link Page} entity. This entity has fields that are 
+ * dependent on the value of the {@link Page#getPageTemplate()} field, and as such,
  * it deviates from the typical {@link AdminAbstractEntityController}.
  * 
  * @author Andre Azzolini (apazzolini)
  */
-@Controller("blAdminStructuredContentController")
-@RequestMapping("/" + AdminStructuredContentController.SECTION_KEY)
-public class AdminStructuredContentController extends AdminBasicEntityController {
+@Controller("blAdminPageController")
+@RequestMapping("/" + AdminPageController.SECTION_KEY)
+public class AdminPageController extends AdminBasicEntityController {
     
-    protected static final String SECTION_KEY = "structured-content";
+    protected static final String SECTION_KEY = "pages";
     
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
@@ -64,16 +64,16 @@ public class AdminStructuredContentController extends AdminBasicEntityController
         
         // Attach the dynamic fields to the form
         DynamicEntityFormInfo info = new DynamicEntityFormInfo()
-            .withCeilingClassName(StructuredContentType.class.getName())
+            .withCeilingClassName(PageTemplate.class.getName())
             .withCriteriaName("constructForm")
-            .withPropertyName("structuredContentType")
-            .withPropertyValue(ef.findField("structuredContentType").getValue());
+            .withPropertyName("pageTemplate")
+            .withPropertyValue(ef.findField("pageTemplate").getValue());
         EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id);
-        ef.putDynamicFormInfo("structuredContentType", info);
-        ef.putDynamicForm("structuredContentType", dynamicForm);
+        ef.putDynamicFormInfo("pageTemplate", info);
+        ef.putDynamicForm("pageTemplate", dynamicForm);
         
         // Mark the field that will drive this dynamic form
-        ef.findField("structuredContentType").setOnChangeTrigger("dynamicForm-structuredContentType");
+        ef.findField("pageTemplate").setOnChangeTrigger("dynamicForm-pageTemplate");
         
         return returnPath;
     }
@@ -86,10 +86,10 @@ public class AdminStructuredContentController extends AdminBasicEntityController
             RedirectAttributes ra) throws Exception {
         // Attach the dynamic form info so that the update service will know how to split up the fields
         DynamicEntityFormInfo info = new DynamicEntityFormInfo()
-            .withCeilingClassName(StructuredContentType.class.getName())
+            .withCeilingClassName(PageTemplate.class.getName())
             .withCriteriaName("constructForm")
-            .withPropertyName("structuredContentType");
-        entityForm.putDynamicFormInfo("structuredContentType", info);
+            .withPropertyName("pageTemplate");
+        entityForm.putDynamicFormInfo("pageTemplate", info);
         
         return super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
     }
@@ -100,7 +100,7 @@ public class AdminStructuredContentController extends AdminBasicEntityController
             @PathVariable("propertyName") String propertyName,
             @RequestParam("propertyTypeId") String propertyTypeId) throws Exception {
         DynamicEntityFormInfo info = new DynamicEntityFormInfo()
-            .withCeilingClassName(StructuredContentType.class.getName())
+            .withCeilingClassName(PageTemplate.class.getName())
             .withCriteriaName("constructForm")
             .withPropertyName(propertyName)
             .withPropertyValue(propertyTypeId);

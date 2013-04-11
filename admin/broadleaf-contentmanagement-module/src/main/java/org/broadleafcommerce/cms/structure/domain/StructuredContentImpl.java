@@ -199,7 +199,6 @@ public class StructuredContentImpl implements StructuredContent {
     @JoinColumn(name="SC_TYPE_ID")
     @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Type", order = 2, 
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
-        visibility = VisibilityEnum.GRID_HIDDEN, 
         requiredOverride = RequiredOverride.REQUIRED)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "name")
     protected StructuredContentType structuredContentType;

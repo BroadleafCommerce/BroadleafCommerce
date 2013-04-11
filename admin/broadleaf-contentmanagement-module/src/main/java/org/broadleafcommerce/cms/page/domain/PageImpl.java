@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -77,6 +78,7 @@ import javax.persistence.TableGenerator;
         @AdminPresentationOverride(name="auditable.dateCreated", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
         @AdminPresentationOverride(name="auditable.dateUpdated", value=@AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
         @AdminPresentationOverride(name="pageTemplate.templateDescription", value=@AdminPresentation(excluded = true)),
+        @AdminPresentationOverride(name="pageTemplate.templateName", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="pageTemplate.locale", value=@AdminPresentation(excluded = true))
     }
 )
@@ -103,9 +105,8 @@ public class PageImpl implements Page {
     @JoinColumn(name = "PAGE_TMPLT_ID")
     @AdminPresentation(friendlyName = "PageImpl_Page_Template", order = 2,
         group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
-        excluded = true, 
-        visibility = VisibilityEnum.GRID_HIDDEN, 
         requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "templateName")
     protected PageTemplate pageTemplate;
 
     @Column (name = "DESCRIPTION")
