@@ -283,25 +283,22 @@ public class OfferImpl implements Offer, Status {
     @AdminPresentationMapFields(
         mapDisplayFields = {
             @AdminPresentationMapField(
-                fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.CUSTOMER_FIELD_KEY, 
-                    friendlyKeyName = "OfferImpl_Customer_Rule"),
+                fieldName = RuleIdentifier.CUSTOMER_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
                     group = Presentation.Group.Name.Qualifiers, groupOrder = Presentation.Group.Order.Qualifiers,
-                    ruleIdentifier = RuleIdentifier.CUSTOMER)
+                    ruleIdentifier = RuleIdentifier.CUSTOMER, friendlyName = "OfferImpl_Customer_Rule")
             ),
             @AdminPresentationMapField(
-                fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.ORDER_FIELD_KEY, 
-                    friendlyKeyName = "OfferImpl_Order_Rule"),
+                fieldName = RuleIdentifier.ORDER_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
                     group = Presentation.Group.Name.Qualifiers, groupOrder = Presentation.Group.Order.Qualifiers,
-                    ruleIdentifier = RuleIdentifier.ORDER)
+                    ruleIdentifier = RuleIdentifier.ORDER, friendlyName = "OfferImpl_Order_Rule")
             ),
             @AdminPresentationMapField(
-                fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.FULFILLMENT_GROUP_FIELD_KEY, 
-                    friendlyKeyName = "OfferImpl_FG_Rule"),
+                fieldName = RuleIdentifier.FULFILLMENT_GROUP_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
                     group = Presentation.Group.Name.Qualifiers, groupOrder = Presentation.Group.Order.Qualifiers,
-                    ruleIdentifier = RuleIdentifier.FULFILLMENTGROUP)
+                    ruleIdentifier = RuleIdentifier.FULFILLMENTGROUP, friendlyName = "OfferImpl_FG_Rule")
             )
         }
     )

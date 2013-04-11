@@ -130,36 +130,32 @@ public class StructuredContentImpl implements StructuredContent {
     @AdminPresentationMapFields(
         mapDisplayFields = {
             @AdminPresentationMapField(
-                fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.CUSTOMER_FIELD_KEY, 
-                    friendlyKeyName = "Generic_Customer_Rule"),
+                fieldName = RuleIdentifier.CUSTOMER_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 1,
                     tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
                     group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.CUSTOMER)
+                    ruleIdentifier = RuleIdentifier.CUSTOMER, friendlyName = "Generic_Customer_Rule")
             ),
             @AdminPresentationMapField(
-                fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.TIME_FIELD_KEY,
-                    friendlyKeyName = "Generic_Time_Rule"),
+                fieldName = RuleIdentifier.TIME_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 2,
                     tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
                     group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.TIME)
+                    ruleIdentifier = RuleIdentifier.TIME, friendlyName = "Generic_Time_Rule")
             ),
             @AdminPresentationMapField(
-                fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.REQUEST_FIELD_KEY,
-                    friendlyKeyName = "Generic_Request_Rule"),
+                fieldName = RuleIdentifier.REQUEST_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 3,
                     tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
                     group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.REQUEST)
+                    ruleIdentifier = RuleIdentifier.REQUEST, friendlyName = "Generic_Request_Rule")
             ),
             @AdminPresentationMapField(
-                fieldName = @AdminPresentationMapKey(keyName = RuleIdentifier.PRODUCT_FIELD_KEY, 
-                    friendlyKeyName = "Generic_Product_Rule"),
+                fieldName = RuleIdentifier.PRODUCT_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 4,
                     tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
                     group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.PRODUCT)
+                    ruleIdentifier = RuleIdentifier.PRODUCT, friendlyName = "Generic_Product_Rule")
             )
         }
     )

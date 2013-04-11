@@ -65,9 +65,9 @@ public class MapFieldsMetadataProvider extends BasicMetadataProvider {
                 throw new IllegalArgumentException("fieldType property on AdminPresentation must be set for AdminPresentationMapField");
             }
             FieldMetadataOverride override = constructBasicMetadataOverride(mapField.fieldPresentation(), null, null);
-            override.setFriendlyName(mapField.fieldName().friendlyKeyName());
+            override.setFriendlyName(mapField.fieldPresentation().friendlyName());
             FieldInfo myInfo = new FieldInfo();
-            myInfo.setName(addMetadataRequest.getRequestedField().getName() + FieldManager.MAPFIELDSEPARATOR + mapField.fieldName().keyName());
+            myInfo.setName(addMetadataRequest.getRequestedField().getName() + FieldManager.MAPFIELDSEPARATOR + mapField.fieldName());
             if (!mapField.targetClass().equals(Void.class)) {
                 if (mapField.targetClass().isInterface()) {
                     throw new IllegalArgumentException("targetClass on @AdminPresentationMapField must be a concrete class");

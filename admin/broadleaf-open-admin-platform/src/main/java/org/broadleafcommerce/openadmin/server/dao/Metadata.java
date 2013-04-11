@@ -87,6 +87,7 @@ public class Metadata {
                 break;
             }
         }
+
         Map<String, FieldMetadata> mergedProperties = propertyBuilder.execute(classAnnotatedPopulateManyToOneFields);
         for (int i = entities.length-1;i >= 0; i--) {
             for (MetadataProvider metadataProvider : metadataProviders) {
@@ -94,6 +95,9 @@ public class Metadata {
                     metadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
                             mergedProperties, isParentExcluded, dynamicEntityDao, prefix));
                 }
+                //perform any standard overrides that are not specific to a module
+                defaultMetadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
+                                                    mergedProperties, isParentExcluded, dynamicEntityDao, prefix));
             }
         }
         //perform any standard overrides that are not specific to a module

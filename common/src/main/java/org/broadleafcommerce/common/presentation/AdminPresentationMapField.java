@@ -33,14 +33,11 @@ import java.lang.annotation.Target;
 public @interface AdminPresentationMapField {
 
     /**
-     * <p>Represents the field name for this field. The keyName property of <tt>AdminPresentationMapKey</tt> will
-     * be used as the field name in the admin form, as well as the key value for the Map structure. The
-     * friendlyKeyName property of <tt>AdminPresentationKey</tt> will be used as the display name for the field
-     * in the admin tool form.</p>
+     * <p>Represents the field name for this field.</p>
      *
-     * @return the name and friendly name for this field
+     * @return the name for this field
      */
-    AdminPresentationMapKey fieldName();
+    String fieldName();
 
     /**
      * <p>Represents the metadata for this field. The <tt>AdminPresentation</tt> properties will be used
