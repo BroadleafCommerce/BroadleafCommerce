@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
+import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
@@ -79,6 +80,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     private Boolean useServerSideInspectionCache;
     private Boolean toOneLookupCreatedViaAnnotation;
     private String ruleIdentifier;
+    private LookupType lookupType;
 
     //for MapFields
     private String mapFieldValueClass;
@@ -446,6 +448,14 @@ public class BasicFieldMetadata extends FieldMetadata {
     public void setMapFieldValueClass(String mapFieldValueClass) {
         this.mapFieldValueClass = mapFieldValueClass;
     }
+    
+    public LookupType getLookupType() {
+        return lookupType;
+    }
+
+    public void setLookupType(LookupType lookupType) {
+        this.lookupType = lookupType;
+    }
 
     @Override
     public FieldMetadata cloneFieldMetadata() {
@@ -516,6 +526,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.toOneLookupCreatedViaAnnotation = toOneLookupCreatedViaAnnotation;
         metadata.ruleIdentifier = ruleIdentifier;
         metadata.mapFieldValueClass = mapFieldValueClass;
+        metadata.lookupType = lookupType;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 
@@ -661,6 +672,9 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (mapFieldValueClass != null ? !mapFieldValueClass.equals(metadata.mapFieldValueClass) : metadata.mapFieldValueClass != null) {
             return false;
         }
+        if (lookupType != null ? !lookupType.equals(metadata.lookupType) : metadata.lookupType != null) {
+            return false;
+        }
 
         return true;
     }
@@ -708,6 +722,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (optionCanEditValues != null ? optionCanEditValues.hashCode() : 0);
         result = 31 * result + (ruleIdentifier != null ? ruleIdentifier.hashCode() : 0);
         result = 31 * result + (mapFieldValueClass != null ? mapFieldValueClass.hashCode() : 0);
+        result = 31 * result + (lookupType != null ? lookupType.hashCode() : 0);
         return result;
     }
 

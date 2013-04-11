@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.presentation;
 
+import org.broadleafcommerce.common.presentation.client.LookupType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -81,5 +83,17 @@ public @interface AdminPresentationToOneLookup {
      * @return whether or not this field uses caching
      */
     boolean useServerSideInspectionCache() default true;
+    
+    /**
+     * <p>Optional - only required if you want to configure the lookup
+     * to be driven by a prepopulated dropdown instead of the standard
+     * lookup type, which is modal based.</p>
+     *
+     * <p>Define whether or not the lookup type for this field should be
+     * handled through a modal or through a dropdown</p>
+     *
+     * @return the item is looked up via a modal or dropdown
+     */
+    LookupType lookupType() default LookupType.STANDARD;
 
 }

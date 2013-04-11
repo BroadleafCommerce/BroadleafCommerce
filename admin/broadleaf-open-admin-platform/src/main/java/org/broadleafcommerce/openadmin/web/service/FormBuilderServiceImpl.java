@@ -22,6 +22,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -63,6 +64,7 @@ import com.gwtincubator.security.exception.ApplicationSecurityException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -329,16 +331,15 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     // Create the field and set some basic attributes
                     Field f;
                     
-                    // If we're dealing with fields that should render as drop-downs, set their possible values
                     if (fieldType.equals(SupportedFieldType.BROADLEAF_ENUMERATION.toString())
                             || fieldType.equals(SupportedFieldType.EXPLICIT_ENUMERATION.toString())
                             || fieldType.equals(SupportedFieldType.EMPTY_ENUMERATION.toString())) {
+                        // We're dealing with fields that should render as drop-downs, so set their possible values
                         f = new ComboField();
                         ((ComboField) f).setOptions(fmd.getEnumerationValues());
-                        
-                    // If we're dealing with rule builders, we'll create those specialized fields
                     } else if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())
                             || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
+                        // We're dealing with rule builders, so we'll create those specialized fields
                         f = new RuleBuilderField();
                         ((RuleBuilderField) f).setJsonFieldName(fmd.getName() + "Json");
                         ((RuleBuilderField) f).setDataWrapper(new DataWrapper());
@@ -356,9 +357,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         } else if (fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
                             ((RuleBuilderField) f).setStyleClass("rule-builder-complex");
                         }
-                        
-                    // The default field to create
+                    } else if (LookupType.DROPDOWN.equals(fmd.getLookupType())) {
+                        // We're dealing with a to-one field that wants to be rendered as a dropdown instead of in a 
+                        // modal, so we'll provision the combo field here. Available options will be set as part of a
+                        // subsequent operation
+                        f = new ComboField();
                     } else {
+                        // Create a default field since there was no specialized handler
                         f = new Field();
                     }
                     
@@ -395,7 +400,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     @Override
-    public EntityForm buildEntityForm(ClassMetadata cmd) {
+    public EntityForm buildEntityForm(ClassMetadata cmd) 
+            throws ServiceException, ApplicationSecurityException {
         EntityForm ef = createStandardEntityForm();
         ef.setCeilingEntityClassname(cmd.getCeilingType());
         
@@ -405,12 +411,15 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
 
         setEntityFormFields(ef, Arrays.asList(cmd.getProperties()));
+        
+        populateDropdownToOneFields(ef, cmd);
 
         return ef;
     }
 
     @Override
-    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity) {
+    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity) 
+            throws ServiceException, ApplicationSecurityException {
         // Get the empty form with appropriate fields
         EntityForm ef = buildEntityForm(cmd);
 
@@ -475,6 +484,54 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             return mapper.readValue(json, DataWrapper.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+    
+    protected void populateDropdownToOneFields(EntityForm ef, ClassMetadata cmd) 
+            throws ServiceException, ApplicationSecurityException {
+        for (Property p : cmd.getProperties()) {
+            if (p.getMetadata() instanceof BasicFieldMetadata) {
+                BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
+                if (LookupType.DROPDOWN.equals(fmd.getLookupType())) {
+                    // Get the records
+                    PersistencePackageRequest toOnePpr = PersistencePackageRequest.standard()
+                            .withCeilingEntityClassname(fmd.getForeignKeyClass());
+                    Entity[] rows = adminEntityService.getRecords(toOnePpr);
+                    
+                    // Determine the id field
+                    String idProp = null;
+                    ClassMetadata foreignClassMd = adminEntityService.getClassMetadata(toOnePpr);
+                    for (Property foreignP : foreignClassMd.getProperties()) {
+                        if (foreignP.getMetadata() instanceof BasicFieldMetadata) {
+                            BasicFieldMetadata foreignFmd = (BasicFieldMetadata) foreignP.getMetadata();
+                            if (SupportedFieldType.ID.equals(foreignFmd.getFieldType())) {
+                                idProp = foreignP.getName();
+                            }
+                        }
+                    }
+                    
+                    if (idProp == null) {
+                        throw new RuntimeException("Could not determine ID property for " + fmd.getForeignKeyClass());
+                    }
+                    
+                    // Determine the display field
+                    String displayProp = fmd.getLookupDisplayProperty();
+                    
+                    // Build the options map
+                    Map<String, String> options = new HashMap<String, String>();
+                    for (Entity row : rows) {
+                        String displayValue = row.findProperty(displayProp).getDisplayValue();
+                        if (StringUtils.isBlank(displayValue)) {
+                            displayValue = row.findProperty(displayProp).getValue();
+                        }
+                        options.put(row.findProperty(idProp).getValue(), displayValue);
+                    }
+                    
+                    // Set the options on the entity field
+                    ComboField cf = (ComboField) ef.findField(p.getName());
+                    cf.setOptions(options);
+                }
+            }
         }
     }
 

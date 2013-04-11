@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.client.dto.override;
 
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.UnspecifiedBooleanType;
@@ -116,6 +117,7 @@ public class FieldMetadataOverride {
     private Serializable[][] optionFilterValues;
     private String showIfProperty;
     private String ruleIdentifier;
+    private LookupType lookupType;
 
     //Not a user definable field
     private Boolean toOneLookupCreatedViaAnnotation;
@@ -776,4 +778,13 @@ public class FieldMetadataOverride {
     public void setCurrencyCodeField(String currencyCodeField) {
         this.currencyCodeField = currencyCodeField;
     }
+    
+    public LookupType getLookupType() {
+        return lookupType;
+    }
+
+    public void setLookupType(LookupType lookupType) {
+        this.lookupType = lookupType;
+    }
+    
 }

@@ -84,8 +84,10 @@ public interface FormBuilderService {
      * 
      * @param cmd
      * @return the EntityForm
+     * @throws ApplicationSecurityException 
+     * @throws ServiceException 
      */
-    public EntityForm buildEntityForm(ClassMetadata cmd);
+    public EntityForm buildEntityForm(ClassMetadata cmd) throws ServiceException, ApplicationSecurityException;
 
     /**
      * Builds an EntityForm that has all of the appropriate fields set up along with the values for those fields
@@ -94,9 +96,12 @@ public interface FormBuilderService {
      * @param cmd
      * @param entity
      * @return the EntityForm
+     * @throws ApplicationSecurityException 
+     * @throws ServiceException 
      */
-    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity);
-
+    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity) 
+            throws ServiceException, ApplicationSecurityException;
+    
     /**
      * Builds an EntityForm that has all of the appropriate fields set up along with the values for thsoe fields
      * from the given Entity as well as all sub-collections of the given Entity that appear in the collectionRecords map.
