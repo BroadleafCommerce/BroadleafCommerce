@@ -35,6 +35,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.context.annotation.Scope;
@@ -334,10 +335,16 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
     }
 
     @Override
-    public int getTotalRecords(PersistencePackage persistencePackage, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) throws ClassNotFoundException {
+    public int getTotalRecords(PersistencePackage persistencePackage, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) {
         AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
         PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), adornedTargetList.getAdornedTargetEntityClassname());
-        Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
+
+        Class<?>[] entities;
+        try {
+            entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
+        } catch (ClassNotFoundException e) {
+            throw new PersistenceException(e);
+        }
         boolean isArchivable = false;
         for (Class<?> entity : entities) {
             if (Status.class.isAssignableFrom(entity)) {
@@ -354,7 +361,11 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);
             ((NestedPropertyCriteria) countCriteria).add(filterCriterion);
         }
-        return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
+        try {
+            return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
+        } catch (ClassNotFoundException e) {
+            throw new PersistenceException(e);
+        }
     }
 
     @Override

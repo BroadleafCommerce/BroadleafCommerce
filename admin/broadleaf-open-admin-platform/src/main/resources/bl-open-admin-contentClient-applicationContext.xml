@@ -80,4 +80,36 @@
         <property name="emailTemplate" value="${adminResetPassword.emailTemplate}"/>
         <property name="subject" value="${adminResetPassword.subject}"/>
     </bean>
+
+    <bean id="blMetadataProviders" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <ref bean="blBasicMetadataProvider"/>
+                <ref bean="blCollectionMetadataProvider"/>
+                <ref bean="blAdornedTargetCollectionMetadataProvider"/>
+                <ref bean="blMapMetadataProvider"/>
+                <ref bean="blMapFieldsMetadataProvider"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blPropertyProviders" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <ref bean="blAdvancedCollectionPropertyProvider"/>
+                <ref bean="blAdornedTargetPropertyProvider"/>
+                <ref bean="blMapPropertyProvider"/>
+                <ref bean="blMapFieldPropertyProvider"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blPersistenceProviders" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <ref bean="blBasicPersistenceProvider"/>
+                <ref bean="blRulePersistenceProvider"/>
+            </list>
+        </property>
+    </bean>
 </beans>

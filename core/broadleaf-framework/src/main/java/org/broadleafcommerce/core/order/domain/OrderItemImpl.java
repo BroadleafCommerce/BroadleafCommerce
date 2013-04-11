@@ -127,8 +127,6 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @AdminPresentation(friendlyName = "OrderItemImpl_Item_Sale_Price", order = 4, group = "OrderItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
-
-    
     @Column(name = "NAME")
     @AdminPresentation(friendlyName = "OrderItemImpl_Item_Name", order=1, group = "OrderItemImpl_Description", prominent=true, groupOrder = 1)
     protected String name;
@@ -184,7 +182,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="name")
-    protected Map<String,OrderItemAttribute> orderItemAttributeMap = new HashMap<String, OrderItemAttribute>();
+    protected Map<String, OrderItemAttribute> orderItemAttributeMap = new HashMap<String, OrderItemAttribute>();
 
     @Column(name = "TOTAL_TAX")
     protected BigDecimal totalTax;

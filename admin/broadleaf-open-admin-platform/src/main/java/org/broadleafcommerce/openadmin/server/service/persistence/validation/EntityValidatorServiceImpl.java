@@ -22,6 +22,7 @@ import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -40,8 +41,7 @@ import java.util.Map;
 public class EntityValidatorServiceImpl implements EntityValidatorService {
 
     @Override
-    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> mergedProperties)
-            throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> mergedProperties) {
 
         //validate each individual property according to their validation configuration
         for (Property property : entity.getProperties()) {
@@ -53,7 +53,12 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
                     String validatorClassname = validation.getKey();
                     Map<String, String> configuration = validation.getValue();
 
-                    PropertyValidator validator = (PropertyValidator) Class.forName(validatorClassname).newInstance();
+                    PropertyValidator validator = null;
+                    try {
+                        validator = (PropertyValidator) Class.forName(validatorClassname).newInstance();
+                    } catch (Exception e) {
+                        throw new PersistenceException(e);
+                    }
                     boolean validationResult = validator.validate(entity, configuration, instance, property.getValue());
                     if (!validationResult) {
                         entity.addValidationError(property.getName(), configuration.get(ConfigurationItem.ERROR_MESSAGE));

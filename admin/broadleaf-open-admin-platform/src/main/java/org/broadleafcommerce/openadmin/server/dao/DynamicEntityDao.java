@@ -25,6 +25,7 @@ import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
 
@@ -99,5 +100,11 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
     public Criteria createCriteria(Class<?> entityClass);
 
     public Field[] getAllFields(Class<?> targetClass);
+
+    public Metadata getMetadata();
+
+    public void setMetadata(Metadata metadata);
+
+    public SessionFactory getSessionFactory();
 
 }

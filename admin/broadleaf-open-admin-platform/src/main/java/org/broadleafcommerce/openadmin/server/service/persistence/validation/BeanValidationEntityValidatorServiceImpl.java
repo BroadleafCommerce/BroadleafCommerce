@@ -70,8 +70,7 @@ public class BeanValidationEntityValidatorServiceImpl extends EntityValidatorSer
     protected boolean useDefaultEntityValidations = true;
     
     @Override
-    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> mergedProperties)
-            throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> mergedProperties) {
         
         if (isUseDefaultEntityValidations()) {
             super.validate(entity, instance, mergedProperties);

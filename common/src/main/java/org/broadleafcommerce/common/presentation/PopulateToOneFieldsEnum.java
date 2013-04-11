@@ -17,11 +17,7 @@
 package org.broadleafcommerce.common.presentation;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 9/27/11
- * Time: 5:53 PM
- * To change this template use File | Settings | File Templates.
+ * @author Jeff Fischer
  */
 public enum PopulateToOneFieldsEnum {
     TRUE,FALSE,NOT_SPECIFIED

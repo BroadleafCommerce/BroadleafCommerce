@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.io.Serializable;
+import org.broadleafcommerce.common.value.ValueAssignable;
 
 /**
  * The Interface OrderItemAttribute.   Allows for arbitrary data to be
@@ -29,7 +29,7 @@ import java.io.Serializable;
  *   Number of minutes for someone purchasing a rate plan.
  *
  */
-public interface OrderItemAttribute extends Serializable {
+public interface OrderItemAttribute extends ValueAssignable<String> {
 
     /**
      * Gets the id.
@@ -46,20 +46,6 @@ public interface OrderItemAttribute extends Serializable {
     void setId(Long id);
 
     /**
-     * Gets the value.
-     * 
-     * @return the value
-     */
-    String getValue();
-
-    /**
-     * Sets the value.
-     * 
-     * @param value the new value
-     */
-    void setValue(String value);
-
-    /**
      * Gets the parent orderItem
      * 
      * @return the orderItem
@@ -72,21 +58,6 @@ public interface OrderItemAttribute extends Serializable {
      * @param orderItem the associated orderItem
      */
     void setOrderItem(OrderItem orderItem);
-
-    /**
-     * Gets the name.
-     * 
-     * @return the name
-     */
-    String getName();
-
-    /**
-     * Sets the name.
-     * 
-     * @param name the new name
-     */
-    void setName(String name);
-
 
     /**
      * Provide support for a deep copy of an order item.

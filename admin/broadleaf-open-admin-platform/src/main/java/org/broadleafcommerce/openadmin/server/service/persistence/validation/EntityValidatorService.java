@@ -39,7 +39,6 @@ public interface EntityValidatorService {
      * @throws IllegalAccessException
      * @throws ClassNotFoundException
      */
-    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> mergedProperties)
-            throws InstantiationException, IllegalAccessException, ClassNotFoundException;
+    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> mergedProperties);
 
 }
