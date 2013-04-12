@@ -48,7 +48,7 @@ public abstract class AbstractGeneratedResourceHandler {
         String filename = getHandledFileName();
         
         Element e = getGeneratedResourceCache().get(filename);
-        if (e == null || e.getValue() == null) {
+        if (e == null || e.getObjectValue() == null) {
             String contents = getFileContents();
             GeneratedResource r = new GeneratedResource(contents.getBytes(), filename);
             e = new Element(filename,  r);

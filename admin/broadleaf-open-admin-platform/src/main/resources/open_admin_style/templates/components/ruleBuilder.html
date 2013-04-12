@@ -45,24 +45,13 @@
         <div class="conditional-rules-container" 
             th:classappend="${field.required ? 'required-conditional' : ''}"
             th:style="${(#arrays.isEmpty(field.dataWrapper.data) and !field.required) ? 'display: none;' : ''}"
-            th:id="${field.name}"></div>
+            th:id="${field.name}" />
+            
+        <div class="rule-builder-data" 
+            th:attr="data-hiddenid=${field.jsonFieldName},
+                     data-containerid=${field.name},
+                     data-fields=${fieldWrapper.serialize()},
+                     data-data=${field.dataWrapper.serialize()}" />
     
     </div>
-    
-    <script type="text/javascript" th:inline="javascript">
-        /*<![CDATA[*/
-        $(document).ready(function() {
-            var hiddenId = /*[[${field.jsonFieldName}]]*/ {};
-            var containerId = /*[[${field.name}]]*/ {};
-            var fields = /*[[${fieldWrapper}]]*/ {};
-            var data = /*[[${field.dataWrapper}]]*/ {};
-            
-            var condition = BLCAdmin.conditions.addCondition(hiddenId, containerId, fields, data);
-            
-            $('#' + condition.containerId).conditionsBuilder(condition.json);
-            condition.builder = $('#' + condition.containerId).conditionsBuilder('builder');
-        });
-        /*]]>*/
-    </script>
-    
 </blc_admin:admin_field_builder>

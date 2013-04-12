@@ -8,14 +8,13 @@
                 activeClass:'active'
             }, options),
 
-        // close all dropdowns except for the dropdown passed
+            // close all dropdowns except for the dropdown passed
             closeDropdowns = function (dropdown) {
-                // alert(dropdown.html());
                 $('.listgrid-headerBtn.dropdown').find('ul').not(dropdown).removeClass('show-dropdown');
             },
-        // reset all toggle states except for the button passed
+            
+            // reset all toggle states except for the button passed
             resetToggles = function (button) {
-                // alert(button.html());
                 var buttons = $('.listgrid-headerBtn.dropdown').not(button);
                 buttons.add($('> span.' + config.activeClass, buttons)).removeClass(config.activeClass);
             },

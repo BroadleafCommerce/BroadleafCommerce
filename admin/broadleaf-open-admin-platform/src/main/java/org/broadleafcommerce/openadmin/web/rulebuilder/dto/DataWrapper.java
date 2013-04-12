@@ -16,6 +16,11 @@
 
 package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -63,5 +68,9 @@ public class DataWrapper implements Serializable {
 
     public void setData(ArrayList<DataDTO> data) {
         this.data = data;
+    }
+    
+    public String serialize() throws JsonGenerationException, JsonMappingException, IOException {
+        return new ObjectMapper().writeValueAsString(this);
     }
 }

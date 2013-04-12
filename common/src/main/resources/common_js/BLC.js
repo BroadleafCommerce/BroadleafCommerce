@@ -26,23 +26,31 @@ var BLC = (function($) {
     }
     
     function ajax(options, callback) {
-        var defaults = {
-            success: function(data) {
-                var $data;
-                if (data.trim) {
-                    $data = $(data.trim());
-                } else {
-                    $data = $(data);
-                }
-                if (!redirectIfNecessary($data)) {
-                    var extraData = getExtraData($data);
-                    callback(data, extraData);
-                }
+        options.success = function(data) {
+            var $data;
+            if (data.trim) {
+                $data = $(data.trim());
+            } else {
+                $data = $(data);
+            }
+            
+            if (!redirectIfNecessary($data)) {
+                var extraData = getExtraData($data);
+                callback(data, extraData);
             }
         };
         
-        $.extend(options, defaults); 
-        $.ajax(options);
+        if (!options.error) {
+            options.error = function(data) {
+                BLC.defaultErrorHandler(data);
+            };
+        }
+        
+        return $.ajax(options);
+    }
+    
+    function defaultErrorHandler(data) {
+        alert("An error occurred while processing your request.");
     }
     
     function serializeObject($object) {
@@ -98,6 +106,7 @@ var BLC = (function($) {
         redirectIfNecessary : redirectIfNecessary,
         getExtraData : getExtraData,
         ajax : ajax,
+        defaultErrorHandler : defaultErrorHandler,
         serializeObject : serializeObject,
         addUrlParam : addUrlParam,
         getThemeVariables : getThemeVariables

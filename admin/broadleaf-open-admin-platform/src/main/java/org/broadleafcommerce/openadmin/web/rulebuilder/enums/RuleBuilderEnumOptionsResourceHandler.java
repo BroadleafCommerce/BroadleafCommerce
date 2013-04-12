@@ -36,7 +36,7 @@ public class RuleBuilderEnumOptionsResourceHandler extends AbstractGeneratedReso
     
     @Override
     public String getHandledFileName() {
-        return "/js/admin/blc-rulebuilder-options.js";
+        return "/js/admin/components/ruleBuilder-options.js";
     }
 
     @Override

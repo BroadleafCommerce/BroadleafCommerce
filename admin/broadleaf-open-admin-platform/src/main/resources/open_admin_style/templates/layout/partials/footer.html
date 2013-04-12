@@ -1,7 +1,7 @@
 <footer>
     
-    <script type="text/javascript" th:src="@{/js/admin/lib/plugins/bootstrap.js}"></script>
-    
+    <!-- Third party libraries -->
+    <script type="text/javascript" th:src="@{/js/admin/lib/jquery-1.9.1.js}"></script>
     <script type="text/javascript" th:src="@{/js/admin/lib/plugins/jquery.cookie.js}"></script>
     <script type="text/javascript" th:src="@{/js/admin/lib/plugins/jquery.event.move.js}"></script>
     <script type="text/javascript" th:src="@{/js/admin/lib/plugins/jquery.event.swipe.js}"></script>
@@ -21,30 +21,39 @@
     <script type="text/javascript" th:src="@{/js/admin/lib/plugins/jquery.placeholder.js}"></script>
     <script type="text/javascript" th:src="@{/js/admin/lib/plugins/jquery-ui-1.10.2.custom.js}"></script>
     <script type="text/javascript" th:src="@{/js/admin/lib/plugins/jquery-ui-timepicker-addon.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/lib/redactor.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/lib/responsive-tables.js}"></script>
     
+    <!-- Third party libraries that were modified by BLC -->
+    <script type="text/javascript" th:src="@{/js/admin/lib/plugins/bootstrap.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/lib/blc-conditions-builder.js}"></script>
+    
+    <!-- Standard BLC JS utility libraries -->
     <script type="text/javascript" th:src="@{/js/BLC.js}"></script>
     <script type="text/javascript" th:src="@{/js/admin/blc-admin.js}"></script>
     
-    <script type="text/javascript" th:src="@{/js/admin/ui/blc-dates.js}"></script>
-    <script type="text/javascript" th:src="@{/js/admin/ui/blc-accordion.js}"></script>
-    <script type="text/javascript" th:src="@{/js/admin/ui/blc-listgrid.js}"></script>
-    <script type="text/javascript" th:src="@{/js/admin/ui/entity-add.js}"></script>
-    <script type="text/javascript" th:src="@{/js/admin/ui/responsive-tables.js}"></script>
+    <!-- BLC Admin specific libraries -->
+    <script type="text/javascript" th:src="@{/js/admin/ui/dates.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/ui/accordion.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/ui/modal.js}"></script>
+    
+    <script type="text/javascript" th:src="@{/js/admin/components/entityForm.js}"></script>
+    
+    <script type="text/javascript" th:src="@{/js/admin/components/ruleBuilder-operators.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/components/ruleBuilder-options.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/components/ruleBuilder.js}"></script>
+    
+    <script type="text/javascript" th:src="@{/js/admin/components/listGrid.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/components/listGrid-filter.js}"></script>
     
     <script type="text/javascript" th:src="@{/js/admin/blc-admin-init.js}"></script>
-    
-    <script type="text/javascript" th:src="@{/js/admin/components/conditions-builder-blc.js}"></script>
-    <script type="text/javascript" th:src="@{/js/admin/components/entityForm.js}"></script>
-    <script type="text/javascript" th:src="@{/js/admin/components/listGrid.js}"></script>
-    <script type="text/javascript" th:src="@{/js/admin/components/modal.js}"></script>
-    <script type="text/javascript" th:src="@{/js/admin/components/redactor.js}"></script>
-    <script type="text/javascript" th:src="@{/js/admin/components/ruleBuilder.js}"></script>
     
     <!-- TODO: REMOVE ME -->
     <!-- This is a temporary fix. These javascript files are actually in the admin project, of which open admin has no
         dependency on. This should eventually be moved into a JAWR bundle or referenced somewhere in a Thymeleaf Processor
         once we figure out exactly how clients and other modules can contribute their own js/css files to the admin -->
-    <script type="text/javascript" th:src="@{/js/admin/catalog.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/catalog/product.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/catalog/offer.js}"></script>
     
 </footer>
 

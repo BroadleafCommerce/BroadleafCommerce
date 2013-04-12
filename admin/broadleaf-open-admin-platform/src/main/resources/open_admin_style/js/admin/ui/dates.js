@@ -10,7 +10,7 @@
         /**
          * This function should be called for any element that wants to be a rulebuilder
          */
-        onLive : function($element) {
+        initialize : function($element) {
             // Set the value of this datepicker to be the appropriately formatted one
             $element.val(this.getDisplayDate($element.val()));
           
@@ -75,24 +75,30 @@
         }
     };
     
+    BLCAdmin.addInitializationHandler(function($container) {
+        $container.find('.datepicker').each(function(index, element) {
+            BLCAdmin.dates.initialize($(element));
+        });
+    });
+    
+    BLCAdmin.addSubmitHandler(function($form) {
+        $form.find('.datepicker').each(function(index, element) {
+            var $hiddenClone = $('<input>', {
+                type: 'hidden',
+                name: $(this).attr('name'),
+                value: BLCAdmin.dates.getServerDate($(this).val())
+            });
+          
+            $(this).removeAttr('name').after($hiddenClone);
+        });
+    });
+            
 })(jQuery, BLCAdmin);
 
 $(document).ready(function() {
   
-  $('body').on('click', 'div.datepicker-container', function(event) {
-      $(this).find('input').datepicker('show');
-  });
-  
-  BLCAdmin.addSubmitHandler(function($form) {
-      $form.find('.datepicker').each(function(index, element) {
-          var $hiddenClone = $('<input>', {
-              type: 'hidden',
-              name: $(this).attr('name'),
-              value: BLCAdmin.dates.getServerDate($(this).val())
-          });
-          
-          $(this).removeAttr('name').after($hiddenClone);
-      });
-  });
+    $('body').on('click', 'div.datepicker-container', function(event) {
+        $(this).find('input').datepicker('show');
+    });
     
 });

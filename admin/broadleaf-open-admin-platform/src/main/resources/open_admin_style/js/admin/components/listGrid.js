@@ -136,13 +136,14 @@ $(document).ready(function() {
             }
         }   
         
-        $.post(currentUrl, postData, function(data) {
+        BLC.ajax({
+            url : currentUrl,
+            type : "POST",
+            data : postData
+        }, function(data) {
             BLCAdmin.listGrid.replaceRelatedListGrid(data);
             BLCAdmin.hideCurrentModal();
         })
-        .fail(function(data) {
-            alert('failed ' + data);
-        });
     });
     
     /**
@@ -196,7 +197,10 @@ $(document).ready(function() {
                     var $fieldSet = $("fieldset[data-dynamicpropertyname='" + trigger[1] + "']");
                     var url = $fieldSet.data('currenturl') + '?propertyTypeId=' + fields['id'];
                     
-                    $.get(url, function(data) {
+                    BLC.ajax({
+                        url : url,
+                        type : "GET"
+                    }, function(data) {
                         var dynamicPropertyName = $(data.trim()).find('fieldset').data('dynamicpropertyname');
                         var $oldFieldset = $('fieldset[data-dynamicpropertyname="' + dynamicPropertyName + '"]');
                         var $newFieldset = $(data.trim()).find('fieldset');
@@ -381,7 +385,6 @@ $(document).ready(function() {
     $('body').on('mouseout', 'td.row-action-selector', function(event) {
         $(this).find('ul.row-actions').hide();
     });
-    
     
 });
 
