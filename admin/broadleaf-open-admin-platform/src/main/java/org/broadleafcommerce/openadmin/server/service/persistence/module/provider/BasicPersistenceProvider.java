@@ -27,6 +27,7 @@ import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
@@ -58,7 +59,8 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
 
     @Override
     public boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata) {
-        return metadata.getFieldType() == SupportedFieldType.BOOLEAN ||
+        //don't handle map fields here - we'll get them in a separate provider
+        return (metadata.getFieldType() == SupportedFieldType.BOOLEAN ||
                 metadata.getFieldType() == SupportedFieldType.DATE ||
                 metadata.getFieldType() == SupportedFieldType.DECIMAL ||
                 metadata.getFieldType() == SupportedFieldType.MONEY ||
@@ -66,7 +68,9 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
                 metadata.getFieldType() == SupportedFieldType.EMAIL ||
                 metadata.getFieldType() == SupportedFieldType.FOREIGN_KEY ||
                 metadata.getFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY ||
-                metadata.getFieldType() == SupportedFieldType.ID;
+                metadata.getFieldType() == SupportedFieldType.ID) &&
+                (property == null ||
+                !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
     }
 
     @Override

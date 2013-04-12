@@ -23,11 +23,15 @@ import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
+import org.hibernate.mapping.Property;
+import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,9 +39,34 @@ import java.util.Map;
  */
 @Component("blDefaultMetadataProvider")
 @Scope("prototype")
-public class DefaultMetadataProvider extends MetadataProviderAdapter {
+public class DefaultMetadataProvider extends BasicMetadataProvider {
 
     private static final Log LOG = LogFactory.getLog(DefaultMetadataProvider.class);
+
+    @Override
+    public boolean canHandleAnnotationOverride(Class<?> clazz) {
+        return false;
+    }
+
+    @Override
+    public boolean canHandleFieldForTypeMetadata(Field field) {
+        return true;
+    }
+
+    @Override
+    public boolean canHandleMappingForTypeMetadata(String propertyName, List<Property> componentProperties, Type entityType) {
+        return true;
+    }
+
+    @Override
+    public boolean canHandleXmlOverride(String ceilingEntityFullyQualifiedClassname, String configurationKey) {
+        return false;
+    }
+
+    @Override
+    public void overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+        //do nothing
+    }
 
     @Override
     public void addMetadata(AddMetadataRequest addMetadataRequest) {
@@ -50,7 +79,7 @@ public class DefaultMetadataProvider extends MetadataProviderAdapter {
     }
 
     @Override
-    public boolean canHandleField(Field field) {
+    public boolean canHandleFieldForConfiguredMetadata(Field field) {
         return true;
     }
 

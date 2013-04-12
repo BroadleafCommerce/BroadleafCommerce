@@ -19,6 +19,8 @@ package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.OptionFilterParamType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
@@ -27,6 +29,8 @@ import javax.annotation.Resource;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -95,4 +99,61 @@ public abstract class AbstractMetadataProvider implements MetadataProvider {
         return null;
     }
 
+    protected Class<?> getBasicJavaType(SupportedFieldType fieldType) {
+        Class<?> response;
+        switch (fieldType) {
+            case BOOLEAN:
+                response = Boolean.TYPE;
+                break;
+            case DATE:
+                response = Date.class;
+                break;
+            case DECIMAL:
+                response = BigDecimal.class;
+                break;
+            case MONEY:
+                response = BigDecimal.class;
+                break;
+            case INTEGER:
+                response = Integer.TYPE;
+                break;
+            case UNKNOWN:
+                response = null;
+                break;
+            default:
+                response = String.class;
+                break;
+        }
+
+        return response;
+    }
+
+    protected Object convertType(String value, OptionFilterParamType type) {
+        Object response;
+        switch (type) {
+            case BIGDECIMAL:
+               response = new BigDecimal(value);
+               break;
+            case BOOLEAN:
+               response = Boolean.parseBoolean(value);
+               break;
+            case DOUBLE:
+               response = Double.parseDouble(value);
+               break;
+            case FLOAT:
+               response = Float.parseFloat(value);
+               break;
+            case INTEGER:
+               response = Integer.parseInt(value);
+               break;
+            case LONG:
+               response = Long.parseLong(value);
+               break;
+            default:
+               response = value;
+               break;
+        }
+
+        return response;
+    }
 }

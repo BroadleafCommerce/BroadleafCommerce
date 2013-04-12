@@ -93,22 +93,12 @@
         </property>
     </bean>
 
-    <bean id="blPropertyProviders" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
-        <property name="sourceList">
-            <list>
-                <ref bean="blAdvancedCollectionPropertyProvider"/>
-                <ref bean="blAdornedTargetPropertyProvider"/>
-                <ref bean="blMapPropertyProvider"/>
-                <ref bean="blMapFieldPropertyProvider"/>
-            </list>
-        </property>
-    </bean>
-
     <bean id="blPersistenceProviders" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
                 <ref bean="blBasicPersistenceProvider"/>
                 <ref bean="blRulePersistenceProvider"/>
+                <ref bean="blMapFieldPersistenceProvider"/>
             </list>
         </property>
     </bean>

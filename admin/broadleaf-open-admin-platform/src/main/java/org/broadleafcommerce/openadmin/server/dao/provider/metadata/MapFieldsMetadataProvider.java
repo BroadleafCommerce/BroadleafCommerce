@@ -16,21 +16,32 @@
 
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
+import org.broadleafcommerce.common.presentation.client.CustomFieldSearchableTypes;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
+import org.hibernate.internal.TypeLocatorImpl;
+import org.hibernate.type.Type;
+import org.hibernate.type.TypeResolver;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -42,9 +53,14 @@ public class MapFieldsMetadataProvider extends BasicMetadataProvider {
     private static final Log LOG = LogFactory.getLog(MapFieldsMetadataProvider.class);
 
     @Override
-    public boolean canHandleField(Field field) {
+    public boolean canHandleFieldForConfiguredMetadata(Field field) {
         AdminPresentationMapFields annot = field.getAnnotation(AdminPresentationMapFields.class);
         return annot != null;
+    }
+
+    @Override
+    public boolean canHandleFieldForTypeMetadata(Field field) {
+        return canHandleFieldForConfiguredMetadata(field);
     }
 
     @Override
@@ -68,14 +84,71 @@ public class MapFieldsMetadataProvider extends BasicMetadataProvider {
             override.setFriendlyName(mapField.fieldPresentation().friendlyName());
             FieldInfo myInfo = new FieldInfo();
             myInfo.setName(addMetadataRequest.getRequestedField().getName() + FieldManager.MAPFIELDSEPARATOR + mapField.fieldName());
+            buildBasicMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), myInfo, override, addMetadataRequest.getDynamicEntityDao());
+            setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), myInfo);
+            BasicFieldMetadata metadata = (BasicFieldMetadata) addMetadataRequest.getRequestedMetadata().get(addMetadataRequest.getRequestedField().getName());
             if (!mapField.targetClass().equals(Void.class)) {
                 if (mapField.targetClass().isInterface()) {
                     throw new IllegalArgumentException("targetClass on @AdminPresentationMapField must be a concrete class");
                 }
-                override.setValueClass(mapField.targetClass().getName());
+                metadata.setMapFieldValueClass(mapField.targetClass().getName());
             }
-            buildBasicMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), myInfo, override, addMetadataRequest.getDynamicEntityDao());
-            setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), myInfo);
+            if (mapField.searchable() != CustomFieldSearchableTypes.NOT_SPECIFIED) {
+                metadata.setSearchable(mapField.searchable() == CustomFieldSearchableTypes.YES);
+            }
+            if (!StringUtils.isEmpty(mapField.manyToField())) {
+                metadata.setManyToField(mapField.manyToField());
+            }
+        }
+    }
+
+    @Override
+    public void addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+        for (Map.Entry<String, FieldMetadata> entry : addMetadataFromFieldTypeRequest.getPresentationAttributes().entrySet()) {
+            if (entry.getKey().startsWith(addMetadataFromFieldTypeRequest.getRequestedPropertyName() + FieldManager.MAPFIELDSEPARATOR)) {
+                TypeLocatorImpl typeLocator = new TypeLocatorImpl(new TypeResolver());
+
+                Type myType = null;
+                //first, check if an explicit type was declared
+                String valueClass = ((BasicFieldMetadata) entry.getValue()).getMapFieldValueClass();
+                if (valueClass != null) {
+                    myType = typeLocator.entity(valueClass);
+                }
+                if (myType == null) {
+                    SupportedFieldType fieldType = ((BasicFieldMetadata) entry.getValue()).getExplicitFieldType();
+                    Class<?> basicJavaType = getBasicJavaType(fieldType);
+                    if (basicJavaType != null) {
+                        myType = typeLocator.basic(basicJavaType);
+                    }
+                }
+                if (myType == null) {
+                    java.lang.reflect.Type genericType = addMetadataFromFieldTypeRequest.getRequestedField().getGenericType();
+                    if (genericType instanceof ParameterizedType) {
+                        ParameterizedType pType = (ParameterizedType) genericType;
+                        Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
+                        Class<?>[] entities = addMetadataFromFieldTypeRequest.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(clazz);
+                        if (!ArrayUtils.isEmpty(entities)) {
+                            myType = typeLocator.entity(entities[entities.length-1]);
+                        }
+                    }
+                }
+                if (myType == null) {
+                   throw new IllegalArgumentException("Unable to establish the type for the property (" + entry
+                           .getKey() + ")");
+                }
+                //add property for this map field as if it was a normal field
+                super.addMetadataFromFieldType(new AddMetadataFromFieldTypeRequest(addMetadataFromFieldTypeRequest.getRequestedField(),
+                        addMetadataFromFieldTypeRequest.getTargetClass(),
+                        addMetadataFromFieldTypeRequest.getForeignField(), addMetadataFromFieldTypeRequest.getAdditionalForeignFields(),
+                        addMetadataFromFieldTypeRequest.getMergedPropertyType(), addMetadataFromFieldTypeRequest.getComponentProperties(),
+                        addMetadataFromFieldTypeRequest.getRequestedProperties(), addMetadataFromFieldTypeRequest.getIdProperty(),
+                        addMetadataFromFieldTypeRequest.getPrefix(),
+                        entry.getKey(), myType, addMetadataFromFieldTypeRequest.isPropertyForeignKey(),
+                        addMetadataFromFieldTypeRequest.getAdditionalForeignKeyIndexPosition(),
+                        addMetadataFromFieldTypeRequest.getPresentationAttributes(), entry.getValue(),
+                        ((BasicFieldMetadata) entry.getValue()).getExplicitFieldType(),
+                        myType.getReturnedClass(), addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
+            }
         }
     }
 

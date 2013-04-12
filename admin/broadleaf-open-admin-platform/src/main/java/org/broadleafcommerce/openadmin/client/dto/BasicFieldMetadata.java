@@ -30,10 +30,8 @@ import java.util.Map;
  */
 public class BasicFieldMetadata extends FieldMetadata {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
+
     private SupportedFieldType fieldType;
     private SupportedFieldType secondaryType = SupportedFieldType.INTEGER;
     private Integer length;
@@ -84,6 +82,8 @@ public class BasicFieldMetadata extends FieldMetadata {
 
     //for MapFields
     private String mapFieldValueClass;
+    private Boolean searchable;
+    private String manyToField;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -453,6 +453,22 @@ public class BasicFieldMetadata extends FieldMetadata {
         return lookupType;
     }
 
+    public Boolean getSearchable() {
+        return searchable;
+    }
+
+    public void setSearchable(Boolean searchable) {
+        this.searchable = searchable;
+    }
+
+    public String getManyToField() {
+        return manyToField;
+    }
+
+    public void setManyToField(String manyToField) {
+        this.manyToField = manyToField;
+    }
+
     public void setLookupType(LookupType lookupType) {
         this.lookupType = lookupType;
     }
@@ -526,6 +542,8 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.toOneLookupCreatedViaAnnotation = toOneLookupCreatedViaAnnotation;
         metadata.ruleIdentifier = ruleIdentifier;
         metadata.mapFieldValueClass = mapFieldValueClass;
+        metadata.searchable = searchable;
+        metadata.manyToField = manyToField;
         metadata.lookupType = lookupType;
 
         metadata = (BasicFieldMetadata) populate(metadata);
@@ -672,6 +690,12 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (mapFieldValueClass != null ? !mapFieldValueClass.equals(metadata.mapFieldValueClass) : metadata.mapFieldValueClass != null) {
             return false;
         }
+        if (searchable != null ? !searchable.equals(metadata.searchable) : metadata.searchable != null) {
+            return false;
+        }
+        if (manyToField != null ? !manyToField.equals(metadata.manyToField) : metadata.manyToField != null) {
+            return false;
+        }
         if (lookupType != null ? !lookupType.equals(metadata.lookupType) : metadata.lookupType != null) {
             return false;
         }
@@ -722,6 +746,8 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (optionCanEditValues != null ? optionCanEditValues.hashCode() : 0);
         result = 31 * result + (ruleIdentifier != null ? ruleIdentifier.hashCode() : 0);
         result = 31 * result + (mapFieldValueClass != null ? mapFieldValueClass.hashCode() : 0);
+        result = 31 * result + (searchable != null ? searchable.hashCode() : 0);
+        result = 31 * result + (manyToField != null ? manyToField.hashCode() : 0);
         result = 31 * result + (lookupType != null ? lookupType.hashCode() : 0);
         return result;
     }

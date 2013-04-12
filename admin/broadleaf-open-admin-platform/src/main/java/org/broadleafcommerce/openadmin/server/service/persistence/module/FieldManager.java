@@ -41,7 +41,7 @@ public class FieldManager {
     
     private static final Log LOG = LogFactory.getLog(FieldManager.class);
 
-    public static final String MAPFIELDSEPARATOR = "--";
+    public static final String MAPFIELDSEPARATOR = "---";
 
     protected EntityConfiguration entityConfiguration;
     protected DynamicEntityDao dynamicEntityDao;

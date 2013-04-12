@@ -51,12 +51,12 @@ import java.util.Map;
  */
 @Component("blCollectionMetadataProvider")
 @Scope("prototype")
-public class CollectionMetadataProvider extends MetadataProviderAdapter {
+public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvider {
 
     private static final Log LOG = LogFactory.getLog(CollectionMetadataProvider.class);
 
     @Override
-    public boolean canHandleField(Field field) {
+    public boolean canHandleFieldForConfiguredMetadata(Field field) {
         AdminPresentationCollection annot = field.getAnnotation(AdminPresentationCollection.class);
         return annot != null;
     }

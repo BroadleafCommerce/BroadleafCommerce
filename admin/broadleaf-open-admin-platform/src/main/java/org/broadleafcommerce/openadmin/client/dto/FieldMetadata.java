@@ -16,12 +16,13 @@
 
 package org.broadleafcommerce.openadmin.client.dto;
 
-import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.broadleafcommerce.openadmin.client.dto.visitor.MetadataVisitor;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -52,6 +53,9 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
     private String showIfProperty;
     private String currencyCodeField;
 
+    //Additional metadata not supported as first class
+    private Map<String, Object> additionalMetadata = new HashMap<String, Object>();
+
     public String[] getAvailableToTypes() {
         return availableToTypes;
     }
@@ -77,6 +81,14 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         this.excluded = excluded;
     }
 
+    public Map<String, Object> getAdditionalMetadata() {
+        return additionalMetadata;
+    }
+
+    public void setAdditionalMetadata(Map<String, Object> additionalMetadata) {
+        this.additionalMetadata = additionalMetadata;
+    }
+
     protected FieldMetadata populate(FieldMetadata metadata) {
         metadata.inheritedFromType = inheritedFromType;
         if (availableToTypes != null) {
@@ -95,6 +107,9 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         metadata.fieldName = fieldName;
         metadata.showIfProperty = showIfProperty;
         metadata.currencyCodeField = currencyCodeField;
+        for (Map.Entry<String, Object> entry : additionalMetadata.entrySet()) {
+            metadata.additionalMetadata.put(entry.getKey(), entry.getValue());
+        }
         return metadata;
     }
 

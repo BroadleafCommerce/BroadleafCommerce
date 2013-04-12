@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.server.dao.provider.property.request;
+package org.broadleafcommerce.openadmin.server.dao.provider.metadata.request;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
@@ -33,7 +33,7 @@ import java.util.Map;
  *
  * @author Jeff Fischer
  */
-public class PropertyRequest {
+public class AddMetadataFromFieldTypeRequest {
 
     private final Field requestedField;
     private final Class<?> targetClass;
@@ -54,7 +54,12 @@ public class PropertyRequest {
     private final Class<?> returnedClass;
     private final DynamicEntityDao dynamicEntityDao;
 
-    public PropertyRequest(Field requestedField, Class<?> targetClass, ForeignKey foreignField, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, List<Property> componentProperties, Map<String, FieldMetadata> requestedProperties, String idProperty, String prefix, String requestedPropertyName, Type type, boolean propertyForeignKey, int additionalForeignKeyIndexPosition, Map<String, FieldMetadata> presentationAttributes, FieldMetadata presentationAttribute, SupportedFieldType explicitType, Class<?> returnedClass, DynamicEntityDao dynamicEntityDao) {
+    public AddMetadataFromFieldTypeRequest(Field requestedField, Class<?> targetClass, ForeignKey foreignField,
+                                           ForeignKey[] additionalForeignFields,
+                                           MergedPropertyType mergedPropertyType, List<Property> componentProperties,
+                                           Map<String, FieldMetadata> requestedProperties, String idProperty,
+                                           String prefix, String requestedPropertyName, Type type,
+                                           boolean propertyForeignKey, int additionalForeignKeyIndexPosition, Map<String, FieldMetadata> presentationAttributes, FieldMetadata presentationAttribute, SupportedFieldType explicitType, Class<?> returnedClass, DynamicEntityDao dynamicEntityDao) {
         this.requestedField = requestedField;
         this.targetClass = targetClass;
         this.foreignField = foreignField;

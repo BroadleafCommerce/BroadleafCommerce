@@ -61,7 +61,7 @@ public class Metadata {
         for (Field field : fields) {
             boolean foundOneOrMoreHandlers = false;
             for (MetadataProvider metadataProvider : metadataProviders) {
-                if (metadataProvider.canHandleField(field)) {
+                if (metadataProvider.canHandleFieldForConfiguredMetadata(field)) {
                     metadataProvider.addMetadata(new AddMetadataRequest(field, parentClass, targetClass, attributes,
                             dynamicEntityDao, prefix));
                     if (!foundOneOrMoreHandlers) {
@@ -147,8 +147,16 @@ public class Metadata {
         }
         presentationAttribute.setInheritedFromType(targetClass.getName());
         presentationAttribute.setAvailableToTypes(new String[]{targetClass.getName()});
+        boolean handled = false;
         for (MetadataProvider metadataProvider : metadataProviders) {
-            metadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(presentationAttribute,
+            if (metadataProvider.canHandleMappingForTypeMetadata(propertyName, componentProperties, entityType)) {
+                metadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(presentationAttribute,
+                    componentProperties, type, secondaryType, entityType, propertyName, mergedPropertyType, dynamicEntityDao));
+                handled = true;
+            }
+        }
+        if (!handled) {
+            defaultMetadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(presentationAttribute,
                     componentProperties, type, secondaryType, entityType, propertyName, mergedPropertyType, dynamicEntityDao));
         }
 

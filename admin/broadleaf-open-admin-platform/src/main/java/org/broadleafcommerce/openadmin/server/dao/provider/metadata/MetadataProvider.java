@@ -16,12 +16,16 @@
 
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
+import org.hibernate.mapping.Property;
+import org.hibernate.type.Type;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * Classes implementing this interface are capable of manipulating metadata resulting from the inspection
@@ -33,15 +37,38 @@ import java.lang.reflect.Field;
 public interface MetadataProvider {
 
     /**
-     * Whether or not this provider is qualified to add metadata for the specified field.
+     * Whether or not this provider is qualified to add metadata for the specified field. The metadata
+     * is derived from annotations and any other forms of explicit configuration.
+     * Determines whether or not addMetadata is called.
      *
      * @param field the <tt>Field</tt> instance to test
      * @return whether or not this provider is qualified
      */
-    boolean canHandleField(Field field);
+    boolean canHandleFieldForConfiguredMetadata(Field field);
 
     /**
-     * Whether or not this provider is qualified to override metadata using <tt>AdminPresentationOverrides</tt>
+     * Whether or not this provider is qualified to add metadata for the specified field based
+     * on the field type. Determines whether or not addMetadataFromFieldType is called.
+     *
+     * @param field the <tt>Field</tt> instance to test
+     * @return whether or not this provider is qualified
+     */
+    boolean canHandleFieldForTypeMetadata(Field field);
+
+    /**
+     * Whether or not this provider is qualified to add metadata for the specified Hibernate mapping information.
+     * Determines whether or not addMetadataFromMappingData is called.
+     *
+     * @param propertyName the name of the property
+     * @param componentProperties the list of hibernate properties keyed by property name
+     * @param entityType the hibernate type for the entity
+     * @return whether or not this provider is qualified
+     */
+    boolean canHandleMappingForTypeMetadata(String propertyName, List<Property> componentProperties, Type entityType);
+
+    /**
+     * Whether or not this provider is qualified to override metadata using <tt>AdminPresentationOverrides</tt>.
+     * Determines whether or not overrideViaAnnotation is called.
      *
      * @param clazz The class to test for the presence of qualified <tt>AdminPresentationOverrides</tt>
      * @return whether or not this provider is qualified
@@ -49,7 +76,8 @@ public interface MetadataProvider {
     boolean canHandleAnnotationOverride(Class<?> clazz);
 
     /**
-     * Whether or not this provider is qualified to override metadata using xml.
+     * Whether or not this provider is qualified to override metadata using xml. Determines whether or not
+     * overrideViaXml is called.
      *
      * @param ceilingEntityFullyQualifiedClassname the fully qualified name of the ceiling entity for this inspect
      * @param configurationKey the configuration key (if any) for this inspect
@@ -88,4 +116,12 @@ public interface MetadataProvider {
      * @param addMetadataFromMappingDataRequest contains the requested Hibernate type, metadata and support classes.
      */
     void addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest);
+
+    /**
+     * Contribute to metadata inspection for the <tt>Field</tt> instance in the request. Implementations should
+     * add values to the requestedProperties field of the request object.
+     *
+     * @param addMetadataFromFieldTypeRequest contains the requested field, properties, property name and support classes.
+     */
+    void addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest);
 }

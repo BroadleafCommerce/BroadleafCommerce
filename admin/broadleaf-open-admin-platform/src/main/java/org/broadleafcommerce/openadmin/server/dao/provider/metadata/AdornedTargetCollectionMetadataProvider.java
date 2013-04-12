@@ -33,6 +33,7 @@ import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
@@ -51,14 +52,19 @@ import java.util.Map;
  */
 @Component("blAdornedTargetCollectionMetadataProvider")
 @Scope("prototype")
-public class AdornedTargetCollectionMetadataProvider extends MetadataProviderAdapter {
+public class AdornedTargetCollectionMetadataProvider extends AdvancedCollectionMetadataProvider {
 
     private static final Log LOG = LogFactory.getLog(AdornedTargetCollectionMetadataProvider.class);
 
     @Override
-    public boolean canHandleField(Field field) {
+    public boolean canHandleFieldForConfiguredMetadata(Field field) {
         AdminPresentationAdornedTargetCollection annot = field.getAnnotation(AdminPresentationAdornedTargetCollection.class);
         return annot != null;
+    }
+
+    @Override
+    public boolean canHandleFieldForTypeMetadata(Field field) {
+        return canHandleFieldForConfiguredMetadata(field);
     }
 
     @Override
@@ -140,6 +146,19 @@ public class AdornedTargetCollectionMetadataProvider extends MetadataProviderAda
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+        super.addMetadataFromFieldType(addMetadataFromFieldTypeRequest);
+        //add additional adorned target support
+        AdornedTargetCollectionMetadata fieldMetadata = (AdornedTargetCollectionMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute();
+        if (StringUtils.isEmpty(fieldMetadata.getCollectionCeilingEntity())) {
+            fieldMetadata.setCollectionCeilingEntity(addMetadataFromFieldTypeRequest.getType().getReturnedClass().getName());
+            AdornedTargetList targetList = ((AdornedTargetList) fieldMetadata.getPersistencePerspective().
+                    getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST));
+            targetList.setAdornedTargetEntityClassname(fieldMetadata.getCollectionCeilingEntity());
         }
     }
 

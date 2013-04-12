@@ -35,6 +35,7 @@ import org.broadleafcommerce.openadmin.client.dto.SimpleValueMapStructure;
 import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
@@ -51,12 +52,12 @@ import java.util.Map;
  */
 @Component("blMapMetadataProvider")
 @Scope("prototype")
-public class MapMetadataProvider extends MetadataProviderAdapter {
+public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
 
     private static final Log LOG = LogFactory.getLog(MapMetadataProvider.class);
 
     @Override
-    public boolean canHandleField(Field field) {
+    public boolean canHandleFieldForConfiguredMetadata(Field field) {
         AdminPresentationMap annot = field.getAnnotation(AdminPresentationMap.class);
         return annot != null;
     }
@@ -72,6 +73,7 @@ public class MapMetadataProvider extends MetadataProviderAdapter {
         return true;
     }
 
+    @Override
     public void addMetadata(AddMetadataRequest addMetadataRequest) {
         AdminPresentationMap annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationMap.class);
         FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
@@ -142,6 +144,13 @@ public class MapMetadataProvider extends MetadataProviderAdapter {
                 }
             }
         }
+    }
+
+    @Override
+    public void addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+        //do nothing but add the property without manipulation
+        addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
+                addMetadataFromFieldTypeRequest.getPresentationAttribute());
     }
 
     protected void buildAdminPresentationMapOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties,

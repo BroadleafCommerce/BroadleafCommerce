@@ -16,12 +16,16 @@
 
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
+import org.hibernate.mapping.Property;
+import org.hibernate.type.Type;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -34,7 +38,17 @@ public class MetadataProviderAdapter extends AbstractMetadataProvider {
     }
 
     @Override
-    public boolean canHandleField(Field field) {
+    public boolean canHandleFieldForTypeMetadata(Field field) {
+        return false;
+    }
+
+    @Override
+    public boolean canHandleMappingForTypeMetadata(String propertyName, List<Property> componentProperties, Type entityType) {
+        return false;
+    }
+
+    @Override
+    public boolean canHandleFieldForConfiguredMetadata(Field field) {
         return false;
     }
 
@@ -60,6 +74,11 @@ public class MetadataProviderAdapter extends AbstractMetadataProvider {
 
     @Override
     public void addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest) {
+        //do nothing
+    }
+
+    @Override
+    public void addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
         //do nothing
     }
 }

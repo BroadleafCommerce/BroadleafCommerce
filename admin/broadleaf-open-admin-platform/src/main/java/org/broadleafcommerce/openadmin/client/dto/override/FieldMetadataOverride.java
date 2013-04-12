@@ -33,7 +33,6 @@ import java.util.Map;
 public class FieldMetadataOverride {
 
     //fields everyone depends on
-
     private Boolean excluded;
     private String friendlyName;
     private String securityLevel;
@@ -118,6 +117,10 @@ public class FieldMetadataOverride {
     private String showIfProperty;
     private String ruleIdentifier;
     private LookupType lookupType;
+
+    //@AdminPresentationMapField derived fields
+    private Boolean searchable;
+    private String mapFieldValueClass;
 
     //Not a user definable field
     private Boolean toOneLookupCreatedViaAnnotation;
@@ -464,6 +467,22 @@ public class FieldMetadataOverride {
 
     public void setRuleIdentifier(String ruleIdentifier) {
         this.ruleIdentifier = ruleIdentifier;
+    }
+
+    public Boolean getSearchable() {
+        return searchable;
+    }
+
+    public void setSearchable(Boolean searchable) {
+        this.searchable = searchable;
+    }
+
+    public String getMapFieldValueClass() {
+        return mapFieldValueClass;
+    }
+
+    public void setMapFieldValueClass(String mapFieldValueClass) {
+        this.mapFieldValueClass = mapFieldValueClass;
     }
 
     //collection fields
