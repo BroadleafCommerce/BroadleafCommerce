@@ -64,6 +64,13 @@
     	            $closeLink.click();
     	        }, options.autoClose);
     	    }
+        },
+        
+        fixHelper : function(e, ui) {
+            ui.closest('tbody').find('tr').children().each(function() {
+                $(this).width($(this).width());
+            });
+            return ui;
         }
     };
     
@@ -85,7 +92,7 @@ $(document).ready(function() {
         var currentUrl = $table.data('currenturl');
         var fields = BLCAdmin.listGrid.getRowFields($tr);
         
-        if ($tr.find('td.list-grid-no-results').length == 0) {
+        if ($tr.find('td.list-grid-no-results').length == 0 && !$table.hasClass('reordering')) {
             $('body').trigger('listGrid-' + listGridType + '-rowSelected', [link, fields, currentUrl]);
         }
     });
@@ -221,6 +228,48 @@ $(document).ready(function() {
     
     $('body').on('click', 'button.sub-list-grid-add', function() {
         BLCAdmin.showLinkAsModal($(this).attr('data-actionurl'));
+        return false;
+    });
+    
+    $('body').on('click', 'button.sub-list-grid-reorder', function() {
+        var $container = $(this).closest('.listgrid-container');
+        var $table = $container.find('table');
+        var $tbody = $table.find('tbody');
+        var $trs = $tbody.find('tr');
+        var doneReordering = $table.hasClass('reordering');
+        
+        $table.toggleClass('reordering');
+        
+        if (doneReordering) {
+            $container.find('.listgrid-toolbar button').removeAttr('disabled');
+            $(this).html('Reorder');
+            
+            BLCAdmin.listGrid.updateToolbarRowActionButtons($container);
+            
+            $trs.removeClass('draggable').addClass('clickable');
+            $tbody.sortable("destroy");
+        } else {
+            $container.find('.listgrid-toolbar button').attr('disabled', 'disabled');
+            $(this).removeAttr('disabled').html('Done');
+            
+            $trs.removeClass('clickable').addClass('draggable');
+            
+            $tbody.sortable({
+                helper : BLCAdmin.listGrid.fixHelper,
+                update : function(event, ui) {
+                    BLC.ajax({
+                        url : ui.item.data('link') + '/sequence',
+                        type : "POST",
+                        data : {
+                            newSequence : ui.item.index()
+                        }
+                    }, function(data) {
+                        console.log(data);
+                    });
+                }
+            }).disableSelection();
+        }
+        
         return false;
     });
     

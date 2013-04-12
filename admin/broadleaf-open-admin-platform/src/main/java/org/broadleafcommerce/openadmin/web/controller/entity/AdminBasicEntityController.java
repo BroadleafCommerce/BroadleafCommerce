@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
@@ -56,6 +57,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -767,6 +769,64 @@ public class AdminBasicEntityController extends AdminAbstractController {
         // We return the new list grid so that it can replace the currently visible one
         setModelAttributes(model, sectionKey);
         return "views/standaloneListGrid";
+    }
+    
+    /**
+     * Updates the given colleciton item's sequence. This should only be triggered for adorned target collections
+     * where a sort field is specified -- any other invocation is incorrect and will result in an exception.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param pathVars
+     * @param id
+     * @param collectionField
+     * @param collectionItemId
+     * @return an object explaining the state of the operation
+     * @throws Exception
+     */
+    @RequestMapping(value = "/{id}/{collectionField}/{collectionItemId}/sequence", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> updateCollectionItemSequence(HttpServletRequest request, 
+            HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable String id,
+            @PathVariable String collectionField,
+            @PathVariable String collectionItemId,
+            @RequestParam String newSequence) throws Exception {
+        String sectionKey = getSectionKey(pathVars);
+        String mainClassName = getClassNameForSection(sectionKey);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        FieldMetadata md = collectionProperty.getMetadata();
+        
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
+        Entity parentEntity = service.getRecord(ppr, id);
+        
+        ppr = PersistencePackageRequest.fromMetadata(md);
+        
+        if (md instanceof AdornedTargetCollectionMetadata) {
+            AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) md;
+            AdornedTargetList atl = ppr.getAdornedList();
+            
+            // Get an entity form for the entity
+            EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
+            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty, 
+                    collectionItemId);
+            formService.populateEntityFormFields(entityForm, entity);
+            formService.populateAdornedEntityFormFields(entityForm, entity, ppr.getAdornedList());
+            
+            // Set the new sequence (note that it will come in 0-indexed but the persistence module expects 1-indexed)
+            int sequenceValue = Integer.parseInt(newSequence) + 1;
+            Field field = entityForm.findField(atl.getSortField());
+            field.setValue(String.valueOf(sequenceValue));
+            
+            Map<String, Object> responseMap = new HashMap<String, Object>();
+            service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, collectionItemId);
+            responseMap.put("status", "ok");
+            return responseMap;
+        } else {
+            throw new UnsupportedOperationException("Cannot handle sequencing for non adorned target collection fields.");
+        }
     }
 
     /**

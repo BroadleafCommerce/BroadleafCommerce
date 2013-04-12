@@ -25,6 +25,12 @@ public class DefaultListGridActions {
         .withUrlPostfix("/add")
         .withIconClass("icon-plus")
         .withDisplayText("Add");
+    
+    public static final ListGridAction REORDER = new ListGridAction()
+        .withButtonClass("sub-list-grid-reorder")
+        .withUrlPostfix("/update")
+        .withIconClass("icon-move")
+        .withDisplayText("Reorder");
 
     // Actions for row-level
     public static final ListGridAction REMOVE = new ListGridAction()

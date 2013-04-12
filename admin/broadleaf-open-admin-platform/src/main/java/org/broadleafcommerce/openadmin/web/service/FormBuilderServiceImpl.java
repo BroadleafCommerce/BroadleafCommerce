@@ -141,8 +141,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         List<Field> headerFields = new ArrayList<Field>();
         ListGrid.Type type = null;
         boolean editable = false;
+        boolean sortable = false;
         String idProperty = "id";
-
         // Get the header fields for this list grid. Note that the header fields are different depending on the
         // kind of field this is.
         if (fmd instanceof BasicFieldMetadata) {
@@ -212,9 +212,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             type = ListGrid.Type.ADORNED;
 
-            if (((AdornedTargetCollectionMetadata) fmd).getMaintainedAdornedTargetFields().length > 0) {
+            if (atcmd.getMaintainedAdornedTargetFields().length > 0) {
                 editable = true;
             }
+            
+            AdornedTargetList adornedList = (AdornedTargetList) atcmd.getPersistencePerspective()
+                    .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+            sortable = StringUtils.isNotBlank(adornedList.getSortField());
         } else if (fmd instanceof MapMetadata) {
             MapMetadata mmd = (MapMetadata) fmd;
 
@@ -262,6 +266,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         
         if (editable) {
             listGrid.getRowActions().add(DefaultListGridActions.UPDATE);
+        }
+        if (sortable) {
+            listGrid.getToolbarActions().add(DefaultListGridActions.REORDER);
         }
         listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
 
@@ -558,7 +565,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         
         for (ListGrid lg : ef.getAllListGrids()) {
-            lg.addToolbarAction(DefaultListGridActions.ADD);
+            // We always want the add option to be the first toolbar action for consistency
+            if (lg.getToolbarActions().isEmpty()) {
+                lg.addToolbarAction(DefaultListGridActions.ADD);
+            } else {
+                lg.getToolbarActions().add(0, DefaultListGridActions.ADD);
+            }
         }
         
         ef.addAction(DefaultEntityFormActions.DELETE);
@@ -588,7 +600,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         field = ef.getFields().get(adornedList.getSortField());
         entityProp = entity.findProperty(adornedList.getSortField());
-        field.setValue(entityProp.getValue());
+        if (entityProp != null) {
+            field.setValue(entityProp.getValue());
+        }
     }
 
     @Override

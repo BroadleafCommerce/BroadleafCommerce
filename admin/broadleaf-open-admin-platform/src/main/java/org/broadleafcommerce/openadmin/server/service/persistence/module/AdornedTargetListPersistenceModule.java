@@ -240,8 +240,10 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             int index = adornedTargetRetrieval.getIndex();
             Map<String, FieldMetadata> mergedProperties = adornedTargetRetrieval.getMergedProperties();
             FieldManager fieldManager = getFieldManager();
+            
+            Serializable myRecord;
             if (adornedTargetList.getSortField() != null && entity.findProperty(adornedTargetList.getSortField()).getValue() != null) {
-                Serializable myRecord = records.get(index);
+                myRecord = records.get(index);
                 
                 Integer requestedSequence = Integer.valueOf(entity.findProperty(adornedTargetList.getSortField()).getValue());
                 Integer previousSequence = Integer.parseInt(String.valueOf(getFieldManager().getFieldValue(myRecord, adornedTargetList.getSortField())));
@@ -263,29 +265,30 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     }
                 }
             } else {
-                String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-                Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
-                Map<String, FieldMetadata> mergedPropertiesTarget = persistenceManager.getDynamicEntityDao().getMergedProperties(
-                        ceilingEntityFullyQualifiedClassname,
-                        entities,
-                        null,
-                        persistencePerspective.getAdditionalNonPersistentProperties(),
-                        persistencePerspective.getAdditionalForeignKeys(),
-                        MergedPropertyType.PRIMARY,
-                        persistencePerspective.getPopulateToOneFields(),
-                        persistencePerspective.getIncludeFields(),
-                        persistencePerspective.getExcludeFields(),
-                        persistencePerspective.getConfigurationKey(),
-                        ""
-                );
-                Serializable myRecord = records.get(index);
-                myRecord = createPopulatedInstance(myRecord, entity, mergedProperties, false);
-                myRecord = persistenceManager.getDynamicEntityDao().merge(myRecord);
-                List<Serializable> myList = new ArrayList<Serializable>();
-                myList.add(myRecord);
-                Entity[] payload = getRecords(mergedPropertiesTarget, myList, mergedProperties, adornedTargetList.getTargetObjectPath());
-                entity = payload[0];
+                myRecord = records.get(index);
             }
+            
+            String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+            Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
+            Map<String, FieldMetadata> mergedPropertiesTarget = persistenceManager.getDynamicEntityDao().getMergedProperties(
+                    ceilingEntityFullyQualifiedClassname,
+                    entities,
+                    null,
+                    persistencePerspective.getAdditionalNonPersistentProperties(),
+                    persistencePerspective.getAdditionalForeignKeys(),
+                    MergedPropertyType.PRIMARY,
+                    persistencePerspective.getPopulateToOneFields(),
+                    persistencePerspective.getIncludeFields(),
+                    persistencePerspective.getExcludeFields(),
+                    persistencePerspective.getConfigurationKey(),
+                    ""
+            );
+            myRecord = createPopulatedInstance(myRecord, entity, mergedProperties, false);
+            myRecord = persistenceManager.getDynamicEntityDao().merge(myRecord);
+            List<Serializable> myList = new ArrayList<Serializable>();
+            myList.add(myRecord);
+            Entity[] payload = getRecords(mergedPropertiesTarget, myList, mergedProperties, adornedTargetList.getTargetObjectPath());
+            entity = payload[0];
 
             return entity;
         } catch (Exception e) {

@@ -339,6 +339,11 @@ pre.exception {
 	font-size: 12px;
 }
 
+table.table-hover tbody tr.draggable:hover {
+    cursor: move;
+    background-color: #f3f3f3;
+}
+
 /* -----------------------------------------
   List Grid
 ----------------------------------------- */
