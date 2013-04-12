@@ -30,6 +30,7 @@ import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.client.dto.MapStructure;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
@@ -410,6 +411,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             p = new Property();
             p.setName("priorKey");
             p.setValue(priorKey);
+            properties.add(p);
+            
+            MapStructure mapStructure = ppr.getMapStructure();
+            
+            p = new Property();
+            p.setName(mapStructure.getKeyPropertyName());
+            p.setValue(itemId);
             properties.add(p);
 
             entity.setType(new String[] { fmd.getTargetClass() });
