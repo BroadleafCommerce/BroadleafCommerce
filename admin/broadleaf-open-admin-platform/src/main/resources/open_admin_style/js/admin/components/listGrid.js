@@ -12,6 +12,7 @@
             $oldTable.find('tbody').replaceWith($table.find('tbody'));
             
             this.updateToolbarRowActionButtons($listGridContainer);
+            this.showAlert($listGridContainer, 'Saved!', { alertType: 'save-alert', autoClose: 1000 });
         },
         
         getButtonLink : function($button) {
@@ -45,10 +46,6 @@
             } else {
                 $listGridContainer.find('button.row-action').attr('disabled', 'disabled');
             }
-        },
-        
-        updateListGrid : function(data, tableBodyToReplace) {
-            tableBodyToReplace.replaceWith($(data).find('tbody'))
         },
         
         showAlert : function($container, message, options) {
@@ -234,11 +231,11 @@ $(document).ready(function() {
         var $selectedRows = $container.find('table tr.selected');
         var rowFields = BLCAdmin.listGrid.getRowFields($selectedRows);
         
-        $.ajax({
+        BLC.ajax({
             url: link,
             data: rowFields,
             type: "POST"
-        }).done(function(data) {
+        }, function(data) {
             BLCAdmin.listGrid.replaceRelatedListGrid(data);
         });
         
@@ -324,7 +321,7 @@ $(document).ready(function() {
             type: "GET",
             data: $inputs.serialize()
         }, function(data) {
-            BLCAdmin.listGrid.updateListGrid(data.trim(), toReplace);
+            toReplace.replaceWith($(data.trim()));
         });
         
         $inputs.each(function(index, element) {
@@ -358,7 +355,7 @@ $(document).ready(function() {
             type: "GET",
             data: $firstHeader.find('div.filter-fields :input').serialize()
         }, function(data) {
-            BLCAdmin.listGrid.updateListGrid(data.trim(), $('body').find('.list-grid-table tbody'));
+            $('body').find('.list-grid-table tbody').replaceWith($(data.trim()).find('tbody'));
         });
         return false;
     });

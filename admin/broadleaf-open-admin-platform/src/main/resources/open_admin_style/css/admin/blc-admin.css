@@ -823,6 +823,25 @@ div.alert-box.list-grid-alert {
 	font-size: 13px;
 }
 
+div.alert-box.list-grid-alert.save-alert {
+	display: inline-block;
+	margin-bottom: 0;
+	margin-left: 0px;
+	padding-right: 7px;
+	background: none;
+	border: none;
+	color: #98B30A;
+	text-shadow: none;
+}
+
+div.alert-box.list-grid-alert.save-alert a.close {
+	display: none;
+}
+
+div.listgrid-container label {
+	display: inline-block;
+}
+
 div.alert-box.list-grid-alert a.close {
 	top: -5px;
 }
