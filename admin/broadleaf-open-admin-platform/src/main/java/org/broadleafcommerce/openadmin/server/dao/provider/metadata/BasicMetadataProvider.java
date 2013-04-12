@@ -646,6 +646,7 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
                 override.setCustomCriteria(toOneLookup.customCriteria());
                 override.setUseServerSideInspectionCache(toOneLookup.useServerSideInspectionCache());
                 override.setToOneLookupCreatedViaAnnotation(true);
+                override.setLookupType(toOneLookup.lookupType());
             }
 
             if (dataDrivenEnumeration != null) {
@@ -835,6 +836,9 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
         }
         if (basicFieldMetadata.getRuleIdentifier()!=null) {
             metadata.setRuleIdentifier(basicFieldMetadata.getRuleIdentifier());
+        }
+        if (basicFieldMetadata.getLookupType()!=null) {
+            metadata.setLookupType(basicFieldMetadata.getLookupType());
         }
 
         attributes.put(field.getName(), metadata);
