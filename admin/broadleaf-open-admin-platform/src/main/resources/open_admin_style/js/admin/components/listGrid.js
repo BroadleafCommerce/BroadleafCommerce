@@ -321,7 +321,7 @@ $(document).ready(function() {
             type: "GET",
             data: $inputs.serialize()
         }, function(data) {
-            toReplace.replaceWith($(data.trim()));
+            toReplace.replaceWith($(data.trim()).find('tbody'));
         });
         
         $inputs.each(function(index, element) {
