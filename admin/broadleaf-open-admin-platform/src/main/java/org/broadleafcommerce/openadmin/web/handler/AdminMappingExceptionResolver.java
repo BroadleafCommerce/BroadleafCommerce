@@ -23,7 +23,6 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
             // Friendly message
             mav.addObject("exceptionMessage", ex.getMessage());
             
-            showDebugMessage = false;
             mav.addObject("showDebugMessage", showDebugMessage);
             if (showDebugMessage) {
                 StringBuilder sb2 = new StringBuilder();
