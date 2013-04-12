@@ -1,6 +1,6 @@
 /* Utility methods provided by Broadleaf Commerce for admin */
 var BLCAdmin = (function($) {
-	
+    
 	// This will keep track of our current active modals so that we are able to overlay them
 	var modals = [];
 	var preFormSubmitHandlers = [];
@@ -8,6 +8,49 @@ var BLCAdmin = (function($) {
 	var stackedModalOptions = {
 	    left: 20,
 	    top: 20
+	}
+    
+	function showModal($data, onModalHide, onModalHideArgs) {
+		BLCAdmin.initializeFields($data);
+		
+		// If we already have an active modal, we don't need another backdrop on subsequent modals
+		$data.modal({
+			backdrop: (modals.length < 1)
+		});
+		
+		// If we already have an active modal, we need to modify its z-index so that it will be
+		// hidden by the current backdrop
+		if (modals.length > 0) {
+			modals.last().css('z-index', '1040');
+			
+			var $backdrop = $('.modal-backdrop');
+			$backdrop.css('z-index', parseInt($backdrop.css('z-index')) + 1);
+			
+			// We will also offset modals by the given option values
+			$data.css('left', $data.position().left + (stackedModalOptions.left * modals.length) + 'px');
+			$data.css('top', $data.position().top + (stackedModalOptions.top * modals.length) + 'px');
+		}
+		
+		// Save our new modal into our stack
+		modals.push($data);
+		
+		// Bind a callback for the modal hidden event...
+		$data.on('hidden', function() {
+			
+			// Allow custom callbacks
+			if (onModalHide != null) {
+				onModalHide(onModalHideArgs);
+			}
+			
+			// Remove the modal from the DOM and from our stack
+			$(this).remove();
+			modals.pop();
+			
+			// If this wasn't the only modal, take the last modal and put it above the backdrop
+			if (modals.length > 0) {
+				modals.last().css('z-index', '1050');
+			}
+		});
 	}
 	
 	return {
@@ -25,6 +68,11 @@ var BLCAdmin = (function($) {
             }
     	},
     	
+    	showElementAsModal : function($element, onModalHide, onModalHideArgs) {
+			$('body').append($element);
+			showModal($element, onModalHide, onModalHideArgs);
+    	},
+    	
     	showLinkAsModal : function(link, onModalHide, onModalHideArgs) {
     	    BLC.ajax({
     	        url : link,
@@ -35,46 +83,7 @@ var BLCAdmin = (function($) {
     			$data.attr('id', 'modal' + modals.length);
     			$('body').append($data);
     			
-    			BLCAdmin.initializeFields($data);
-    			
-    			// If we already have an active modal, we don't need another backdrop on subsequent modals
-    			$data.modal({
-    				backdrop: (modals.length < 1)
-    			});
-    			
-    			// If we already have an active modal, we need to modify its z-index so that it will be
-    			// hidden by the current backdrop
-    			if (modals.length > 0) {
-    				modals.last().css('z-index', '1040');
-    				
-    				var $backdrop = $('.modal-backdrop');
-    				$backdrop.css('z-index', parseInt($backdrop.css('z-index')) + 1);
-    				
-    				// We will also offset modals by the given option values
-    				$data.css('left', $data.position().left + (stackedModalOptions.left * modals.length) + 'px');
-    				$data.css('top', $data.position().top + (stackedModalOptions.top * modals.length) + 'px');
-    			}
-    			
-    			// Save our new modal into our stack
-    			modals.push($data);
-    			
-    			// Bind a callback for the modal hidden event...
-    			$data.on('hidden', function() {
-    				
-    				// Allow custom callbacks
-    				if (onModalHide != null) {
-    					onModalHide(onModalHideArgs);
-    				}
-    				
-    				// Remove the modal from the DOM and from our stack
-    				$(this).remove();
-    				modals.pop();
-    				
-    				// If this wasn't the only modal, take the last modal and put it above the backdrop
-    				if (modals.length > 0) {
-    					modals.last().css('z-index', '1050');
-    				}
-    			});
+    			showModal($data, onModalHide, onModalHideArgs);
     		});
     	},
     	
@@ -133,3 +142,16 @@ var BLCAdmin = (function($) {
 	};
     
 })(jQuery);
+
+// Replace the default AJAX error handler with this custom admin one that relies on the exception
+// being set on the model instead of a stack trace page when an error occurs on an AJAX request.
+BLC.defaultErrorHandler = function(data) {
+    var $data;
+    if (data.responseText.trim) {
+        $data = $(data.responseText.trim());
+    } else {
+        $data = $(data.responseText);
+    }
+    
+    BLCAdmin.showElementAsModal($data);
+}

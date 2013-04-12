@@ -332,6 +332,13 @@ table.table-hover tbody tr.clickable:hover {
     background-color: #f3f3f3;
 }
 
+pre.exception {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	padding: 20px;
+	font-size: 12px;
+}
+
 /* -----------------------------------------
   List Grid
 ----------------------------------------- */
