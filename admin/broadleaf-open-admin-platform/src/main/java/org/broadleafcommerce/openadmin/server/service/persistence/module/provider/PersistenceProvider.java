@@ -33,41 +33,11 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 public interface PersistenceProvider {
 
     /**
-     * Whether or not this provider is qualified to handle persistence events for the given
-     * object instance and field metadata.
-     *
-     * @param instance The Hibernate entity being persisted
-     * @param property The Property being requested to apply
-     * @param metadata The descriptive metadata for the field
-     * @return whether or not this provider is qualified
-     */
-    //boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata);
-
-    /**
-     * Whether or not this provider is qualified to handle search mappings for the given field metadata. Search
-     * mappings are in the form of criteria that refine the final select query for a list of entities to
-     * display in the admin during a fetch.
-     *
-     * @param metadata The descriptive metadata for the field
-     * @return whether or not this provider is qualified
-     */
-    //boolean canHandleSearchMapping(BasicFieldMetadata metadata);
-
-    /**
-     * Whether or not this provider is qualified to filter properties returned from the admin during an
-     * update or add before passing into the final persistence phase.
-     *
-     * @param entity The <tt>Entity</tt> instance passed in from the admin
-     * @param unfilteredProperties The property list before filtering
-     * @return whether or not this provider is qualified
-     */
-    //boolean canHandlePropertyFiltering(Entity entity, Map<String, FieldMetadata> unfilteredProperties);
-
-    /**
      * Set the property value on the target object. Implementations should translate and set the requestedValue
      * field from the request on the requestedInstance field from the request.
      *
      * @param populateValueRequest contains the requested value, instance and support classes.
+     * @return whether or not the implementation handled the persistence request
      */
     boolean populateValue(PopulateValueRequest populateValueRequest);
 
@@ -76,6 +46,7 @@ public interface PersistenceProvider {
      * and set on the requestedProperty.
      *
      * @param extractValueRequest contains the requested value, property and support classes.
+     * @return whether or not the implementation handled the persistence request
      */
     boolean extractValue(ExtractValueRequest extractValueRequest);
 
@@ -85,6 +56,7 @@ public interface PersistenceProvider {
      * and is generally used to drive the criteria added to CtoConverter.
      *
      * @param addSearchMappingRequest contains the requested ctoConverter, cto and support classes.
+     * @return whether or not the implementation handled the persistence request
      */
     boolean addSearchMapping(AddSearchMappingRequest addSearchMappingRequest);
 
@@ -93,6 +65,7 @@ public interface PersistenceProvider {
      * immediately before persistence is attempted. Properties may be altered, removed or added.
      *
      * @param addFilterPropertiesRequest contains the <tt>Entity</tt> instance and unfiltered property list.
+     * @return whether or not the implementation handled the persistence request
      */
     boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest);
 

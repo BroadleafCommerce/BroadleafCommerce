@@ -42,21 +42,6 @@ public class PersistenceProviderAdapter extends AbstractPersistenceProvider {
         return false;
     }
 
-//    @Override
-//    public boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata) {
-//        return false;
-//    }
-
-//    @Override
-//    public boolean canHandleSearchMapping(BasicFieldMetadata metadata) {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean canHandlePropertyFiltering(Entity entity, Map<String, FieldMetadata> unfilteredProperties) {
-//        return false;
-//    }
-
     @Override
     public boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest) {
         return false;
