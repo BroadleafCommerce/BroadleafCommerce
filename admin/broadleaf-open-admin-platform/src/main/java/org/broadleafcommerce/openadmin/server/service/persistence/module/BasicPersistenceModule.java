@@ -191,8 +191,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         FieldManager fieldManager = getFieldManager();
         boolean handled = false;
         for (PersistenceProvider persistenceProvider : persistenceProviders) {
-            if (persistenceProvider.canHandlePropertyFiltering(entity, unfilteredProperties)) {
-                persistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity, unfilteredProperties));
+            boolean response = persistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity, unfilteredProperties));
+            if (response) {
                 handled = true;
             }
         }
@@ -238,9 +238,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         if (value != null) {
                             handled = false;
                             for (PersistenceProvider persistenceProvider : persistenceProviders) {
-                                if (persistenceProvider.canHandlePersistence(instance, property, metadata)) {
-                                    persistenceProvider.populateValue(new PopulateValueRequest(instance, setId,
-                                            fieldManager, property, metadata, returnType, value, persistenceManager, this));
+                                boolean response = persistenceProvider.populateValue(new PopulateValueRequest(instance, setId,
+                                        fieldManager, property, metadata, returnType, value, persistenceManager, this));
+                                if (response) {
                                     handled = true;
                                 }
                             }
@@ -424,10 +424,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             String displayVal = null;
                             boolean handled = false;
                             for (PersistenceProvider persistenceProvider : persistenceProviders) {
-                                if (persistenceProvider.canHandlePersistence(value, propertyItem, metadata)) {
-                                    persistenceProvider.extractValue(
-                                            new ExtractValueRequest(props, fieldManager,
-                                                    metadata, value, propertyItem, displayVal, persistenceManager, this));
+                                boolean response = persistenceProvider.extractValue(
+                                        new ExtractValueRequest(props, fieldManager,
+                                                metadata, value, propertyItem, displayVal, persistenceManager, this));
+                                if (response) {
                                     handled = true;
                                 }
                             }
@@ -582,12 +582,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (mergedProperties.containsKey(propertyId)) {
                 boolean handled = false;
                 for (PersistenceProvider persistenceProvider : persistenceProviders) {
-                    if (persistenceProvider.canHandleSearchMapping((BasicFieldMetadata) mergedProperties.get
-                            (propertyId))) {
-                        persistenceProvider.addSearchMapping(
-                                new AddSearchMappingRequest(persistencePerspective, cto,
-                                        ceilingEntityFullyQualifiedClassname, mergedProperties, ctoConverter,
-                                        propertyId, getFieldManager()));
+                    boolean response = persistenceProvider.addSearchMapping(
+                            new AddSearchMappingRequest(persistencePerspective, cto,
+                                    ceilingEntityFullyQualifiedClassname, mergedProperties, ctoConverter,
+                                    propertyId, getFieldManager()));
+                    if (response) {
                         handled = true;
                     }
                 }

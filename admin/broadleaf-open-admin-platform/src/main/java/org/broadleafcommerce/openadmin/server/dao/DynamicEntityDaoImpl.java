@@ -360,12 +360,12 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     if (!Modifier.isStatic(field.getModifiers())) {
                         boolean handled = false;
                         for (MetadataProvider provider : metadataProviders) {
-                            if (provider.canHandleFieldForTypeMetadata(field)) {
-                                provider.addMetadataFromFieldType(
-                                        new AddMetadataFromFieldTypeRequest(field, targetClass, null, new ForeignKey[]{},
-                                                MergedPropertyType.PRIMARY, null, mergedProperties, null, "",
-                                                property, null, false, 0, attributesMap, presentationAttribute,
-                                                ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(), field.getType(), this));
+                            boolean response = provider.addMetadataFromFieldType(
+                                    new AddMetadataFromFieldTypeRequest(field, targetClass, null, new ForeignKey[]{},
+                                            MergedPropertyType.PRIMARY, null, mergedProperties, null, "",
+                                            property, null, false, 0, attributesMap, presentationAttribute,
+                                            ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(), field.getType(), this));
+                            if (response) {
                                 handled = true;
                             }
                         }
@@ -919,15 +919,15 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                 if (myField != null) {
                     boolean handled = false;
                     for (MetadataProvider provider : metadataProviders) {
-                        if (provider.canHandleFieldForTypeMetadata(myField)) {
-                            FieldMetadata presentationAttribute = presentationAttributes.get(propertyName);
-                            if (presentationAttribute != null) {
-                                setExcludedBasedOnShowIfProperty(presentationAttribute);
-                            }
-                            provider.addMetadataFromFieldType(
-                                    new AddMetadataFromFieldTypeRequest(myField, targetClass, foreignField, additionalForeignFields,
-                                            mergedPropertyType, componentProperties, fields, idProperty, prefix,
-                                            propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition, presentationAttributes, presentationAttribute, null, type.getReturnedClass(), this));
+                        FieldMetadata presentationAttribute = presentationAttributes.get(propertyName);
+                        if (presentationAttribute != null) {
+                            setExcludedBasedOnShowIfProperty(presentationAttribute);
+                        }
+                        boolean response = provider.addMetadataFromFieldType(
+                                new AddMetadataFromFieldTypeRequest(myField, targetClass, foreignField, additionalForeignFields,
+                                        mergedPropertyType, componentProperties, fields, idProperty, prefix,
+                                        propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition, presentationAttributes, presentationAttribute, null, type.getReturnedClass(), this));
+                        if (response) {
                             handled = true;
                         }
                     }

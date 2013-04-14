@@ -60,21 +60,18 @@ import java.util.Map;
 @Scope("prototype")
 public class RulePersistenceProvider extends PersistenceProviderAdapter {
 
-    @Override
-    public boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata) {
+    protected boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata) {
         return metadata.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
                 metadata.getFieldType() == SupportedFieldType.RULE_SIMPLE;
-    }
-
-    @Override
-    public boolean canHandlePropertyFiltering(Entity entity, Map<String, FieldMetadata> unfilteredProperties) {
-        return true;
     }
 
     @Resource(name = "blRuleBuilderFieldServiceFactory")
     protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
 
-    public void populateValue(PopulateValueRequest populateValueRequest) throws PersistenceException {
+    public boolean populateValue(PopulateValueRequest populateValueRequest) throws PersistenceException {
+        if (!canHandlePersistence(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty(), populateValueRequest.getMetadata())) {
+            return false;
+        }
         try {
             switch (populateValueRequest.getMetadata().getFieldType()) {
                 case RULE_WITH_QUANTITY:{
@@ -146,10 +143,14 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
+        return true;
     }
 
     @Override
-    public void extractValue(ExtractValueRequest extractValueRequest) throws PersistenceException {
+    public boolean extractValue(ExtractValueRequest extractValueRequest) throws PersistenceException {
+        if (!canHandlePersistence(extractValueRequest.getRequestedValue(), extractValueRequest.getRequestedProperty(), extractValueRequest.getMetadata())) {
+            return false;
+        }
         String val = null;
         ObjectMapper mapper = new ObjectMapper();
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
@@ -190,10 +191,11 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
                 }
             }
         }
+        return true;
     }
 
     @Override
-    public void filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest) {
+    public boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest) {
         //This may contain rule Json fields - convert and filter out
         List<Property> propertyList = new ArrayList<Property>();
         propertyList.addAll(Arrays.asList(addFilterPropertiesRequest.getEntity().getProperties()));
@@ -224,6 +226,7 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
         }
         propertyList.addAll(additionalProperties);
         addFilterPropertiesRequest.getEntity().setProperties(propertyList.toArray(new Property[propertyList.size()]));
+        return true;
     }
 
     protected Property convertQuantityBasedRuleToJson(MVELToDataWrapperTranslator translator, ObjectMapper mapper,

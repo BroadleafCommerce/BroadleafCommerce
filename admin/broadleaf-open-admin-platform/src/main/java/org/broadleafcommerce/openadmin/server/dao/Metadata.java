@@ -23,9 +23,10 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.DefaultMetadataProvider;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.MetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.MetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
 import org.hibernate.mapping.Property;
@@ -61,12 +62,10 @@ public class Metadata {
         for (Field field : fields) {
             boolean foundOneOrMoreHandlers = false;
             for (MetadataProvider metadataProvider : metadataProviders) {
-                if (metadataProvider.canHandleFieldForConfiguredMetadata(field)) {
-                    metadataProvider.addMetadata(new AddMetadataRequest(field, parentClass, targetClass, attributes,
-                            dynamicEntityDao, prefix));
-                    if (!foundOneOrMoreHandlers) {
-                        foundOneOrMoreHandlers = true;
-                    }
+                boolean response = metadataProvider.addMetadata(new AddMetadataRequest(field, parentClass, targetClass, attributes,
+                        dynamicEntityDao, prefix));
+                if (response) {
+                    foundOneOrMoreHandlers = true;
                 }
             }
             if (!foundOneOrMoreHandlers) {
@@ -90,26 +89,35 @@ public class Metadata {
 
         Map<String, FieldMetadata> mergedProperties = propertyBuilder.execute(classAnnotatedPopulateManyToOneFields);
         for (int i = entities.length-1;i >= 0; i--) {
+            boolean handled = false;
             for (MetadataProvider metadataProvider : metadataProviders) {
-                if (metadataProvider.canHandleAnnotationOverride(entities[i])) {
-                    metadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
+                boolean response = metadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
                             mergedProperties, isParentExcluded, dynamicEntityDao, prefix));
+                if (response) {
+                    handled = true;
                 }
-                //perform any standard overrides that are not specific to a module
+            }
+            if (!handled) {
                 defaultMetadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
                                                     mergedProperties, isParentExcluded, dynamicEntityDao, prefix));
             }
         }
-        //perform any standard overrides that are not specific to a module
-        defaultMetadataProvider.overrideViaXml(new OverrideViaXmlRequest(configurationKey,
+        ((DefaultMetadataProvider) defaultMetadataProvider).overrideExclusionsFromXml(new OverrideViaXmlRequest(configurationKey,
                 ceilingEntityFullyQualifiedClassname, prefix, isParentExcluded, mergedProperties, dynamicEntityDao));
 
+        boolean handled = false;
         for (MetadataProvider metadataProvider : metadataProviders) {
-            if (metadataProvider.canHandleXmlOverride(ceilingEntityFullyQualifiedClassname, configurationKey)) {
-                metadataProvider.overrideViaXml(
-                        new OverrideViaXmlRequest(configurationKey, ceilingEntityFullyQualifiedClassname, prefix,
-                                isParentExcluded, mergedProperties, dynamicEntityDao));
+            boolean response = metadataProvider.overrideViaXml(
+                    new OverrideViaXmlRequest(configurationKey, ceilingEntityFullyQualifiedClassname, prefix,
+                            isParentExcluded, mergedProperties, dynamicEntityDao));
+            if (response) {
+                handled = true;
             }
+        }
+        if (!handled) {
+            defaultMetadataProvider.overrideViaXml(
+                                new OverrideViaXmlRequest(configurationKey, ceilingEntityFullyQualifiedClassname, prefix,
+                                        isParentExcluded, mergedProperties, dynamicEntityDao));
         }
 
         return mergedProperties;
@@ -149,9 +157,9 @@ public class Metadata {
         presentationAttribute.setAvailableToTypes(new String[]{targetClass.getName()});
         boolean handled = false;
         for (MetadataProvider metadataProvider : metadataProviders) {
-            if (metadataProvider.canHandleMappingForTypeMetadata(propertyName, componentProperties, entityType)) {
-                metadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(presentationAttribute,
-                    componentProperties, type, secondaryType, entityType, propertyName, mergedPropertyType, dynamicEntityDao));
+            boolean response = metadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(presentationAttribute,
+                componentProperties, type, secondaryType, entityType, propertyName, mergedPropertyType, dynamicEntityDao));
+            if (response) {
                 handled = true;
             }
         }

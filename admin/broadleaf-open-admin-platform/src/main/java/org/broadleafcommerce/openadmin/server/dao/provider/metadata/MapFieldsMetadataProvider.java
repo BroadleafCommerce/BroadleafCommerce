@@ -48,33 +48,24 @@ import java.util.Map;
  */
 @Component("blMapFieldsMetadataProvider")
 @Scope("prototype")
-public class MapFieldsMetadataProvider extends BasicMetadataProvider {
+public class MapFieldsMetadataProvider extends DefaultMetadataProvider {
 
     private static final Log LOG = LogFactory.getLog(MapFieldsMetadataProvider.class);
 
-    @Override
-    public boolean canHandleFieldForConfiguredMetadata(Field field) {
+    protected boolean canHandleFieldForConfiguredMetadata(Field field) {
         AdminPresentationMapFields annot = field.getAnnotation(AdminPresentationMapFields.class);
         return annot != null;
     }
 
-    @Override
-    public boolean canHandleFieldForTypeMetadata(Field field) {
+    protected boolean canHandleFieldForTypeMetadata(Field field) {
         return canHandleFieldForConfiguredMetadata(field);
     }
 
     @Override
-    public boolean canHandleAnnotationOverride(Class<?> clazz) {
-        return false;
-    }
-
-    @Override
-    public boolean canHandleXmlOverride(String ceilingEntityFullyQualifiedClassname, String configurationKey) {
-        return false;
-    }
-
-    @Override
-    public void addMetadata(AddMetadataRequest addMetadataRequest) {
+    public boolean addMetadata(AddMetadataRequest addMetadataRequest) {
+        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest.getRequestedField())) {
+            return false;
+        }
         AdminPresentationMapFields annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationMapFields.class);
         for (AdminPresentationMapField mapField : annot.mapDisplayFields()) {
             if (mapField.fieldPresentation().fieldType() == SupportedFieldType.UNKNOWN) {
@@ -100,10 +91,14 @@ public class MapFieldsMetadataProvider extends BasicMetadataProvider {
                 metadata.setManyToField(mapField.manyToField());
             }
         }
+        return true;
     }
 
     @Override
-    public void addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+    public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+        if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest.getRequestedField())) {
+            return false;
+        }
         for (Map.Entry<String, FieldMetadata> entry : addMetadataFromFieldTypeRequest.getPresentationAttributes().entrySet()) {
             if (entry.getKey().startsWith(addMetadataFromFieldTypeRequest.getRequestedPropertyName() + FieldManager.MAPFIELDSEPARATOR)) {
                 TypeLocatorImpl typeLocator = new TypeLocatorImpl(new TypeResolver());
@@ -150,17 +145,18 @@ public class MapFieldsMetadataProvider extends BasicMetadataProvider {
                         myType.getReturnedClass(), addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
             }
         }
+        return true;
     }
 
     @Override
-    public void overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
         //TODO support annotation override
-        //do nothing
+        return false;
     }
 
     @Override
-    public void overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
+    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
         //TODO support xml override
-        //do nothing
+        return false;
     }
 }

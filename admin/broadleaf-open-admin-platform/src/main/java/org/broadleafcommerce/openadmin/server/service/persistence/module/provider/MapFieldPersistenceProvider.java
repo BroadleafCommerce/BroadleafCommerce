@@ -17,19 +17,14 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -39,41 +34,32 @@ import java.util.Map;
 public class MapFieldPersistenceProvider extends BasicPersistenceProvider {
 
     @Override
-    public boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata) {
+    protected boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata) {
         return property.getName().contains(FieldManager.MAPFIELDSEPARATOR);
     }
 
     @Override
-    public void populateValue(PopulateValueRequest populateValueRequest) {
+    public boolean populateValue(PopulateValueRequest populateValueRequest) {
         //handle the map value set itself
-        super.populateValue(populateValueRequest);
+        if (!super.populateValue(populateValueRequest)) {
+            return false;
+        }
         //handle some additional field settings (if applicable)
         //TODO this need to be embellished to handle a complex map value
+        return true;
     }
 
     @Override
-    public void extractValue(ExtractValueRequest extractValueRequest) throws PersistenceException {
-        super.extractValue(extractValueRequest);
+    public boolean extractValue(ExtractValueRequest extractValueRequest) throws PersistenceException {
+        if (!super.extractValue(extractValueRequest)) {
+            return false;
+        }
         //TODO this need to be embellished to handle a complex map value
+        return true;
     }
 
     @Override
-    public void addSearchMapping(AddSearchMappingRequest addSearchMappingRequest) {
-        //do nothing
-    }
-
-    @Override
-    public boolean canHandleSearchMapping(BasicFieldMetadata metadata) {
-        return false;
-    }
-
-    @Override
-    public void filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest) {
-        //do nothing
-    }
-
-    @Override
-    public boolean canHandlePropertyFiltering(Entity entity, Map<String, FieldMetadata> unfilteredProperties) {
+    public boolean addSearchMapping(AddSearchMappingRequest addSearchMappingRequest) {
         return false;
     }
 

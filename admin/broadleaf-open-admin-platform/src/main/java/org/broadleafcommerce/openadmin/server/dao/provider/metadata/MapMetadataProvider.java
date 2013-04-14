@@ -56,35 +56,35 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
 
     private static final Log LOG = LogFactory.getLog(MapMetadataProvider.class);
 
-    @Override
-    public boolean canHandleFieldForConfiguredMetadata(Field field) {
+    protected boolean canHandleFieldForConfiguredMetadata(Field field) {
         AdminPresentationMap annot = field.getAnnotation(AdminPresentationMap.class);
         return annot != null;
     }
 
-    @Override
-    public boolean canHandleAnnotationOverride(Class<?> clazz) {
+    protected boolean canHandleAnnotationOverride(Class<?> clazz) {
         AdminPresentationOverrides myOverrides = clazz.getAnnotation(AdminPresentationOverrides.class);
         return myOverrides != null && !ArrayUtils.isEmpty(myOverrides.maps());
     }
 
     @Override
-    public boolean canHandleXmlOverride(String ceilingEntityFullyQualifiedClassname, String configurationKey) {
-        return true;
-    }
-
-    @Override
-    public void addMetadata(AddMetadataRequest addMetadataRequest) {
+    public boolean addMetadata(AddMetadataRequest addMetadataRequest) {
+        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest.getRequestedField())) {
+            return false;
+        }
         AdminPresentationMap annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationMap.class);
         FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
         FieldMetadataOverride override = constructMapMetadataOverride(annot);
         buildMapMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest
                 .getRequestedMetadata(), info, override, addMetadataRequest.getDynamicEntityDao(), addMetadataRequest.getPrefix());
         setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), info);
+        return true;
     }
 
     @Override
-    public void overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+        if (!canHandleAnnotationOverride(overrideViaAnnotationRequest.getRequestedEntity())) {
+            return false;
+        }
         Map<String, AdminPresentationMapOverride> presentationMapOverrides = new HashMap<String, AdminPresentationMapOverride>();
 
         AdminPresentationOverrides myOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationOverrides.class);
@@ -102,10 +102,11 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
                 }
             }
         }
+        return true;
     }
 
     @Override
-    public void overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
+    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
         Map<String, FieldMetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
@@ -144,13 +145,18 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
                 }
             }
         }
+        return true;
     }
 
     @Override
-    public void addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+    public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+        if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest.getRequestedField())) {
+            return false;
+        }
         //do nothing but add the property without manipulation
         addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                 addMetadataFromFieldTypeRequest.getPresentationAttribute());
+        return true;
     }
 
     protected void buildAdminPresentationMapOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties,

@@ -31,15 +31,17 @@ import java.lang.reflect.ParameterizedType;
  */
 public class AdvancedCollectionMetadataProvider extends MetadataProviderAdapter {
 
-    @Override
-    public boolean canHandleFieldForTypeMetadata(Field field) {
+    protected boolean canHandleFieldForTypeMetadata(Field field) {
         AdminPresentationMap map = field.getAnnotation(AdminPresentationMap.class);
         AdminPresentationCollection collection = field.getAnnotation(AdminPresentationCollection.class);
         return map != null || collection != null;
     }
 
     @Override
-    public void addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+    public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+        if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest.getRequestedField())) {
+            return false;
+        }
         CollectionMetadata fieldMetadata = (CollectionMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute();
         if (StringUtils.isEmpty(fieldMetadata.getCollectionCeilingEntity())) {
             ParameterizedType listType = (ParameterizedType) addMetadataFromFieldTypeRequest.getRequestedField().getGenericType();
@@ -55,5 +57,6 @@ public class AdvancedCollectionMetadataProvider extends MetadataProviderAdapter 
             }
         }
         addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(), fieldMetadata);
+        return true;
     }
 }

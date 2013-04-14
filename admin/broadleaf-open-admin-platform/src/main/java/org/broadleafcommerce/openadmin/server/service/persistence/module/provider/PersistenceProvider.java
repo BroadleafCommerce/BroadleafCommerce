@@ -16,16 +16,10 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
-
-import java.util.Map;
 
 /**
  * Classes implementing this interface are capable of handling persistence related events for fields whose values
@@ -47,7 +41,7 @@ public interface PersistenceProvider {
      * @param metadata The descriptive metadata for the field
      * @return whether or not this provider is qualified
      */
-    boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata);
+    //boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata);
 
     /**
      * Whether or not this provider is qualified to handle search mappings for the given field metadata. Search
@@ -57,7 +51,7 @@ public interface PersistenceProvider {
      * @param metadata The descriptive metadata for the field
      * @return whether or not this provider is qualified
      */
-    boolean canHandleSearchMapping(BasicFieldMetadata metadata);
+    //boolean canHandleSearchMapping(BasicFieldMetadata metadata);
 
     /**
      * Whether or not this provider is qualified to filter properties returned from the admin during an
@@ -67,7 +61,7 @@ public interface PersistenceProvider {
      * @param unfilteredProperties The property list before filtering
      * @return whether or not this provider is qualified
      */
-    boolean canHandlePropertyFiltering(Entity entity, Map<String, FieldMetadata> unfilteredProperties);
+    //boolean canHandlePropertyFiltering(Entity entity, Map<String, FieldMetadata> unfilteredProperties);
 
     /**
      * Set the property value on the target object. Implementations should translate and set the requestedValue
@@ -75,7 +69,7 @@ public interface PersistenceProvider {
      *
      * @param populateValueRequest contains the requested value, instance and support classes.
      */
-    void populateValue(PopulateValueRequest populateValueRequest);
+    boolean populateValue(PopulateValueRequest populateValueRequest);
 
     /**
      * Retrieve the property value from the provided value. Implementations should translate the requestedValue
@@ -83,7 +77,7 @@ public interface PersistenceProvider {
      *
      * @param extractValueRequest contains the requested value, property and support classes.
      */
-    void extractValue(ExtractValueRequest extractValueRequest);
+    boolean extractValue(ExtractValueRequest extractValueRequest);
 
     /**
      * Add criteria to the requestCtoConverter. The CtoConverter is used by the system to refine the fetch criteria
@@ -92,7 +86,7 @@ public interface PersistenceProvider {
      *
      * @param addSearchMappingRequest contains the requested ctoConverter, cto and support classes.
      */
-    void addSearchMapping(AddSearchMappingRequest addSearchMappingRequest);
+    boolean addSearchMapping(AddSearchMappingRequest addSearchMappingRequest);
 
     /**
      * Filter the list of properties posted by the admin during and add or update. This is the property list
@@ -100,6 +94,6 @@ public interface PersistenceProvider {
      *
      * @param addFilterPropertiesRequest contains the <tt>Entity</tt> instance and unfiltered property list.
      */
-    void filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest);
+    boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest);
 
 }

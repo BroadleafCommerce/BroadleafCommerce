@@ -21,11 +21,6 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
-import org.hibernate.mapping.Property;
-import org.hibernate.type.Type;
-
-import java.lang.reflect.Field;
-import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -33,52 +28,27 @@ import java.util.List;
 public class MetadataProviderAdapter extends AbstractMetadataProvider {
 
     @Override
-    public void addMetadata(AddMetadataRequest addMetadataRequest) {
-        //do nothing
-    }
-
-    @Override
-    public boolean canHandleFieldForTypeMetadata(Field field) {
+    public boolean addMetadata(AddMetadataRequest addMetadataRequest) {
         return false;
     }
 
     @Override
-    public boolean canHandleMappingForTypeMetadata(String propertyName, List<Property> componentProperties, Type entityType) {
+    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
         return false;
     }
 
     @Override
-    public boolean canHandleFieldForConfiguredMetadata(Field field) {
+    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
         return false;
     }
 
     @Override
-    public boolean canHandleAnnotationOverride(Class<?> clazz) {
+    public boolean addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest) {
         return false;
     }
 
     @Override
-    public boolean canHandleXmlOverride(String ceilingEntityFullyQualifiedClassname, String configurationKey) {
+    public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
         return false;
-    }
-
-    @Override
-    public void overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
-        //do nothing
-    }
-
-    @Override
-    public void overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
-        //do nothing
-    }
-
-    @Override
-    public void addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest) {
-        //do nothing
-    }
-
-    @Override
-    public void addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
-        //do nothing
     }
 }

@@ -57,8 +57,7 @@ import java.util.StringTokenizer;
 @Scope("prototype")
 public class BasicPersistenceProvider extends PersistenceProviderAdapter {
 
-    @Override
-    public boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata) {
+    protected boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata) {
         //don't handle map fields here - we'll get them in a separate provider
         return (metadata.getFieldType() == SupportedFieldType.BOOLEAN ||
                 metadata.getFieldType() == SupportedFieldType.DATE ||
@@ -73,13 +72,15 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
                 !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
     }
 
-    @Override
-    public boolean canHandleSearchMapping(BasicFieldMetadata metadata) {
+    protected boolean canHandleSearchMapping(BasicFieldMetadata metadata) {
         return canHandlePersistence(null, null, metadata);
     }
 
     @Override
-    public void populateValue(PopulateValueRequest populateValueRequest) {
+    public boolean populateValue(PopulateValueRequest populateValueRequest) {
+        if (!canHandlePersistence(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty(), populateValueRequest.getMetadata())) {
+            return false;
+        }
         try {
             switch (populateValueRequest.getMetadata().getFieldType()) {
                 case BOOLEAN:
@@ -202,10 +203,14 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
+        return true;
     }
 
     @Override
-    public void extractValue(ExtractValueRequest extractValueRequest) throws PersistenceException {
+    public boolean extractValue(ExtractValueRequest extractValueRequest) throws PersistenceException {
+        if (!canHandlePersistence(extractValueRequest.getRequestedValue(), extractValueRequest.getRequestedProperty(), extractValueRequest.getMetadata())) {
+            return false;
+        }
         try {
             if (extractValueRequest.getRequestedValue() != null) {
                 String val = null;
@@ -252,10 +257,14 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
         } catch (IllegalAccessException e) {
             throw new PersistenceException(e);
         }
+        return true;
     }
 
     @Override
-    public void addSearchMapping(AddSearchMappingRequest addSearchMappingRequest) {
+    public boolean addSearchMapping(AddSearchMappingRequest addSearchMappingRequest) {
+        if (!canHandleSearchMapping((BasicFieldMetadata) addSearchMappingRequest.getMergedProperties().get(addSearchMappingRequest.getPropertyName()))) {
+            return false;
+        }
         AssociationPath associationPath;
         int dotIndex = addSearchMappingRequest.getPropertyName().lastIndexOf('.');
         StringBuilder property;
@@ -421,6 +430,7 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
                 }
                 break;
         }
+        return true;
     }
 
 }

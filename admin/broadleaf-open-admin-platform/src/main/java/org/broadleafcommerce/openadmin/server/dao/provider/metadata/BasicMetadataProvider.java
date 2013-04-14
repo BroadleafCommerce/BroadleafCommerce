@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -40,33 +39,21 @@ import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.mapping.Column;
-import org.hibernate.mapping.Property;
-import org.hibernate.metadata.ClassMetadata;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * @author Jeff Fischer
@@ -77,73 +64,36 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
 
     private static final Log LOG = LogFactory.getLog(BasicMetadataProvider.class);
 
-    @Override
-    public boolean canHandleFieldForConfiguredMetadata(Field field) {
+    protected boolean canHandleFieldForConfiguredMetadata(Field field) {
         AdminPresentation annot = field.getAnnotation(AdminPresentation.class);
         return annot != null;
     }
 
-    @Override
-    public boolean canHandleAnnotationOverride(Class<?> clazz) {
+    protected boolean canHandleAnnotationOverride(Class<?> clazz) {
         AdminPresentationOverrides myOverrides = clazz.getAnnotation(AdminPresentationOverrides.class);
         return myOverrides != null && (!ArrayUtils.isEmpty(myOverrides.value()) || !ArrayUtils.isEmpty(myOverrides
                 .toOneLookups()) || !ArrayUtils.isEmpty(myOverrides.dataDrivenEnums()));
     }
 
     @Override
-    public boolean canHandleXmlOverride(String ceilingEntityFullyQualifiedClassname, String configurationKey) {
-        return true;
-    }
-
-    @Override
-    public void addMetadata(AddMetadataRequest addMetadataRequest) {
+    public boolean addMetadata(AddMetadataRequest addMetadataRequest) {
+        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest.getRequestedField())) {
+            return false;
+        }
         AdminPresentation annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentation.class);
         FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
         FieldMetadataOverride override = constructBasicMetadataOverride(annot, addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationToOneLookup.class),
                 addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationDataDrivenEnumeration.class));
         buildBasicMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), info, override, addMetadataRequest.getDynamicEntityDao());
         setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), info);
+        return true;
     }
 
     @Override
-    public void addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest) {
-        BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) addMetadataFromMappingDataRequest
-                .getRequestedMetadata();
-        fieldMetadata.setFieldType(addMetadataFromMappingDataRequest.getType());
-        fieldMetadata.setSecondaryType(addMetadataFromMappingDataRequest.getSecondaryType());
-        if (addMetadataFromMappingDataRequest.getRequestedEntityType() != null && !addMetadataFromMappingDataRequest.getRequestedEntityType().isCollectionType()) {
-            Column column = null;
-            for (Property property : addMetadataFromMappingDataRequest.getComponentProperties()) {
-                if (property.getName().equals(addMetadataFromMappingDataRequest.getPropertyName())) {
-                    column = (Column) property.getColumnIterator().next();
-                    break;
-                }
-            }
-            if (column != null) {
-                fieldMetadata.setLength(column.getLength());
-                fieldMetadata.setScale(column.getScale());
-                fieldMetadata.setPrecision(column.getPrecision());
-                fieldMetadata.setRequired(!column.isNullable());
-                fieldMetadata.setUnique(column.isUnique());
-            }
-            fieldMetadata.setForeignKeyCollection(false);
-        } else {
-            fieldMetadata.setForeignKeyCollection(true);
+    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+        if (!canHandleAnnotationOverride(overrideViaAnnotationRequest.getRequestedEntity())) {
+            return false;
         }
-        fieldMetadata.setMutable(true);
-        fieldMetadata.setMergedPropertyType(addMetadataFromMappingDataRequest.getMergedPropertyType());
-        if (SupportedFieldType.BROADLEAF_ENUMERATION.equals(addMetadataFromMappingDataRequest.getType())) {
-            try {
-                setupBroadleafEnumeration(fieldMetadata.getBroadleafEnumeration(), fieldMetadata,
-                        addMetadataFromMappingDataRequest.getDynamicEntityDao());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    @Override
-    public void overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
         Map<String, AdminPresentationOverride> presentationOverrides = new HashMap<String, AdminPresentationOverride>();
         Map<String, AdminPresentationToOneLookupOverride> presentationToOneLookupOverrides = new HashMap<String, AdminPresentationToOneLookupOverride>();
         Map<String, AdminPresentationDataDrivenEnumerationOverride> presentationDataDrivenEnumerationOverrides = new HashMap<String, AdminPresentationDataDrivenEnumerationOverride>();
@@ -184,10 +134,11 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
                 }
             }
         }
+        return true;
     }
 
     @Override
-    public void overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
+    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
         Map<String, FieldMetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
@@ -228,235 +179,7 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
                 }
             }
         }
-    }
-
-    @Override
-    public void addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
-        if (
-                addMetadataFromFieldTypeRequest.getExplicitType() != null &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() != SupportedFieldType.UNKNOWN &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() != SupportedFieldType.BOOLEAN &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() != SupportedFieldType.INTEGER &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() != SupportedFieldType.DATE &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() != SupportedFieldType.STRING &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() != SupportedFieldType.MONEY &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() != SupportedFieldType.DECIMAL &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() != SupportedFieldType.FOREIGN_KEY &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() != SupportedFieldType.ADDITIONAL_FOREIGN_KEY
-                ) {
-            addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                    addMetadataFromFieldTypeRequest.getDynamicEntityDao()
-                    .getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(),
-                            addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                            addMetadataFromFieldTypeRequest.getComponentProperties(),
-                            addMetadataFromFieldTypeRequest.getExplicitType(), addMetadataFromFieldTypeRequest.getType(),
-                            addMetadataFromFieldTypeRequest.getTargetClass(),
-                            addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(), addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
-        } else if (
-                addMetadataFromFieldTypeRequest.getExplicitType() != null &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() == SupportedFieldType.BOOLEAN
-                        ||
-                        addMetadataFromFieldTypeRequest.getReturnedClass().equals(Boolean.class) ||
-                        addMetadataFromFieldTypeRequest.getReturnedClass().equals(Character.class)
-                ) {
-            addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                    addMetadataFromFieldTypeRequest.getDynamicEntityDao()
-                    .getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(),
-                            addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                            addMetadataFromFieldTypeRequest.getComponentProperties(),
-                            SupportedFieldType.BOOLEAN, addMetadataFromFieldTypeRequest.getType(), addMetadataFromFieldTypeRequest.getTargetClass(),
-                            addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
-                            addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
-        } else if (
-                addMetadataFromFieldTypeRequest.getExplicitType() != null &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() == SupportedFieldType.INTEGER
-                        ||
-                        addMetadataFromFieldTypeRequest.getReturnedClass().equals(Byte.class) ||
-                        addMetadataFromFieldTypeRequest.getReturnedClass().equals(Short.class) ||
-                        addMetadataFromFieldTypeRequest.getReturnedClass().equals(Integer.class) ||
-                        addMetadataFromFieldTypeRequest.getReturnedClass().equals(Long.class)
-                ) {
-            if (addMetadataFromFieldTypeRequest.getRequestedPropertyName().equals(addMetadataFromFieldTypeRequest.getIdProperty())) {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                        addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest
-                                .getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                                addMetadataFromFieldTypeRequest.getComponentProperties(),
-                                SupportedFieldType.ID, SupportedFieldType.INTEGER, addMetadataFromFieldTypeRequest.getType(),
-                                addMetadataFromFieldTypeRequest.getTargetClass(), addMetadataFromFieldTypeRequest.getPresentationAttribute(),
-                                addMetadataFromFieldTypeRequest.getMergedPropertyType(), addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
-            } else {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                        addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest
-                                .getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                                addMetadataFromFieldTypeRequest.getComponentProperties(),
-                                SupportedFieldType.INTEGER, addMetadataFromFieldTypeRequest.getType(), addMetadataFromFieldTypeRequest.getTargetClass(), addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
-                                addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
-            }
-        } else if (
-                addMetadataFromFieldTypeRequest.getExplicitType() != null &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() == SupportedFieldType.DATE
-                        ||
-                        addMetadataFromFieldTypeRequest.getReturnedClass().equals(Calendar.class) ||
-                        addMetadataFromFieldTypeRequest.getReturnedClass().equals(Date.class) ||
-                        addMetadataFromFieldTypeRequest.getReturnedClass().equals(Timestamp.class)
-                ) {
-            addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                    addMetadataFromFieldTypeRequest.getDynamicEntityDao()
-                    .getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(),
-                            addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                            addMetadataFromFieldTypeRequest.getComponentProperties(),
-                            SupportedFieldType.DATE, addMetadataFromFieldTypeRequest.getType(), addMetadataFromFieldTypeRequest.getTargetClass(),
-                            addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
-                            addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
-        } else if (
-                addMetadataFromFieldTypeRequest.getExplicitType() != null &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() == SupportedFieldType.STRING
-                        ||
-                        addMetadataFromFieldTypeRequest.getReturnedClass().equals(String.class)
-                ) {
-            if (addMetadataFromFieldTypeRequest.getRequestedPropertyName().equals(addMetadataFromFieldTypeRequest.getIdProperty())) {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                        addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest
-                                .getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                                addMetadataFromFieldTypeRequest.getComponentProperties(),
-                                SupportedFieldType.ID, SupportedFieldType.STRING, addMetadataFromFieldTypeRequest.getType(),
-                                addMetadataFromFieldTypeRequest.getTargetClass(), addMetadataFromFieldTypeRequest.getPresentationAttribute(),
-                                addMetadataFromFieldTypeRequest.getMergedPropertyType(), addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
-            } else {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                        addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest
-                                .getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                                addMetadataFromFieldTypeRequest.getComponentProperties(),
-                                SupportedFieldType.STRING, addMetadataFromFieldTypeRequest.getType(), addMetadataFromFieldTypeRequest.getTargetClass(), addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
-                                addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
-            }
-        } else if (
-                addMetadataFromFieldTypeRequest.getExplicitType() != null &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() == SupportedFieldType.MONEY
-                        ||
-                        addMetadataFromFieldTypeRequest.getReturnedClass().equals(Money.class)
-                ) {
-            addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                    addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                    addMetadataFromFieldTypeRequest.getComponentProperties(),
-                    SupportedFieldType.MONEY, addMetadataFromFieldTypeRequest.getType(), addMetadataFromFieldTypeRequest.getTargetClass(), addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
-                    addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
-        } else if (
-                addMetadataFromFieldTypeRequest.getExplicitType() != null &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() == SupportedFieldType.DECIMAL
-                        ||
-                        addMetadataFromFieldTypeRequest.getReturnedClass().equals(Double.class) ||
-                        addMetadataFromFieldTypeRequest.getReturnedClass().equals(BigDecimal.class)
-                ) {
-            addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                    addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                    addMetadataFromFieldTypeRequest.getComponentProperties(),
-                    SupportedFieldType.DECIMAL, addMetadataFromFieldTypeRequest.getType(), addMetadataFromFieldTypeRequest.getTargetClass(), addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
-                    addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
-        } else if (
-                addMetadataFromFieldTypeRequest.getExplicitType() != null &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() == SupportedFieldType.FOREIGN_KEY
-                        ||
-                        addMetadataFromFieldTypeRequest.getForeignField() != null &&
-                                addMetadataFromFieldTypeRequest.isPropertyForeignKey()
-                ) {
-            ClassMetadata foreignMetadata;
-            String foreignKeyClass;
-            String lookupDisplayProperty;
-            if (addMetadataFromFieldTypeRequest.getForeignField() == null) {
-                Class<?>[] entities = addMetadataFromFieldTypeRequest.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(addMetadataFromFieldTypeRequest.getType().getReturnedClass());
-                foreignMetadata = addMetadataFromFieldTypeRequest.getDynamicEntityDao().getSessionFactory().getClassMetadata(entities
-                        [entities.length - 1]);
-                foreignKeyClass = entities[entities.length - 1].getName();
-                lookupDisplayProperty = ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute()).getLookupDisplayProperty();
-            } else {
-                try {
-                    foreignMetadata = addMetadataFromFieldTypeRequest.getDynamicEntityDao().getSessionFactory().getClassMetadata(Class.forName(addMetadataFromFieldTypeRequest.getForeignField()
-                            .getForeignKeyClass()));
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-                foreignKeyClass = addMetadataFromFieldTypeRequest.getForeignField().getForeignKeyClass();
-                lookupDisplayProperty = addMetadataFromFieldTypeRequest.getForeignField().getDisplayValueProperty();
-            }
-            Class<?> foreignResponseType = foreignMetadata.getIdentifierType().getReturnedClass();
-            if (foreignResponseType.equals(String.class)) {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                        addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest
-                                .getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                                addMetadataFromFieldTypeRequest.getComponentProperties(),
-                                SupportedFieldType.FOREIGN_KEY, SupportedFieldType.STRING, addMetadataFromFieldTypeRequest.getType(),
-                                addMetadataFromFieldTypeRequest.getTargetClass(),
-                                addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
-                                addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
-            } else {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(), addMetadataFromFieldTypeRequest
-                        .getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                                addMetadataFromFieldTypeRequest.getComponentProperties(),
-                                SupportedFieldType.FOREIGN_KEY, SupportedFieldType.INTEGER, addMetadataFromFieldTypeRequest.getType(), addMetadataFromFieldTypeRequest.getTargetClass(),
-
-                                addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
-                                addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
-            }
-            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getRequestedProperties().get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyProperty(foreignMetadata
-                    .getIdentifierPropertyName());
-            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getRequestedProperties().get(addMetadataFromFieldTypeRequest.getRequestedPropertyName()))
-                    .setForeignKeyClass(foreignKeyClass);
-            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getRequestedProperties().get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyDisplayValueProperty(lookupDisplayProperty);
-        } else if (
-                addMetadataFromFieldTypeRequest.getExplicitType() != null &&
-                        addMetadataFromFieldTypeRequest.getExplicitType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY
-                        ||
-                        addMetadataFromFieldTypeRequest.getAdditionalForeignFields() != null &&
-                                addMetadataFromFieldTypeRequest.getAdditionalForeignKeyIndexPosition() >= 0
-                ) {
-            if (!addMetadataFromFieldTypeRequest.getType().isEntityType()) {
-                throw new IllegalArgumentException("Only ManyToOne and OneToOne fields can be marked as a " +
-                        "SupportedFieldType of ADDITIONAL_FOREIGN_KEY");
-            }
-            ClassMetadata foreignMetadata;
-            String foreignKeyClass;
-            String lookupDisplayProperty;
-            if (addMetadataFromFieldTypeRequest.getAdditionalForeignKeyIndexPosition() < 0) {
-                Class<?>[] entities = addMetadataFromFieldTypeRequest.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling
-                        (addMetadataFromFieldTypeRequest.getType().getReturnedClass());
-                foreignMetadata = addMetadataFromFieldTypeRequest.getDynamicEntityDao().getSessionFactory().getClassMetadata(entities[entities.length - 1]);
-                foreignKeyClass = entities[entities.length - 1].getName();
-                lookupDisplayProperty = ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute()).getLookupDisplayProperty();
-            } else {
-                try {
-                    foreignMetadata = addMetadataFromFieldTypeRequest.getDynamicEntityDao().getSessionFactory().getClassMetadata(Class.forName
-                            (addMetadataFromFieldTypeRequest.getAdditionalForeignFields()[addMetadataFromFieldTypeRequest.getAdditionalForeignKeyIndexPosition()].getForeignKeyClass()));
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-                foreignKeyClass = addMetadataFromFieldTypeRequest.getAdditionalForeignFields()[addMetadataFromFieldTypeRequest
-                        .getAdditionalForeignKeyIndexPosition()].getForeignKeyClass();
-                lookupDisplayProperty = addMetadataFromFieldTypeRequest.getAdditionalForeignFields()[addMetadataFromFieldTypeRequest
-                        .getAdditionalForeignKeyIndexPosition()]
-                        .getDisplayValueProperty();
-            }
-            Class<?> foreignResponseType = foreignMetadata.getIdentifierType().getReturnedClass();
-            if (foreignResponseType.equals(String.class)) {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                        addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest
-                                .getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                                addMetadataFromFieldTypeRequest.getComponentProperties(), SupportedFieldType.ADDITIONAL_FOREIGN_KEY,
-                                SupportedFieldType.STRING,
-                                addMetadataFromFieldTypeRequest.getType(), addMetadataFromFieldTypeRequest.getTargetClass(),
-                                addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
-                                addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
-            } else {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(), addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
-                        addMetadataFromFieldTypeRequest.getComponentProperties(), SupportedFieldType.ADDITIONAL_FOREIGN_KEY, SupportedFieldType.INTEGER,
-                        addMetadataFromFieldTypeRequest.getType(), addMetadataFromFieldTypeRequest.getTargetClass(), addMetadataFromFieldTypeRequest
-                        .getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(), addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
-            }
-            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getRequestedProperties().get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyProperty(foreignMetadata.getIdentifierPropertyName());
-            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getRequestedProperties().get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyClass(foreignKeyClass);
-            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getRequestedProperties().get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyDisplayValueProperty(lookupDisplayProperty);
-        }
-        //return type not supported - just skip this property
+        return true;
     }
 
     protected void buildAdminPresentationToOneLookupOverride(Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationToOneLookupOverride> presentationOverrides, String propertyName, String key) {
@@ -882,38 +605,4 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
         }
     }
 
-    protected void setupBroadleafEnumeration(String broadleafEnumerationClass, BasicFieldMetadata fieldMetadata, DynamicEntityDao dynamicEntityDao) {
-        try {
-            Map<String, String> enumVals = new TreeMap<String, String>();
-            Class<?> broadleafEnumeration = Class.forName(broadleafEnumerationClass);
-            Method typeMethod = broadleafEnumeration.getMethod("getType");
-            Method friendlyTypeMethod = broadleafEnumeration.getMethod("getFriendlyType");
-            Field types = dynamicEntityDao.getFieldManager().getField(broadleafEnumeration, "TYPES");
-            if (types != null) {
-                Map typesMap = (Map) types.get(null);
-                for (Object value : typesMap.values()) {
-                    enumVals.put((String) friendlyTypeMethod.invoke(value), (String) typeMethod.invoke(value));
-                }
-            } else {
-                Field[] fields = dynamicEntityDao.getAllFields(broadleafEnumeration);
-                for (Field field : fields) {
-                    boolean isStatic = Modifier.isStatic(field.getModifiers());
-                    if (isStatic && field.getType().isAssignableFrom(broadleafEnumeration)){
-                        enumVals.put((String) friendlyTypeMethod.invoke(field.get(null)), (String) typeMethod.invoke(field.get(null)));
-                    }
-                }
-            }
-            String[][] enumerationValues = new String[enumVals.size()][2];
-            int j = 0;
-            for (String key : enumVals.keySet()) {
-                enumerationValues[j][0] = enumVals.get(key);
-                enumerationValues[j][1] = key;
-                j++;
-            }
-            fieldMetadata.setEnumerationValues(enumerationValues);
-            fieldMetadata.setEnumerationClass(broadleafEnumerationClass);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

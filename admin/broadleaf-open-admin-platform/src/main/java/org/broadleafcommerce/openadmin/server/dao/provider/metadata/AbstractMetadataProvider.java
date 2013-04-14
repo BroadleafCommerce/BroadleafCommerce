@@ -21,17 +21,22 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 
 import javax.annotation.Resource;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Jeff Fischer
@@ -155,5 +160,40 @@ public abstract class AbstractMetadataProvider implements MetadataProvider {
         }
 
         return response;
+    }
+
+    protected void setupBroadleafEnumeration(String broadleafEnumerationClass, BasicFieldMetadata fieldMetadata, DynamicEntityDao dynamicEntityDao) {
+        try {
+            Map<String, String> enumVals = new TreeMap<String, String>();
+            Class<?> broadleafEnumeration = Class.forName(broadleafEnumerationClass);
+            Method typeMethod = broadleafEnumeration.getMethod("getType");
+            Method friendlyTypeMethod = broadleafEnumeration.getMethod("getFriendlyType");
+            Field types = dynamicEntityDao.getFieldManager().getField(broadleafEnumeration, "TYPES");
+            if (types != null) {
+                Map typesMap = (Map) types.get(null);
+                for (Object value : typesMap.values()) {
+                    enumVals.put((String) friendlyTypeMethod.invoke(value), (String) typeMethod.invoke(value));
+                }
+            } else {
+                Field[] fields = dynamicEntityDao.getAllFields(broadleafEnumeration);
+                for (Field field : fields) {
+                    boolean isStatic = Modifier.isStatic(field.getModifiers());
+                    if (isStatic && field.getType().isAssignableFrom(broadleafEnumeration)){
+                        enumVals.put((String) friendlyTypeMethod.invoke(field.get(null)), (String) typeMethod.invoke(field.get(null)));
+                    }
+                }
+            }
+            String[][] enumerationValues = new String[enumVals.size()][2];
+            int j = 0;
+            for (String key : enumVals.keySet()) {
+                enumerationValues[j][0] = enumVals.get(key);
+                enumerationValues[j][1] = key;
+                j++;
+            }
+            fieldMetadata.setEnumerationValues(enumerationValues);
+            fieldMetadata.setEnumerationClass(broadleafEnumerationClass);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

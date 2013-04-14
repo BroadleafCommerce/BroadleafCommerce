@@ -55,25 +55,21 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
 
     private static final Log LOG = LogFactory.getLog(CollectionMetadataProvider.class);
 
-    @Override
-    public boolean canHandleFieldForConfiguredMetadata(Field field) {
+    protected boolean canHandleFieldForConfiguredMetadata(Field field) {
         AdminPresentationCollection annot = field.getAnnotation(AdminPresentationCollection.class);
         return annot != null;
     }
 
-    @Override
-    public boolean canHandleAnnotationOverride(Class<?> clazz) {
+    protected boolean canHandleAnnotationOverride(Class<?> clazz) {
         AdminPresentationOverrides myOverrides = clazz.getAnnotation(AdminPresentationOverrides.class);
         return myOverrides != null && !ArrayUtils.isEmpty(myOverrides.collections());
     }
 
     @Override
-    public boolean canHandleXmlOverride(String ceilingEntityFullyQualifiedClassname, String configurationKey) {
-        return true;
-    }
-
-    @Override
-    public void addMetadata(AddMetadataRequest addMetadataRequest) {
+    public boolean addMetadata(AddMetadataRequest addMetadataRequest) {
+        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest.getRequestedField())) {
+            return false;
+        }
         AdminPresentationCollection annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationCollection
                 .class);
         FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
@@ -81,10 +77,14 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
         buildCollectionMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(),
                 addMetadataRequest.getRequestedMetadata(), info, override);
         setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), info);
+        return true;
     }
 
     @Override
-    public void overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+        if (!canHandleAnnotationOverride(overrideViaAnnotationRequest.getRequestedEntity())) {
+            return false;
+        }
         Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides = new HashMap<String, AdminPresentationCollectionOverride>();
 
         AdminPresentationOverrides myOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationOverrides.class);
@@ -101,10 +101,11 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
                 }
             }
         }
+        return true;
     }
 
     @Override
-    public void overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
+    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
         Map<String, FieldMetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
@@ -143,6 +144,7 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
                 }
             }
         }
+        return true;
     }
 
     protected void buildAdminPresentationCollectionOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides, String propertyName, String key, DynamicEntityDao dynamicEntityDao) {
