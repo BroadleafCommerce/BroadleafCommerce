@@ -102,7 +102,7 @@ public class AdminProductController extends AdminBasicEntityController {
         // Find the metadata and the entity for the selected sku
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
         ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-        Entity entity = service.getRecord(ppr, collectionItemId);
+        Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata);
         
         // Find the records for all subcollections of Sku
         Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);

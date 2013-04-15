@@ -80,8 +80,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity getRecord(PersistencePackageRequest request, String id) throws ServiceException, ApplicationSecurityException {
-        FilterAndSortCriteria fasc = new FilterAndSortCriteria("id");
+    public Entity getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd)
+            throws ServiceException, ApplicationSecurityException {
+        String idProperty = getIdProperty(cmd);
+        
+        FilterAndSortCriteria fasc = new FilterAndSortCriteria(idProperty);
         fasc.setFilterValue(id);
         request.addFilterAndSortCriteria(fasc);
 
@@ -471,6 +474,20 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             return entity.findProperty("id").getValue();
         }
         throw new RuntimeException("Unable to establish a relationship id");
+    }
+    
+    @Override
+    public String getIdProperty(ClassMetadata cmd) throws ServiceException {
+        for (Property p : cmd.getProperties()) {
+            if (p.getMetadata() instanceof BasicFieldMetadata) {
+                BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
+                if (SupportedFieldType.ID.equals(fmd.getFieldType())) {
+                    return p.getName();
+                }
+            }
+        }
+        
+        throw new ServiceException("Could not determine ID field for " + cmd.getCeilingType());
     }
 
     protected Entity add(PersistencePackageRequest request)

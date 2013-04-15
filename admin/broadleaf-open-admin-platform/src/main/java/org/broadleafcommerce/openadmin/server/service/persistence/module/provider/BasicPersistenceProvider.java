@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.AssociationPathElement;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
@@ -35,7 +33,9 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Embedded;
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.AssociationPathElement;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -49,6 +49,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
+import javax.persistence.Embedded;
 
 /**
  * @author Jeff Fischer
@@ -425,7 +427,7 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
                         addSearchMappingRequest.getRequestedCtoConverter().addLongEQMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
                         break;
                     case STRING:
-                        addSearchMappingRequest.getRequestedCtoConverter().addStringLikeMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
+                        addSearchMappingRequest.getRequestedCtoConverter().addStringEQMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
                         break;
                 }
                 break;

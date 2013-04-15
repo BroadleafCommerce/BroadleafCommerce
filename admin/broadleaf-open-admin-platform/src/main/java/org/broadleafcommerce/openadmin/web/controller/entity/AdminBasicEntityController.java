@@ -80,7 +80,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Andre Azzolini (apazzolini)
  */
 @Controller("blAdminBasicEntityController")
-@RequestMapping("/{sectionKey}")
+@RequestMapping("/{sectionKey:.+}")
 public class AdminBasicEntityController extends AdminAbstractController {
     
     // ***********************
@@ -271,7 +271,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
 
         ClassMetadata cmd = service.getClassMetadata(ppr);
-        Entity entity = service.getRecord(ppr, id);
+        Entity entity = service.getRecord(ppr, id, cmd);
 
         Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
 
@@ -491,7 +491,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
-        Entity entity = service.getRecord(ppr, id);
+        Entity entity = service.getRecord(ppr, id, mainMetadata);
 
         // Next, we must get the new list grid that represents this collection
         ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty,
@@ -643,7 +643,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         FieldMetadata md = collectionProperty.getMetadata();
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
-        Entity parentEntity = service.getRecord(ppr, id);
+        Entity parentEntity = service.getRecord(ppr, id, mainMetadata);
         
         ppr = PersistencePackageRequest.fromMetadata(md);
 
@@ -652,7 +652,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-            Entity entity = service.getRecord(ppr, collectionItemId);
+            Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata);
 
             EntityForm entityForm = formService.buildEntityForm(collectionMetadata, entity);
 
@@ -717,7 +717,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
-        Entity entity = service.getRecord(ppr, id);
+        Entity entity = service.getRecord(ppr, id, mainMetadata);
         
         // First, we must save the collection entity
         service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity);
@@ -757,7 +757,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
-        Entity entity = service.getRecord(ppr, id);
+        Entity entity = service.getRecord(ppr, id, mainMetadata);
         
         // First, we must save the collection entity
         service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, collectionItemId);
@@ -800,7 +800,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         FieldMetadata md = collectionProperty.getMetadata();
         
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
-        Entity parentEntity = service.getRecord(ppr, id);
+        Entity parentEntity = service.getRecord(ppr, id, mainMetadata);
         
         ppr = PersistencePackageRequest.fromMetadata(md);
         
@@ -859,7 +859,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String priorKey = request.getParameter("key");
         
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
-        Entity entity = service.getRecord(ppr, id);
+        Entity entity = service.getRecord(ppr, id, mainMetadata);
 
         // First, we must remove the collection entity
         service.removeSubCollectionEntity(mainMetadata, collectionProperty, entity, collectionItemId, priorKey);
@@ -1015,7 +1015,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         // However, when we fetch, the second custom criteria needs to be the id
         // of this particular structured content entity
         ppr.setCustomCriteria(new String[] { info.getCriteriaName(), entityId });
-        Entity entity = service.getRecord(ppr, entityId);
+        Entity entity = service.getRecord(ppr, entityId, cmd);
         
         // Assemble the dynamic form for structured content type
         EntityForm dynamicForm = formService.buildEntityForm(cmd, entity);

@@ -13,7 +13,7 @@
                 </div>
                 <div class="content">
                     <ul>
-                        <li th:each="section : ${module.sections}" th:classappend="${currentAdminSection.id == section.id}? 'active'">
+                        <li th:each="section : ${module.sections}" th:classappend="${(currentAdminSection != null) and (currentAdminSection.id == section.id) ? 'active' : ''}">
                             <a blc_admin:admin_section_href="${section}">
                                 [[#{${module.moduleKey} + '.' + ${section.sectionKey}}]]
                             </a>

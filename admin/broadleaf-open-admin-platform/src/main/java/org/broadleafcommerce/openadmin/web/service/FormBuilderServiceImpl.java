@@ -430,7 +430,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         // Get the empty form with appropriate fields
         EntityForm ef = buildEntityForm(cmd);
 
-        ef.setId(entity.findProperty("id").getValue());
+        String idProperty = adminEntityService.getIdProperty(cmd);
+        ef.setId(entity.findProperty(idProperty).getValue());
         ef.setEntityType(entity.getType()[0]);
 
         // Set the appropriate property values

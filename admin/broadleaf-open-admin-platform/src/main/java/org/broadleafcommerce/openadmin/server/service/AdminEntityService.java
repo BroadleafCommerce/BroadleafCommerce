@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
@@ -56,15 +57,16 @@ public interface AdminEntityService {
             throws ServiceException, ApplicationSecurityException;
 
     /**
-     * Returns a specific record for the given request and primary key id
+     * Returns a specific record for the given request and primary key id/property
      * 
      * @param request
      * @param id
+     * @param cmd
      * @return the Entity
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public Entity getRecord(PersistencePackageRequest request, String id)
+    public Entity getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd) 
             throws ServiceException, ApplicationSecurityException;
 
     /**
@@ -206,5 +208,14 @@ public interface AdminEntityService {
      * @return the id to be used for this relationship
      */
     public String getContextSpecificRelationshipId(ClassMetadata cmd, Entity entity, String propertyName);
+
+    /**
+     * Returns the name of the property in this ClassMetadata that has field type set to {@link SupportedFieldType#ID}
+     * 
+     * @param cmd
+     * @return the id property name
+     * @throws ServiceException
+     */
+    public String getIdProperty(ClassMetadata cmd) throws ServiceException;
 
 }

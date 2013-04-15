@@ -32,6 +32,10 @@
     </bean>
     
     <mvc:annotation-driven/>
+    
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+        <property name="useSuffixPatternMatch" value="false" />
+    </bean>
 
     <context:component-scan base-package="org.broadleafcommerce.openadmin.web.controller" />
 
