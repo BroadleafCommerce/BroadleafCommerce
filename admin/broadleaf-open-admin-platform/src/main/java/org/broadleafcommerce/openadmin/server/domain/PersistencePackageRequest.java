@@ -51,6 +51,7 @@ public class PersistencePackageRequest {
     protected MapStructure mapStructure;
     protected Entity entity;
     protected ForeignKey foreignKey;
+    protected Integer startIndex = 0;
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -210,6 +211,11 @@ public class PersistencePackageRequest {
         setEntity(entity);
         return this;
     }
+    
+    public PersistencePackageRequest withStartIndex(Integer startIndex) {
+        setStartIndex(startIndex);
+        return this;
+    }
 
     /* *********** */
     /* ADD METHODS */
@@ -344,5 +350,13 @@ public class PersistencePackageRequest {
     public void setOperationTypesOverride(OperationTypes operationTypesOverride) {
         this.operationTypesOverride = operationTypesOverride;
     }
+    
+    public Integer getStartIndex() {
+        return startIndex;
+    }
 
+    public void setStartIndex(Integer startIndex) {
+        this.startIndex = startIndex;
+    }
+    
 }

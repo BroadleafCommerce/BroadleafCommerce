@@ -20,25 +20,26 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.io.Serializable;
 
-
 /**
  * 
  * @author jfischer
  *
  */
 public class DynamicResultSet implements IsSerializable, Serializable {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     private ClassMetadata classMetaData;
     private Entity[] records;
+    private Integer pageSize;
+    private Integer startIndex;
     private Integer totalRecords;
     private Integer batchId;
-    
+
     public DynamicResultSet() {
         //do nothing
     }
-    
+
     public DynamicResultSet(ClassMetadata classMetaData, Entity[] records, Integer totalRecords) {
         this.records = records;
         this.classMetaData = classMetaData;
@@ -85,4 +86,21 @@ public class DynamicResultSet implements IsSerializable, Serializable {
     public void setBatchId(Integer batchId) {
         this.batchId = batchId;
     }
+
+    public Integer getStartIndex() {
+        return startIndex;
+    }
+
+    public void setStartIndex(Integer startIndex) {
+        this.startIndex = startIndex;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
 }

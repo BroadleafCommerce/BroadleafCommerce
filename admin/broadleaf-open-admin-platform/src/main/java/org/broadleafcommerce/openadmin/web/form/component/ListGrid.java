@@ -49,11 +49,12 @@ public class ListGrid {
     protected List<ListGridRecord> records = new ArrayList<ListGridRecord>();
     protected List<ListGridAction> toolbarActions = new ArrayList<ListGridAction>();
     
-    /**
-     * These actions will start greyed out and unable to be clicked until a specific row has been selected
-     */
+    
+    // These actions will start greyed out and unable to be clicked until a specific row has been selected
     protected List<ListGridAction> rowActions = new ArrayList<ListGridAction>();
-    protected int startIndex = 0;
+    protected int totalRecords;
+    protected int startIndex;
+    protected int pageSize;
     
     protected AddMethodType addMethodType;
     protected String listGridType;
@@ -183,6 +184,22 @@ public class ListGrid {
     public void setStartIndex(int startIndex) {
         this.startIndex = startIndex;
     }
+    
+    public int getTotalRecords() {
+        return totalRecords;
+    }
+
+    public void setTotalRecords(int totalRecords) {
+        this.totalRecords = totalRecords;
+    }
+    
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
 
     public AddMethodType getAddMethodType() {
         return addMethodType;
@@ -241,4 +258,3 @@ public class ListGrid {
     }
     
 }
-

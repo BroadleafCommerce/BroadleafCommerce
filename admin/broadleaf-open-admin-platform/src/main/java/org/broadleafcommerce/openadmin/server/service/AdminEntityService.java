@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.server.service;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.client.dto.Property;
@@ -46,14 +47,14 @@ public interface AdminEntityService {
             throws ServiceException, ApplicationSecurityException;
 
     /**
-     * Returns an Entity[] representing the records that were found for the given request.
+     * Returns the DynamicResultSet containing the total records for the query and the currently fetched Entity[]
      * 
      * @param request
-     * @return the Entity[]
+     * @return DynamicResultSet 
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public Entity[] getRecords(PersistencePackageRequest request)
+    public DynamicResultSet getRecords(PersistencePackageRequest request)
             throws ServiceException, ApplicationSecurityException;
 
     /**
@@ -120,17 +121,17 @@ public interface AdminEntityService {
             throws ServiceException, ApplicationSecurityException;
 
     /**
-     * Returns the Entity[] representing the records that belong to the specified collectionProperty for the 
+     * Returns the DynamicResultSet representing the records that belong to the specified collectionProperty for the 
      * given containingClass and the primary key for the containingClass
      * 
      * @param containingClassMetadata
      * @param containingEntity
      * @param collectionProperty
-     * @return the Entity[]
+     * @return the DynamicResultSet
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public Entity[] getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
+    public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, FilterAndSortCriteria[] criteria)
             throws ServiceException, ApplicationSecurityException;
 
@@ -145,7 +146,8 @@ public interface AdminEntityService {
      * 
      * @see #getRecordsForCollection(ClassMetadata, String, Property)
      */
-    public Map<String, Entity[]> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity)
+    public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, 
+            Entity containingEntity)
             throws ServiceException, ApplicationSecurityException;
 
     /**

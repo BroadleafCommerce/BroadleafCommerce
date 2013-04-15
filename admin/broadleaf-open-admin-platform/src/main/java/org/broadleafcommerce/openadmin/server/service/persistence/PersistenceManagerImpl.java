@@ -49,7 +49,6 @@ import org.springframework.stereotype.Component;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -254,16 +253,20 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
                 }
                 DynamicResultSet results = handler.fetch(persistencePackage, cto, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
-                return postFetch(results, persistencePackage);
+                return postFetch(results, persistencePackage, cto);
             }
         }
         adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
-        return postFetch(myModule.fetch(persistencePackage, cto), persistencePackage);
+        return postFetch(myModule.fetch(persistencePackage, cto), persistencePackage, cto);
     }
 
-    protected DynamicResultSet postFetch(DynamicResultSet resultSet, PersistencePackage persistencePackage) throws ServiceException {
-        //do nothing
+    protected DynamicResultSet postFetch(DynamicResultSet resultSet, PersistencePackage persistencePackage, 
+            CriteriaTransferObject cto) 
+            throws ServiceException {
+        // Expose the start index so that we can utilize when building the UI
+        resultSet.setStartIndex(cto.getFirstResult());
+        resultSet.setPageSize(cto.getMaxResults());
         return resultSet;
     }
 

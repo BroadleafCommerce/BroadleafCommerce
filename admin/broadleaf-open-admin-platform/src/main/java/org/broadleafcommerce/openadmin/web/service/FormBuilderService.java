@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.client.dto.MapStructure;
@@ -49,7 +50,7 @@ public interface FormBuilderService {
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public ListGrid buildMainListGrid(Entity[] entities, ClassMetadata cmd, String sectionKey)
+    public ListGrid buildMainListGrid(DynamicResultSet drs, ClassMetadata cmd, String sectionKey)
             throws ServiceException, ApplicationSecurityException;
 
     /**
@@ -66,7 +67,7 @@ public interface FormBuilderService {
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public ListGrid buildCollectionListGrid(String containingEntityId, Entity[] entities, Property field, String sectionKey)
+    public ListGrid buildCollectionListGrid(String containingEntityId, DynamicResultSet drs, Property field, String sectionKey)
             throws ServiceException, ApplicationSecurityException;
 
     /**
@@ -113,7 +114,7 @@ public interface FormBuilderService {
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity, Map<String, Entity[]> collectionRecords)
+    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords)
             throws ServiceException, ApplicationSecurityException;
 
     /**

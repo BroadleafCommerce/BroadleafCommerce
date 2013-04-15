@@ -73,8 +73,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity[] getRecords(PersistencePackageRequest request) throws ServiceException, ApplicationSecurityException {
-        return fetch(request).getRecords();
+    public DynamicResultSet getRecords(PersistencePackageRequest request) throws ServiceException, ApplicationSecurityException {
+        return fetch(request);
     }
 
     @Override
@@ -221,7 +221,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity[] getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
+    public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, FilterAndSortCriteria[] criteria)
             throws ServiceException, ApplicationSecurityException {
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata())
@@ -245,19 +245,19 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         fasc.setFilterValue(id);
         ppr.addFilterAndSortCriteria(fasc);
 
-        return fetch(ppr).getRecords();
+        return fetch(ppr);
     }
 
     @Override
-    public Map<String, Entity[]> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity) 
+    public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity) 
             throws ServiceException, ApplicationSecurityException {
-        Map<String, Entity[]> map = new HashMap<String, Entity[]>();
+        Map<String, DynamicResultSet> map = new HashMap<String, DynamicResultSet>();
 
         ClassMetadata cmd = getClassMetadata(ppr);
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof CollectionMetadata) {
-                Entity[] rows = getRecordsForCollection(cmd, containingEntity, p, null);
-                map.put(p.getName(), rows);
+                DynamicResultSet drs = getRecordsForCollection(cmd, containingEntity, p, null);
+                map.put(p.getName(), drs);
             }
         }
 
@@ -521,14 +521,15 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         if (request.getFilterAndSortCriteria() != null) {
             cto.addAll(request.getFilterAndSortCriteria());
         }
+        
+        cto.setFirstResult(request.getStartIndex());
 
         return service.fetch(pkg, cto);
     }
 
     protected CriteriaTransferObject getDefaultCto() {
         CriteriaTransferObject cto = new CriteriaTransferObject();
-        cto.setFirstResult(0);
-        cto.setMaxResults(75);
+        cto.setMaxResults(5);
         return cto;
     }
 

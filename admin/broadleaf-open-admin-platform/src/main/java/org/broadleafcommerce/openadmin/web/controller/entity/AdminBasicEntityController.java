@@ -29,6 +29,7 @@ import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassTree;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
@@ -126,12 +127,20 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
 
+        PersistencePackageRequest ppr;
+        if (criteriaForm == null) {
+            ppr = getSectionPersistencePackageRequest(sectionClassName);
+        } else {
+            ppr = getSectionPersistencePackageRequest(sectionClassName, 
+                    criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]));
+        }
+
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, getCriteria(requestParams));
 
         ClassMetadata cmd = service.getClassMetadata(ppr);
-        Entity[] rows = service.getRecords(ppr);
+        DynamicResultSet drs =  service.getRecords(ppr);
 
-        ListGrid listGrid = formService.buildMainListGrid(rows, cmd, sectionKey);
+        ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey);
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("listGrid", listGrid);
@@ -270,8 +279,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         ClassMetadata cmd = service.getClassMetadata(ppr);
         Entity entity = service.getRecord(ppr, id, cmd);
-
-        Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
+        
+        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
 
         EntityForm entityForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
         
@@ -419,8 +428,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ppr.addFilterAndSortCriteria(getCriteria(requestParams));
         
         if (md instanceof BasicFieldMetadata) {
-            Entity[] rows = service.getRecords(ppr);
-            ListGrid listGrid = formService.buildCollectionListGrid(null, rows, collectionProperty, sectionKey);
+            DynamicResultSet drs = service.getRecords(ppr);
+            ListGrid listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, sectionKey);
 
             model.addAttribute("listGrid", listGrid);
             model.addAttribute("viewType", "modal/simpleSelectEntity");
@@ -491,7 +500,15 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Entity entity = service.getRecord(ppr, id, mainMetadata);
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, getCriteria(requestParams), sectionKey);
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty,
+                criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]), sectionKey);
+ ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, getCriteria(requestParams), sectionKey);
+        
+
+ ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, criteriaForm, sectionKey);
+
+
+
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
@@ -567,8 +584,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 model.addAttribute("entityForm", entityForm);
                 model.addAttribute("viewType", "modal/simpleAddEntity");
             } else {
-                Entity[] rows = service.getRecords(ppr);
-                ListGrid listGrid = formService.buildCollectionListGrid(id, rows, collectionProperty, sectionKey);
+                DynamicResultSet drs = service.getRecords(ppr);
+                ListGrid listGrid = formService.buildCollectionListGrid(id, drs, collectionProperty, sectionKey);
 
                 model.addAttribute("listGrid", listGrid);
                 model.addAttribute("viewType", "modal/simpleSelectEntity");
@@ -583,8 +600,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
 
-            Entity[] rows = service.getRecords(ppr);
-            ListGrid listGrid = formService.buildMainListGrid(rows, collectionMetadata, sectionKey);
+            DynamicResultSet drs = service.getRecords(ppr);
+            ListGrid listGrid = formService.buildMainListGrid(drs, collectionMetadata, sectionKey);
             listGrid.setSubCollectionFieldName(collectionField);
             EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
 
@@ -935,18 +952,23 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param mainMetadata class metadata for the root entity that this <b>collectionProperty</b> relates to
      * @param id foreign key from the root entity for <b>collectionProperty</b>
      * @param collectionProperty property that this collection should be based on from the root entity
-     * @param criteria criteria to filter the subcollection list by, can be null
+     * @param form the criteria form model attribute
      * @param sectionKey the current main section key
      * @return the list grid
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
     protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, Entity entity, Property collectionProperty,
-            FilterAndSortCriteria[] criteria, String sectionKey)
+            CriteriaForm form, String sectionKey)
             throws ServiceException, ApplicationSecurityException {
-        Entity[] rows = service.getRecordsForCollection(mainMetadata, entity, collectionProperty, criteria);
+        FilterAndSortCriteria[] fascs = null;
+        if (form != null) {
+            fascs = form.getCriteria().toArray(new FilterAndSortCriteria[form.getCriteria().size()]);
+        }
+        DynamicResultSet drs = service.getRecordsForCollection(mainMetadata, entity, collectionProperty, fascs);
 
-        ListGrid listGrid = formService.buildCollectionListGrid(entity.findProperty("id").getValue(), rows, 
+        String idProperty = service.getIdProperty(mainMetadata);
+        ListGrid listGrid = formService.buildCollectionListGrid(entity.findProperty(idProperty).getValue(), drs, 
                 collectionProperty, sectionKey);
         listGrid.setListGridType(ListGrid.Type.INLINE);
 
@@ -1236,9 +1258,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param filterAndSortCriteria
      * @return the PersistencePacakageRequest
      */
-    protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName,
-            FilterAndSortCriteria[] filterAndSortCriteria) {
-        return getSectionPersistencePackageRequest(sectionClassName).withFilterAndSortCriteria(filterAndSortCriteria);
+    protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, CriteriaForm form) {
+        FilterAndSortCriteria[] fascs = form.getCriteria().toArray(new FilterAndSortCriteria[form.getCriteria().size()]);
+        return getSectionPersistencePackageRequest(sectionClassName)
+                .withFilterAndSortCriteria(fascs)
+                .withStartIndex(form.getStartIndex());
     }
     
 }

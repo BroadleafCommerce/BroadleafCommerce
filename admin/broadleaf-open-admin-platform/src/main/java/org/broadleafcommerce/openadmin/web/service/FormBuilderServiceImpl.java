@@ -32,6 +32,7 @@ import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
@@ -84,7 +85,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     protected AdminNavigationService navigationService;
 
     @Override
-    public ListGrid buildMainListGrid(Entity[] entities, ClassMetadata cmd, String sectionKey)
+    public ListGrid buildMainListGrid(DynamicResultSet drs, ClassMetadata cmd, String sectionKey)
             throws ServiceException, ApplicationSecurityException {
 
         List<Field> headerFields = new ArrayList<Field>();
@@ -126,12 +127,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
 
-        ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, entities, sectionKey, 0, idProperty);
+        ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, drs, sectionKey, 0, idProperty);
         return listGrid;
     }
 
     @Override
-    public ListGrid buildCollectionListGrid(String containingEntityId, Entity[] entities, Property field, String sectionKey)
+    public ListGrid buildCollectionListGrid(String containingEntityId, DynamicResultSet drs, Property field, 
+            String sectionKey)
             throws ServiceException, ApplicationSecurityException {
         FieldMetadata fmd = field.getMetadata();
         // Get the class metadata for this particular field
@@ -256,7 +258,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             editable = true;
         }
 
-        ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, entities, sectionKey, fmd.getOrder(), idProperty);
+        String ceilingType = cmd.getCeilingType();
+        ListGrid listGrid = createListGrid(ceilingType, headerFields, type, drs, sectionKey, fmd.getOrder(), idProperty);
         listGrid.setSubCollectionFieldName(field.getName());
         listGrid.setFriendlyName(field.getMetadata().getFriendlyName());
         if (StringUtils.isEmpty(listGrid.getFriendlyName())) {
@@ -275,7 +278,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return listGrid;
     }
 
-    protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, Entity[] entities, 
+    protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, DynamicResultSet drs, 
             String sectionKey, int order, String idProperty) {
         // Create the list grid and set some basic attributes
         ListGrid listGrid = new ListGrid();
@@ -285,6 +288,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         listGrid.setSectionKey(sectionKey);
         listGrid.setOrder(order);
         listGrid.setIdProperty(idProperty);
+        listGrid.setStartIndex(drs.getStartIndex());
+        listGrid.setTotalRecords(drs.getTotalRecords());
+        listGrid.setPageSize(drs.getPageSize());
         
         AdminSection section = navigationService.findAdminSectionByClass(className);
         if (section != null) {
@@ -294,7 +300,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         // For each of the entities (rows) in the list grid, we need to build the associated
         // ListGridRecord and set the required fields on the record. These fields are the same ones
         // that are used for the header fields.
-        for (Entity e : entities) {
+        for (Entity e : drs.getRecords()) {
             ListGridRecord record = new ListGridRecord();
             record.setListGrid(listGrid);
             
@@ -505,7 +511,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     // Get the records
                     PersistencePackageRequest toOnePpr = PersistencePackageRequest.standard()
                             .withCeilingEntityClassname(fmd.getForeignKeyClass());
-                    Entity[] rows = adminEntityService.getRecords(toOnePpr);
+                    Entity[] rows = adminEntityService.getRecords(toOnePpr).getRecords();
                     
                     // Determine the id field
                     String idProp = null;
@@ -545,7 +551,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     @Override
-    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity, Map<String, Entity[]> collectionRecords)
+    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords)
             throws ServiceException, ApplicationSecurityException {
         // Get the form with values for this entity
         EntityForm ef = buildEntityForm(cmd, entity);
@@ -557,7 +563,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 continue;
             }
 
-            Entity[] subCollectionEntities = collectionRecords.get(p.getName());
+            DynamicResultSet subCollectionEntities = collectionRecords.get(p.getName());
             String containingEntityId = entity.getPMap().get("id").getValue();
             ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p, ef.getSectionKey());
             listGrid.setListGridType(ListGrid.Type.INLINE);
@@ -691,13 +697,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                         .withCeilingEntityClassname(mapMd.getMapKeyOptionEntityClass());
 
-                Entity[] rows = adminEntityService.getRecords(ppr);
+            DynamicResultSet drs = adminEntityService.getRecords(ppr);
 
-                for (Entity entity : rows) {
-                    String keyValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityValueField()).getValue();
-                    String keyDisplayValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityDisplayField()).getValue();
-                    temp.putOption(keyValue, keyDisplayValue);
-                }
+            for (Entity entity : drs.getRecords()) {
+                String keyValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityValueField()).getValue();
+                String keyDisplayValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityDisplayField()).getValue();
+                keyField.putOption(keyValue, keyDisplayValue);
             }
             keyField = temp;
         } else {

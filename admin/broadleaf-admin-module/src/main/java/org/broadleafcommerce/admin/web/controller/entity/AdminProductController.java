@@ -19,6 +19,7 @@ package org.broadleafcommerce.admin.web.controller.entity;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.Property;
@@ -105,7 +106,7 @@ public class AdminProductController extends AdminBasicEntityController {
         Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata);
         
         // Find the records for all subcollections of Sku
-        Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
+        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
         
         // Build the entity form for the modal that includes the subcollections
         EntityForm entityForm = formService.buildEntityForm(collectionMetadata, entity, subRecordsMap);
