@@ -17,31 +17,15 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
-import org.broadleafcommerce.core.search.domain.SearchFacet;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.Filters;
-import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The Class CategoryXrefImpl is for testing purposes only.  It helps autogenerate the cross reference table
@@ -54,7 +38,7 @@ import java.util.Map;
 @Polymorphism(type = PolymorphismType.EXPLICIT)
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY_XREF")
-@AdminPresentationClass(excludeFromPolymorphism = true)
+@AdminPresentationClass(excludeFromPolymorphism = false)
 public class CategoryXrefImpl implements CategoryXref {
 
     /** The Constant serialVersionUID. */

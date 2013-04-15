@@ -823,6 +823,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             Map<String, Object> responseMap = new HashMap<String, Object>();
             service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, collectionItemId);
             responseMap.put("status", "ok");
+            responseMap.put("field", collectionField);
             return responseMap;
         } else {
             throw new UnsupportedOperationException("Cannot handle sequencing for non adorned target collection fields.");

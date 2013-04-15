@@ -264,6 +264,8 @@ $(document).ready(function() {
                             newSequence : ui.item.index()
                         }
                     }, function(data) {
+                        var $container = $('div.listgrid-container#' + data.field);
+                        BLCAdmin.listGrid.showAlert($container, 'Saved!', { alertType: 'save-alert', autoClose: 400 });
                         console.log(data);
                     });
                 }

@@ -48,7 +48,7 @@ import javax.persistence.Table;
 @Polymorphism(type = PolymorphismType.EXPLICIT)
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY_PRODUCT_XREF")
-@AdminPresentationClass(excludeFromPolymorphism = true)
+@AdminPresentationClass(excludeFromPolymorphism = false)
 public class CategoryProductXrefImpl implements CategoryProductXref {
 
     /** The Constant serialVersionUID. */
