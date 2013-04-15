@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.util;
+package org.broadleafcommerce.common.util;
 
 import org.apache.commons.lang.time.DurationFormatUtils;
 
