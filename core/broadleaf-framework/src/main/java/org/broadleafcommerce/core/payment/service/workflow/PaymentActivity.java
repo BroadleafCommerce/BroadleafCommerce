@@ -22,10 +22,10 @@ import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.PaymentContextImpl;
 import org.broadleafcommerce.core.payment.service.PaymentService;
+import org.broadleafcommerce.core.payment.service.exception.InsufficientFundsException;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -150,7 +150,13 @@ public class PaymentActivity extends BaseActivity<WorkflowPaymentContext> {
                             throw new PaymentException("The PaymentResponseItem instance did not contain one or more of the following: transactionAmount, transactionTimestamp or transactionSuccess");
                         }
                         seed.getPaymentResponse().addPaymentResponseItem(info, paymentResponseItem);
-                        remainingTotal = remainingTotal.subtract(paymentResponseItem.getTransactionAmount());
+                        if (paymentResponseItem.getTransactionSuccess()) {
+                            remainingTotal = remainingTotal.subtract(paymentResponseItem.getTransactionAmount());
+                        }
+                        if (paymentResponseItem.getTransactionAmount().lessThan(transactionTotal.getAmount())) {
+                            throw new InsufficientFundsException(String.format("Transaction amount was [%s] but paid amount was [%s]",
+                                    transactionTotal.getAmount(), paymentResponseItem.getTransactionAmount()));
+                        }
                     }
                 }
             }
