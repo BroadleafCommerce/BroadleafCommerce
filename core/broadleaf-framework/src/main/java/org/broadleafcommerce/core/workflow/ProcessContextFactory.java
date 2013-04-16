@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.core.workflow;
 
-public interface ProcessContextFactory {
+public interface ProcessContextFactory<T> {
 
-    public ProcessContext createContext(Object preSeedData) throws WorkflowException;
+    public ProcessContext createContext(T preSeedData) throws WorkflowException;
 
 }

@@ -17,19 +17,26 @@
 package org.broadleafcommerce.core.workflow;
 
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
+import org.springframework.core.Ordered;
 
 import java.util.Map;
 
-public abstract class BaseActivity implements Activity {
+public abstract class BaseActivity<T extends ProcessContext> implements Activity<T> {
     
-    private ErrorHandler errorHandler;
-    private String beanName;
+    protected ErrorHandler errorHandler;
+    protected String beanName;
 
-    private RollbackHandler rollbackHandler;
-    private String rollbackRegion;
-    private Map<String, Object> stateConfiguration;
-    private boolean automaticallyRegisterRollbackHandler = true;
-
+    protected RollbackHandler rollbackHandler;
+    protected String rollbackRegion;
+    protected Map<String, Object> stateConfiguration;
+    protected boolean automaticallyRegisterRollbackHandler = true;
+    protected int order = Ordered.LOWEST_PRECEDENCE;
+    
+    @Override
+    public boolean shouldExecute(T context) {
+        return true;
+    }
+    
     @Override
     public ErrorHandler getErrorHandler() {
         return errorHandler;
@@ -89,4 +96,14 @@ public abstract class BaseActivity implements Activity {
     public void setAutomaticallyRegisterRollbackHandler(boolean automaticallyRegisterRollbackHandler) {
         this.automaticallyRegisterRollbackHandler = automaticallyRegisterRollbackHandler;
     }
+    
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
 }

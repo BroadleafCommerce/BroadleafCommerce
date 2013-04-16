@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,28 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.pricing.service.workflow;
+package org.broadleafcommerce.core.workflow.state.test;
 
-import org.broadleafcommerce.core.offer.service.ShippingOfferService;
-import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ModuleActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
-import javax.annotation.Resource;
 
-public class ShippingOfferActivity extends BaseActivity<PricingContext> {
-
-    @Resource(name="blShippingOfferService")
-    private ShippingOfferService shippingOfferService;
+/**
+ * Pass-through activity to test that a workflow with a {@link ModuleActivity} marker interface in it performs correctly
+ *
+ * @author Phillip Verheyden (phillipuniverse)
+ */
+public class TestExampleModuleActivity extends BaseActivity<ProcessContext> implements ModuleActivity {
 
     @Override
-    public PricingContext execute(PricingContext context) throws Exception {
-        Order order = context.getSeedData();
-        shippingOfferService.reviewOffers(order);
-        context.setSeedData(order);
-
+    public ProcessContext execute(ProcessContext context) throws Exception {
         return context;
+    }
+
+    @Override
+    public String getModuleName() {
+        return "integration";
     }
 
 }

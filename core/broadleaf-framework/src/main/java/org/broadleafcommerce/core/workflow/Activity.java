@@ -16,12 +16,30 @@
 
 package org.broadleafcommerce.core.workflow;
 
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.core.Ordered;
 
 import java.util.Map;
 
-public interface Activity extends BeanNameAware{
+/**
+ * <p>
+ * Interface to be used for workflows in Broadleaf. Usually implementations will subclass {@link BaseActivity}.
+ * </p>
+ * 
+ * Important note: if you are writing a 3rd-party integration module or adding a module outside of the Broadleaf core, your
+ * activity should implement the {@link ModuleActivity} interface as well. This ensures that there is proper logging
+ * for users that are using your module so that they know exactly what their final workflow configuration looks like.
+ *
+ * @author Phillip Verheyden (phillipuniverse)
+ * @param <T>
+ * @see {@link BaseActivity}
+ * @see {@link ModuleActivity}
+ * @see {@link BaseProcessor}
+ * @see {@link SequenceProcessor}
+ */
+public interface Activity<T extends ProcessContext> extends BeanNameAware, Ordered {
 
     /**
      * Called by the encompassing processor to activate
@@ -31,7 +49,18 @@ public interface Activity extends BeanNameAware{
      * @return resulting process context
      * @throws Exception
      */
-    public ProcessContext execute(ProcessContext context) throws Exception;
+    public T execute(T context) throws Exception;
+
+    /**
+     * Determines if an activity should execute based on the current values in the {@link ProcessContext}. For example, a
+     * context might have both an {@link Order} as well as a String 'status' of what the order should be changed to. It is
+     * possible that an activity in a workflow could only deal with a particular status change, and thus could return false
+     * from this method.
+     * 
+     * @param context
+     * @return
+     */
+    public boolean shouldExecute(T context);
 
     /**
      * Get the fine-grained error handler wired up for this Activity

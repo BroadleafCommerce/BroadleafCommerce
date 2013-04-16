@@ -20,14 +20,10 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.ProcessContextFactory;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 
-public class CheckoutProcessContextFactory implements ProcessContextFactory {
+public class CheckoutProcessContextFactory implements ProcessContextFactory<CheckoutSeed> {
 
-    public ProcessContext createContext(Object seedData) throws WorkflowException {
-        if(!(seedData instanceof CheckoutSeed)){
-            throw new WorkflowException("Seed data instance is incorrect. " +
-                    "Required class is "+CheckoutSeed.class.getName()+" " +
-                    "but found class: "+seedData.getClass().getName());
-        }
+    @Override
+    public ProcessContext createContext(CheckoutSeed seedData) throws WorkflowException {
         CheckoutContext context = new CheckoutContext();
         context.setSeedData(seedData);
 

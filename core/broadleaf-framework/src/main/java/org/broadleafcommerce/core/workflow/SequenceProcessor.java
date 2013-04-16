@@ -35,14 +35,17 @@ public class SequenceProcessor extends BaseProcessor {
      *
      * @see org.iocworkflow.BaseProcessor#supports(java.lang.Class)
      */
-    public boolean supports(Activity activity) {
+    @Override
+    public boolean supports(Activity<? extends ProcessContext> activity) {
         return (activity instanceof BaseActivity);
     }
 
+    @Override
     public ProcessContext doActivities() throws WorkflowException {
         return doActivities(null);
     }
 
+    @Override
     public ProcessContext doActivities(Object seedData) throws WorkflowException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(getBeanName() + " processor is running..");
@@ -61,42 +64,46 @@ public class SequenceProcessor extends BaseProcessor {
         }
         try {
             //retrieve injected by Spring
-            List<Activity> activities = getActivities();
+            List<Activity<ProcessContext>> activities = getActivities();
 
             //retrieve a new instance of the Workflow ProcessContext
             context = createContext(seedData);
 
-            for (Activity activity : activities) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("running activity:" + activity.getBeanName() + " using arguments:" + context);
-                }
-
-                try {
-                    context = activity.execute(context);
-                } catch (Throwable th) {
-                    if (getAutoRollbackOnError()) {
-                        LOG.info("Automatically rolling back state for any previously registered RollbackHandlers. RollbackHandlers may be registered for workflow activities in appContext.");
-                        ActivityStateManagerImpl.getStateManager().rollbackAllState();
+            for (Activity<ProcessContext> activity : activities) {
+                if (activity.shouldExecute(context)) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("running activity:" + activity.getBeanName() + " using arguments:" + context);
                     }
-                    ErrorHandler errorHandler = activity.getErrorHandler();
-                    if (errorHandler == null) {
-                        LOG.info("no error handler for this action, run default error" + "handler and abort processing ");
-                        getDefaultErrorHandler().handleError(context, th);
+    
+                    try {
+                        context = activity.execute(context);
+                    } catch (Throwable th) {
+                        if (getAutoRollbackOnError()) {
+                            LOG.info("Automatically rolling back state for any previously registered RollbackHandlers. RollbackHandlers may be registered for workflow activities in appContext.");
+                            ActivityStateManagerImpl.getStateManager().rollbackAllState();
+                        }
+                        ErrorHandler errorHandler = activity.getErrorHandler();
+                        if (errorHandler == null) {
+                            LOG.info("no error handler for this action, run default error" + "handler and abort processing ");
+                            getDefaultErrorHandler().handleError(context, th);
+                            break;
+                        } else {
+                            LOG.info("run error handler and continue");
+                            errorHandler.handleError(context, th);
+                        }
+                    }
+    
+                    //ensure its ok to continue the process
+                    if (processShouldStop(context, activity)) {
                         break;
-                    } else {
-                        LOG.info("run error handler and continue");
-                        errorHandler.handleError(context, th);
                     }
-                }
-
-                //ensure its ok to continue the process
-                if (processShouldStop(context, activity)) {
-                    break;
-                }
-
-                //register the RollbackHandler
-                if (activity.getRollbackHandler() != null && activity.getAutomaticallyRegisterRollbackHandler()) {
-                    ActivityStateManagerImpl.getStateManager().registerState(activity, context, activity.getRollbackRegion(), activity.getRollbackHandler(), activity.getStateConfiguration());
+    
+                    //register the RollbackHandler
+                    if (activity.getRollbackHandler() != null && activity.getAutomaticallyRegisterRollbackHandler()) {
+                        ActivityStateManagerImpl.getStateManager().registerState(activity, context, activity.getRollbackRegion(), activity.getRollbackHandler(), activity.getStateConfiguration());
+                    }
+                } else {
+                    LOG.debug("Not executing activity: " + activity.getBeanName() + " based on the context: " + context);
                 }
             }
         } finally {
@@ -119,7 +126,7 @@ public class SequenceProcessor extends BaseProcessor {
      * @param activity
      *            the current activity in the iteration
      */
-    private boolean processShouldStop(ProcessContext context, Activity activity) {
+    protected boolean processShouldStop(ProcessContext context, Activity<? extends ProcessContext> activity) {
         if (context != null && context.isStopped()) {
             LOG.info("Interrupted workflow as requested by:" + activity.getBeanName());
             return true;
@@ -127,10 +134,11 @@ public class SequenceProcessor extends BaseProcessor {
         return false;
     }
 
-    private ProcessContext createContext(Object seedData) throws WorkflowException {
+    protected ProcessContext createContext(Object seedData) throws WorkflowException {
         return processContextFactory.createContext(seedData);
     }
 
+    @Override
     public void setProcessContextFactory(ProcessContextFactory processContextFactory) {
         this.processContextFactory = processContextFactory;
     }
