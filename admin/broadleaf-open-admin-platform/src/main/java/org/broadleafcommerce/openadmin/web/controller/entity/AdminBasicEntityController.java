@@ -49,6 +49,7 @@ import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -63,6 +64,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.gwtincubator.security.exception.ApplicationSecurityException;
 
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,24 +113,18 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param response
      * @param model
      * @param pathVars
-     * @param criteriaForm criteria from the frontend; can be null
+     * @param criteria a Map of property name -> list critiera values
      * @return the return view path
      * @throws Exception
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
-            @ModelAttribute CriteriaForm criteriaForm) throws Exception {
+            @RequestParam MultiValueMap<String, String> criteriaMap) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
 
-        PersistencePackageRequest ppr;
-        if (criteriaForm == null) {
-            ppr = getSectionPersistencePackageRequest(sectionClassName);
-        } else {
-            ppr = getSectionPersistencePackageRequest(sectionClassName, 
-                    criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]));
-        }
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, getCriteriaFromMap(criteriaMap));
 
         ClassMetadata cmd = service.getClassMetadata(ppr);
         Entity[] rows = service.getRecords(ppr);
@@ -1049,6 +1045,22 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     protected String getSectionKey(Map<String, String> pathVars) {
         return pathVars.get("sectionKey");
+    }
+    
+    /**
+     * Helper method to return an array of {@link FilterAndSortCriteria} based on a map of propertyName -> list of criteria
+     * value
+     * @param criteriaMap
+     * @return
+     */
+    protected FilterAndSortCriteria[] getCriteriaFromMap(Map<String, List<String>> criteriaMap) {
+        List<FilterAndSortCriteria> result = new ArrayList<FilterAndSortCriteria>();
+        for (Entry<String, List<String>> entry : criteriaMap.entrySet()) {
+            FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), entry.getValue());
+            result.add(fasCriteria);
+        }
+        
+        return result.toArray(new FilterAndSortCriteria[result.size()]);
     }
 
     /**

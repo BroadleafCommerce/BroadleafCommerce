@@ -32,8 +32,6 @@
                         <li class="divider"></li>
                         <li>                                  
                             <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}">
-                                <input type="hidden" class="property-name"
-                                    th:attr="data-name=${'criteria[' + headerFieldStat.index + '].propertyId'}" th:value="${headerField.name}" />
                                 <input type="hidden" class="property-sort" th:attr="data-name=${'criteria[' + headerFieldStat.index + '].sortType'}" />
                                 <label>Filter:</label>
                                 <div class="listgrid-criteria" th:attr="data-field-index=${headerFieldStat.index}">
@@ -64,8 +62,6 @@
                         <li class="divider"></li>
                         <li>                                  
                             <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}">
-                                <input type="hidden" class="property-name"
-                                    th:attr="data-name=${'criteria[' + #lists.size(listGrid.headerFields) + '].propertyId'}" value="id" />
                                 <input type="hidden" class="property-sort" th:attr="data-name=${'criteria[' + #lists.size(listGrid.headerFields) + '].sortType'}" />
                                 <label>Filter:</label>
                                 <div class="listgrid-criteria" th:attr="data-field-index=${#lists.size(listGrid.headerFields)}">

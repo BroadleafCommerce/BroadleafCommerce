@@ -95,6 +95,16 @@ public class FilterAndSortCriteria implements IsSerializable, Serializable {
         this.propertyId = propertyId;
     }
     
+    public FilterAndSortCriteria(String propertyId, String filterValue) {
+        this.propertyId = propertyId;
+        setFilterValue(filterValue);
+    }
+    
+    public FilterAndSortCriteria(String propertyId, List<String> filterValues) {
+        this.propertyId = propertyId;
+        setFilterValues(filterValues);
+    }
+    
     /**
      * @return Symbolic persistent entity property identifier.
      */

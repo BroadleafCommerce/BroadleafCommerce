@@ -1,5 +1,5 @@
 <div class="datepicker-container">
-    <input th:attr="data-name=${'criteria[' + headerFieldStat.index  + '].filterValues'}"
+    <input th:attr="data-name=${headerField.name}"
            class="listgrid-criteria-input datepicker"
            type="text"
            placeholder="Start Date"/>
@@ -7,7 +7,7 @@
 </div>
 <br />
 <div class="datepicker-container">
-    <input th:attr="data-name=${'criteria[' + headerFieldStat.index  + '].filterValues'}"
+    <input th:attr="data-name=${headerField.name}"
            class="listgrid-criteria-input datepicker"
            type="text"
            placeholder="End Date"/>

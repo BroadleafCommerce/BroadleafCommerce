@@ -360,23 +360,27 @@ $(document).ready(function() {
         $(this).closest('ul').removeClass('show-dropdown');
         
         var $inputs = $(this).closest('thead').find('div.filter-fields :input');
-        $inputs.each(function(index, element) {
-            $(element).attr('name', $(element).data('name'));
+        var nonBlankInputs = [];
+        $inputs.each(function(index, input) {
+            $(input).attr('name', $(input).data('name'));
             //toggle the filter for this field as active or not
-            var filterIcon = $(element).parents('.listgrid-headerBtn').find('div i.filter-icon');
-            filterIcon.toggleClass('icon-filter', !!$(element).val());
+            var filterIcon = $(input).parents('.listgrid-headerBtn').find('div i.filter-icon');
+            filterIcon.toggleClass('icon-filter', !!$(input).val());
+            if ($(input).val()) {
+                nonBlankInputs.push(input);
+            }
         });
                 
         BLC.ajax({
             url: $(this).closest('.filter-fields').data('action'),
             type: "GET",
-            data: $inputs.serialize()
+            data: $(nonBlankInputs).serialize()
         }, function(data) {
             toReplace.replaceWith($(data.trim()).find('tbody'));
         });
         
-        $inputs.each(function(index, element) {
-            $(element).removeAttr('name');
+        $inputs.each(function(index, input) {
+            $(input).removeAttr('name');
         });
         
         return false;
