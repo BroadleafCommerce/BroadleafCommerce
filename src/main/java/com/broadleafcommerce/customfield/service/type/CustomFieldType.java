@@ -16,7 +16,7 @@
  * from Broadleaf Commerce, LLC.
  */
 
-package com.broadleafcommerce.openadmin.server.service.type;
+package com.broadleafcommerce.customfield.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
@@ -25,35 +25,43 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * An extensible enumeration for a Custom Field Target Type.
- * Represent the attributes map on each of the target entity which can contain
- * a custom field.
+ * An extensible enumeration for a Custom Field Type.
+ * Represents the possible custom field types available to admin users.
  *
  * @author Jeff Fischer
  *
  */
-public class CustomFieldTargetType implements Serializable, BroadleafEnumerationType {
+public class CustomFieldType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, CustomFieldTargetType> TYPES = new HashMap<String, CustomFieldTargetType>();
+    private static final Map<String, CustomFieldType> TYPES = new HashMap<String, CustomFieldType>();
 
-    public static final CustomFieldTargetType CUSTOMER = new CustomFieldTargetType("org.broadleafcommerce.profile.core.domain.CustomerImpl", "Customer");
-    public static final CustomFieldTargetType SKU = new CustomFieldTargetType("org.broadleafcommerce.core.catalog.domain.SkuImpl", "Sku");
-    public static final CustomFieldTargetType ORDERITEM = new CustomFieldTargetType("org.broadleafcommerce.core.order.domain.OrderItemImpl", "Order Item");
+    //standard persistence field types, which can be persisted as custom fields in an attribute map
+    public static final CustomFieldType BOOLEAN = new CustomFieldType("BOOLEAN", "Boolean");
+    public static final CustomFieldType INTEGER = new CustomFieldType("INTEGER", "Integer");
+    public static final CustomFieldType MONEY = new CustomFieldType("MONEY", "Money");
+    public static final CustomFieldType DECIMAL = new CustomFieldType("DECIMAL", "Decimal");
+    public static final CustomFieldType DATE = new CustomFieldType("DATE", "Date");
+    public static final CustomFieldType STRING = new CustomFieldType("STRING", "Text");
 
-    public static CustomFieldTargetType getInstance(final String type) {
+    //advanced usage - not supported for persistence, and therefore cannot be a form field.
+    //however, can be used in the context of a rule builder when the data to test is not coming from
+    //an entity value (e.g. testing a dto submitted as part of a service call)
+    public static final CustomFieldType STRING_LIST = new CustomFieldType("STRING_LIST", "List of Text Items");
+
+    public static CustomFieldType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
     private String friendlyType;
 
-    public CustomFieldTargetType() {
+    public CustomFieldType() {
         //do nothing
     }
 
-    public CustomFieldTargetType(final String type, final String friendlyType) {
+    public CustomFieldType(final String type, final String friendlyType) {
         this.friendlyType = friendlyType;
         setType(type);
     }
@@ -91,7 +99,7 @@ public class CustomFieldTargetType implements Serializable, BroadleafEnumeration
             return false;
         if (getClass() != obj.getClass())
             return false;
-        CustomFieldTargetType other = (CustomFieldTargetType) obj;
+        CustomFieldType other = (CustomFieldType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;

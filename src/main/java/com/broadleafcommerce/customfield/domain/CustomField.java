@@ -16,7 +16,7 @@
  * from Broadleaf Commerce, LLC.
  */
 
-package com.broadleafcommerce.openadmin.server.domain;
+package com.broadleafcommerce.customfield.domain;
 
 import java.io.Serializable;
 
@@ -57,23 +57,21 @@ public interface CustomField extends Serializable {
     void setCustomFieldType(String customFieldType);
 
     /**
-     * The order in which this field will appear in the main listgrid for the target entity in the admin.
-     * May be null, in which case the field will not appear in the main grid.
+     * Optional - The order for this field in the form
      *
-     * @return the order in which this field appears in the list grid.
+     * @return the order of the field in the form
      */
-    Integer getGridOrder();
+    Integer getFieldOrder();
 
     /**
-     * The order in which this field will appear in the main listgrid for the target entity in the admin.
-     * May be null, in which case the field will not appear in the main grid.
+     * Optional - the order for this field in the form
      *
-     * @param gridOrder the order in which this field appears in the list grid.
+     * @param fieldOrder the order of the field in the form
      */
-    void setGridOrder(Integer gridOrder);
+    void setFieldOrder(Integer fieldOrder);
 
     /**
-     * The group in the target entity in which this field will reside. Grouping effects visual organization of fields
+     * Optional - The group in the target entity in which this field will reside. Grouping effects visual organization of fields
      * in the admin tool form. May be null, in which case the field will be in the default, general group.
      *
      * @return The group in the target entity in which this field will reside.
@@ -81,7 +79,7 @@ public interface CustomField extends Serializable {
     String getGroupName();
 
     /**
-     * The group in the target entity in which this field will reside. Grouping effects visual organization of fields
+     * Optional - The group in the target entity in which this field will reside. Grouping effects visual organization of fields
      * in the admin tool form. May be null, in which case the field will be in the default, general group.
      *
      * @param groupName The group in the target entity in which this field will reside.
@@ -147,16 +145,18 @@ public interface CustomField extends Serializable {
     void setShowFieldOnForm(Boolean showFieldOnForm);
 
     /**
-     * Whether or not the field is included in search engine indexing and is including in keyword searches
-     * performed on the site.
+     * Optional - Whether or not the field is included in search engine indexing and is including in keyword searches
+     * performed on the site. May not apply to every custom attribute field (e.g. attributes on Customer are
+     * not searchable).
      *
      * @return Whether or not the field is available for search engine usage
      */
     Boolean getSearchable();
 
     /**
-     * Whether or not the field is included in search engine indexing and is including in keyword searches
-     * performed on the site.
+     * Optional - Whether or not the field is included in search engine indexing and is including in keyword searches
+     * performed on the site. May not apply to every custom attribute field (e.g. attributes on Customer are
+     * not searchable).
      *
      * @param searchable Whether or not the field is available for search engine usage
      */

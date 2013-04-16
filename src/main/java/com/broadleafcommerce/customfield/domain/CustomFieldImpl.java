@@ -16,7 +16,7 @@
  * from Broadleaf Commerce, LLC.
  */
 
-package com.broadleafcommerce.openadmin.server.domain;
+package com.broadleafcommerce.customfield.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,7 +59,7 @@ public class CustomFieldImpl implements CustomField {
     @Column(name = "CUSTOM_FIELD_TARGET", nullable=false)
     @AdminPresentation(friendlyName = "CustomFieldImpl_Custom_Field_Target", order = 1, prominent = true, gridOrder = 2,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "com.broadleafcommerce.openadmin.server.service.type.CustomFieldTargetType")
+            broadleafEnumeration = "com.broadleafcommerce.customfield.service.type.CustomFieldTargetType")
     protected String customFieldTarget;
 
     @Column(name = "LABEL", nullable=false)
@@ -69,7 +69,7 @@ public class CustomFieldImpl implements CustomField {
     @Column(name = "CUSTOM_FIELD_TYPE", nullable=false)
     @AdminPresentation(friendlyName = "CustomFieldImpl_Custom_Field_Type", order = 3, prominent = true, gridOrder = 3,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "com.broadleafcommerce.openadmin.server.service.type.CustomFieldType")
+            broadleafEnumeration = "com.broadleafcommerce.customfield.service.type.CustomFieldType")
     protected String customFieldType;
 
     @Column(name = "SHOW_FIELD_ON_FORM")
@@ -84,9 +84,9 @@ public class CustomFieldImpl implements CustomField {
     @AdminPresentation(friendlyName = "CustomFieldImpl_Group_Name", order = 6)
     protected String groupName;
 
-    @Column(name = "GRID_ORDER")
-    @AdminPresentation(friendlyName = "CustomFieldImpl_Grid_Order", order = 7)
-    protected Integer gridOrder;
+    @Column(name = "FIELD_ORDER")
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Field_Order", order = 7)
+    protected Integer fieldOrder;
 
     @Column(name = "SEARCHABLE")
     @AdminPresentation(friendlyName = "CustomFieldImpl_Searchable", order = 8)
@@ -113,13 +113,13 @@ public class CustomFieldImpl implements CustomField {
     }
 
     @Override
-    public Integer getGridOrder() {
-        return gridOrder;
+    public Integer getFieldOrder() {
+        return fieldOrder;
     }
 
     @Override
-    public void setGridOrder(Integer gridOrder) {
-        this.gridOrder = gridOrder;
+    public void setFieldOrder(Integer groupOrder) {
+        this.fieldOrder = groupOrder;
     }
 
     @Override

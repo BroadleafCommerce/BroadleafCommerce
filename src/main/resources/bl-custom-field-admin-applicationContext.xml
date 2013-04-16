@@ -36,4 +36,12 @@
             </list>
         </property>
     </bean>
+
+    <bean id="blMetadataProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <ref bean="blCustomFieldMetadataProvider"/>
+            </list>
+        </property>
+    </bean>
 </beans>

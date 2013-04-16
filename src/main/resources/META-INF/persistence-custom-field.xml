@@ -23,7 +23,7 @@
              version="2.0">
 
     <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
-        <class>com.broadleafcommerce.openadmin.server.domain.CustomFieldImpl</class>
+        <class>com.broadleafcommerce.customfield.domain.CustomFieldImpl</class>
         <exclude-unlisted-classes/>
     </persistence-unit>
 
