@@ -21,9 +21,9 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class BroadleafOrderHistoryController extends AbstractAccountController {
 
@@ -46,28 +46,15 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
         return isAjaxRequest(request) ? getOrderDetailsView() : getOrderDetailsRedirectView();
     }
 
-    public static String getOrderHistoryView() {
+    public String getOrderHistoryView() {
         return orderHistoryView;
     }
 
-    public static void setOrderHistoryView(String orderHistoryView) {
-        BroadleafOrderHistoryController.orderHistoryView = orderHistoryView;
-    }
-
-    public static String getOrderDetailsView() {
+    public String getOrderDetailsView() {
         return orderDetailsView;
     }
 
-    public static void setOrderDetailsView(String orderDetailsView) {
-        BroadleafOrderHistoryController.orderDetailsView = orderDetailsView;
-    }
-
-    public static String getOrderDetailsRedirectView() {
+    public String getOrderDetailsRedirectView() {
         return orderDetailsRedirectView;
     }
-
-    public static void setOrderDetailsRedirectView(String orderDetailsRedirectView) {
-        BroadleafOrderHistoryController.orderDetailsRedirectView = orderDetailsRedirectView;
-    }
-
 }
