@@ -75,6 +75,7 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
                 metadata.getFieldType() == SupportedFieldType.EMAIL ||
                 metadata.getFieldType() == SupportedFieldType.FOREIGN_KEY ||
                 metadata.getFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY ||
+                metadata.getFieldType() == SupportedFieldType.STRING || 
                 metadata.getFieldType() == SupportedFieldType.ID) &&
                 (property == null ||
                 !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
@@ -144,6 +145,7 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
                         populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), Long.valueOf(populateValueRequest.getRequestedValue()));
                     }
                     break;
+                case STRING:
                 case EMAIL:
                     populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), populateValueRequest.getRequestedValue());
                     break;
@@ -360,6 +362,7 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
             default:
                 addSearchMappingRequest.getRequestedCtoConverter().addStringLikeMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
                 break;
+            case STRING:    
             case EMAIL:
                 addSearchMappingRequest.getRequestedCtoConverter().addStringLikeMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
                 break;
