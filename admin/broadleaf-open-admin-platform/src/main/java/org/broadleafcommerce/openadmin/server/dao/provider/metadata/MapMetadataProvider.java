@@ -56,19 +56,19 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
 
     private static final Log LOG = LogFactory.getLog(MapMetadataProvider.class);
 
-    protected boolean canHandleFieldForConfiguredMetadata(Field field) {
-        AdminPresentationMap annot = field.getAnnotation(AdminPresentationMap.class);
+    protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest) {
+        AdminPresentationMap annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationMap.class);
         return annot != null;
     }
 
-    protected boolean canHandleAnnotationOverride(Class<?> clazz) {
-        AdminPresentationOverrides myOverrides = clazz.getAnnotation(AdminPresentationOverrides.class);
+    protected boolean canHandleAnnotationOverride(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+        AdminPresentationOverrides myOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationOverrides.class);
         return myOverrides != null && !ArrayUtils.isEmpty(myOverrides.maps());
     }
 
     @Override
     public boolean addMetadata(AddMetadataRequest addMetadataRequest) {
-        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest.getRequestedField())) {
+        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest)) {
             return false;
         }
         AdminPresentationMap annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationMap.class);
@@ -82,7 +82,7 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
 
     @Override
     public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
-        if (!canHandleAnnotationOverride(overrideViaAnnotationRequest.getRequestedEntity())) {
+        if (!canHandleAnnotationOverride(overrideViaAnnotationRequest)) {
             return false;
         }
         Map<String, AdminPresentationMapOverride> presentationMapOverrides = new HashMap<String, AdminPresentationMapOverride>();
@@ -150,7 +150,7 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
 
     @Override
     public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
-        if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest.getRequestedField())) {
+        if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest)) {
             return false;
         }
         //do nothing but add the property without manipulation
@@ -258,6 +258,8 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
             override.setInspectType(map.operationTypes().inspectType());
             override.setShowIfProperty(map.showIfProperty());
             override.setCurrencyCodeField(map.currencyCodeField());
+            override.setForceFreeFormKeys(map.forceFreeFormKeys());
+            override.setManyToField(map.manyToField());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationMap annotation not found on field");
@@ -390,10 +392,8 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
             }
         }
         if (metadata.getValueClassName() == null) {
-            //ManyToMany manyToMany = field.getAnnotation(ManyToMany.class);
-            String manyToManyMappedBy = field.getManyToManyMappedBy();
             if (!StringUtils.isEmpty(field.getManyToManyTargetEntity())) {
-                metadata.setValueClassName(field.getManyToManyMappedBy());
+                metadata.setValueClassName(field.getManyToManyTargetEntity());
             }
         }
         if (metadata.getValueClassName() == null) {
@@ -443,25 +443,26 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
             metadata.setMapKeyOptionEntityValueField(map.getMapKeyOptionEntityValueField());
         }
 
-        if (ArrayUtils.isEmpty(metadata.getKeys()) && (StringUtils.isEmpty(metadata.getMapKeyOptionEntityClass()) || StringUtils.isEmpty(metadata.getMapKeyOptionEntityValueField()) || StringUtils.isEmpty(metadata.getMapKeyOptionEntityDisplayField()))) {
-            throw new IllegalArgumentException("Could not ascertain method for generating key options for the annotated map ("+field.getName()+"). Must specify either an array of AdminPresentationMapKey values for the keys property, or utilize the mapOptionKeyClass, mapOptionKeyDisplayField and mapOptionKeyValueField properties");
+        if ((map.getForceFreeFormKeys() == null || !map.getForceFreeFormKeys()) && ArrayUtils.isEmpty(metadata.getKeys()) && (StringUtils.isEmpty(metadata.getMapKeyOptionEntityClass()) || StringUtils.isEmpty(metadata.getMapKeyOptionEntityValueField()) || StringUtils.isEmpty(metadata.getMapKeyOptionEntityDisplayField()))) {
+            throw new IllegalArgumentException("Could not ascertain method for generating key options for the annotated map ("+field.getName()+"). Must specify either an array of AdminPresentationMapKey values for the keys property, or utilize the mapOptionKeyClass, mapOptionKeyDisplayField and mapOptionKeyValueField properties. If you wish to allow free form entry for key values, then set forceFreeFormKeys on AdminPresentationMap.");
         }
 
+        MapStructure mapStructure;
         if (serverMetadata != null) {
             ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
             foreignKey.setManyToField(parentObjectIdField);
             foreignKey.setForeignKeyClass(parentObjectClass);
             if (metadata.isSimpleValue()) {
-                SimpleValueMapStructure mapStructure = (SimpleValueMapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
+                mapStructure = (SimpleValueMapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
                 mapStructure.setKeyClassName(keyClassName);
                 mapStructure.setKeyPropertyName(keyPropertyName);
                 mapStructure.setKeyPropertyFriendlyName(keyPropertyFriendlyName);
                 mapStructure.setValueClassName(metadata.getValueClassName());
-                mapStructure.setValuePropertyName(valuePropertyName);
-                mapStructure.setValuePropertyFriendlyName(valuePropertyFriendlyName);
+                ((SimpleValueMapStructure) mapStructure).setValuePropertyName(valuePropertyName);
+                ((SimpleValueMapStructure) mapStructure).setValuePropertyFriendlyName(valuePropertyFriendlyName);
                 mapStructure.setMapProperty(prefix + field.getName());
             } else {
-                MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
+                mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
                 mapStructure.setKeyClassName(keyClassName);
                 mapStructure.setKeyPropertyName(keyPropertyName);
                 mapStructure.setKeyPropertyFriendlyName(keyPropertyFriendlyName);
@@ -472,13 +473,28 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
         } else {
             ForeignKey foreignKey = new ForeignKey(parentObjectIdField, parentObjectClass);
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
-            MapStructure mapStructure;
             if (metadata.isSimpleValue()) {
                 mapStructure = new SimpleValueMapStructure(keyClassName, keyPropertyName, keyPropertyFriendlyName, metadata.getValueClassName(), valuePropertyName, valuePropertyFriendlyName, prefix + field.getName());
             } else {
                 mapStructure = new MapStructure(keyClassName, keyPropertyName, keyPropertyFriendlyName, metadata.getValueClassName(), prefix + field.getName(), deleteEntityUponRemove);
             }
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, mapStructure);
+        }
+
+        if (!StringUtils.isEmpty(map.getManyToField())) {
+            mapStructure.setManyToField(map.getManyToField());
+        }
+        if (mapStructure.getManyToField() == null) {
+            //try to infer the value
+            if (field.getManyToManyMappedBy() != null) {
+                mapStructure.setManyToField(field.getManyToManyMappedBy());
+            }
+        }
+        if (mapStructure.getManyToField() == null) {
+            //try to infer the value
+            if (field.getOneToManyMappedBy() != null) {
+                mapStructure.setManyToField(field.getOneToManyMappedBy());
+            }
         }
 
         if (map.getExcluded() != null) {
@@ -528,6 +544,15 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
             metadata.setCurrencyCodeField(map.getCurrencyCodeField());
         }
 
+        if (map.getForceFreeFormKeys()!=null) {
+            metadata.setForceFreeFormKeys(map.getForceFreeFormKeys());
+        }
+
         attributes.put(field.getName(), metadata);
+    }
+
+    @Override
+    public int getOrder() {
+        return MetadataProvider.MAP;
     }
 }

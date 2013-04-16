@@ -20,17 +20,26 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
+import org.springframework.core.Ordered;
 
 /**
  * Classes implementing this interface are capable of handling persistence related events for fields whose values
  * are being requested or set for the admin. This includes any special translations or transformations required to get
  * from the string representation in the admin back to the field on a Hibernate entity - and the reverse. Providers are
  * typically added in response to new admin presentation annotation support that requires special persistence behavior.
+ * Note, <tt>PersistenceProviders</tt> are part of BasicPersistenceModule, and therefore relate to variations on persistence of
+ * basic fields. For more exotic field types (e.g. Maps), <tt>PersistenceModules</tt> are used (e.g. MapStructurePersistenceModule).
  * Implementers should generally extend <tt>PersistenceProviderAdapter</tt>.
  *
+ * @see org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule
  * @author Jeff Fischer
  */
-public interface PersistenceProvider {
+public interface PersistenceProvider extends Ordered {
+
+    //standard ordering constants for BLC providers
+    public static final int BASIC = 1000;
+    public static final int MAP_FIELD = 2000;
+    public static final int RULE = 3000;
 
     /**
      * Set the property value on the target object. Implementations should translate and set the requestedValue

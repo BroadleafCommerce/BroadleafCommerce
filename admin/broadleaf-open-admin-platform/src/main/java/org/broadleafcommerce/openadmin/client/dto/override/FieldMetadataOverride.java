@@ -693,6 +693,7 @@ public class FieldMetadataOverride {
     private String mapKeyOptionEntityDisplayField;
     private String mapKeyOptionEntityValueField;
     private String currencyCodeField;
+    private Boolean forceFreeFormKeys;
 
     public Boolean isDeleteEntityUponRemove() {
         return deleteEntityUponRemove;
@@ -805,5 +806,12 @@ public class FieldMetadataOverride {
     public void setLookupType(LookupType lookupType) {
         this.lookupType = lookupType;
     }
-    
+
+    public Boolean getForceFreeFormKeys() {
+        return forceFreeFormKeys;
+    }
+
+    public void setForceFreeFormKeys(Boolean forceFreeFormKeys) {
+        this.forceFreeFormKeys = forceFreeFormKeys;
+    }
 }

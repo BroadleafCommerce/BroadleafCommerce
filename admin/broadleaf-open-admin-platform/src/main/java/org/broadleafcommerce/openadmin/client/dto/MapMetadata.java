@@ -30,6 +30,7 @@ public class MapMetadata extends CollectionMetadata {
     private String mapKeyOptionEntityClass;
     private String mapKeyOptionEntityDisplayField;
     private String mapKeyOptionEntityValueField;
+    private Boolean forceFreeFormKeys;
 
     public String getValueClassName() {
         return valueClassName;
@@ -87,6 +88,14 @@ public class MapMetadata extends CollectionMetadata {
         this.mapKeyOptionEntityValueField = mapKeyOptionEntityValueField;
     }
 
+    public Boolean getForceFreeFormKeys() {
+        return forceFreeFormKeys;
+    }
+
+    public void setForceFreeFormKeys(Boolean forceFreeFormKeys) {
+        this.forceFreeFormKeys = forceFreeFormKeys;
+    }
+
     @Override
     public void accept(MetadataVisitor visitor) {
         visitor.visit(this);
@@ -101,6 +110,7 @@ public class MapMetadata extends CollectionMetadata {
         ((MapMetadata) metadata).mapKeyOptionEntityClass = mapKeyOptionEntityClass;
         ((MapMetadata) metadata).mapKeyOptionEntityDisplayField = mapKeyOptionEntityDisplayField;
         ((MapMetadata) metadata).mapKeyOptionEntityValueField = mapKeyOptionEntityValueField;
+        ((MapMetadata) metadata).forceFreeFormKeys = forceFreeFormKeys;
 
         return super.populate(metadata);
     }

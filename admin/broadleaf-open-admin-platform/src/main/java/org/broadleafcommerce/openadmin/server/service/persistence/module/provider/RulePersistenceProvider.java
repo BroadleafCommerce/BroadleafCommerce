@@ -60,16 +60,21 @@ import java.util.Map;
 @Scope("prototype")
 public class RulePersistenceProvider extends PersistenceProviderAdapter {
 
-    protected boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata) {
-        return metadata.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
-                metadata.getFieldType() == SupportedFieldType.RULE_SIMPLE;
+    protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest) {
+        return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
+                populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
+    }
+
+    protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest) {
+        return extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
+                extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
     }
 
     @Resource(name = "blRuleBuilderFieldServiceFactory")
     protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
 
     public boolean populateValue(PopulateValueRequest populateValueRequest) throws PersistenceException {
-        if (!canHandlePersistence(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty(), populateValueRequest.getMetadata())) {
+        if (!canHandlePersistence(populateValueRequest)) {
             return false;
         }
         try {
@@ -148,7 +153,7 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
 
     @Override
     public boolean extractValue(ExtractValueRequest extractValueRequest) throws PersistenceException {
-        if (!canHandlePersistence(extractValueRequest.getRequestedValue(), extractValueRequest.getRequestedProperty(), extractValueRequest.getMetadata())) {
+        if (!canHandleExtraction(extractValueRequest)) {
             return false;
         }
         String val = null;
@@ -399,5 +404,10 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
         }
 
         return mvel;
+    }
+
+    @Override
+    public int getOrder() {
+        return PersistenceProvider.RULE;
     }
 }

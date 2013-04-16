@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -35,9 +36,7 @@ import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.core.media.domain.Media;
@@ -49,15 +48,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -72,11 +62,20 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -234,15 +233,16 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
         sortProperty = "displayOrder",
         gridVisibleFields = { "name" })
     protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
-    
-    @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+
+    @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
+    @MapKey(name="name")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "productAttributesTitle",
+    @AdminPresentationMap(friendlyName = "productAttributesTitle",
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-        addType = AddMethodType.PERSIST)
-    protected List<ProductAttribute> productAttributes  = new ArrayList<ProductAttribute>();
+        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name"
+    )
+    protected Map<String, ProductAttribute> productAttributes = new HashMap<String, ProductAttribute>();
     
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductOptionImpl.class)
     @JoinTable(name = "BLC_PRODUCT_OPTION_XREF", 
@@ -663,15 +663,15 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
     }
 
     @Override
-    public List<ProductAttribute> getProductAttributes() {
+    public Map<String, ProductAttribute> getProductAttributes() {
         return productAttributes;
     }
 
     @Override
-    public void setProductAttributes(List<ProductAttribute> productAttributes) {
+    public void setProductAttributes(Map<String, ProductAttribute> productAttributes) {
         this.productAttributes = productAttributes;
     }
-    
+
     @Override
     public List<ProductOption> getProductOptions() {
         return productOptions;
@@ -704,26 +704,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
     @Override
     public void setDisplayTemplate(String displayTemplate) {
         this.displayTemplate = displayTemplate;
-    }
-    
-    @Override
-    public ProductAttribute getProductAttributeByName(String name) {
-        for (ProductAttribute attribute : getProductAttributes()) {
-            if (attribute.getName().equals(name)) {
-                return attribute;
-            }
-        }
-        return null;
-    }
-    
-    @Override
-    public Map<String, ProductAttribute> getMappedProductAttributes() {
-        return BLCMapUtils.keyedMap(getProductAttributes(), new TypedClosure<String, ProductAttribute>() {
-            @Override
-            public String getKey(ProductAttribute value) {
-                return value.getName();
-            }
-        });
     }
 
     @Override

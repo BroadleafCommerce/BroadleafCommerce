@@ -51,7 +51,10 @@ public @interface AdminPresentationMapField {
     /**
      * <p>Optional - if the Map structure is using generics, then the system can usually infer the concrete
      * type for the Map value. However, if not using generics for the Map, or if the value cannot be clearly
-     * inferred, you can explicitly set the Map structure value type here.</p>
+     * inferred, you can explicitly set the Map structure value type here. Map fields can only understand
+     * maps whose values are basic types (String, Long, Date, etc...). Complex types require additional
+     * support. Support is provided out-of-the-box for complex types <tt>ValueAssignable</tt>,
+     * <tt>Searchable</tt> and <tt>SimpleRule</tt>.</p>
      *
      * @return the concrete type for the Map structure value
      */

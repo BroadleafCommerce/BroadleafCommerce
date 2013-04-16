@@ -566,16 +566,16 @@ public interface Product extends Serializable {
     /**
      * Generic key-value pair of attributes to associate to this Product for maximum
      * extensibility.
-     * 
+     *
      * @return the attributes for this Product
      */
-    public List<ProductAttribute> getProductAttributes();
+    public Map<String, ProductAttribute> getProductAttributes();
 
     /**
      * Sets a generic list of key-value pairs for Product
      * @param productAttributes
      */
-    public void setProductAttributes(List<ProductAttribute> productAttributes);
+    public void setProductAttributes(Map<String, ProductAttribute> productAttributes);
 
     /**
      * Gets the promotional message for this Product. For instance, this could be a limited-time
@@ -665,19 +665,6 @@ public interface Product extends Serializable {
      * Builds the url by combining the url of the default category with the getUrlKey() of this product.
      */
     public String getGeneratedUrl();
-
-    /**
-     * Looks at all ProductAttributes for this product and returns the attribute that matches the given name
-     * 
-     * @param name the name of the attribute
-     * @return the matching ProductAttribute (null if no match)
-     */
-    public ProductAttribute getProductAttributeByName(String name);
-
-    /**
-     * @return a Map of all the product attributes on this product keyed by the attribute name
-     */
-    public Map<String, ProductAttribute> getMappedProductAttributes();
     
     /** 
      * Returns a list of the cross sale products for this product as well

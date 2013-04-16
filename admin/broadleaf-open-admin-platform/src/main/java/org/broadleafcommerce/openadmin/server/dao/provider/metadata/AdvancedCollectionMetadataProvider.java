@@ -23,7 +23,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 
 /**
@@ -31,15 +30,15 @@ import java.lang.reflect.ParameterizedType;
  */
 public class AdvancedCollectionMetadataProvider extends MetadataProviderAdapter {
 
-    protected boolean canHandleFieldForTypeMetadata(Field field) {
-        AdminPresentationMap map = field.getAnnotation(AdminPresentationMap.class);
-        AdminPresentationCollection collection = field.getAnnotation(AdminPresentationCollection.class);
+    protected boolean canHandleFieldForTypeMetadata(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+        AdminPresentationMap map = addMetadataFromFieldTypeRequest.getRequestedField().getAnnotation(AdminPresentationMap.class);
+        AdminPresentationCollection collection = addMetadataFromFieldTypeRequest.getRequestedField().getAnnotation(AdminPresentationCollection.class);
         return map != null || collection != null;
     }
 
     @Override
     public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
-        if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest.getRequestedField())) {
+        if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest)) {
             return false;
         }
         CollectionMetadata fieldMetadata = (CollectionMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute();

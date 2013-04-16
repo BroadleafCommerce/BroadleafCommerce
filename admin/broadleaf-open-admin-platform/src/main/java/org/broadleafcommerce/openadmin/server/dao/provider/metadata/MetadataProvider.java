@@ -21,6 +21,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
+import org.springframework.core.Ordered;
 
 /**
  * Classes implementing this interface are capable of manipulating metadata resulting from the inspection
@@ -29,7 +30,14 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.Over
  *
  * @author Jeff Fischer
  */
-public interface MetadataProvider {
+public interface MetadataProvider extends Ordered {
+
+    //standard ordering constants for BLC providers
+    public static final int BASIC = 1000;
+    public static final int COLLECTION = 2000;
+    public static final int ADORNED_TARGET = 3000;
+    public static final int MAP = 4000;
+    public static final int MAP_FIELD = 5000;
 
     /**
      * Contribute to metadata inspection for the <tt>Field</tt> instance in the request. Implementations should
@@ -75,4 +83,5 @@ public interface MetadataProvider {
      * @return whether or not this implementation adjusted metadata
      */
     boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest);
+
 }

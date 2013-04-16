@@ -21,6 +21,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
+import org.springframework.core.Ordered;
 
 /**
  * @author Jeff Fischer
@@ -45,5 +46,10 @@ public class PersistenceProviderAdapter extends AbstractPersistenceProvider {
     @Override
     public boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest) {
         return false;
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
     }
 }

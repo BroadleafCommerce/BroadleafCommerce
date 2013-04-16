@@ -16,15 +16,19 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.common.value.Searchable;
+import org.broadleafcommerce.common.value.ValueAssignable;
+import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Field;
 
 /**
  * @author Jeff Fischer
@@ -34,27 +38,92 @@ import org.springframework.stereotype.Component;
 public class MapFieldPersistenceProvider extends BasicPersistenceProvider {
 
     @Override
-    protected boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata) {
-        return property.getName().contains(FieldManager.MAPFIELDSEPARATOR);
+    protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest) {
+        return populateValueRequest.getProperty().getName().contains(FieldManager.MAPFIELDSEPARATOR);
+    }
+
+    @Override
+    protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest) {
+        return extractValueRequest.getRequestedProperty().getName().contains(FieldManager.MAPFIELDSEPARATOR);
     }
 
     @Override
     public boolean populateValue(PopulateValueRequest populateValueRequest) {
-        //handle the map value set itself
-        if (!super.populateValue(populateValueRequest)) {
-            return false;
+        try {
+            //handle some additional field settings (if applicable)
+            Class<?> valueType = null;
+            String valueClassName = populateValueRequest.getMetadata().getMapFieldValueClass();
+            if (valueClassName != null) {
+                valueType = Class.forName(valueClassName);
+            }
+            if (valueType == null) {
+                valueType = populateValueRequest.getReturnType();
+            }
+            if (valueType == null) {
+                throw new IllegalAccessException("Unable to determine the valueType for the rule field (" + populateValueRequest.getProperty().getName() + ")");
+            }
+            if (ValueAssignable.class.isAssignableFrom(valueType)) {
+                ValueAssignable assignableValue;
+                try {
+                    assignableValue = (ValueAssignable) populateValueRequest.getFieldManager().getFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName());
+                } catch (FieldNotAvailableException e) {
+                    throw new IllegalArgumentException(e);
+                }
+                String key = populateValueRequest.getProperty().getName().substring(populateValueRequest.getProperty().getName().indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(), populateValueRequest.getProperty().getName().length());
+                boolean persistValue = false;
+                if (assignableValue == null) {
+                    assignableValue = (ValueAssignable) valueType.newInstance();
+                    persistValue = true;
+                }
+                assignableValue.setName(key);
+                assignableValue.setValue(populateValueRequest.getProperty().getValue());
+                String fieldName = populateValueRequest.getProperty().getName().substring(0, populateValueRequest.getProperty().getName().indexOf(FieldManager.MAPFIELDSEPARATOR));
+                Field field = populateValueRequest.getFieldManager().getField(populateValueRequest.getRequestedInstance().getClass(), fieldName);
+                FieldInfo fieldInfo = buildFieldInfo(field);
+                String manyToField = null;
+                if (populateValueRequest.getMetadata().getManyToField() != null) {
+                    manyToField = populateValueRequest.getMetadata().getManyToField();
+                }
+                if (manyToField == null) {
+                    manyToField = fieldInfo.getManyToManyMappedBy();
+                }
+                if (manyToField == null) {
+                    manyToField = fieldInfo.getOneToManyMappedBy();
+                }
+                if (manyToField != null) {
+                    populateValueRequest.getFieldManager().setFieldValue(assignableValue, manyToField, populateValueRequest.getRequestedInstance());
+                }
+                if (Searchable.class.isAssignableFrom(valueType)) {
+                    ((Searchable) assignableValue).setSearchable(populateValueRequest.getMetadata().getSearchable());
+                }
+                if (persistValue) {
+                    populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(assignableValue);
+                    populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), assignableValue);
+                }
+            } else {
+                //handle the map value set itself
+                if (!super.populateValue(populateValueRequest)) {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            throw new PersistenceException(e);
         }
-        //handle some additional field settings (if applicable)
-        //TODO this need to be embellished to handle a complex map value
         return true;
     }
 
     @Override
     public boolean extractValue(ExtractValueRequest extractValueRequest) throws PersistenceException {
-        if (!super.extractValue(extractValueRequest)) {
-            return false;
+        if (extractValueRequest.getRequestedValue() != null && extractValueRequest.getRequestedValue() instanceof ValueAssignable) {
+            ValueAssignable assignableValue = (ValueAssignable) extractValueRequest.getRequestedValue();
+            String val = (String) assignableValue.getValue();
+            extractValueRequest.getRequestedProperty().setValue(val);
+            extractValueRequest.getRequestedProperty().setDisplayValue(extractValueRequest.getDisplayVal());
+        } else {
+            if (!super.extractValue(extractValueRequest)) {
+                return false;
+            }
         }
-        //TODO this need to be embellished to handle a complex map value
         return true;
     }
 
@@ -63,4 +132,8 @@ public class MapFieldPersistenceProvider extends BasicPersistenceProvider {
         return false;
     }
 
+    @Override
+    public int getOrder() {
+        return PersistenceProvider.MAP_FIELD;
+    }
 }

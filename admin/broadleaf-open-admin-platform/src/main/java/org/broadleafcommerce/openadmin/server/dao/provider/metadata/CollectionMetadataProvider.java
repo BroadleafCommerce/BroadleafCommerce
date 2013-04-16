@@ -55,19 +55,19 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
 
     private static final Log LOG = LogFactory.getLog(CollectionMetadataProvider.class);
 
-    protected boolean canHandleFieldForConfiguredMetadata(Field field) {
-        AdminPresentationCollection annot = field.getAnnotation(AdminPresentationCollection.class);
+    protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest) {
+        AdminPresentationCollection annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationCollection.class);
         return annot != null;
     }
 
-    protected boolean canHandleAnnotationOverride(Class<?> clazz) {
-        AdminPresentationOverrides myOverrides = clazz.getAnnotation(AdminPresentationOverrides.class);
+    protected boolean canHandleAnnotationOverride(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+        AdminPresentationOverrides myOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationOverrides.class);
         return myOverrides != null && !ArrayUtils.isEmpty(myOverrides.collections());
     }
 
     @Override
     public boolean addMetadata(AddMetadataRequest addMetadataRequest) {
-        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest.getRequestedField())) {
+        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest)) {
             return false;
         }
         AdminPresentationCollection annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationCollection
@@ -82,7 +82,7 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
 
     @Override
     public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
-        if (!canHandleAnnotationOverride(overrideViaAnnotationRequest.getRequestedEntity())) {
+        if (!canHandleAnnotationOverride(overrideViaAnnotationRequest)) {
             return false;
         }
         Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides = new HashMap<String, AdminPresentationCollectionOverride>();
@@ -389,5 +389,10 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
         }
 
         attributes.put(field.getName(), metadata);
+    }
+
+    @Override
+    public int getOrder() {
+        return MetadataProvider.COLLECTION;
     }
 }

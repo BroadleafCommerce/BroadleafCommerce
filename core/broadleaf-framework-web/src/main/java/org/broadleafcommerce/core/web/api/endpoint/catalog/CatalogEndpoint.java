@@ -377,9 +377,9 @@ public class CatalogEndpoint implements ApplicationContextAware {
         if (product != null) {
             ArrayList<ProductAttributeWrapper> out = new ArrayList<ProductAttributeWrapper>();
             if (product.getProductAttributes() != null) {
-                for (ProductAttribute attribute : product.getProductAttributes()) {
+                for (Map.Entry<String, ProductAttribute> entry : product.getProductAttributes().entrySet()) {
                     ProductAttributeWrapper wrapper = (ProductAttributeWrapper)context.getBean(ProductAttributeWrapper.class.getName());
-                    wrapper.wrap(attribute, request);
+                    wrapper.wrap(entry.getValue(), request);
                     out.add(wrapper);
                 }
             }
@@ -396,9 +396,9 @@ public class CatalogEndpoint implements ApplicationContextAware {
         if (sku != null) {
             ArrayList<SkuAttributeWrapper> out = new ArrayList<SkuAttributeWrapper>();
             if (sku.getSkuAttributes() != null) {
-                for (SkuAttribute attribute : sku.getSkuAttributes()) {
+                for (Map.Entry<String, SkuAttribute> entry : sku.getSkuAttributes().entrySet()) {
                     SkuAttributeWrapper wrapper = (SkuAttributeWrapper)context.getBean(SkuAttributeWrapper.class.getName());
-                    wrapper.wrap(attribute, request);
+                    wrapper.wrap(entry.getValue(), request);
                     out.add(wrapper);
                 }
             }

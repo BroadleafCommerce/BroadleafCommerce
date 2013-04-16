@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,6 +25,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.value.ValueAssignable;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -38,9 +41,6 @@ import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.hibernate.mapping.PersistentClass;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -98,15 +98,14 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
         } catch (FieldNotAvailableException e) {
             throw new IllegalArgumentException(e);
         }
-        Entity[] entities = new Entity[map.size()];
-        int j=0;
+        List<Entity> entities = new ArrayList<Entity>(map.size());
         for (Object key : map.keySet()) {
             if (key instanceof String && mapFieldKeys.contains(key)) {
                 continue;
             }
             Entity entityItem = new Entity();
             entityItem.setType(new String[]{record.getClass().getName()});
-            entities[j] = entityItem;
+            entities.add(entityItem);
             List<Property> props = new ArrayList<Property>();
             
             Property propertyItem = new Property();
@@ -144,10 +143,9 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             Property[] properties = new Property[props.size()];
             properties = props.toArray(properties);
             entityItem.setProperties(properties);
-            j++;
         }
         
-        return entities;
+        return entities.toArray(new Entity[entities.size()]);
     }
     
     @Override
@@ -280,6 +278,15 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             if (persistentClass != null) {
                 Serializable valueInstance = (Serializable) Class.forName(mapStructure.getValueClassName()).newInstance();
                 valueInstance = createPopulatedInstance(valueInstance, entity, valueMergedProperties, false);
+                if (valueInstance instanceof ValueAssignable) {
+                    //This is likely a OneToMany map (see productAttributes) whose map key is actually the name field from
+                    //the mapped entity.
+                    ((ValueAssignable) valueInstance).setName(entity.findProperty(mapStructure.getKeyPropertyName()).getValue());
+                }
+                if (mapStructure.getManyToField() != null) {
+                    //Need to fulfill a bi-directional association back to the parent entity
+                    fieldManager.setFieldValue(valueInstance, mapStructure.getManyToField(), instance);
+                }
                 valueInstance = persistenceManager.getDynamicEntityDao().persist(valueInstance);
                 /*
                  * TODO this map manipulation code currently assumes the key value is a String. This should be widened to accept

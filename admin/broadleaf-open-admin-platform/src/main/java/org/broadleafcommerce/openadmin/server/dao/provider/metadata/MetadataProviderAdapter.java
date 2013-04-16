@@ -21,6 +21,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
+import org.springframework.core.Ordered;
 
 /**
  * @author Jeff Fischer
@@ -50,5 +51,10 @@ public class MetadataProviderAdapter extends AbstractMetadataProvider {
     @Override
     public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
         return false;
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
     }
 }

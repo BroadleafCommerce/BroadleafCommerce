@@ -34,6 +34,8 @@ import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
+import org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -68,6 +70,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.MapKeyClass;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.MapKeyJoinColumn;
@@ -254,11 +257,11 @@ public class SkuImpl implements Sku {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     protected Product product;
 
-    @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
+    @MapKey(name="name")
     @BatchSize(size = 50)
-    protected List<SkuAttribute> skuAttributes = new ArrayList<SkuAttribute>();
+    protected Map<String, SkuAttribute> skuAttributes = new HashMap<String, SkuAttribute>();
 
     @ManyToMany(targetEntity = ProductOptionValueImpl.class)
     @JoinTable(name = "BLC_SKU_OPTION_VALUE_XREF", 
@@ -699,30 +702,6 @@ public class SkuImpl implements Sku {
     }
 
     @Override
-    public List<SkuAttribute> getSkuAttributes() {
-        return skuAttributes;
-    }
-
-    @Override
-    public SkuAttribute getSkuAttributeByName(String name) {
-        for (SkuAttribute attribute : getSkuAttributes()) {
-            if (attribute.getName().equals(name)) {
-                return attribute;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Map<String, SkuAttribute> getMappedSkuAttributes() {
-        Map<String, SkuAttribute> map = new HashMap<String, SkuAttribute>();
-        for (SkuAttribute attr : getSkuAttributes()) {
-            map.put(attr.getName(), attr);
-        }
-        return map;
-    }
-
-    @Override
     public List<ProductOptionValue> getProductOptionValues() {
         return productOptionValues;
     }
@@ -730,11 +709,6 @@ public class SkuImpl implements Sku {
     @Override
     public void setProductOptionValues(List<ProductOptionValue> productOptionValues) {
         this.productOptionValues = productOptionValues;
-    }
-
-    @Override
-    public void setSkuAttributes(List<SkuAttribute> skuAttributes) {
-        this.skuAttributes = skuAttributes;
     }
 
     @Override
@@ -813,6 +787,16 @@ public class SkuImpl implements Sku {
     @Override
     public void setFulfillmentType(FulfillmentType fulfillmentType) {
         this.fulfillmentType = fulfillmentType.getType();
+    }
+
+    @Override
+    public Map<String, SkuAttribute> getSkuAttributes() {
+        return skuAttributes;
+    }
+
+    @Override
+    public void setSkuAttributes(Map<String, SkuAttribute> skuAttributes) {
+        this.skuAttributes = skuAttributes;
     }
 
     @Override

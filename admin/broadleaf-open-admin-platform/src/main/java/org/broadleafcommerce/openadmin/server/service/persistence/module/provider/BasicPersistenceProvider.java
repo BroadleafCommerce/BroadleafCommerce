@@ -59,8 +59,14 @@ import javax.persistence.Embedded;
 @Scope("prototype")
 public class BasicPersistenceProvider extends PersistenceProviderAdapter {
 
-    protected boolean canHandlePersistence(Object instance, Property property, BasicFieldMetadata metadata) {
+    protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest) {
+        BasicFieldMetadata metadata = populateValueRequest.getMetadata();
+        Property property = populateValueRequest.getProperty();
         //don't handle map fields here - we'll get them in a separate provider
+        return detectBasicType(metadata, property);
+    }
+
+    protected boolean detectBasicType(BasicFieldMetadata metadata, Property property) {
         return (metadata.getFieldType() == SupportedFieldType.BOOLEAN ||
                 metadata.getFieldType() == SupportedFieldType.DATE ||
                 metadata.getFieldType() == SupportedFieldType.DECIMAL ||
@@ -74,13 +80,23 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
                 !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
     }
 
-    protected boolean canHandleSearchMapping(BasicFieldMetadata metadata) {
-        return canHandlePersistence(null, null, metadata);
+    protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest) {
+        BasicFieldMetadata metadata = extractValueRequest.getMetadata();
+        Property property = extractValueRequest.getRequestedProperty();
+        //don't handle map fields here - we'll get them in a separate provider
+        return detectBasicType(metadata, property);
+    }
+
+    protected boolean canHandleSearchMapping(AddSearchMappingRequest addSearchMappingRequest) {
+        BasicFieldMetadata metadata = (BasicFieldMetadata) addSearchMappingRequest.getMergedProperties().get(addSearchMappingRequest.getPropertyName());
+        Property property = null;
+        //don't handle map fields here - we'll get them in a separate provider
+        return detectBasicType(metadata, property);
     }
 
     @Override
     public boolean populateValue(PopulateValueRequest populateValueRequest) {
-        if (!canHandlePersistence(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty(), populateValueRequest.getMetadata())) {
+        if (!canHandlePersistence(populateValueRequest)) {
             return false;
         }
         try {
@@ -210,7 +226,7 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
 
     @Override
     public boolean extractValue(ExtractValueRequest extractValueRequest) throws PersistenceException {
-        if (!canHandlePersistence(extractValueRequest.getRequestedValue(), extractValueRequest.getRequestedProperty(), extractValueRequest.getMetadata())) {
+        if (!canHandleExtraction(extractValueRequest)) {
             return false;
         }
         try {
@@ -264,7 +280,7 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
 
     @Override
     public boolean addSearchMapping(AddSearchMappingRequest addSearchMappingRequest) {
-        if (!canHandleSearchMapping((BasicFieldMetadata) addSearchMappingRequest.getMergedProperties().get(addSearchMappingRequest.getPropertyName()))) {
+        if (!canHandleSearchMapping(addSearchMappingRequest)) {
             return false;
         }
         AssociationPath associationPath;
@@ -435,4 +451,8 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
         return true;
     }
 
+    @Override
+    public int getOrder() {
+        return PersistenceProvider.BASIC;
+    }
 }

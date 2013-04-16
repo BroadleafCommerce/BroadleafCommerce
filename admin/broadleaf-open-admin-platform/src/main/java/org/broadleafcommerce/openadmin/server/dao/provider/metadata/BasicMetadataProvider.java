@@ -64,20 +64,20 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
 
     private static final Log LOG = LogFactory.getLog(BasicMetadataProvider.class);
 
-    protected boolean canHandleFieldForConfiguredMetadata(Field field) {
-        AdminPresentation annot = field.getAnnotation(AdminPresentation.class);
+    protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest) {
+        AdminPresentation annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentation.class);
         return annot != null;
     }
 
-    protected boolean canHandleAnnotationOverride(Class<?> clazz) {
-        AdminPresentationOverrides myOverrides = clazz.getAnnotation(AdminPresentationOverrides.class);
+    protected boolean canHandleAnnotationOverride(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+        AdminPresentationOverrides myOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationOverrides.class);
         return myOverrides != null && (!ArrayUtils.isEmpty(myOverrides.value()) || !ArrayUtils.isEmpty(myOverrides
                 .toOneLookups()) || !ArrayUtils.isEmpty(myOverrides.dataDrivenEnums()));
     }
 
     @Override
     public boolean addMetadata(AddMetadataRequest addMetadataRequest) {
-        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest.getRequestedField())) {
+        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest)) {
             return false;
         }
         AdminPresentation annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentation.class);
@@ -91,7 +91,7 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
 
     @Override
     public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
-        if (!canHandleAnnotationOverride(overrideViaAnnotationRequest.getRequestedEntity())) {
+        if (!canHandleAnnotationOverride(overrideViaAnnotationRequest)) {
             return false;
         }
         Map<String, AdminPresentationOverride> presentationOverrides = new HashMap<String, AdminPresentationOverride>();
@@ -605,4 +605,8 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
         }
     }
 
+    @Override
+    public int getOrder() {
+        return MetadataProvider.BASIC;
+    }
 }

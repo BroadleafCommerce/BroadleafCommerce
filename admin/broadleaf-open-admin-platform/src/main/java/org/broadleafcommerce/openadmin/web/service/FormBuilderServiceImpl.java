@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.service;
 
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
@@ -59,8 +60,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Service;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,8 +68,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -675,27 +673,34 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
         ef.setEntityType(foreignKey.getForeignKeyClass());
 
-        // We will use a combo field to render the key choices
-        ComboField keyField = new ComboField();
-        keyField.withName("key")
-                .withFieldType("combo_field")
-                .withFriendlyName("Key");
+        Field keyField;
+        if (!mapMd.getForceFreeFormKeys()) {
+            // We will use a combo field to render the key choices
+            ComboField temp = new ComboField();
+            temp.withName("key")
+                    .withFieldType("combo_field")
+                    .withFriendlyName("Key");
+            if (mapMd.getKeys() != null) {
+                // The keys can be explicitly set in the annotation...
+                temp.setOptions(mapMd.getKeys());
+            } else {
+                // Or they could be based on a different entity
+                PersistencePackageRequest ppr = PersistencePackageRequest.standard()
+                        .withCeilingEntityClassname(mapMd.getMapKeyOptionEntityClass());
 
-        if (mapMd.getKeys() != null) {
-            // The keys can be explicitly set in the annotation...
-            keyField.setOptions(mapMd.getKeys());
-        } else {
-            // Or they could be based on a different entity
-            PersistencePackageRequest ppr = PersistencePackageRequest.standard()
-                    .withCeilingEntityClassname(mapMd.getMapKeyOptionEntityClass());
+                Entity[] rows = adminEntityService.getRecords(ppr);
 
-            Entity[] rows = adminEntityService.getRecords(ppr);
-
-            for (Entity entity : rows) {
-                String keyValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityValueField()).getValue();
-                String keyDisplayValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityDisplayField()).getValue();
-                keyField.putOption(keyValue, keyDisplayValue);
+                for (Entity entity : rows) {
+                    String keyValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityValueField()).getValue();
+                    String keyDisplayValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityDisplayField()).getValue();
+                    temp.putOption(keyValue, keyDisplayValue);
+                }
             }
+            keyField = temp;
+        } else {
+            keyField = new Field().withName("key")
+                                .withFieldType(SupportedFieldType.STRING.toString())
+                                .withFriendlyName("Key");
         }
         ef.addMapKeyField(keyField);
 

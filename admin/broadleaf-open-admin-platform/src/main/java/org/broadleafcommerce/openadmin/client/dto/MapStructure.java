@@ -35,6 +35,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
     private String valueClassName;
     private String mapProperty;
     private Boolean deleteValueEntity = Boolean.FALSE;
+    private String manyToField;
     
     public MapStructure() {
         //do nothing - support serialization requirements
@@ -103,6 +104,14 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         this.deleteValueEntity = deleteValueEntity;
     }
 
+    public String getManyToField() {
+        return manyToField;
+    }
+
+    public void setManyToField(String manyToField) {
+        this.manyToField = manyToField;
+    }
+
     public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
     }
@@ -116,6 +125,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         mapStructure.valueClassName = valueClassName;
         mapStructure.mapProperty = mapProperty;
         mapStructure.deleteValueEntity = deleteValueEntity;
+        mapStructure.manyToField = manyToField;
 
         return mapStructure;
     }
@@ -137,6 +147,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         if (mapProperty != null ? !mapProperty.equals(that.mapProperty) : that.mapProperty != null) return false;
         if (valueClassName != null ? !valueClassName.equals(that.valueClassName) : that.valueClassName != null)
             return false;
+        if (manyToField != null ? !manyToField.equals(that.manyToField) : that.manyToField != null) return false;
 
         return true;
     }
@@ -149,6 +160,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         result = 31 * result + (valueClassName != null ? valueClassName.hashCode() : 0);
         result = 31 * result + (mapProperty != null ? mapProperty.hashCode() : 0);
         result = 31 * result + (deleteValueEntity != null ? deleteValueEntity.hashCode() : 0);
+        result = 31 * result + (manyToField != null ? manyToField.hashCode() : 0);
         return result;
     }
 }

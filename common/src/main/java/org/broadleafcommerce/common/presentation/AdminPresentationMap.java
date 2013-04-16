@@ -235,6 +235,27 @@ public @interface AdminPresentationMap {
     AdminPresentationMapKey[] keys() default {};
 
     /**
+     * <p>Optional - only required when you want to allow the user to create his/her own
+     * key value, rather than select from a pre-defined list. The default is to
+     * force selection from a pre-defined list.</p>
+     *
+     * @return whether or not the user will create their own key values.
+     */
+    boolean forceFreeFormKeys() default false;
+
+    /**
+     * <p>Optional - only required with a complex value class that has a bi-directional
+     * association back to the parent class containing the map. This can generally
+     * be inferred by the system from a "mappedBy" attribute for maps of a OneToMany
+     * type. For map configurations without a mappedBy value, or if you wish to
+     * explicitly set a bi-directional association field on the complex value, use
+     * this property.</p>
+     *
+     * @return the bi-directional association field on the complex value, if any
+     */
+    String manyToField() default "";
+
+    /**
      * <p>Optional - only required when the user should select from a list of database
      * persisted values for keys when adding/editing this map. Either this value, or the
      * keys parameter should be user - not both</p>

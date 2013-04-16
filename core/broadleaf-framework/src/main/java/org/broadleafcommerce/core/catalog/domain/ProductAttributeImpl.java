@@ -68,7 +68,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @Index(name="PRODUCTATTRIBUTE_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Name", order=1, group = "ProductAttributeImpl_Description", prominent=true)
+    @AdminPresentation(excluded = true)
     protected String name;
 
     /** The value. */

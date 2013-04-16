@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -33,7 +34,9 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -45,6 +48,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -120,12 +124,14 @@ public class CustomerImpl implements Customer {
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",order=9, group = "CustomerImpl_Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Locale customerLocale;
     
-    @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
+    @MapKey(name="name")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Attributes", dataSourceName = "customerAttributeDS")
-    protected List<CustomerAttribute> customerAttributes  = new ArrayList<CustomerAttribute>();
+    @AdminPresentationMap(friendlyName = "CustomerAttributeImpl_Attribute_Name",
+        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name"
+    )
+    protected Map<String, CustomerAttribute> customerAttributes = new HashMap<String, CustomerAttribute>();
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
@@ -365,26 +371,14 @@ public class CustomerImpl implements Customer {
         this.customerLocale = customerLocale;
     }
 
-    @Override
-    public List<CustomerAttribute> getCustomerAttributes() {
+    public Map<String, CustomerAttribute> getCustomerAttributes() {
         return customerAttributes;
     }
-    
-    @Override
-    public CustomerAttribute getCustomerAttributeByName(String name) {
-        for (CustomerAttribute attribute : getCustomerAttributes()) {
-            if (attribute.getName().equals(name)) {
-                return attribute;
-            }
-        }
-        return null;
-    }
 
-    @Override
-    public void setCustomerAttributes(List<CustomerAttribute> customerAttributes) {
+    public void setCustomerAttributes(Map<String, CustomerAttribute> customerAttributes) {
         this.customerAttributes = customerAttributes;
     }
-    
+
     @Override
     public boolean isDeactivated() {
         if (deactivated == null) {

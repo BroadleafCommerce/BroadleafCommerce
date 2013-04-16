@@ -270,17 +270,17 @@ public interface Sku extends Serializable {
      * Denormalized set of key-value pairs to attach to a Sku. If you are looking for setting up
      * a {@link ProductOption} scenario (like colors, sizes, etc) see {@link getProductOptionValues()}
      * and {@link setProductOptionValues()}
-     * 
+     *
      * @return the attributes for this Sku
      */
-    public List<SkuAttribute> getSkuAttributes();
+    public Map<String, SkuAttribute> getSkuAttributes();
 
     /**
      * Sets the denormalized set of key-value pairs on a Sku
-     * 
+     *
      * @param skuAttributes
      */
-    public void setSkuAttributes(List<SkuAttribute> skuAttributes);
+    public void setSkuAttributes(Map<String, SkuAttribute> skuAttributes);
 
     /**
      * Gets the ProductOptionValues used to map to this Sku. For instance, this Sku could hold specific
@@ -431,18 +431,6 @@ public interface Sku extends Serializable {
      * @param excludedFulfillmentOptions
      */
     public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions);
-
-    /**
-     * Convenience method to return a given sku attribute by its name
-     * @param name
-     * @return the SkuAttribute
-     */
-    public SkuAttribute getSkuAttributeByName(String name);
-
-    /**
-     * @return a Map of all the sku attributes on this sku keyed by the attribute name
-     */
-    public Map<String, SkuAttribute> getMappedSkuAttributes();
 
     /**
      * Returns the type of inventory for this sku

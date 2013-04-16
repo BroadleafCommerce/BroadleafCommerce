@@ -56,24 +56,24 @@ public class AdornedTargetCollectionMetadataProvider extends AdvancedCollectionM
 
     private static final Log LOG = LogFactory.getLog(AdornedTargetCollectionMetadataProvider.class);
 
-    protected boolean canHandleFieldForConfiguredMetadata(Field field) {
-        AdminPresentationAdornedTargetCollection annot = field.getAnnotation(AdminPresentationAdornedTargetCollection.class);
+    protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest) {
+        AdminPresentationAdornedTargetCollection annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationAdornedTargetCollection.class);
         return annot != null;
     }
 
-    @Override
-    protected boolean canHandleFieldForTypeMetadata(Field field) {
-        return canHandleFieldForConfiguredMetadata(field);
+    protected boolean canHandleFieldForTypeMetadata(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+        AdminPresentationAdornedTargetCollection annot = addMetadataFromFieldTypeRequest.getRequestedField().getAnnotation(AdminPresentationAdornedTargetCollection.class);
+        return annot != null;
     }
 
-    protected boolean canHandleAnnotationOverride(Class<?> clazz) {
-        AdminPresentationOverrides myOverrides = clazz.getAnnotation(AdminPresentationOverrides.class);
+    protected boolean canHandleAnnotationOverride(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+        AdminPresentationOverrides myOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationOverrides.class);
         return myOverrides != null && !ArrayUtils.isEmpty(myOverrides.adornedTargetCollections());
     }
 
     @Override
     public boolean addMetadata(AddMetadataRequest addMetadataRequest) {
-        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest.getRequestedField())) {
+        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest)) {
             return false;
         }
         AdminPresentationAdornedTargetCollection annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationAdornedTargetCollection.class);
@@ -86,7 +86,7 @@ public class AdornedTargetCollectionMetadataProvider extends AdvancedCollectionM
 
     @Override
     public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
-        if (!canHandleAnnotationOverride(overrideViaAnnotationRequest.getRequestedEntity())) {
+        if (!canHandleAnnotationOverride(overrideViaAnnotationRequest)) {
             return false;
         }
         Map<String, AdminPresentationAdornedTargetCollectionOverride> presentationAdornedTargetCollectionOverrides = new HashMap<String, AdminPresentationAdornedTargetCollectionOverride>();
@@ -153,7 +153,7 @@ public class AdornedTargetCollectionMetadataProvider extends AdvancedCollectionM
 
     @Override
     public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
-        if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest.getRequestedField())) {
+        if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest)) {
             return false;
         }
         super.addMetadataFromFieldType(addMetadataFromFieldTypeRequest);
@@ -493,5 +493,10 @@ public class AdornedTargetCollectionMetadataProvider extends AdvancedCollectionM
         }
 
         attributes.put(field.getName(), metadata);
+    }
+
+    @Override
+    public int getOrder() {
+        return MetadataProvider.ADORNED_TARGET;
     }
 }

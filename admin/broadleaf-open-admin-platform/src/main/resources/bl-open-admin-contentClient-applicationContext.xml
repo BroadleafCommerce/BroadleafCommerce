@@ -81,7 +81,7 @@
         <property name="subject" value="${adminResetPassword.subject}"/>
     </bean>
 
-    <bean id="blMetadataProviders" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+    <bean id="blMetadataProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
                 <ref bean="blBasicMetadataProvider"/>
@@ -93,7 +93,7 @@
         </property>
     </bean>
 
-    <bean id="blPersistenceProviders" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+    <bean id="blPersistenceProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
                 <ref bean="blBasicPersistenceProvider"/>
