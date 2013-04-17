@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
+import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
@@ -43,16 +44,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-
+import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -481,7 +479,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
-                if (SupportedFieldType.ID.equals(fmd.getFieldType())) {
+                //check for ID type and also make sure the field we're looking at is not a "ToOne" association
+                if (SupportedFieldType.ID.equals(fmd.getFieldType()) && !p.getName().contains(".")) {
                     return p.getName();
                 }
             }
