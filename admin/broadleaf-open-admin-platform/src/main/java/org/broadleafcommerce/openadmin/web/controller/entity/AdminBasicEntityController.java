@@ -419,11 +419,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, criteriaForm);
+        ClassMetadata mainMetadata = service.getClassMetadata(ppr);
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
-        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
+        ppr = PersistencePackageRequest.fromMetadata(md);
         
         ppr.addFilterAndSortCriteria(getCriteria(requestParams));
         
@@ -493,10 +494,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, criteriaForm);
+        ClassMetadata mainMetadata = service.getClassMetadata(ppr);
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
+        ppr = getSectionPersistencePackageRequest(mainClassName);
         Entity entity = service.getRecord(ppr, id, mainMetadata);
 
         // Next, we must get the new list grid that represents this collection
@@ -961,11 +963,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
     protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, Entity entity, Property collectionProperty,
             CriteriaForm form, String sectionKey)
             throws ServiceException, ApplicationSecurityException {
-        FilterAndSortCriteria[] fascs = null;
-        if (form != null) {
-            fascs = form.getCriteria().toArray(new FilterAndSortCriteria[form.getCriteria().size()]);
-        }
-        DynamicResultSet drs = service.getRecordsForCollection(mainMetadata, entity, collectionProperty, fascs);
+        DynamicResultSet drs = service.getRecordsForCollection(mainMetadata, entity, collectionProperty, form);
 
         String idProperty = service.getIdProperty(mainMetadata);
         ListGrid listGrid = formService.buildCollectionListGrid(entity.findProperty(idProperty).getValue(), drs, 

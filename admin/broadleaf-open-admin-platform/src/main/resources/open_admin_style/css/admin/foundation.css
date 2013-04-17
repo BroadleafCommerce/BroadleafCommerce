@@ -628,8 +628,8 @@ ul.orbit-bullets li.active.has-thumb { background-position: 0 0; border-top: 2px
 .tabs.five-up dt, .tabs.five-up dd, .tabs.five-up li { width: 20%; }
 
 ul.tabs-content { display: block; margin: 0 0 20px; padding: 0; }
-ul.tabs-content > li { display: none; }
-ul.tabs-content > li.active { display: block; }
+ul.tabs-content > li { visibility: hidden; }
+ul.tabs-content > li.active { visibility: visible; list-style-type: none; }
 ul.tabs-content.contained { padding: 0; }
 ul.tabs-content.contained > li { border: solid 0 #e6e6e6; border-width: 0 1px 1px 1px; padding: 20px; }
 ul.tabs-content.contained.vertical > li { border-width: 1px 1px 1px 1px; }

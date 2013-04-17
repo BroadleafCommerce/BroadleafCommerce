@@ -71,6 +71,12 @@
                 $(this).width($(this).width());
             });
             return ui;
+        },
+        
+        initialize : function($container) {
+            if (BLCAdmin.listGrid.paginate) {
+                BLCAdmin.listGrid.paginate.initialize($container);
+            }
         }
     };
     
@@ -447,6 +453,10 @@ $(document).ready(function() {
     
     $('body').on('mouseout', 'td.row-action-selector', function(event) {
         $(this).find('ul.row-actions').hide();
+    });
+    
+    $('table.list-grid-table').each(function(index, element) {
+        BLCAdmin.listGrid.initialize($(element));
     });
     
 });

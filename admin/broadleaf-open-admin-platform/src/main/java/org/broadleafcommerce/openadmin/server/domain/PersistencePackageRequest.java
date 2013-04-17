@@ -285,7 +285,6 @@ public class PersistencePackageRequest {
     /* ************************** */
     /* STANDARD GETTERS / SETTERS */
     /* ************************** */
-    
 
     public ForeignKey getForeignKey() {
         return foreignKey;

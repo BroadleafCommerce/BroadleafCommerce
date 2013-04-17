@@ -7,7 +7,9 @@
 
 <table class="list-grid-table responsive twelve table-hover"
        th:classappend="${listGrid.listGridType != 'inline'}? 'table-hover'"
-       th:attr="data-listgridtype=${listGrid.listGridType},data-currenturl=${currentUrl}"
+       th:attr="data-listgridtype=${listGrid.listGridType},
+                data-currenturl=${currentUrl},
+                data-path=${listGrid.path}"
        blc_admin:component_id="${listGrid}">
     <thead>
         <tr>
@@ -54,18 +56,26 @@
             </th>
         </tr>
     </thead>
-    <tbody>
-    
+    <tbody th:attr="data-nextpage=${listGrid.hasNextPage}? @{${listGrid.path}(startIndex=${listGrid.nextPage})},
+                    data-prevpage=${listGrid.hasPrevPage}? @{${listGrid.path}(startIndex=${listGrid.prevPage})}">
+                    
         <tr th:if="${#lists.isEmpty(listGrid.records)}">
             <td th:colspan="${#lists.size(listGrid.headerFields) + 1}" class="list-grid-no-results">
                 (No records found)
             </td>
         </tr>
-    
+        
+        <tr th:if="${listGrid.hasPrevPage}" class="blank-row-top hidden list-grid-no-results">
+            <td th:colspan="${#lists.size(listGrid.headerFields) + 1}">
+            &nbsp;
+            </td>
+        </tr>
+        
         <tr th:each="record : ${listGrid.records}"
             th:unless="${#lists.isEmpty(listGrid.records)}"
             th:classappend="${listGrid.listGridType != 'main'}? 'clickable'"
-            th:attr="data-link=@{${record.path}}">
+            th:attr="data-link=@{${record.path}},
+                     data-pagestart=${listGrid.currentStartIndex}">
             
             <td th:each="headerField : ${record.listGrid.headerFields}"
                 th:class="${'td' + headerFieldStat.count}"
@@ -119,5 +129,50 @@
             <td data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
             
         </tr>
+        
+        <tr th:if="${listGrid.hasNextPage}" class="blank-row-bottom hidden">
+            <td th:colspan="${#lists.size(listGrid.headerFields) + 1}">
+            &nbsp;
+            </td>
+        </tr>
+        
     </tbody>
 </table>
+
+<span class="listgrid-table-footer" th:inline="text">
+<!--     Start Index : [[${listGrid.startIndex}]],  -->
+<!--     Total Records: [[${listGrid.totalRecords}]], -->
+<!--     Page Size: [[${listGrid.pageSize}]] -->
+<!--     <ul class="pagination-links"> -->
+<!--         <li> -->
+<!--             <a th:href="@{${listGrid.path}(startIndex=0)}" -->
+<!--                 class="tiny dark radius button" -->
+<!--                 th:classappend="${listGrid.currentPage == num}? 'active'" -->
+<!--                 th:text="'First'"></a> -->
+<!--         </li> -->
+<!--         <li> -->
+<!--             <a th:href="@{${listGrid.path}(startIndex=${(listGrid.pageSize * (listGrid.currentPage - 1))})}" -->
+<!--                 class="tiny dark radius button" -->
+<!--                 th:classappend="${listGrid.currentPage == num}? 'active'" -->
+<!--                 th:text="'Prev'"></a> -->
+<!--         </li> -->
+<!--         <li th:each="num : ${#numbers.sequence(0, listGrid.totalPages - 1)}"> -->
+<!--             <a th:href="@{${listGrid.path}(startIndex=${(num * listGrid.pageSize)})}"  -->
+<!--                 class="tiny dark radius button" -->
+<!--                 th:classappend="${listGrid.currentPage == num}? 'active'" -->
+<!--                 th:text="${num + 1}"></a> -->
+<!--         </li> -->
+<!--         <li> -->
+<!--             <a th:href="@{${listGrid.path}(startIndex=${(listGrid.pageSize * (listGrid.currentPage + 1))})}" -->
+<!--                 class="tiny dark radius button" -->
+<!--                 th:classappend="${listGrid.currentPage == num}? 'active'" -->
+<!--                 th:text="'Next'"></a> -->
+<!--         </li> -->
+<!--         <li> -->
+<!--             <a th:href="@{${listGrid.path}(startIndex=${(listGrid.pageSize * (listGrid.totalPages - 1))})}" -->
+<!--                 class="tiny dark radius button" -->
+<!--                 th:classappend="${listGrid.currentPage == num}? 'active'" -->
+<!--                 th:text="'Last'"></a> -->
+<!--         </li> -->
+<!--     </ul> -->
+</span>

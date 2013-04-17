@@ -30,13 +30,15 @@
                 });
                 
                 // Pull the appropriate parts from the result and format them
-                var displayDate = $.datepicker.formatDate(this.displayDateFormat, result);
-                var displayTime = $.datepicker.formatTime(this.displayTimeFormat, {
-                    hour : result.getHours(),
-                    minute : result.getMinutes()
-                });
-                
-                return displayDate + " " + displayTime;
+                if (result != null) {
+                    var displayDate = $.datepicker.formatDate(this.displayDateFormat, result);
+                    var displayTime = $.datepicker.formatTime(this.displayTimeFormat, {
+                        hour : result.getHours(),
+                        minute : result.getMinutes()
+                    });
+                    
+                    return displayDate + " " + displayTime;
+                }
             }
             
             return null;

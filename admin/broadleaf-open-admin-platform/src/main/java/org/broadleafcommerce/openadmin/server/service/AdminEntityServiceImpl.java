@@ -37,6 +37,7 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
+import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
@@ -222,10 +223,25 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Override
     public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
-            Property collectionProperty, FilterAndSortCriteria[] criteria)
+            Property collectionProperty, CriteriaForm criteriaForm)
             throws ServiceException, ApplicationSecurityException {
+        
+        FilterAndSortCriteria[] fascs = null;
+        int startIndex = 0;
+        if (criteriaForm != null) {
+            if (criteriaForm.getCriteria() != null) {
+                fascs = criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]);
+            }
+            
+            if (criteriaForm.getStartIndex() != null) {
+                startIndex = criteriaForm.getStartIndex();
+            }
+        }
+        
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata())
-                .withFilterAndSortCriteria(criteria);
+                .withStartIndex(startIndex)
+                .withFilterAndSortCriteria(fascs);
+        
         FilterAndSortCriteria fasc;
 
         FieldMetadata md = collectionProperty.getMetadata();
@@ -529,7 +545,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     protected CriteriaTransferObject getDefaultCto() {
         CriteriaTransferObject cto = new CriteriaTransferObject();
-        cto.setMaxResults(5);
+        cto.setMaxResults(50);
         return cto;
     }
 
