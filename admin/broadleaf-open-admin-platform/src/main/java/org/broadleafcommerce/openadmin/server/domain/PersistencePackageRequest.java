@@ -51,7 +51,8 @@ public class PersistencePackageRequest {
     protected MapStructure mapStructure;
     protected Entity entity;
     protected ForeignKey foreignKey;
-    protected Integer startIndex = 0;
+    protected Integer startIndex;
+    protected Integer maxIndex;
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -216,6 +217,11 @@ public class PersistencePackageRequest {
         setStartIndex(startIndex);
         return this;
     }
+    
+    public PersistencePackageRequest withMaxIndex(Integer maxIndex) {
+        setMaxIndex(maxIndex);
+        return this;
+    }
 
     /* *********** */
     /* ADD METHODS */
@@ -356,6 +362,14 @@ public class PersistencePackageRequest {
 
     public void setStartIndex(Integer startIndex) {
         this.startIndex = startIndex;
+    }
+
+    public Integer getMaxIndex() {
+        return maxIndex;
+    }
+
+    public void setMaxIndex(Integer maxIndex) {
+        this.maxIndex = maxIndex;
     }
     
 }

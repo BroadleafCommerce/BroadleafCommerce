@@ -300,7 +300,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 				}else{
 					mCSB_dragger.add(mCSB_container).css("top",0);
 				}
-				mCSB_scrollTools.css("display","none");
+				//mCSB_scrollTools.css("display","none");
 				mCSB_container.addClass("mCS_no_scrollbar");
 				$this.data({"bindEvent_mousewheel":false,"bindEvent_focusin":false});
 			}

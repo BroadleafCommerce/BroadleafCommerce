@@ -127,15 +127,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
 
-        PersistencePackageRequest ppr;
-        if (criteriaForm == null) {
-            ppr = getSectionPersistencePackageRequest(sectionClassName);
-        } else {
-            ppr = getSectionPersistencePackageRequest(sectionClassName, 
-                    criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]));
-        }
-
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, getCriteria(requestParams));
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, requestParams);
 
         ClassMetadata cmd = service.getClassMetadata(ppr);
         DynamicResultSet drs =  service.getRecords(ppr);
@@ -419,7 +411,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, criteriaForm);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, requestParams);
         ClassMetadata mainMetadata = service.getClassMetadata(ppr);
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
@@ -494,7 +486,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, criteriaForm);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, requestParams);
         ClassMetadata mainMetadata = service.getClassMetadata(ppr);
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         
@@ -502,15 +494,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Entity entity = service.getRecord(ppr, id, mainMetadata);
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty,
-                criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]), sectionKey);
- ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, getCriteria(requestParams), sectionKey);
-        
-
- ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, criteriaForm, sectionKey);
-
-
-
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, requestParams, sectionKey);
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
@@ -961,9 +945,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @throws ApplicationSecurityException
      */
     protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, Entity entity, Property collectionProperty,
-            CriteriaForm form, String sectionKey)
+            MultiValueMap<String, String> requestParams, String sectionKey)
             throws ServiceException, ApplicationSecurityException {
-        DynamicResultSet drs = service.getRecordsForCollection(mainMetadata, entity, collectionProperty, form);
+        DynamicResultSet drs = service.getRecordsForCollection(mainMetadata, entity, collectionProperty,
+                getCriteria(requestParams), getStartIndex(requestParams), getMaxIndex(requestParams));
 
         String idProperty = service.getIdProperty(mainMetadata);
         ListGrid listGrid = formService.buildCollectionListGrid(entity.findProperty(idProperty).getValue(), drs, 
@@ -1089,6 +1074,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @see {@link #getSortDirections(Map)}
      */
     protected FilterAndSortCriteria[] getCriteria(Map<String, List<String>> requestParams) {        
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+        
         List<FilterAndSortCriteria> result = new ArrayList<FilterAndSortCriteria>();
         for (Entry<String, List<String>> entry : requestParams.entrySet()) {
             if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER) && 
@@ -1125,6 +1114,36 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
         
         return result.toArray(new FilterAndSortCriteria[result.size()]);
+    }
+    
+    /**
+     * Obtains the requested start index parameter
+     * 
+     * @param requestParams
+     * @return
+     */
+    protected Integer getStartIndex(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+        
+        List<String> startIndex = requestParams.get(FilterAndSortCriteria.START_INDEX_PARAMETER);
+        return CollectionUtils.isEmpty(startIndex) ? null : Integer.parseInt(startIndex.get(0));
+    }
+    
+    /**
+     * Obtains the requested max index parameter
+     * 
+     * @param requestParams
+     * @return
+     */
+    protected Integer getMaxIndex(Map<String, List<String>> requestParams) {
+        if (requestParams == null || requestParams.isEmpty()) {
+            return null;
+        }
+        
+        List<String> maxIndex = requestParams.get(FilterAndSortCriteria.MAX_INDEX_PARAMETER);
+        return CollectionUtils.isEmpty(maxIndex) ? null : Integer.parseInt(maxIndex.get(0));
     }
 
     /**
@@ -1256,11 +1275,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param filterAndSortCriteria
      * @return the PersistencePacakageRequest
      */
-    protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, CriteriaForm form) {
-        FilterAndSortCriteria[] fascs = form.getCriteria().toArray(new FilterAndSortCriteria[form.getCriteria().size()]);
+    protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, 
+            MultiValueMap<String, String> requestParams) {
+        FilterAndSortCriteria[] fascs = getCriteria(requestParams);
         return getSectionPersistencePackageRequest(sectionClassName)
                 .withFilterAndSortCriteria(fascs)
-                .withStartIndex(form.getStartIndex());
+                .withStartIndex(getStartIndex(requestParams))
+                .withMaxIndex(getMaxIndex(requestParams));
     }
     
 }

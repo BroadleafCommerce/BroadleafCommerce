@@ -697,12 +697,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                         .withCeilingEntityClassname(mapMd.getMapKeyOptionEntityClass());
 
-            DynamicResultSet drs = adminEntityService.getRecords(ppr);
-
-            for (Entity entity : drs.getRecords()) {
-                String keyValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityValueField()).getValue();
-                String keyDisplayValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityDisplayField()).getValue();
-                keyField.putOption(keyValue, keyDisplayValue);
+                DynamicResultSet drs = adminEntityService.getRecords(ppr);
+    
+                for (Entity entity : drs.getRecords()) {
+                    String keyValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityValueField()).getValue();
+                    String keyDisplayValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityDisplayField()).getValue();
+                    temp.putOption(keyValue, keyDisplayValue);
+                }
             }
             keyField = temp;
         } else {

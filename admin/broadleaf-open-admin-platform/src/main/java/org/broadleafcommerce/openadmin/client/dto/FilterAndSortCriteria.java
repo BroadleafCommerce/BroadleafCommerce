@@ -63,6 +63,8 @@ public class FilterAndSortCriteria implements IsSerializable, Serializable {
 
     public static final String SORT_PROPERTY_PARAMETER = "sortProperty";
     public static final String SORT_DIRECTION_PARAMETER = "sortDirection";
+    public static final String START_INDEX_PARAMETER = "startIndex";
+    public static final String MAX_INDEX_PARAMETER = "maxIndex";
     
     public enum SortDirection {
         ASCENDING, DESCENDING

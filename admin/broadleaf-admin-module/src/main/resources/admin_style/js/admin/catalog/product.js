@@ -8,8 +8,7 @@
                 url : listGridUrl,
                 type : "GET"
             }, function(data) {
-                $container.find('table.list-grid-table').replaceWith($(data.trim()));
-                BLCAdmin.listGrid.updateToolbarRowActionButtons($container);
+                BLCAdmin.listGrid.replaceRelatedListGrid(data);
             });
         }
 

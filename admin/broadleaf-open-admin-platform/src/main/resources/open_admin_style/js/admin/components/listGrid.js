@@ -3,15 +3,28 @@
     // Add utility functions for list grids to the BLCAdmin object
     BLCAdmin.listGrid = {
         replaceRelatedListGrid : function(data) {
-            var $table = $(data.trim());
+            var $headerWrapper = $($(data.trim())[0]);
+            var $table = $headerWrapper.find('table');
             var tableId = $table.attr('id');
             var $oldTable = $('#' + tableId);
             
-            var $listGridContainer = $oldTable.closest('.listgrid-container');
+            var currentIndex = BLCAdmin.listGrid.paginate.getTopVisibleIndex($oldTable.find('tbody'));
             
-            $oldTable.find('tbody').replaceWith($table.find('tbody'));
+            var $oldBodyWrapper = $oldTable.closest('.listgrid-body-wrapper');
+            var $oldHeaderWrapper = $oldBodyWrapper.prev();
             
-            this.updateToolbarRowActionButtons($listGridContainer);
+            $oldHeaderWrapper.remove();
+            $oldBodyWrapper.before($headerWrapper);
+            $oldBodyWrapper.remove();
+            
+            var $listGridContainer = $headerWrapper.closest('.listgrid-container');
+            $listGridContainer.find('.listgrid-table-footer').text('');
+            
+            this.initialize($listGridContainer);
+            
+            BLCAdmin.listGrid.paginate.scrollToIndex($listGridContainer.find('tbody'), currentIndex);
+            $listGridContainer.find('.listgrid-body-wrapper').mCustomScrollbar('update');
+            
             this.showAlert($listGridContainer, 'Saved!', { alertType: 'save-alert', autoClose: 1000 });
         },
         
@@ -74,9 +87,19 @@
         },
         
         initialize : function($container) {
+            this.updateToolbarRowActionButtons($container);
+            
+            // Prepare the tabs in case a list grid inside of this container requires browser
+            // rendering for something like table cell widths
+            $('ul.tabs-content > li, ul.tabs-content > li.active').css('visibility', 'hidden').css('display', 'block');
+            
             if (BLCAdmin.listGrid.paginate) {
                 BLCAdmin.listGrid.paginate.initialize($container);
             }
+            
+            // Restore normal tab state
+            $('ul.tabs-content > li').css('visibility', 'visible').css('display', 'none');
+            $('ul.tabs-content > li.active').css('visibility', 'visible').css('display', 'block');
         }
     };
     
@@ -455,7 +478,7 @@ $(document).ready(function() {
         $(this).find('ul.row-actions').hide();
     });
     
-    $('table.list-grid-table').each(function(index, element) {
+    $('.listgrid-container').each(function(index, element) {
         BLCAdmin.listGrid.initialize($(element));
     });
     

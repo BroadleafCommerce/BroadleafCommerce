@@ -107,34 +107,6 @@ public class ListGrid {
         return sb.toString();
     }
     
-    public int getTotalPages() {
-        return new Double(Math.ceil(1.0 * totalRecords / pageSize)).intValue();
-    }
-    
-    public int getCurrentPage() {
-        return startIndex / pageSize;
-    }
-    
-    public int getCurrentStartIndex() {
-        return getCurrentPage() * pageSize;
-    }
-    
-    public boolean getHasPrevPage() {
-        return getCurrentPage() > 0;
-    }
-    
-    public int getPrevPage() {
-        return (getCurrentPage() - 1) * pageSize;
-    }
-    
-    public boolean getHasNextPage() {
-        return getCurrentPage() + 1 < getTotalPages();
-    }
-    
-    public int getNextPage() {
-        return (getCurrentPage() + 1) * pageSize;
-    }
-    
     public void addRowAction(ListGridAction action) {
         getRowActions().add(action);
     }

@@ -21,9 +21,9 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
-import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 import com.gwtincubator.security.exception.ApplicationSecurityException;
@@ -127,14 +127,16 @@ public interface AdminEntityService {
      * @param containingClassMetadata
      * @param containingEntity
      * @param collectionProperty
+     * @param fascs
+     * @param startIndex
+     * @param maxIndex
      * @return the DynamicResultSet
      * @throws ServiceException
      * @throws ApplicationSecurityException
      */
-    public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
-            Property collectionProperty, CriteriaForm criteriaForm)
+    public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity, 
+            Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex) 
             throws ServiceException, ApplicationSecurityException;
-
     /**
      * Returns all records for all subcollections of the specified request and its primary key
      * 

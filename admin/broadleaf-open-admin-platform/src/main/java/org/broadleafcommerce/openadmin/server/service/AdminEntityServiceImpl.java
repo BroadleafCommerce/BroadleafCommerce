@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
@@ -37,7 +36,6 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
-import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
@@ -45,13 +43,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import com.gwtincubator.security.exception.ApplicationSecurityException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -223,24 +224,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Override
     public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
-            Property collectionProperty, CriteriaForm criteriaForm)
+            Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex)
             throws ServiceException, ApplicationSecurityException {
         
-        FilterAndSortCriteria[] fascs = null;
-        int startIndex = 0;
-        if (criteriaForm != null) {
-            if (criteriaForm.getCriteria() != null) {
-                fascs = criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]);
-            }
-            
-            if (criteriaForm.getStartIndex() != null) {
-                startIndex = criteriaForm.getStartIndex();
-            }
-        }
-        
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata())
+                .withFilterAndSortCriteria(fascs)
                 .withStartIndex(startIndex)
-                .withFilterAndSortCriteria(fascs);
+                .withMaxIndex(maxIndex);
         
         FilterAndSortCriteria fasc;
 
@@ -272,7 +262,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         ClassMetadata cmd = getClassMetadata(ppr);
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof CollectionMetadata) {
-                DynamicResultSet drs = getRecordsForCollection(cmd, containingEntity, p, null);
+                DynamicResultSet drs = getRecordsForCollection(cmd, containingEntity, p, null, null, null);
                 map.put(p.getName(), drs);
             }
         }
@@ -538,11 +528,22 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             cto.addAll(request.getFilterAndSortCriteria());
         }
         
-        cto.setFirstResult(request.getStartIndex());
-
+        if (request.getStartIndex() == null) {
+            cto.setFirstResult(0);
+        } else {
+            cto.setFirstResult(request.getStartIndex());
+        }
+        
+        if (request.getMaxIndex() != null) {
+            int requestedMaxResults = request.getMaxIndex() - request.getStartIndex() + 1;
+            if (requestedMaxResults >= 0 && requestedMaxResults < cto.getMaxResults()) {
+                cto.setMaxResults(requestedMaxResults);
+            }
+        }
+        
         return service.fetch(pkg, cto);
     }
-
+    
     protected CriteriaTransferObject getDefaultCto() {
         CriteriaTransferObject cto = new CriteriaTransferObject();
         cto.setMaxResults(50);

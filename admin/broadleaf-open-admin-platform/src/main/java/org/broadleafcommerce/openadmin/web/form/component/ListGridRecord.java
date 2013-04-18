@@ -63,6 +63,10 @@ public class ListGridRecord {
     public void setId(String id) {
         this.id = id;
     }
+    
+    public int getIndex() {
+        return listGrid.getStartIndex() + listGrid.getRecords().indexOf(this);
+    }
 
     /**
      * Normally you should not be looping through these fields. In order to preserve proper field ordering, instead you

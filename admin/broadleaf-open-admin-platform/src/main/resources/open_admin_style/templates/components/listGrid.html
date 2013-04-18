@@ -4,88 +4,79 @@
 <!--    hideActionButtons - if set to true, will not render the sort/filter buttons -->
 </comment>
 
-
-<table class="list-grid-table responsive twelve table-hover"
-       th:classappend="${listGrid.listGridType != 'inline'}? 'table-hover'"
-       th:attr="data-listgridtype=${listGrid.listGridType},
-                data-currenturl=${currentUrl},
-                data-path=${listGrid.path}"
-       blc_admin:component_id="${listGrid}">
-    <thead>
-        <tr>
-            
-            <th th:each="headerField : ${listGrid.headerFields}"
-                th:class="${'th' + headerFieldStat.count}"
-                th:inline="text"
-                scope="col">
-
-                <div href="#" class="listgrid-headerBtn split dropdown">
-                    <div class="listgrid-title">
-                        <i class="filter-icon"></i>
-                        <i class="sort-icon"></i>
-                        &nbsp;[[#{${headerField.friendlyName}}]]
-                    </div>
-
-                    <span class="hide-for-small"></span>
-                    <ul th:include="${'components/partials/listGridHeaderFilter'}"
-                        class="no-hover"
-                        th:classappend="${headerFieldStat.first ? 'first' : ''}"
-                        th:with="fieldType=${headerField.fieldType},
-                                 fieldName=${headerField.name},
-                                 index=${headerFieldStat.index}">
-                    </ul>
-                </div>
-            </th>
-            
-            <th width="90">
-                <div class="listgrid-headerBtn split dropdown">
-                    <div class="listgrid-title">
-                        <i class="filter-icon"></i>
-                        <i class="sort-icon"></i>
-                        &nbsp;Id
-                    </div>
-                    
-                    <span class="hide-for-small"></span>
-                    <ul th:include="${'components/partials/listGridHeaderFilter'}"
-                        class="no-hover end"
-                        th:with="fieldType=${'id'},
-                                 fieldName=${listGrid.idProperty},
-                                 index=${#lists.size(listGrid.headerFields) - 1}">
-                    </ul>
-               </div>
-            </th>
-        </tr>
-    </thead>
-    <tbody th:attr="data-nextpage=${listGrid.hasNextPage}? @{${listGrid.path}(startIndex=${listGrid.nextPage})},
-                    data-prevpage=${listGrid.hasPrevPage}? @{${listGrid.path}(startIndex=${listGrid.prevPage})}">
-                    
-        <tr th:if="${#lists.isEmpty(listGrid.records)}">
-            <td th:colspan="${#lists.size(listGrid.headerFields) + 1}" class="list-grid-no-results">
-                (No records found)
-            </td>
-        </tr>
-        
-        <tr th:if="${listGrid.hasPrevPage}" class="blank-row-top hidden list-grid-no-results">
-            <td th:colspan="${#lists.size(listGrid.headerFields) + 1}">
-            &nbsp;
-            </td>
-        </tr>
-        
-        <tr th:each="record : ${listGrid.records}"
-            th:unless="${#lists.isEmpty(listGrid.records)}"
-            th:classappend="${listGrid.listGridType != 'main'}? 'clickable'"
-            th:attr="data-link=@{${record.path}},
-                     data-pagestart=${listGrid.currentStartIndex}">
-            
-            <td th:each="headerField : ${record.listGrid.headerFields}"
-                th:class="${'td' + headerFieldStat.count}"
-                th:switch="${listGrid.listGridType}"
-                th:with="field=${record.getField(headerField.name)}"
-                th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}">
+<div class="listgrid-header-wrapper">
+    <table class="list-grid-table responsive twelve table-hover"
+           th:classappend="${listGrid.listGridType != 'inline'}? 'table-hover'"
+           th:attr="data-listgridtype=${listGrid.listGridType},
+                    data-currenturl=${currentUrl},
+                    data-path=${listGrid.path}"
+           blc_admin:component_id="${listGrid}">
+        <thead>
+            <tr>
                 
-                <span th:class="${#strings.isEmpty(headerField.columnWidth) ? '' : 'table-width-container'}"
-                      th:style="${#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';'}">
+                <th th:each="headerField : ${listGrid.headerFields}"
+                    th:inline="text"
+                    th:style="${#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';'}"
+                    scope="col">
+    
+                    <div href="#" class="listgrid-headerBtn split dropdown">
+                        <div class="listgrid-title">
+                            <i class="filter-icon"></i>
+                            <i class="sort-icon"></i>
+                            [[#{${headerField.friendlyName}}]]
+                        </div>
+    
+                        <span class="hide-for-small"></span>
+                        <ul th:include="${'components/partials/listGridHeaderFilter'}"
+                            class="no-hover"
+                            th:classappend="${headerFieldStat.first ? 'first' : ''}"
+                            th:with="fieldType=${headerField.fieldType},
+                                     fieldName=${headerField.name},
+                                     index=${headerFieldStat.index}">
+                        </ul>
+                    </div>
+                </th>
                 
+                <th width="65">
+                    <div class="listgrid-headerBtn split dropdown">
+                        <div class="listgrid-title">
+                            <i class="filter-icon"></i>
+                            <i class="sort-icon"></i>
+                            &nbsp;Id
+                        </div>
+                        
+                        <span class="hide-for-small"></span>
+                        <ul th:include="${'components/partials/listGridHeaderFilter'}"
+                            class="no-hover end"
+                            th:with="fieldType=${'id'},
+                                     fieldName=${listGrid.idProperty},
+                                     index=${#lists.size(listGrid.headerFields) - 1}">
+                        </ul>
+                   </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody th:attr="data-recordranges=${listGrid.startIndex + '-' + (listGrid.startIndex + #lists.size(listGrid.records) - 1)},
+                        data-totalrecords=${listGrid.totalRecords},
+                        data-pagesize=${listGrid.pageSize}">
+                        
+            <tr th:if="${#lists.isEmpty(listGrid.records)}">
+                <td th:colspan="${#lists.size(listGrid.headerFields) + 1}" class="list-grid-no-results">
+                    (No records found)
+                </td>
+            </tr>
+            
+            <tr th:each="record : ${listGrid.records}"
+                th:unless="${#lists.isEmpty(listGrid.records)}"
+                th:classappend="${listGrid.listGridType != 'main'}? 'clickable'"
+                th:attr="data-link=@{${record.path}},
+                         data-index=${record.index}">
+                
+                <td th:each="headerField : ${record.listGrid.headerFields}"
+                    th:switch="${listGrid.listGridType}"
+                    th:with="field=${record.getField(headerField.name)}"
+                    th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}">
+                    
                     <span th:case="'main'" th:remove="tag">
                         <a th:if="${headerFieldStat.first}" 
                             th:href="@{${record.path}}"
@@ -99,10 +90,10 @@
                         </span>
                             
                         <span th:unless="${headerFieldStat.first or headerField.canLinkToExternalEntity}"
-                              th:text="${field.displayValue}" />
+                              th:text="${field.displayValue}" th:remove="tag"/>
                     </span>
                     
-                    <span th:case="*">                    
+                    <span th:case="*" th:remove="tag">
                         <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
                            <span th:remove="tag" th:text="${field.displayValue}" />
                            <a th:href="@{${listGrid.path + '/' + field.entityViewPath}}" class="modal-view">
@@ -121,58 +112,16 @@
                                                  or headerField.canLinkToExternalEntity}"
                               th:remove="tag" th:text="${field.displayValue}" />
                     </span>
-                    
-                </span>
+                        
+                </td>
                 
-            </td>
+                <td data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
+                
+            </tr>
             
-            <td data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
-            
-        </tr>
-        
-        <tr th:if="${listGrid.hasNextPage}" class="blank-row-bottom hidden">
-            <td th:colspan="${#lists.size(listGrid.headerFields) + 1}">
-            &nbsp;
-            </td>
-        </tr>
-        
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 
 <span class="listgrid-table-footer" th:inline="text">
-<!--     Start Index : [[${listGrid.startIndex}]],  -->
-<!--     Total Records: [[${listGrid.totalRecords}]], -->
-<!--     Page Size: [[${listGrid.pageSize}]] -->
-<!--     <ul class="pagination-links"> -->
-<!--         <li> -->
-<!--             <a th:href="@{${listGrid.path}(startIndex=0)}" -->
-<!--                 class="tiny dark radius button" -->
-<!--                 th:classappend="${listGrid.currentPage == num}? 'active'" -->
-<!--                 th:text="'First'"></a> -->
-<!--         </li> -->
-<!--         <li> -->
-<!--             <a th:href="@{${listGrid.path}(startIndex=${(listGrid.pageSize * (listGrid.currentPage - 1))})}" -->
-<!--                 class="tiny dark radius button" -->
-<!--                 th:classappend="${listGrid.currentPage == num}? 'active'" -->
-<!--                 th:text="'Prev'"></a> -->
-<!--         </li> -->
-<!--         <li th:each="num : ${#numbers.sequence(0, listGrid.totalPages - 1)}"> -->
-<!--             <a th:href="@{${listGrid.path}(startIndex=${(num * listGrid.pageSize)})}"  -->
-<!--                 class="tiny dark radius button" -->
-<!--                 th:classappend="${listGrid.currentPage == num}? 'active'" -->
-<!--                 th:text="${num + 1}"></a> -->
-<!--         </li> -->
-<!--         <li> -->
-<!--             <a th:href="@{${listGrid.path}(startIndex=${(listGrid.pageSize * (listGrid.currentPage + 1))})}" -->
-<!--                 class="tiny dark radius button" -->
-<!--                 th:classappend="${listGrid.currentPage == num}? 'active'" -->
-<!--                 th:text="'Next'"></a> -->
-<!--         </li> -->
-<!--         <li> -->
-<!--             <a th:href="@{${listGrid.path}(startIndex=${(listGrid.pageSize * (listGrid.totalPages - 1))})}" -->
-<!--                 class="tiny dark radius button" -->
-<!--                 th:classappend="${listGrid.currentPage == num}? 'active'" -->
-<!--                 th:text="'Last'"></a> -->
-<!--         </li> -->
-<!--     </ul> -->
 </span>
