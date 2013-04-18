@@ -143,7 +143,7 @@ public class SkuImpl implements Sku {
     @Index(name = "SKU_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order = 1000,
         group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
-        prominent = true, gridOrder = 1)
+        prominent = true, gridOrder = 1, columnWidth = "300px")
     protected String name;
 
     @Column(name = "DESCRIPTION")
