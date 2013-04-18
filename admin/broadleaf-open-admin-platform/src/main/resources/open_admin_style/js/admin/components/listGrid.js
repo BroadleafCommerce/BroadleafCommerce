@@ -399,10 +399,23 @@ $(document).ready(function() {
         var $inputs = $(this).closest('thead').find('div.filter-fields :input');
         var nonBlankInputs = [];
         $inputs.each(function(index, input) {
+            //since these filter inputs do not have 'real' input names in the DOM, give it here to make serialization easier
             $(input).attr('name', $(input).data('name'));
-            //toggle the filter for this field as active or not
+            
+            //convert the datepicker inputs to server-valid ones
+            if ($(input).hasClass('datepicker')) {
+                input = $('<input>', {
+                    type: 'hidden',
+                    name: $(input).attr('name'),
+                    value: BLCAdmin.dates.getServerDate($(input).val())
+                })[0];
+            }
+            
+            //toggle the filter icon for this field as active or not
             var filterIcon = $(input).parents('.listgrid-headerBtn').find('div i.filter-icon');
             filterIcon.toggleClass('icon-filter', !!$(input).val());
+            
+            //only submit fields that have a value set and are not a sort field. Sort fields will be added separately
             if ($(input).val() && !$(input).hasClass('sort-direction') && !$(input).hasClass('sort-property')) {
                 nonBlankInputs.push(input);
             }

@@ -346,7 +346,7 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
                 }
                 break;
             case DATE:
-                addSearchMappingRequest.getRequestedCtoConverter().addDateMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty);
+                addSearchMappingRequest.getRequestedCtoConverter().addDateMapping(addSearchMappingRequest.getCeilingEntityFullyQualifiedClassname(), addSearchMappingRequest.getPropertyName(), associationPath, convertedProperty, addSearchMappingRequest.getDataFormatProvider());
                 break;
             case DECIMAL:
                 addSearchMappingRequest.getRequestedCtoConverter().addDecimalMapping(addSearchMappingRequest

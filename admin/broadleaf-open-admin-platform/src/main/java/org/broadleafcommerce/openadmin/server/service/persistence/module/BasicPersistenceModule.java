@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -63,7 +56,14 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -86,6 +86,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
 
 /**
  * @author jfischer
@@ -586,7 +588,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     boolean response = persistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
                                     ceilingEntityFullyQualifiedClassname, mergedProperties, ctoConverter,
-                                    propertyId, getFieldManager()));
+                                    propertyId, getFieldManager(), this));
                     if (response) {
                         handled = true;
                     }
@@ -595,7 +597,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     defaultPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
                                     ceilingEntityFullyQualifiedClassname, mergedProperties, ctoConverter, propertyId,
-                                    getFieldManager()));
+                                    getFieldManager(), this));
                 }
             } else {
                 ctoConverter.addEmptyMapping(ceilingEntityFullyQualifiedClassname, propertyId);

@@ -77,8 +77,8 @@ public class FilterCriterionProviders {
     public static final FilterCriterionProvider BETWEEN_DATE = new SimpleFilterCriterionProvider(FilterDataStrategy.NONE, 2) {
         @Override
         public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-            if (directValues.length > 2) {
-                return Restrictions.between(targetPropertyName, directValues[0], directValues[2]);
+            if (directValues.length == 2) {
+                return Restrictions.between(targetPropertyName, directValues[0], directValues[1]);
             } else if (directValues[0]==null) {
                 return Restrictions.lt(targetPropertyName, directValues[1]);
             } else if (directValues[1]==null) {

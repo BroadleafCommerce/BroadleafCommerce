@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.server.cto;
 
+import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
+
 import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectConverter;
 
@@ -51,7 +53,7 @@ public interface BaseCtoConverter extends CriteriaTransferObjectConverter {
                              AssociationPath associationPath, String targetPropertyName);
 
     void addDateMapping(String mappingGroupName, String propertyId,
-                        AssociationPath associationPath, String targetPropertyName);
+                        AssociationPath associationPath, String targetPropertyName, DataFormatProvider dataFormatProvider);
 
     void addCollectionSizeEqMapping(String mappingGroupName, String propertyId,
                                     AssociationPath associationPath, String targetPropertyName);
@@ -59,5 +61,5 @@ public interface BaseCtoConverter extends CriteriaTransferObjectConverter {
     public FilterCriterionProviders getFilterCriterionProviders();
 
     public void setFilterCriterionProviders(FilterCriterionProviders filterCriterionProviders);
-
+    
 }

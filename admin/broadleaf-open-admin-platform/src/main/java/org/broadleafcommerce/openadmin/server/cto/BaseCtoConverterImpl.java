@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.cto;
 
+import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -97,22 +98,22 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
 
     public static class NullAwareDateConverter implements FilterValueConverter<Date> {
 
-        private final String dateFormatPattern;
+        private final SimpleDateFormat dateFormat;
 
         /**
          * Creates a new converter.
          *
          * @param dateFormatPattern Pattern describing the date format.
          */
-        public NullAwareDateConverter(String dateFormatPattern) {
-            this.dateFormatPattern = dateFormatPattern;
+        public NullAwareDateConverter(SimpleDateFormat dateFormat) {
+            this.dateFormat = dateFormat;
         }
 
         /**
          * @return Pattern describing the date format.
          */
-        public String getDateFormatPattern() {
-            return dateFormatPattern;
+        public SimpleDateFormat getDateFormatPattern() {
+            return dateFormat;
         }
 
         /**
@@ -120,17 +121,17 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
          */
         @Override
         public Date convert(String stringValue) {
-            return parseDate(stringValue, dateFormatPattern);
+            return parseDate(stringValue, dateFormat);
         }
 
-        public Date parseDate(String value, String dateFormatPattern) {
+        public Date parseDate(String value, SimpleDateFormat dateFormat) {
             if (value == null) {
                 return null;
             }
             try {
-                return new SimpleDateFormat(dateFormatPattern).parse(value);
+                return dateFormat.parse(value);
             } catch (ParseException e) {
-                throw new RuntimeException("Error while converting '" + value + "' into Date using pattern " + dateFormatPattern, e);
+                throw new RuntimeException("Error while converting '" + value + "' into Date using pattern " + dateFormat.toPattern(), e);
             }
         }
 
@@ -210,10 +211,10 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
     
     @Override
     public void addDateMapping(String mappingGroupName, String propertyId,
-                               AssociationPath associationPath, String targetPropertyName) {
+                               AssociationPath associationPath, String targetPropertyName, DataFormatProvider dataFormatProvider) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Date>(
                 propertyId, associationPath, targetPropertyName,
-                filterCriterionProviders.getBetweenDateProvider(associationPath, propertyId), new NullAwareDateConverter("yyyy-MM-dd'T'HH:mm:ss Z")));
+                filterCriterionProviders.getBetweenDateProvider(associationPath, propertyId), new NullAwareDateConverter(dataFormatProvider.getSimpleDateFormatter())));
     }
     
     @Override
@@ -224,10 +225,12 @@ public class BaseCtoConverterImpl extends NestedPropertyCriteriaBasedConverter i
                 filterCriterionProviders.getCollectionSizeEqualsProvider(associationPath, propertyId), FilterValueConverters.INTEGER));
     }
 
+    @Override
     public FilterCriterionProviders getFilterCriterionProviders() {
         return filterCriterionProviders;
     }
 
+    @Override
     public void setFilterCriterionProviders(FilterCriterionProviders filterCriterionProviders) {
         this.filterCriterionProviders = filterCriterionProviders;
     }
