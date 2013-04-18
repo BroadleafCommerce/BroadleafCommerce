@@ -57,7 +57,7 @@ public class CustomFieldImpl implements CustomField {
     protected Long id;
 
     @Column(name = "CUSTOM_FIELD_TARGET", nullable=false)
-    @AdminPresentation(friendlyName = "CustomFieldImpl_Custom_Field_Target", order = 1, prominent = true, gridOrder = 2,
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Custom_Field_Target", order = 1, prominent = true, gridOrder = 3,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "com.broadleafcommerce.customfield.service.type.CustomFieldTargetType")
     protected String customFieldTarget;
@@ -66,30 +66,34 @@ public class CustomFieldImpl implements CustomField {
     @AdminPresentation(friendlyName = "CustomFieldImpl_Label", order = 2, prominent = true, gridOrder = 1)
     protected String label;
 
+    @Column(name = "FRIENDLY_NAME", nullable=false)
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Friendly_name", order = 3, prominent = true, gridOrder = 2)
+    protected String friendlyName;
+
     @Column(name = "CUSTOM_FIELD_TYPE", nullable=false)
-    @AdminPresentation(friendlyName = "CustomFieldImpl_Custom_Field_Type", order = 3, prominent = true, gridOrder = 3,
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Custom_Field_Type", order = 4, prominent = true, gridOrder = 4,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "com.broadleafcommerce.customfield.service.type.CustomFieldType")
     protected String customFieldType;
 
     @Column(name = "SHOW_FIELD_ON_FORM")
-    @AdminPresentation(friendlyName = "CustomFieldImpl_Show_Field_On_Form", order = 4)
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Show_Field_On_Form", order = 5)
     protected Boolean showFieldOnForm = true;
 
     @Column(name = "SHOW_FIELD_IN_RULE")
-    @AdminPresentation(friendlyName = "CustomFieldImpl_Show_Field_In_Rule", order = 5)
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Show_Field_In_Rule", order = 6)
     protected Boolean showFieldInRuleBuilder = true;
 
     @Column(name = "GROUP_NAME")
-    @AdminPresentation(friendlyName = "CustomFieldImpl_Group_Name", order = 6)
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Group_Name", order = 7)
     protected String groupName;
 
     @Column(name = "FIELD_ORDER")
-    @AdminPresentation(friendlyName = "CustomFieldImpl_Field_Order", order = 7)
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Field_Order", order = 8)
     protected Integer fieldOrder;
 
     @Column(name = "SEARCHABLE")
-    @AdminPresentation(friendlyName = "CustomFieldImpl_Searchable", order = 8, excluded = true)
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Searchable", order = 9, excluded = true)
     protected Boolean searchable;
 
     @Override
@@ -150,6 +154,14 @@ public class CustomFieldImpl implements CustomField {
     @Override
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
     }
 
     @Override

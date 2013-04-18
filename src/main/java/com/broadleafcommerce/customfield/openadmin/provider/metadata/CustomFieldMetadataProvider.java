@@ -88,7 +88,7 @@ public class CustomFieldMetadataProvider extends MapFieldsMetadataProvider {
             override.setGroup(customField.getGroupName());
             override.setOrder(customField.getFieldOrder());
             override.setName(customField.getLabel());
-            override.setFriendlyName(customField.getLabel());
+            override.setFriendlyName(customField.getFriendlyName());
 
             FieldInfo myInfo = new FieldInfo();
             myInfo.setName(addMetadataRequest.getRequestedField().getName() + FieldManager.MAPFIELDSEPARATOR + customField.getLabel());

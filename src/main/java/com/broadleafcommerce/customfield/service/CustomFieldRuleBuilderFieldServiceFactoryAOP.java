@@ -64,7 +64,7 @@ public class CustomFieldRuleBuilderFieldServiceFactoryAOP {
                         fieldName.append(customField.getLabel());
 
                         tempList.add(new FieldData.Builder()
-                            .label(targetType.getFriendlyType() + " - " + customField.getLabel())
+                            .label(targetType.getFriendlyType() + " - " + customField.getFriendlyName())
                             .name(fieldName.toString())
                             .operators(CustomFieldInfo.CUSTOM_FIELD_RULE_OPERATORS.get(CustomFieldType.getInstance
                                     (customField.getCustomFieldType())))

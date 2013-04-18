@@ -101,20 +101,34 @@ public interface CustomField extends Serializable {
     void setId(Long id);
 
     /**
-     * The field label that will be for the target entity attribute map key. Will also be used to derive
-     * the label shown to the admin user for the field (using i18n).
+     * The field label that will be for the target entity attribute map key.
      *
      * @return the label for this field
      */
     String getLabel();
 
     /**
-     * The field label that will be for the target entity attribute map key. Will also be used to derive
-     * the label shown to the admin user for the field (using i18n).
+     * The field label that will be for the target entity attribute map key.
      *
      * @param label the label for this field
      */
     void setLabel(String label);
+
+    /**
+     * The name that will be displayed to the user in the target form and rule builder. Will also be used to derive
+     * the label shown to the admin user for the field (using i18n).
+     *
+     * @return The display name for the custom field
+     */
+    String getFriendlyName();
+
+    /**
+     * The name that will be displayed to the user in the target form and rule builder. Will also be used to derive
+     * the label shown to the admin user for the field (using i18n).
+     *
+     * @param friendlyName The display name for the custom field
+     */
+    void setFriendlyName(String friendlyName);
 
     /**
      * Whether or not this field is available to rule builders based on the target entity.
