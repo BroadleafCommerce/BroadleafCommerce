@@ -1,5 +1,8 @@
-<li><a class="sort down" href="#">Sort A - Z</a></li>
-<li><a class="sort up" href="#">Sort Z - A</a></li>
+<div th:if="${!listGrid.sortable}" th:remove="tag" >
+    <li><a class="sort down" href="#">Sort A - Z</a></li>
+    <li><a class="sort up" href="#">Sort Z - A</a></li>
+</div>
+
 <li class="divider"></li>
 <li>
     <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}">

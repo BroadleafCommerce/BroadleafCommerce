@@ -110,6 +110,16 @@ public class ListGrid {
         getToolbarActions().add(action);
     }
     
+    /**
+     * This grid is sortable if there is a reorder action defined in the toolbar. If records can be reordered, then the
+     * sort functionality doesn't make any sense.
+     * 
+     * @return
+     */
+    public boolean isSortable() {
+        return getToolbarActions().contains(DefaultListGridActions.REORDER);
+    }
+    
     public String getIdProperty() {
         return idProperty;
     }
