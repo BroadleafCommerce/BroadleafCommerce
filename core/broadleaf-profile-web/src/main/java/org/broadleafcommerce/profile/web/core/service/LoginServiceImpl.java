@@ -26,7 +26,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.Resource;
@@ -70,8 +69,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     protected WebRequest getWebRequest() {
-        BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
-        return new ServletWebRequest(requestContext.getRequest(), requestContext.getResponse());
+        return BroadleafRequestContext.getBroadleafRequestContext().getWebRequest();
     }
 
 }
