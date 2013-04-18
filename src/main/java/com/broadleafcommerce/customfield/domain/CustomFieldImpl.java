@@ -89,7 +89,7 @@ public class CustomFieldImpl implements CustomField {
     protected Integer fieldOrder;
 
     @Column(name = "SEARCHABLE")
-    @AdminPresentation(friendlyName = "CustomFieldImpl_Searchable", order = 8)
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Searchable", order = 8, excluded = true)
     protected Boolean searchable;
 
     @Override
