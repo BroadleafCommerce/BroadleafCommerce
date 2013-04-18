@@ -381,6 +381,7 @@ $(document).ready(function() {
     $('body').on('keypress', 'input.listgrid-criteria-input', function(event) {
         if (event.which == 13) {
             $(this).closest('.filter-fields').find('a.listgrid-filter').click();
+            return false;
         }
     });
     
@@ -402,13 +403,13 @@ $(document).ready(function() {
             //toggle the filter for this field as active or not
             var filterIcon = $(input).parents('.listgrid-headerBtn').find('div i.filter-icon');
             filterIcon.toggleClass('icon-filter', !!$(input).val());
-            if ($(input).val() && !$(input).hasClass('sort-type') && !$(input).hasClass('sort-property')) {
+            if ($(input).val() && !$(input).hasClass('sort-direction') && !$(input).hasClass('sort-property')) {
                 nonBlankInputs.push(input);
             }
         });
         
         //also grab the sorts and ensure those inputs are also serialized
-        var sorts = $(this).closest('thead').find('input.sort-type.active, input.sort-property.active');
+        var sorts = $(this).closest('thead').find('input.sort-direction.active, input.sort-property.active');
         nonBlankInputs = nonBlankInputs.concat($.makeArray(sorts));
         
         BLC.ajax({
