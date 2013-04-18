@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.web.service;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
@@ -60,7 +59,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import com.gwtincubator.security.exception.ApplicationSecurityException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +68,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -282,6 +284,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         listGrid.setListGridType(type);
         listGrid.setSectionKey(sectionKey);
         listGrid.setOrder(order);
+        listGrid.setIdProperty(idProperty);
         
         AdminSection section = navigationService.findAdminSectionByClass(className);
         if (section != null) {

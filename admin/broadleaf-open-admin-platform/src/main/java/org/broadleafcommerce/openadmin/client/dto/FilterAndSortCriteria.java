@@ -61,7 +61,10 @@ public class FilterAndSortCriteria implements IsSerializable, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected enum SortType {
+    public static final String SORT_PROPERTY_PARAMETER = "sortProperty";
+    public static final String SORT_DIRECTION_PARAMETER = "sortDirection";
+    
+    public enum SortDirection {
         ASCENDING, DESCENDING
     }
 
@@ -69,10 +72,10 @@ public class FilterAndSortCriteria implements IsSerializable, Serializable {
     protected List<String> filterValues = new ArrayList<String>();
     
     protected Boolean ignoreCase;
-    protected SortType sortType;
+    protected SortDirection sortDirection;
 
     /**
-     * @deprecated use sortType instead
+     * @deprecated use sortDirection instead
      */
     @Deprecated
     protected Boolean sortAscending;
@@ -169,26 +172,25 @@ public class FilterAndSortCriteria implements IsSerializable, Serializable {
      * the sorting functionality.
      */
     public Boolean getSortAscending() {
-        return (sortType == null) ? null : SortType.ASCENDING.equals(sortType);
+        return (sortDirection == null) ? null : SortDirection.ASCENDING.equals(sortDirection);
     }
 
-    @Deprecated
     public void setSortAscending(Boolean sortAscending) {
-        this.sortAscending = sortAscending;
+        this.sortDirection = (sortAscending) ? SortDirection.ASCENDING : SortDirection.DESCENDING;
     }
     
     /**
-     * @return the sortType
+     * @return the sortDirection
      */
-    public SortType getSortType() {
-        return sortType;
+    public SortDirection getSortDirection() {
+        return sortDirection;
     }
 
     /**
-     * @param sortType the sortType to set
+     * @param sortDirection the sortDirection to set
      */
-    public void setSortType(SortType sortType) {
-        this.sortType = sortType;
+    public void setSortDirection(SortDirection sortDirection) {
+        this.sortDirection = sortDirection;
     }
 
     /**

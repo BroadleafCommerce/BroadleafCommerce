@@ -322,16 +322,23 @@ $(document).ready(function() {
     $('body').on('click', 'a.sort', function() {
         //reset any of the currently active sorts on all the fields in the grid
         $(this).closest('thead').find('i.sort-icon').removeClass('listgrid-icon-down').removeClass('listgrid-icon-up');
-        $(this).closest('thead').find('input.property-sort').val('');
+        $(this).closest('thead').find('input.sort-direction').removeClass('active').val('');
+        $(this).closest('thead').find('input.sort-property').removeClass('active');
         
         //apply the sort to the current field
         var ascending = $(this).hasClass('down');
         var sortValue = (ascending) ? 'ASCENDING' : 'DESCENDING';
-        $(this).parents('ul').find('input.property-sort').val(sortValue);
+        var $sortType = $(this).parents('ul').find('input.sort-direction');
+        $sortType.val(sortValue);
+        
         //update the header icon for this field
         var icon = $(this).parents('.listgrid-headerBtn').find('div i.sort-icon');
         icon.toggleClass('listgrid-icon-up', ascending);
         icon.toggleClass('listgrid-icon-down', !ascending);
+        
+        //also mark these particular sorts as active so they will be serialized
+        $sortType.toggleClass('active', true);
+        $(this).parents('ul').find('input.sort-property').toggleClass('active', true);
 
         //submit the form just for this particular field since this is the only sort that changed
         $(this).closest('ul').find('div.filter-fields .listgrid-filter').click();
@@ -366,11 +373,15 @@ $(document).ready(function() {
             //toggle the filter for this field as active or not
             var filterIcon = $(input).parents('.listgrid-headerBtn').find('div i.filter-icon');
             filterIcon.toggleClass('icon-filter', !!$(input).val());
-            if ($(input).val()) {
+            if ($(input).val() && !$(input).hasClass('sort-type') && !$(input).hasClass('sort-property')) {
                 nonBlankInputs.push(input);
             }
         });
-                
+        
+        //also grab the sorts and ensure those inputs are also serialized
+        var sorts = $(this).closest('thead').find('input.sort-type.active, input.sort-property.active');
+        nonBlankInputs = nonBlankInputs.concat($.makeArray(sorts));
+        
         BLC.ajax({
             url: $(this).closest('.filter-fields').data('action'),
             type: "GET",

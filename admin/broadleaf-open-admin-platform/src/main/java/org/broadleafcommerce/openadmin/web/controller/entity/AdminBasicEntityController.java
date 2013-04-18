@@ -16,10 +16,13 @@
 
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.util.BLCMapUtils;
+import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
@@ -36,7 +39,6 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
-import org.broadleafcommerce.openadmin.web.form.component.CriteriaForm;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -120,11 +122,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
-            @RequestParam MultiValueMap<String, String> criteriaMap) throws Exception {
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
 
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, getCriteriaFromMap(criteriaMap));
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, getCriteria(requestParams));
 
         ClassMetadata cmd = service.getClassMetadata(ppr);
         Entity[] rows = service.getRecords(ppr);
@@ -405,7 +407,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
     public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable String collectionField,
-            @ModelAttribute CriteriaForm criteriaForm) throws Exception {
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
@@ -414,9 +416,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
         
-        if (criteriaForm != null) {
-            ppr.addFilterAndSortCriteria(criteriaForm.getCriteria());
-        }
+        ppr.addFilterAndSortCriteria(getCriteria(requestParams));
         
         if (md instanceof BasicFieldMetadata) {
             Entity[] rows = service.getRecords(ppr);
@@ -480,7 +480,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
     public String getCollectionFieldRecords(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable String id,
-            @PathVariable String collectionField, @ModelAttribute CriteriaForm criteriaForm) throws Exception {
+            @PathVariable String collectionField,
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
@@ -490,8 +491,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Entity entity = service.getRecord(ppr, id, mainMetadata);
 
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty,
-                criteriaForm.getCriteria().toArray(new FilterAndSortCriteria[criteriaForm.getCriteria().size()]), sectionKey);
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, getCriteria(requestParams), sectionKey);
         model.addAttribute("listGrid", listGrid);
 
         // We return the new list grid so that it can replace the currently visible one
@@ -1048,19 +1048,86 @@ public class AdminBasicEntityController extends AdminAbstractController {
     }
     
     /**
-     * Helper method to return an array of {@link FilterAndSortCriteria} based on a map of propertyName -> list of criteria
-     * value
-     * @param criteriaMap
-     * @return
+     * <p>Helper method to return an array of {@link FilterAndSortCriteria} based on a map of propertyName -> list of criteria
+     * value. This will also grab the sorts off of the request parameters, if any.</p>
+     * 
+     * <p>The multi-valued map allows users to specify multiple criteria values per property, as well as multiple sort
+     * properties and sort directions. For multiple sort properties and sort directions, these would usually come in as
+     * request parameters like:
+     * <br />
+     * <br />
+     * ....?sortProperty=defaultSku.name&sortProperty=manufacturer&sortDirection=ASCENDING&sortDirection=DESCENDING
+     * <br />
+     * <br />
+     * This would attach criteria such that defaultSku.name was sorted ascending, and manufacturer was sorted descending</p>
+     * 
+     * @param requestParams usually a {@link MultiValueMap} that has been bound by a controller to receive all of the
+     * request parameters that are not explicitly named
+     * @return the final array of {@link FilterAndSortCriteria} to pass to the fetch
+     * 
+     * @see {@link #getSortPropertyNames(Map)}
+     * @see {@link #getSortDirections(Map)}
      */
-    protected FilterAndSortCriteria[] getCriteriaFromMap(Map<String, List<String>> criteriaMap) {
+    protected FilterAndSortCriteria[] getCriteria(Map<String, List<String>> requestParams) {        
         List<FilterAndSortCriteria> result = new ArrayList<FilterAndSortCriteria>();
-        for (Entry<String, List<String>> entry : criteriaMap.entrySet()) {
-            FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), entry.getValue());
-            result.add(fasCriteria);
+        for (Entry<String, List<String>> entry : requestParams.entrySet()) {
+            if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER) && 
+                    !entry.getKey().equals(FilterAndSortCriteria.SORT_DIRECTION_PARAMETER)) {
+                FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), entry.getValue());
+                result.add(fasCriteria);
+            }
+        }
+
+        List<String> sortProperties = getSortPropertyNames(requestParams);
+        List<String> sortDirections = getSortDirections(requestParams);
+        if (CollectionUtils.isNotEmpty(sortProperties)) {
+            //set up a map to determine if there is already some criteria set for the sort property
+            Map<String, FilterAndSortCriteria> fasMap = BLCMapUtils.keyedMap(result, new TypedClosure<String, FilterAndSortCriteria>() {
+    
+                @Override
+                public String getKey(FilterAndSortCriteria value) {
+                    return value.getPropertyId();
+                }
+            });
+            for (int i = 0; i < sortProperties.size(); i++) {
+                boolean sortAscending = FilterAndSortCriteria.SortDirection.ASCENDING.toString().equals(sortDirections.get(i));
+                FilterAndSortCriteria propertyCriteria = fasMap.get(sortProperties.get(i));
+                //If there is already criteria for this property, attach the sort to that. Otherwise, create some new
+                //FilterAndSortCriteria for the sort
+                if (propertyCriteria != null) {
+                    propertyCriteria.setSortAscending(sortAscending);
+                } else {
+                    FilterAndSortCriteria fasc = new FilterAndSortCriteria(sortProperties.get(i));
+                    fasc.setSortAscending(sortAscending);
+                    result.add(fasc);
+                }
+            }
         }
         
         return result.toArray(new FilterAndSortCriteria[result.size()]);
+    }
+
+    /**
+     * Obtains the list of sort directions from the bound request parameters. Note that these should appear in the same
+     * relative order as {@link #getSortPropertyNames(Map)}
+     * 
+     * @param requestParams
+     * @return
+     */
+    protected List<String> getSortDirections(Map<String, List<String>> requestParams) {
+        List<String> sortTypes = requestParams.get(FilterAndSortCriteria.SORT_DIRECTION_PARAMETER);
+        return sortTypes;
+    }
+    
+    /**
+     * Obtains the list of property names to sort on from the bound request parameters. Note that these should appear in the
+     * same relative order as {@link #getSortDirections(Map)}.
+     * 
+     * @param requestParams
+     * @return
+     */
+    protected List<String> getSortPropertyNames(Map<String, List<String>> requestParams) {
+        return requestParams.get(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER);
     }
 
     /**

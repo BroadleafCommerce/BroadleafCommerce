@@ -25,24 +25,12 @@
                     </div>
 
                     <span class="hide-for-small"></span>
-                    <ul class="no-hover"
-                        th:classappend="${headerFieldStat.first ? 'first' : ''}">
-                        <li><a class="sort down" href="#">Sort A - Z</a></li>
-                        <li><a class="sort up" href="#">Sort Z - A</a></li>
-                        <li class="divider"></li>
-                        <li>                                  
-                            <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}">
-                                <input type="hidden" class="property-sort" th:attr="data-name=${'criteria[' + headerFieldStat.index + '].sortType'}" />
-                                <label>Filter:</label>
-                                <div class="listgrid-criteria" th:attr="data-field-index=${headerFieldStat.index}">
-                                    <div class="listgrid-criteria-container">
-                                        <div th:remove="element" 
-                                        th:substituteby="${'fields/filter/' + #strings.toLowerCase(headerField.fieldType)}" />
-                                    </div>
-                                </div>
-                                <a href="#" class="listgrid-filter button small dark radius">Filter</a>
-                            </div>
-                        </li>
+                    <ul th:include="${'components/partials/listGridHeaderFilter'}"
+                        class="no-hover"
+                        th:classappend="${headerFieldStat.first ? 'first' : ''}"
+                        th:with="fieldType=${headerField.fieldType},
+                                 fieldName=${headerField.name},
+                                 index=${headerFieldStat.index}">
                     </ul>
                 </div>
             </th>
@@ -56,28 +44,14 @@
                     </div>
                     
                     <span class="hide-for-small"></span>
-                    <ul class="no-hover end">
-                        <li><a class="sort down" href="#">Sort A - Z</a></li>
-                        <li><a class="sort up" href="#">Sort Z - A</a></li>
-                        <li class="divider"></li>
-                        <li>                                  
-                            <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}">
-                                <input type="hidden" class="property-sort" th:attr="data-name=${'criteria[' + #lists.size(listGrid.headerFields) + '].sortType'}" />
-                                <label>Filter:</label>
-                                <div class="listgrid-criteria" th:attr="data-field-index=${#lists.size(listGrid.headerFields)}">
-                                    <div class="listgrid-criteria-container">
-                                        <div th:remove="element" 
-                                        th:substituteby="${'fields/filter/id'}" />
-                                    </div>
-                                </div>
-                                <a href="#" class="listgrid-filter button small dark radius">Filter</a>
-                            </div>
-                        </li>
+                    <ul th:include="${'components/partials/listGridHeaderFilter'}"
+                        class="no-hover end"
+                        th:with="fieldType=${'id'},
+                                 fieldName=${listGrid.idProperty},
+                                 index=${#lists.size(listGrid.headerFields) - 1}">
                     </ul>
-                    
                </div>
             </th>
-            
         </tr>
     </thead>
     <tbody>

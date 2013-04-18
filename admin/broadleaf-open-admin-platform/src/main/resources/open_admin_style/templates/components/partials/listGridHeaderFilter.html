@@ -1,0 +1,17 @@
+<li><a class="sort down" href="#">Sort A - Z</a></li>
+<li><a class="sort up" href="#">Sort Z - A</a></li>
+<li class="divider"></li>
+<li>
+    <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}">
+        <input type="hidden" class="sort-property" data-name="sortProperty" th:value="${fieldName}" />
+        <input type="hidden" class="sort-direction" data-name="sortDirection" />
+        <label>Filter:</label>
+        <div class="listgrid-criteria" th:attr="data-field-index=${index}">
+            <div class="listgrid-criteria-container">
+                <div th:remove="element"
+                th:substituteby="${'fields/filter/' + #strings.toLowerCase(fieldType)}" />
+            </div>
+        </div>
+        <a href="#" class="listgrid-filter button small dark radius">Filter</a>
+    </div>
+</li>
