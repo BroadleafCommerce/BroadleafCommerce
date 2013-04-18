@@ -21,6 +21,7 @@ import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.content.dao.ContentDao;
 import org.broadleafcommerce.core.content.dao.ContentDetailsDao;
@@ -281,6 +282,7 @@ public class ContentServiceImpl implements ContentService {
         Serializable exp = (Serializable)EXPRESSION_CACHE.get(expression);
         if (exp == null) {
             ParserContext context = new ParserContext();
+            context.addImport("MvelHelper", MvelHelper.class);
             exp = MVEL.compileExpression(expression.toString(), context);
         }
         EXPRESSION_CACHE.put(expression, exp);

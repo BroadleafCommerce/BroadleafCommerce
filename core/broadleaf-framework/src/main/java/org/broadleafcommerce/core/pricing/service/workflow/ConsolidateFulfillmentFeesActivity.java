@@ -16,16 +16,9 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -39,6 +32,13 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -108,6 +108,7 @@ public class ConsolidateFulfillmentFeesActivity extends BaseActivity {
             if (exp == null) {
                 ParserContext mvelContext = new ParserContext();
                 mvelContext.addImport("MVEL", MVEL.class);
+                mvelContext.addImport("MvelHelper", MvelHelper.class);
                 exp = MVEL.compileExpression(feeExpression, mvelContext);
             
                 EXPRESSION_CACHE.put(feeExpression, exp);

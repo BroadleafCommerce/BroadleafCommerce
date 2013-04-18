@@ -16,13 +16,14 @@
 
 package org.broadleafcommerce.openadmin.web.rulebuilder;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -430,14 +431,14 @@ public class DataDTOToMVELTranslator {
         if (isMapField) {
             switch(type) {
                 case BOOLEAN:
-                    response.append("new java.lang.Boolean(");
+                    response.append("MvelHelper.convertField(\"BOOLEAN\",");
                     response.append(entityKey);
                     response.append(".");
                     response.append(convertedField);
                     response.append(")");
                     break;
                 case INTEGER:
-                    response.append("new java.lang.Integer(");
+                    response.append("MvelHelper.convertField(\"INTEGER\",");
                     response.append(entityKey);
                     response.append(".");
                     response.append(convertedField);
@@ -445,14 +446,14 @@ public class DataDTOToMVELTranslator {
                     break;
                 case DECIMAL:
                 case MONEY:
-                    response.append("new java.math.BigDecimal(");
+                    response.append("MvelHelper.convertField(\"DECIMAL\",");
                     response.append(entityKey);
                     response.append(".");
                     response.append(convertedField);
                     response.append(")");
                     break;
                 case DATE:
-                    response.append("new java.text.SimpleDateFormat(\"yyyy.MM.dd HH:mm:ss Z\").parse(");
+                    response.append("MvelHelper.convertField(\"DATE\",");
                     response.append(entityKey);
                     response.append(".");
                     response.append(convertedField);
@@ -460,7 +461,7 @@ public class DataDTOToMVELTranslator {
                     break;
                 case STRING:
                     if (ignoreCase) {
-                        response.append("MVEL.eval(\"toUpperCase()\",");
+                        response.append("MvelHelper.toUpperCase(");
                     }
                     response.append(entityKey);
                     response.append(".");
@@ -497,7 +498,7 @@ public class DataDTOToMVELTranslator {
                     break;
                 case STRING:
                     if (ignoreCase) {
-                        response.append("MVEL.eval(\"toUpperCase()\",");
+                        response.append("MvelHelper.toUpperCase(");
                     }
                     response.append(entityKey);
                     response.append(".");
@@ -531,7 +532,7 @@ public class DataDTOToMVELTranslator {
                     break;
                 case STRING:
                     if (ignoreCase) {
-                        response.append("MVEL.eval(\"toUpperCase()\",");
+                        response.append("MvelHelper.toUpperCase(");
                     }
                     response.append(entityKey);
                     response.append(".");
@@ -566,7 +567,7 @@ public class DataDTOToMVELTranslator {
                         if (secondaryType != null && secondaryType.toString().equals(
                                 SupportedFieldType.STRING.toString())) {
                             if (ignoreCase) {
-                                response.append("MVEL.eval(\"toUpperCase()\",");
+                                response.append("MvelHelper.toUpperCase(");
                             }
                             if (!ignoreQuotes) {
                                 response.append("\"");
@@ -610,16 +611,23 @@ public class DataDTOToMVELTranslator {
                         response.append(value[j]);
                         break;
                     case DATE:
-                        //TODO remove dependency on GWT with this DateTimeFormat
-                        DateTimeFormat formatter = DateTimeFormat.getFormat("MM/dd/yy H:mm a Z");
-                        String formattedDate = formatter.format((Date) value[0]);
-                        response.append("java.text.DateFormat.getDateTimeInstance(3,3).parse(\"");
-                        response.append(formattedDate);
+                        //convert the date to our standard date/time format
+                        Date temp = null;
+                        try {
+                            temp = RuleBuilderFormatUtil.getDateFormat().parse(String.valueOf(value[j]));
+                        } catch (ParseException e) {
+                            throw new MVELTranslationException("Cannot format value for the field (" +
+                                    fieldName + ") based on field type. The type of field is Date, " +
+                                    "and you entered: (" + value[j] +"). Dates must be in the format MM/dd/yyyy HH:mm.");
+                        }
+                        String convertedDate = FormatUtil.getDateFormat().format(temp);
+                        response.append("MvelHelper.convertField(\"DATE\",\"");
+                        response.append(convertedDate);
                         response.append("\")");
                         break;
                     default:
                         if (ignoreCase) {
-                            response.append("MVEL.eval(\"toUpperCase()\",");
+                            response.append("MvelHelper.toUpperCase(");
                         }
                         if (!ignoreQuotes) {
                             response.append("\"");

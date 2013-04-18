@@ -35,6 +35,7 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -48,10 +49,10 @@ import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.cto.FilterCriterionProviders;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.PersistenceProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.PersistenceProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.EntityValidatorService;
 import org.hibernate.criterion.Criterion;
@@ -94,10 +95,10 @@ import java.util.StringTokenizer;
 public class BasicPersistenceModule implements PersistenceModule, RecordHelper, ApplicationContextAware, DataFormatProvider {
     
     private static final Log LOG = LogFactory.getLog(BasicPersistenceModule.class);
-    
+
     public static final String MAIN_ENTITY_NAME_PROPERTY = "MAIN_ENTITY_NAME";
 
-    protected SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z");
+    protected SimpleDateFormat dateFormat = FormatUtil.getDateFormat();
 
     protected DecimalFormat decimalFormat;
     protected ApplicationContext applicationContext;
@@ -917,4 +918,5 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     public void setPersistenceProviders(List<PersistenceProvider> persistenceProviders) {
         this.persistenceProviders = persistenceProviders;
     }
+
 }

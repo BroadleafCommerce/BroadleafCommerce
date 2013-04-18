@@ -16,9 +16,13 @@
 
 package org.broadleafcommerce.openadmin.web.rulebuilder.statement;
 
+import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.rulebuilder.BLCOperator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
+import org.broadleafcommerce.openadmin.web.rulebuilder.RuleBuilderFormatUtil;
+
+import java.text.ParseException;
 
 /**
  * @author jfischer
@@ -58,7 +62,17 @@ public class PhraseTranslator {
         }
 
         boolean isIgnoreCase = false;
-        String caseInsensitivityKey = "MVEL.eval(\"toUpperCase()\",";
+
+        //keep for backwards compatibility with legacy generated MVEL
+        String legacyCaseInsensitivityKey = "MVEL.eval(\"toUpperCase()\",";
+
+        String newCaseInsensitivityKey = "MvelHelper.toUpperCase(";
+        String caseInsensitivityKey;
+        if (field.contains(legacyCaseInsensitivityKey) || value.contains(legacyCaseInsensitivityKey)) {
+            caseInsensitivityKey = legacyCaseInsensitivityKey;
+        } else {
+            caseInsensitivityKey = newCaseInsensitivityKey;
+        }
         if (field.startsWith(caseInsensitivityKey)) {
             isIgnoreCase = true;
             field = field.substring(caseInsensitivityKey.length(), field.length()-1);
@@ -92,9 +106,25 @@ public class PhraseTranslator {
             sb.append("]");
             value = sb.toString();
         }
-        String dateFormatKey = "java.text.DateFormat.getDateTimeInstance(3,3).parse(";
+        //keep for backwards compatibility with legacy generated MVEL
+        String legacyDateFormatKey = "java.text.DateFormat.getDateTimeInstance(3,3).parse(";
+
+        String newDateFormatKey = "MvelHelper.convertField(\"DATE\",\"";
+        String dateFormatKey;
+        if (value.contains(legacyDateFormatKey)) {
+            dateFormatKey = legacyDateFormatKey;
+        } else {
+            dateFormatKey = newDateFormatKey;
+        }
         if (value.startsWith(dateFormatKey)) {
             value = value.substring(dateFormatKey.length(), value.length()-1);
+            //convert the date into admin display format
+            try {
+                value = RuleBuilderFormatUtil.getDateFormat().format(FormatUtil.getDateFormat().parse(value));
+            } catch (ParseException e) {
+                throw new MVELTranslationException("Unable to convert the persisted date value(" + value + ") to the admin" +
+                        "display format.");
+            }
         }
         int entityKeyIndex = field.indexOf(".");
         if (entityKeyIndex < 0) {
@@ -184,10 +214,11 @@ public class PhraseTranslator {
         if (components[0].matches(".*\\[\".*?\"\\].*")) {
             //this is using map access syntax - must be a map field
             components[0] = components[0].substring(0, components[0].lastIndexOf("[")) + FieldManager.MAPFIELDSEPARATOR +
-                    components[0].substring(components[0].lastIndexOf("[") + 2, components[0].lastIndexOf("]") - 1);
-            //strip any new type object construction
-            if (components[0].startsWith("new ")) {
-                components[0] = components[0].substring(components[0].indexOf("(") + 1, components[0].length());
+                    components[0].substring(components[0].lastIndexOf("[") + 2, components[0].lastIndexOf("]") - 1) +
+                    components[0].substring(components[0].lastIndexOf("]") + 1, components[0].length());
+            //strip any convertField usage
+            if (components[0].startsWith("MvelHelper.convertField(")) {
+                components[0] = components[0].substring(components[0].indexOf("(") + 1, components[0].length()-1);
             }
         }
         return components;

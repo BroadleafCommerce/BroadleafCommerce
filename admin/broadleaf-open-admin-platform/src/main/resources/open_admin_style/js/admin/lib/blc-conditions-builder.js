@@ -272,8 +272,10 @@
             var falseRadio = ruleDiv.find(".false");
             if (trueRadio != null && ruleData.value == "true") {
                 trueRadio.prop('checked', true)
-            } else if (falseRadio != null && ruleData.value == "false") {
+                falseRadio.prop('checked', false)
+            } else if ((falseRadio != null && ruleData.value == "false") || ruleData.value == null) {
                 falseRadio.prop('checked', true)
+                trueRadio.prop('checked', false)
             } else {
                 ruleDiv.find(".value").val(ruleData.value);
             }
@@ -381,9 +383,9 @@
                 $this.after($("<span>", {"class": "radioContainer"}));
                 radioContainer = container.find(".radioContainer");
                 radioContainer.append($("<input>", {"type": "radio", "name": "ruleBuilderBooleanRadio", "value":"true", "class": "true"}));
-                radioContainer.append($("<span>", {"style": "margin-right: 10px; margin-left: 3px", "text" : "Yes"}));
-                radioContainer.append($("<input>", {"type": "radio", "name": "ruleBuilderBooleanRadio", "value":"false", "class": "false"}));
-                radioContainer.append($("<span>", {"style": "margin-right: 10px; margin-left: 3px", "text" : "No"}));
+                radioContainer.append($("<span>", {"style": "margin-right: 10px; margin-left: 3px", "text" : "True"}));
+                radioContainer.append($("<input>", {"type": "radio", "name": "ruleBuilderBooleanRadio", "value":"false", "class": "false", "checked": "true"}));
+                radioContainer.append($("<span>", {"style": "margin-right: 10px; margin-left: 3px", "text" : "False"}));
                 break;
             case "SELECT":
                 var select = $("<select>", {"class": "value"});

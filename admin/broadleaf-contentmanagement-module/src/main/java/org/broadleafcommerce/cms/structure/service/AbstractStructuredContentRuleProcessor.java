@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.structure.service;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.rule.MvelHelper;
 import org.mvel2.CompileException;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
@@ -51,6 +52,7 @@ public abstract class AbstractStructuredContentRuleProcessor implements Structur
         if (parserContext == null) {
             parserContext = new ParserContext();
             parserContext.addImport("MVEL", MVEL.class);
+            parserContext.addImport("MvelHelper", MvelHelper.class);
            /*  Getting errors when the following is in place.
            for (String key : contextClassNames.keySet()) {
                 String className = contextClassNames.get(key);

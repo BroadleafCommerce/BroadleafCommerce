@@ -1,6 +1,4 @@
-var blcOperators_Boolean = [      
-	{label: "is present", name: "NOT_NULL", fieldType: "NONE"},
-	{label: "is blank", name: "IS_NULL", fieldType: "NONE"},
+var blcOperators_Boolean = [
     {label: "is equal to", name: "EQUALS", fieldType: "BOOLEAN"}
 ];
 

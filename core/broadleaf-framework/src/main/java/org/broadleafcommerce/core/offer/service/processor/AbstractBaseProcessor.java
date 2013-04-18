@@ -20,6 +20,7 @@ import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -220,6 +221,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                     context.addImport("OfferType", OfferType.class);
                     context.addImport("FulfillmentType", FulfillmentType.class);
                     context.addImport("MVEL", MVEL.class);
+                    context.addImport("MvelHelper", MvelHelper.class);
                     //            StringBuffer completeExpression = new StringBuffer(functions.toString());
                     //            completeExpression.append(" ").append(expression);
                     exp = MVEL.compileExpression(expression, context);
@@ -234,7 +236,8 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         } catch (Exception e) {
             //Unable to execute the MVEL expression for some reason
             //Return false, but notify about the bad expression through logs
-            LOG.info("Unable to parse and/or execute an mvel expression. Reporting to the logs and returning false for the match expression", e);
+            LOG.warn("Unable to parse and/or execute an mvel expression. Reporting to the logs and returning false " +
+                    "for the match expression", e);
             return false;
         }
 
