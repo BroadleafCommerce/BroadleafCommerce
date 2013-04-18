@@ -17,6 +17,7 @@
 package org.broadleafcommerce.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.AbstractRuleBuilderFieldService;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Service;
  * @author Priyesh Patel
  */
 @Service("blSkuFieldService")
-public class SkuFieldServiceImpl  extends AbstractRuleBuilderFieldService {
+public class SkuFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
 
     {
@@ -122,7 +123,7 @@ public class SkuFieldServiceImpl  extends AbstractRuleBuilderFieldService {
 
     @Override
     public String getName() {
-        return "SKU_FIELDS";
+        return RuleIdentifier.SKU;
     }
 
 }

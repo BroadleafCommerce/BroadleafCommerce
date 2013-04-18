@@ -17,6 +17,7 @@
 package org.broadleafcommerce.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.AbstractRuleBuilderFieldService;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Service;
  * @author Andre Azzolini (apazzolini)
  */
 @Service("blTimeFieldService")
-public class TimeFieldServiceImpl  extends AbstractRuleBuilderFieldService {
+public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     //TODO: extensibility mechanism, support i18N
     {
@@ -84,7 +85,7 @@ public class TimeFieldServiceImpl  extends AbstractRuleBuilderFieldService {
 
     @Override
     public String getName() {
-        return "TIME_FIELDS";
+        return RuleIdentifier.TIME;
     }
 
 }

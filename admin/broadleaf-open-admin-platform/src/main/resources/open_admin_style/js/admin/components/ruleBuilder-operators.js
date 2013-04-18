@@ -1,6 +1,7 @@
 var blcOperators_Boolean = [      
 	{label: "is present", name: "NOT_NULL", fieldType: "NONE"},
-	{label: "is blank", name: "IS_NULL", fieldType: "NONE"}
+	{label: "is blank", name: "IS_NULL", fieldType: "NONE"},
+    {label: "is equal to", name: "EQUALS", fieldType: "BOOLEAN"}
 ];
 
 var blcOperators_Date = [      
@@ -31,7 +32,7 @@ var blcOperators_Numeric = [
 	{label: "is between (inclusive)", name: "BETWEEN_INCLUSIVE", fieldType: "RANGE"}
 ];
 
-var blcOperators_Text = [      
+var blcOperators_Text = [
 	{label: "is present", name: "NOT_NULL", fieldType: "NONE"},
 	{label: "is blank", name: "IS_NULL", fieldType: "NONE"},
 	{label: "is equal to", name: "EQUALS", fieldType: "TEXT"},
@@ -52,5 +53,13 @@ var blcOperators_Enumeration = [
 	{label: "is not equal to", name: "NOT_EQUAL", fieldType: "SELECT"}
 ];
 
-
-
+var blcOperators_Text_List = [
+    {label: "is present", name: "NOT_NULL", fieldType: "NONE"},
+    {label: "is blank", name: "IS_NULL", fieldType: "NONE"},
+    {label: "contains", name: "CONTAINS", fieldType: "TEXT"},
+    {label: "is count greater than", name: "COUNT_GREATER_THAN", fieldType: "TEXT"},
+    {label: "is count greater than or equal to", name: "COUNT_GREATER_OR_EQUAL", fieldType: "TEXT"},
+    {label: "is count less than", name: "COUNT_LESS_THAN", fieldType: "TEXT"},
+    {label: "is count less than or equal to", name: "COUNT_LESS_OR_EQUAL", fieldType: "TEXT"},
+    {label: "is count equal to", name: "COUNT_EQUALS", fieldType: "TEXT"}
+];

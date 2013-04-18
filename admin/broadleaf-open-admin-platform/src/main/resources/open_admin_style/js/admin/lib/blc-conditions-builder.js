@@ -111,6 +111,16 @@
                 return out;
             }
             else {
+                var value;
+                var trueRadio = element.find(".true");
+                var falseRadio = element.find(".false");
+                if (trueRadio != null && trueRadio.is(':checked')) {
+                    value = "true";
+                } else if (falseRadio != null && falseRadio.is(':checked')) {
+                    value = "false";
+                } else {
+                    value = element.find(".value").val();
+                }
                 return {
                     id:null,
                     quantity:null,
@@ -118,7 +128,7 @@
                     groups:[],
                     name: element.find(".field").val(),
                     operator: element.find(".operator").val(),
-                    value: element.find(".value").val(),
+                    value: value,
                     start: element.find(".start").val(),
                     end: element.find(".end").val()
                 };
@@ -257,7 +267,17 @@
             ruleDiv.append(operatorSelect);
 
             fieldSelect.change();
-            ruleDiv.find(".value").val(ruleData.value);
+
+            var trueRadio = ruleDiv.find(".true");
+            var falseRadio = ruleDiv.find(".false");
+            if (trueRadio != null && ruleData.value == "true") {
+                trueRadio.prop('checked', true)
+            } else if (falseRadio != null && ruleData.value == "false") {
+                falseRadio.prop('checked', true)
+            } else {
+                ruleDiv.find(".value").val(ruleData.value);
+            }
+
             return ruleDiv;
         },
 
@@ -341,7 +361,10 @@
         var fieldSelect = container.find(".field");
         var currentValue = container.find(".value");
         var val = currentValue.val();
-
+        var radioContainer = container.find(".radioContainer");
+        if (radioContainer != null) {
+            radioContainer.remove();
+        }
         switch(option.data("fieldType")) {
             case "NONE":
                 $this.after($("<input>", {"type": "hidden", "class": "value"}));
@@ -353,6 +376,14 @@
                 $this.after($("<input>", {"type": "text", "class": "end"}))
                     .after("<span class=\"value conditional-spacer\">and</span>")
                     .after($("<input>", {"type": "text", "class": "start"}));
+                break;
+            case "BOOLEAN":
+                $this.after($("<span>", {"class": "radioContainer"}));
+                radioContainer = container.find(".radioContainer");
+                radioContainer.append($("<input>", {"type": "radio", "name": "ruleBuilderBooleanRadio", "value":"true", "class": "true"}));
+                radioContainer.append($("<span>", {"style": "margin-right: 10px; margin-left: 3px", "text" : "Yes"}));
+                radioContainer.append($("<input>", {"type": "radio", "name": "ruleBuilderBooleanRadio", "value":"false", "class": "false"}));
+                radioContainer.append($("<span>", {"style": "margin-right: 10px; margin-left: 3px", "text" : "No"}));
                 break;
             case "SELECT":
                 var select = $("<select>", {"class": "value"});

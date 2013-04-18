@@ -17,6 +17,7 @@
 package org.broadleafcommerce.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.AbstractRuleBuilderFieldService;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Service;
  * @author Andre Azzolini (apazzolini)
  */
 @Service("blProductFieldService")
-public class ProductFieldServiceImpl  extends AbstractRuleBuilderFieldService {
+public class ProductFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     {
         fields.add(new FieldData.Builder()
@@ -122,7 +123,7 @@ public class ProductFieldServiceImpl  extends AbstractRuleBuilderFieldService {
 
     @Override
     public String getName() {
-        return "PRODUCT_FIELDS";
+        return RuleIdentifier.PRODUCT;
     }
 
 }

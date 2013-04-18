@@ -17,6 +17,7 @@
 package org.broadleafcommerce.admin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.AbstractRuleBuilderFieldService;
 import org.springframework.stereotype.Service;
@@ -135,6 +136,6 @@ public class FulfillmentGroupFieldServiceImpl  extends AbstractRuleBuilderFieldS
 
     @Override
     public String getName() {
-        return "FULFILLMENT_GROUP_FIELDS";
+        return RuleIdentifier.FULFILLMENTGROUP;
     }
 }

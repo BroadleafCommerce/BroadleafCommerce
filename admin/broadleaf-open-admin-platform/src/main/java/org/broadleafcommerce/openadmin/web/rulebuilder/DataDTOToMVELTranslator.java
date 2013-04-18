@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.web.rulebuilder;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
@@ -258,6 +259,26 @@ public class DataDTOToMVELTranslator {
                         true, true, false, false, false);
                 break;
             }
+            case COUNT_GREATER_THAN: {
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".size()>", false, false, false, false, true);
+                break;
+            }
+            case COUNT_GREATER_OR_EQUAL:{
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".size()>=", false, false, false, false, true);
+                break;
+            }
+            case COUNT_LESS_THAN:{
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".size()<", false, false, false, false, true);
+                break;
+            }
+            case COUNT_LESS_OR_EQUAL:{
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".size()<=", false, false, false, false, true);
+                break;
+            }
+            case COUNT_EQUALS:{
+                buildExpression(sb, entityKey, field, value, type, secondaryType, ".size()==", false, false, false, false, true);
+                break;
+            }
             case BETWEEN: {
                 if (SupportedFieldType.DATE.toString().equals(type.toString())) {
                     sb.append("(");
@@ -397,35 +418,100 @@ public class DataDTOToMVELTranslator {
         if (isNegation) {
             response.append("!");
         }
-        switch(type) {
-            case BROADLEAF_ENUMERATION:
-                response.append(entityKey);
-                response.append(".");
-                response.append(field);
-                response.append(".getType()");
-                break;
-            case MONEY:
-                response.append(entityKey);
-                response.append(".");
-                response.append(field);
-                response.append(".getAmount()");
-                break;
-            case STRING:
-                if (ignoreCase) {
-                    response.append("MVEL.eval(\"toUpperCase()\",");
-                }
-                response.append(entityKey);
-                response.append(".");
-                response.append(field);
-                if (ignoreCase) {
+        String convertedField = field;
+        boolean isMapField = false;
+        if (convertedField.contains(FieldManager.MAPFIELDSEPARATOR)) {
+            //This must be a map field, convert the field name to syntax MVEL can understand for map access
+            convertedField = convertedField.substring(0, convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR))
+                    + "[\"" + convertedField.substring(convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR) +
+                    FieldManager.MAPFIELDSEPARATOR.length(), convertedField.length()) + "\"]";
+            isMapField = true;
+        }
+        if (isMapField) {
+            switch(type) {
+                case BOOLEAN:
+                    response.append("new java.lang.Boolean(");
+                    response.append(entityKey);
+                    response.append(".");
+                    response.append(convertedField);
                     response.append(")");
-                }
-                break;
-            default:
-                response.append(entityKey);
-                response.append(".");
-                response.append(field);
-                break;
+                    break;
+                case INTEGER:
+                    response.append("new java.lang.Integer(");
+                    response.append(entityKey);
+                    response.append(".");
+                    response.append(convertedField);
+                    response.append(")");
+                    break;
+                case DECIMAL:
+                case MONEY:
+                    response.append("new java.math.BigDecimal(");
+                    response.append(entityKey);
+                    response.append(".");
+                    response.append(convertedField);
+                    response.append(")");
+                    break;
+                case DATE:
+                    response.append("new java.text.SimpleDateFormat(\"yyyy.MM.dd HH:mm:ss Z\").parse(");
+                    response.append(entityKey);
+                    response.append(".");
+                    response.append(convertedField);
+                    response.append(")");
+                    break;
+                case STRING:
+                    if (ignoreCase) {
+                        response.append("MVEL.eval(\"toUpperCase()\",");
+                    }
+                    response.append(entityKey);
+                    response.append(".");
+                    response.append(convertedField);
+                    if (ignoreCase) {
+                        response.append(")");
+                    }
+                    break;
+                case STRING_LIST:
+                    response.append(entityKey);
+                    response.append(".");
+                    response.append(convertedField);
+                    break;
+                default:
+                    throw new UnsupportedOperationException(type.toString() + " is not supported for map fields in the rule builder.");
+            }
+        } else {
+            switch(type) {
+                case BROADLEAF_ENUMERATION:
+                    if (isMapField) {
+                        throw new UnsupportedOperationException("Enumerations are not supported for map fields in the rule builder.");
+                    } else {
+                        response.append(entityKey);
+                        response.append(".");
+                        response.append(field);
+                        response.append(".getType()");
+                    }
+                    break;
+                case MONEY:
+                    response.append(entityKey);
+                    response.append(".");
+                    response.append(field);
+                    response.append(".getAmount()");
+                    break;
+                case STRING:
+                    if (ignoreCase) {
+                        response.append("MVEL.eval(\"toUpperCase()\",");
+                    }
+                    response.append(entityKey);
+                    response.append(".");
+                    response.append(field);
+                    if (ignoreCase) {
+                        response.append(")");
+                    }
+                    break;
+                default:
+                    response.append(entityKey);
+                    response.append(".");
+                    response.append(field);
+                    break;
+            }
         }
         return response.toString();
     }

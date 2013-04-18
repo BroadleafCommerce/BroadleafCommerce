@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.rulebuilder.statement;
 
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.rulebuilder.BLCOperator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 
@@ -32,6 +33,11 @@ public class PhraseTranslator {
     };
 
     private static final String[] STANDARDOPERATORS = {
+            ".size()>",
+            ".size()>=",
+            ".size()<",
+            ".size()<=",
+            ".size()==",
             "==",
             "!=",
             "<=",
@@ -128,7 +134,15 @@ public class PhraseTranslator {
     protected String[] extractComponents(String phrase) throws MVELTranslationException {
         String[] components = new String[]{};
         for (String operator : STANDARDOPERATORS) {
-            String[] temp = phrase.split(operator);
+            String[] temp;
+            if (phrase.contains(operator)) {
+                temp = new String[2];
+                temp[0] = phrase.substring(0, phrase.indexOf(operator));
+                temp[1] = phrase.substring(phrase.indexOf(operator) + operator.length(), phrase.length());
+            } else {
+                temp = new String[1];
+                temp[0] = phrase;
+            }
             if (temp.length == 2) {
                 components = new String[3];
                 components[0] = temp[0];
@@ -164,6 +178,16 @@ public class PhraseTranslator {
                     throw new MVELTranslationException("Could not parse the MVEL expression to a " +
                             "compatible form for the rules builder (" + phrase + ")");
                 }
+            }
+        }
+
+        if (components[0].matches(".*\\[\".*?\"\\].*")) {
+            //this is using map access syntax - must be a map field
+            components[0] = components[0].substring(0, components[0].lastIndexOf("[")) + FieldManager.MAPFIELDSEPARATOR +
+                    components[0].substring(components[0].lastIndexOf("[") + 2, components[0].lastIndexOf("]") - 1);
+            //strip any new type object construction
+            if (components[0].startsWith("new ")) {
+                components[0] = components[0].substring(components[0].indexOf("(") + 1, components[0].length());
             }
         }
         return components;
@@ -281,6 +305,16 @@ public class PhraseTranslator {
             return BLCOperator.ENDS_WITH_FIELD;
         } else if (operator.equals("endsWith")) {
             return BLCOperator.ENDS_WITH;
+        } else if (operator.equals(".size()>")) {
+            return BLCOperator.COUNT_GREATER_THAN;
+        } else if (operator.equals(".size()>=")) {
+            return BLCOperator.COUNT_GREATER_OR_EQUAL;
+        } else if (operator.equals(".size()<")) {
+            return BLCOperator.COUNT_LESS_THAN;
+        } else if (operator.equals(".size()<=")) {
+            return BLCOperator.COUNT_LESS_OR_EQUAL;
+        } else if (operator.equals(".size()==")) {
+            return BLCOperator.COUNT_EQUALS;
         }
         throw new MVELTranslationException("Unable to identify an operator compatible with the " +
                 "rules builder: ("+(isNegation?"!":""+field+operator+value)+")");

@@ -18,12 +18,15 @@ package org.broadleafcommerce.openadmin.web.rulebuilder.service;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
+
+import java.util.ArrayList;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public interface RuleBuilderFieldService {
+public interface RuleBuilderFieldService extends Cloneable {
 
     public String getName();
 
@@ -35,4 +38,9 @@ public interface RuleBuilderFieldService {
 
     public SupportedFieldType getSecondaryFieldType(String fieldName);
 
+    public ArrayList<FieldData> getFields();
+
+    public void setFields(ArrayList<FieldData> fields);
+
+    public RuleBuilderFieldService clone() throws CloneNotSupportedException;
 }

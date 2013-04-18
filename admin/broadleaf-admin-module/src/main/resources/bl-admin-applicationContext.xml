@@ -153,8 +153,8 @@
         </property>
     </bean>
 
-    <bean id="blRuleBuilderFieldServiceFactory" class="org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory">
-        <property name="fieldServices">
+    <bean id="blRuleBuilderFieldServices" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
             <list>
                 <ref bean="blOrderItemFieldService"/>
                 <ref bean="blCustomerFieldService"/>

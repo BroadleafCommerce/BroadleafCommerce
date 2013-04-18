@@ -34,7 +34,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
     public FieldWrapper buildFields() {
         FieldWrapper wrapper = new FieldWrapper();
 
-        for (FieldData field : fields) {
+        for (FieldData field : getFields()) {
             FieldDTO fieldDTO = new FieldDTO();
             fieldDTO.setLabel(field.getFieldLabel());
             fieldDTO.setName(field.getFieldName());
@@ -50,7 +50,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
     public SupportedFieldType getSupportedFieldType(String fieldName) {
         SupportedFieldType type = null;
         if (fieldName != null) {
-            for (FieldData field : fields) {
+            for (FieldData field : getFields()) {
                 if (fieldName.equals(field.getFieldName())){
                     return field.getFieldType();
                 }
@@ -63,7 +63,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
     public SupportedFieldType getSecondaryFieldType(String fieldName) {
         SupportedFieldType type = null;
         if (fieldName != null) {
-            for (FieldData field : fields) {
+            for (FieldData field : getFields()) {
                 if (fieldName.equals(field.getFieldName())){
                     return field.getSecondaryFieldType();
                 }
@@ -74,7 +74,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
 
     @Override
     public FieldDTO getField(String fieldName) {
-        for (FieldData field : fields) {
+        for (FieldData field : getFields()) {
             if (field.getFieldName().equals(fieldName)) {
                 FieldDTO fieldDTO = new FieldDTO();
                 fieldDTO.setLabel(field.getFieldLabel());
@@ -87,11 +87,24 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
         return null;
     }
 
+    @Override
     public ArrayList<FieldData> getFields() {
         return fields;
     }
 
-    public void setFields(ArrayList<FieldData> fields) {
+    @Override
+    public void setFields(ArrayList <FieldData> fields) {
         this.fields = fields;
+    }
+
+    public RuleBuilderFieldService clone() throws CloneNotSupportedException {
+        try {
+            RuleBuilderFieldService clone = this.getClass().newInstance();
+            clone.setFields(this.fields);
+
+            return clone;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
