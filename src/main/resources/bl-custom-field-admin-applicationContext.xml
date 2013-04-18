@@ -44,4 +44,15 @@
             </list>
         </property>
     </bean>
+
+    <bean id="blCustomFieldRuleBuilderServiceFactoryAOP" class="com.broadleafcommerce.customfield.service.CustomFieldRuleBuilderFieldServiceFactoryAOP"/>
+
+    <aop:config>
+        <aop:aspect id="blCustomFieldRuleBuilderServiceAspect" ref="blCustomFieldRuleBuilderServiceFactoryAOP">
+            <aop:pointcut id="blCustomFieldRuleBuilderServiceCreateInstanceMethod"
+                          expression="execution(* org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory.createInstance(java.lang.String))"/>
+            <aop:around method="process" pointcut-ref="blCustomFieldRuleBuilderServiceCreateInstanceMethod"/>
+        </aop:aspect>
+    </aop:config>
+
 </beans>
