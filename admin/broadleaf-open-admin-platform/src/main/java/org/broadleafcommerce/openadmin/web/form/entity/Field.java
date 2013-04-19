@@ -27,6 +27,8 @@ import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityCon
  */
 public class Field {
 
+    public static final String ALTERNATE_ORDERING = "AlternateOrdering";
+
     protected String name;
     protected String friendlyName;
     protected String fieldType;
@@ -39,6 +41,7 @@ public class Field {
     protected Boolean required = false;
     protected String columnWidth;
     protected Boolean isVisible;
+    protected Boolean isAlternateOrdering;
     
     /* ************ */
     /* WITH METHODS */
@@ -81,6 +84,11 @@ public class Field {
 
     public Field withOrder(Integer order) {
         setOrder(order);
+        return this;
+    }
+
+    public Field withAlternateOrdering(Boolean alternateOrdering) {
+        setAlternateOrdering(alternateOrdering);
         return this;
     }
     
@@ -226,5 +234,12 @@ public class Field {
     public void setIsVisible(Boolean isVisible) {
         this.isVisible = isVisible;
     }
-    
+
+    public Boolean getAlternateOrdering() {
+        return isAlternateOrdering == null ? false : isAlternateOrdering;
+    }
+
+    public void setAlternateOrdering(Boolean alternateOrdering) {
+        this.isAlternateOrdering = alternateOrdering;
+    }
 }

@@ -164,7 +164,7 @@ public class EntityForm {
         }
 
         if (fieldToRemove != null) {
-            containingGroup.getFields().remove(fieldToRemove);
+            containingGroup.removeField(fieldToRemove);
         }
         
         if (fields != null) {
@@ -209,7 +209,7 @@ public class EntityForm {
             tab.getFieldGroups().add(fieldGroup);
         }
 
-        fieldGroup.getFields().add(field);
+        fieldGroup.addField(field);
     }
 
     public void addListGrid(ListGrid listGrid, String tabName, Integer tabOrder) {

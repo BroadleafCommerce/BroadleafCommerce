@@ -223,45 +223,44 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof FieldMetadata)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof FieldMetadata)) return false;
 
-        FieldMetadata that = (FieldMetadata) o;
+        FieldMetadata metadata = (FieldMetadata) o;
 
-        if (!Arrays.equals(availableToTypes, that.availableToTypes)) {
+        if (additionalMetadata != null ? !additionalMetadata.equals(metadata.additionalMetadata) : metadata
+                .additionalMetadata != null)
             return false;
-        }
-        if (excluded != null ? !excluded.equals(that.excluded) : that.excluded != null) {
+        if (!Arrays.equals(availableToTypes, metadata.availableToTypes)) return false;
+        if (childrenExcluded != null ? !childrenExcluded.equals(metadata.childrenExcluded) : metadata
+                .childrenExcluded != null)
             return false;
-        }
-        if (fieldName != null ? !fieldName.equals(that.fieldName) : that.fieldName != null) {
+        if (currencyCodeField != null ? !currencyCodeField.equals(metadata.currencyCodeField) : metadata
+                .currencyCodeField != null)
             return false;
-        }
-        if (friendlyName != null ? !friendlyName.equals(that.friendlyName) : that.friendlyName != null) {
+        if (excluded != null ? !excluded.equals(metadata.excluded) : metadata.excluded != null) return false;
+        if (fieldName != null ? !fieldName.equals(metadata.fieldName) : metadata.fieldName != null) return false;
+        if (friendlyName != null ? !friendlyName.equals(metadata.friendlyName) : metadata.friendlyName != null)
             return false;
-        }
-        if (inheritedFromType != null ? !inheritedFromType.equals(that.inheritedFromType) : that.inheritedFromType != null) {
+        if (inheritedFromType != null ? !inheritedFromType.equals(metadata.inheritedFromType) : metadata
+                .inheritedFromType != null)
             return false;
-        }
-        if (order != null ? !order.equals(that.order) : that.order != null) {
+        if (order != null ? !order.equals(metadata.order) : metadata.order != null) return false;
+        if (owningClass != null ? !owningClass.equals(metadata.owningClass) : metadata.owningClass != null)
             return false;
-        }
-        if (securityLevel != null ? !securityLevel.equals(that.securityLevel) : that.securityLevel != null) {
+        if (owningClassFriendlyName != null ? !owningClassFriendlyName.equals(metadata.owningClassFriendlyName) :
+                metadata.owningClassFriendlyName != null)
             return false;
-        }
-        if (targetClass != null ? !targetClass.equals(that.targetClass) : that.targetClass != null) {
+        if (prefix != null ? !prefix.equals(metadata.prefix) : metadata.prefix != null) return false;
+        if (securityLevel != null ? !securityLevel.equals(metadata.securityLevel) : metadata.securityLevel != null)
             return false;
-        }
-        if (showIfProperty != null ? !showIfProperty.equals(that.showIfProperty) : that.showIfProperty != null) {
+        if (showIfProperty != null ? !showIfProperty.equals(metadata.showIfProperty) : metadata.showIfProperty != null)
             return false;
-        }
-        if (currencyCodeField != null ? !currencyCodeField.equals(that.currencyCodeField) : that.currencyCodeField != null) {
+        if (tab != null ? !tab.equals(metadata.tab) : metadata.tab != null) return false;
+        if (tabOrder != null ? !tabOrder.equals(metadata.tabOrder) : metadata.tabOrder != null) return false;
+        if (targetClass != null ? !targetClass.equals(metadata.targetClass) : metadata.targetClass != null)
             return false;
-        }
+
         return true;
     }
 
@@ -273,10 +272,17 @@ public abstract class FieldMetadata implements IsSerializable, Serializable {
         result = 31 * result + (friendlyName != null ? friendlyName.hashCode() : 0);
         result = 31 * result + (securityLevel != null ? securityLevel.hashCode() : 0);
         result = 31 * result + (order != null ? order.hashCode() : 0);
+        result = 31 * result + (owningClassFriendlyName != null ? owningClassFriendlyName.hashCode() : 0);
+        result = 31 * result + (tab != null ? tab.hashCode() : 0);
+        result = 31 * result + (tabOrder != null ? tabOrder.hashCode() : 0);
+        result = 31 * result + (childrenExcluded != null ? childrenExcluded.hashCode() : 0);
         result = 31 * result + (targetClass != null ? targetClass.hashCode() : 0);
+        result = 31 * result + (owningClass != null ? owningClass.hashCode() : 0);
+        result = 31 * result + (prefix != null ? prefix.hashCode() : 0);
         result = 31 * result + (fieldName != null ? fieldName.hashCode() : 0);
         result = 31 * result + (showIfProperty != null ? showIfProperty.hashCode() : 0);
         result = 31 * result + (currencyCodeField != null ? currencyCodeField.hashCode() : 0);
+        result = 31 * result + (additionalMetadata != null ? additionalMetadata.hashCode() : 0);
         return result;
     }
 }
