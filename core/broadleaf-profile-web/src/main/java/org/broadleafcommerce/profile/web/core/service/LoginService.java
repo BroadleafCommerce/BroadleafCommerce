@@ -21,6 +21,8 @@ import org.springframework.security.core.Authentication;
 
 public interface LoginService {
     public Authentication loginCustomer(Customer customer);
-        
+
     public Authentication loginCustomer(String username, String clearTextPassword);
+
+    public void logoutCustomer();
 }
