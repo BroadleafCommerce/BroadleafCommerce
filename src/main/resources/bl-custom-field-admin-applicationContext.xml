@@ -55,4 +55,11 @@
         </aop:aspect>
     </aop:config>
 
+    <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <bean class="com.broadleafcommerce.customfield.service.handler.CustomFieldCustomPersistenceHandler"/>
+            </list>
+        </property>
+    </bean>
 </beans>
