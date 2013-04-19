@@ -26,18 +26,18 @@
         },
         
         showLoadingSpinner : function($tbody, spinnerOffset) {
-            var $spinner = $('<i>', { 'class' : 'icon-spin icon-spinner' });
+            var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
             
             if (spinnerOffset) {
                 $spinner.css('position', 'absolute').css('top', spinnerOffset + 'px');
             }
             
-            var $footer = $tbody.closest('.listgrid-container').find('.listgrid-table-footer')
-            $footer.html($spinner);
+            $spinner.css('visibility', 'visible');
         },
         
         hideLoadingSpinner : function($tbody) {
-            this.updateTableFooter($tbody);
+            var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
+            $spinner.css('visibility', 'hidden');
         },
         
         // ****************************** *
@@ -287,10 +287,7 @@
             }
             
             if (startIndex != null && maxIndex != null) {
-                
-                var tbodyHeight = $tbody.closest('.listgrid-body-wrapper').height();
                 var delta;
-                
                 if (startIndex <= topIndex && maxIndex <= botIndex) {
                     // Top range missing - show in the middle of the top and max
                     delta = (topIndex + maxIndex) / 2;
@@ -305,8 +302,7 @@
                     delta = (topIndex + botIndex) / 2;
                 }
                 delta = delta - topIndex;
-                
-                spinnerOffset = 95 + (this.getRowHeight($tbody) * delta);
+                spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (this.getRowHeight($tbody) * delta);
                 this.showLoadingSpinner($tbody, spinnerOffset);
                 
                 var url = BLCAdmin.history.getUrlWithParameter('startIndex', startIndex, null, baseUrl);
@@ -357,7 +353,6 @@
         scrollToIndex : function($tbody, index) {
             var offset = index * this.getRowHeight($tbody);
             console.log('scrolling to ' + offset);
-            debugger;
             $tbody.closest('.listgrid-body-wrapper').find('.mCSB_container').css('top', '-' + offset + 'px');
         },
         
@@ -366,8 +361,9 @@
             var botIndex = this.getBottomVisibleIndex($tbody) + 1;
             var totalRecords = this.getTotalRecords($tbody);
             var $footer = $tbody.closest('.listgrid-container').find('.listgrid-table-footer');
-            
-            $footer.text(topIndex + ' - ' + botIndex + ' of ' + totalRecords + ' records');
+            var $footerMsg = $footer.find('.listgrid-table-footer-message');
+                    
+            $footerMsg.text(topIndex + ' - ' + botIndex + ' of ' + totalRecords + ' records');
         },
         
         updateGridSize : function($tbody) {
