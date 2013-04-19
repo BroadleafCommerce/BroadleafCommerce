@@ -32,12 +32,12 @@
                 $spinner.css('position', 'absolute').css('top', spinnerOffset + 'px');
             }
             
-            $spinner.css('visibility', 'visible');
+            $spinner.parent().css('display', 'block');
         },
         
         hideLoadingSpinner : function($tbody) {
             var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
-            $spinner.css('visibility', 'hidden');
+            $spinner.parent().css('display', 'none');
         },
         
         // ****************************** *

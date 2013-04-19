@@ -918,12 +918,11 @@ table.list-grid-table thead tr.width-control-header th {
 
 span.listgrid-table-spinner-container {
 	text-align: center;
-	display: block;
+	display: none;
 }
 
 i.listgrid-table-spinner {
     position: absolute; 
-    visibility: hidden; 
     font-size: 20px;
 }
 
