@@ -86,7 +86,7 @@ public class CustomFieldMetadataProvider extends MapFieldsMetadataProvider {
             override.setFieldType(myType);
             override.setExplicitFieldType(myType);
             override.setGroup(customField.getGroupName());
-            override.setOrder(customField.getFieldOrder());
+            override.setOrder(customField.getFieldOrder()==null?99999:customField.getFieldOrder());
             override.setName(customField.getLabel());
             override.setFriendlyName(customField.getFriendlyName());
 
@@ -96,6 +96,7 @@ public class CustomFieldMetadataProvider extends MapFieldsMetadataProvider {
             setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), myInfo);
             BasicFieldMetadata metadata = (BasicFieldMetadata) addMetadataRequest.getRequestedMetadata().get(myInfo.getName());
             metadata.setSearchable(customField.getSearchable());
+            metadata.getAdditionalMetadata().put(org.broadleafcommerce.openadmin.web.form.entity.Field.ALTERNATE_ORDERING, true);
         }
         return true;
     }
