@@ -202,6 +202,12 @@
                 return false;
             }
             
+            // If we can't see the list grid at all, don't load anything
+            if (!$tbody.is(':visible')) {
+                this.releaseLock();
+                return false;
+            }
+            
             var topIndex = this.getTopVisibleIndex($tbody);
             var botIndex = this.getBottomVisibleIndex($tbody);
             var ranges = this.getLoadedRecordRanges($tbody);
