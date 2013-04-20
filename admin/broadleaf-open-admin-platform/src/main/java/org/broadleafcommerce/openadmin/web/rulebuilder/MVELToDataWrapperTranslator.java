@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.web.rulebuilder;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.Property;
@@ -40,52 +42,60 @@ import java.util.List;
  */
 public class MVELToDataWrapperTranslator {
 
+    private static final Log LOG = LogFactory.getLog(MVELToDataWrapperTranslator.class);
+
     //TODO remove dependency on Supported Field Type which has a dependency on SmartGWT
     protected GroupingTranslator groupingTranslator = new GroupingTranslator();
     protected PhraseTranslator phraseTranslator = new PhraseTranslator();
 
     public DataWrapper createRuleData(Entity[] entities, String mvelProperty, String quantityProperty, String idProperty,
-            RuleBuilderFieldService fieldService) throws MVELTranslationException {
+            RuleBuilderFieldService fieldService) {
         if (entities == null || entities.length == 0 || mvelProperty == null) {
             return null;
         }
 
         DataWrapper dataWrapper = new DataWrapper();
 
-        for (Entity e : entities) {
-            String mvel = null;
-            Integer qty = null;
-            Long id = null;
-            for (Property p : e.getProperties()) {
-                if (mvelProperty.equals(p.getName())){
-                    mvel = p.getValue();
+        try {
+            for (Entity e : entities) {
+                String mvel = null;
+                Integer qty = null;
+                Long id = null;
+                for (Property p : e.getProperties()) {
+                    if (mvelProperty.equals(p.getName())){
+                        mvel = p.getValue();
+                    }
+
+                    if (quantityProperty !=null && quantityProperty.equals(p.getName())){
+                        qty = Integer.parseInt(p.getValue());
+                    }
+
+                    if (idProperty != null && idProperty.equals(p.getName())) {
+                        id = Long.parseLong(p.getValue());
+                    }
                 }
 
-                if (quantityProperty !=null && quantityProperty.equals(p.getName())){
-                    qty = Integer.parseInt(p.getValue());
-                }
-
-                if (idProperty != null && idProperty.equals(p.getName())) {
-                    id = Long.parseLong(p.getValue());
+                if (mvel != null) {
+                    Group group = groupingTranslator.createGroups(mvel);
+                    DataDTO dataDTO = createRuleDataDTO(null, group, fieldService);
+                    if (dataDTO != null) {
+                        dataDTO.setId(id);
+                        dataDTO.setQuantity(qty);
+                        dataWrapper.getData().add(dataDTO);
+                    }
                 }
             }
-
-            if (mvel != null) {
-                Group group = groupingTranslator.createGroups(mvel);
-                DataDTO dataDTO = createRuleDataDTO(null, group, fieldService);
-                if (dataDTO != null) {
-                    dataDTO.setId(id);
-                    dataDTO.setQuantity(qty);
-                    dataWrapper.getData().add(dataDTO);
-                }
-            }
+            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_RULE, "test");
+        } catch (MVELTranslationException e) {
+            LOG.error("Unable to translate rule MVEL", e);
+            dataWrapper.setError(e.getLocalizedMessage());
         }
 
         return dataWrapper;
     }
 
-    public DataDTO createRuleDataDTO(DataDTO parentDTO, Group group, RuleBuilderFieldService fieldService)
-            throws MVELTranslationException {
+    protected DataDTO createRuleDataDTO(DataDTO parentDTO, Group group, RuleBuilderFieldService fieldService)
+        throws MVELTranslationException {
         DataDTO data = new DataDTO();
         if (group.getOperatorType() == null) {
             group.setOperatorType(BLCOperator.AND);
@@ -111,7 +121,6 @@ public class MVELToDataWrapperTranslator {
                 data.getGroups().add(subCriteria);
             }
         }
-
         if (data.getGroups() != null && !data.getGroups().isEmpty()) {
             return data;
         } else {
@@ -124,7 +133,7 @@ public class MVELToDataWrapperTranslator {
         Expression expression = phraseTranslator.createExpression(phrase);
         FieldDTO field = fieldService.getField(expression.getField());
         if (field == null) {
-            throw new MVELTranslationException("MVEL phrase is not compatible with the RuleBuilderFieldService " +
+            throw new MVELTranslationException(MVELTranslationException.SPECIFIED_FIELD_NOT_FOUND, "MVEL phrase is not compatible with the RuleBuilderFieldService " +
                     "associated with the current rules builder. Unable to find the field " +
                     "specified: ("+expression.getField()+")");
         }

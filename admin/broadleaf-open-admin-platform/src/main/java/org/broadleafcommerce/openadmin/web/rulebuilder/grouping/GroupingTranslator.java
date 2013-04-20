@@ -35,7 +35,7 @@ public class GroupingTranslator {
         mvel = stripWhiteSpace(mvel);
         String[] tokens = mvel.trim().split(STATEMENTENDCHAR);
         if (tokens.length > 1) {
-            throw new MVELTranslationException("mvel expressions must resolve to a boolean result. " +
+            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_RULE, "mvel expressions must resolve to a boolean result. " +
                     "More than one terminated statement has been detected, which does not cumulatively result " +
                     "in a single boolean. Multiple phrases should be strung together into a single expression using " +
                     "standard operators.");
@@ -81,7 +81,7 @@ public class GroupingTranslator {
                 }
             }
         }
-        throw new MVELTranslationException("Unable to find an end parenthesis for the group started at (" +
+        throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_RULE, "Unable to find an end parenthesis for the group started at (" +
                 segment.substring(subgroupStartIndex) + ")");
     }
 
@@ -151,7 +151,7 @@ public class GroupingTranslator {
         String[] andTokens = segment.split("&&");
         String[] orTokens = segment.split("\\|\\|");
         if (andTokens.length > 1 && orTokens.length > 1) {
-            throw new MVELTranslationException("Segments that mix logical operators are not compatible with " +
+            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_RULE, "Segments that mix logical operators are not compatible with " +
                     "the rules builder: (" + segment + ")");
         }
         boolean isAnd = false;
@@ -196,7 +196,7 @@ public class GroupingTranslator {
             if (
                     (isOr && !myGroup.getOperatorType().toString().equals(BLCOperator.OR.toString()))
                     ) {
-                throw new MVELTranslationException("Segment logical operator is not compatible with the group " +
+                throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_RULE, "Segment logical operator is not compatible with the group " +
                         "logical operator: (" + segment + ")");
             }
         }

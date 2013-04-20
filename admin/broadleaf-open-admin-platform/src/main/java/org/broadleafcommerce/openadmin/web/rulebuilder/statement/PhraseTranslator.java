@@ -122,13 +122,13 @@ public class PhraseTranslator {
             try {
                 value = RuleBuilderFormatUtil.getDateFormat().format(FormatUtil.getDateFormat().parse(value));
             } catch (ParseException e) {
-                throw new MVELTranslationException("Unable to convert the persisted date value(" + value + ") to the admin" +
+                throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DATE_VALUE, "Unable to convert the persisted date value(" + value + ") to the admin" +
                         "display format.");
             }
         }
         int entityKeyIndex = field.indexOf(".");
         if (entityKeyIndex < 0) {
-            throw new MVELTranslationException("Could not identify a valid property field value " +
+            throw new MVELTranslationException(MVELTranslationException.NO_FIELD_FOUND_IN_RULE, "Could not identify a valid property field value " +
                     "in the expression: ("+phrase+")");
         }
         if (value.startsWith(caseInsensitivityKey)) {
@@ -205,7 +205,7 @@ public class PhraseTranslator {
                 }
 
                 if (components.length != 3) {
-                    throw new MVELTranslationException("Could not parse the MVEL expression to a " +
+                    throw new MVELTranslationException(MVELTranslationException.UNRECOGNIZABLE_RULE, "Could not parse the MVEL expression to a " +
                             "compatible form for the rules builder (" + phrase + ")");
                 }
             }
@@ -347,7 +347,7 @@ public class PhraseTranslator {
         } else if (operator.equals(".size()==")) {
             return BLCOperator.COUNT_EQUALS;
         }
-        throw new MVELTranslationException("Unable to identify an operator compatible with the " +
+        throw new MVELTranslationException(MVELTranslationException.OPERATOR_NOT_FOUND, "Unable to identify an operator compatible with the " +
                 "rules builder: ("+(isNegation?"!":""+field+operator+value)+")");
     }
 

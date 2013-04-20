@@ -92,7 +92,7 @@ public class DataDTOToMVELTranslator {
         Object[] value;
 
         if (type == null) {
-            throw new MVELTranslationException("The DataDTO is not compatible with the RuleBuilderFieldService " +
+            throw new MVELTranslationException(MVELTranslationException.SPECIFIED_FIELD_NOT_FOUND, "The DataDTO is not compatible with the RuleBuilderFieldService " +
                     "associated with the current rules builder. Unable to find the field " +
                     "specified: ("+field+")");
         }
@@ -557,7 +557,7 @@ public class DataDTOToMVELTranslator {
                         try {
                             Double.parseDouble(value[j].toString());
                         } catch (Exception e) {
-                            throw new MVELTranslationException("Cannot format value for the field ("
+                            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DECIMAL_VALUE, "Cannot format value for the field ("
                                     + fieldName + ") based on field type. The type of field is Decimal, " +
                                     "and you entered: (" + value[j] +")");
                         }
@@ -583,7 +583,7 @@ public class DataDTOToMVELTranslator {
                             try {
                                 Integer.parseInt(value[j].toString());
                             } catch (Exception e) {
-                                throw new MVELTranslationException("Cannot format value for the field (" +
+                                throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_INTEGER_VALUE, "Cannot format value for the field (" +
                                         fieldName + ") based on field type. The type of field is Integer, " +
                                         "and you entered: (" + value[j] +")");
                             }
@@ -594,7 +594,7 @@ public class DataDTOToMVELTranslator {
                         try {
                             Integer.parseInt(value[j].toString());
                         } catch (Exception e) {
-                            throw new MVELTranslationException("Cannot format value for the field (" +
+                            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_INTEGER_VALUE, "Cannot format value for the field (" +
                                     fieldName + ") based on field type. The type of field is Integer, " +
                                     "and you entered: (" + value[j] +")");
                         }
@@ -604,7 +604,7 @@ public class DataDTOToMVELTranslator {
                         try {
                             Double.parseDouble(value[j].toString());
                         } catch (Exception e) {
-                            throw new MVELTranslationException("Cannot format value for the field (" +
+                            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DECIMAL_VALUE, "Cannot format value for the field (" +
                                     fieldName + ") based on field type. The type of field is Money, " +
                                     "and you entered: (" + value[j] +")");
                         }
@@ -616,7 +616,7 @@ public class DataDTOToMVELTranslator {
                         try {
                             temp = RuleBuilderFormatUtil.getDateFormat().parse(String.valueOf(value[j]));
                         } catch (ParseException e) {
-                            throw new MVELTranslationException("Cannot format value for the field (" +
+                            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DATE_VALUE, "Cannot format value for the field (" +
                                     fieldName + ") based on field type. The type of field is Date, " +
                                     "and you entered: (" + value[j] +"). Dates must be in the format MM/dd/yyyy HH:mm.");
                         }

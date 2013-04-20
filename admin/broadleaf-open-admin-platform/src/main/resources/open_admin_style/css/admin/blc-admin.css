@@ -132,6 +132,10 @@ div.field-label {
 	color: #4D4D4D;
 }
 
+div.error {
+    color: #ff1c2b;
+}
+
 .entity-form-tabs {
 	float: left;
 	width: 220px;

@@ -8,6 +8,9 @@
                th:id="${field.jsonFieldName}"
                th:name="'fields[\&#39;'+${field.jsonFieldName}+'\&#39;].value'"
                th:value="${field.json}"/>
+
+        <div class="error" th:text="#{'ruleErrorTitle'} + ' ' + ${field.dataWrapper.error}"
+                    th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}"/>
                
         <div class="rule-builder-required-field" 
             th:if="${field.required}"

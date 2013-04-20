@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
+import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
@@ -73,6 +74,7 @@ public class BroadleafRequestContext {
     protected Catalog currentCatalog;
     protected Boolean ignoreSite = false;
     protected Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    protected MessageSource messageSource;
 
     /**
      * Gets the current request on the context
@@ -288,5 +290,13 @@ public class BroadleafRequestContext {
 
     public void setAdditionalProperties(Map<String, Object> additionalProperties) {
         this.additionalProperties = additionalProperties;
+    }
+
+    public MessageSource getMessageSource() {
+        return messageSource;
+    }
+
+    public void setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 }

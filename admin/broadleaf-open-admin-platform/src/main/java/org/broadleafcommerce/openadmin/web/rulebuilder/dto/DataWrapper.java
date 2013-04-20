@@ -62,6 +62,8 @@ public class DataWrapper implements Serializable {
 
     protected ArrayList<DataDTO> data = new ArrayList<DataDTO>();
 
+    protected String error;
+
     public ArrayList<DataDTO> getData() {
         return data;
     }
@@ -69,7 +71,15 @@ public class DataWrapper implements Serializable {
     public void setData(ArrayList<DataDTO> data) {
         this.data = data;
     }
-    
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
     public String serialize() throws JsonGenerationException, JsonMappingException, IOException {
         return new ObjectMapper().writeValueAsString(this);
     }

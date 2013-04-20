@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
@@ -57,6 +58,9 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
     @Resource(name = "blThemeResolver")
     private BroadleafThemeResolver themeResolver;
 
+    @Resource(name = "messageSource")
+    private MessageSource messageSource;
+
     @Override
     public void process(WebRequest request) throws SiteNotFoundException {
         Site site = siteResolver.resolveSite(request);
@@ -87,6 +91,7 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
         brc.setBroadleafCurrency(currency);
         brc.setSandbox(currentSandbox);
         brc.setTheme(theme);
+        brc.setMessageSource(messageSource);
 
         Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute("blRuleMap", WebRequest.SCOPE_REQUEST);
         if (ruleMap == null) {

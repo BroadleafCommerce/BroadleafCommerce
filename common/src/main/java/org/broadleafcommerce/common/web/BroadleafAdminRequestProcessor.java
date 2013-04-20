@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
@@ -39,6 +40,9 @@ public class BroadleafAdminRequestProcessor implements BroadleafWebRequestProces
     @Resource(name = "blSiteResolver")
     private BroadleafSiteResolver siteResolver;
 
+    @Resource(name = "messageSource")
+    private MessageSource messageSource;
+
     @Override
     public void process(WebRequest request) throws SiteNotFoundException {
         Site site = siteResolver.resolveSite(request);
@@ -50,6 +54,7 @@ public class BroadleafAdminRequestProcessor implements BroadleafWebRequestProces
         if (site == null) {
             brc.setIgnoreSite(true);
         }
+        brc.setMessageSource(messageSource);
 
         BroadleafRequestContext.setBroadleafRequestContext(brc);
     }
