@@ -1,10 +1,10 @@
 <div>
-    <div th:fragment="messages">
-        <div class="alert-box alert" th:unless="${#strings.isEmpty(param.errorCode)}">
-            <div th:if="${errorCode == 'notFound'}">No matching user found.</div>
-            <div th:if="${errorCode == 'inactiveUser'}">The username associated with the email you entered is marked as inactive. Please contact an administrator to activate the account.</div>
-            <div th:unless="${#strings.isEmpty(param.errorCode)}">Unknown error.</div>
-        </div>
+    <div th:fragment="messages">    
+         <div class="alert-box alert" th:switch="${errorCode}" th:unless="${#strings.isEmpty(errorCode)}"> 
+             <div th:case="'notFound'">No matching user found for the passed in email address.</div>
+             <div th:case="'inactiveUser'">The username associated with the email you entered is marked as inactive. Please contact an administrator to activate the account.</div>
+             <div th:case="*">Unknown error. </div>         
+         </div>
     </div>
 
     <form th:fragment="form" action="#" th:action="@{forgotUsername}" method="POST">

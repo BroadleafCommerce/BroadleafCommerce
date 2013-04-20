@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.web.controller;
 
-import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
@@ -99,25 +98,10 @@ public class AdminLoginController extends BroadleafAbstractController {
         return getForgotUsernameView();
     }
     
-    @RequestMapping(value="/resetPassword", method=RequestMethod.POST)
-    public String processResetPassword(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm) {
-        if (!StringUtils.isEmpty(resetPasswordForm.getToken())) {
-            GenericResponse errorResponse = adminSecurityService.resetPasswordUsingToken(
-                    resetPasswordForm.getUsername(), 
-                    resetPasswordForm.getToken(), 
-                    resetPasswordForm.getPassword(), 
-                    resetPasswordForm.getConfirmPassword());
-            if (errorResponse.getHasErrors()) {
-                setErrors(errorResponse, request);
-                return getResetPasswordView();
-            } else {
-                return redirectToLoginWithMessage("passwordReset");
-            }
-        }
-        
-        String username = resetPasswordForm.getUsername();
-        
+    @RequestMapping(value = "/sendResetPassword", method = RequestMethod.POST)
+    public String processSendResetPasswordEmail(HttpServletRequest request, HttpServletResponse response,
+            @RequestParam("username") String username) {
+
         GenericResponse errorResponse = adminSecurityService.sendResetPasswordNotification(username);
         if (errorResponse.getHasErrors()) {
             setErrors(errorResponse, request);
@@ -127,9 +111,25 @@ public class AdminLoginController extends BroadleafAbstractController {
             return redirectToResetPasswordWithMessage("passwordTokenSent");
         }
     }
+
+    @RequestMapping(value="/resetPassword", method=RequestMethod.POST)
+    public String processResetPassword(HttpServletRequest request, HttpServletResponse response, Model model,
+            @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm) {
+        GenericResponse errorResponse = adminSecurityService.resetPasswordUsingToken(
+                resetPasswordForm.getUsername(),
+                resetPasswordForm.getToken(),
+                resetPasswordForm.getPassword(),
+                resetPasswordForm.getConfirmPassword());
+        if (errorResponse.getHasErrors()) {
+            setErrors(errorResponse, request);
+            return getResetPasswordView();
+        } else {
+            return redirectToLoginWithMessage("passwordReset");
+        }
+    }
    
     @RequestMapping(value="/forgotUsername", method=RequestMethod.POST)
-    public String processForgotUserName(HttpServletRequest request, Model model,
+    public String processForgotUserName(HttpServletRequest request,
             @RequestParam("emailAddress") String email) {
         GenericResponse errorResponse = adminSecurityService.sendForgotUsernameNotification(email);
         if (errorResponse.getHasErrors()) {
