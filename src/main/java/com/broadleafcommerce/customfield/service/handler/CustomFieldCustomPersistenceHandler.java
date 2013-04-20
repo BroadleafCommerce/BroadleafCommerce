@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
@@ -16,11 +17,9 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -31,9 +30,6 @@ import java.util.Map;
  * @author Jeff Fischer
  */
 public class CustomFieldCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-
-    @Resource(name = "messageSource")
-    protected MessageSource messageSource;
 
     private static final Log LOG = LogFactory.getLog(CustomFieldCustomPersistenceHandler.class);
 
@@ -106,19 +102,22 @@ public class CustomFieldCustomPersistenceHandler extends CustomPersistenceHandle
 
     protected void updateGroupName(RecordHelper helper, PersistencePerspective persistencePerspective, CustomField customFieldInstance) {
         //traverse the target entity fields, looking for the group that's equivalent to the one specified in the custom field
-        Map<String, FieldMetadata> targetProperties = helper.getSimpleMergedProperties(customFieldInstance.getCustomFieldTarget(), persistencePerspective);
-        for (Map.Entry<String, FieldMetadata> entry : targetProperties.entrySet()) {
-            if (entry.getValue() instanceof BasicFieldMetadata) {
-                BasicFieldMetadata metadata = (BasicFieldMetadata) entry.getValue();
-                if (metadata.getGroup() != null) {
-                    try {
-                        String translatedGroup = messageSource.getMessage(metadata.getGroup(), null, LocaleContextHolder.getLocale());
-                        if (translatedGroup.equalsIgnoreCase(customFieldInstance.getGroupName())) {
-                            customFieldInstance.setGroupName(metadata.getGroup());
-                            break;
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getMessageSource() != null) {
+            Map<String, FieldMetadata> targetProperties = helper.getSimpleMergedProperties(customFieldInstance.getCustomFieldTarget(), persistencePerspective);
+            for (Map.Entry<String, FieldMetadata> entry : targetProperties.entrySet()) {
+                if (entry.getValue() instanceof BasicFieldMetadata) {
+                    BasicFieldMetadata metadata = (BasicFieldMetadata) entry.getValue();
+                    if (metadata.getGroup() != null) {
+                        try {
+                            String translatedGroup = context.getMessageSource().getMessage(metadata.getGroup(), null, context.getJavaLocale());
+                            if (translatedGroup.equalsIgnoreCase(customFieldInstance.getGroupName())) {
+                                customFieldInstance.setGroupName(metadata.getGroup());
+                                break;
+                            }
+                        } catch (NoSuchMessageException e) {
+                            //do nothing - translation not available
                         }
-                    } catch (NoSuchMessageException e) {
-                        //do nothing - translation not available
                     }
                 }
             }
@@ -128,11 +127,13 @@ public class CustomFieldCustomPersistenceHandler extends CustomPersistenceHandle
     protected void setGroupNamePropertyValue(Entity customFieldEntity) {
         Property groupNameProperty = customFieldEntity.findProperty("groupName");
         String convertedValue = groupNameProperty.getValue();
-        try {
-            convertedValue = messageSource.getMessage(groupNameProperty.getValue(), null, LocaleContextHolder
-                    .getLocale());
-        } catch (NoSuchMessageException e) {
-            //do nothing
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getMessageSource() != null) {
+            try {
+                convertedValue = context.getMessageSource().getMessage(groupNameProperty.getValue(), null, context.getJavaLocale());
+            } catch (NoSuchMessageException e) {
+                //do nothing
+            }
         }
         groupNameProperty.setValue(convertedValue);
     }
