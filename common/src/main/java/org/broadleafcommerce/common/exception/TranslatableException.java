@@ -53,4 +53,16 @@ public class TranslatableException extends Exception {
         }
         return response;
     }
+
+    /**
+     * Cause the message passed to the constructor to show up on stack trace logs
+     *
+     * @return the non-localized version of the exception message
+     */
+    @Override
+    public String toString() {
+        String s = getClass().getName();
+        String message = getMessage();
+        return (message != null) ? (s + ": " + message) : s;
+    }
 }

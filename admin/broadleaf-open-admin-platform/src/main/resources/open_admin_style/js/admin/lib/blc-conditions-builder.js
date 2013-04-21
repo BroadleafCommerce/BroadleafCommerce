@@ -276,6 +276,9 @@
             } else if ((falseRadio != null && ruleData.value == "false") || ruleData.value == null) {
                 falseRadio.prop('checked', true)
                 trueRadio.prop('checked', false)
+            } else if (ruleData.start != "null" && ruleData.end != "null") {
+                ruleDiv.find(".start").val(ruleData.start);
+                ruleDiv.find(".end").val(ruleData.end);
             } else {
                 ruleDiv.find(".value").val(ruleData.value);
             }
