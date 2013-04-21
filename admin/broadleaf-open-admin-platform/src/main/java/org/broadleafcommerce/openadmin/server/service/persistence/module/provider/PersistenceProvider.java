@@ -52,7 +52,7 @@ public interface PersistenceProvider extends Ordered {
      * field from the request on the instance parameter.
      *
      * @param populateValueRequest contains the requested value and support classes.
-     * @param instance the entity instance on which to set the values harvested from the request
+     * @param instance the entity instance on which to set the value harvested from the request
      * @return whether or not the implementation handled the persistence request
      */
     boolean populateValue(PopulateValueRequest populateValueRequest, Serializable instance);
