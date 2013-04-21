@@ -614,7 +614,7 @@ public class DataDTOToMVELTranslator {
                         //convert the date to our standard date/time format
                         Date temp = null;
                         try {
-                            temp = RuleBuilderFormatUtil.getDateFormat().parse(String.valueOf(value[j]));
+                            temp = RuleBuilderFormatUtil.parseDate(String.valueOf(value[j]));
                         } catch (ParseException e) {
                             throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DATE_VALUE, "Cannot format value for the field (" +
                                     fieldName + ") based on field type. The type of field is Date, " +

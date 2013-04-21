@@ -211,14 +211,14 @@ public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .build());
         fields.add(new FieldData.Builder()
                 .label("Sku - Start Date")
-                .name("sku.startDate")
+                .name("sku.activeStartDate")
                 .operators("blcOperators_Date")
                 .options("[]")
                 .type(SupportedFieldType.DATE)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("Sku - End Date")
-                .name("sku.endDate")
+                .name("sku.activeEndDate")
                 .operators("blcOperators_Date")
                 .options("[]")
                 .type(SupportedFieldType.DATE)

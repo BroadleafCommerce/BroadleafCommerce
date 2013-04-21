@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.web.rulebuilder.statement;
 
-import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.rulebuilder.BLCOperator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
@@ -120,16 +119,16 @@ public class PhraseTranslator {
             value = value.substring(dateFormatKey.length(), value.length()-1);
             //convert the date into admin display format
             try {
-                value = RuleBuilderFormatUtil.getDateFormat().format(FormatUtil.getDateFormat().parse(value));
+                value = RuleBuilderFormatUtil.formatDate(RuleBuilderFormatUtil.parseDate(value.substring(1, value.length()-1)));
             } catch (ParseException e) {
-                throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DATE_VALUE, "Unable to convert the persisted date value(" + value + ") to the admin" +
-                        "display format.");
+                throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DATE_VALUE, "Unable to convert " +
+                        "the persisted date value(" + value + ") to the admin display format.");
             }
         }
         int entityKeyIndex = field.indexOf(".");
         if (entityKeyIndex < 0) {
-            throw new MVELTranslationException(MVELTranslationException.NO_FIELD_FOUND_IN_RULE, "Could not identify a valid property field value " +
-                    "in the expression: ("+phrase+")");
+            throw new MVELTranslationException(MVELTranslationException.NO_FIELD_FOUND_IN_RULE, "Could not identify a " +
+                    "valid property field value in the expression: ("+phrase+")");
         }
         if (value.startsWith(caseInsensitivityKey)) {
             value = value.substring(caseInsensitivityKey.length(), value.length()-1);
