@@ -7,6 +7,7 @@ import com.broadleafcommerce.customfield.service.type.CustomFieldType;
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.MapFieldsMetadataProvider;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -37,7 +39,7 @@ public class CustomFieldMetadataProvider extends MapFieldsMetadataProvider {
     protected CustomFieldService customFieldService;
 
     @Override
-    protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest) {
+    protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         String targetEntityName = addMetadataRequest.getTargetClass().getName();
         Field field = addMetadataRequest.getRequestedField();
         return detectField(targetEntityName, field);
@@ -50,7 +52,7 @@ public class CustomFieldMetadataProvider extends MapFieldsMetadataProvider {
     }
 
     @Override
-    protected boolean canHandleFieldForTypeMetadata(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+    protected boolean canHandleFieldForTypeMetadata(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
         //detect our field, but let the superclass handle metadata alteration
         String targetEntityName = addMetadataFromFieldTypeRequest.getTargetClass().getName();
         Field field = addMetadataFromFieldTypeRequest.getRequestedField();
@@ -65,8 +67,8 @@ public class CustomFieldMetadataProvider extends MapFieldsMetadataProvider {
      * @return whether or not any metadata changes were applied
      */
     @Override
-    public boolean addMetadata(AddMetadataRequest addMetadataRequest) {
-        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest)) {
+    public boolean addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest, metadata)) {
             return false;
         }
         //We will check in the database to see if there are any configured custom fields
@@ -92,29 +94,29 @@ public class CustomFieldMetadataProvider extends MapFieldsMetadataProvider {
 
             FieldInfo myInfo = new FieldInfo();
             myInfo.setName(addMetadataRequest.getRequestedField().getName() + FieldManager.MAPFIELDSEPARATOR + customField.getLabel());
-            buildBasicMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), myInfo, override, addMetadataRequest.getDynamicEntityDao());
-            setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), myInfo);
-            BasicFieldMetadata metadata = (BasicFieldMetadata) addMetadataRequest.getRequestedMetadata().get(myInfo.getName());
-            metadata.setSearchable(customField.getSearchable());
-            metadata.getAdditionalMetadata().put(org.broadleafcommerce.openadmin.web.form.entity.Field.ALTERNATE_ORDERING, true);
+            buildBasicMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, myInfo, override, addMetadataRequest.getDynamicEntityDao());
+            setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, myInfo);
+            BasicFieldMetadata basicFieldMetadata = (BasicFieldMetadata) metadata.get(myInfo.getName());
+            basicFieldMetadata.setSearchable(customField.getSearchable());
+            basicFieldMetadata.getAdditionalMetadata().put(org.broadleafcommerce.openadmin.web.form.entity.Field.ALTERNATE_ORDERING, true);
         }
         return true;
     }
 
     @Override
-    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
         //we never want to use annotaton override for this
         return false;
     }
 
     @Override
-    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
+    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
         //we never want to use xml override for this
         return false;
     }
 
     @Override
-    public boolean addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest) {
+    public boolean addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata) {
         //there is no hibernate mapping for this, as we are describing the field "virtually" from metadata stored in the database
         return false;
     }
