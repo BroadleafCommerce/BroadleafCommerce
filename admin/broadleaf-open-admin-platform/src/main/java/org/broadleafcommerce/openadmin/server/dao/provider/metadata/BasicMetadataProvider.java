@@ -64,34 +64,34 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
 
     private static final Log LOG = LogFactory.getLog(BasicMetadataProvider.class);
 
-    protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest) {
+    protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         AdminPresentation annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentation.class);
         return annot != null;
     }
 
-    protected boolean canHandleAnnotationOverride(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+    protected boolean canHandleAnnotationOverride(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
         AdminPresentationOverrides myOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationOverrides.class);
         return myOverrides != null && (!ArrayUtils.isEmpty(myOverrides.value()) || !ArrayUtils.isEmpty(myOverrides
                 .toOneLookups()) || !ArrayUtils.isEmpty(myOverrides.dataDrivenEnums()));
     }
 
     @Override
-    public boolean addMetadata(AddMetadataRequest addMetadataRequest) {
-        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest)) {
+    public boolean addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest, metadata)) {
             return false;
         }
         AdminPresentation annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentation.class);
         FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
         FieldMetadataOverride override = constructBasicMetadataOverride(annot, addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationToOneLookup.class),
                 addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationDataDrivenEnumeration.class));
-        buildBasicMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), info, override, addMetadataRequest.getDynamicEntityDao());
-        setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), info);
+        buildBasicMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info, override, addMetadataRequest.getDynamicEntityDao());
+        setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
         return true;
     }
 
     @Override
-    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
-        if (!canHandleAnnotationOverride(overrideViaAnnotationRequest)) {
+    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
+        if (!canHandleAnnotationOverride(overrideViaAnnotationRequest, metadata)) {
             return false;
         }
         Map<String, AdminPresentationOverride> presentationOverrides = new HashMap<String, AdminPresentationOverride>();
@@ -112,24 +112,23 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
         }
 
         for (String propertyName : presentationOverrides.keySet()) {
-            for (String key : overrideViaAnnotationRequest.getRequestedMetadata().keySet()) {
+            for (String key : metadata.keySet()) {
                 if (key.startsWith(propertyName)) {
-                    buildAdminPresentationOverride(overrideViaAnnotationRequest.getPrefix(), overrideViaAnnotationRequest.getParentExcluded(), overrideViaAnnotationRequest.getRequestedMetadata(), presentationOverrides, propertyName, key, overrideViaAnnotationRequest.getDynamicEntityDao());
+                    buildAdminPresentationOverride(overrideViaAnnotationRequest.getPrefix(), overrideViaAnnotationRequest.getParentExcluded(), metadata, presentationOverrides, propertyName, key, overrideViaAnnotationRequest.getDynamicEntityDao());
                 }
             }
         }
         for (String propertyName : presentationToOneLookupOverrides.keySet()) {
-            for (String key : overrideViaAnnotationRequest.getRequestedMetadata().keySet()) {
+            for (String key : metadata.keySet()) {
                 if (key.startsWith(propertyName)) {
-                    buildAdminPresentationToOneLookupOverride(overrideViaAnnotationRequest.getRequestedMetadata(), presentationToOneLookupOverrides, propertyName, key);
+                    buildAdminPresentationToOneLookupOverride(metadata, presentationToOneLookupOverrides, propertyName, key);
                 }
             }
         }
         for (String propertyName : presentationDataDrivenEnumerationOverrides.keySet()) {
-            for (String key : overrideViaAnnotationRequest.getRequestedMetadata().keySet()) {
+            for (String key : metadata.keySet()) {
                 if (key.startsWith(propertyName)) {
-                    buildAdminPresentationDataDrivenEnumerationOverride(overrideViaAnnotationRequest
-                            .getRequestedMetadata(), presentationDataDrivenEnumerationOverrides, propertyName, key,
+                    buildAdminPresentationDataDrivenEnumerationOverride(metadata, presentationDataDrivenEnumerationOverrides, propertyName, key,
                             overrideViaAnnotationRequest.getDynamicEntityDao());
                 }
             }
@@ -138,17 +137,16 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
     }
 
     @Override
-    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
+    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
         Map<String, FieldMetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
                 final FieldMetadataOverride localMetadata = overrides.get(propertyName);
-                for (String key : overrideViaXmlRequest.getRequestedMetadata().keySet()) {
+                for (String key : metadata.keySet()) {
                     if (key.equals(propertyName)) {
                         try {
-                            if (overrideViaXmlRequest.getRequestedMetadata().get(key) instanceof BasicFieldMetadata) {
-                                BasicFieldMetadata serverMetadata = (BasicFieldMetadata) overrideViaXmlRequest
-                                        .getRequestedMetadata().get(key);
+                            if (metadata.get(key) instanceof BasicFieldMetadata) {
+                                BasicFieldMetadata serverMetadata = (BasicFieldMetadata) metadata.get(key);
                                 if (serverMetadata.getTargetClass() != null) {
                                     Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
                                     Class<?> parentClass = null;
@@ -163,7 +161,7 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
                                     buildBasicMetadata(parentClass, targetClass, temp, info, localMetadata,
                                             overrideViaXmlRequest.getDynamicEntityDao());
                                     serverMetadata = (BasicFieldMetadata) temp.get(field.getName());
-                                    overrideViaXmlRequest.getRequestedMetadata().put(key, serverMetadata);
+                                    metadata.put(key, serverMetadata);
                                     if (overrideViaXmlRequest.getParentExcluded()) {
                                         if (LOG.isDebugEnabled()) {
                                             LOG.debug("applyMetadataOverrides:Excluding " + key + "because the parent was excluded");

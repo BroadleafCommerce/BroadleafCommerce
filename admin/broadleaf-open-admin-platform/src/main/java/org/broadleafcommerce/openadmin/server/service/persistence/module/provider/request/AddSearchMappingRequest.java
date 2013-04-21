@@ -16,13 +16,11 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request;
 
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
-
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
 import java.util.Map;
 
@@ -37,20 +35,18 @@ public class AddSearchMappingRequest {
     private final CriteriaTransferObject requestedCto;
     private final String ceilingEntityFullyQualifiedClassname;
     private final Map<String, FieldMetadata> mergedProperties;
-    private final BaseCtoConverter requestedCtoConverter;
     private final String propertyName;
     private final FieldManager fieldManager;
     private final DataFormatProvider dataFormatProvider;
 
     public AddSearchMappingRequest(PersistencePerspective persistencePerspective, CriteriaTransferObject
             requestedCto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedProperties,
-                                   BaseCtoConverter requestedCtoConverter, String propertyName, FieldManager fieldManager,
+                                   String propertyName, FieldManager fieldManager,
                                    DataFormatProvider dataFormatProvider) {
         this.persistencePerspective = persistencePerspective;
         this.requestedCto = requestedCto;
         this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
         this.mergedProperties = mergedProperties;
-        this.requestedCtoConverter = requestedCtoConverter;
         this.propertyName = propertyName;
         this.fieldManager = fieldManager;
         this.dataFormatProvider = dataFormatProvider;
@@ -70,10 +66,6 @@ public class AddSearchMappingRequest {
 
     public Map<String, FieldMetadata> getMergedProperties() {
         return mergedProperties;
-    }
-
-    public BaseCtoConverter getRequestedCtoConverter() {
-        return requestedCtoConverter;
     }
 
     public String getPropertyName() {

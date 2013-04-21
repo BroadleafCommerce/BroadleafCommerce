@@ -16,11 +16,17 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.springframework.core.Ordered;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Classes implementing this interface are capable of handling persistence related events for fields whose values
@@ -43,39 +49,43 @@ public interface PersistenceProvider extends Ordered {
 
     /**
      * Set the property value on the target object. Implementations should translate and set the requestedValue
-     * field from the request on the requestedInstance field from the request.
+     * field from the request on the instance parameter.
      *
      * @param populateValueRequest contains the requested value, instance and support classes.
+     * @param instance the entity instance on which to set the values harvested from the request
      * @return whether or not the implementation handled the persistence request
      */
-    boolean populateValue(PopulateValueRequest populateValueRequest);
+    boolean populateValue(PopulateValueRequest populateValueRequest, Serializable instance);
 
     /**
      * Retrieve the property value from the provided value. Implementations should translate the requestedValue
-     * and set on the requestedProperty.
+     * and set on the property parameter.
      *
      * @param extractValueRequest contains the requested value, property and support classes.
+     * @param property the property for the admin that contains the information harvested from the persistence value
      * @return whether or not the implementation handled the persistence request
      */
-    boolean extractValue(ExtractValueRequest extractValueRequest);
+    boolean extractValue(ExtractValueRequest extractValueRequest, Property property);
 
     /**
-     * Add criteria to the requestCtoConverter. The CtoConverter is used by the system to refine the fetch criteria
+     * Add criteria to the ctoConverter. The CtoConverter is used by the system to refine the fetch criteria
      * used to retrieve lists of records for the admin. The requestedCto contains filters requested from the admin
      * and is generally used to drive the criteria added to CtoConverter.
      *
      * @param addSearchMappingRequest contains the requested ctoConverter, cto and support classes.
+     * @param ctoConverter search info should be added to converter. It is responsible for generating the final search criteria.
      * @return whether or not the implementation handled the persistence request
      */
-    boolean addSearchMapping(AddSearchMappingRequest addSearchMappingRequest);
+    boolean addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, BaseCtoConverter ctoConverter);
 
     /**
      * Filter the list of properties posted by the admin during and add or update. This is the property list
      * immediately before persistence is attempted. Properties may be altered, removed or added.
      *
      * @param addFilterPropertiesRequest contains the <tt>Entity</tt> instance and unfiltered property list.
+     * @param properties the collection of properties to filter
      * @return whether or not the implementation handled the persistence request
      */
-    boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest);
+    boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties);
 
 }

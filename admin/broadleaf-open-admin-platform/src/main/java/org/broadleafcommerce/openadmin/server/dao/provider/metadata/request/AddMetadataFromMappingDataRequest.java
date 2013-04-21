@@ -32,7 +32,6 @@ import java.util.List;
  */
 public class AddMetadataFromMappingDataRequest {
 
-    private final FieldMetadata requestedMetadata;
     private final List<Property> componentProperties;
     private final SupportedFieldType type;
     private final SupportedFieldType secondaryType;
@@ -41,8 +40,7 @@ public class AddMetadataFromMappingDataRequest {
     private final MergedPropertyType mergedPropertyType;
     private final DynamicEntityDao dynamicEntityDao;
 
-    public AddMetadataFromMappingDataRequest(FieldMetadata requestedMetadata, List<Property> componentProperties, SupportedFieldType type, SupportedFieldType secondaryType, Type requestedEntityType, String propertyName, MergedPropertyType mergedPropertyType, DynamicEntityDao dynamicEntityDao) {
-        this.requestedMetadata = requestedMetadata;
+    public AddMetadataFromMappingDataRequest(List<Property> componentProperties, SupportedFieldType type, SupportedFieldType secondaryType, Type requestedEntityType, String propertyName, MergedPropertyType mergedPropertyType, DynamicEntityDao dynamicEntityDao) {
         this.componentProperties = componentProperties;
         this.type = type;
         this.secondaryType = secondaryType;
@@ -50,10 +48,6 @@ public class AddMetadataFromMappingDataRequest {
         this.propertyName = propertyName;
         this.mergedPropertyType = mergedPropertyType;
         this.dynamicEntityDao = dynamicEntityDao;
-    }
-
-    public FieldMetadata getRequestedMetadata() {
-        return requestedMetadata;
     }
 
     public List<Property> getComponentProperties() {

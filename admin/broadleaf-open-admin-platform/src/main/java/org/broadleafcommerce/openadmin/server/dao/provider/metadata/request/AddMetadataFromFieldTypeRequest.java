@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Contains the requested field, properties, property name and support classes.
+ * Contains the requested field, property name and support classes.
  *
  * @author Jeff Fischer
  */
@@ -41,7 +41,6 @@ public class AddMetadataFromFieldTypeRequest {
     private final ForeignKey[] additionalForeignFields;
     private final MergedPropertyType mergedPropertyType;
     private final List<Property> componentProperties;
-    private final Map<String, FieldMetadata> requestedProperties;
     private final String idProperty;
     private final String prefix;
     private final String requestedPropertyName;
@@ -57,16 +56,18 @@ public class AddMetadataFromFieldTypeRequest {
     public AddMetadataFromFieldTypeRequest(Field requestedField, Class<?> targetClass, ForeignKey foreignField,
                                            ForeignKey[] additionalForeignFields,
                                            MergedPropertyType mergedPropertyType, List<Property> componentProperties,
-                                           Map<String, FieldMetadata> requestedProperties, String idProperty,
+                                           String idProperty,
                                            String prefix, String requestedPropertyName, Type type,
-                                           boolean propertyForeignKey, int additionalForeignKeyIndexPosition, Map<String, FieldMetadata> presentationAttributes, FieldMetadata presentationAttribute, SupportedFieldType explicitType, Class<?> returnedClass, DynamicEntityDao dynamicEntityDao) {
+                                           boolean propertyForeignKey, int additionalForeignKeyIndexPosition,
+                                           Map<String, FieldMetadata> presentationAttributes,
+                                           FieldMetadata presentationAttribute, SupportedFieldType explicitType, 
+                                           Class<?> returnedClass, DynamicEntityDao dynamicEntityDao) {
         this.requestedField = requestedField;
         this.targetClass = targetClass;
         this.foreignField = foreignField;
         this.additionalForeignFields = additionalForeignFields;
         this.mergedPropertyType = mergedPropertyType;
         this.componentProperties = componentProperties;
-        this.requestedProperties = requestedProperties;
         this.idProperty = idProperty;
         this.prefix = prefix;
         this.requestedPropertyName = requestedPropertyName;
@@ -102,10 +103,6 @@ public class AddMetadataFromFieldTypeRequest {
 
     public List<Property> getComponentProperties() {
         return componentProperties;
-    }
-
-    public Map<String, FieldMetadata> getRequestedProperties() {
-        return requestedProperties;
     }
 
     public String getIdProperty() {

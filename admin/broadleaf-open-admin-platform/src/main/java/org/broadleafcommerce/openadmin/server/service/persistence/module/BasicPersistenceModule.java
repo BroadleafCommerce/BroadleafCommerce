@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -56,14 +63,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
-
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -86,8 +86,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
 
 /**
  * @author jfischer
@@ -194,13 +192,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         FieldManager fieldManager = getFieldManager();
         boolean handled = false;
         for (PersistenceProvider persistenceProvider : persistenceProviders) {
-            boolean response = persistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity, unfilteredProperties));
+            boolean response = persistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity), unfilteredProperties);
             if (response) {
                 handled = true;
             }
         }
         if (!handled) {
-            defaultPersistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity, unfilteredProperties));
+            defaultPersistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity), unfilteredProperties);
         }
         try {
             for (Property property : entity.getProperties()) {
@@ -241,15 +239,15 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         if (value != null) {
                             handled = false;
                             for (PersistenceProvider persistenceProvider : persistenceProviders) {
-                                boolean response = persistenceProvider.populateValue(new PopulateValueRequest(instance, setId,
-                                        fieldManager, property, metadata, returnType, value, persistenceManager, this));
+                                boolean response = persistenceProvider.populateValue(new PopulateValueRequest(setId,
+                                        fieldManager, property, metadata, returnType, value, persistenceManager, this), instance);
                                 if (response) {
                                     handled = true;
                                 }
                             }
                             if (!handled) {
-                                defaultPersistenceProvider.populateValue(new PopulateValueRequest(instance, setId,
-                                        fieldManager, property, metadata, returnType, value, persistenceManager, this));
+                                defaultPersistenceProvider.populateValue(new PopulateValueRequest(setId,
+                                        fieldManager, property, metadata, returnType, value, persistenceManager, this), instance);
                             }
                         } else {
                             try {
@@ -429,7 +427,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             for (PersistenceProvider persistenceProvider : persistenceProviders) {
                                 boolean response = persistenceProvider.extractValue(
                                         new ExtractValueRequest(props, fieldManager,
-                                                metadata, value, propertyItem, displayVal, persistenceManager, this));
+                                                metadata, value, displayVal, persistenceManager, this), propertyItem);
                                 if (response) {
                                     handled = true;
                                 }
@@ -437,7 +435,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             if (!handled) {
                                 defaultPersistenceProvider.extractValue(
                                         new ExtractValueRequest(props, fieldManager, metadata,
-                                                value, propertyItem, displayVal, persistenceManager, this));
+                                                value, displayVal, persistenceManager, this), propertyItem);
                             }
                             break checkField;
                         }
@@ -587,8 +585,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 for (PersistenceProvider persistenceProvider : persistenceProviders) {
                     boolean response = persistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
-                                    ceilingEntityFullyQualifiedClassname, mergedProperties, ctoConverter,
-                                    propertyId, getFieldManager(), this));
+                                    ceilingEntityFullyQualifiedClassname, mergedProperties,
+                                    propertyId, getFieldManager(), this), ctoConverter);
                     if (response) {
                         handled = true;
                     }
@@ -596,8 +594,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 if (!handled) {
                     defaultPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
-                                    ceilingEntityFullyQualifiedClassname, mergedProperties, ctoConverter, propertyId,
-                                    getFieldManager(), this));
+                                    ceilingEntityFullyQualifiedClassname, mergedProperties, propertyId,
+                                    getFieldManager(), this), ctoConverter);
                 }
             } else {
                 ctoConverter.addEmptyMapping(ceilingEntityFullyQualifiedClassname, propertyId);

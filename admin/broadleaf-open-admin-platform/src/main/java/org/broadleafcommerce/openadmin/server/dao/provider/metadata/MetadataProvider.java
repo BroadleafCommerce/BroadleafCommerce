@@ -16,12 +16,15 @@
 
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
 import org.springframework.core.Ordered;
+
+import java.util.Map;
 
 /**
  * Classes implementing this interface are capable of manipulating metadata resulting from the inspection
@@ -41,47 +44,52 @@ public interface MetadataProvider extends Ordered {
 
     /**
      * Contribute to metadata inspection for the <tt>Field</tt> instance in the request. Implementations should
-     * add values to the requestedMetadata field of the request object.
+     * add values to the metadata parameter.
      *
-     * @param addMetadataRequest contains the requested field, metadata and support classes.
+     * @param addMetadataRequest contains the requested field and support classes.
+     * @param metadata implementations should add metadata for the requested field here
      * @return whether or not this implementation adjusted metadata
      */
-    boolean addMetadata(AddMetadataRequest addMetadataRequest);
+    boolean addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata);
 
     /**
      * Contribute to metadata inspection for the entity in the request. Implementations should override values
-     * in the requestedMetadata field of the request object.
+     * in the metadata parameter.
      *
-     * @param overrideViaAnnotationRequest contains the requested entity, metadata and support classes.
+     * @param overrideViaAnnotationRequest contains the requested entity and support classes.
+     * @param metadata implementations should override metadata here
      * @return whether or not this implementation adjusted metadata
      */
-     boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest);
+     boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata);
 
     /**
      * Contribute to metadata inspection for the ceiling entity and config key. Implementations should override
-     * values in the requestedMetadata field of the request object.
+     * values in the metadata parameter.
      *
-     * @param overrideViaXmlRequest contains the requested config key, ceiling entity, metadata and support classes.
+     * @param overrideViaXmlRequest contains the requested config key, ceiling entity and support classes.
+     * @param metadata implementations should override metadata here
      * @return whether or not this implementation adjusted metadata
      */
-    boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest);
+    boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata);
 
     /**
      * Contribute to metadata inspection using Hibernate column information. Implementations should impact values
-     * in the requestedMetadata field of the request object.
+     * in the metadata parameter.
      *
-     * @param addMetadataFromMappingDataRequest contains the requested Hibernate type, metadata and support classes.
+     * @param addMetadataFromMappingDataRequest contains the requested Hibernate type and support classes.
+     * @param metadata implementations should impact values for the metadata for the field here
      * @return whether or not this implementation adjusted metadata
      */
-    boolean addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest);
+    boolean addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata);
 
     /**
      * Contribute to metadata inspection for the <tt>Field</tt> instance in the request. Implementations should
-     * add values to the requestedProperties field of the request object.
+     * add values to the metadata parameter. This is metadata based on the field type.
      *
-     * @param addMetadataFromFieldTypeRequest contains the requested field, properties, property name and support classes.
+     * @param addMetadataFromFieldTypeRequest contains the requested field, property name and support classes.
+     * @param metadata implementations should add values for the field here
      * @return whether or not this implementation adjusted metadata
      */
-    boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest);
+    boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata);
 
 }

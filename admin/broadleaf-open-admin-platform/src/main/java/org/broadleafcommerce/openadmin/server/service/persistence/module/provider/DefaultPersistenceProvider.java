@@ -16,11 +16,14 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
 
 /**
  * @author Jeff Fischer
@@ -29,9 +32,9 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class DefaultPersistenceProvider extends PersistenceProviderAdapter {
 
-    public boolean populateValue(PopulateValueRequest populateValueRequest) throws PersistenceException {
+    public boolean populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
         try {
-            populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(),
+            populateValueRequest.getFieldManager().setFieldValue(instance,
                     populateValueRequest.getProperty().getName(), populateValueRequest.getRequestedValue());
         } catch (Exception e) {
             throw new PersistenceException(e);
@@ -40,11 +43,11 @@ public class DefaultPersistenceProvider extends PersistenceProviderAdapter {
     }
 
     @Override
-    public boolean extractValue(ExtractValueRequest extractValueRequest) throws PersistenceException {
+    public boolean extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (extractValueRequest.getRequestedValue() != null) {
             String val = extractValueRequest.getRequestedValue().toString();
-            extractValueRequest.getRequestedProperty().setValue(val);
-            extractValueRequest.getRequestedProperty().setDisplayValue(extractValueRequest.getDisplayVal());
+            property.setValue(val);
+            property.setDisplayValue(extractValueRequest.getDisplayVal());
         }
         return true;
     }

@@ -62,15 +62,15 @@ public class Metadata {
         for (Field field : fields) {
             boolean foundOneOrMoreHandlers = false;
             for (MetadataProvider metadataProvider : metadataProviders) {
-                boolean response = metadataProvider.addMetadata(new AddMetadataRequest(field, parentClass, targetClass, attributes,
-                        dynamicEntityDao, prefix));
+                boolean response = metadataProvider.addMetadata(new AddMetadataRequest(field, parentClass, targetClass,
+                        dynamicEntityDao, prefix), attributes);
                 if (response) {
                     foundOneOrMoreHandlers = true;
                 }
             }
             if (!foundOneOrMoreHandlers) {
                 defaultMetadataProvider.addMetadata(new AddMetadataRequest(field, parentClass, targetClass,
-                        attributes, dynamicEntityDao, prefix));
+                        dynamicEntityDao, prefix), attributes);
             }
         }
         return attributes;
@@ -92,24 +92,24 @@ public class Metadata {
             boolean handled = false;
             for (MetadataProvider metadataProvider : metadataProviders) {
                 boolean response = metadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
-                            mergedProperties, isParentExcluded, dynamicEntityDao, prefix));
+                            isParentExcluded, dynamicEntityDao, prefix), mergedProperties);
                 if (response) {
                     handled = true;
                 }
             }
             if (!handled) {
                 defaultMetadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
-                                                    mergedProperties, isParentExcluded, dynamicEntityDao, prefix));
+                                         isParentExcluded, dynamicEntityDao, prefix), mergedProperties);
             }
         }
         ((DefaultMetadataProvider) defaultMetadataProvider).overrideExclusionsFromXml(new OverrideViaXmlRequest(configurationKey,
-                ceilingEntityFullyQualifiedClassname, prefix, isParentExcluded, mergedProperties, dynamicEntityDao));
+                ceilingEntityFullyQualifiedClassname, prefix, isParentExcluded, dynamicEntityDao), mergedProperties);
 
         boolean handled = false;
         for (MetadataProvider metadataProvider : metadataProviders) {
             boolean response = metadataProvider.overrideViaXml(
                     new OverrideViaXmlRequest(configurationKey, ceilingEntityFullyQualifiedClassname, prefix,
-                            isParentExcluded, mergedProperties, dynamicEntityDao));
+                            isParentExcluded, dynamicEntityDao), mergedProperties);
             if (response) {
                 handled = true;
             }
@@ -117,7 +117,7 @@ public class Metadata {
         if (!handled) {
             defaultMetadataProvider.overrideViaXml(
                                 new OverrideViaXmlRequest(configurationKey, ceilingEntityFullyQualifiedClassname, prefix,
-                                        isParentExcluded, mergedProperties, dynamicEntityDao));
+                                        isParentExcluded, dynamicEntityDao), mergedProperties);
         }
 
         return mergedProperties;
@@ -157,15 +157,15 @@ public class Metadata {
         presentationAttribute.setAvailableToTypes(new String[]{targetClass.getName()});
         boolean handled = false;
         for (MetadataProvider metadataProvider : metadataProviders) {
-            boolean response = metadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(presentationAttribute,
-                componentProperties, type, secondaryType, entityType, propertyName, mergedPropertyType, dynamicEntityDao));
+            boolean response = metadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(
+                componentProperties, type, secondaryType, entityType, propertyName, mergedPropertyType, dynamicEntityDao), presentationAttribute);
             if (response) {
                 handled = true;
             }
         }
         if (!handled) {
-            defaultMetadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(presentationAttribute,
-                    componentProperties, type, secondaryType, entityType, propertyName, mergedPropertyType, dynamicEntityDao));
+            defaultMetadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(
+                    componentProperties, type, secondaryType, entityType, propertyName, mergedPropertyType, dynamicEntityDao), presentationAttribute);
         }
 
         return presentationAttribute;

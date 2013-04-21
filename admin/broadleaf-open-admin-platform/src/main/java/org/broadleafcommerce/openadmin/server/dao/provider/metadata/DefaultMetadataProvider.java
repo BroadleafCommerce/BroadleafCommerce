@@ -50,40 +50,40 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
     private static final Log LOG = LogFactory.getLog(DefaultMetadataProvider.class);
 
     @Override
-    public boolean addMetadata(AddMetadataRequest addMetadataRequest) {
+    public boolean addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
-        BasicFieldMetadata metadata = new BasicFieldMetadata();
-        metadata.setName(addMetadataRequest.getRequestedField().getName());
-        metadata.setExcluded(false);
-        addMetadataRequest.getRequestedMetadata().put(addMetadataRequest.getRequestedField().getName(), metadata);
-        setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), info);
+        BasicFieldMetadata basicMetadata = new BasicFieldMetadata();
+        basicMetadata.setName(addMetadataRequest.getRequestedField().getName());
+        basicMetadata.setExcluded(false);
+        metadata.put(addMetadataRequest.getRequestedField().getName(), basicMetadata);
+        setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
         return true;
     }
 
-    public void overrideExclusionsFromXml(OverrideViaXmlRequest overrideViaXmlRequest) {
+    public void overrideExclusionsFromXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
         //override any and all exclusions derived from xml
         Map<String, FieldMetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
                 final FieldMetadataOverride localMetadata = overrides.get(propertyName);
                 Boolean excluded = localMetadata.getExcluded();
-                for (String key : overrideViaXmlRequest.getRequestedMetadata().keySet()) {
+                for (String key : metadata.keySet()) {
                     String testKey = overrideViaXmlRequest.getPrefix() + key;
                     if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded != null && excluded) {
-                        FieldMetadata metadata = overrideViaXmlRequest.getRequestedMetadata().get(key);
+                        FieldMetadata fieldMetadata = metadata.get(key);
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("setExclusionsBasedOnParents:Excluding " + key + "because an override annotation declared "+ testKey + " to be excluded");
                         }
-                        metadata.setExcluded(true);
+                        fieldMetadata.setExcluded(true);
                         continue;
                     }
                     if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && excluded != null && !excluded) {
-                        FieldMetadata metadata = overrideViaXmlRequest.getRequestedMetadata().get(key);
+                        FieldMetadata fieldMetadata = metadata.get(key);
                         if (!overrideViaXmlRequest.getParentExcluded()) {
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("setExclusionsBasedOnParents:Showing " + key + "because an override annotation declared " + testKey + " to not be excluded");
                             }
-                            metadata.setExcluded(false);
+                            fieldMetadata.setExcluded(false);
                         }
                     }
                 }
@@ -92,9 +92,8 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
     }
 
     @Override
-    public boolean addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest) {
-        BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) addMetadataFromMappingDataRequest
-                .getRequestedMetadata();
+    public boolean addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata) {
+        BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) metadata;
         fieldMetadata.setFieldType(addMetadataFromMappingDataRequest.getType());
         fieldMetadata.setSecondaryType(addMetadataFromMappingDataRequest.getSecondaryType());
         if (addMetadataFromMappingDataRequest.getRequestedEntityType() != null && !addMetadataFromMappingDataRequest.getRequestedEntityType().isCollectionType()) {
@@ -130,7 +129,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
     }
 
     @Override
-    public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+    public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
         if (
                 addMetadataFromFieldTypeRequest.getExplicitType() != null &&
                         addMetadataFromFieldTypeRequest.getExplicitType() != SupportedFieldType.UNKNOWN &&
@@ -143,7 +142,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                         addMetadataFromFieldTypeRequest.getExplicitType() != SupportedFieldType.FOREIGN_KEY &&
                         addMetadataFromFieldTypeRequest.getExplicitType() != SupportedFieldType.ADDITIONAL_FOREIGN_KEY
                 ) {
-            addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
+            metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                     addMetadataFromFieldTypeRequest.getDynamicEntityDao()
                     .getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(),
                             addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
@@ -158,7 +157,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                         addMetadataFromFieldTypeRequest.getReturnedClass().equals(Boolean.class) ||
                         addMetadataFromFieldTypeRequest.getReturnedClass().equals(Character.class)
                 ) {
-            addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
+            metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                     addMetadataFromFieldTypeRequest.getDynamicEntityDao()
                     .getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(),
                             addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
@@ -176,7 +175,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                         addMetadataFromFieldTypeRequest.getReturnedClass().equals(Long.class)
                 ) {
             if (addMetadataFromFieldTypeRequest.getRequestedPropertyName().equals(addMetadataFromFieldTypeRequest.getIdProperty())) {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
+                metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                         addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest
                                 .getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                                 addMetadataFromFieldTypeRequest.getComponentProperties(),
@@ -184,7 +183,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                                 addMetadataFromFieldTypeRequest.getTargetClass(), addMetadataFromFieldTypeRequest.getPresentationAttribute(),
                                 addMetadataFromFieldTypeRequest.getMergedPropertyType(), addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
             } else {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
+                metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                         addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest
                                 .getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                                 addMetadataFromFieldTypeRequest.getComponentProperties(),
@@ -199,7 +198,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                         addMetadataFromFieldTypeRequest.getReturnedClass().equals(Date.class) ||
                         addMetadataFromFieldTypeRequest.getReturnedClass().equals(Timestamp.class)
                 ) {
-            addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
+            metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                     addMetadataFromFieldTypeRequest.getDynamicEntityDao()
                     .getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(),
                             addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
@@ -214,7 +213,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                         addMetadataFromFieldTypeRequest.getReturnedClass().equals(String.class)
                 ) {
             if (addMetadataFromFieldTypeRequest.getRequestedPropertyName().equals(addMetadataFromFieldTypeRequest.getIdProperty())) {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
+                metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                         addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest
                                 .getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                                 addMetadataFromFieldTypeRequest.getComponentProperties(),
@@ -222,7 +221,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                                 addMetadataFromFieldTypeRequest.getTargetClass(), addMetadataFromFieldTypeRequest.getPresentationAttribute(),
                                 addMetadataFromFieldTypeRequest.getMergedPropertyType(), addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
             } else {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
+                metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                         addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest
                                 .getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                                 addMetadataFromFieldTypeRequest.getComponentProperties(),
@@ -235,7 +234,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                         ||
                         addMetadataFromFieldTypeRequest.getReturnedClass().equals(Money.class)
                 ) {
-            addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
+            metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                     addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                     addMetadataFromFieldTypeRequest.getComponentProperties(),
                     SupportedFieldType.MONEY, addMetadataFromFieldTypeRequest.getType(), addMetadataFromFieldTypeRequest.getTargetClass(), addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
@@ -247,7 +246,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                         addMetadataFromFieldTypeRequest.getReturnedClass().equals(Double.class) ||
                         addMetadataFromFieldTypeRequest.getReturnedClass().equals(BigDecimal.class)
                 ) {
-            addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
+            metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                     addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                     addMetadataFromFieldTypeRequest.getComponentProperties(),
                     SupportedFieldType.DECIMAL, addMetadataFromFieldTypeRequest.getType(), addMetadataFromFieldTypeRequest.getTargetClass(), addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
@@ -280,7 +279,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
             }
             Class<?> foreignResponseType = foreignMetadata.getIdentifierType().getReturnedClass();
             if (foreignResponseType.equals(String.class)) {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
+                metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                         addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest
                                 .getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                                 addMetadataFromFieldTypeRequest.getComponentProperties(),
@@ -289,7 +288,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                                 addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
                                 addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
             } else {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(), addMetadataFromFieldTypeRequest
+                metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(), addMetadataFromFieldTypeRequest
                         .getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                                 addMetadataFromFieldTypeRequest.getComponentProperties(),
                                 SupportedFieldType.FOREIGN_KEY, SupportedFieldType.INTEGER, addMetadataFromFieldTypeRequest.getType(), addMetadataFromFieldTypeRequest.getTargetClass(),
@@ -297,11 +296,11 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                                 addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
                                 addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
             }
-            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getRequestedProperties().get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyProperty(foreignMetadata
+            ((BasicFieldMetadata) metadata.get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyProperty(foreignMetadata
                     .getIdentifierPropertyName());
-            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getRequestedProperties().get(addMetadataFromFieldTypeRequest.getRequestedPropertyName()))
+            ((BasicFieldMetadata) metadata.get(addMetadataFromFieldTypeRequest.getRequestedPropertyName()))
                     .setForeignKeyClass(foreignKeyClass);
-            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getRequestedProperties().get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyDisplayValueProperty(lookupDisplayProperty);
+            ((BasicFieldMetadata) metadata.get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyDisplayValueProperty(lookupDisplayProperty);
         } else if (
                 addMetadataFromFieldTypeRequest.getExplicitType() != null &&
                         addMetadataFromFieldTypeRequest.getExplicitType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY
@@ -337,7 +336,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
             }
             Class<?> foreignResponseType = foreignMetadata.getIdentifierType().getReturnedClass();
             if (foreignResponseType.equals(String.class)) {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
+                metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                         addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest
                                 .getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                                 addMetadataFromFieldTypeRequest.getComponentProperties(), SupportedFieldType.ADDITIONAL_FOREIGN_KEY,
@@ -346,14 +345,14 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                                 addMetadataFromFieldTypeRequest.getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(),
                                 addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
             } else {
-                addMetadataFromFieldTypeRequest.getRequestedProperties().put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(), addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
+                metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(), addMetadataFromFieldTypeRequest.getDynamicEntityDao().getMetadata().getFieldMetadata(addMetadataFromFieldTypeRequest.getPrefix(), addMetadataFromFieldTypeRequest.getRequestedPropertyName(),
                         addMetadataFromFieldTypeRequest.getComponentProperties(), SupportedFieldType.ADDITIONAL_FOREIGN_KEY, SupportedFieldType.INTEGER,
                         addMetadataFromFieldTypeRequest.getType(), addMetadataFromFieldTypeRequest.getTargetClass(), addMetadataFromFieldTypeRequest
                         .getPresentationAttribute(), addMetadataFromFieldTypeRequest.getMergedPropertyType(), addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
             }
-            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getRequestedProperties().get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyProperty(foreignMetadata.getIdentifierPropertyName());
-            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getRequestedProperties().get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyClass(foreignKeyClass);
-            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getRequestedProperties().get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyDisplayValueProperty(lookupDisplayProperty);
+            ((BasicFieldMetadata) metadata.get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyProperty(foreignMetadata.getIdentifierPropertyName());
+            ((BasicFieldMetadata) metadata.get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyClass(foreignKeyClass);
+            ((BasicFieldMetadata) metadata.get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyDisplayValueProperty(lookupDisplayProperty);
         }
         //return type not supported - just skip this property
         return true;

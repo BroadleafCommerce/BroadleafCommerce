@@ -35,17 +35,15 @@ public class ExtractValueRequest {
     private final FieldManager fieldManager;
     private final BasicFieldMetadata metadata;
     private final Object requestedValue;
-    private final Property requestedProperty;
     private String displayVal;
     private final PersistenceManager persistenceManager;
     private final DataFormatProvider dataFormatProvider;
 
-    public ExtractValueRequest(List<Property> props, FieldManager fieldManager, BasicFieldMetadata metadata, Object requestedValue, Property requestedProperty, String displayVal, PersistenceManager persistenceManager, DataFormatProvider dataFormatProvider) {
+    public ExtractValueRequest(List<Property> props, FieldManager fieldManager, BasicFieldMetadata metadata, Object requestedValue, String displayVal, PersistenceManager persistenceManager, DataFormatProvider dataFormatProvider) {
         this.props = props;
         this.fieldManager = fieldManager;
         this.metadata = metadata;
         this.requestedValue = requestedValue;
-        this.requestedProperty = requestedProperty;
         this.displayVal = displayVal;
         this.persistenceManager = persistenceManager;
         this.dataFormatProvider = dataFormatProvider;
@@ -65,10 +63,6 @@ public class ExtractValueRequest {
 
     public Object getRequestedValue() {
         return requestedValue;
-    }
-
-    public Property getRequestedProperty() {
-        return requestedProperty;
     }
 
     public String getDisplayVal() {

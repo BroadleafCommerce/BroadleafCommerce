@@ -31,7 +31,6 @@ import java.io.Serializable;
  */
 public class PopulateValueRequest {
 
-    private final Serializable requestedInstance;
     private final Boolean setId;
     private final FieldManager fieldManager;
     private final Property property;
@@ -41,8 +40,7 @@ public class PopulateValueRequest {
     private final PersistenceManager persistenceManager;
     private final DataFormatProvider dataFormatProvider;
 
-    public PopulateValueRequest(Serializable requestedInstance, Boolean setId, FieldManager fieldManager, Property property, BasicFieldMetadata metadata, Class<?> returnType, String requestedValue, PersistenceManager persistenceManager, DataFormatProvider dataFormatProvider) {
-        this.requestedInstance = requestedInstance;
+    public PopulateValueRequest(Boolean setId, FieldManager fieldManager, Property property, BasicFieldMetadata metadata, Class<?> returnType, String requestedValue, PersistenceManager persistenceManager, DataFormatProvider dataFormatProvider) {
         this.setId = setId;
         this.fieldManager = fieldManager;
         this.property = property;
@@ -51,10 +49,6 @@ public class PopulateValueRequest {
         this.requestedValue = requestedValue;
         this.persistenceManager = persistenceManager;
         this.dataFormatProvider = dataFormatProvider;
-    }
-
-    public Serializable getRequestedInstance() {
-        return requestedInstance;
     }
 
     public Boolean getSetId() {

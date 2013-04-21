@@ -51,19 +51,19 @@ public class MapFieldsMetadataProvider extends DefaultMetadataProvider {
 
     private static final Log LOG = LogFactory.getLog(MapFieldsMetadataProvider.class);
 
-    protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest) {
+    protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         AdminPresentationMapFields annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationMapFields.class);
         return annot != null;
     }
 
-    protected boolean canHandleFieldForTypeMetadata(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
+    protected boolean canHandleFieldForTypeMetadata(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
         AdminPresentationMapFields annot = addMetadataFromFieldTypeRequest.getRequestedField().getAnnotation(AdminPresentationMapFields.class);
         return annot != null;
     }
 
     @Override
-    public boolean addMetadata(AddMetadataRequest addMetadataRequest) {
-        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest)) {
+    public boolean addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest, metadata)) {
             return false;
         }
         AdminPresentationMapFields annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationMapFields.class);
@@ -75,28 +75,28 @@ public class MapFieldsMetadataProvider extends DefaultMetadataProvider {
             override.setFriendlyName(mapField.fieldPresentation().friendlyName());
             FieldInfo myInfo = new FieldInfo();
             myInfo.setName(addMetadataRequest.getRequestedField().getName() + FieldManager.MAPFIELDSEPARATOR + mapField.fieldName());
-            buildBasicMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), myInfo, override, addMetadataRequest.getDynamicEntityDao());
-            setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), addMetadataRequest.getRequestedMetadata(), myInfo);
-            BasicFieldMetadata metadata = (BasicFieldMetadata) addMetadataRequest.getRequestedMetadata().get(myInfo.getName());
+            buildBasicMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, myInfo, override, addMetadataRequest.getDynamicEntityDao());
+            setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, myInfo);
+            BasicFieldMetadata basicFieldMetadata = (BasicFieldMetadata) metadata.get(myInfo.getName());
             if (!mapField.targetClass().equals(Void.class)) {
                 if (mapField.targetClass().isInterface()) {
                     throw new IllegalArgumentException("targetClass on @AdminPresentationMapField must be a concrete class");
                 }
-                metadata.setMapFieldValueClass(mapField.targetClass().getName());
+                basicFieldMetadata.setMapFieldValueClass(mapField.targetClass().getName());
             }
             if (mapField.searchable() != CustomFieldSearchableTypes.NOT_SPECIFIED) {
-                metadata.setSearchable(mapField.searchable() == CustomFieldSearchableTypes.YES);
+                basicFieldMetadata.setSearchable(mapField.searchable() == CustomFieldSearchableTypes.YES);
             }
             if (!StringUtils.isEmpty(mapField.manyToField())) {
-                metadata.setManyToField(mapField.manyToField());
+                basicFieldMetadata.setManyToField(mapField.manyToField());
             }
         }
         return true;
     }
 
     @Override
-    public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest) {
-        if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest)) {
+    public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
+        if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest, metadata)) {
             return false;
         }
         //look for any map field metadata that was previously added for the requested field
@@ -137,26 +137,26 @@ public class MapFieldsMetadataProvider extends DefaultMetadataProvider {
                         addMetadataFromFieldTypeRequest.getTargetClass(),
                         addMetadataFromFieldTypeRequest.getForeignField(), addMetadataFromFieldTypeRequest.getAdditionalForeignFields(),
                         addMetadataFromFieldTypeRequest.getMergedPropertyType(), addMetadataFromFieldTypeRequest.getComponentProperties(),
-                        addMetadataFromFieldTypeRequest.getRequestedProperties(), addMetadataFromFieldTypeRequest.getIdProperty(),
+                        addMetadataFromFieldTypeRequest.getIdProperty(),
                         addMetadataFromFieldTypeRequest.getPrefix(),
                         entry.getKey(), myType, addMetadataFromFieldTypeRequest.isPropertyForeignKey(),
                         addMetadataFromFieldTypeRequest.getAdditionalForeignKeyIndexPosition(),
                         addMetadataFromFieldTypeRequest.getPresentationAttributes(), entry.getValue(),
                         ((BasicFieldMetadata) entry.getValue()).getExplicitFieldType(),
-                        myType.getReturnedClass(), addMetadataFromFieldTypeRequest.getDynamicEntityDao()));
+                        myType.getReturnedClass(), addMetadataFromFieldTypeRequest.getDynamicEntityDao()), metadata);
             }
         }
         return true;
     }
 
     @Override
-    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest) {
+    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
         //TODO support annotation override
         return false;
     }
 
     @Override
-    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest) {
+    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
         //TODO support xml override
         return false;
     }

@@ -362,9 +362,10 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                         for (MetadataProvider provider : metadataProviders) {
                             boolean response = provider.addMetadataFromFieldType(
                                     new AddMetadataFromFieldTypeRequest(field, targetClass, null, new ForeignKey[]{},
-                                            MergedPropertyType.PRIMARY, null, mergedProperties, null, "",
+                                            MergedPropertyType.PRIMARY, null, null, "",
                                             property, null, false, 0, attributesMap, presentationAttribute,
-                                            ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(), field.getType(), this));
+                                            ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(), field.getType(), this),
+                                            mergedProperties);
                             if (response) {
                                 handled = true;
                             }
@@ -374,8 +375,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                             //AdminPresentation fields, and those fields not admin presentation annotated at all
                             defaultMetadataProvider.addMetadataFromFieldType(
                                     new AddMetadataFromFieldTypeRequest(field, targetClass, null, new ForeignKey[]{},
-                                            MergedPropertyType.PRIMARY, null, mergedProperties, null, "", property,
-                                            null, false, 0, attributesMap, presentationAttribute, ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(), field.getType(), this));
+                                            MergedPropertyType.PRIMARY, null, null, "", property,
+                                            null, false, 0, attributesMap, presentationAttribute, ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(),
+                                            field.getType(), this), mergedProperties);
                         }
                     }
                 }
@@ -925,8 +927,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                         }
                         boolean response = provider.addMetadataFromFieldType(
                                 new AddMetadataFromFieldTypeRequest(myField, targetClass, foreignField, additionalForeignFields,
-                                        mergedPropertyType, componentProperties, fields, idProperty, prefix,
-                                        propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition, presentationAttributes, presentationAttribute, null, type.getReturnedClass(), this));
+                                        mergedPropertyType, componentProperties, idProperty, prefix,
+                                        propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition,
+                                        presentationAttributes, presentationAttribute, null, type.getReturnedClass(), this), fields);
                         if (response) {
                             handled = true;
                         }
@@ -1100,7 +1103,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         if (includeField || propertyForeignKey || additionalForeignKeyIndexPosition >= 0) {
             defaultMetadataProvider.addMetadataFromFieldType(
                     new AddMetadataFromFieldTypeRequest(field, targetClass, foreignField, additionalForeignFields,
-                            mergedPropertyType, componentProperties, fields, idProperty, prefix, propertyName, type, propertyForeignKey, additionalForeignKeyIndexPosition, presentationAttributes, presentationAttribute, explicitType, returnedClass, this));
+                            mergedPropertyType, componentProperties, idProperty, prefix, propertyName, type,
+                            propertyForeignKey, additionalForeignKeyIndexPosition, presentationAttributes,
+                            presentationAttribute, explicitType, returnedClass, this), fields);
         }
     }
 

@@ -16,12 +16,17 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
+import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.springframework.core.Ordered;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -29,22 +34,22 @@ import org.springframework.core.Ordered;
 public class PersistenceProviderAdapter extends AbstractPersistenceProvider {
 
     @Override
-    public boolean addSearchMapping(AddSearchMappingRequest addSearchMappingRequest) {
+    public boolean addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, BaseCtoConverter ctoConverter) {
         return false;
     }
 
     @Override
-    public boolean populateValue(PopulateValueRequest populateValueRequest) throws PersistenceException {
+    public boolean populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
         return false;
     }
 
     @Override
-    public boolean extractValue(ExtractValueRequest extractValueRequest) throws PersistenceException {
+    public boolean extractValue(ExtractValueRequest extractValueRequest, Property property) {
         return false;
     }
 
     @Override
-    public boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest) {
+    public boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
         return false;
     }
 

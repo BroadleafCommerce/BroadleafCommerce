@@ -46,6 +46,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -60,12 +61,12 @@ import java.util.Map;
 @Scope("prototype")
 public class RulePersistenceProvider extends PersistenceProviderAdapter {
 
-    protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest) {
+    protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
         return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
                 populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
     }
 
-    protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest) {
+    protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
         return extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
                 extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
     }
@@ -73,15 +74,15 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
     @Resource(name = "blRuleBuilderFieldServiceFactory")
     protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
 
-    public boolean populateValue(PopulateValueRequest populateValueRequest) throws PersistenceException {
-        if (!canHandlePersistence(populateValueRequest)) {
+    public boolean populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
+        if (!canHandlePersistence(populateValueRequest, instance)) {
             return false;
         }
         try {
             switch (populateValueRequest.getMetadata().getFieldType()) {
                 case RULE_WITH_QUANTITY:{
                     //currently, this only works with Collection fields
-                    Class<?> valueType = getListFieldType(populateValueRequest.getRequestedInstance(), populateValueRequest
+                    Class<?> valueType = getListFieldType(instance, populateValueRequest
                             .getFieldManager(), populateValueRequest.getProperty(), populateValueRequest.getPersistenceManager());
                     if (valueType == null) {
                         throw new IllegalAccessException("Unable to determine the valueType for the rule field (" +
@@ -91,7 +92,7 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
                     Collection<QuantityBasedRule> rules;
                     try {
                         rules = (Collection<QuantityBasedRule>) populateValueRequest.getFieldManager().getFieldValue
-                                (populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName());
+                                (instance, populateValueRequest.getProperty().getName());
                     } catch (FieldNotAvailableException e) {
                         throw new IllegalArgumentException(e);
                     }
@@ -122,13 +123,13 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
                     }
                     //This is a simple String field (or String map field)
                     if (String.class.isAssignableFrom(valueType)) {
-                        populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), mvel);
+                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), mvel);
                     }
                     if (SimpleRule.class.isAssignableFrom(valueType)) {
                         //see if there's an existing rule
                         SimpleRule rule;
                         try {
-                            rule = (SimpleRule) populateValueRequest.getFieldManager().getFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName());
+                            rule = (SimpleRule) populateValueRequest.getFieldManager().getFieldValue(instance, populateValueRequest.getProperty().getName());
                         } catch (FieldNotAvailableException e) {
                             throw new IllegalArgumentException(e);
                         }
@@ -139,7 +140,7 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
                             rule = (SimpleRule) valueType.newInstance();
                             rule.setMatchRule(mvel);
                             populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(rule);
-                            populateValueRequest.getFieldManager().setFieldValue(populateValueRequest.getRequestedInstance(), populateValueRequest.getProperty().getName(), rule);
+                            populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), rule);
                         }
                     }
                     break;
@@ -152,8 +153,8 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
     }
 
     @Override
-    public boolean extractValue(ExtractValueRequest extractValueRequest) throws PersistenceException {
-        if (!canHandleExtraction(extractValueRequest)) {
+    public boolean extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+        if (!canHandleExtraction(extractValueRequest, property)) {
             return false;
         }
         String val = null;
@@ -163,15 +164,15 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
             if (extractValueRequest.getRequestedValue() != null) {
                 if (extractValueRequest.getRequestedValue() instanceof String) {
                     val = (String) extractValueRequest.getRequestedValue();
-                    extractValueRequest.getRequestedProperty().setValue(val);
-                    extractValueRequest.getRequestedProperty().setDisplayValue(extractValueRequest.getDisplayVal());
+                    property.setValue(val);
+                    property.setDisplayValue(extractValueRequest.getDisplayVal());
                 }
                 if (extractValueRequest.getRequestedValue() instanceof SimpleRule) {
                     SimpleRule simpleRule = (SimpleRule) extractValueRequest.getRequestedValue();
                     if (simpleRule != null) {
                         val = simpleRule.getMatchRule();
-                        extractValueRequest.getRequestedProperty().setValue(val);
-                        extractValueRequest.getRequestedProperty().setDisplayValue(extractValueRequest.getDisplayVal());
+                        property.setValue(val);
+                        property.setDisplayValue(extractValueRequest.getDisplayVal());
                     }
                 }
             }
@@ -200,7 +201,7 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
     }
 
     @Override
-    public boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest) {
+    public boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
         //This may contain rule Json fields - convert and filter out
         List<Property> propertyList = new ArrayList<Property>();
         propertyList.addAll(Arrays.asList(addFilterPropertiesRequest.getEntity().getProperties()));
@@ -209,7 +210,7 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
         while(itr.hasNext()) {
             Property prop = itr.next();
             if (prop.getName().endsWith("Json")) {
-                for (Map.Entry<String, FieldMetadata> entry : addFilterPropertiesRequest.getRequestedProperties().entrySet()) {
+                for (Map.Entry<String, FieldMetadata> entry : properties.entrySet()) {
                     if (prop.getName().startsWith(entry.getKey())) {
                         BasicFieldMetadata originalFM = (BasicFieldMetadata) entry.getValue();
                         if (originalFM.getFieldType() == SupportedFieldType.RULE_SIMPLE ||
