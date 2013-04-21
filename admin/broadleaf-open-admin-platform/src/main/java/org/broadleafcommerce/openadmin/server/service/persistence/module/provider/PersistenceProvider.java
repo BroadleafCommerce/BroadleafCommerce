@@ -51,7 +51,7 @@ public interface PersistenceProvider extends Ordered {
      * Set the property value on the target object. Implementations should translate and set the requestedValue
      * field from the request on the instance parameter.
      *
-     * @param populateValueRequest contains the requested value, instance and support classes.
+     * @param populateValueRequest contains the requested value and support classes.
      * @param instance the entity instance on which to set the values harvested from the request
      * @return whether or not the implementation handled the persistence request
      */
@@ -61,7 +61,7 @@ public interface PersistenceProvider extends Ordered {
      * Retrieve the property value from the provided value. Implementations should translate the requestedValue
      * and set on the property parameter.
      *
-     * @param extractValueRequest contains the requested value, property and support classes.
+     * @param extractValueRequest contains the requested value and support classes.
      * @param property the property for the admin that contains the information harvested from the persistence value
      * @return whether or not the implementation handled the persistence request
      */
@@ -72,7 +72,7 @@ public interface PersistenceProvider extends Ordered {
      * used to retrieve lists of records for the admin. The requestedCto contains filters requested from the admin
      * and is generally used to drive the criteria added to CtoConverter.
      *
-     * @param addSearchMappingRequest contains the requested ctoConverter, cto and support classes.
+     * @param addSearchMappingRequest contains the requested cto and support classes.
      * @param ctoConverter search info should be added to converter. It is responsible for generating the final search criteria.
      * @return whether or not the implementation handled the persistence request
      */
@@ -82,7 +82,7 @@ public interface PersistenceProvider extends Ordered {
      * Filter the list of properties posted by the admin during and add or update. This is the property list
      * immediately before persistence is attempted. Properties may be altered, removed or added.
      *
-     * @param addFilterPropertiesRequest contains the <tt>Entity</tt> instance and unfiltered property list.
+     * @param addFilterPropertiesRequest contains the <tt>Entity</tt> instance.
      * @param properties the collection of properties to filter
      * @return whether or not the implementation handled the persistence request
      */
