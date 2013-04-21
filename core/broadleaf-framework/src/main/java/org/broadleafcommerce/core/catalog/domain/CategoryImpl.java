@@ -154,49 +154,68 @@ public class CategoryImpl implements Category, Status {
         }
     )
     @Column(name = "CATEGORY_ID")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_ID", group = "CategoryImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME", nullable=false)
     @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Name", order=1, group = "CategoryImpl_Description", prominent=true, groupOrder = 1, largeEntry=true)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Name", order = 1000,
+            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
+            prominent = true, gridOrder = 1, columnWidth = "300px")
     protected String name;
 
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order=1, group = "CategoryImpl_Description", groupOrder = 1)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order = 2000,
+            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
+            prominent = true, gridOrder = 2, columnWidth = "300px")
     protected String url;
 
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key", order=6, tab = "Seo_Tab", group ="Seo_Group",groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
+            excluded = true)
     protected String urlKey;
 
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Description", order=2, group = "CategoryImpl_Description", largeEntry=true, groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Description",
+            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
+            largeEntry = true,
+            excluded = true)
     protected String description;
 
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order=11, group = "CategoryImpl_Active_Date_Range", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order = 1000,
+            group = Presentation.Group.Name.ActiveDateRange, groupOrder = Presentation.Group.Order.ActiveDateRange)
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order=12, group = "CategoryImpl_Active_Date_Range", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order = 2000,
+            group = Presentation.Group.Name.ActiveDateRange, groupOrder = Presentation.Group.Order.ActiveDateRange)
     protected Date activeEndDate;
 
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Display_Template",tab = "advancedTab", order=3, group = "CategoryImpl_Description", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Display_Template", order = 1000,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
     protected String displayTemplate;
 
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order=4, group = "CategoryImpl_Description", largeEntry=true,fieldType=SupportedFieldType.HTML_BASIC, groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order = 3000,
+            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
+            largeEntry = true,
+            fieldType = SupportedFieldType.HTML_BASIC)
     protected String longDescription;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Default_Parent", order=13, group = "CategoryImpl_Description", excluded = true, visibility = VisibilityEnum.HIDDEN_ALL, groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Default_Parent",
+            excluded = true,
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected Category defaultParentCategory;
 
     @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "categoryXrefPK.category")
@@ -216,7 +235,7 @@ public class CategoryImpl implements Category, Status {
             parentObjectProperty = "categoryXrefPK.category",
             friendlyName = "allParentCategoriesTitle",
             sortProperty = "displayOrder",
-            tab = "advancedTab",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             gridVisibleFields = { "name" })
     protected List<CategoryXref> allParentCategoryXrefs = new ArrayList<CategoryXref>(10);
 
@@ -230,7 +249,7 @@ public class CategoryImpl implements Category, Status {
             parentObjectProperty = "categoryProductXref.category",
             friendlyName = "allProductsTitle",
             sortProperty = "displayOrder",
-            tab = "productsTab",
+            tab = Presentation.Tab.Name.Products, tabOrder = Presentation.Tab.Order.Products,
             gridVisibleFields = { "defaultSku.name" })
     protected List<CategoryProductXref> allProductXrefs = new ArrayList<CategoryProductXref>(10);
 
@@ -251,7 +270,7 @@ public class CategoryImpl implements Category, Status {
     @AdminPresentationMap(
             friendlyName = "SkuImpl_Sku_Media",
             targetUIElementId = "productSkuMediaLayout",
-            tab = "categoryMediaTab",
+            tab = Presentation.Tab.Name.Media, tabOrder = Presentation.Tab.Order.Media,
             dataSourceName = "productMediaMapDS",
             keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
             deleteEntityUponRemove = true,
@@ -272,25 +291,34 @@ public class CategoryImpl implements Category, Status {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "product", friendlyName = "featuredProductsTitle",
-    	tab = "productMarketingTab", tabOrder = 200, sortProperty = "sequence", dataSourceName = "featuredProductsDS",
-    	maintainedAdornedTargetFields = { "promotionMessage" }, gridVisibleFields = { "defaultSku.name", "promotionMessage" })
+    @AdminPresentationAdornedTargetCollection(friendlyName = "featuredProductsTitle", order = 1000,
+            tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+            targetObjectProperty = "product",
+            sortProperty = "sequence",
+            maintainedAdornedTargetFields = { "promotionMessage" },
+            gridVisibleFields = { "defaultSku.name", "promotionMessage" })
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>(10);
     
     @OneToMany(mappedBy = "category", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "crossSaleProductsTitle",
-    	tab = "productMarketingTab", tabOrder = 200, sortProperty = "sequence", dataSourceName = "crossSaleProductsDS",
-    	maintainedAdornedTargetFields = { "promotionMessage" }, gridVisibleFields = { "defaultSku.name", "promotionMessage" })
+    @AdminPresentationAdornedTargetCollection(friendlyName = "crossSaleProductsTitle", order = 2000,
+            tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+            targetObjectProperty = "relatedSaleProduct",
+            sortProperty = "sequence",
+            maintainedAdornedTargetFields = { "promotionMessage" },
+            gridVisibleFields = { "defaultSku.name", "promotionMessage" })
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
     @OneToMany(mappedBy = "category", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "upsaleProductsTitle",
-    	tab = "productMarketingTab", tabOrder = 200, sortProperty = "sequence", dataSourceName = "upSaleProductsDS",
-    	maintainedAdornedTargetFields = { "promotionMessage" }, gridVisibleFields = { "defaultSku.name", "promotionMessage" })
+    @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle", order = 3000,
+            tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+            targetObjectProperty = "relatedSaleProduct",
+            sortProperty = "sequence",
+            maintainedAdornedTargetFields = { "promotionMessage" },
+            gridVisibleFields = { "defaultSku.name", "promotionMessage" })
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
     
     @OneToMany(mappedBy = "category", targetEntity = CategorySearchFacetImpl.class, cascade = {CascadeType.ALL})
@@ -309,15 +337,25 @@ public class CategoryImpl implements Category, Status {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "categoryAttributesTitle", dataSourceName = "categoryAttributeDS", order = 87, tab = "advancedTab")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "categoryAttributesTitle",
+            dataSourceName = "categoryAttributeDS", order = 87,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected List<CategoryAttribute> categoryAttributes  = new ArrayList<CategoryAttribute>();
 
     @Column(name = "INVENTORY_TYPE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", group = "CategoryImpl_Sku_Inventory", order=10, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.inventory.service.type.InventoryType")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", order = 2000,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")
     protected String inventoryType;
     
     @Column(name = "FULFILLMENT_TYPE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_FulfillmentType", group = "CategoryImpl_Sku_Inventory", order=11, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_FulfillmentType", order = 3000,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
 
     @Embedded
@@ -995,5 +1033,44 @@ public class CategoryImpl implements Category, Status {
             return o1.getSequence().compareTo(o2.getSequence());
         }
     };
+
+    public static class Presentation {
+
+        public static class Tab {
+
+            public static class Name {
+
+                public static final String Marketing = "CategoryImpl_Marketing_Tab";
+                public static final String Media = "CategoryImpl_Media_Tab";
+                public static final String Advanced = "CategoryImpl_Advanced_Tab";
+                public static final String Products = "CategoryImpl_Products_Tab";
+            }
+
+            public static class Order {
+
+                public static final int Marketing = 2000;
+                public static final int Media = 3000;
+                public static final int Advanced = 4000;
+                public static final int Products = 5000;
+            }
+        }
+
+        public static class Group {
+
+            public static class Name {
+
+                public static final String General = "CategoryImpl_Category_Description";
+                public static final String ActiveDateRange = "CategoryImpl_Active_Date_Range";
+                public static final String Advanced = "CategoryImpl_Advanced";
+            }
+
+            public static class Order {
+
+                public static final int General = 1000;
+                public static final int ActiveDateRange = 2000;
+                public static final int Advanced = 1000;
+            }
+        }
+    }
 
 }
