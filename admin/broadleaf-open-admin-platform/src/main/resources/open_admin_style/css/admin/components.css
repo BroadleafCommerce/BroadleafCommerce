@@ -19,6 +19,7 @@ input.datepicker {
 
 .datepicker-container {
 	display: inline;
+    white-space: nowrap;
 }
 
 .datepicker-container:hover, input.datepicker:hover {

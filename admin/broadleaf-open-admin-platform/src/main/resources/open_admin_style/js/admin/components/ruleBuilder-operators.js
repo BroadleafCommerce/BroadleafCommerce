@@ -5,14 +5,14 @@ var blcOperators_Boolean = [
 var blcOperators_Date = [      
 	{label: "is present", name: "NOT_NULL", fieldType: "NONE"},
 	{label: "is blank", name: "IS_NULL", fieldType: "NONE"},
-	{label: "is equal to", name: "EQUALS", fieldType: "TEXT"},
-	{label: "is not equal to", name: "NOT_EQUAL", fieldType: "TEXT"},
-	{label: "is greater than", name: "GREATER_THAN", fieldType: "TEXT"},
-	{label: "is greater than or equal to", name: "GREATER_OR_EQUAL", fieldType: "TEXT"},
-	{label: "is less than", name: "LESS_THAN", fieldType: "TEXT"},
-	{label: "is less than or equal to", name: "LESS_OR_EQUAL", fieldType: "TEXT"},
-	{label: "is between", name: "BETWEEN", fieldType: "RANGE"},
-	{label: "is between (inclusive)", name: "BETWEEN_INCLUSIVE", fieldType: "RANGE"}
+	{label: "is equal to", name: "EQUALS", fieldType: "DATE"},
+	{label: "is not equal to", name: "NOT_EQUAL", fieldType: "DATE"},
+	{label: "is greater than", name: "GREATER_THAN", fieldType: "DATE"},
+	{label: "is greater than or equal to", name: "GREATER_OR_EQUAL", fieldType: "DATE"},
+	{label: "is less than", name: "LESS_THAN", fieldType: "DATE"},
+	{label: "is less than or equal to", name: "LESS_OR_EQUAL", fieldType: "DATE"},
+	{label: "is between", name: "BETWEEN", fieldType: "DATE_RANGE"},
+	{label: "is between (inclusive)", name: "BETWEEN_INCLUSIVE", fieldType: "DATE_RANGE"}
 ];
 
 var blcOperators_Numeric = [      

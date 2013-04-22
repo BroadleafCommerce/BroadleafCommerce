@@ -1111,6 +1111,10 @@ input[type="text"].conditional-qty {
 	margin-right: 10px;
 }
 
+.conditional-date-spacer {
+	margin-left: 10px;
+}
+
 .conditional-rules-header {
 	background: #CCC;
 	margin-top: 10px;

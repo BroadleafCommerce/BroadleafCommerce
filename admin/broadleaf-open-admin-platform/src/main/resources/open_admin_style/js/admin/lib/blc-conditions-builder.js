@@ -370,6 +370,14 @@
         if (radioContainer != null) {
             radioContainer.remove();
         }
+        var datePickerContainer = container.find(".single-picker");
+        if (datePickerContainer != null) {
+            datePickerContainer.remove();
+        }
+        var rangeDatePickerContainer = container.find(".range-picker");
+        if (rangeDatePickerContainer != null) {
+            rangeDatePickerContainer.remove();
+        }
         switch(option.data("fieldType")) {
             case "NONE":
                 $this.after($("<input>", {"type": "hidden", "class": "value"}));
@@ -377,10 +385,32 @@
             case "TEXT":
                 $this.after($("<input>", {"type": "text", "class": "value"}));
                 break;
+            case "DATE":
+                $this.after($("<div>", {"class": "datepicker-container single-picker"}));
+                datePickerContainer = container.find(".single-picker");
+                datePickerContainer.append($("<input>", {"type": "text", "class": "three datepicker value"}));
+                datePickerContainer.append($("<i>", {"class": "icon-calendar"}));
+                BLCAdmin.dates.initialize(datePickerContainer.find('.datepicker'));
+                break;
             case "RANGE":
                 $this.after($("<input>", {"type": "text", "class": "end"}))
                     .after("<span class=\"value conditional-spacer\">and</span>")
                     .after($("<input>", {"type": "text", "class": "start"}));
+                break;
+            case "DATE_RANGE":
+                $this.after($("<span>", {"class": "datepicker-container range-picker"}));
+                rangeDatePickerContainer = container.find(".range-picker");
+                rangeDatePickerContainer.append($("<div>", {"class": "datepicker-container start-picker"}));
+                var startContainer = rangeDatePickerContainer.find(".start-picker");
+                startContainer.append($("<input>", {"type": "text", "class": "three datepicker start"}));
+                startContainer.append($("<i>", {"class": "icon-calendar"}));
+                BLCAdmin.dates.initialize(startContainer.find('.datepicker'));
+                rangeDatePickerContainer.append("<span class=\"value conditional-spacer conditional-date-spacer\">and</span>")
+                rangeDatePickerContainer.append($("<div>", {"class": "datepicker-container end-picker"}));
+                var endContainer = rangeDatePickerContainer.find(".end-picker");
+                endContainer.append($("<input>", {"type": "text", "class": "three datepicker end"}));
+                endContainer.append($("<i>", {"class": "icon-calendar"}));
+                BLCAdmin.dates.initialize(endContainer.find('.datepicker'));
                 break;
             case "BOOLEAN":
                 $this.after($("<span>", {"class": "radioContainer"}));
