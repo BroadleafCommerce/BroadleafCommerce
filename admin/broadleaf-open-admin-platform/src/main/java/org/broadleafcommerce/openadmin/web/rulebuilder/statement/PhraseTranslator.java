@@ -119,7 +119,13 @@ public class PhraseTranslator {
             value = value.substring(dateFormatKey.length(), value.length()-1);
             //convert the date into admin display format
             try {
-                value = RuleBuilderFormatUtil.formatDate(RuleBuilderFormatUtil.parseDate(value.substring(1, value.length()-1)));
+                if (value.startsWith("\"")) {
+                    value = value.substring(1, value.length());
+                }
+                if (value.endsWith("\"")) {
+                    value = value.substring(0, value.length()-1);
+                }
+                value = RuleBuilderFormatUtil.formatDate(RuleBuilderFormatUtil.parseDate(value));
             } catch (ParseException e) {
                 throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DATE_VALUE, "Unable to convert " +
                         "the persisted date value(" + value + ") to the admin display format.");

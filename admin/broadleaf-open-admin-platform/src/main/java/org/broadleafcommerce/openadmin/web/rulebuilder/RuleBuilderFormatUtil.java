@@ -38,10 +38,10 @@ public class RuleBuilderFormatUtil {
             parsedDate = FormatUtil.getDateFormat().parse(date);
         } catch (ParseException e) {
             try {
-                parsedDate = new SimpleDateFormat(DATE_FORMAT).parse(date);
+                parsedDate = new SimpleDateFormat(COMPATIBILITY_FORMAT).parse(date);
             } catch (ParseException e1) {
                 try {
-                    parsedDate = new SimpleDateFormat(COMPATIBILITY_FORMAT).parse(date);
+                    parsedDate = new SimpleDateFormat(DATE_FORMAT).parse(date);
                 } catch (ParseException e2) {
                     throw e;
                 }
