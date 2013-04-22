@@ -5,14 +5,13 @@ var BLCAdmin = (function($) {
 	var modals = [];
 	var preFormSubmitHandlers = [];
 	var initializationHandlers = [];
+	var updateHandlers = [];
 	var stackedModalOptions = {
 	    left: 20,
 	    top: 20
 	}
     
 	function showModal($data, onModalHide, onModalHideArgs) {
-		BLCAdmin.initializeFields($data);
-		
 		// If we already have an active modal, we don't need another backdrop on subsequent modals
 		$data.modal({
 			backdrop: (modals.length < 1)
@@ -51,6 +50,8 @@ var BLCAdmin = (function($) {
 				modals.last().css('z-index', '1050');
 			}
 		});
+		
+		BLCAdmin.initializeFields();
 	}
 	
 	return {
@@ -60,6 +61,10 @@ var BLCAdmin = (function($) {
 	    
 	    addInitializationHandler : function(fn) {
 	        initializationHandlers.push(fn);
+	    },
+	    
+	    addUpdateHandler : function(fn) {
+	        updateHandlers.push(fn);
 	    },
 	    
     	runSubmitHandlers : function($form) {
@@ -122,7 +127,40 @@ var BLCAdmin = (function($) {
     	    }
     	},
     	
+    	getActiveTab : function() {
+    	    var $modal = this.currentModal();
+    	    if ($modal != null) {
+        	    var $tabs = $modal.find('ul.tabs-content');
+        	    
+        	    if ($tabs.length == 0) {
+        	        return $modal;
+        	    } else {
+        	        return $modal.find('li.active');
+        	    }
+    	        
+    	    } else {
+        	    var $body = $('body');
+        	    var $tabs = $body.find('ul.tabs-content');
+        	    
+        	    if ($tabs.length == 0) {
+        	        return $body;
+        	    } else {
+        	        return $tabs.find('li.active');
+        	    }
+    	    }
+    	},
+    	
     	initializeFields : function($container) {
+    	    // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
+    	    if ($container == null) {
+    	        $container = this.getActiveTab();
+    	    }
+    	    
+    	    // If we've already initialized this container, we'll skip it.
+    	    if ($container.data('initialized') == 'true') {
+    	        return;
+    	    }
+    	    
     	    // Set up rich-text HTML editors
             $container.find('.redactor').redactor();
             
@@ -137,6 +175,15 @@ var BLCAdmin = (function($) {
             // Run any additionally configured initialization handlers
             for (var i = 0; i < initializationHandlers.length; i++) {
                 initializationHandlers[i]($container);
+            }
+            
+            // Mark this container as initialized
+    	    $container.data('initialized', 'true');
+    	},
+    	
+    	updateFields : function($container) {
+            for (var i = 0; i < updateHandlers.length; i++) {
+                updateHandlers[i]($container);
             }
     	}
 	};

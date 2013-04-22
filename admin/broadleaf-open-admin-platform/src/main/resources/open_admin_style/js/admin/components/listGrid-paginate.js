@@ -5,6 +5,7 @@
     var updateUrlDebounce = 700;
     var lockDebounce = 100;
     var trHeight = null;
+    var maxSubCollectionListGridHeight = 460;
     
     // Add utility functions for list grids to the BLCAdmin object
     BLCAdmin.listGrid.paginate = {
@@ -373,14 +374,63 @@
         },
         
         updateGridSize : function($tbody) {
+            var $table = $tbody.closest('table.list-grid-table');
+            var $headerTable = $table.closest('div.listgrid-container').find('.listgrid-header-wrapper table');
+            var thWidths = [];
+            
+            // Clear out widths
+            $headerTable.css('width', '');
+            $table.css('width', '');
+            $headerTable.closest('.listgrid-container').find('th').css('width', '');
+            
+            // Figure out what the new table width will be
+            var newWidth = ($headerTable.width() - 15) + 'px';
+            $headerTable.css('width', newWidth);
+            $table.css('width', newWidth);
+            
+            // Determine if we need to ignore any explicitly set column widths
+            var $explicitSizeThs = $headerTable.closest('.listgrid-container').find('th.explicit-size');
+            if (($table.data('listgridtype') == 'main' && $table.outerWidth() < 974) || 
+                ($table.data('listgridtype') != 'main' && $table.outerWidth() < 694)) {
+                $explicitSizeThs.each(function(index, element) {
+                    $(element).addClass('width-ignored');
+                });
+            } else {
+                $explicitSizeThs.each(function(index, element) {
+                    $(element).removeClass('width-ignored');
+                });
+            }
+            
+            // Set back any specified widths if appropriate
+            $headerTable.closest('.listgrid-container').find('th').filter(function() {
+                return $(this).hasClass('explicit-size') && !$(this).hasClass('width-ignored');
+            }).each(function(index, thElement) {
+                $(thElement).css('width', $(thElement).data('columnwidth'));
+            });
+            
+            // Set the new widths
+            $headerTable.find('th').each(function(index, thElement) {
+                var $th = $(thElement);
+                var width = $th.outerWidth();
+                $th.css('width', width);
+                thWidths[index] = width;
+            });
+            $table.find('th').each(function(index, thElement) {
+                $(thElement).css('width', thWidths[index]);
+            });
+            
+            // If we're a main grid, we should stretch to the bottom of the screen
             var $wrapper = $tbody.closest('.listgrid-body-wrapper');
-            var $window = $(window);
-            
-            var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
-            
-            $wrapper.css('max-height', wrapperHeight + 'px');
-            //$wrapper.css('max-height', '250px');
-            //$wrapper.css('max-height', '99999px');
+            if ($table.data('listgridtype') == 'main') {
+                var $window = $(window);
+                
+                var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
+                $wrapper.css('max-height', wrapperHeight);
+                $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
+            } else {
+                $wrapper.css('max-height', maxSubCollectionListGridHeight);
+                $wrapper.find('.mCustomScrollBox').css('max-height', maxSubCollectionListGridHeight);
+            }
         },
         
         updateUrlFromScroll : function($tbody) {
@@ -438,9 +488,7 @@
             $clonedTable.append($tbody);
             $tbody = $clonedTable.find('tbody');
             
-            if ($tbody.closest('table').data('listgridtype') == 'main') {
-                BLCAdmin.listGrid.paginate.updateGridSize($tbody);
-            }
+            BLCAdmin.listGrid.paginate.updateGridSize($tbody);
             
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
             $wrapper.mCustomScrollbar({
@@ -495,37 +543,27 @@
         }
     };
     
+    BLCAdmin.addUpdateHandler(function($container) {
+        $container.find('.needsupdate').each(function(index, element) {
+            BLCAdmin.listGrid.paginate.updateGridSize($(element));
+            $(element).removeClass('needsupdate');
+        });
+    });
+    
 })(jQuery, BLCAdmin);
 
 $(document).ready(function() {
     
-    /**
-     * Performs pagination on the given list grid. 
-     */
-    $('body').on('click', 'ul.pagination-links a', function(event) {
-        var $toReplace = $(this).closest('.listgrid-container').find('tbody');
-        var $this = $(this);
-        
-        BLC.ajax({
-            url: $(this).attr('href'),
-            type: 'GET'
-        }, function(data) {
-            $this.closest('ul').find('a.active').removeClass('active');
-            $this.addClass('active')
-            $toReplace.replaceWith($(data.trim()).find('tbody'));
-        });
-        
-        return false;
-    });
-    
     $(window).resize(function() {
-        var $mainTbody = $('tbody').filter(function() { 
-            return $(this).closest('table').data('listgridtype') == 'main';
+        $.doTimeout('resize', 100, function() {
+            $('tbody').each(function(index, element) {
+                if ($(element).is(':visible')) {
+                    BLCAdmin.listGrid.paginate.updateGridSize($(element));
+                } else {
+                    $(element).addClass('needsupdate');
+                }
+            });
         });
-        
-        if ($mainTbody.length) {
-            BLCAdmin.listGrid.paginate.updateGridSize($mainTbody);
-        }
     });
     
 });

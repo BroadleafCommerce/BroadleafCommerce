@@ -89,19 +89,18 @@
         initialize : function($container) {
             this.updateToolbarRowActionButtons($container);
             
-            // Prepare the tabs in case a list grid inside of this container requires browser
-            // rendering for something like table cell widths
-            $('ul.tabs-content > li, ul.tabs-content > li.active').css('visibility', 'hidden').css('display', 'block');
-            
             if (BLCAdmin.listGrid.paginate) {
                 BLCAdmin.listGrid.paginate.initialize($container);
             }
-            
-            // Restore normal tab state
-            $('ul.tabs-content > li').css('visibility', 'visible').css('display', 'none');
-            $('ul.tabs-content > li.active').css('visibility', 'visible').css('display', 'block');
         }
     };
+    
+    BLCAdmin.addInitializationHandler(function($container) {
+        $container.find('.listgrid-container').each(function(index, element) {
+            BLCAdmin.listGrid.initialize($(element));
+        });
+    });
+    
     
 })(jQuery, BLCAdmin);
 
@@ -490,10 +489,6 @@ $(document).ready(function() {
     
     $('body').on('mouseout', 'td.row-action-selector', function(event) {
         $(this).find('ul.row-actions').hide();
-    });
-    
-    $('.listgrid-container').each(function(index, element) {
-        BLCAdmin.listGrid.initialize($(element));
     });
     
 });

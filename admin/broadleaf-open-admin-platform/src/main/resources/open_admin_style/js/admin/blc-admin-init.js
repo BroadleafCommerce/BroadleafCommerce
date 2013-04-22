@@ -11,7 +11,12 @@
         $.fn.foundationNavigation       ? $doc.foundationNavigation() : null;
         $.fn.foundationTopBar           ? $doc.foundationTopBar() : null;
         $.fn.foundationMediaQueryViewer ? $doc.foundationMediaQueryViewer() : null;
-        $.fn.foundationTabs             ? $doc.foundationTabs() : null;
+        $.fn.foundationTabs             ? $doc.foundationTabs({
+            callback: function() {
+                BLCAdmin.initializeFields(BLCAdmin.getActiveTab());
+                BLCAdmin.updateFields(BLCAdmin.getActiveTab());
+            }
+        }) : null;
         $.fn.foundationTooltips         ? $doc.foundationTooltips() : null;
         $.fn.foundationMagellan         ? $doc.foundationMagellan() : null;
         $.fn.foundationClearing         ? $doc.foundationClearing() : null;
@@ -19,7 +24,7 @@
         $.fn.broadleafAccordion         ? $doc.broadleafAccordion() : null;
         $.fn.broadleafListgrid          ? $doc.broadleafListgrid() : null;
     
-        BLCAdmin.initializeFields($('body'));
+        BLCAdmin.initializeFields();
     });
 
     // UNCOMMENT THE LINE YOU WANT BELOW IF YOU WANT IE8 SUPPORT AND ARE USING .block-grids

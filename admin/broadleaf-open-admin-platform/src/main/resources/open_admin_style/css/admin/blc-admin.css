@@ -433,7 +433,6 @@ table.table-hover tbody tr.draggable:hover {
     border: none;
     text-align: left;
     color: white;
-    cursor: pointer;
     display: inline-block;
     font-family: inherit;
     font-size: 14px;
@@ -610,6 +609,7 @@ table.table-hover tbody tr.draggable:hover {
 .listgrid-headerBtn.dropdown.split {
     padding: 3px 0; 
     position: relative; /* Sizes */ /* Triangle Spans */ /* Colors */
+    overflow: hidden;
 }
 
 .listgrid-headerBtn.dropdown.split:after {
@@ -670,12 +670,12 @@ table.table-hover tbody tr.draggable:hover {
 }
 
 .listgrid-headerBtn.dropdown.split > span {
-    background: transparent;
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
+    height: 14px;
     width: 20px;
+    cursor: pointer;
+    position: absolute;
+    right: -1px;
+    background: #F5F5F5;
     -webkit-transition: background-color 0.15s ease-in-out;
     -moz-transition: background-color 0.15s ease-in-out;
     -o-transition: background-color 0.15s ease-in-out;
@@ -695,8 +695,7 @@ table.table-hover tbody tr.draggable:hover {
     border-color: #9d9d9d transparent transparent transparent;
     position: absolute;
     top: 50%;
-    left: 50%;
-    margin-left: -6px;
+    margin-left: 4px;
     margin-top: -2px;
 }
 
@@ -798,7 +797,7 @@ table.table-hover tbody tr.draggable:hover {
 
 .listgrid-headerBtn.dropdown.split > .listgrid-title {
     color: #222;
-    display: block;
+    display: inline-block;
     cursor: default;
     padding: 0;
 }
@@ -895,7 +894,6 @@ table tbody tr:nth-child(odd) {
 }
 
 .listgrid-body-wrapper {
-	max-height: 460px;
 	background: #F5F5F5;
 }
 

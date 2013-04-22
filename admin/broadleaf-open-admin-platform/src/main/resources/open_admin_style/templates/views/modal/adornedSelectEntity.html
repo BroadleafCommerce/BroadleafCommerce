@@ -9,7 +9,9 @@
 
 <ul class="tabs-content">
     <li class="active" id="adornedModalTab1Tab">
-        <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
+        <div class="listgrid-container">
+            <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
+        </div>
     </li>
     
     <li id="adornedModalTab2Tab">

@@ -630,8 +630,8 @@ ul.orbit-bullets li.active.has-thumb { background-position: 0 0; border-top: 2px
 ul.tabs-content { display: block; margin: 0 0 20px; padding: 0; }
 
 /* Modified by APA */
-ul.tabs-content > li { visibility: hidden; }
-ul.tabs-content > li.active { visibility: visible; list-style-type: none; }
+ul.tabs-content > li { display: none; }
+ul.tabs-content > li.active { display: block; list-style-type: none; }
 .modal-body ul.tabs-content > li { display: none; }
 .modal-body ul.tabs-content > li.active { display: block; }
 /* End modified by APA */
