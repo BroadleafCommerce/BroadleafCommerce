@@ -173,6 +173,29 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                 fieldCount = 0;
             }
 
+            Property property = new Property();
+            property.setName("id");
+            BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
+            property.setMetadata(fieldMetadata);
+            fieldMetadata.setFieldType(SupportedFieldType.ID);
+            fieldMetadata.setSecondaryType(SupportedFieldType.INTEGER);
+            fieldMetadata.setMutable(true);
+            fieldMetadata.setInheritedFromType(PageTemplateImpl.class.getName());
+            fieldMetadata.setAvailableToTypes(new String[] { PageTemplateImpl.class.getName() });
+            fieldMetadata.setForeignKeyCollection(false);
+            fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+            fieldMetadata.setName("id");
+            fieldMetadata.setFriendlyName("PageTemplateCustomPersistenceHandler_ID");
+            fieldMetadata.setSecurityLevel("");
+            fieldMetadata.setVisibility(VisibilityEnum.HIDDEN_ALL);
+            fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+            fieldMetadata.setLargeEntry(false);
+            fieldMetadata.setProminent(false);
+            fieldMetadata.setColumnWidth("*");
+            fieldMetadata.setBroadleafEnumeration("");
+            fieldMetadata.setReadOnly(true);
+            propertiesList.add(property);
+
             Property[] properties = new Property[propertiesList.size()];
             properties = propertiesList.toArray(properties);
             Arrays.sort(properties, new Comparator<Property>() {
