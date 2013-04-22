@@ -1,5 +1,7 @@
 package org.broadleafcommerce.openadmin.web.handler;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
@@ -9,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 
 public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolver {
+
+    private static final Log LOG = LogFactory.getLog(AdminMappingExceptionResolver.class);
     
     protected boolean showDebugMessage = false;
     
@@ -28,6 +32,7 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
                 StringBuilder sb2 = new StringBuilder();
                 appendStackTrace(ex, sb2);
                 mav.addObject("debugMessage", sb2.toString());
+                LOG.error("Unhandled error processing ajax request", ex);
             }
             
             // Add the message to the model so we can render it 

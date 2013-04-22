@@ -245,7 +245,9 @@ public class PersistencePackageRequest {
     }
     
     public PersistencePackageRequest addFilterAndSortCriteria(FilterAndSortCriteria[] filterAndSortCriteria) {
-        this.filterAndSortCriteria.addAll(Arrays.asList(filterAndSortCriteria));
+        if (filterAndSortCriteria != null) {
+            this.filterAndSortCriteria.addAll(Arrays.asList(filterAndSortCriteria));
+        }
         return this;
     }
     
