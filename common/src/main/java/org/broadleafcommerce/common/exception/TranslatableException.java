@@ -8,7 +8,7 @@ import org.springframework.context.NoSuchMessageException;
  *
  * @author Jeff Fischer
  */
-public class TranslatableException extends Exception {
+public abstract class TranslatableException extends Exception {
 
     protected int code;
 
@@ -21,6 +21,15 @@ public class TranslatableException extends Exception {
     public TranslatableException(int code, String message) {
         super(message);
         this.code = code;
+    }
+
+    /**
+     * Retrieve the error code associated with this exception
+     *
+     * @return the error code
+     */
+    public int getCode() {
+        return code;
     }
 
     /**
