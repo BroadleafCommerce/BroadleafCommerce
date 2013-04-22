@@ -55,7 +55,7 @@ public class StructuredContentTypeImpl implements StructuredContentType {
     protected Long id;
 
     @Column (name = "NAME")
-    @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Name", order=1, group = "StructuredContentTypeImpl_Details", prominent=true)
+    @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Name", order = 1, gridOrder = 1, group = "StructuredContentTypeImpl_Details", prominent = true)
     protected String name;
 
     @Column (name = "DESCRIPTION")

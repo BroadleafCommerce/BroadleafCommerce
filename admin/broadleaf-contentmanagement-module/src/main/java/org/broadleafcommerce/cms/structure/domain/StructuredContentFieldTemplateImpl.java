@@ -26,6 +26,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,7 +42,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import java.util.List;
 
 /**
  * Created by bpolster.
@@ -61,7 +62,7 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
     protected Long id;
 
     @Column (name = "NAME")
-    @AdminPresentation(friendlyName = "StructuredContentFieldTemplateImpl_Field_Template_Name", order=1, group = "StructuredContentFieldTemplateImpl_Details",prominent=true)
+    @AdminPresentation(friendlyName = "StructuredContentFieldTemplateImpl_Field_Template_Name", order = 1, gridOrder = 2, group = "StructuredContentFieldTemplateImpl_Details", prominent = true)
     protected String name;
 
     @ManyToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
