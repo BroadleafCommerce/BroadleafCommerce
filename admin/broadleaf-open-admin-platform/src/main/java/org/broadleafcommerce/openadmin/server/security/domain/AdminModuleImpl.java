@@ -16,18 +16,26 @@
 
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 /**
  *
@@ -127,5 +135,19 @@ public class AdminModuleImpl implements AdminModule {
     @Override
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
+    }
+
+    /**
+     * Set all properties except the sections.
+     * @return
+     */
+    public AdminModuleDTO getAdminModuleDTO() {
+        AdminModuleDTO dto = new AdminModuleDTO();
+        dto.setDisplayOrder(displayOrder);
+        dto.setIcon(icon);
+        dto.setId(id);
+        dto.setModuleKey(moduleKey);
+        dto.setName(name);
+        return dto;
     }
 }

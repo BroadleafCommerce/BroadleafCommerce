@@ -1,10 +1,10 @@
 <section id="sidebar" role="complementary">
     <nav id="sideMenu" role="navigation">
 
-        <blc_admin:admin_module resultVar="modules22" />
+        <blc_admin:admin_module resultVar="adminMenu" />
         
         <ul class="blc-accordion">
-            <li class="blc-module" th:each="module : ${modules22}" th:inline="text">
+            <li class="blc-module" th:each="module : ${adminMenu.adminModules}" th:inline="text">
                 <div class="title">
                     <h5>
                         <i th:class="${module.icon}"></i>

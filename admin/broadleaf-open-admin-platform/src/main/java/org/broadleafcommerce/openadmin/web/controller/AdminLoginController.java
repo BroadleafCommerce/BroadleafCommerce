@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.web.controller;
 
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -77,11 +78,12 @@ public class AdminLoginController extends BroadleafAbstractController {
 
     @RequestMapping(value = {"/", "/loginSuccess"}, method = RequestMethod.GET)
     public String loginSuccess(HttpServletRequest request, HttpServletResponse response, Model model) {
-        List<AdminModule> modules = adminNavigationService.buildMenu(getPersistentAdminUser());
-        if (!modules.isEmpty()) {
-            AdminModule first = modules.get(0);
-            if (!first.getSections().isEmpty()) {
-                AdminSection adminSection = first.getSections().get(0);
+        AdminMenu adminMenu = adminNavigationService.buildMenu(getPersistentAdminUser());
+        if (!adminMenu.getAdminModules().isEmpty()) {
+            AdminModule first = adminMenu.getAdminModules().get(0);
+            List<AdminSection> sections = first.getSections();
+            if (!sections.isEmpty()) {
+                AdminSection adminSection = sections.get(0);
                 return "redirect:" + adminSection.getUrl();
             }
         }

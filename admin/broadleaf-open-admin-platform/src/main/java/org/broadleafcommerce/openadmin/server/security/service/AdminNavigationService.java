@@ -16,15 +16,14 @@
 
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 
-import java.util.List;
-
 public interface AdminNavigationService {
 
-    public List<AdminModule> buildMenu(AdminUser adminUser);
+    public AdminMenu buildMenu(AdminUser adminUser);
 
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section);
 

@@ -24,6 +24,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,9 +41,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -98,6 +98,11 @@ public class AdminSectionImpl implements AdminSection {
     @Column(name = "CEILING_ENTITY", nullable = true)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Ceiling_Entity", order = 6, group = "AdminSectionImpl_Section")
     protected String ceilingEntity;
+
+    @Column(name = "DISPLAY_ORDER", nullable = true)
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Order", order = 7, group = "AdminSectionImpl_Section",
+            prominent = true)
+    protected Integer displayOrder;
 
     @Override
     public Long getId() {
@@ -188,4 +193,13 @@ public class AdminSectionImpl implements AdminSection {
         this.ceilingEntity = ceilingEntity;
     }
 
+    @Override
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+
+    @Override
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
+    }
 }
