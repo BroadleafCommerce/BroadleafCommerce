@@ -92,19 +92,21 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
                 permutationsToGenerate.add(permutation);
             }
         }
-        
+        int numPermutationsCreated = 0;
         //For each permutation, I need them to map to a specific Sku
         for (List<ProductOptionValue> permutation : permutationsToGenerate) {
+            if (permutation.isEmpty()) continue;
             Sku permutatedSku = catalogService.createSku();
             permutatedSku.setProduct(product);
             permutatedSku.setProductOptionValues(permutation);
             permutatedSku = catalogService.saveSku(permutatedSku);
             product.getAdditionalSkus().add(permutatedSku);
+            numPermutationsCreated++;
         }
-        
-        catalogService.saveProduct(product);
-        
-        return permutationsToGenerate.size();
+        if (numPermutationsCreated != 0) {
+            catalogService.saveProduct(product);
+        }
+        return numPermutationsCreated;
     }
     
     protected boolean isSamePermutation(List<ProductOptionValue> perm1, List<ProductOptionValue> perm2) {
@@ -143,11 +145,21 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
         }
         
         ProductOption currentOption = options.get(currentTypeIndex);
+        if (!currentOption.getUseInSkuGeneration()) {
+            //This flag means do not generate skus and so do not create permutations for this productoption, 
+            //end it here and return the current list of permutations.
+            result.addAll(generatePermutations(currentTypeIndex + 1, currentPermutation, options));
+            return result;
+        }
         for (ProductOptionValue option : currentOption.getAllowedValues()) {
             List<ProductOptionValue> permutation = new ArrayList<ProductOptionValue>();
             permutation.addAll(currentPermutation);
             permutation.add(option);
             result.addAll(generatePermutations(currentTypeIndex + 1, permutation, options));
+        }
+        if (currentOption.getAllowedValues().size() == 0) {
+            //There are still product options left in our array to compute permutations, even though this productOption does not have any values associated.
+            result.addAll(generatePermutations(currentTypeIndex + 1, currentPermutation, options));
         }
         
         return result;

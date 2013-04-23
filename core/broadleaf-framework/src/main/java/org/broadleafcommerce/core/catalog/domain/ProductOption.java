@@ -16,6 +16,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 
@@ -167,5 +168,25 @@ public interface ProductOption extends Serializable {
      * @param allowedValues
      */
     public void setAllowedValues(List<ProductOptionValue> allowedValues);
+
+    public Boolean getUseInSkuGeneration();
+
+    public ProductOptionValidationType getProductOptionValidationType();
+
+    public void setProductOptionValidationType(ProductOptionValidationType productOptionValidationType);
+
+    public void setUseInSkuGeneration(Boolean useInSkuGeneration);
+
+    void setErrorMessage(String errorMessage);
+
+    void setErrorCode(String errorCode);
+
+    String getErrorMessage();
+
+    String getValidationSring();
+
+    void setValidationSring(String validationSring);
+
+    String getErrorCode();
 
 }

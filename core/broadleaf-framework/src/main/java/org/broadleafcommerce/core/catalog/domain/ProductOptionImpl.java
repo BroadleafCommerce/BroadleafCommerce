@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -84,11 +85,31 @@ public class ProductOptionImpl implements ProductOption {
     @Column(name = "REQUIRED")
     @AdminPresentation(friendlyName = "productOption_Required")
     protected Boolean required;
-    
+
+    @Column(name = "USE_IN_SKU_GENERATION")
+    @AdminPresentation(friendlyName = "productOption_UseInSKUGeneration")
+    private Boolean useInSkuGeneration;
+
     @Column(name = "DISPLAY_ORDER")
     @AdminPresentation(friendlyName = "productOption_displayOrder")
     protected Integer displayOrder;
-    
+
+    @Column(name = "VALIDATION_TYPE")
+    @AdminPresentation(friendlyName = "productOption_validationType", group = "productOption_validation", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType")
+    private String productOptionValidationType;
+
+    @Column(name = "VALIDATION_STRING")
+    @AdminPresentation(friendlyName = "productOption_validationSring", group = "productOption_validation")
+    protected String validationSring;
+
+    @Column(name = "ERROR_CODE")
+    @AdminPresentation(friendlyName = "productOption_errorCode", group = "productOption_validation")
+    protected String errorCode;
+
+    @Column(name = "ERROR_MESSAGE")
+    @AdminPresentation(friendlyName = "productOption_errorMessage", group = "productOption_validation")
+    protected String errorMessage;
+
     @OneToMany(mappedBy = "productOption", targetEntity = ProductOptionValueImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @OrderBy(value = "displayOrder")
@@ -179,6 +200,56 @@ public class ProductOptionImpl implements ProductOption {
     @Override
     public void setAllowedValues(List<ProductOptionValue> allowedValues) {
         this.allowedValues = allowedValues;
+    }
+
+    @Override
+    public Boolean getUseInSkuGeneration() {
+        return (useInSkuGeneration == null) ? true : useInSkuGeneration;
+    }
+
+    @Override
+    public void setUseInSkuGeneration(Boolean useInSkuGeneration) {
+        this.useInSkuGeneration = useInSkuGeneration;
+    }
+
+    @Override
+    public ProductOptionValidationType getProductOptionValidationType() {
+        return ProductOptionValidationType.getInstance(productOptionValidationType);
+    }
+
+    @Override
+    public void setProductOptionValidationType(ProductOptionValidationType productOptionValidationType) {
+        this.productOptionValidationType = productOptionValidationType == null ? null : productOptionValidationType.getType();
+    }
+
+    @Override
+    public String getValidationSring() {
+        return validationSring;
+    }
+
+    @Override
+    public void setValidationSring(String validationSring) {
+        this.validationSring = validationSring;
+    }
+
+    @Override
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    @Override
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    @Override
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    @Override
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
 }
