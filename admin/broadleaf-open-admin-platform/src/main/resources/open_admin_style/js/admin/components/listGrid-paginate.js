@@ -344,14 +344,14 @@
                 return 0;
             }
             
-            var scrollOffset = mcs.top;
+            var scrollOffset = $tbody.closest('.mCSB_container').position().top;
             var trHeight = this.getRowHeight($tbody);
             var topVisibleIndex = Math.floor(scrollOffset * -1 / trHeight);
             return topVisibleIndex;
         },
         
         getBottomVisibleIndex : function($tbody) {
-            var scrollOffset = mcs.top;
+            var scrollOffset = $tbody.closest('.mCSB_container').position().top;
             var trHeight = this.getRowHeight($tbody);
             var bottomVisibleIndex = Math.floor((scrollOffset * -1 + $tbody.closest('.listgrid-body-wrapper').height() - 4) / trHeight);
             return bottomVisibleIndex;
@@ -368,9 +368,10 @@
             var botIndex = this.getBottomVisibleIndex($tbody) + 1;
             var totalRecords = this.getTotalRecords($tbody);
             var $footer = $tbody.closest('.listgrid-container').find('.listgrid-table-footer');
-            var $footerMsg = $footer.find('.listgrid-table-footer-message');
-                    
-            $footerMsg.text(topIndex + ' - ' + botIndex + ' of ' + totalRecords + ' records');
+            
+            $footer.find('.low-index').text(topIndex);
+            $footer.find('.high-index').text(botIndex);
+            $footer.find('.total-records').text(totalRecords);
         },
         
         updateGridSize : function($tbody) {
@@ -427,6 +428,14 @@
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
                 $wrapper.css('max-height', wrapperHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
+                
+                $wrapper.mCustomScrollbar('update');
+                
+                // If we are showing all records, ensure the url and footer are updated
+                if ($wrapper.find('.mCS_no_scrollbar').length > 0) {
+                    BLCAdmin.listGrid.paginate.updateUrlFromScroll($wrapper.find('tbody'));
+                    BLCAdmin.listGrid.paginate.updateTableFooter($wrapper.find('tbody'));
+                }
             } else {
                 $wrapper.css('max-height', maxSubCollectionListGridHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxSubCollectionListGridHeight);
@@ -555,7 +564,7 @@
 $(document).ready(function() {
     
     $(window).resize(function() {
-        $.doTimeout('resize', 100, function() {
+        $.doTimeout('resize', 150, function() {
             $('tbody').each(function(index, element) {
                 if ($(element).is(':visible')) {
                     BLCAdmin.listGrid.paginate.updateGridSize($(element));

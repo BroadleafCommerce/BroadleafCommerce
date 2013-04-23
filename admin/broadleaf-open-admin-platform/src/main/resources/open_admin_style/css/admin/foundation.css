@@ -134,7 +134,7 @@ abbr { text-transform: none; }
   .show-for-print { display: inherit !important; } }
 /* Requires globals.css */
 /* Standard Forms ---------------------- */
-form { margin: 0 0 19.41641px; }
+form { margin: 0; }
 
 .row form .row { margin: 0 -6px; }
 .row form .row .column, .row form .row .columns { padding: 0 6px; }

@@ -1,10 +1,9 @@
 <div class="row">
     <div class="seven columns">
         <form class="custom-entity-search" th:action="${currentUrl}" method="GET">
-            <label>Search</label>
             <div class="row">
                 <div class="six columns">
-                    <input style="height: 28px;" type="search" placeholder="Name" />
+                    <input style="height: 28px; width: 100%" type="search" placeholder="Name" />
                 </div>
                 <div class="four columns">
                     <a href="#" class="button small dark radius"><i class="icon-search"></i>&nbsp;Search</a>
@@ -13,7 +12,7 @@
             </div>
         </form>
     </div>
-    <div class="five columns" style="padding-top:17px;">
+    <div class="five columns">
         <ul class="button-group" style="float: right;">
             <li>
                 <a th:href="@{${sectionKey} + '/add'}" class="button small radius dark add-main-entity" th:inline="text">
