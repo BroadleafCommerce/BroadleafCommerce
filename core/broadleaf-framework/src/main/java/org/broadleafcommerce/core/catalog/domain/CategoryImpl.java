@@ -20,6 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.cache.Hydrated;
 import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
@@ -97,7 +98,7 @@ import javax.persistence.Transient;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "CategoryImpl_baseCategory")
 @SQLDelete(sql="UPDATE BLC_CATEGORY SET ARCHIVED = 'Y' WHERE CATEGORY_ID = ?")
-public class CategoryImpl implements Category, Status {
+public class CategoryImpl implements Category, Status, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
@@ -1071,6 +1072,11 @@ public class CategoryImpl implements Category, Status {
                 public static final int Advanced = 1000;
             }
         }
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getName();
     }
 
 }
