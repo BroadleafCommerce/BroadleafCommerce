@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     //TODO: extensibility mechanism, support i18N
-    {
+    public void init() {
         fields.add(new FieldData.Builder()
                 .label("Time - Hour of Day")
                 .name("hour")
@@ -88,4 +88,8 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
         return RuleIdentifier.TIME;
     }
 
+    @Override
+    public String getDtoClassName() {
+        return "org.broadleafcommerce.common.TimeDTO";
+    }
 }

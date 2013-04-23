@@ -62,6 +62,9 @@ public class PhraseTranslator {
 
         boolean isIgnoreCase = false;
 
+        //remove null check syntax
+        field = field.replaceAll("\\.\\?", ".");
+
         //keep for backwards compatibility with legacy generated MVEL
         String legacyCaseInsensitivityKey = "MVEL.eval(\"toUpperCase()\",";
 

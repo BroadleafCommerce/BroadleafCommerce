@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 public class RequestFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     //TODO: extensibility mechanism, support i18N
-    {
+    public void init() {
         fields.add(new FieldData.Builder()
                 .label("Full URL")
                 .name("fullUrlWithQueryString")
@@ -64,4 +64,8 @@ public class RequestFieldServiceImpl extends AbstractRuleBuilderFieldService {
         return RuleIdentifier.REQUEST;
     }
 
+    @Override
+    public String getDtoClassName() {
+        return "org.broadleafcommerce.common.RequestDTOImpl";
+    }
 }

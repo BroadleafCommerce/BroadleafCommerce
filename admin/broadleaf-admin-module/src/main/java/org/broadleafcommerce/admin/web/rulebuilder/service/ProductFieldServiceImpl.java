@@ -32,10 +32,17 @@ import org.springframework.stereotype.Service;
 @Service("blProductFieldService")
 public class ProductFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
-    {
+    public void init() {
         fields.add(new FieldData.Builder()
                 .label("Product - URL")
                 .name("url")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Product - URLKey")
+                .name("urlKey")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
@@ -61,42 +68,12 @@ public class ProductFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
-        
-        
         fields.add(new FieldData.Builder()
                 .label("Sku - Name")
                 .name("defaultSku.name")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Description")
-                .name("defaultSku.description")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Long Description")
-                .name("defaultSku.longDescription")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Sale Price")
-                .name("defaultSku.salePrice")
-                .operators("blcOperators_Numeric")
-                .options("[]")
-                .type(SupportedFieldType.MONEY)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Retail Price")
-                .name("defaultSku.retailPrice")
-                .operators("blcOperators_Numeric")
-                .options("[]")
-                .type(SupportedFieldType.MONEY)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("Sku - Fulfillment Type")
@@ -113,11 +90,46 @@ public class ProductFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Sku - taxable")
+                .label("Sku - Description")
+                .name("defaultSku.description")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Long Description")
+                .name("defaultSku.longDescription")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Taxable")
                 .name("defaultSku.taxable")
                 .operators("blcOperators_Boolean")
                 .options("[]")
                 .type(SupportedFieldType.BOOLEAN)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Available")
+                .name("defaultSku.available")
+                .operators("blcOperators_Boolean")
+                .options("[]")
+                .type(SupportedFieldType.BOOLEAN)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Start Date")
+                .name("defaultSku.activeStartDate")
+                .operators("blcOperators_Date")
+                .options("[]")
+                .type(SupportedFieldType.DATE)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - End Date")
+                .name("defaultSku.activeEndDate")
+                .operators("blcOperators_Date")
+                .options("[]")
+                .type(SupportedFieldType.DATE)
                 .build());
     }
 
@@ -126,4 +138,8 @@ public class ProductFieldServiceImpl extends AbstractRuleBuilderFieldService {
         return RuleIdentifier.PRODUCT;
     }
 
+    @Override
+    public String getDtoClassName() {
+        return "org.broadleafcommerce.core.catalog.domain.ProductImpl";
+    }
 }

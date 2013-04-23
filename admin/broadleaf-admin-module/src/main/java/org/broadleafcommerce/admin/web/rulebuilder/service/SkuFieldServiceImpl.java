@@ -33,42 +33,13 @@ import org.springframework.stereotype.Service;
 public class SkuFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
 
-    {
+    public void init() {
         fields.add(new FieldData.Builder()
                 .label("Sku - Name")
                 .name("name")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Description")
-                .name("description")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Long Description")
-                .name("longDescription")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-
-        fields.add(new FieldData.Builder()
-                .label("Sku - Sale Price")
-                .name("salePrice")
-                .operators("blcOperators_Numeric")
-                .options("[]")
-                .type(SupportedFieldType.MONEY)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("Sku - Retail Price")
-                .name("retailPrice")
-                .operators("blcOperators_Numeric")
-                .options("[]")
-                .type(SupportedFieldType.MONEY)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("Sku - Fulfillment Type")
@@ -85,11 +56,46 @@ public class SkuFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Sku - taxable")
+                .label("Sku - Description")
+                .name("description")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Long Description")
+                .name("longDescription")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Taxable")
                 .name("taxable")
                 .operators("blcOperators_Boolean")
                 .options("[]")
                 .type(SupportedFieldType.BOOLEAN)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Available")
+                .name("available")
+                .operators("blcOperators_Boolean")
+                .options("[]")
+                .type(SupportedFieldType.BOOLEAN)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - Start Date")
+                .name("activeStartDate")
+                .operators("blcOperators_Date")
+                .options("[]")
+                .type(SupportedFieldType.DATE)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Sku - End Date")
+                .name("activeEndDate")
+                .operators("blcOperators_Date")
+                .options("[]")
+                .type(SupportedFieldType.DATE)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("Product - URL")
@@ -126,4 +132,8 @@ public class SkuFieldServiceImpl extends AbstractRuleBuilderFieldService {
         return RuleIdentifier.SKU;
     }
 
+    @Override
+    public String getDtoClassName() {
+        return "org.broadleafcommerce.core.catalog.domain.SkuImpl";
+    }
 }

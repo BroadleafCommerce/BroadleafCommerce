@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 public class LocaleFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     //TODO: extensibility mechanism, support i18N
-    {
+    public void init() {
         fields.add(new FieldData.Builder()
                 .label("Locale - Name")
                 .name("friendlyName")
@@ -62,4 +62,8 @@ public class LocaleFieldServiceImpl extends AbstractRuleBuilderFieldService {
         return RuleIdentifier.LOCALE;
     }
 
+    @Override
+    public String getDtoClassName() {
+        return "org.broadleafcommerce.common.locale.domain.LocaleImpl";
+    }
 }

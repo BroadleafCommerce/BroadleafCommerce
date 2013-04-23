@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 public class OrderFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     //TODO: extensibility mechanism, support i18N
-    {
+    public void init() {
         fields.add(new FieldData.Builder()
                 .label("Currency - Is Default Currency")
                 .name("currency.defaultFlag")
@@ -88,5 +88,10 @@ public class OrderFieldServiceImpl extends AbstractRuleBuilderFieldService {
     @Override
     public String getName() {
         return RuleIdentifier.ORDER;
+    }
+
+    @Override
+    public String getDtoClassName() {
+        return "org.broadleafcommerce.core.order.domain.OrderImpl";
     }
 }

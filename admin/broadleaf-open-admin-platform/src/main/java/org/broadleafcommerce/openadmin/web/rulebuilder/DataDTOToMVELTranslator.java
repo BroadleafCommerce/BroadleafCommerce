@@ -413,9 +413,15 @@ public class DataDTOToMVELTranslator {
         }
     }
 
+    protected String buildFieldName(String entityKey, String fieldName) {
+        String response = entityKey + "." + fieldName;
+        response = response.replaceAll("\\.", ".?");
+        return response;
+    }
+
     protected String formatField(String entityKey, SupportedFieldType type, String field,
                                  boolean ignoreCase, boolean isNegation) {
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
         if (isNegation) {
             response.append("!");
         }
@@ -432,48 +438,36 @@ public class DataDTOToMVELTranslator {
             switch(type) {
                 case BOOLEAN:
                     response.append("MvelHelper.convertField(\"BOOLEAN\",");
-                    response.append(entityKey);
-                    response.append(".");
-                    response.append(convertedField);
+                    response.append(buildFieldName(entityKey, convertedField));
                     response.append(")");
                     break;
                 case INTEGER:
                     response.append("MvelHelper.convertField(\"INTEGER\",");
-                    response.append(entityKey);
-                    response.append(".");
-                    response.append(convertedField);
+                    response.append(buildFieldName(entityKey, convertedField));
                     response.append(")");
                     break;
                 case DECIMAL:
                 case MONEY:
                     response.append("MvelHelper.convertField(\"DECIMAL\",");
-                    response.append(entityKey);
-                    response.append(".");
-                    response.append(convertedField);
+                    response.append(buildFieldName(entityKey, convertedField));
                     response.append(")");
                     break;
                 case DATE:
                     response.append("MvelHelper.convertField(\"DATE\",");
-                    response.append(entityKey);
-                    response.append(".");
-                    response.append(convertedField);
+                    response.append(buildFieldName(entityKey, convertedField));
                     response.append(")");
                     break;
                 case STRING:
                     if (ignoreCase) {
                         response.append("MvelHelper.toUpperCase(");
                     }
-                    response.append(entityKey);
-                    response.append(".");
-                    response.append(convertedField);
+                    response.append(buildFieldName(entityKey, convertedField));
                     if (ignoreCase) {
                         response.append(")");
                     }
                     break;
                 case STRING_LIST:
-                    response.append(entityKey);
-                    response.append(".");
-                    response.append(convertedField);
+                    response.append(buildFieldName(entityKey, convertedField));
                     break;
                 default:
                     throw new UnsupportedOperationException(type.toString() + " is not supported for map fields in the rule builder.");
@@ -484,33 +478,25 @@ public class DataDTOToMVELTranslator {
                     if (isMapField) {
                         throw new UnsupportedOperationException("Enumerations are not supported for map fields in the rule builder.");
                     } else {
-                        response.append(entityKey);
-                        response.append(".");
-                        response.append(field);
+                        response.append(buildFieldName(entityKey, convertedField));
                         response.append(".getType()");
                     }
                     break;
                 case MONEY:
-                    response.append(entityKey);
-                    response.append(".");
-                    response.append(field);
+                    response.append(buildFieldName(entityKey, convertedField));
                     response.append(".getAmount()");
                     break;
                 case STRING:
                     if (ignoreCase) {
                         response.append("MvelHelper.toUpperCase(");
                     }
-                    response.append(entityKey);
-                    response.append(".");
-                    response.append(field);
+                    response.append(buildFieldName(entityKey, convertedField));
                     if (ignoreCase) {
                         response.append(")");
                     }
                     break;
                 default:
-                    response.append(entityKey);
-                    response.append(".");
-                    response.append(field);
+                    response.append(buildFieldName(entityKey, convertedField));
                     break;
             }
         }
@@ -521,7 +507,7 @@ public class DataDTOToMVELTranslator {
                                  SupportedFieldType secondaryType, Object[] value,
                                  boolean isFieldComparison, boolean ignoreCase,
                                  boolean ignoreQuotes) throws MVELTranslationException {
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
         if (isFieldComparison) {
             switch(type) {
                 case MONEY:

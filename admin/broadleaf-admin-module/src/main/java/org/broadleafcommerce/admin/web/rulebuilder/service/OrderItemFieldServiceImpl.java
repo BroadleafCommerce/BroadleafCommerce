@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     //TODO: extensibility mechanism, support i18N
-    {
+    public void init() {
         fields.add(new FieldData.Builder()
                 .label("Order Item - Item Name")
                 .name("name")
@@ -189,8 +189,8 @@ public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Sku - Large Description")
-                .name("sku.largeDescription")
+                .label("Sku - Long Description")
+                .name("sku.longDescription")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
@@ -230,4 +230,8 @@ public class OrderItemFieldServiceImpl extends AbstractRuleBuilderFieldService {
         return RuleIdentifier.ORDERITEM;
     }
 
+    @Override
+    public String getDtoClassName() {
+        return "org.broadleafcommerce.core.order.domain.OrderItemImpl";
+    }
 }

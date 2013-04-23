@@ -30,10 +30,10 @@ import org.springframework.stereotype.Service;
  * @author Elbert Bautista (elbertbautista)
  */
 @Service("blCustomerFieldService")
-public class CustomerFieldServiceImpl  extends AbstractRuleBuilderFieldService {
+public class CustomerFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     //TODO: extensibility mechanism, support i18N
-    {
+    public void init() {
         fields.add(new FieldData.Builder()
                 .label("Customer - Deactivated")
                 .name("deactivated")
@@ -76,11 +76,30 @@ public class CustomerFieldServiceImpl  extends AbstractRuleBuilderFieldService {
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
+        fields.add(new FieldData.Builder()
+                .label("Customer - First Name")
+                .name("firstName")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Customer - Last Name")
+                .name("lastName")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
     }
 
     @Override
     public String getName() {
         return RuleIdentifier.CUSTOMER;
+    }
+
+    @Override
+    public String getDtoClassName() {
+        return "org.broadleafcommerce.profile.core.domain.CustomerImpl";
     }
 
 }

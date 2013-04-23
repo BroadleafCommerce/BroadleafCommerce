@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 public class FulfillmentGroupFieldServiceImpl  extends AbstractRuleBuilderFieldService {
 
     //TODO: extensibility mechanism, support i18N
-    {
+    public void init() {
         fields.add(new FieldData.Builder()
                 .label("Fulfillment Group - First Name")
                 .name("address.firstName")
@@ -98,6 +98,27 @@ public class FulfillmentGroupFieldServiceImpl  extends AbstractRuleBuilderFieldS
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
+                .label("Fulfillment Group - Primary Phone")
+                .name("address.phonePrimary.phoneNumber")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Fulfillment Group - Secondary Phone")
+                .name("address.phoneSecondary.phoneNumber")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Fulfillment Group - Fax")
+                .name("address.phoneFax.phoneNumber")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .build());
+        fields.add(new FieldData.Builder()
                 .label("Fulfillment Group - Total")
                 .name("total")
                 .operators("blcOperators_Numeric")
@@ -106,36 +127,55 @@ public class FulfillmentGroupFieldServiceImpl  extends AbstractRuleBuilderFieldS
                 .build());
         fields.add(new FieldData.Builder()
                 .label("Fulfillment Group - Shipping Price")
-                .name("shippingPrice")
+                .name("fulfillmentPrice")
                 .operators("blcOperators_Numeric")
                 .options("[]")
                 .type(SupportedFieldType.MONEY)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("Fulfillment Group - Retail Shipping Price")
-                .name("retailShippingPrice")
+                .name("retailFulfillmentPrice")
                 .operators("blcOperators_Numeric")
                 .options("[]")
                 .type(SupportedFieldType.MONEY)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("Fulfillment Group - Sale Shipping Price")
-                .name("saleShippingPrice")
+                .name("saleFulfillmentPrice")
                 .operators("blcOperators_Numeric")
                 .options("[]")
                 .type(SupportedFieldType.MONEY)
                 .build());
         fields.add(new FieldData.Builder()
                 .label("Fulfillment Group - Type")
-                .name("shippingPrice")
+                .name("type")
                 .operators("blcOperators_Enumeration")
                 .options("blcOptions_FulfillmentType")
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Fulfillment Group - Merchandise Total")
+                .name("merchandiseTotal")
+                .operators("blcOperators_Numeric")
+                .options("[]")
+                .type(SupportedFieldType.MONEY)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("Fulfillment Option - Name")
+                .name("fulfillmentOption.name")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
                 .build());
     }
 
     @Override
     public String getName() {
         return RuleIdentifier.FULFILLMENTGROUP;
+    }
+
+    @Override
+    public String getDtoClassName() {
+        return "org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl";
     }
 }
