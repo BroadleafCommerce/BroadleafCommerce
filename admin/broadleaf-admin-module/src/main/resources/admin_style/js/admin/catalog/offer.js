@@ -24,7 +24,7 @@
         initializeOfferTypeField : function($form) {
             var $offerType = $form.find('#field-type');
             
-            var $fgCriteria = $form.find('#field-offerMatchRules--FULFILLMENT_GROUP');
+            var $fgCriteria = $form.find('#field-offerMatchRules---FULFILLMENT-GROUP');
             var $itemTarget = $form.find('#field-targetItemCriteria');
             var $itemTargetFieldset = $itemTarget.closest('fieldset');
             
