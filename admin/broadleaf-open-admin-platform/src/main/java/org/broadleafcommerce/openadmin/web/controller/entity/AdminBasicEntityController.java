@@ -134,6 +134,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey);
 
+        model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("listGrid", listGrid);
         model.addAttribute("viewType", "entityList");

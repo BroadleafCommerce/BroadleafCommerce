@@ -52,7 +52,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_OPTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(friendlyName = "Base Product Option", populateToOneFields=PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(friendlyName = "ProductOptionImpl_baseProductOption", populateToOneFields=PopulateToOneFieldsEnum.TRUE)
 public class ProductOptionImpl implements ProductOption {
 
     private static final long serialVersionUID = 1L;
