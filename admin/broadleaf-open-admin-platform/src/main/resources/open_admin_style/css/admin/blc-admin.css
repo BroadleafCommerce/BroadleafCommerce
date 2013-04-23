@@ -1192,6 +1192,19 @@ form.custom div.conditional div.custom.dropdown {
     margin-right: 10px;
 }
 
+.modal form {
+	margin: 0;
+}
+
+.modal dl.tabs {
+	margin-bottom: 0;
+	margin-top: 10px;
+}
+
+.modal .modal-header {
+	padding-bottom: 0;
+}
+
 /* -----------------------------------------
    Login/Forgot Password Forms
 ----------------------------------------- */

@@ -12,6 +12,7 @@
         $.fn.foundationTopBar           ? $doc.foundationTopBar() : null;
         $.fn.foundationMediaQueryViewer ? $doc.foundationMediaQueryViewer() : null;
         $.fn.foundationTabs             ? $doc.foundationTabs({
+            deep_linking: false,
             callback: function() {
                 BLCAdmin.initializeFields(BLCAdmin.getActiveTab());
                 BLCAdmin.updateFields(BLCAdmin.getActiveTab());

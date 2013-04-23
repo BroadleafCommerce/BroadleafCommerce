@@ -49,7 +49,6 @@ public class ListGrid {
     protected List<ListGridRecord> records = new ArrayList<ListGridRecord>();
     protected List<ListGridAction> toolbarActions = new ArrayList<ListGridAction>();
     
-    
     // These actions will start greyed out and unable to be clicked until a specific row has been selected
     protected List<ListGridAction> rowActions = new ArrayList<ListGridAction>();
     protected int totalRecords;
@@ -67,6 +66,7 @@ public class ListGrid {
     protected String externalEntitySectionKey;
     protected String containingEntityId;
     protected String subCollectionFieldName;
+    protected String pathOverride;
 
     public enum Type {
         MAIN,
@@ -83,6 +83,10 @@ public class ListGrid {
     /* ************** */
     
     public String getPath() {
+        if (StringUtils.isNotBlank(pathOverride)) {
+            return pathOverride;
+        }
+                
         StringBuilder sb = new StringBuilder();
         
         if (!getSectionKey().startsWith("/")) {
@@ -267,6 +271,14 @@ public class ListGrid {
 
     public void setExternalEntitySectionKey(String externalEntitySectionKey) {
         this.externalEntitySectionKey = externalEntitySectionKey;
+    }
+    
+    public String getPathOverride() {
+        return pathOverride;
+    }
+    
+    public void setPathOverride(String pathOverride) {
+        this.pathOverride = pathOverride;
     }
     
 }

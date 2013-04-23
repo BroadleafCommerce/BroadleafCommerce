@@ -419,6 +419,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ppr = PersistencePackageRequest.fromMetadata(md);
         
         ppr.addFilterAndSortCriteria(getCriteria(requestParams));
+        ppr.setStartIndex(getStartIndex(requestParams));
+        ppr.setMaxIndex(getMaxIndex(requestParams));
         
         if (md instanceof BasicFieldMetadata) {
             DynamicResultSet drs = service.getRecords(ppr);
@@ -538,6 +540,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param sectionKey
      * @param id
      * @param collectionField
+     * @param requestParams
      * @return the return view path
      * @throws Exception
      */
@@ -545,7 +548,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable String id,
-            @PathVariable String collectionField) throws Exception {
+            @PathVariable String collectionField,
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
@@ -554,7 +558,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
         
         //service.getContextSpecificRelationshipId(mainMetadata, entity, prefix);
 
-        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md)
+                .withFilterAndSortCriteria(getCriteria(requestParams))
+                .withStartIndex(getStartIndex(requestParams))
+                .withMaxIndex(getMaxIndex(requestParams));
 
         if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
@@ -572,6 +579,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             } else {
                 DynamicResultSet drs = service.getRecords(ppr);
                 ListGrid listGrid = formService.buildCollectionListGrid(id, drs, collectionProperty, sectionKey);
+                listGrid.setPathOverride(request.getRequestURL().toString());
 
                 model.addAttribute("listGrid", listGrid);
                 model.addAttribute("viewType", "modal/simpleSelectEntity");
@@ -589,6 +597,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             DynamicResultSet drs = service.getRecords(ppr);
             ListGrid listGrid = formService.buildMainListGrid(drs, collectionMetadata, sectionKey);
             listGrid.setSubCollectionFieldName(collectionField);
+            listGrid.setPathOverride(request.getRequestURL().toString());
             EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
 
             if (fmd.getMaintainedAdornedTargetFields().length > 0) {

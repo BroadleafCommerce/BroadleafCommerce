@@ -8,13 +8,13 @@
 </dl> 
 
 <ul class="tabs-content">
-    <li class="active" id="adornedModalTab1Tab">
+    <li class="active adornedModalTab1Tab">
         <div class="listgrid-container">
             <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
         </div>
     </li>
     
-    <li id="adornedModalTab2Tab">
+    <li class="adornedModalTab2Tab">
         <form th:include="components/entityForm"
             th:remove="tag"
             th:with="additionalClasses='modal-form'" />

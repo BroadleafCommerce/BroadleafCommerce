@@ -17,6 +17,7 @@
 
 package org.broadleafcommerce.openadmin.web.form.entity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
@@ -273,7 +274,7 @@ public class EntityForm {
     }
     
     public String getMainEntityName() {
-        return mainEntityName;
+        return StringUtils.isBlank(mainEntityName) ? "" : mainEntityName;
     }
     
     public void setMainEntityName(String mainEntityName) {

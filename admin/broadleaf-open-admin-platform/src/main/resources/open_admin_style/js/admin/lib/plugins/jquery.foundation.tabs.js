@@ -3,7 +3,7 @@
 
   var settings = {
         callback: $.noop,
-        deep_linking: true,
+        deep_linking: false,
         init: false
       },
 
@@ -30,7 +30,8 @@
           var $activeTab = $tab.closest('dl, ul').find('.active'),
               target = $tab.children('a').attr("href"),
               hasHash = /^#/.test(target),
-              $content = $(target + 'Tab');
+              targetClass = '.' + target.substring(1),
+              $content = $tab.closest('dl').parent().parent().find('.tabs-content').find(targetClass + 'Tab');
 
           if (hasHash && $content.length > 0) {
             // Show tab content

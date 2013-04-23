@@ -11,7 +11,15 @@ $(document).ready(function() {
 	});
 	
 	$('body').on('click', 'button.submit-button', function(event) {
-		$(this).closest('form').submit();
+	    var $form;
+	    
+	    if ($(this).closest('.modal').length > 0) {
+	        $form = $(this).closest('.modal').find('.modal-body form');
+	    } else {
+	        $form = $(this).closest('form')
+	    }
+	    
+	    $form.submit();
 		event.preventDefault();
 	});
 	

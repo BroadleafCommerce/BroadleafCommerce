@@ -596,18 +596,18 @@ ul.orbit-bullets li.active.has-thumb { background-position: 0 0; border-top: 2px
 
 @media print { .reveal-modal { border: solid 1px #000; background: #fff; } }
 /* Tabs ---------------------- */
-.tabs { list-style: none; border-bottom: solid 1px #e6e6e6; display: block; height: 40px; padding: 0; margin-bottom: 20px; }
+.tabs { list-style: none; border-bottom: none; display: block; height: 43px; padding: 0; margin-bottom: 20px; white-space: nowrap; overflow: hidden; }
 .tabs.contained { margin-bottom: 0; margin-left: 0; }
 .tabs dt, .tabs li.section-title { color: #b3b3b3; cursor: default; display: block; float: left; font-size: 12px; height: 40px; line-height: 40px; padding: 0; padding-right: 9px; padding-left: 20px; font-weight: normal; width: auto; text-transform: uppercase; }
 .tabs dt:first-child, .tabs li.section-title:first-child { padding: 0; padding-right: 9px; }
-.tabs dd, .tabs li { display: block; float: left; padding: 0; margin: 0; }
+.tabs dd, .tabs li { display: inline-block; padding: 0; margin: 0; }
 .tabs dd a, .tabs li a { color: #6f6f6f; display: block; font-size: 14px; height: 40px; line-height: 40px; padding: 0px 23.8px; }
 .tabs dd a:focus, .tabs li a:focus { font-weight: bold; color: #2ba6cb; }
-.tabs dd.active, .tabs li.active { border-top: 3px solid #2ba6cb; margin-top: -3px; }
+.tabs dd.active, .tabs li.active { border-top: 3px solid #2ba6cb; }
 .tabs dd.active a, .tabs li.active a { cursor: default; color: #3c3c3c; background: #fff; border-left: 1px solid #e6e6e6; border-right: 1px solid #e6e6e6; font-weight: bold; }
 .tabs dd:first-child, .tabs li:first-child { margin-left: 0; }
-.tabs.vertical { height: auto; border-bottom: 1px solid #e6e6e6; }
-.tabs.vertical dt, .tabs.vertical dd, .tabs.vertical li { float: none; height: auto; }
+.tabs.vertical { height: auto; border-bottom: 1px solid #e6e6e6; white-space: inherit; }
+.tabs.vertical dt, .tabs.vertical dd, .tabs.vertical li { float: none; height: auto; display: block; }
 .tabs.vertical dd, .tabs.vertical li { border-left: 3px solid #cccccc; }
 .tabs.vertical dd a, .tabs.vertical li a { background: #f2f2f2; border: none; border: 1px solid #e6e6e6; border-width: 1px 1px 0 0; color: #555; display: block; font-size: 14px; height: auto; line-height: 1; padding: 15px 20px; -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset; -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset; box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset; }
 .tabs.vertical dd.active, .tabs.vertical li.active { margin-top: 0; border-top: 1px solid #4d4d4d; border-left: 4px solid #1a1a1a; }

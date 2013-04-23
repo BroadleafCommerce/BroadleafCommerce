@@ -51,6 +51,8 @@ var BLCAdmin = (function($) {
 			}
 		});
 		
+		BLCAdmin.initializeModalTabs($data);
+        BLCAdmin.initializeModalButtons($data);
 		BLCAdmin.initializeFields();
 	}
 	
@@ -71,6 +73,31 @@ var BLCAdmin = (function($) {
             for (var i = 0; i < preFormSubmitHandlers.length; i++) {
                 preFormSubmitHandlers[i]($form);
             }
+    	},
+    	
+    	initializeModalTabs : function($data) {
+    		var $tabs = $data.find('dl.tabs');
+    		if ($tabs.length > 0) {
+    		    $tabs.remove().appendTo($data.find('.modal-header'));
+    		    
+    		    var $lastTab = $tabs.find('dd:last');
+    		    if ($lastTab.width() + $lastTab.position().left + 15 > $tabs.width()) {
+                    $tabs.mCustomScrollbar({
+                        theme: 'dark',
+                        autoHideScrollbar: true,
+                        horizontalScroll: true
+                    });
+    		    }
+    		}
+    	},
+    	
+    	initializeModalButtons : function($data) {
+    		var $buttonDiv = $data.find('div.entity-form-actions');
+    		if ($buttonDiv.length > 0) {
+    		    var $footer = $('<div>', { 'class' : 'modal-footer' });
+    		    $buttonDiv.remove().appendTo($footer);
+    		    $data.append($footer);
+    		}
     	},
     	
     	showElementAsModal : function($element, onModalHide, onModalHideArgs) {
@@ -101,9 +128,14 @@ var BLCAdmin = (function($) {
     		    }, function(data) {
         			// Create a modal out of the server response
         			var $data = $(data);
+        			
         			BLCAdmin.initializeFields($data);
+        			
         			$data = $data.children();
         		    BLCAdmin.currentModal().empty().append($data);
+        		    
+        			BLCAdmin.initializeModalTabs(BLCAdmin.currentModal());
+        			BLCAdmin.initializeModalButtons(BLCAdmin.currentModal());
         		});
     		} else {
     		    showLinkAsModal(link);

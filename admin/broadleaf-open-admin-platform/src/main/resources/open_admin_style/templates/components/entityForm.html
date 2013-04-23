@@ -3,7 +3,6 @@
 <!-- Additional parameters that can be specified include: -->
 <!--    additionalClasses - any additional CSS classes to apply to the form -->
 <!--    additionalTabClasses - any additional CSS classes to apply to the tabs -->
-<!--    entityFormName - a unique name for this form used in specifying tab names -->
 <!--    showSingleTab - boolean value determining whether or not to show tabs if there is only one -->
 </comment>
 
@@ -21,14 +20,14 @@
     
     <dl class="tabs" th:classappend="${additionalTabClasses}" th:if="${renderTabs}">
         <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'" th:inline="text">
-            <a th:href="'#tab' + ${entityFormName} + ${tabStat.count}" th:text="#{${tab.title}}" />
+            <a th:href="'#tab' + ${tabStat.count}" th:text="#{${tab.title}}" />
         </dd>
     </dl> 
 
     <ul class="tabs-content" th:style="${verticalTabs}? 'margin-left: 250px;'">
         <li th:each="tab : ${entityForm.tabs}" 
             th:class="${tabStat.first}? 'active'" 
-            th:id="'tab' + ${entityFormName} + ${tabStat.count} + 'Tab'"
+            th:classappend="'tab' + ${tabStat.count} + 'Tab'"
             th:inline="text">
             
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
@@ -59,8 +58,10 @@
         </li>
     </ul>
     
-    <button th:each="action : ${entityForm.actions}" class="button radius dark right" th:classappend="${action.buttonClass}">
-        <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="${action.displayText}" th:remove="tag" />
-    </button>
+    <div class="entity-form-actions">
+        <button th:each="action : ${entityForm.actions}" class="button radius dark right" th:classappend="${action.buttonClass}">
+            <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="${action.displayText}" th:remove="tag" />
+        </button>
+    </div>
     
 </form>

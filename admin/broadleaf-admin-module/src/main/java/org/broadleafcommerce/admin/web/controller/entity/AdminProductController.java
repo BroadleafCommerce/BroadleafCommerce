@@ -31,9 +31,11 @@ import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
@@ -143,11 +145,12 @@ public class AdminProductController extends AdminBasicEntityController {
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable String id,
-            @PathVariable String collectionField) throws Exception {
+            @PathVariable String collectionField,
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         if ("additionalSkus".equals(collectionField)) {
             return showAddAdditionalSku(request, response, model, id);
         } 
-        return super.showAddCollectionItem(request, response, model, pathVars, id, collectionField);
+        return super.showAddCollectionItem(request, response, model, pathVars, id, collectionField, requestParams);
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

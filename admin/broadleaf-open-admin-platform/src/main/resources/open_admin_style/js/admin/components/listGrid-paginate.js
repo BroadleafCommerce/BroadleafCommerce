@@ -5,7 +5,7 @@
     var updateUrlDebounce = 700;
     var lockDebounce = 100;
     var trHeight = null;
-    var maxSubCollectionListGridHeight = 460;
+    var maxSubCollectionListGridHeight = 360;
     
     // Add utility functions for list grids to the BLCAdmin object
     BLCAdmin.listGrid.paginate = {
