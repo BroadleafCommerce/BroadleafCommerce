@@ -84,9 +84,6 @@ public class MVELToDataWrapperTranslator {
                     }
                 }
             }
-            if (!dataWrapper.getData().isEmpty()) {
-                throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_RULE, "test");
-            }
         } catch (MVELTranslationException e) {
             LOG.error("Unable to translate rule MVEL", e);
             dataWrapper.getData().clear();
