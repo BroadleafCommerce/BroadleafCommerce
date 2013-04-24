@@ -954,7 +954,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     }
 
     protected boolean setExcludedBasedOnShowIfProperty(FieldMetadata fieldMetadata) {
-        if(fieldMetadata.getShowIfProperty()!=null && !fieldMetadata.getShowIfProperty().equals("")
+        if(fieldMetadata != null && fieldMetadata.getShowIfProperty()!=null && !fieldMetadata.getShowIfProperty().equals("")
                 && appConfigurationRemoteService.getBooleanPropertyValue(fieldMetadata.getShowIfProperty())!=null
                 && !appConfigurationRemoteService.getBooleanPropertyValue(fieldMetadata.getShowIfProperty())
                 ) {
