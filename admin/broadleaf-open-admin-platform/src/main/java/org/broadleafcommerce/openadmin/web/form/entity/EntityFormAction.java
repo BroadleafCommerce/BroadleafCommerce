@@ -22,6 +22,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 
 public class EntityFormAction {
     
+    protected String buttonType = "button";
     protected String buttonClass = "";
     protected String urlPostfix = "";
     protected String iconClass = "";
@@ -38,6 +39,11 @@ public class EntityFormAction {
                 .build();
         }
         return false;
+    }
+    
+    public EntityFormAction withButtonType(String buttonType) {
+        setButtonType(buttonType);
+        return this;
     }
     
     public EntityFormAction withButtonClass(String buttonClass) {
@@ -58,6 +64,14 @@ public class EntityFormAction {
     public EntityFormAction withDisplayText(String displayText) {
         setDisplayText(displayText);
         return this;
+    }
+    
+    public String getButtonType() {
+        return buttonType;
+    }
+    
+    public void setButtonType(String buttonType) {
+        this.buttonType = buttonType;
     }
 
     public String getButtonClass() {

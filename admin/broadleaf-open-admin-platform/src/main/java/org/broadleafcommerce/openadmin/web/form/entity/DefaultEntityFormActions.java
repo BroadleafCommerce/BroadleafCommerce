@@ -21,6 +21,7 @@ package org.broadleafcommerce.openadmin.web.form.entity;
 public class DefaultEntityFormActions {
     
     public static final EntityFormAction SAVE = new EntityFormAction()
+        .withButtonType("submit")
         .withButtonClass("submit-button")
         .withDisplayText("Save");
 
