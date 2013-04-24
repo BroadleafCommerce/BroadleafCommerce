@@ -47,15 +47,18 @@
         
         showOrCreateMainCondition : function($container, typeToCreate) {
             var containerId = $container.attr("id");
-            var builder = this.getCondition(containerId).builder;
-            
-            $container.show();
-            
-            if ($container.children().children().length == 0) {
-                if (typeToCreate == 'add-main-rule') {
-                    builder.buildAddNewRule($container);
-                } else if (typeToCreate == 'add-main-item-rule') {
-                    builder.buildAddNewItemRule($container);
+            var condition = this.getCondition(containerId);
+            if (condition != null) {
+                var builder = this.getCondition(containerId).builder;
+
+                $container.show();
+
+                if ($container.children().children().length == 0) {
+                    if (typeToCreate == 'add-main-rule') {
+                        builder.buildAddNewRule($container);
+                    } else if (typeToCreate == 'add-main-item-rule') {
+                        builder.buildAddNewItemRule($container);
+                    }
                 }
             }
         },
@@ -101,27 +104,33 @@
     
     BLCAdmin.addSubmitHandler(function($form) {
         for (var i = 0; i < BLCAdmin.conditions.conditionCount(); i++) {
-            var hiddenId = BLCAdmin.conditions.getConditionByIndex(i).hiddenId;
+            var condition = BLCAdmin.conditions.getConditionByIndex(i);
+            var hiddenId = condition.hiddenId;
             
-            var builder = BLCAdmin.conditions.getConditionByIndex(i).builder;
-            
-            // There are two scenarios that we should clear out rule data:
-            //   1. The containing field-box has a hidden class, which means this field was explicitly hidden as it 
-            //      likely depends on the value of some other field and is not currently applicable
-            //   2. This field is optional and currently set to off
-            
-            var explicitlyHidden = $(builder.element).closest('.field-box').hasClass('hidden');
-            var onOffRadios = $(builder.element).parent().find('input[type="radio"]');
-            var setToOff = onOffRadios.length < 1 ? false : onOffRadios.filter(function() { 
-                return this.id.endsWith('false'); 
-            }).is(':checked');
-            
-            if (explicitlyHidden || setToOff) {
-                builder.element.find('div.conditional-rules').remove();
+            var builder = condition.builder;
+
+            if (builder != null) {
+                // There are two scenarios that we should clear out rule data:
+                //   1. The containing field-box has a hidden class, which means this field was explicitly hidden as it
+                //      likely depends on the value of some other field and is not currently applicable
+                //   2. This field is optional and currently set to off
+
+                var explicitlyHidden = $(builder.element).closest('.field-box').hasClass('hidden');
+                var onOffRadios = $(builder.element).parent().find('input[type="radio"]');
+                var setToOff = onOffRadios.length < 1 ? false : onOffRadios.filter(function() {
+                    return this.id.endsWith('false');
+                }).is(':checked');
+
+                if (explicitlyHidden || setToOff) {
+                    builder.element.find('div.conditional-rules').remove();
+                }
+
+                var collectedData = builder.collectData();
+                if (condition.data.error != null) {
+                    collectedData.error = condition.data.error;
+                }
+                $("#"+hiddenId).val(JSON.stringify(collectedData));
             }
-            
-            var collectedData = builder.collectData();
-            $("#"+hiddenId).val(JSON.stringify(collectedData));
         }
     });
     

@@ -103,44 +103,47 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
                 }
                 case RULE_SIMPLE:{
                     DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
-                    String mvel = convertMatchRuleJsonToMvel(translator, RuleIdentifier.ENTITY_KEY_MAP.get(populateValueRequest.getMetadata().getRuleIdentifier()),
-                            populateValueRequest.getMetadata().getRuleIdentifier(), populateValueRequest.getRequestedValue());
-                    Class<?> valueType = null;
-                    //is this a regular field?
-                    if (!populateValueRequest.getProperty().getName().contains(FieldManager.MAPFIELDSEPARATOR)) {
-                        valueType = populateValueRequest.getReturnType();
-                    } else {
-                        String valueClassName = populateValueRequest.getMetadata().getMapFieldValueClass();
-                        if (valueClassName != null) {
-                            valueType = Class.forName(valueClassName);
+                    DataWrapper dw = convertJsonToDataWrapper(populateValueRequest.getRequestedValue());
+                    if (dw == null || StringUtils.isEmpty(dw.getError())) {
+                        String mvel = convertMatchRuleJsonToMvel(translator, RuleIdentifier.ENTITY_KEY_MAP.get(populateValueRequest.getMetadata().getRuleIdentifier()),
+                                populateValueRequest.getMetadata().getRuleIdentifier(), dw);
+                        Class<?> valueType = null;
+                        //is this a regular field?
+                        if (!populateValueRequest.getProperty().getName().contains(FieldManager.MAPFIELDSEPARATOR)) {
+                            valueType = populateValueRequest.getReturnType();
+                        } else {
+                            String valueClassName = populateValueRequest.getMetadata().getMapFieldValueClass();
+                            if (valueClassName != null) {
+                                valueType = Class.forName(valueClassName);
+                            }
+                            if (valueType == null) {
+                                valueType = populateValueRequest.getReturnType();
+                            }
                         }
                         if (valueType == null) {
-                            valueType = populateValueRequest.getReturnType();
+                            throw new IllegalAccessException("Unable to determine the valueType for the rule field (" + populateValueRequest.getProperty().getName() + ")");
                         }
-                    }
-                    if (valueType == null) {
-                        throw new IllegalAccessException("Unable to determine the valueType for the rule field (" + populateValueRequest.getProperty().getName() + ")");
-                    }
-                    //This is a simple String field (or String map field)
-                    if (String.class.isAssignableFrom(valueType)) {
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), mvel);
-                    }
-                    if (SimpleRule.class.isAssignableFrom(valueType)) {
-                        //see if there's an existing rule
-                        SimpleRule rule;
-                        try {
-                            rule = (SimpleRule) populateValueRequest.getFieldManager().getFieldValue(instance, populateValueRequest.getProperty().getName());
-                        } catch (FieldNotAvailableException e) {
-                            throw new IllegalArgumentException(e);
+                        //This is a simple String field (or String map field)
+                        if (String.class.isAssignableFrom(valueType)) {
+                            populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), mvel);
                         }
-                        if (rule != null) {
-                            rule.setMatchRule(mvel);
-                        } else {
-                            //create a new instance, persist and set
-                            rule = (SimpleRule) valueType.newInstance();
-                            rule.setMatchRule(mvel);
-                            populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(rule);
-                            populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), rule);
+                        if (SimpleRule.class.isAssignableFrom(valueType)) {
+                            //see if there's an existing rule
+                            SimpleRule rule;
+                            try {
+                                rule = (SimpleRule) populateValueRequest.getFieldManager().getFieldValue(instance, populateValueRequest.getProperty().getName());
+                            } catch (FieldNotAvailableException e) {
+                                throw new IllegalArgumentException(e);
+                            }
+                            if (rule != null) {
+                                rule.setMatchRule(mvel);
+                            } else {
+                                //create a new instance, persist and set
+                                rule = (SimpleRule) valueType.newInstance();
+                                rule.setMatchRule(mvel);
+                                populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(rule);
+                                populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), rule);
+                            }
                         }
                     }
                     break;
@@ -307,7 +310,7 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
                                                           Collection<QuantityBasedRule> criteriaList, Class<?> memberType) {
         if (!StringUtils.isEmpty(jsonPropertyValue)) {
             DataWrapper dw = convertJsonToDataWrapper(jsonPropertyValue);
-            if (dw != null) {
+            if (dw != null && StringUtils.isEmpty(dw.getError())) {
                 List<QuantityBasedRule> updatedRules = new ArrayList<QuantityBasedRule>();
                 for (DataDTO dto : dw.getData()) {
                     if (dto.getId() != null) {
@@ -345,6 +348,9 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
                             quantityBasedRule.setQuantity(dto.getQuantity());
                             quantityBasedRule.setMatchRule(translator.createMVEL(entityKey, dto,
                                     ruleBuilderFieldServiceFactory.createInstance(fieldService)));
+                            if (StringUtils.isEmpty(quantityBasedRule.getMatchRule()) && !StringUtils.isEmpty(dw.getRawMvel())) {
+                                quantityBasedRule.setMatchRule(dw.getRawMvel());
+                            }
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -388,19 +394,16 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
     }
 
     protected String convertMatchRuleJsonToMvel(DataDTOToMVELTranslator translator, String entityKey,
-                                                      String fieldService, String jsonPropertyValue) {
+                                                      String fieldService, DataWrapper dw) {
         String mvel = null;
-        if (jsonPropertyValue != null) {
-            DataWrapper dw = convertJsonToDataWrapper(jsonPropertyValue);
-            //there can only be one DataDTO for an appliesTo* rule
-            if (dw != null && dw.getData().size() == 1) {
-                DataDTO dto = dw.getData().get(0);
-                try {
-                    mvel = translator.createMVEL(entityKey, dto,
-                            ruleBuilderFieldServiceFactory.createInstance(fieldService));
-                } catch (MVELTranslationException e) {
-                    throw new RuntimeException(e);
-                }
+        //there can only be one DataDTO for an appliesTo* rule
+        if (dw != null && dw.getData().size() == 1) {
+            DataDTO dto = dw.getData().get(0);
+            try {
+                mvel = translator.createMVEL(entityKey, dto,
+                        ruleBuilderFieldServiceFactory.createInstance(fieldService));
+            } catch (MVELTranslationException e) {
+                throw new RuntimeException(e);
             }
         }
 

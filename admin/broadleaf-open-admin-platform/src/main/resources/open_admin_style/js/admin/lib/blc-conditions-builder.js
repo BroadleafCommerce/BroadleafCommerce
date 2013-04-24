@@ -56,6 +56,7 @@
         init: function() {
             this.fields = this.options[0].fields;
             this.data = this.options[1].data;
+            this.error = this.options[1].error;
             var rules = this.buildRules(this.data);
             this.element.html(rules);
             this.element.find(".conditional-rules").unwrap();

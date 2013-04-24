@@ -59,13 +59,11 @@
         }
         
     };
-    
+
     BLCAdmin.addInitializationHandler(function($container) {
-        $container.find('form.offer-form').each(function(index, element) {
-            var $form = $(element);
-            BLCAdmin.offer.addOnChangeTriggers($form);
-            BLCAdmin.offer.initializeOfferFormFields($form);
-        });
+        var $form = $container.closest('form.offer-form');
+        BLCAdmin.offer.addOnChangeTriggers($form);
+        BLCAdmin.offer.initializeOfferFormFields($form);
     });
     
 })(jQuery, BLCAdmin);

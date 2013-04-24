@@ -55,10 +55,9 @@ public class MVELToDataWrapperTranslator {
         }
 
         DataWrapper dataWrapper = new DataWrapper();
-
+        String mvel = null;
         try {
             for (Entity e : entities) {
-                String mvel = null;
                 Integer qty = null;
                 Long id = null;
                 for (Property p : e.getProperties()) {
@@ -85,9 +84,14 @@ public class MVELToDataWrapperTranslator {
                     }
                 }
             }
+            if (!dataWrapper.getData().isEmpty()) {
+                throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_RULE, "test");
+            }
         } catch (MVELTranslationException e) {
             LOG.error("Unable to translate rule MVEL", e);
+            dataWrapper.getData().clear();
             dataWrapper.setError(e.getLocalizedMessage());
+            dataWrapper.setRawMvel(mvel);
         }
 
         return dataWrapper;

@@ -63,6 +63,7 @@ public class DataWrapper implements Serializable {
     protected ArrayList<DataDTO> data = new ArrayList<DataDTO>();
 
     protected String error;
+    protected String rawMvel;
 
     public ArrayList<DataDTO> getData() {
         return data;
@@ -78,6 +79,14 @@ public class DataWrapper implements Serializable {
 
     public void setError(String error) {
         this.error = error;
+    }
+
+    public String getRawMvel() {
+        return rawMvel;
+    }
+
+    public void setRawMvel(String rawMvel) {
+        this.rawMvel = rawMvel;
     }
 
     public String serialize() throws JsonGenerationException, JsonMappingException, IOException {
