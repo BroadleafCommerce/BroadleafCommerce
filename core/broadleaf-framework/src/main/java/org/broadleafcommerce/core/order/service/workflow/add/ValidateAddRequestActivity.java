@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.service.workflow.add;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -29,11 +30,11 @@ import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
-import javax.annotation.Resource;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 public class ValidateAddRequestActivity extends BaseActivity {
     
@@ -123,10 +124,12 @@ public class ValidateAddRequestActivity extends BaseActivity {
         if (product != null && product.getProductOptions() != null && product.getProductOptions().size() > 0) {
             for (ProductOption productOption : product.getProductOptions()) {
                 if (productOption.getRequired()) {
-                    if (attributeValues.get(productOption.getAttributeName()) == null) {
+                    if (StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
                         throw new RequiredAttributeNotProvidedException("Unable to add to product ("+ product.getId() +") cart. Required attribute was not provided: " + productOption.getAttributeName());
                     } else {
-                        attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
+                        if (productOption.getUseInSkuGeneration()) {
+                            attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
+                        }
                     }
                 }
             }
