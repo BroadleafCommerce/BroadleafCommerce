@@ -56,8 +56,9 @@
         <div class="conditional-rules-container-mvel"
             th:if="${field.dataWrapper.error != null}"
             th:classappend="${field.required ? 'required-conditional' : ''}"
-            th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}"
-            th:text="${field.dataWrapper.rawMvel}"/>
+            th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}">
+                <textarea style="width: 98%" th:text="${field.dataWrapper.rawMvel}"/>
+        </div>
             
         <div class="rule-builder-data" 
             th:attr="data-hiddenid=${field.jsonFieldName},
