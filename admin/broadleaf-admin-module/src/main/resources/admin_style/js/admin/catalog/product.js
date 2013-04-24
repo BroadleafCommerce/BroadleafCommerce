@@ -28,9 +28,9 @@ $(document).ready(function() {
             var alertType = data.error ? 'alert' : '';
             
             BLCAdmin.listGrid.showAlert($container, data.message, {
-                    alertType: alertType
-                }
-            );
+                alertType: alertType,
+                clearOtherAlerts: true
+            });
             
             if (data.skusGenerated > 0) {
                 BLCAdmin.product.refreshSkusGrid($container, data.listGridUrl);

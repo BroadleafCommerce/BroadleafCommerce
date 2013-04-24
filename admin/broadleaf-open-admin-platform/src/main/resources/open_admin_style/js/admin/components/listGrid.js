@@ -70,6 +70,10 @@
     	    $alert.append(message);
     	    $alert.append($closeLink);
     	    
+    	    if (options.clearOtherAlerts) {
+    	        $container.children('.list-grid-alert').find('a.close').click();
+    	    }
+    	    
     	    $container.children().first().after($alert);
     	    
     	    if (options.autoClose) {
