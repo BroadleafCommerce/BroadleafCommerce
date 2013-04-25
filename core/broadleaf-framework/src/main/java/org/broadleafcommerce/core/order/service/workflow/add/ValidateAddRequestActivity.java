@@ -23,6 +23,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
@@ -43,6 +44,8 @@ public class ValidateAddRequestActivity extends BaseActivity {
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
+    @Resource(name = "blProductOptionValidationService")
+    protected ProductOptionValidationService productOptionValidationService;
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CartOperationRequest request = ((CartOperationContext) context).getSeedData();
@@ -125,13 +128,15 @@ public class ValidateAddRequestActivity extends BaseActivity {
                 if (productOption.getRequired()) {
                     if (StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
                         throw new RequiredAttributeNotProvidedException("Unable to add to product ("+ product.getId() +") cart. Required attribute was not provided: " + productOption.getAttributeName());
-                    } else {
-                        if (productOption.getUseInSkuGeneration()) {
-                            attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
-                        }
+                    } else if (productOption.getUseInSkuGeneration()) {
+                        attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
                     }
                 }
+                if (productOption.getProductOptionValidationType() != null) {
+                    productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()));
+                }
             }
+            
 
             if (product !=null && product.getSkus() != null) {
                 for (Sku sku : product.getSkus()) {
