@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.server.security.service;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminNavigationDao;
@@ -126,24 +127,38 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     @Override
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section) {
         List<AdminPermission> authorizedPermissions = section.getPermissions();
-        if (adminUser.getAllRoles() != null && !adminUser.getAllRoles().isEmpty()) {
+        if (!CollectionUtils.isEmpty(adminUser.getAllRoles())) {
             for (AdminRole role : adminUser.getAllRoles()) {
                 for (AdminPermission permission : role.getAllPermissions()){
-                    if (authorizedPermissions != null) {
-                        if (authorizedPermissions.contains(permission)){
-                            return true;
-                        }
-
-                        for (AdminPermission authorizedPermission : authorizedPermissions) {
-                            if (permission.getName().equals(parseForAllPermission(authorizedPermission.getName()))) {
-                                return true;
-                            }
-                        }
+                    if (checkPermissions(authorizedPermissions, permission)) {
+                        return true;
                     }
                 }
             }
         }
+        if (!CollectionUtils.isEmpty(adminUser.getAllPermissions())) {
+            for (AdminPermission permission : adminUser.getAllPermissions()){
+                if (checkPermissions(authorizedPermissions, permission)) {
+                    return true;
+                }
+            }
+        }
 
+        return false;
+    }
+
+    protected boolean checkPermissions(List<AdminPermission> authorizedPermissions, AdminPermission permission) {
+        if (authorizedPermissions != null) {
+            if (authorizedPermissions.contains(permission)){
+                return true;
+            }
+
+            for (AdminPermission authorizedPermission : authorizedPermissions) {
+                if (permission.getName().equals(parseForAllPermission(authorizedPermission.getName()))) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
