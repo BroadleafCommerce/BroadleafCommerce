@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
@@ -31,6 +32,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.Over
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Property;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +40,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,7 +57,22 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
         Map<String, Object> idMetadata = addMetadataRequest.getDynamicEntityDao().getIdMetadata(addMetadataRequest.getTargetClass());
         if (idMetadata != null) {
             String idField = (String) idMetadata.get("name");
-            if (idField.equals(addMetadataRequest.getRequestedField().getName())) {
+            boolean processField;
+            //allow id fields without AdminPresentation annotation to pass through
+            processField = idField.equals(addMetadataRequest.getRequestedField().getName());
+            if (!processField) {
+                List<String> propertyNames = addMetadataRequest.getDynamicEntityDao().getPropertyNames(addMetadataRequest.getTargetClass());
+                if (!CollectionUtils.isEmpty(propertyNames)) {
+                    List<org.hibernate.type.Type> propertyTypes = addMetadataRequest.getDynamicEntityDao().getPropertyTypes(addMetadataRequest.getTargetClass());
+                    int index = propertyNames.indexOf(addMetadataRequest.getRequestedField().getName());
+                    if (index >= 0) {
+                        Type myType = propertyTypes.get(index);
+                        //allow OneToOne, ManyToOne and Embeddable fields to pass through
+                        processField =  myType.isCollectionType() || myType.isAssociationType() || myType.isComponentType() || myType.isEntityType();
+                    }
+                }
+            }
+            if (processField) {
                 FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
                 BasicFieldMetadata basicMetadata = new BasicFieldMetadata();
                 basicMetadata.setName(addMetadataRequest.getRequestedField().getName());
