@@ -18,7 +18,6 @@ package org.broadleafcommerce.openadmin.dto;
 
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
-import org.eclipse.core.internal.runtime.Product;
 
 import java.io.Serializable;
 import java.util.Arrays;
