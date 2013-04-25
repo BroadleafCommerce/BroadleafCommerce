@@ -32,7 +32,7 @@ public class RegexPropertyValidator implements PropertyValidator {
     @Override
     public boolean validate(Entity entity, Map<String, String> validationConfiguration, Serializable instance, String value) {
         String expression = validationConfiguration.get("regularExpression");
-        return value.matches(expression);
+        return (value == null) ? true : value.matches(expression);
     }
 
 }
