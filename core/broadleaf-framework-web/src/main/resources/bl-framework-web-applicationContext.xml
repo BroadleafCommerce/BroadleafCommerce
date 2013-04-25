@@ -38,6 +38,7 @@
             <ref bean="blPriceTextDisplayProcessor" />
             <ref bean="blProductOptionValueProcessor" />
             <ref bean="blProductOptionsProcessor" />
+            <ref bean="blProductOptionDisplayProcessor" />
             <ref bean="blRatingsProcessor" />
             <ref bean="blRelatedProductProcessor" />
             <ref bean="blRemoveFacetValuesLinkProcessor" />

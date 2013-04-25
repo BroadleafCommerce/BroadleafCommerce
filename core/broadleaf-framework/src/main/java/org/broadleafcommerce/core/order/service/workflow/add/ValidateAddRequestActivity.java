@@ -31,10 +31,11 @@ import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 public class ValidateAddRequestActivity extends BaseActivity {
     
@@ -132,9 +133,12 @@ public class ValidateAddRequestActivity extends BaseActivity {
                         attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
                     }
                 }
-                if (productOption.getProductOptionValidationType() != null) {
-                    productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()));
+                if (!productOption.getRequired() && StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
+                    //if the productoption is not required, and user has not set the optional value, then we dont need to validate
+                } else if (productOption.getProductOptionValidationType() != null) {
+                        productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()));
                 }
+
             }
             
 
