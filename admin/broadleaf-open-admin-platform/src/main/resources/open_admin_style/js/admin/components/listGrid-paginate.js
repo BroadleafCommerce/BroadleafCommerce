@@ -485,6 +485,7 @@
             $tbody = $clonedTable.find('tbody');
             $clonedTable.attr('id', $clonedTable.attr('id').replace('-header', ''));
             
+            /*
             BLCAdmin.listGrid.paginate.updateGridSize($tbody);
             
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
@@ -536,15 +537,18 @@
             
             // Render the table
             $wrapper.mCustomScrollbar('update');
+            */
             $clonedTable.find('tbody').css('visibility', 'visible');
         }
     };
     
     BLCAdmin.addUpdateHandler(function($container) {
+        /*
         $container.find('.needsupdate').each(function(index, element) {
             BLCAdmin.listGrid.paginate.updateGridSize($(element));
             $(element).removeClass('needsupdate');
         });
+        */
     });
     
 })(jQuery, BLCAdmin);
@@ -552,6 +556,7 @@
 $(document).ready(function() {
     
     $(window).resize(function() {
+        /*
         $.doTimeout('resize', 150, function() {
             $('tbody').each(function(index, element) {
                 if ($(element).is(':visible')) {
@@ -561,6 +566,7 @@ $(document).ready(function() {
                 }
             });
         });
+        */
     });
     
 });
