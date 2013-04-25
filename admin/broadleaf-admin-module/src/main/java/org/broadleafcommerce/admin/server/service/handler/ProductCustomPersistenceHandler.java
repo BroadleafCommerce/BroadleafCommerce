@@ -67,6 +67,10 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             
+            if (entity.isValidationFailure()) {
+                return entity;
+            }
+            
             adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
 
             CategoryProductXref categoryXref = new CategoryProductXrefImpl();
@@ -106,14 +110,18 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
+            if (!entity.isValidationFailure()) {
+                adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
+            } else {
+                return entity;
+            }
+
             CategoryProductXref categoryXref = new CategoryProductXrefImpl();
             categoryXref.setCategory(adminInstance.getDefaultCategory());
             categoryXref.setProduct(adminInstance);
             if (adminInstance.getDefaultCategory() != null && !adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
                 adminInstance.getAllParentCategoryXrefs().add(categoryXref);
             }
-
-            adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
             
             return helper.getRecord(adminProperties, adminInstance, null, null);
         } catch (Exception e) {

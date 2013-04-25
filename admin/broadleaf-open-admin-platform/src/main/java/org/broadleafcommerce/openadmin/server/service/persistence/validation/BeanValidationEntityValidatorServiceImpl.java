@@ -78,7 +78,6 @@ public class BeanValidationEntityValidatorServiceImpl extends EntityValidatorSer
         Set<ConstraintViolation<Serializable>> violations = getValidator().validate(instance);
         for (ConstraintViolation<Serializable> violation : violations) {
             entity.addValidationError(violation.getPropertyPath().toString(), violation.getMessage());
-            entity.setValidationFailure(true);
         }
     }
 

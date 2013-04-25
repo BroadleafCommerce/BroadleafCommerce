@@ -16,13 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -63,7 +56,14 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -86,6 +86,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
 
 /**
  * @author jfischer
@@ -261,9 +263,19 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     }
                 }
             }
-            Map<String, Serializable> persistedEntities = fieldManager.persistMiddleEntities();
-            for (Entry<String, Serializable> entry : persistedEntities.entrySet()) {
-                fieldManager.setFieldValue(instance, entry.getKey(), entry.getValue());
+            validate(entity, instance, mergedProperties);
+            //if validation failed, refresh the current instance so that none of the changes will be persisted
+            if (entity.isValidationFailure()) {
+                //only refresh the instance if it was managed to begin with
+                if (persistenceManager.getDynamicEntityDao().getStandardEntityManager().contains(instance)) {
+                    persistenceManager.getDynamicEntityDao().refresh(instance);
+                }
+            }
+            else {
+                Map<String, Serializable> persistedEntities = fieldManager.persistMiddleEntities();
+                for (Entry<String, Serializable> entry : persistedEntities.entrySet()) {
+                    fieldManager.setFieldValue(instance, entry.getKey(), entry.getValue());
+                }
             }
         } catch (IllegalAccessException e) {
             throw new PersistenceException(e);
@@ -514,8 +526,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             }
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), primaryKey);
             instance = createPopulatedInstance(instance, entity, mergedProperties, false);
-            boolean validated = validate(entity, instance, mergedProperties);
-            if (validated) {
+            if (!entity.isValidationFailure()) {
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
 
                 List<Serializable> entityList = new ArrayList<Serializable>(1);

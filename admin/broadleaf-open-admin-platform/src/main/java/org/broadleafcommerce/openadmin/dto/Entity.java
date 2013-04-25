@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.dto;
 
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
+import org.eclipse.core.internal.runtime.Product;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -165,6 +166,7 @@ public class Entity implements Serializable {
         newErrors[newErrors.length - 1][0] = fieldName;
         newErrors[newErrors.length - 1][1] = errorOrErrorKey;
         setValidationErrors(newErrors);
+        setValidationFailure(true);
     }
 
     public boolean isDirty() {

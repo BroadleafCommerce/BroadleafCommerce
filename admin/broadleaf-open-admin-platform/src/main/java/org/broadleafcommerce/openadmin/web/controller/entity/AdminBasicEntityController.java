@@ -182,7 +182,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("viewType", "modal/entityTypeSelection");
         } else {
             ClassMetadata specificTypeMd = service.getClassMetadata(getSectionPersistencePackageRequest(entityType));
-            EntityForm entityForm = formService.buildEntityForm(specificTypeMd);
+            EntityForm entityForm = formService.createEntityForm(specificTypeMd);
             
             // We need to make sure that the ceiling entity is set to the interface and the specific entity type
             // is set to the type we're going to be creating.
@@ -221,26 +221,23 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable Map<String, String> pathVars,
             @ModelAttribute EntityForm entityForm, BindingResult result) throws Exception {
         String sectionKey = getSectionKey(pathVars);
-        String sectionClassName = getClassNameForSection(sectionKey);
 
         Entity entity = service.addEntity(entityForm, getSectionCustomCriteria());
         entityValidator.validate(entityForm, entity, result);
 
-        /*
         if (result.hasErrors()) {
-            ClassMetadata cmd = service.getClassMetadata(sectionClassName);
-            Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(sectionClassName, id);
+            ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(entityForm.getEntityType()));
+            entityForm.clearFieldsMap();
+            formService.populateEntityForm(cmd, entity, entityForm);
 
-            //re-initialize the field groups as well as sub collections
-            EntityForm newForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
-            formService.copyEntityFormValues(newForm, entityForm);
+            formService.removeNonApplicableFields(cmd, entityForm, entityForm.getEntityType());
 
-            model.addAttribute("entityForm", newForm);
-            model.addAttribute("viewType", "entityForm");
+            model.addAttribute("viewType", "modal/entityAdd");
+            model.addAttribute("currentUrl", request.getRequestURL().toString());
+            model.addAttribute("modalHeaderType", "addEntity");
             setModelAttributes(model, sectionKey);
-            return "modules/defaultContainer";
+            return "modules/modalContainer";
         }
-        */
         
         // Note that AJAX Redirects need the context path prepended to them
         return "ajaxredirect:" + getContextPath(request) + sectionKey + "/" + entity.getPMap().get("id").getValue();
@@ -272,7 +269,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         
         Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
 
-        EntityForm entityForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
+        EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap);
         
         model.addAttribute("entity", entity);
         model.addAttribute("entityForm", entityForm);
@@ -345,23 +342,28 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria());
-        /*
+        
         entityValidator.validate(entityForm, entity, result);
         if (result.hasErrors()) {
+            Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
             ClassMetadata cmd = service.getClassMetadata(ppr);
-            Map<String, Entity[]> subRecordsMap = service.getRecordsForAllSubCollections(ppr, id);
-
-            //re-initialize the field groups as well as sub collections
-            EntityForm newForm = formService.buildEntityForm(cmd, entity, subRecordsMap);
-            formService.copyEntityFormValues(newForm, entityForm);
-
+            entityForm.clearFieldsMap();
+            formService.populateEntityForm(cmd, entity, subRecordsMap, entityForm);
+            
             model.addAttribute("entity", entity);
-            model.addAttribute("entityForm", newForm);
-            model.addAttribute("viewType", "entityEdit");
+            model.addAttribute("currentUrl", request.getRequestURL().toString());
+
             setModelAttributes(model, sectionKey);
-            return "modules/defaultContainer";
+            
+            if (isAjaxRequest(request)) {
+                model.addAttribute("viewType", "modal/entityView");
+                model.addAttribute("modalHeaderType", "viewEntity");
+                return "modules/modalContainer";
+            } else {
+                model.addAttribute("viewType", "entityEdit");
+                return "modules/defaultContainer";
+            }
         }
-        */
         
         ra.addFlashAttribute("headerFlash", "save.successful");
         
@@ -568,7 +570,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             // and sometimes show a list grid to allow the user to associate an existing record.
             if (fmd.getAddMethodType().equals(AddMethodType.PERSIST)) {
                 ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-                EntityForm entityForm = formService.buildEntityForm(collectionMetadata);
+                EntityForm entityForm = formService.createEntityForm(collectionMetadata);
 
                 entityForm.getTabs().iterator().next().getIsVisible();
 
@@ -660,7 +662,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
             Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata);
 
-            EntityForm entityForm = formService.buildEntityForm(collectionMetadata, entity);
+            EntityForm entityForm = formService.createEntityForm(collectionMetadata, entity);
 
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/simpleEditEntity");
@@ -983,7 +985,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 .withCustomCriteria(new String[] { info.getCriteriaName(),  info.getPropertyValue() });
         ClassMetadata cmd = service.getClassMetadata(ppr);
         
-        EntityForm dynamicForm = formService.buildEntityForm(cmd);
+        EntityForm dynamicForm = formService.createEntityForm(cmd);
         
         // Set the specialized name for these fields - we need to handle them separately
         dynamicForm.clearFieldsMap();
@@ -1024,7 +1026,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Entity entity = service.getRecord(ppr, entityId, cmd);
         
         // Assemble the dynamic form for structured content type
-        EntityForm dynamicForm = formService.buildEntityForm(cmd, entity);
+        EntityForm dynamicForm = formService.createEntityForm(cmd, entity);
         
         // Set the specialized name for these fields - we need to handle them separately
         dynamicForm.clearFieldsMap();

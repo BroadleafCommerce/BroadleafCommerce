@@ -699,7 +699,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
         if (!validated) {
             Entity errorEntity = new Entity();
-            errorEntity.setValidationFailure(true);
             for (Property productOptionProperty : productOptionProperties) {
                 errorEntity.addValidationError(productOptionProperty.getName(), "uniqueSkuError");
             }

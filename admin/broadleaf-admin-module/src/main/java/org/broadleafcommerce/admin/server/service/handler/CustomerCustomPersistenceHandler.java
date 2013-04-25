@@ -30,8 +30,9 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 
-import javax.annotation.Resource;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author jfischer
@@ -60,7 +61,6 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
             
             if (customerService.readCustomerByUsername(adminInstance.getUsername()) != null) {
                 Entity error = new Entity();
-                error.setValidationFailure(true);
                 error.addValidationError("username", "nonUniqueUsernameError");
                 return error;
             }

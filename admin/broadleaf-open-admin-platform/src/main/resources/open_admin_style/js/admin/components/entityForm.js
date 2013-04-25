@@ -45,7 +45,7 @@ $(document).ready(function() {
 			type: "POST",
 			data: $(this).serialize()
 		}, function(data) {
-			// Handle error scenario
+			$('.modal .modal-body .tabs-content').replaceWith($(data).find('.modal-body .tabs-content'));
 	    });
 		return false;
 	});

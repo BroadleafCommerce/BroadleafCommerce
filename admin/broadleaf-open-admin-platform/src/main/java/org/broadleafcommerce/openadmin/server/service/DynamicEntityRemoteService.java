@@ -40,10 +40,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
+import javax.annotation.Resource;
 /**
  * @author jfischer
  */
@@ -195,7 +195,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
                 property.setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml(property.getValue()));
             }
         } catch (CleanStringException e) {
-            entity.setValidationFailure(true);
             StringBuilder sb = new StringBuilder();
             for (int j=0;j<e.getCleanResults().getNumberOfErrors();j++){
                 sb.append(j+1);

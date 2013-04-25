@@ -62,7 +62,6 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
                     boolean validationResult = validator.validate(entity, configuration, instance, property.getValue());
                     if (!validationResult) {
                         entity.addValidationError(property.getName(), configuration.get(ConfigurationItem.ERROR_MESSAGE));
-                        entity.setValidationFailure(true);
                     }
                 }
             }
