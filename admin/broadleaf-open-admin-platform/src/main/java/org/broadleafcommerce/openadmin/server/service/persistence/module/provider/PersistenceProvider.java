@@ -33,9 +33,11 @@ import java.util.Map;
  * are being requested or set for the admin. This includes any special translations or transformations required to get
  * from the string representation in the admin back to the field on a Hibernate entity - and the reverse. Providers are
  * typically added in response to new admin presentation annotation support that requires special persistence behavior.
- * Note, <tt>PersistenceProviders</tt> are part of BasicPersistenceModule, and therefore relate to variations on persistence of
- * basic fields. For more exotic field types (e.g. Maps), <tt>PersistenceModules</tt> are used (e.g. MapStructurePersistenceModule).
- * Implementers should generally extend <tt>PersistenceProviderAdapter</tt>.
+ * Note, {@link PersistenceProvider} instances are part of {@link org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule},
+ * and therefore relate to variations on persistence of basic fields. For more exotic field types (e.g. Maps),
+ * {@link org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule} are used (e.g.
+ * {@link org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule}).
+ * Implementers should generally extend {@link PersistenceProviderAdapter}.
  *
  * @see org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule
  * @author Jeff Fischer

@@ -19,7 +19,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 import org.broadleafcommerce.openadmin.dto.Entity;
 
 /**
- * Contains the <tt>Entity</tt> instance and unfiltered property list.
+ * Contains the {@link Entity} instance and unfiltered property list.
  *
  * @author Jeff Fischer
  */

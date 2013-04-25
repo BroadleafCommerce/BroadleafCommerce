@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * Classes implementing this interface are capable of manipulating metadata resulting from the inspection
  * phase for the admin. Providers are typically added in response to new admin presentation annotation support.
- * Implementers should generally extend <tt>MetadataProviderAdapter</tt>.
+ * Implementers should generally extend {@link MetadataProviderAdapter}.
  *
  * @author Jeff Fischer
  */
@@ -43,7 +43,7 @@ public interface MetadataProvider extends Ordered {
     public static final int MAP_FIELD = 5000;
 
     /**
-     * Contribute to metadata inspection for the <tt>Field</tt> instance in the request. Implementations should
+     * Contribute to metadata inspection for the {@link java.lang.reflect.Field} instance in the request. Implementations should
      * add values to the metadata parameter.
      *
      * @param addMetadataRequest contains the requested field and support classes.
@@ -83,7 +83,7 @@ public interface MetadataProvider extends Ordered {
     boolean addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata);
 
     /**
-     * Contribute to metadata inspection for the <tt>Field</tt> instance in the request. Implementations should
+     * Contribute to metadata inspection for the {@link java.lang.reflect.Field} instance in the request. Implementations should
      * add values to the metadata parameter. This is metadata based on the field type.
      *
      * @param addMetadataFromFieldTypeRequest contains the requested field, property name and support classes.

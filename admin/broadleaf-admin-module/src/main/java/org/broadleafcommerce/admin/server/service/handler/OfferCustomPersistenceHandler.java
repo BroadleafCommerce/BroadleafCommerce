@@ -59,7 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The main reason for this persistence handler is to support <tt>OfferCode</tt>, which is not directly related
+ * The main reason for this persistence handler is to support {@link OfferCode}, which is not directly related
  * in the domain.
  *
  * @author jfischer
