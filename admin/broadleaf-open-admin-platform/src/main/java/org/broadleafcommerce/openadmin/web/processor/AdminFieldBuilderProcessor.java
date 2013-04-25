@@ -76,10 +76,7 @@ public class AdminFieldBuilderProcessor extends AbstractLocalVariableDefinitionE
         }
         
         Map<String, Object> newVars = new HashMap<String, Object>();
-        
-        newVars.put("andre", "TEST");
         newVars.put("fieldWrapper", fieldWrapper);
-        
         return newVars;
     }
 
