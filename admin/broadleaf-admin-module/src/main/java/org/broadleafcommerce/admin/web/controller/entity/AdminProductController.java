@@ -76,7 +76,7 @@ public class AdminProductController extends AdminBasicEntityController {
                 .withCustomCriteria(new String[] { id });
 
         ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-        EntityForm entityForm = formService.buildEntityForm(collectionMetadata);
+        EntityForm entityForm = formService.createEntityForm(collectionMetadata);
         
         entityForm.getActions().remove(DefaultEntityFormActions.DELETE);
 
@@ -110,7 +110,7 @@ public class AdminProductController extends AdminBasicEntityController {
         Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
         
         // Build the entity form for the modal that includes the subcollections
-        EntityForm entityForm = formService.buildEntityForm(collectionMetadata, entity, subRecordsMap);
+        EntityForm entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap);
         
         entityForm.getActions().remove(DefaultEntityFormActions.DELETE);
         
@@ -128,6 +128,7 @@ public class AdminProductController extends AdminBasicEntityController {
         return "modules/modalContainer";
     }
 
+    @Override
     @RequestMapping(value = "/{id}/{collectionField}/{collectionItemId}", method = RequestMethod.GET)
     public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
@@ -140,6 +141,7 @@ public class AdminProductController extends AdminBasicEntityController {
         return super.showUpdateCollectionItem(request, response, model, pathVars, id, collectionField, collectionItemId);
     }
     
+    @Override
     @RequestMapping(value = "/{id}/{collectionField}/add", method = RequestMethod.GET)
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
@@ -152,6 +154,7 @@ public class AdminProductController extends AdminBasicEntityController {
         return super.showAddCollectionItem(request, response, model, pathVars, id, collectionField, requestParams);
     }
     
+    @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,

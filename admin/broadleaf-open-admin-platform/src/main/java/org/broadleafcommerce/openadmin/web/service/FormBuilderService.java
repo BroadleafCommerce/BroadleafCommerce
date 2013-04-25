@@ -27,6 +27,7 @@ import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.springframework.validation.BindingResult;
 
 import java.util.Map;
 
@@ -77,37 +78,91 @@ public interface FormBuilderService {
     public void removeNonApplicableFields(ClassMetadata cmd, EntityForm entityForm, String entityType);
 
     /**
-     * Builds an EntityForm that has all of the appropriate fields set up without any values.
+     * Creates a new EntityForm with the a default 'Save' action. This will then delegate to
+     * {@link #populateEntityForm(ClassMetadata, EntityForm)} to ensure that the newly created {@link EntityForm}
+     * has all of the appropriate fields set up without any values based on <b>cmd</b>
      * 
      * @param cmd
      * @return the EntityForm
-     * @throws ServiceException 
+     * @throws ServiceException
+     * @see {@link #populateEntityForm(ClassMetadata, EntityForm)}
      */
-    public EntityForm buildEntityForm(ClassMetadata cmd) throws ServiceException;
+    public EntityForm createEntityForm(ClassMetadata cmd) throws ServiceException;
 
     /**
-     * Builds an EntityForm that has all of the appropriate fields set up along with the values for those fields
-     * from the given Entity.
+     * Populates the given <b>ef</b> with all of the fields based on the properties from <b>cmd</b>. For all the fields that
+     * are created, no values are set (as <b>cmd</b> usually does not have any). In order to fill out values in the given
+     * <b>ef</b>, consider instead calling {@link #populateEntityForm(ClassMetadata, Entity, EntityForm)}
      * 
      * @param cmd
+     * @param ef
+     * @throws ServiceException
+     */
+    public void populateEntityForm(ClassMetadata cmd, EntityForm ef) throws ServiceException;
+    
+    /**
+     * Creates a new EntityForm that has all of the appropriate fields set up along with the values for those fields
+     * from the given Entity. Delegates to {@link #createEntityForm(ClassMetadata)} for further population
+     * 
+     * @param cmd metadata that the created {@link EntityForm} should use to initialize its fields
      * @param entity
      * @return the EntityForm
-     * @throws ServiceException 
+     * @throws ServiceException
+     * @see {@link #createEntityForm(ClassMetadata)}
      */
-    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity) 
+    public EntityForm createEntityForm(ClassMetadata cmd, Entity entity)
             throws ServiceException;
     
     /**
-     * Builds an EntityForm that has all of the appropriate fields set up along with the values for thsoe fields
+     * Populates a given <b>ef</b> based on the given <b>cmd</b> to initially create fields with the necessary metadata
+     * and then fills those fields out based on the property values from <b>entity</b>.
+     * 
+     * @param cmd
+     * @param entity
+     * @param ef
+     * @throws ServiceException
+     * @see {@link #populateEntityForm(ClassMetadata, EntityForm)}
+     */
+    public void populateEntityForm(ClassMetadata cmd, Entity entity, EntityForm ef) 
+            throws ServiceException;
+    
+    /**
+     * Builds an EntityForm that has all of the appropriate fields set up along with the values for those fields
      * from the given Entity as well as all sub-collections of the given Entity that appear in the collectionRecords map.
+     * This method simply delegates to create a standard {@link EntityForm} (that has a save action) and then populates
+     * that {@link EntityForm} using {@link #populateEntityForm(ClassMetadata, Entity, Map, EntityForm)}.
+     * 
+     * NOTE: if you are submitting a validation result, you must not call this method and instead invoke the one that has
+     * an {@link EntityForm} as a parameter. You cannot re-assign the entityForm to the model after it has already been
+     * bound to a BindingResult, else the binding result will be removed.
      * 
      * @param cmd
      * @param entity
      * @param collectionRecords
      * @return the EntityForm
      * @throws ServiceException
+     * @see {@link #populateEntityForm(ClassMetadata, Entity, Map, EntityForm)}
      */
-    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords)
+    public EntityForm createEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords)
+            throws ServiceException;
+
+    /**
+     * Builds an EntityForm that has all of the appropriate fields set up along with the values for thsoe fields
+     * from the given Entity as well as all sub-collections of the given Entity that appear in the collectionRecords map.
+     * 
+     * NOTE: This method is mainly used when coming back from validation. In the case of validation, you cannot re-add a new
+     * {@link EntityForm} to the model or else you lose the whole {@link BindingResult} and errors will not properly be 
+     * displayed. In that scenario, you must use this method rather than the one that does not take in an entityForm as it
+     * will attempt to instantiate a new object.
+     * 
+     * @param cmd
+     * @param entity
+     * @param collectionRecords
+     * @param entityForm rather than instantiate a new EntityForm, this will use this parameter to fill out
+     * @return the EntityForm
+     * @throws ServiceException
+     */
+    public void populateEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords, EntityForm entityForm)
             throws ServiceException;
 
     /**
@@ -134,14 +189,6 @@ public interface FormBuilderService {
      * @param entity
      */
     public void populateMapEntityFormFields(EntityForm ef, Entity entity);
-
-    /**
-     * Copies all values for fields from the destinationForm into the sourceForm.
-     * 
-     * @param destinationForm
-     * @param sourceForm
-     */
-    public void copyEntityFormValues(EntityForm destinationForm, EntityForm sourceForm);
 
     /**
      * Builds the EntityForm used in modal dialogs when adding items to adorned target collections.

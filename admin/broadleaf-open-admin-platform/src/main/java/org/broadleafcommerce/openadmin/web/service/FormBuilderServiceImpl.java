@@ -60,7 +60,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +67,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -201,11 +202,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         .withName(p.getName())
                         .withFriendlyName(p.getMetadata().getFriendlyName());
                 if (p.getMetadata() instanceof BasicFieldMetadata) {
-                    hf.setOrder(((BasicFieldMetadata) p.getMetadata()).getGridOrder());
+                    BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+                    hf.setOrder(md.getGridOrder());
+                    String fieldType = md.getFieldType() == null ? null : md.getFieldType().toString();
+                    hf.setFieldType(fieldType);
                 }
-                //TODO FIXME: PJV
-                String fieldType = "default";
-                hf.setFieldType(fieldType);
+
                 headerFields.add(hf);
             }
 
@@ -224,11 +226,15 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             Property p2 = cmd.getPMap().get("key");
             Field hf = new Field()
                     .withName(p2.getName())
-                    .withFriendlyName(p2.getMetadata().getFriendlyName())
-                    .withOrder(p2.getMetadata().getOrder());
-            //TODO FIXME : PJV
-            String fieldType = "default";
-            hf.setFieldType(fieldType);
+                    .withFriendlyName(p2.getMetadata().getFriendlyName());
+            
+            if (p2.getMetadata() instanceof BasicFieldMetadata) {
+                BasicFieldMetadata md = (BasicFieldMetadata) p2.getMetadata();
+                hf.setOrder(md.getGridOrder());
+                String fieldType = md.getFieldType() == null ? null : md.getFieldType().toString();
+                hf.setFieldType(fieldType);
+            }
+            
             headerFields.add(hf);
 
             for (Property p : cmd.getProperties()) {
@@ -242,8 +248,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                     .withName(p.getName())
                                     .withFriendlyName(md.getFriendlyName())
                                     .withOrder(md.getGridOrder());
-                            //TODO FIXME: PJV
-                            fieldType = "default";
+                            String fieldType = md.getFieldType() == null ? null : md.getFieldType().toString();
                             hf.setFieldType(fieldType);
                             headerFields.add(hf);
                         }
@@ -417,9 +422,16 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     @Override
-    public EntityForm buildEntityForm(ClassMetadata cmd) 
+    public EntityForm createEntityForm(ClassMetadata cmd)
             throws ServiceException {
         EntityForm ef = createStandardEntityForm();
+        populateEntityForm(cmd, ef);
+        return ef;
+    }
+    
+    @Override
+    public void populateEntityForm(ClassMetadata cmd, EntityForm ef)
+            throws ServiceException {
         ef.setCeilingEntityClassname(cmd.getCeilingType());
         
         AdminSection section = navigationService.findAdminSectionByClass(cmd.getCeilingType());
@@ -430,15 +442,20 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         setEntityFormFields(ef, Arrays.asList(cmd.getProperties()));
         
         populateDropdownToOneFields(ef, cmd);
-
+    }
+    
+    @Override
+    public EntityForm createEntityForm(ClassMetadata cmd, Entity entity)
+            throws ServiceException {
+        EntityForm ef = createEntityForm(cmd);
         return ef;
     }
 
     @Override
-    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity) 
+    public void populateEntityForm(ClassMetadata cmd, Entity entity, EntityForm ef) 
             throws ServiceException {
         // Get the empty form with appropriate fields
-        EntityForm ef = buildEntityForm(cmd);
+        populateEntityForm(cmd, ef);
 
         String idProperty = adminEntityService.getIdProperty(cmd);
         ef.setId(entity.findProperty(idProperty).getValue());
@@ -478,8 +495,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (p != null) {
             ef.setMainEntityName(p.getValue());
         }
-
-        return ef;
     }
 
     /**
@@ -553,11 +568,19 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
     }
 
+   @Override
+    public EntityForm createEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords)
+            throws ServiceException {
+        EntityForm ef = createStandardEntityForm();
+        populateEntityForm(cmd, entity, collectionRecords, ef);
+        return ef;
+    }
+
     @Override
-    public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords)
+    public void populateEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords, EntityForm ef)
             throws ServiceException {
         // Get the form with values for this entity
-        EntityForm ef = buildEntityForm(cmd, entity);
+        populateEntityForm(cmd, entity, ef);
 
         // Attach the sub-collection list grids and specialty UI support
         for (Property p : cmd.getProperties()) {
@@ -584,9 +607,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
         
+        if (CollectionUtils.isEmpty(ef.getActions())) {
+            ef.addAction(DefaultEntityFormActions.SAVE);
+        }
+        
         ef.addAction(DefaultEntityFormActions.DELETE);
-
-        return ef;
+        
     }
 
     @Override
@@ -621,15 +647,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         Field field = ef.getFields().get("priorKey");
         Property entityProp = entity.findProperty("key");
         field.setValue(entityProp.getValue());
-    }
-
-    @Override
-    public void copyEntityFormValues(EntityForm destinationForm, EntityForm sourceForm) {
-        for (Entry<String, Field> entry : sourceForm.getFields().entrySet()) {
-            Field destinationField = destinationForm.getFields().get(entry.getKey());
-            destinationField.setValue(entry.getValue().getValue());
-            destinationField.setDisplayValue(entry.getValue().getDisplayValue());
-        }
     }
 
     @Override
