@@ -1,9 +1,9 @@
 <div th:if="${!listGrid.sortable}" th:remove="tag" >
     <li><a class="sort down" href="#">Sort A - Z</a></li>
     <li><a class="sort up" href="#">Sort Z - A</a></li>
+    <li><button class="listgrid-clear-sort tiny radius dark button" disabled="disabled"><i class="icon-remove"></i>Clear Sort</button></li>
+    <li class="divider"></li>
 </div>
-
-<li class="divider"></li>
 <li>
     <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}">
         <input type="hidden" class="sort-property" data-name="sortProperty" th:value="${fieldName}" />
@@ -15,6 +15,7 @@
                 th:substituteby="${'fields/filter/' + #strings.toLowerCase(fieldType)}" />
             </div>
         </div>
-        <a href="#" class="listgrid-filter button small dark radius">Filter</a>
+        <button class="listgrid-filter tiny radius dark button"><i class="icon-search"></i>Filter</button>
+        <button class="listgrid-clear-filter tiny radius dark button" disabled="disabled"><i class="icon-remove"></i>Clear Filter</button>
     </div>
 </li>

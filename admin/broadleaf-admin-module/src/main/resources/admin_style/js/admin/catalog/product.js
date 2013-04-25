@@ -8,7 +8,7 @@
                 url : listGridUrl,
                 type : "GET"
             }, function(data) {
-                BLCAdmin.listGrid.replaceRelatedListGrid(data);
+                BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]).find('table'));
             });
         }
 

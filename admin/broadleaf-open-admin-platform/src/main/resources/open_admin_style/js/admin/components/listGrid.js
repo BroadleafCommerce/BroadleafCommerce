@@ -2,8 +2,7 @@
     
     // Add utility functions for list grids to the BLCAdmin object
     BLCAdmin.listGrid = {
-        replaceRelatedListGrid : function(data) {
-            var $headerWrapper = $($(data.trim())[0]);
+        replaceRelatedListGrid : function($headerWrapper, alert) {
             var $table = $headerWrapper.find('table');
             var tableId = $table.attr('id');
             var $oldTable = $('#' + tableId);
@@ -13,11 +12,10 @@
             var $oldBodyWrapper = $oldTable.closest('.listgrid-body-wrapper');
             var $oldHeaderWrapper = $oldBodyWrapper.prev();
             
-            $oldHeaderWrapper.remove();
-            $oldBodyWrapper.before($headerWrapper);
+            $oldHeaderWrapper.find('thead').after($table.find('tbody'));
             $oldBodyWrapper.remove();
             
-            var $listGridContainer = $headerWrapper.closest('.listgrid-container');
+            var $listGridContainer = $oldHeaderWrapper.closest('.listgrid-container');
             $listGridContainer.find('.listgrid-table-footer').text('');
             
             this.initialize($listGridContainer);
@@ -25,7 +23,9 @@
             BLCAdmin.listGrid.paginate.scrollToIndex($listGridContainer.find('tbody'), currentIndex);
             $listGridContainer.find('.listgrid-body-wrapper').mCustomScrollbar('update');
             
-            this.showAlert($listGridContainer, 'Saved!', { alertType: 'save-alert', autoClose: 1000 });
+            if (alert) {
+                this.showAlert($listGridContainer, alert);
+            }
         },
         
         getButtonLink : function($button) {
@@ -61,13 +61,13 @@
             }
         },
         
-        showAlert : function($container, message, options) {
+        showAlert : function($container, options) {
     	    var alertType = options.alertType || '';
     	    
     	    var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass(alertType);
     	    var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
     	    
-    	    $alert.append(message);
+    	    $alert.append(options.message);
     	    $alert.append($closeLink);
     	    
     	    if (options.clearOtherAlerts) {
@@ -88,6 +88,21 @@
                 $(this).width($(this).width());
             });
             return ui;
+        },
+        
+        showLoadingSpinner : function($tbody, spinnerOffset) {
+            var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
+            
+            if (spinnerOffset) {
+                $spinner.css('position', 'absolute').css('top', spinnerOffset + 'px');
+            }
+            
+            $spinner.parent().css('display', 'block');
+        },
+        
+        hideLoadingSpinner : function($tbody) {
+            var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
+            $spinner.parent().css('display', 'none');
         },
         
         initialize : function($container) {
@@ -177,7 +192,7 @@ $(document).ready(function() {
             type : "POST",
             data : postData
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid(data);
+            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]), { message: 'Saved!', alertType: 'save-alert', autoClose: 1000 });
             BLCAdmin.hideCurrentModal();
         })
     });
@@ -319,7 +334,7 @@ $(document).ready(function() {
             data: rowFields,
             type: "POST"
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid(data);
+            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]), { message: 'Saved!', alertType: 'save-alert', autoClose: 1000 });
         });
         
         return false;
@@ -341,137 +356,12 @@ $(document).ready(function() {
             type: "POST",
             data: $(this).serialize()
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid(data);
+            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]), { message: 'Saved!', alertType: 'save-alert', autoClose: 1000 });
             BLCAdmin.hideCurrentModal();
         });
         return false;
     });
-    
-    /**
-     * Handler that fires whenever a sorting link is clicked, sort ascending or descending. This will also modify the
-     * sort value input for the closet sort input for this list grid header
-     */
-    $('body').on('click', 'a.sort', function() {
-        //reset any of the currently active sorts on all the fields in the grid
-        $(this).closest('thead').find('i.sort-icon').removeClass('listgrid-icon-down').removeClass('listgrid-icon-up');
-        $(this).closest('thead').find('input.sort-direction').removeClass('active').val('');
-        $(this).closest('thead').find('input.sort-property').removeClass('active');
         
-        //apply the sort to the current field
-        var ascending = $(this).hasClass('down');
-        var sortValue = (ascending) ? 'ASCENDING' : 'DESCENDING';
-        var $sortType = $(this).parents('ul').find('input.sort-direction');
-        $sortType.val(sortValue);
-        
-        //update the header icon for this field
-        var icon = $(this).parents('.listgrid-headerBtn').find('div i.sort-icon');
-        icon.toggleClass('listgrid-icon-up', ascending);
-        icon.toggleClass('listgrid-icon-down', !ascending);
-        
-        //also mark these particular sorts as active so they will be serialized
-        $sortType.toggleClass('active', true);
-        $(this).parents('ul').find('input.sort-property').toggleClass('active', true);
-
-        //submit the form just for this particular field since this is the only sort that changed
-        $(this).closest('ul').find('div.filter-fields .listgrid-filter').click();
-        return false;
-    });
-
-    /**
-     * Intercepts the enter keypress from the listgrid criteria input (since it is not apart of a form) and clicks the
-     * closest filter button
-     */
-    $('body').on('keypress', 'input.listgrid-criteria-input', function(event) {
-        if (event.which == 13) {
-            $(this).closest('.filter-fields').find('a.listgrid-filter').click();
-            return false;
-        }
-    });
-    
-    /**
-     * Intercepts click events on the 'filter' button for the list grid headers. This will execute an AJAX call after
-     * serializing all of the inputs for all of the list grid header fields so that criteria on multiple fields can
-     * be sent to the server
-     */
-    $('body').on('click', 'div.filter-fields a.listgrid-filter', function(event) {
-        //Serialize all of the filter-forms in this particular list grid since it's possible that criteria could be set
-        //for multiple fields at the same time
-        var toReplace = $(this).closest('.list-grid-table').find('tbody');
-        $(this).closest('ul').removeClass('show-dropdown');
-        
-        var $inputs = $(this).closest('thead').find('div.filter-fields :input');
-        var nonBlankInputs = [];
-        $inputs.each(function(index, input) {
-            //since these filter inputs do not have 'real' input names in the DOM, give it here to make serialization easier
-            $(input).attr('name', $(input).data('name'));
-            
-            //convert the datepicker inputs to server-valid ones
-            if ($(input).hasClass('datepicker')) {
-                input = $('<input>', {
-                    type: 'hidden',
-                    name: $(input).attr('name'),
-                    value: BLCAdmin.dates.getServerDate($(input).val())
-                })[0];
-            }
-            
-            //toggle the filter icon for this field as active or not
-            var filterIcon = $(input).parents('.listgrid-headerBtn').find('div i.filter-icon');
-            filterIcon.toggleClass('icon-filter', !!$(input).val());
-            
-            //only submit fields that have a value set and are not a sort field. Sort fields will be added separately
-            if ($(input).val() && !$(input).hasClass('sort-direction') && !$(input).hasClass('sort-property')) {
-                nonBlankInputs.push(input);
-            }
-        });
-        
-        //also grab the sorts and ensure those inputs are also serialized
-        var sorts = $(this).closest('thead').find('input.sort-direction.active, input.sort-property.active');
-        nonBlankInputs = nonBlankInputs.concat($.makeArray(sorts));
-        
-        BLC.ajax({
-            url: $(this).closest('.filter-fields').data('action'),
-            type: "GET",
-            data: $(nonBlankInputs).serialize()
-        }, function(data) {
-            toReplace.replaceWith($(data.trim()).find('tbody'));
-        });
-        
-        $inputs.each(function(index, input) {
-            $(input).removeAttr('name');
-        });
-        
-        return false;
-    });
-    
-    /**
-     * Intercepts the form submission for a top-level entity search. This search is only available on a main entity page
-     * (like Products)
-     */
-    $('body').on('submit', 'form.custom-entity-search', function(event) {
-        $('body').find('.custom-entity-search a').click();
-        return false;
-    });
-    
-    /**
-     * Intercepts the button click for the main entity search. This will look at the first field in the main list grid (of
-     * which there is only 1 on the page) and replace the criteria value for that field with whatever was typed into the
-     * search box.
-     */
-    $('body').on('click', '.custom-entity-search a', function(event) {
-        //this takes place on the main list grid screen so there should be a single list grid
-        var search = $('body').find('input').val();
-        var $firstHeader = $('body').find('.list-grid-table th.th1');
-        $firstHeader.find('input.listgrid-criteria-input').val(search);
-        BLC.ajax({
-            url: $(this).closest('form').action,
-            type: "GET",
-            data: $firstHeader.find('div.filter-fields :input').serialize()
-        }, function(data) {
-            $('body').find('.list-grid-table tbody').replaceWith($(data.trim()).find('tbody'));
-        });
-        return false;
-    });
-    
     /**
      * Clears out a previously-selected foreign key on both a form and listgrid criteria
      */

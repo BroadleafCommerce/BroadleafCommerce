@@ -25,22 +25,7 @@
         releaseLock : function() {
             LISTGRID_AJAX_LOCK = 0;
         },
-        
-        showLoadingSpinner : function($tbody, spinnerOffset) {
-            var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
-            
-            if (spinnerOffset) {
-                $spinner.css('position', 'absolute').css('top', spinnerOffset + 'px');
-            }
-            
-            $spinner.parent().css('display', 'block');
-        },
-        
-        hideLoadingSpinner : function($tbody) {
-            var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
-            $spinner.parent().css('display', 'none');
-        },
-        
+                
         // ****************************** *
         // RECORD RANGE RELATED FUNCTIONS *
         // ****************************** *
@@ -310,7 +295,7 @@
                 }
                 delta = delta - topIndex;
                 spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (this.getRowHeight($tbody) * delta);
-                this.showLoadingSpinner($tbody, spinnerOffset);
+                BLCAdmin.listGrid.showLoadingSpinner($tbody, spinnerOffset);
                 
                 var url = BLCAdmin.history.getUrlWithParameter('startIndex', startIndex, null, baseUrl);
                 url = BLCAdmin.history.getUrlWithParameter('maxIndex', maxIndex, null, url);
@@ -321,7 +306,7 @@
                     var $newTbody = $(data.trim()).find('tbody');
                     BLCAdmin.listGrid.paginate.injectRecords($tbody, $newTbody);
                     BLCAdmin.listGrid.paginate.releaseLock();
-                    BLCAdmin.listGrid.paginate.hideLoadingSpinner($tbody);
+                    BLCAdmin.listGrid.hideLoadingSpinner($tbody);
                 });
             } else {
                 BLCAdmin.listGrid.paginate.releaseLock();
@@ -488,7 +473,9 @@
             $tbody.remove();
             var $clonedTable = $table.clone();
             $table.parent().after($clonedTable);
-            $table.attr('id', $table.attr('id') + '-header');
+            if ($table.attr('id').indexOf("-header") === -1) {
+                $table.attr('id', $table.attr('id') + '-header');
+            }
             
             $clonedTable.wrap($('<div>', { 'class' : 'listgrid-body-wrapper' }));
             var $wrapper = $clonedTable.parent();
@@ -496,6 +483,7 @@
             $clonedTable.find('thead').find('tr').addClass('width-control-header').find('th').empty();
             $clonedTable.append($tbody);
             $tbody = $clonedTable.find('tbody');
+            $clonedTable.attr('id', $clonedTable.attr('id').replace('-header', ''));
             
             BLCAdmin.listGrid.paginate.updateGridSize($tbody);
             

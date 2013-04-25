@@ -610,7 +610,6 @@ table.table-hover tbody tr.draggable:hover {
 .listgrid-headerBtn.dropdown.split {
     padding: 3px 0; 
     position: relative; /* Sizes */ /* Triangle Spans */ /* Colors */
-    overflow: hidden;
 }
 
 .listgrid-headerBtn.dropdown.split:after {
@@ -803,6 +802,10 @@ table.table-hover tbody tr.draggable:hover {
     padding: 0;
 }
 
+.listgrid-headerBtn.dropdown button.listgrid-clear-sort {
+    margin-left: 12px;
+}
+
 .listgrid-headerBtn.dropdown > ul > li > div.filter-fields {
     padding: 10px;
 }
@@ -818,7 +821,7 @@ input[type="text"].listgrid-criteria-input {
     margin: 0px;
 }
 
-a.listgrid-filter {
+button.listgrid-filter {
     margin-top:5px;
 }
 

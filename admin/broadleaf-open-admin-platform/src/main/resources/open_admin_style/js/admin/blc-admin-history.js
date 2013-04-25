@@ -14,6 +14,11 @@
             }
         },
         
+        /**
+         * Returns the URL with the given request parameter (param) replaced/added with the given value. Note that
+         * both 'param' and 'value' can also be arrays, in which case it is assumed that the arrays are of equal length and
+         * matching indices within each array represent a key/value pair
+         */
         getUrlWithParameter : function(param, value, state, baseUrl) {
             if (baseUrl == null) {
                 baseUrl = window.location.href;
@@ -33,7 +38,13 @@
             }
             
             // Update the desired parameter to its new value
-            paramObj[param] = value;
+            if ($.isArray(param)) {
+                $(param).each(function(index, param) {
+                    paramObj[param[index]] = value[index];
+                });
+            } else {
+                paramObj[param] = value;
+            }
             
             // Reassemble the new url
             var newUrl = baseUrl + '?';
