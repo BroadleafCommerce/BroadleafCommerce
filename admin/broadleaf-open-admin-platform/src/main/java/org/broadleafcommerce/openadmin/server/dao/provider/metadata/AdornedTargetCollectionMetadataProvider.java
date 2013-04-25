@@ -242,7 +242,6 @@ public class AdornedTargetCollectionMetadataProvider extends AdvancedCollectionM
             override.setJoinEntityClass(adornedTargetCollection.joinEntityClass());
             override.setCustomCriteria(adornedTargetCollection.customCriteria());
             override.setUseServerSideInspectionCache(adornedTargetCollection.useServerSideInspectionCache());
-            override.setDataSourceName(adornedTargetCollection.dataSourceName());
             override.setExcluded(adornedTargetCollection.excluded());
             override.setFriendlyName(adornedTargetCollection.friendlyName());
             override.setReadOnly(adornedTargetCollection.readOnly());
@@ -250,7 +249,6 @@ public class AdornedTargetCollectionMetadataProvider extends AdvancedCollectionM
             override.setTab(adornedTargetCollection.tab());
             override.setTabOrder(adornedTargetCollection.tabOrder());
             override.setSecurityLevel(adornedTargetCollection.securityLevel());
-            override.setTargetElementId(adornedTargetCollection.targetUIElementId());
             override.setAddType(adornedTargetCollection.operationTypes().addType());
             override.setFetchType(adornedTargetCollection.operationTypes().fetchType());
             override.setRemoveType(adornedTargetCollection.operationTypes().removeType());
@@ -467,14 +465,6 @@ public class AdornedTargetCollectionMetadataProvider extends AdvancedCollectionM
         }
         if (adornedTargetCollectionMetadata.getTabOrder() != null) {
             metadata.setTabOrder(adornedTargetCollectionMetadata.getTabOrder());
-        }
-
-        if (!StringUtils.isEmpty(adornedTargetCollectionMetadata.getTargetElementId())) {
-            metadata.setTargetElementId(adornedTargetCollectionMetadata.getTargetElementId());
-        }
-
-        if (!StringUtils.isEmpty(adornedTargetCollectionMetadata.getDataSourceName())) {
-            metadata.setDataSourceName(adornedTargetCollectionMetadata.getDataSourceName());
         }
 
         if (adornedTargetCollectionMetadata.getCustomCriteria() != null) {

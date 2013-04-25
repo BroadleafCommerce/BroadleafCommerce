@@ -218,8 +218,6 @@ public class SkuImpl implements Sku {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @AdminPresentationMap(friendlyName = "SkuImpl_Sku_Media",
         tab = ProductImpl.Presentation.Tab.Name.Media, tabOrder = ProductImpl.Presentation.Tab.Order.Media,
-        targetUIElementId = "productSkuMediaLayout",
-        dataSourceName = "productMediaMapDS",
         keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
         deleteEntityUponRemove = true,
         mediaField = "url",

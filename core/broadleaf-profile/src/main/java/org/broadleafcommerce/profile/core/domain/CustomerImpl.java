@@ -135,20 +135,20 @@ public class CustomerImpl implements Customer {
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Addresses", dataSourceName = "customerAddressesDS")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Addresses")
     protected List<CustomerAddress> customerAddresses = new ArrayList<CustomerAddress>();
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerPhoneImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Phones", dataSourceName = "customerPhonesDS")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Phones")
     protected List<CustomerPhone> customerPhones = new ArrayList<CustomerPhone>();
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerPaymentImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Payments", dataSourceName = "customerPaymentsDS")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Payments")
     protected List<CustomerPayment> customerPayments  = new ArrayList<CustomerPayment>();
 
     @Transient

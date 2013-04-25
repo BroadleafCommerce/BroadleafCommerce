@@ -45,6 +45,7 @@ import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetImpl;
+import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -269,9 +270,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @BatchSize(size = 50)
     @AdminPresentationMap(
             friendlyName = "SkuImpl_Sku_Media",
-            targetUIElementId = "productSkuMediaLayout",
             tab = Presentation.Tab.Name.Media, tabOrder = Presentation.Tab.Order.Media,
-            dataSourceName = "productMediaMapDS",
             keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
             deleteEntityUponRemove = true,
             mediaField = "url",
@@ -338,7 +337,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "categoryAttributesTitle",
-            dataSourceName = "categoryAttributeDS", order = 87,
+            order = 87,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected List<CategoryAttribute> categoryAttributes  = new ArrayList<CategoryAttribute>();
 

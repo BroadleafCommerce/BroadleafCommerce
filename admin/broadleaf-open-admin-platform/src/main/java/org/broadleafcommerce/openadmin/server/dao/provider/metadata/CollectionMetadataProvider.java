@@ -213,7 +213,6 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
             override.setManyToField(annotColl.manyToField());
             override.setCustomCriteria(annotColl.customCriteria());
             override.setUseServerSideInspectionCache(annotColl.useServerSideInspectionCache());
-            override.setDataSourceName(annotColl.dataSourceName());
             override.setExcluded(annotColl.excluded());
             override.setFriendlyName(annotColl.friendlyName());
             override.setReadOnly(annotColl.readOnly());
@@ -221,7 +220,6 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
             override.setTab(annotColl.tab());
             override.setTabOrder(annotColl.tabOrder());
             override.setSecurityLevel(annotColl.securityLevel());
-            override.setTargetElementId(annotColl.targetUIElementId());
             override.setAddType(annotColl.operationTypes().addType());
             override.setFetchType(annotColl.operationTypes().fetchType());
             override.setRemoveType(annotColl.operationTypes().removeType());
@@ -366,14 +364,6 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
         }
         if (collectionMetadata.getTabOrder() != null) {
             metadata.setTabOrder(collectionMetadata.getTabOrder());
-        }
-
-        if (!StringUtils.isEmpty(collectionMetadata.getTargetElementId())) {
-            metadata.setTargetElementId(collectionMetadata.getTargetElementId());
-        }
-
-        if (!StringUtils.isEmpty(collectionMetadata.getDataSourceName())) {
-            metadata.setDataSourceName(collectionMetadata.getDataSourceName());
         }
 
         if (collectionMetadata.getCustomCriteria() != null) {

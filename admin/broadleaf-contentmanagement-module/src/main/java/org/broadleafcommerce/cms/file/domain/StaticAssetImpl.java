@@ -127,7 +127,6 @@ public class StaticAssetImpl implements StaticAsset {
     @BatchSize(size = 20)
     @AdminPresentationMap(
         friendlyName = "assetDescriptionTitle",
-        dataSourceName = "staticAssetDescriptionMapDS",
         keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
         deleteEntityUponRemove = true,
         mapKeyOptionEntityClass = LocaleImpl.class,

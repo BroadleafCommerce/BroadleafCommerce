@@ -193,8 +193,6 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
                 metadata.setExplicitFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                 metadata.setLookupDisplayProperty(annot.lookupDisplayProperty());
                 metadata.setForeignKeyDisplayValueProperty(annot.lookupDisplayProperty());
-                metadata.setLookupParentDataSourceName(annot.lookupParentDataSourceName());
-                metadata.setTargetDynamicFormDisplayId(annot.targetDynamicFormDisplayId());
                 metadata.setCustomCriteria(annot.customCriteria());
                 metadata.setUseServerSideInspectionCache(annot.useServerSideInspectionCache());
             }
@@ -336,6 +334,7 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
             override.setReadOnly(annot.readOnly());
             override.setShowIfProperty(annot.showIfProperty());
             override.setCurrencyCodeField(annot.currencyCodeField());
+            override.setRuleIdentifier(annot.ruleIdentifier());
 
             if (annot.validationConfigurations().length != 0) {
                 ValidationConfiguration[] configurations = annot.validationConfigurations();
@@ -362,8 +361,6 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
                 override.setExplicitFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                 override.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                 override.setLookupDisplayProperty(toOneLookup.lookupDisplayProperty());
-                override.setLookupParentDataSourceName(toOneLookup.lookupParentDataSourceName());
-                override.setTargetDynamicFormDisplayId(toOneLookup.targetDynamicFormDisplayId());
                 override.setCustomCriteria(toOneLookup.customCriteria());
                 override.setUseServerSideInspectionCache(toOneLookup.useServerSideInspectionCache());
                 override.setToOneLookupCreatedViaAnnotation(true);
@@ -387,6 +384,8 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
                 override.setOptionListEntity(dataDrivenEnumeration.optionListEntity().getName());
                 override.setOptionValueFieldName(dataDrivenEnumeration.optionValueFieldName());
             }
+
+
             return override;
         }
         throw new IllegalArgumentException("AdminPresentation annotation not found on field");
@@ -498,12 +497,6 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
         if (basicFieldMetadata.getLookupDisplayProperty()!=null) {
             metadata.setLookupDisplayProperty(basicFieldMetadata.getLookupDisplayProperty());
             metadata.setForeignKeyDisplayValueProperty(basicFieldMetadata.getLookupDisplayProperty());
-        }
-        if (basicFieldMetadata.getLookupParentDataSourceName()!=null) {
-            metadata.setLookupParentDataSourceName(basicFieldMetadata.getLookupParentDataSourceName());
-        }
-        if (basicFieldMetadata.getTargetDynamicFormDisplayId()!=null) {
-            metadata.setTargetDynamicFormDisplayId(basicFieldMetadata.getTargetDynamicFormDisplayId());
         }
         if (basicFieldMetadata.getCustomCriteria() != null) {
             metadata.setCustomCriteria(basicFieldMetadata.getCustomCriteria());

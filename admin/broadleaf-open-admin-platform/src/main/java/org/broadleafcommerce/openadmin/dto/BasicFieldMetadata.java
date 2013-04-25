@@ -67,8 +67,6 @@ public class BasicFieldMetadata extends FieldMetadata {
     private String helpText;
     private String hint;
     private String lookupDisplayProperty;
-    private String lookupParentDataSourceName;
-    private String targetDynamicFormDisplayId;
     private String optionListEntity;
     private String optionValueFieldName;
     private String optionDisplayFieldName;
@@ -353,22 +351,6 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.lookupDisplayProperty = lookupDisplayProperty;
     }
 
-    public String getLookupParentDataSourceName() {
-        return lookupParentDataSourceName;
-    }
-
-    public void setLookupParentDataSourceName(String lookupParentDataSourceName) {
-        this.lookupParentDataSourceName = lookupParentDataSourceName;
-    }
-
-    public String getTargetDynamicFormDisplayId() {
-        return targetDynamicFormDisplayId;
-    }
-
-    public void setTargetDynamicFormDisplayId(String targetDynamicFormDisplayId) {
-        this.targetDynamicFormDisplayId = targetDynamicFormDisplayId;
-    }
-
     public Boolean getOptionCanEditValues() {
         return optionCanEditValues;
     }
@@ -524,8 +506,6 @@ public class BasicFieldMetadata extends FieldMetadata {
             metadata.validationConfigurations.put(entry.getKey(), clone);
         }
         metadata.lookupDisplayProperty = lookupDisplayProperty;
-        metadata.lookupParentDataSourceName = lookupParentDataSourceName;
-        metadata.targetDynamicFormDisplayId = targetDynamicFormDisplayId;
         metadata.optionListEntity = optionListEntity;
         metadata.optionCanEditValues = optionCanEditValues;
         metadata.optionDisplayFieldName = optionDisplayFieldName;
@@ -621,9 +601,6 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (lookupDisplayProperty != null ? !lookupDisplayProperty.equals(metadata.lookupDisplayProperty) : metadata.lookupDisplayProperty != null) {
             return false;
         }
-        if (lookupParentDataSourceName != null ? !lookupParentDataSourceName.equals(metadata.lookupParentDataSourceName) : metadata.lookupParentDataSourceName != null) {
-            return false;
-        }
         if (mergedPropertyType != metadata.mergedPropertyType) {
             return false;
         }
@@ -667,9 +644,6 @@ public class BasicFieldMetadata extends FieldMetadata {
             return false;
         }
         if (secondaryType != metadata.secondaryType) {
-            return false;
-        }
-        if (targetDynamicFormDisplayId != null ? !targetDynamicFormDisplayId.equals(metadata.targetDynamicFormDisplayId) : metadata.targetDynamicFormDisplayId != null) {
             return false;
         }
         if (tooltip != null ? !tooltip.equals(metadata.tooltip) : metadata.tooltip != null) {
@@ -738,8 +712,6 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (helpText != null ? helpText.hashCode() : 0);
         result = 31 * result + (hint != null ? hint.hashCode() : 0);
         result = 31 * result + (lookupDisplayProperty != null ? lookupDisplayProperty.hashCode() : 0);
-        result = 31 * result + (lookupParentDataSourceName != null ? lookupParentDataSourceName.hashCode() : 0);
-        result = 31 * result + (targetDynamicFormDisplayId != null ? targetDynamicFormDisplayId.hashCode() : 0);
         result = 31 * result + (optionListEntity != null ? optionListEntity.hashCode() : 0);
         result = 31 * result + (optionValueFieldName != null ? optionValueFieldName.hashCode() : 0);
         result = 31 * result + (optionDisplayFieldName != null ? optionDisplayFieldName.hashCode() : 0);

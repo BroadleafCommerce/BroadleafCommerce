@@ -41,26 +41,6 @@ public @interface AdminPresentationToOneLookup {
     String lookupDisplayProperty() default "name";
 
     /**
-     * <p>Optional - only required if the parent datasource from the admin tool used to bind this lookup
-     * is other than the default top-level datasource. Can only be used in conjunction with SupportedFieldType.ADDITIONAL_FOREIGN_KEY.</p>
-     *
-     * <p>Specify an alternate datasource to bind the lookup to. This is an advanced setting.</p>
-     *
-     * @return alternate datasource for lookup binding
-     */
-    String lookupParentDataSourceName() default "";
-
-    /**
-     * <p>Optional - only required if the dynamic form used to display the lookup in the admin tool is other
-     * than the default top-level form. Can only be used in conjunction with SupportedFieldType.ADDITIONAL_FOREIGN_KEY.</p>
-     *
-     * <p>Specify an alternate DynamicFormDisplay instance in which to show the lookup form item. This is an advanced setting.</p>
-     *
-     * @return alternate DynamicFormDisplay for lookup display
-     */
-    String targetDynamicFormDisplayId() default "";
-
-    /**
      * <p>Optional - only required if you need to specially handle crud operations for this
      * specific collection on the server</p>
      *

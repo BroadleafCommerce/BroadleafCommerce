@@ -241,7 +241,6 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
             override.setValuePropertyFriendlyName(map.valuePropertyFriendlyName());
             override.setCustomCriteria(map.customCriteria());
             override.setUseServerSideInspectionCache(map.useServerSideInspectionCache());
-            override.setDataSourceName(map.dataSourceName());
             override.setExcluded(map.excluded());
             override.setFriendlyName(map.friendlyName());
             override.setReadOnly(map.readOnly());
@@ -249,7 +248,6 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
             override.setTab(map.tab());
             override.setTabOrder(map.tabOrder());
             override.setSecurityLevel(map.securityLevel());
-            override.setTargetElementId(map.targetUIElementId());
             override.setAddType(map.operationTypes().addType());
             override.setFetchType(map.operationTypes().fetchType());
             override.setRemoveType(map.operationTypes().removeType());
@@ -521,14 +519,6 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
         }
         if (map.getTabOrder() != null) {
             metadata.setTabOrder(map.getTabOrder());
-        }
-
-        if (map.getTargetElementId() != null) {
-            metadata.setTargetElementId(map.getTargetElementId());
-        }
-
-        if (map.getDataSourceName() != null) {
-            metadata.setDataSourceName(map.getDataSourceName());
         }
 
         if (map.getCustomCriteria() != null) {

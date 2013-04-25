@@ -107,8 +107,6 @@ public class FieldMetadataOverride {
     private String helpText;
     private String hint;
     private String lookupDisplayProperty;
-    private String lookupParentDataSourceName;
-    private String targetDynamicFormDisplayId;
     private String optionListEntity;
     private String optionValueFieldName;
     private String optionDisplayFieldName;
@@ -405,22 +403,6 @@ public class FieldMetadataOverride {
         this.lookupDisplayProperty = lookupDisplayProperty;
     }
 
-    public String getLookupParentDataSourceName() {
-        return lookupParentDataSourceName;
-    }
-
-    public void setLookupParentDataSourceName(String lookupParentDataSourceName) {
-        this.lookupParentDataSourceName = lookupParentDataSourceName;
-    }
-
-    public String getTargetDynamicFormDisplayId() {
-        return targetDynamicFormDisplayId;
-    }
-
-    public void setTargetDynamicFormDisplayId(String targetDynamicFormDisplayId) {
-        this.targetDynamicFormDisplayId = targetDynamicFormDisplayId;
-    }
-
     public Boolean getOptionCanEditValues() {
         return optionCanEditValues;
     }
@@ -486,8 +468,6 @@ public class FieldMetadataOverride {
     }
 
     //collection fields
-    private String targetElementId;
-    private String dataSourceName;
     private String[] customCriteria;
     private OperationType addType;
     private OperationType removeType;
@@ -495,22 +475,6 @@ public class FieldMetadataOverride {
     private OperationType fetchType;
     private OperationType inspectType;
     private Boolean useServerSideInspectionCache;
-
-    public String getTargetElementId() {
-        return targetElementId;
-    }
-
-    public void setTargetElementId(String targetElementId) {
-        this.targetElementId = targetElementId;
-    }
-
-    public String getDataSourceName() {
-        return dataSourceName;
-    }
-
-    public void setDataSourceName(String dataSourceName) {
-        this.dataSourceName = dataSourceName;
-    }
 
     public String[] getCustomCriteria() {
         return customCriteria;
