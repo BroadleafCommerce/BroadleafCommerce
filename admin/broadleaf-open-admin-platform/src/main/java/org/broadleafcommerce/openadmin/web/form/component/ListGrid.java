@@ -123,10 +123,13 @@ public class ListGrid {
      * This grid is sortable if there is a reorder action defined in the toolbar. If records can be reordered, then the
      * sort functionality doesn't make any sense.
      * 
+     * Also, map structures are currently unsortable.
+     * 
      * @return
      */
     public boolean isSortable() {
-        return getToolbarActions().contains(DefaultListGridActions.REORDER);
+        return getToolbarActions().contains(DefaultListGridActions.REORDER) || 
+                Type.MAP.toString().toLowerCase().equals(getListGridType());
     }
 
     /* ************************ */
