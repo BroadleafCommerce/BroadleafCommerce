@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import java.io.Serializable;
-
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+
+import java.io.Serializable;
 
 public interface CandidateFulfillmentGroupOffer extends Serializable {
 

@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.core.order.domain.Order;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
-import org.broadleafcommerce.core.order.domain.Order;
 
 public interface OfferCode extends Serializable {
 

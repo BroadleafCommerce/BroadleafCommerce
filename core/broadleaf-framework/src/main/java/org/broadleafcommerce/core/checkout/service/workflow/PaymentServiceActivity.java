@@ -28,9 +28,8 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.util.Map.Entry;
-
 import javax.annotation.Resource;
+import java.util.Map.Entry;
 
 public class PaymentServiceActivity extends BaseActivity {
     

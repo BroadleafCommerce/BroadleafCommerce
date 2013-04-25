@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.common.audit;
 
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

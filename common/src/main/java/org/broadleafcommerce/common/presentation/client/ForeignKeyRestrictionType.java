@@ -16,14 +16,12 @@
 
 package org.broadleafcommerce.common.presentation.client;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 /**
  * 
  * @author jfischer
  *
  */
-public enum ForeignKeyRestrictionType implements IsSerializable {
+public enum ForeignKeyRestrictionType {
     ID_EQ,
     COLLECTION_SIZE_EQ
 }

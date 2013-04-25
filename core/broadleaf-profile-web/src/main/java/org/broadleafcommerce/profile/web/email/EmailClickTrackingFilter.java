@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.profile.web.email;
 
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.common.email.service.EmailTrackingManager;
+import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 
 import javax.annotation.Resource;

@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.util.service;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.util.domain.CodeType;
+
+import java.util.List;
 
 @Deprecated
 public interface CodeTypeService {

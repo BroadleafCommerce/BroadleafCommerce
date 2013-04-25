@@ -16,13 +16,15 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.broadleafcommerce.core.catalog.domain.Category;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a JAXB wrapper class for wrapping a collection of categories.

@@ -16,15 +16,14 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 public class OfferActivity extends BaseActivity {
 

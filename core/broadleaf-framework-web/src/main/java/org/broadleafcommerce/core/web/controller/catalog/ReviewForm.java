@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.web.controller.catalog;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.core.catalog.domain.Product;
+
+import java.io.Serializable;
 
 public class ReviewForm implements Serializable {
 

@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.common.money.Money;
+
+import java.io.Serializable;
 
 public interface Adjustment extends Serializable {
 

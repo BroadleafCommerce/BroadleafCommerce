@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.catalog.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+
+import java.util.List;
 
 /**
  * 

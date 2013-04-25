@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.profile.core.service;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.profile.core.dao.PhoneDao;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 @Service("blPhoneService")
 public class PhoneServiceImpl implements PhoneService {

@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
-import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.Entity;
 
 import java.io.Serializable;
 import java.util.Map;

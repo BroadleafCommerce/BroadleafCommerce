@@ -48,7 +48,6 @@ import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.test.BaseTest;
 
 import javax.annotation.Resource;
-
 import java.math.BigDecimal;
 import java.util.Calendar;
 

@@ -16,14 +16,12 @@
 
 package org.broadleafcommerce.common.exception;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 /**
  * Base exception class for BroadleafExceptions that understands root cause messages.
  * 
  * @author bpolster
  */
-public abstract class BroadleafException extends Exception implements IsSerializable, RootCauseAccessor {
+public abstract class BroadleafException extends Exception implements RootCauseAccessor {
 
     private Throwable rootCause;
 

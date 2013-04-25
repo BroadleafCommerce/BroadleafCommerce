@@ -24,12 +24,11 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.List;
 
 @Repository("blFulfillmentGroupDao")
 public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {

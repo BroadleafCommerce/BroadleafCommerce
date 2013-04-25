@@ -21,7 +21,11 @@ import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.cha
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.imageio.*;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.image.BufferedImage;

@@ -15,18 +15,6 @@
     <!-- Scan Broadleaf defined web utility classes -->
     <context:component-scan base-package="org.broadleafcommerce.openadmin.web"/>
 
-    <bean id="multipartResolver"
-          class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadMultipartResolver"/>
-
-    <bean id="blUploadController"
-          class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadAddOrUpdateController">
-        <property name="dynamicEntityRemoteService" ref="blDynamicEntityRemoteService"/>
-        <property name="exploitProtectionService" ref="blExploitProtectionService"/>
-    </bean>
-
-    <bean id="blUploadCompletedView"
-          class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadCompletedView"/>
-
     <bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
         <property name="order" value="1"/>
     </bean>

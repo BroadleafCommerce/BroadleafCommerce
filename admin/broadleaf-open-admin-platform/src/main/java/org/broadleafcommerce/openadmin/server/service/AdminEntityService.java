@@ -18,15 +18,13 @@ package org.broadleafcommerce.openadmin.server.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-
-import com.gwtincubator.security.exception.ApplicationSecurityException;
 
 import java.util.Map;
 
@@ -41,10 +39,9 @@ public interface AdminEntityService {
      * @param request
      * @return ClassMetadata for the given request
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public ClassMetadata getClassMetadata(PersistencePackageRequest request)
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
     /**
      * Returns the DynamicResultSet containing the total records for the query and the currently fetched Entity[]
@@ -52,10 +49,9 @@ public interface AdminEntityService {
      * @param request
      * @return DynamicResultSet 
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public DynamicResultSet getRecords(PersistencePackageRequest request)
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
     /**
      * Returns a specific record for the given request and primary key id/property
@@ -65,10 +61,9 @@ public interface AdminEntityService {
      * @param cmd
      * @return the Entity
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public Entity getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd) 
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
     /**
      * Persists the given entity
@@ -77,10 +72,9 @@ public interface AdminEntityService {
      * @param customCriteria
      * @return the persisted Entity
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public Entity addEntity(EntityForm entityForm, String[] customCriteria)
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
     /**
      * Updates the given entity
@@ -89,10 +83,9 @@ public interface AdminEntityService {
      * @param customCriteria
      * @return the persisted Entity
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public Entity updateEntity(EntityForm entityForm, String[] customCriteria)
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
     /**
      * Removes the given entity
@@ -100,10 +93,9 @@ public interface AdminEntityService {
      * @param entityForm
      * @param customCriteria
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public void removeEntity(EntityForm entityForm, String[] customCriteria)
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
     /**
      * Gets an Entity representing a specific collection item
@@ -114,11 +106,10 @@ public interface AdminEntityService {
      * @param collectionItemId
      * @return the Entity
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public Entity getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, String collectionItemId)
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
     /**
      * Returns the DynamicResultSet representing the records that belong to the specified collectionProperty for the 
@@ -132,11 +123,10 @@ public interface AdminEntityService {
      * @param maxIndex
      * @return the DynamicResultSet
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity, 
             Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex) 
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
     /**
      * Returns all records for all subcollections of the specified request and its primary key
      * 
@@ -144,13 +134,12 @@ public interface AdminEntityService {
      * @param containingEntity
      * @return all Entity[] for all collections for the specified containingClass
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      * 
      * @see #getRecordsForCollection(ClassMetadata, String, Property)
      */
     public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, 
             Entity containingEntity)
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
     /**
      * Adds an item into the specified collection
@@ -161,12 +150,11 @@ public interface AdminEntityService {
      * @param parentEntity
      * @return the persisted Entity
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      * @throws ClassNotFoundException
      */
     public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, 
             Entity parentEntity)
-            throws ServiceException, ApplicationSecurityException, ClassNotFoundException;
+            throws ServiceException, ClassNotFoundException;
 
     /**
      * Updates the specified collection item
@@ -178,12 +166,11 @@ public interface AdminEntityService {
      * @param collectionItemId
      * @return the persisted Entity
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      * @throws ClassNotFoundException
      */
     public Entity updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
             Entity parentEntity, String collectionItemId)
-            throws ServiceException, ApplicationSecurityException, ClassNotFoundException;
+            throws ServiceException, ClassNotFoundException;
 
     /**
      * Removes the given item from the specified collection.
@@ -194,11 +181,10 @@ public interface AdminEntityService {
      * @param itemId
      * @param priorKey - only needed for Map type collections
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity, String itemId,
             String priorKey)
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
     /**
      * Returns the appropriate id to use for the given entity/metadata and prefix when dealing with collections. For

@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.cms.url.domain;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
+
+import java.io.Serializable;
 
 public interface URLHandler extends  Serializable{
 

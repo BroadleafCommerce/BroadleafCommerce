@@ -32,7 +32,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;

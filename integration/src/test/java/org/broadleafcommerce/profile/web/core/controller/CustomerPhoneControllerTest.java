@@ -33,7 +33,6 @@ import org.springframework.validation.BindingResult;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.List;
 

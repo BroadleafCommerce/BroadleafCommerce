@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.order.service.manipulation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderItemSplitContainer {
     

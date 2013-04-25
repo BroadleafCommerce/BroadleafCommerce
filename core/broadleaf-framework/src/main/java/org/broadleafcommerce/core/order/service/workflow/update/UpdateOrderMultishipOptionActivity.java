@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.order.service.workflow.update;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
@@ -29,7 +28,6 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 public class UpdateOrderMultishipOptionActivity extends BaseActivity {
     

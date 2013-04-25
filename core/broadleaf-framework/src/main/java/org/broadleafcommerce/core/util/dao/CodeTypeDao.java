@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.util.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.util.domain.CodeType;
+
+import java.util.List;
 
 public interface CodeTypeDao {
 

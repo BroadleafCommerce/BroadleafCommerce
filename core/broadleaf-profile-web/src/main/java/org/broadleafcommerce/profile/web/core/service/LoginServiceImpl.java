@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.profile.web.core.service;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +24,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 @Service("blLoginService")
 public class LoginServiceImpl implements LoginService {

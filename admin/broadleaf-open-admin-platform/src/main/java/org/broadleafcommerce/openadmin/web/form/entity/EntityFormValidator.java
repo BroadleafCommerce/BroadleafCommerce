@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.form.entity;
 
-import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

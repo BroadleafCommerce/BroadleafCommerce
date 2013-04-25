@@ -16,14 +16,14 @@
 
 package org.broadleafcommerce.core.catalog.service.dynamic;
 
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 
 public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHandler {
 

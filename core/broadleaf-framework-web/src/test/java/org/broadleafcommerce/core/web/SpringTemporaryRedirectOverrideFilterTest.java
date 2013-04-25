@@ -16,14 +16,11 @@
 
 package org.broadleafcommerce.core.web;
 
-import java.util.Enumeration;
+import junit.framework.TestCase;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
-
-import org.broadleafcommerce.core.web.SpringTemporaryRedirectOverrideFilter;
-
-import junit.framework.TestCase;
+import java.util.Enumeration;
 
 /**
  * 

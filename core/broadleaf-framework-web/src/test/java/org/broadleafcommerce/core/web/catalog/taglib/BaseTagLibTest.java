@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.core.web.catalog.taglib;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
-
 import junit.framework.TestCase;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.easymock.classextension.EasyMock;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
 
 abstract public class BaseTagLibTest extends TestCase {
     

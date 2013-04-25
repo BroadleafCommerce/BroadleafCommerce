@@ -16,14 +16,14 @@
 
 package org.broadleafcommerce.core.store.domain;
 
+import org.hibernate.annotations.Index;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Index;
 
 @Entity
 @Table(name = "BLC_STORE")

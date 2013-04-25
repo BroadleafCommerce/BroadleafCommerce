@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.profile.web.controller;
 
-import java.beans.PropertyEditorSupport;
-
 import org.broadleafcommerce.profile.core.domain.ChallengeQuestion;
 import org.broadleafcommerce.profile.core.service.ChallengeQuestionService;
+
+import java.beans.PropertyEditorSupport;
 
 public class CustomChallengeQuestionEditor extends PropertyEditorSupport {
     

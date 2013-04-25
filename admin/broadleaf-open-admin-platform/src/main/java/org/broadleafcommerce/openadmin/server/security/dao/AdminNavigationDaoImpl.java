@@ -22,14 +22,13 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.hibernate.annotations.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.List;
 
 /**
  *

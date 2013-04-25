@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+
+import java.util.List;
 
 public interface FulfillmentGroupItemDao {
 

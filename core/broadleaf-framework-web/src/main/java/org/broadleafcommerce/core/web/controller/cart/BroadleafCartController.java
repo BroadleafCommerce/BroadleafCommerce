@@ -31,12 +31,11 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.ui.Model;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * In charge of performing the various modify cart operations

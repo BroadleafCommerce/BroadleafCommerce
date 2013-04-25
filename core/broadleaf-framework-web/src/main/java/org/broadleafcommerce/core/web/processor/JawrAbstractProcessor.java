@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.web.processor;
 import net.jawr.web.resource.bundle.renderer.BundleRenderer;
 import net.jawr.web.resource.bundle.renderer.BundleRendererContext;
 import net.jawr.web.servlet.RendererRequestUtils;
-
 import org.apache.commons.logging.Log;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
@@ -27,11 +26,10 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractUnescapedTextChildModifierAttrProcessor;
 
-import java.io.IOException;
-import java.io.StringWriter;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.StringWriter;
 
 /**
  * A Thymeleaf processor that resolves a Jawr JavaScript bundle

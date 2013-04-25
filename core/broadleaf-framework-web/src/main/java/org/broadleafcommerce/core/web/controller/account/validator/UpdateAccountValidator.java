@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.web.controller.account.validator;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.validator.GenericValidator;
 import org.broadleafcommerce.core.web.controller.account.UpdateAccountForm;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -27,6 +25,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+
+import javax.annotation.Resource;
 
 
 @Component("blUpdateAccountValidator")

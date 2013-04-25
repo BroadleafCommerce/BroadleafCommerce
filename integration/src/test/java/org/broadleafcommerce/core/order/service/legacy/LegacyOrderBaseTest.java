@@ -32,7 +32,6 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.test.legacy.LegacyCommonSetupBaseTest;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.List;
 

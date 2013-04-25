@@ -21,8 +21,8 @@ import org.broadleafcommerce.admin.web.rulebuilder.service.CustomerFieldServiceI
 import org.broadleafcommerce.admin.web.rulebuilder.service.FulfillmentGroupFieldServiceImpl;
 import org.broadleafcommerce.admin.web.rulebuilder.service.OrderFieldServiceImpl;
 import org.broadleafcommerce.admin.web.rulebuilder.service.OrderItemFieldServiceImpl;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.web.rulebuilder.BLCOperator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELToDataWrapperTranslator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;

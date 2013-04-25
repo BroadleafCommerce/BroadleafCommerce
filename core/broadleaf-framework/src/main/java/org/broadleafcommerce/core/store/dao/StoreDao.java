@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.store.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.store.domain.Store;
+
+import java.util.List;
 
 public interface StoreDao {
 

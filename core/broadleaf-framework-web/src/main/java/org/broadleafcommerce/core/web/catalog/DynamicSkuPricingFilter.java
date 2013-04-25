@@ -20,10 +20,9 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 
-import java.util.HashMap;
-
 import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
+import java.util.HashMap;
 
 /**
  * Responsible for setting up the {@link SkuPricingConsiderationContext}. Rather than simply creating a filter that

@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.common.web.extensibility;
 
-import javax.servlet.ServletContext;
-
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
+
+import javax.servlet.ServletContext;
 
 /**
  * Performs the actual initialization work for the rootId application context.

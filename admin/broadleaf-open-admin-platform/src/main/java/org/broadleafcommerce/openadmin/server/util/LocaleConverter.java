@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.openadmin.server.util;
 
-import java.util.Locale;
-
 import org.springframework.core.convert.converter.Converter;
+
+import java.util.Locale;
 
 public class LocaleConverter implements Converter<String, Locale> {
 

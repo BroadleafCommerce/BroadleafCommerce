@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
+import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
@@ -28,8 +29,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 
 import java.math.BigDecimal;
-
-import junit.framework.TestCase;
 
 public class FulfillmentItemPricingActivityTest extends TestCase {
 

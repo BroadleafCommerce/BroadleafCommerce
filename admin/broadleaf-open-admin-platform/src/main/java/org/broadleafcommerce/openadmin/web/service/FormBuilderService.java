@@ -17,18 +17,16 @@
 package org.broadleafcommerce.openadmin.web.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
-import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MapStructure;
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.dto.MapStructure;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-
-import com.gwtincubator.security.exception.ApplicationSecurityException;
 
 import java.util.Map;
 
@@ -43,15 +41,14 @@ public interface FormBuilderService {
      * Note that it can also be used in other places that require the same grid as the main entity search screen
      * provided the type on the returned ListGrid is set appropriately.
      * 
-     * @param entities
+     * @param drs
      * @param cmd
      * @param sectionKey
      * @return the ListGrid
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public ListGrid buildMainListGrid(DynamicResultSet drs, ClassMetadata cmd, String sectionKey)
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
     /**
      * Builds a list grid that is used to render a collection inline in an entity form.
@@ -60,15 +57,14 @@ public interface FormBuilderService {
      * ListGrid is set appropriately. 
      * 
      * @param containingEntityId
-     * @param entities
+     * @param drs
      * @param field
      * @param sectionKey
      * @return the ListGrid
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public ListGrid buildCollectionListGrid(String containingEntityId, DynamicResultSet drs, Property field, String sectionKey)
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
     /**
      * Loops through all of the fields that are specified in given class metadata and removes fields that
@@ -85,10 +81,9 @@ public interface FormBuilderService {
      * 
      * @param cmd
      * @return the EntityForm
-     * @throws ApplicationSecurityException 
      * @throws ServiceException 
      */
-    public EntityForm buildEntityForm(ClassMetadata cmd) throws ServiceException, ApplicationSecurityException;
+    public EntityForm buildEntityForm(ClassMetadata cmd) throws ServiceException;
 
     /**
      * Builds an EntityForm that has all of the appropriate fields set up along with the values for those fields
@@ -97,11 +92,10 @@ public interface FormBuilderService {
      * @param cmd
      * @param entity
      * @return the EntityForm
-     * @throws ApplicationSecurityException 
      * @throws ServiceException 
      */
     public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity) 
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
     
     /**
      * Builds an EntityForm that has all of the appropriate fields set up along with the values for thsoe fields
@@ -112,10 +106,9 @@ public interface FormBuilderService {
      * @param collectionRecords
      * @return the EntityForm
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public EntityForm buildEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords)
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
     /**
      * Sets values for all fields found on the EntityForm from the specified entity.
@@ -158,11 +151,10 @@ public interface FormBuilderService {
      * @param parentId
      * @return the EntityForm
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
             String parentId)
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
     /**
      * Builds the EntityForm used in modal dialogs when adding items to map collections.
@@ -173,9 +165,8 @@ public interface FormBuilderService {
      * @param parentId
      * @return the EntityForm
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     public EntityForm buildMapForm(MapMetadata mapMd, MapStructure mapStructure, ClassMetadata cmd, String parentId)
-            throws ServiceException, ApplicationSecurityException;
+            throws ServiceException;
 
 }

@@ -12,17 +12,6 @@
 
     <aop:config/>
 
-    <bean id="blStaticAssetURLHandlerMapping" class="org.broadleafcommerce.cms.web.BroadleafCmsSimpleUrlHandlerMapping">
-        <property name="order" value="-1"/>
-        <property name="alwaysUseFullPath" value="true"></property>
-        <property name="mappings">
-            <map>
-                <entry key="/**/cms.upload.service" value-ref="blUploadController"/>
-                <entry key="/**/${asset.server.url.prefix.internal}/**" value-ref="blStaticAssetViewController"/>
-            </map>
-        </property>
-    </bean>
-
     <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
         <property name="basenames">
             <list>

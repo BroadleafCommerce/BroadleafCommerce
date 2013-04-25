@@ -26,7 +26,6 @@ import org.broadleafcommerce.profile.core.service.AddressService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
+import junit.framework.TestCase;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
@@ -29,8 +30,6 @@ import org.easymock.classextension.EasyMock;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 /**
  * 

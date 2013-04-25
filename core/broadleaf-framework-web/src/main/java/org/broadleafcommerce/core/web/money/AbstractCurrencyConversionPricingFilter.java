@@ -16,15 +16,14 @@
 
 package org.broadleafcommerce.core.web.money;
 
-import java.io.IOException;
+import org.broadleafcommerce.common.money.CurrencyConversionContext;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
-import org.broadleafcommerce.common.money.CurrencyConversionContext;
+import java.io.IOException;
 
 public abstract class AbstractCurrencyConversionPricingFilter implements CurrencyConversionPricingFilter {
     

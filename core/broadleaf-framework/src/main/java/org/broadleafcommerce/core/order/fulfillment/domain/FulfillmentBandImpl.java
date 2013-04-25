@@ -22,7 +22,6 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmount
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-
 import java.math.BigDecimal;
 
 /**

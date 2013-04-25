@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.order.service.manipulation;
 
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 
 public class BundleOrderItemSplitContainer {
     

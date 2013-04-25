@@ -15,16 +15,15 @@
  */
 package org.broadleafcommerce.core.web.api;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import com.sun.jersey.core.impl.provider.entity.XMLListElementProvider;
+import com.sun.jersey.core.impl.provider.entity.XMLRootElementProvider;
+import com.sun.jersey.json.impl.provider.entity.JSONListElementProvider;
+import com.sun.jersey.json.impl.provider.entity.JSONRootElementProvider;
+import com.sun.jersey.spi.inject.Injectable;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -42,17 +41,16 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLInputFactory;
-
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
-
-import com.sun.jersey.core.impl.provider.entity.XMLListElementProvider;
-import com.sun.jersey.core.impl.provider.entity.XMLRootElementProvider;
-import com.sun.jersey.json.impl.provider.entity.JSONListElementProvider;
-import com.sun.jersey.json.impl.provider.entity.JSONRootElementProvider;
-import com.sun.jersey.spi.inject.Injectable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>

@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -27,6 +25,8 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+
+import java.util.List;
 
 public interface FulfillmentGroupService {
 

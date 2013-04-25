@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.common.web;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 
 /**

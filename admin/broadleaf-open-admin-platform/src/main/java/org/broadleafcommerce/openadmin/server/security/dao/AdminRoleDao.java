@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.openadmin.server.security.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
+
+import java.util.List;
 
 /**
  * 

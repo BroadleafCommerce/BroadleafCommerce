@@ -16,16 +16,15 @@
 
 package org.broadleafcommerce.profile.web.controller.validator;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.service.CustomerPhoneService;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 @Component("blCustomerPhoneValidator")
 public class CustomerPhoneValidator implements Validator {

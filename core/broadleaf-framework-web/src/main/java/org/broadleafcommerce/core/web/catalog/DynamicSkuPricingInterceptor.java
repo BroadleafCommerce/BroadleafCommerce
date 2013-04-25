@@ -22,9 +22,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.request.WebRequestInterceptor;
 
-import java.util.HashMap;
-
 import javax.annotation.Resource;
+import java.util.HashMap;
 
 /**
  * <p>Interceptor version of the {@link DynamicSkuPricingFilter}. If you are using Broadleaf in a Servlet web application

@@ -18,11 +18,20 @@ package org.broadleafcommerce.core.catalog.service;
 
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
-import org.broadleafcommerce.core.catalog.domain.*;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.FeaturedProduct;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
+import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
+import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service("blRelatedProductsService")
 /*

@@ -17,10 +17,6 @@
 package org.broadleafcommerce.common.web.extensibility;
 
 import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 
 /**
  * Bootstrap listener to start up BroadleafCommerce's rootId {@link MergeWebApplicationContext}.

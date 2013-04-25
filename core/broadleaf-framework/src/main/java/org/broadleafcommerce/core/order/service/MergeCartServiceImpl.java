@@ -31,7 +31,6 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;

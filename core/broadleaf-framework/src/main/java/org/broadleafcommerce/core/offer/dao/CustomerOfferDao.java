@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.offer.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.util.List;
 
 public interface CustomerOfferDao {
 

@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.search.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.search.domain.SearchSynonym;
+
+import java.util.List;
 
 public interface SearchSynonymDao {
     public List<SearchSynonym> getAllSynonyms();

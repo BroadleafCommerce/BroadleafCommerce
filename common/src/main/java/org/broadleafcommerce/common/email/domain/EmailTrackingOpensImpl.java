@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.common.email.domain;
 
-import java.util.Date;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,8 +27,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import org.hibernate.annotations.Index;
+import java.util.Date;
 
 /**
  * @author jfischer

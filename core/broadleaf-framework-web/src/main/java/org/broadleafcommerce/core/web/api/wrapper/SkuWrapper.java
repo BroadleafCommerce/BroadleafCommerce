@@ -16,16 +16,15 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import java.util.Date;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Sku;
+import java.util.Date;
 
 /**
  * This is a JAXB wrapper to wrap Sku.

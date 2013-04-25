@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.core.rating.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.core.rating.service.type.RatingType;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,9 +30,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import org.broadleafcommerce.core.rating.service.type.RatingType;
-import org.hibernate.annotations.Index;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

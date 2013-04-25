@@ -40,7 +40,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

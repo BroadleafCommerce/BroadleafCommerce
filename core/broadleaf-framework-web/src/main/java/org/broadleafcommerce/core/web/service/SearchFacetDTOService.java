@@ -21,7 +21,6 @@ import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.List;
 
 /**

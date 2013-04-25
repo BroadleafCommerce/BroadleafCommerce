@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.core.web.controller.catalog;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
@@ -26,6 +23,9 @@ import org.broadleafcommerce.core.rating.service.RatingService;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 public class BroadleafRatingsController {
 

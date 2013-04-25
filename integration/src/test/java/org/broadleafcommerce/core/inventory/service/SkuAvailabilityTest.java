@@ -24,7 +24,6 @@ import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
-
 import java.util.Arrays;
 import java.util.List;
 

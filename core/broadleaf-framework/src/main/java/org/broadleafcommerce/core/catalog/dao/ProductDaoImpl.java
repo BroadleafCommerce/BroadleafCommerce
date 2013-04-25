@@ -45,7 +45,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;

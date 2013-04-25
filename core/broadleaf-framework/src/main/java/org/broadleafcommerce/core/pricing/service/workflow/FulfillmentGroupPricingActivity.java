@@ -24,9 +24,8 @@ import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
-import java.math.BigDecimal;
-
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 /**
  * Called during the pricing workflow to compute all of the fulfillment costs

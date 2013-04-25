@@ -18,7 +18,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 
 import org.broadleafcommerce.common.value.Searchable;
 import org.broadleafcommerce.common.value.ValueAssignable;
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;

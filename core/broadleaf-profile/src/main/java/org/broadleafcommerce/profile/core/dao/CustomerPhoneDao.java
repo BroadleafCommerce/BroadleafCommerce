@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.profile.core.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
+
+import java.util.List;
 
 public interface CustomerPhoneDao {
 

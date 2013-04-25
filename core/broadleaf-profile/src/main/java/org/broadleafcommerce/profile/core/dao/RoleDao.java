@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.profile.core.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.broadleafcommerce.profile.core.domain.Role;
+
+import java.util.List;
 
 public interface RoleDao {
 

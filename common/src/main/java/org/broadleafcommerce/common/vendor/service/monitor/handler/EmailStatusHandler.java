@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.common.vendor.service.monitor.handler;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.common.email.domain.EmailTarget;
 import org.broadleafcommerce.common.email.service.EmailService;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.vendor.service.monitor.StatusHandler;
 import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
+
+import javax.annotation.Resource;
 
 public class EmailStatusHandler implements StatusHandler {
 

@@ -21,9 +21,8 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 
-import java.util.HashMap;
-
 import javax.annotation.Nonnull;
+import java.util.HashMap;
 
 /**
  * <p>Interface for calculating dynamic pricing for a {@link Sku}. This should be hooked up via a custom subclass of 

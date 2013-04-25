@@ -22,7 +22,6 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.List;
 
 public class BroadleafOrderHistoryController extends AbstractAccountController {

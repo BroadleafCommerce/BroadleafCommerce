@@ -45,7 +45,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
 import java.math.BigDecimal;
 import java.util.List;
 

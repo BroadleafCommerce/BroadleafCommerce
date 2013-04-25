@@ -16,15 +16,14 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import java.util.Map;
-
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.service.module.PaymentResponse;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.payment.service.workflow.CompositePaymentResponse;
+
+import java.util.Map;
 
 public interface CompositePaymentService {
 

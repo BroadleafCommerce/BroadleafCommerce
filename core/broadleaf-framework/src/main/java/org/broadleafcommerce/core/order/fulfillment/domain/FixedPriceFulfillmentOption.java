@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.core.order.fulfillment.domain;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FixedPriceFulfillmentPricingProvider;
+
+import java.io.Serializable;
 
 /**
  * Used in conjunction with the {@link FixedPriceFulfillmentPricingProvider} to allow for a single price

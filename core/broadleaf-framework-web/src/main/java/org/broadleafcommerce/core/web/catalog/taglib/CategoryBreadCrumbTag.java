@@ -16,17 +16,16 @@
 
 package org.broadleafcommerce.core.web.catalog.taglib;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.catalog.domain.Category;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.catalog.domain.Category;
 
 public class CategoryBreadCrumbTag extends CategoryLinkTag {
 

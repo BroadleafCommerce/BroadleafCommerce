@@ -16,14 +16,12 @@
 
 package org.broadleafcommerce.common.presentation.client;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 /**
  * 
  * @author jfischer
  *
  */
-public enum OperationType implements IsSerializable {
+public enum OperationType {
     NONDESTRUCTIVEREMOVE,
     BASIC,
     ADORNEDTARGETLIST,

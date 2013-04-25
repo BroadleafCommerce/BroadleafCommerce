@@ -16,7 +16,9 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
-import javax.persistence.CascadeType;
+import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.hibernate.annotations.Index;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -29,9 +31,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
-import org.hibernate.annotations.Index;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })

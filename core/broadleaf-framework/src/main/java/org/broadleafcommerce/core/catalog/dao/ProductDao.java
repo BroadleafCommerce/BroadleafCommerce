@@ -22,7 +22,6 @@ import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 
 import javax.annotation.Nonnull;
-
 import java.util.Date;
 import java.util.List;
 

@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.core.checkout.service.workflow;
 
-import java.util.Map;
-
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.module.PaymentResponse;
+
+import java.util.Map;
 
 public interface CheckoutResponse {
 

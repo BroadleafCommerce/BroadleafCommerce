@@ -16,20 +16,19 @@
 
 package org.broadleafcommerce.core.payment.dao;
 
-import java.util.List;
+import org.broadleafcommerce.common.encryption.EncryptionModule;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo;
+import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
+import org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo;
+import org.broadleafcommerce.core.payment.domain.Referenced;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo;
-import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
-import org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.encryption.EncryptionModule;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository("blSecurePaymentInfoDao")
 public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {

@@ -23,7 +23,12 @@ import org.broadleafcommerce.profile.core.domain.IdGeneration;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import javax.persistence.*;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.OptimisticLockException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 @Repository("blIdGenerationDao")
 public class IdGenerationDaoImpl implements IdGenerationDao {

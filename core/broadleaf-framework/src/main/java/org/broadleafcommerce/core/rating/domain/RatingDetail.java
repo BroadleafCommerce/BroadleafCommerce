@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.rating.domain;
 
-import java.util.Date;
-
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.util.Date;
 
 public interface RatingDetail {
 

@@ -19,9 +19,9 @@ package org.broadleafcommerce.core.web.catalog.taglib;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.common.time.SystemTime;
 
 import javax.servlet.jsp.JspException;
 import java.util.List;

@@ -16,14 +16,12 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import org.hibernate.Criteria;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-
+import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.util.List;
-
-import javax.persistence.EntityManager;
 
 /**
  * 

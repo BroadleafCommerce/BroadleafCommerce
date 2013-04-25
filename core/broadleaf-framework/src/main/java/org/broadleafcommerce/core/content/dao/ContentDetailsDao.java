@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.content.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.content.domain.ContentDetails;
+
+import java.util.List;
 
 /**
  * @author btaylor

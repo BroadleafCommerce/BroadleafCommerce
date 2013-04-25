@@ -30,7 +30,6 @@ import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceT
 import org.broadleafcommerce.profile.core.domain.Address;
 
 import javax.annotation.Resource;
-
 import java.math.BigDecimal;
 import java.util.Map;
 

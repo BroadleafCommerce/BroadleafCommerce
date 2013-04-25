@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.core.payment.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
+
+import java.util.List;
 
 public interface PaymentInfoDao {
 

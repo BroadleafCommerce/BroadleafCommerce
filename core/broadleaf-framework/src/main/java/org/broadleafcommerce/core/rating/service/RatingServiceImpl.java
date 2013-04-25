@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.core.rating.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.beanutils.BeanComparator;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.rating.dao.RatingSummaryDao;
@@ -40,6 +32,13 @@ import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service("blRatingService")
 public class RatingServiceImpl implements RatingService {

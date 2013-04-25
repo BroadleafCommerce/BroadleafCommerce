@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.file.service;
 
+import junit.framework.TestCase;
 import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
@@ -27,8 +28,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-
-import junit.framework.TestCase;
 
 /**
  * Created by bpolster.

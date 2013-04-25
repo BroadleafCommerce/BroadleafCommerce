@@ -18,7 +18,7 @@ package org.broadleafcommerce.openadmin.server.util;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
+import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.MapFactoryBean;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;

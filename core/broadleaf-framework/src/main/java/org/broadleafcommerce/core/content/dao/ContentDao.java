@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.content.dao;
 
+import org.broadleafcommerce.core.content.domain.Content;
+
 import java.util.Date;
 import java.util.List;
-
-import org.broadleafcommerce.core.content.domain.Content;
 
 /**
 * DOCUMENT ME!

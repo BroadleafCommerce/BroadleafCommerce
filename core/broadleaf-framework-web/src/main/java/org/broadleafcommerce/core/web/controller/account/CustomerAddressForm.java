@@ -18,7 +18,6 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
-import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 
 import java.io.Serializable;

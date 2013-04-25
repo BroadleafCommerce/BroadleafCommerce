@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.web.order.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.collections.FactoryUtils;
 import org.apache.commons.collections.list.LazyList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddToCartItems {
 

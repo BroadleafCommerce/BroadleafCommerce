@@ -17,7 +17,7 @@
 
 package org.broadleafcommerce.openadmin.server.factory;
 
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 
 /**

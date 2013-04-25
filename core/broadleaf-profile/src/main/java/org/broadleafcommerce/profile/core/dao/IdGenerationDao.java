@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.profile.core.dao;
 
-import javax.persistence.OptimisticLockException;
-
 import org.broadleafcommerce.profile.core.domain.IdGeneration;
+
+import javax.persistence.OptimisticLockException;
 
 public interface IdGenerationDao {
 

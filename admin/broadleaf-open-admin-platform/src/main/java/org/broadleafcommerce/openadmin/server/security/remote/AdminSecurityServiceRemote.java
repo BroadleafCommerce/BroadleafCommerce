@@ -16,13 +16,10 @@
 
 package org.broadleafcommerce.openadmin.server.security.remote;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.web.SandBoxContext;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
-import org.broadleafcommerce.openadmin.client.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -66,10 +63,10 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
     private boolean isEntitySecurityExplicit = false;
     
     @Override
-    public org.broadleafcommerce.openadmin.client.security.AdminUser getAdminUser() throws ServiceException, ApplicationSecurityException {
+    public org.broadleafcommerce.openadmin.server.security.remote.AdminUser getAdminUser() throws ServiceException {
         AdminUser persistentAdminUser = getPersistentAdminUser();
         if (persistentAdminUser != null) {
-            org.broadleafcommerce.openadmin.client.security.AdminUser response = new org.broadleafcommerce.openadmin.client.security.AdminUser();
+            org.broadleafcommerce.openadmin.server.security.remote.AdminUser response = new org.broadleafcommerce.openadmin.server.security.remote.AdminUser();
             for (AdminRole role : persistentAdminUser.getAllRoles()) {
                 response.getRoles().add(role.getName());
                 for (AdminPermission permission : role.getAllPermissions()) {

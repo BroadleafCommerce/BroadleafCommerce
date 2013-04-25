@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.common.extensibility.context.merge.handlers;
 
-import java.util.List;
-
 import org.w3c.dom.Node;
+
+import java.util.List;
 
 /**
  * This handler is responsible for replacing nodes in the source document

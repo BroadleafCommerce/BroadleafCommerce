@@ -51,8 +51,6 @@
     </developers>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <gwt.version>2.4.0</gwt.version>
-        <smartgwt.version>2.5</smartgwt.version>
         <spring.version>3.2.2.RELEASE</spring.version>
         <spring.security.version>3.1.3.RELEASE</spring.security.version>
     </properties>
@@ -126,11 +124,6 @@
                             <scope>runtime</scope>
                         </dependency>
                     </dependencies>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>gwt-maven-plugin</artifactId>
-                    <version>${gwt.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -370,15 +363,6 @@
                         <artifactId>ant</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-
-            <!-- Google Libraries -->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava-gwt</artifactId>
-                <version>12.0</version>
-                <type>jar</type>
-                <scope>provided</scope>
             </dependency>
 
             <!-- Commons Libraries -->
@@ -1021,38 +1005,6 @@
 
             <!--Admin Libraries-->
             <dependency>
-                <groupId>com.google.gwt</groupId>
-                <artifactId>gwt-servlet</artifactId>
-                <version>${gwt.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.gwt</groupId>
-                <artifactId>gwt-user</artifactId>
-                <version>${gwt.version}</version>
-                <scope>provided</scope>
-                <optional>true</optional>
-            </dependency>
-            <dependency>
-                <groupId>com.google.gwt</groupId>
-                <artifactId>gwt-dev</artifactId>
-                <version>${gwt.version}</version>
-                <scope>provided</scope>
-                <optional>true</optional>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.gwt-math</groupId>
-                <artifactId>gwt-math</artifactId>
-                <version>2.0.3</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.smartgwt</groupId>
-                <artifactId>smartgwt</artifactId>
-                <version>${smartgwt.version}-patch</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.anasoft.os</groupId>
                 <artifactId>daofusion-core</artifactId>
                 <version>1.2.0</version>
@@ -1064,66 +1016,6 @@
                 <version>1.2.0</version>
                 <scope>compile</scope>
                 <classifier>sources</classifier>
-            </dependency>
-            <dependency>
-                <groupId>com.gwtincubator</groupId>
-                <artifactId>gwt-incubator-security</artifactId>
-                <version>1.0.1</version>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-context</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-webmvc</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework.security</groupId>
-                        <artifactId>spring-security-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework.security</groupId>
-                        <artifactId>spring-security-core-tiger</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>net.sf.transmorph</groupId>
-                        <artifactId>transmorph</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.google.gwt</groupId>
-                        <artifactId>gwt-user</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.google.gwt</groupId>
-                        <artifactId>gwt-servlet</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>net.sf.gwt-widget</groupId>
-                        <artifactId>gwt-sl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.gwt-widget</groupId>
-                <artifactId>gwt-sl</artifactId>
-                <version>1.1</version>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-jdbc</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <!--Persistence Libraries-->
@@ -1169,12 +1061,6 @@
                 <artifactId>ant</artifactId>
                 <version>1.7.1</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.transmorph</groupId>
-                <artifactId>transmorph</artifactId>
-                <version>2.2.2</version>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
@@ -1226,6 +1112,21 @@
                 <artifactId>jawr</artifactId>
                 <version>3.3.3</version>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator-annotation-processor</artifactId>
+                <version>4.1.0.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>1.0.0.GA</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>12.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

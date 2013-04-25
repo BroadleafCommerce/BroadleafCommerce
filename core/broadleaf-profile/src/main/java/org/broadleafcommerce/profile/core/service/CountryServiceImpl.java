@@ -16,14 +16,13 @@
 
 package org.broadleafcommerce.profile.core.service;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.profile.core.dao.CountryDao;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 @Service("blCountryService")
 public class CountryServiceImpl implements CountryService {

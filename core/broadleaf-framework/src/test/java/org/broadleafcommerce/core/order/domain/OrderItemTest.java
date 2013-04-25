@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
@@ -34,8 +35,6 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
-
-import junit.framework.TestCase;
 
 /**
  * 

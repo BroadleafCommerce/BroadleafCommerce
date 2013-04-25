@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.openadmin.security;
 
+import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
 
 /**
  * 

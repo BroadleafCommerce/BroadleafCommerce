@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.web;
 
-import java.util.Locale;
-
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
+
+import java.util.Locale;
 
 /**
  * @author jfischer

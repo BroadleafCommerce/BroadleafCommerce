@@ -174,26 +174,6 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-servlet</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gwt-math</groupId>
-            <artifactId>gwt-math</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-user</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-dev</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.smartgwt</groupId>
-            <artifactId>smartgwt</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.anasoft.os</groupId>
             <artifactId>daofusion-core</artifactId>
         </dependency>
@@ -201,18 +181,6 @@
             <groupId>com.anasoft.os</groupId>
             <artifactId>daofusion-core</artifactId>
             <classifier>sources</classifier>
-        </dependency>
-        <dependency>
-            <groupId>com.gwtincubator</groupId>
-            <artifactId>gwt-incubator-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.gwt-widget</groupId>
-            <artifactId>gwt-sl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.transmorph</groupId>
-            <artifactId>transmorph</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-pool</groupId>
@@ -233,6 +201,22 @@
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator-annotation-processor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
     </dependencies>
 </project>

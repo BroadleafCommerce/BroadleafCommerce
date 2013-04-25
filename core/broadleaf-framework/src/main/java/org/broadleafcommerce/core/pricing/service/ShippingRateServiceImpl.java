@@ -24,7 +24,6 @@ import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFul
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
 import java.math.BigDecimal;
 
 /**

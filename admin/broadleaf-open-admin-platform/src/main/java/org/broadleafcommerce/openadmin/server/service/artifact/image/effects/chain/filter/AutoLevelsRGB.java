@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter;
 
+import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -27,8 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
-
-import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
 
 /**
  * This filter is based conceptually on the auto-levels feature of Photoshop and functions in the same way.

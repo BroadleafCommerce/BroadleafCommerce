@@ -20,11 +20,10 @@ import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingServi
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 
-import java.util.HashMap;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 /**
  * Register this filter via Spring DelegatingFilterProxy, or register your own implementation

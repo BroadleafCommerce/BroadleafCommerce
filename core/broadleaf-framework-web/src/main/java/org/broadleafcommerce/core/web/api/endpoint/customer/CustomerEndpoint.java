@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.web.api.endpoint.customer;
 
-import org.broadleafcommerce.core.web.api.wrapper.CustomerWrapper;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -26,9 +24,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**

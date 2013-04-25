@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * The Interface TaxDetail. A TaxDetail object stores relevant tax information 

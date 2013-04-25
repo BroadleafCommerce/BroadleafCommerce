@@ -17,7 +17,16 @@
 package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion;
 
 import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.ConverterNotFoundException;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.impl.*;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.impl
+        .BooleanParameterConverter;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.impl
+        .DoubleParameterConverter;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.impl
+        .FloatParameterConverter;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.impl
+        .IntParameterConverter;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.impl
+        .RectangleParameterConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

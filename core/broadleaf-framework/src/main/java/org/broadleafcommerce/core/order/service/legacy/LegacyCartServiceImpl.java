@@ -30,7 +30,6 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.List;
 

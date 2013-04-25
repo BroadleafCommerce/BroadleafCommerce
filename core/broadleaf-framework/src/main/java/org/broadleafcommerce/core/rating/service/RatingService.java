@@ -16,14 +16,14 @@
 
 package org.broadleafcommerce.core.rating.service;
 
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.type.RatingSortType;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.util.List;
+import java.util.Map;
 
 public interface RatingService {
 

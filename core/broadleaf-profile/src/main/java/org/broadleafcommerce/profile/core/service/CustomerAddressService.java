@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.profile.core.service;
 
-import java.util.List;
-
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
+
+import java.util.List;
 
 public interface CustomerAddressService {
 

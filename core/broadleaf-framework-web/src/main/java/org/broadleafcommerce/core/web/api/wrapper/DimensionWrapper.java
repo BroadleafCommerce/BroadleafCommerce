@@ -20,7 +20,6 @@ import org.broadleafcommerce.core.catalog.domain.Dimension;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlElement;
-
 import java.math.BigDecimal;
 
 /**

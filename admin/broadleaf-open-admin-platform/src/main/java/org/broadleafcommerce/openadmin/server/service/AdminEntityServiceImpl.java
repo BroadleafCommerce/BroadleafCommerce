@@ -18,22 +18,21 @@ package org.broadleafcommerce.openadmin.server.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
-import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.dto.CollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.CriteriaTransferObject;
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MapStructure;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.Property;
-import org.broadleafcommerce.openadmin.client.service.DynamicEntityService;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
+import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.CollectionMetadata;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.dto.MapStructure;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
@@ -43,16 +42,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-
+import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -68,20 +64,20 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Override
     public ClassMetadata getClassMetadata(PersistencePackageRequest request)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         ClassMetadata cmd = inspect(request).getClassMetaData();
         cmd.setCeilingType(request.getCeilingEntityClassname());
         return cmd;
     }
 
     @Override
-    public DynamicResultSet getRecords(PersistencePackageRequest request) throws ServiceException, ApplicationSecurityException {
+    public DynamicResultSet getRecords(PersistencePackageRequest request) throws ServiceException {
         return fetch(request);
     }
 
     @Override
     public Entity getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         String idProperty = getIdProperty(cmd);
         
         FilterAndSortCriteria fasc = new FilterAndSortCriteria(idProperty);
@@ -98,7 +94,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Override
     public Entity addEntity(EntityForm entityForm, String[] customCriteria)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
         return add(ppr);
     }
@@ -106,7 +102,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     @Override
     @Transactional("blTransactionManager")
     public Entity updateEntity(EntityForm entityForm, String[] customCriteria)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
         
         Entity returnEntity = update(ppr);
@@ -127,7 +123,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Override
     public void removeEntity(EntityForm entityForm, String[] customCriteria)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
         remove(ppr);
     }
@@ -174,7 +170,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     @Override
     public Entity getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, String collectionItemId)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata());
 
         FieldMetadata md = collectionProperty.getMetadata();
@@ -225,7 +221,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     @Override
     public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata())
                 .withFilterAndSortCriteria(fascs)
@@ -256,7 +252,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Override
     public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity) 
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         Map<String, DynamicResultSet> map = new HashMap<String, DynamicResultSet>();
 
         ClassMetadata cmd = getClassMetadata(ppr);
@@ -273,7 +269,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     @Override
     public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, 
             Entity parentEntity)
-            throws ServiceException, ApplicationSecurityException, ClassNotFoundException {
+            throws ServiceException, ClassNotFoundException {
         // Assemble the properties from the entity form
         List<Property> properties = new ArrayList<Property>();
         for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
@@ -322,7 +318,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     @Override
     public Entity updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
             Entity parentEntity, String collectionItemId)
-            throws ServiceException, ApplicationSecurityException, ClassNotFoundException {
+            throws ServiceException, ClassNotFoundException {
         List<Property> properties = getPropertiesFromEntityForm(entityForm);
 
         FieldMetadata md = field.getMetadata();
@@ -369,7 +365,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     @Override
     public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity, String itemId,
             String priorKey)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         List<Property> properties = new ArrayList<Property>();
 
         Property p;
@@ -496,31 +492,31 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     protected Entity add(PersistencePackageRequest request)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         return service.add(pkg);
     }
 
     protected Entity update(PersistencePackageRequest request)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         return service.update(pkg);
     }
 
     protected DynamicResultSet inspect(PersistencePackageRequest request)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         return service.inspect(pkg);
     }
 
     protected void remove(PersistencePackageRequest request)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         service.remove(pkg);
     }
 
     protected DynamicResultSet fetch(PersistencePackageRequest request)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
 
         CriteriaTransferObject cto = getDefaultCto();

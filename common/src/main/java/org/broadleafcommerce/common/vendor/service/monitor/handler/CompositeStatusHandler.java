@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.common.vendor.service.monitor.handler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.broadleafcommerce.common.vendor.service.monitor.StatusHandler;
 import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CompositeStatusHandler implements StatusHandler {
 

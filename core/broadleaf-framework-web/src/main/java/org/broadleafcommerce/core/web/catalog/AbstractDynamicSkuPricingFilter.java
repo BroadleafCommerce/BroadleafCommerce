@@ -18,13 +18,12 @@ package org.broadleafcommerce.core.web.catalog;
 
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 
-import java.io.IOException;
-
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import java.io.IOException;
 
 /**
  * 

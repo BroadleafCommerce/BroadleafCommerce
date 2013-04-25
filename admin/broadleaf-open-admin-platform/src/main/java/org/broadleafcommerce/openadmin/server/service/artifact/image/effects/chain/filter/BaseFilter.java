@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter;
 
+import org.broadleafcommerce.openadmin.server.service.artifact.OperationBuilder;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -24,8 +26,6 @@ import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.util.Map;
-
-import org.broadleafcommerce.openadmin.server.service.artifact.OperationBuilder;
 
 public abstract class BaseFilter implements BufferedImageOp, OperationBuilder {
     

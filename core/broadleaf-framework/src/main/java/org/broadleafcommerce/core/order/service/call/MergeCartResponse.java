@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 
 public class MergeCartResponse implements Serializable {
     private static final long serialVersionUID = 1L;

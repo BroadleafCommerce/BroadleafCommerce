@@ -16,14 +16,12 @@
 
 package org.broadleafcommerce.common.exception;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 /**
  * Exception thrown when a {@link EntityService service} method fails.
  * 
  * @author jfischer
  */
-public class ServiceException extends Exception implements IsSerializable {
+public class ServiceException extends Exception {
     
     private static final long serialVersionUID = -7084792578727995587L;
     

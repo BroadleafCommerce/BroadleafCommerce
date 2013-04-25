@@ -16,10 +16,9 @@
 
 package org.broadleafcommerce.openadmin.server.cto;
 
-import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
-
 import com.anasoft.os.daofusion.criteria.AssociationPath;
 import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectConverter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
 
 /**
  * @author Jeff Fischer

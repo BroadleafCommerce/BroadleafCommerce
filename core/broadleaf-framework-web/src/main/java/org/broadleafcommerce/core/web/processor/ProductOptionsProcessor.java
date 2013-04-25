@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import net.entropysoft.transmorph.cache.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
@@ -29,6 +28,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.util.LRUMap;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -56,7 +56,7 @@ import java.util.Map;
 public class ProductOptionsProcessor extends AbstractModelVariableModifierProcessor {
 
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
-    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
+    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(100, 500));
 
     public ProductOptionsProcessor() {
         super("product_options");

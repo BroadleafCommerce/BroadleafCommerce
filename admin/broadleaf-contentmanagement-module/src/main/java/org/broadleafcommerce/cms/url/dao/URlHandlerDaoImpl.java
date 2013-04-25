@@ -16,16 +16,15 @@
 
 package org.broadleafcommerce.cms.url.dao;
 
-import java.util.List;
+import org.broadleafcommerce.cms.url.domain.URLHandler;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.broadleafcommerce.cms.url.domain.URLHandler;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 /**
  * Created by ppatel.

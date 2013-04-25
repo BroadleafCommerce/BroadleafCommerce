@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.rating.domain;
 
-import java.util.Date;
-import java.util.List;
-
 import org.broadleafcommerce.core.rating.service.type.ReviewStatusType;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.util.Date;
+import java.util.List;
 
 public interface ReviewDetail {
 

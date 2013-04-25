@@ -25,7 +25,6 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;

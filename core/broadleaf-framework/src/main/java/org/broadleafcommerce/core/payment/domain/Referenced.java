@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.common.encryption.EncryptionModule;
+
+import java.io.Serializable;
 
 public interface Referenced extends Serializable {
 

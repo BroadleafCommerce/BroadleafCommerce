@@ -19,7 +19,6 @@ package org.broadleafcommerce.openadmin.web.resource;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.springframework.core.io.Resource;
 

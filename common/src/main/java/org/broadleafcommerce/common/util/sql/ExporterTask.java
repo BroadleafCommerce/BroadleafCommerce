@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.common.util.sql;
 
-import java.io.File;
-import java.util.Properties;
-
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.PropertySet;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2x.Exporter;
+
+import java.io.File;
+import java.util.Properties;
 
 /**
  * This is a re-worked version from Hibernate tools

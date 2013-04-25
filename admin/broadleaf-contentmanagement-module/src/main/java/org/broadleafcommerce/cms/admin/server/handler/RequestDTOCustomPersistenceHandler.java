@@ -19,7 +19,7 @@ package org.broadleafcommerce.cms.admin.server.handler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTOImpl;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 
 /**
  * Created by IntelliJ IDEA.

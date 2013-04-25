@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.payment.service.module;
 
-import java.util.Map;
-
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
+
+import java.util.Map;
 
 public interface PaymentResponse {
 

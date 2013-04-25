@@ -21,7 +21,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 import javax.annotation.Resource;
-
 import java.util.HashMap;
 
 /**

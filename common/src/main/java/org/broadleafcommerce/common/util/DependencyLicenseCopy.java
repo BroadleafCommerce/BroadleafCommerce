@@ -16,17 +16,17 @@
 
 package org.broadleafcommerce.common.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Vector;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.FileResource;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Vector;
 
 public class DependencyLicenseCopy extends Copy {
 

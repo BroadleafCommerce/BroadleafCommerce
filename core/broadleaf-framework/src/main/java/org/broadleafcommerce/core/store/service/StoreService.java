@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.store.service;
 
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.core.store.domain.Store;
 import org.broadleafcommerce.profile.core.domain.Address;
+
+import java.util.List;
+import java.util.Map;
 
 public interface StoreService {
 

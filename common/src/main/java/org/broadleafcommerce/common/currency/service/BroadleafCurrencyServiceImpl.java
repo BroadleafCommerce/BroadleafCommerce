@@ -18,7 +18,6 @@ package org.broadleafcommerce.common.currency.service;
 
 import org.broadleafcommerce.common.currency.dao.BroadleafCurrencyDao;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.locale.domain.Locale;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

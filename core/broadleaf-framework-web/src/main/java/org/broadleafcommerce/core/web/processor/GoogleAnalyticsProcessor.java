@@ -35,7 +35,6 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
 import javax.annotation.Resource;
-
 import java.util.Map;
 
 /**

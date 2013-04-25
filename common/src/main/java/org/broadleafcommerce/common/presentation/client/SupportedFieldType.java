@@ -16,14 +16,12 @@
 
 package org.broadleafcommerce.common.presentation.client;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 /**
  * 
  * @author jfischer
  *
  */
-public enum SupportedFieldType implements IsSerializable {
+public enum SupportedFieldType {
     UNKNOWN,
     ID,
     BOOLEAN,

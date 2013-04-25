@@ -16,7 +16,12 @@
 
 package org.broadleafcommerce.core.social.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**

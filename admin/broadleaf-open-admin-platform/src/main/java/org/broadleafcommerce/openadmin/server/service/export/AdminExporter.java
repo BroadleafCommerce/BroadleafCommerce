@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service.export;
 
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.dto.Property;
 
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;

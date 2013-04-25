@@ -20,9 +20,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.override.FieldMetadataOverride;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
@@ -51,15 +51,18 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
 
     @Override
     public boolean addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
-        String idField = (String) addMetadataRequest.getDynamicEntityDao().getIdMetadata(addMetadataRequest.getTargetClass()).get("name");
-        if (idField.equals(addMetadataRequest.getRequestedField().getName())) {
-            FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
-            BasicFieldMetadata basicMetadata = new BasicFieldMetadata();
-            basicMetadata.setName(addMetadataRequest.getRequestedField().getName());
-            basicMetadata.setExcluded(false);
-            metadata.put(addMetadataRequest.getRequestedField().getName(), basicMetadata);
-            setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
-            return true;
+        Map<String, Object> idMetadata = addMetadataRequest.getDynamicEntityDao().getIdMetadata(addMetadataRequest.getTargetClass());
+        if (idMetadata != null) {
+            String idField = (String) idMetadata.get("name");
+            if (idField.equals(addMetadataRequest.getRequestedField().getName())) {
+                FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
+                BasicFieldMetadata basicMetadata = new BasicFieldMetadata();
+                basicMetadata.setName(addMetadataRequest.getRequestedField().getName());
+                basicMetadata.setExcluded(false);
+                metadata.put(addMetadataRequest.getRequestedField().getName(), basicMetadata);
+                setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
+                return true;
+            }
         }
         return false;
     }

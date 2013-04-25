@@ -16,14 +16,13 @@
 
 package org.broadleafcommerce.core.web.catalog.taglib;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.broadleafcommerce.core.catalog.domain.Product;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
-
-import org.broadleafcommerce.core.catalog.domain.Product;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class DisplayFeaturedProductsTag extends TagSupport {
 

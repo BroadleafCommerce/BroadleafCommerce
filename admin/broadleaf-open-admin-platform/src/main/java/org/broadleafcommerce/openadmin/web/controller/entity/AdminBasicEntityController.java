@@ -23,18 +23,18 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.AdornedTargetList;
-import org.broadleafcommerce.openadmin.client.dto.BasicCollectionMetadata;
-import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ClassTree;
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.FilterAndSortCriteria;
-import org.broadleafcommerce.openadmin.client.dto.MapMetadata;
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
+import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
@@ -64,18 +64,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to 
@@ -952,11 +949,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param sectionKey the current main section key
      * @return the list grid
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, Entity entity, Property collectionProperty,
             MultiValueMap<String, String> requestParams, String sectionKey)
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         DynamicResultSet drs = service.getRecordsForCollection(mainMetadata, entity, collectionProperty,
                 getCriteria(requestParams), getStartIndex(requestParams), getMaxIndex(requestParams));
 
@@ -977,10 +973,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param info
      * @return the entity form
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     protected EntityForm getBlankDynamicFieldTemplateForm(DynamicEntityFormInfo info) 
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         // We need to inspect with the second custom criteria set to the id of
         // the desired structured content type
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
@@ -1013,10 +1008,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param entityId
      * @return the entity form
      * @throws ServiceException
-     * @throws ApplicationSecurityException
      */
     protected EntityForm getDynamicFieldTemplateForm(DynamicEntityFormInfo info, String entityId) 
-            throws ServiceException, ApplicationSecurityException {
+            throws ServiceException {
         // We need to inspect with the second custom criteria set to the id of
         // the desired structured content type
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()

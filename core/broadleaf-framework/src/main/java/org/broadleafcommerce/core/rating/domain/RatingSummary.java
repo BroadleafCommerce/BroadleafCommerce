@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.rating.domain;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.rating.service.type.RatingType;
+
+import java.util.List;
 
 public interface RatingSummary {
     Long getId();

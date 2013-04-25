@@ -25,7 +25,6 @@ import org.broadleafcommerce.core.workflow.ProcessContextFactory;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 
 import javax.annotation.Resource;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;

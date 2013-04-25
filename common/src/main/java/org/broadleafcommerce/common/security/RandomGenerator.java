@@ -28,8 +28,8 @@
  */
 package org.broadleafcommerce.common.security;
 
-import java.security.SecureRandom;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 public final class RandomGenerator {
 

@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.order.domain;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.common.money.Money;
+
+import java.io.Serializable;
 
 public interface DiscreteOrderItemFeePrice extends Serializable {
 

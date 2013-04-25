@@ -35,7 +35,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

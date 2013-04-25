@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request;
 
-import org.broadleafcommerce.openadmin.client.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.Entity;
 
 /**
  * Contains the <tt>Entity</tt> instance and unfiltered property list.

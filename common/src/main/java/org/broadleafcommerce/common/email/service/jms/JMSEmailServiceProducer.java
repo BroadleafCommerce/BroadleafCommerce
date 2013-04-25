@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.common.email.service.jms;
 
-import javax.jms.Destination;
-
 import org.broadleafcommerce.common.email.service.message.EmailServiceProducer;
 import org.springframework.jms.core.JmsTemplate;
+
+import javax.jms.Destination;
 
 public interface JMSEmailServiceProducer extends EmailServiceProducer {
 

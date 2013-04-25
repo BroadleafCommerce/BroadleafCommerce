@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.payment.dao.SecurePaymentInfoDao;
 import org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
@@ -26,6 +24,8 @@ import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * Acquisition of Primary Account Number (PAN) and other sensitive information

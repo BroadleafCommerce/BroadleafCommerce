@@ -18,16 +18,15 @@ package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>Implementation of the {@link EntityValidatorService} that runs entities through JSR-303 validations. The default

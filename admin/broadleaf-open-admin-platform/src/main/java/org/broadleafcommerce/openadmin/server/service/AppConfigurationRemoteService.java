@@ -18,11 +18,9 @@ package org.broadleafcommerce.openadmin.server.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.client.service.AppConfigurationService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
 import java.util.HashMap;
 import java.util.Map;
 

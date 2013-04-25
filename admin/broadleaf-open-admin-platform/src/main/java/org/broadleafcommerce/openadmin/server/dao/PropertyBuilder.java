@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 
 import java.util.Map;
 

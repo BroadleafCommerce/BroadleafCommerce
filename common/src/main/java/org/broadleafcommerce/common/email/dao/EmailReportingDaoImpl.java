@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.common.email.dao;
 
-import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.email.domain.EmailTarget;
 import org.broadleafcommerce.common.email.domain.EmailTracking;
 import org.broadleafcommerce.common.email.domain.EmailTrackingClicks;
 import org.broadleafcommerce.common.email.domain.EmailTrackingOpens;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;

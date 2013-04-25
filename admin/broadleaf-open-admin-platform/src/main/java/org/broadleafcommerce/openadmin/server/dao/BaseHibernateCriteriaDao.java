@@ -16,18 +16,16 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.ejb.HibernateEntityManager;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-
+import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.util.List;
-
-import javax.persistence.EntityManager;
 
 /**
  * Inspired by the com.anasoft.os.daofusion.AbstractHibernateEntityDao class by vojtech.szocs.

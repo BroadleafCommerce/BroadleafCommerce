@@ -28,10 +28,9 @@ import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 @Service("blCheckoutService")
 public class CheckoutServiceImpl implements CheckoutService {

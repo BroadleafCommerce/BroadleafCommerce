@@ -35,7 +35,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 

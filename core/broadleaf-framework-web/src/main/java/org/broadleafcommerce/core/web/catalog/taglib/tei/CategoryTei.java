@@ -16,14 +16,13 @@
 
 package org.broadleafcommerce.core.web.catalog.taglib.tei;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.core.web.catalog.taglib.CategoryTag;
 
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
-
-import org.broadleafcommerce.core.web.catalog.taglib.CategoryTag;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CategoryTei extends TagExtraInfo {
 

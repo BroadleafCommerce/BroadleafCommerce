@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import java.io.Serializable;
-
-import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.Order;
+
+import java.io.Serializable;
 
 public interface CandidateOrderOffer extends Serializable {
 

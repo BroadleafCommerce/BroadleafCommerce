@@ -16,13 +16,12 @@
 
 package org.broadleafcommerce.profile.core.service;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.profile.core.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 @Service("blCustomerAddressService")
 public class CustomerAddressServiceImpl implements CustomerAddressService {

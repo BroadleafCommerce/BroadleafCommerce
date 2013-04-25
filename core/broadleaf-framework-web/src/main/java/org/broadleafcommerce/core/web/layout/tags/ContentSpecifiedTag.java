@@ -17,9 +17,9 @@
 package org.broadleafcommerce.core.web.layout.tags;
 
 import org.apache.taglibs.standard.tag.common.core.Util;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.content.domain.Content;
 import org.broadleafcommerce.core.content.service.ContentService;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 

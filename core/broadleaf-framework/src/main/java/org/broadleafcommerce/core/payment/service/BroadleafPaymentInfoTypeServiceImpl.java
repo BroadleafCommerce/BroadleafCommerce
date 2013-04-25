@@ -17,7 +17,12 @@
 package org.broadleafcommerce.core.payment.service;
 
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.payment.domain.*;
+import org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo;
+import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
+import org.broadleafcommerce.core.payment.domain.EmptyReferenced;
+import org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo;
+import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.springframework.stereotype.Service;
 

@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.money.Money;
+
 import java.io.Serializable;
 import java.util.List;
-
-import org.broadleafcommerce.common.money.Money;
 
 public interface FulfillmentGroupFee extends Serializable {
 

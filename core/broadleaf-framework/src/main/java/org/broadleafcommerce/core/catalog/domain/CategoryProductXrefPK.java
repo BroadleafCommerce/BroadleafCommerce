@@ -18,11 +18,10 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
-import java.io.Serializable;
-
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 /**
  * @author Jeff Fischer

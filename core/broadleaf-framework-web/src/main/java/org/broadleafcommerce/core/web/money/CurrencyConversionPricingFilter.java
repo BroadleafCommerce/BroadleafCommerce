@@ -16,12 +16,11 @@
 
 package org.broadleafcommerce.core.web.money;
 
-import java.util.HashMap;
+import org.broadleafcommerce.common.money.CurrencyConversionService;
 
 import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
-
-import org.broadleafcommerce.common.money.CurrencyConversionService;
+import java.util.HashMap;
 
 public interface CurrencyConversionPricingFilter extends Filter {
     

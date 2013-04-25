@@ -25,7 +25,6 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import javax.mail.internet.MimeMessage;
 import javax.mail.util.ByteArrayDataSource;
-
 import java.util.HashMap;
 
 public abstract class MessageCreator {

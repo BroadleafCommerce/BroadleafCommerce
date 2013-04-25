@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.util;
 
-import org.broadleafcommerce.openadmin.client.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
 
 import java.util.LinkedHashMap;
 

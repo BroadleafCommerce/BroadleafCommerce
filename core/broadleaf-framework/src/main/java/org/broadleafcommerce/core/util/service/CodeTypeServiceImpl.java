@@ -16,13 +16,12 @@
 
 package org.broadleafcommerce.core.util.service;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.util.dao.CodeTypeDao;
 import org.broadleafcommerce.core.util.domain.CodeType;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 @Service("blCodeTypeService")
 @Deprecated

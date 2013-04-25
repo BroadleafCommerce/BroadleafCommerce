@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.search.redirect.service;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.search.redirect.dao.SearchRedirectDao;
 import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * Created by ppatel.

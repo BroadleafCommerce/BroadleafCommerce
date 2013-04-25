@@ -16,16 +16,16 @@
 
 package org.broadleafcommerce.common.security.ldap;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-
 import org.broadleafcommerce.common.security.BroadleafExternalAuthenticationUserDetails;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsMapper;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * This class allows Spring to do it's thing with respect to mapping user details from

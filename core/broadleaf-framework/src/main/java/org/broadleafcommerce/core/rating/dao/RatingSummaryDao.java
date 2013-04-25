@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.core.rating.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.rating.domain.RatingDetail;
 import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
+
+import java.util.List;
 
 public interface RatingSummaryDao {
 

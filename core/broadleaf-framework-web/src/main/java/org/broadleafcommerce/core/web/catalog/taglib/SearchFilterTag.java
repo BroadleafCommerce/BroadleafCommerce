@@ -16,15 +16,14 @@
 
 package org.broadleafcommerce.core.web.catalog.taglib;
 
-import java.io.IOException;
-import java.util.List;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
-
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * The SearchFilterTag sets up an environment for it's children {@link SearchFilterItemTag}s. If a queryString
