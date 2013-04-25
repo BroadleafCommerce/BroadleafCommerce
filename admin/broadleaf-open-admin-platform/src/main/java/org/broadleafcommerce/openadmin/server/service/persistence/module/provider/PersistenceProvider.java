@@ -48,6 +48,7 @@ public interface PersistenceProvider extends Ordered {
     public static final int BASIC = 1000;
     public static final int MAP_FIELD = 2000;
     public static final int RULE = 3000;
+    public static final int MONEY = 3000;
 
     /**
      * Set the property value on the target object. Implementations should translate and set the requestedValue

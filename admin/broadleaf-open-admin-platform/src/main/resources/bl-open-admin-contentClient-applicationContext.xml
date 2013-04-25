@@ -99,6 +99,7 @@
                 <ref bean="blBasicPersistenceProvider"/>
                 <ref bean="blRulePersistenceProvider"/>
                 <ref bean="blMapFieldPersistenceProvider"/>
+                <ref bean="blMoneyFieldPersistenceProvider"/>
             </list>
         </property>
     </bean>

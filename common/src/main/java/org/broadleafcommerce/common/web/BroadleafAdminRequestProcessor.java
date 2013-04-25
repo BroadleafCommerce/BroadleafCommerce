@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.web;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -42,6 +43,9 @@ public class BroadleafAdminRequestProcessor implements BroadleafWebRequestProces
 
     @Resource(name = "messageSource")
     private MessageSource messageSource;
+    
+    @Resource(name = "blLocaleResolver")
+    private BroadleafLocaleResolver localeResolver;
 
     @Override
     public void process(WebRequest request) throws SiteNotFoundException {
@@ -50,10 +54,14 @@ public class BroadleafAdminRequestProcessor implements BroadleafWebRequestProces
         BroadleafRequestContext brc = new BroadleafRequestContext();
         brc.setSite(site);
         brc.setWebRequest(request);
+        
+        Locale locale = localeResolver.resolveLocale(request);
+        brc.setLocale(locale);
 
         if (site == null) {
             brc.setIgnoreSite(true);
         }
+        
         brc.setMessageSource(messageSource);
 
         BroadleafRequestContext.setBroadleafRequestContext(brc);
