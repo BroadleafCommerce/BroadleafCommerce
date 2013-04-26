@@ -70,7 +70,6 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         return (metadata.getFieldType() == SupportedFieldType.BOOLEAN ||
                 metadata.getFieldType() == SupportedFieldType.DATE ||
                 metadata.getFieldType() == SupportedFieldType.DECIMAL ||
-                metadata.getFieldType() == SupportedFieldType.MONEY ||
                 metadata.getFieldType() == SupportedFieldType.INTEGER ||
                 metadata.getFieldType() == SupportedFieldType.EMAIL ||
                 metadata.getFieldType() == SupportedFieldType.FOREIGN_KEY ||
