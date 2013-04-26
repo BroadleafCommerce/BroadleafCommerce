@@ -54,5 +54,19 @@
             return this[this.length - 1];
         };
     }
+    
+    if (!$.prototype.isOverflowed) {
+        $.prototype.isOverflowed = function() {
+            var element = $(this)
+                .clone()
+                .css({display: 'inline', width: 'auto', visibility: 'hidden'})
+                .appendTo('body');
+
+            var elementWidth = element.width();
+            element.remove();
+            
+            return (elementWidth > $(this).width());
+        };
+    }
   
 })(jQuery, this);

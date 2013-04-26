@@ -61,6 +61,18 @@
             }
         },
         
+        updateNecessaryOverflowTooltips : function($container) {
+            var $tds = $container.find('td');
+            $tds.each(function(index, element) {
+                var $element = $(element);
+                console.log($element.data('fieldvalue') + ' ' + $element.isOverflowed());
+                if ($element.isOverflowed()) {
+                    $element.addClass('has-tip tip-top');
+                    $element.attr('title', $element.data('fieldvalue'));
+                }
+            });
+        },
+        
         showAlert : function($container, options) {
     	    var alertType = options.alertType || '';
     	    
@@ -111,6 +123,8 @@
             if (BLCAdmin.listGrid.paginate) {
                 BLCAdmin.listGrid.paginate.initialize($container);
             }
+            
+            this.updateNecessaryOverflowTooltips($container);
         }
     };
     

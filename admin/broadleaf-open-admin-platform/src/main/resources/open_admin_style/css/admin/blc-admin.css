@@ -78,6 +78,17 @@ span.error {
   Foundation Overrides
 ----------------------------------------------------- */
 
+.has-tip {
+	border-bottom: inherit;
+	cursor: inherit;
+	font-weight: inherit;
+}
+
+.has-tip:hover {
+	border-bottom: inherit;
+	color: inherit;
+}
+
 input[type="search"] {
     -webkit-appearance: none;
     padding: 0px;
