@@ -172,6 +172,7 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
         adornedTargetList.linkedIdProperty = linkedIdProperty;
         adornedTargetList.targetIdProperty = targetIdProperty;
         adornedTargetList.inverse = inverse;
+        adornedTargetList.joinEntityClass = joinEntityClass;
 
         return adornedTargetList;
     }
