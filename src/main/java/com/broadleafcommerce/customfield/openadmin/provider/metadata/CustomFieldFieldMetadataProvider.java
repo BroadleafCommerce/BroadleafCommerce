@@ -10,13 +10,14 @@ import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.MapFieldsMetadataProvider;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.MapFieldsFieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -30,10 +31,10 @@ import java.util.Map;
  */
 @Component("blCustomFieldMetadataProvider")
 @Scope("prototype")
-public class CustomFieldMetadataProvider extends MapFieldsMetadataProvider {
+public class CustomFieldFieldMetadataProvider extends MapFieldsFieldMetadataProvider {
 
     //ordering constant for custom field - make execute before the regular map field provider
-    public static final int CUSTOM_FIELD = 4500;
+    public static final int CUSTOM_FIELD = 45000;
 
     @Resource(name="blCustomFieldService")
     protected CustomFieldService customFieldService;
@@ -67,15 +68,15 @@ public class CustomFieldMetadataProvider extends MapFieldsMetadataProvider {
      * @return whether or not any metadata changes were applied
      */
     @Override
-    public boolean addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleFieldForConfiguredMetadata(addMetadataRequest, metadata)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         //We will check in the database to see if there are any configured custom fields
         String targetEntityName = addMetadataRequest.getTargetClass().getName();
         List<CustomField> customFields = customFieldService.findByTargetEntityName(targetEntityName);
         if (CollectionUtils.isEmpty(customFields)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         for (CustomField customField : customFields) {
             FieldMetadataOverride override = new FieldMetadataOverride();
@@ -100,25 +101,25 @@ public class CustomFieldMetadataProvider extends MapFieldsMetadataProvider {
             basicFieldMetadata.setSearchable(customField.getSearchable());
             basicFieldMetadata.getAdditionalMetadata().put(org.broadleafcommerce.openadmin.web.form.entity.Field.ALTERNATE_ORDERING, true);
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
         //we never want to use annotaton override for this
-        return false;
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
         //we never want to use xml override for this
-        return false;
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public boolean addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata) {
+    public FieldProviderResponse addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata) {
         //there is no hibernate mapping for this, as we are describing the field "virtually" from metadata stored in the database
-        return false;
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override
