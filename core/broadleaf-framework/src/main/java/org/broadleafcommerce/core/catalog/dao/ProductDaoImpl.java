@@ -76,7 +76,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public Product readProductById(Long productId) {
-        return (Product) em.find(ProductImpl.class, productId);
+        return em.find(ProductImpl.class, productId);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class ProductDaoImpl implements ProductDao {
         // We only want results that match the product IDs
         criteria.where(product.get("id").as(Long.class).in(productIds));
         
-        return (List<Product>) em.createQuery(criteria).getResultList();
+        return em.createQuery(criteria).getResultList();
     }
 
     @Override
@@ -174,7 +174,7 @@ public class ProductDaoImpl implements ProductDao {
         
         // Execute the query with the restrictions
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        return (List<Product>) em.createQuery(criteria).getResultList();
+        return em.createQuery(criteria).getResultList();
     }
     
     @Override
@@ -206,7 +206,7 @@ public class ProductDaoImpl implements ProductDao {
         
         // Execute the query with the restrictions
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        return (List<Product>) em.createQuery(criteria).getResultList();
+        return em.createQuery(criteria).getResultList();
     }
 
     protected void attachActiveRestriction(Date currentDate, Path<? extends Product> product, 
@@ -378,10 +378,6 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void delete(Product product){
-//      if (!em.contains(product)) {
-//          product = readProductById(product.getId());
-//      }
-//        em.remove(product);
         ((Status) product).setArchived('Y');
         em.merge(product);
     }
@@ -428,13 +424,13 @@ public class ProductDaoImpl implements ProductDao {
     public List<Product> readAllActiveProducts(int page, int pageSize, Date currentDate) {
         CriteriaQuery<Product> criteria = getCriteriaForActiveProducts(currentDate);
         int firstResult = page * pageSize;
-        return (List<Product>) em.createQuery(criteria).setFirstResult(firstResult).setMaxResults(pageSize).getResultList();
+        return em.createQuery(criteria).setFirstResult(firstResult).setMaxResults(pageSize).getResultList();
     }
 
     @Override
     public List<Product> readAllActiveProducts(Date currentDate) {
         CriteriaQuery<Product> criteria = getCriteriaForActiveProducts(currentDate);
-        return (List<Product>) em.createQuery(criteria).getResultList();
+        return em.createQuery(criteria).getResultList();
     }
 
     @Override
