@@ -29,6 +29,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Property;
 import org.hibernate.metadata.ClassMetadata;
@@ -48,12 +49,12 @@ import java.util.Map;
  */
 @Component("blDefaultMetadataProvider")
 @Scope("prototype")
-public class DefaultMetadataProvider extends BasicMetadataProvider {
+public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
 
-    private static final Log LOG = LogFactory.getLog(DefaultMetadataProvider.class);
+    private static final Log LOG = LogFactory.getLog(DefaultFieldMetadataProvider.class);
 
     @Override
-    public boolean addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         Map<String, Object> idMetadata = addMetadataRequest.getDynamicEntityDao().getIdMetadata(addMetadataRequest.getTargetClass());
         if (idMetadata != null) {
             String idField = (String) idMetadata.get("name");
@@ -79,10 +80,10 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                 basicMetadata.setExcluded(false);
                 metadata.put(addMetadataRequest.getRequestedField().getName(), basicMetadata);
                 setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
-                return true;
+                return FieldProviderResponse.HANDLED;
             }
         }
-        return false;
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     public void overrideExclusionsFromXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
@@ -117,7 +118,7 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
     }
 
     @Override
-    public boolean addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata) {
+    public FieldProviderResponse addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata) {
         BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) metadata;
         fieldMetadata.setFieldType(addMetadataFromMappingDataRequest.getType());
         fieldMetadata.setSecondaryType(addMetadataFromMappingDataRequest.getSecondaryType());
@@ -150,11 +151,11 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                 throw new RuntimeException(e);
             }
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
         if (addMetadataFromFieldTypeRequest.getPresentationAttribute() != null) {
             if (
                     addMetadataFromFieldTypeRequest.getExplicitType() != null &&
@@ -381,9 +382,9 @@ public class DefaultMetadataProvider extends BasicMetadataProvider {
                 ((BasicFieldMetadata) metadata.get(addMetadataFromFieldTypeRequest.getRequestedPropertyName())).setForeignKeyDisplayValueProperty(lookupDisplayProperty);
             }
             //return type not supported - just skip this property
-            return true;
+            return FieldProviderResponse.HANDLED;
         }
-        return false;
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
 }

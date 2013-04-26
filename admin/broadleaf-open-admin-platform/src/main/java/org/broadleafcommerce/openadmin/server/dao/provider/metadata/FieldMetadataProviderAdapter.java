@@ -22,6 +22,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.core.Ordered;
 
 import java.util.Map;
@@ -29,31 +30,31 @@ import java.util.Map;
 /**
  * @author Jeff Fischer
  */
-public class MetadataProviderAdapter extends AbstractMetadataProvider {
+public class FieldMetadataProviderAdapter extends AbstractFieldMetadataProvider {
 
     @Override
-    public boolean addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
-        return false;
+    public FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
-        return false;
+    public FieldProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
-        return false;
+    public FieldProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public boolean addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata) {
-        return false;
+    public FieldProviderResponse addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata) {
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
-        return false;
+    public FieldProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override

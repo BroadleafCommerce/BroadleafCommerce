@@ -42,6 +42,7 @@ import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.context.annotation.Scope;
@@ -60,9 +61,9 @@ import java.util.Map;
  */
 @Component("blBasicMetadataProvider")
 @Scope("prototype")
-public class BasicMetadataProvider extends MetadataProviderAdapter {
+public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
 
-    private static final Log LOG = LogFactory.getLog(BasicMetadataProvider.class);
+    private static final Log LOG = LogFactory.getLog(BasicFieldMetadataProvider.class);
 
     protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         AdminPresentation annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentation.class);
@@ -76,9 +77,9 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
     }
 
     @Override
-    public boolean addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleFieldForConfiguredMetadata(addMetadataRequest, metadata)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         AdminPresentation annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentation.class);
         FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
@@ -86,13 +87,13 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
                 addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationDataDrivenEnumeration.class));
         buildBasicMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info, override, addMetadataRequest.getDynamicEntityDao());
         setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleAnnotationOverride(overrideViaAnnotationRequest, metadata)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         Map<String, AdminPresentationOverride> presentationOverrides = new HashMap<String, AdminPresentationOverride>();
         Map<String, AdminPresentationToOneLookupOverride> presentationToOneLookupOverrides = new HashMap<String, AdminPresentationToOneLookupOverride>();
@@ -133,11 +134,11 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
                 }
             }
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
         Map<String, FieldMetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
@@ -177,7 +178,7 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
                 }
             }
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     protected void buildAdminPresentationToOneLookupOverride(Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationToOneLookupOverride> presentationOverrides, String propertyName, String key) {
@@ -598,6 +599,6 @@ public class BasicMetadataProvider extends MetadataProviderAdapter {
 
     @Override
     public int getOrder() {
-        return MetadataProvider.BASIC;
+        return FieldMetadataProvider.BASIC;
     }
 }

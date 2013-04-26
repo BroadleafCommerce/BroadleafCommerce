@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.openadmin.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;
@@ -30,7 +31,7 @@ import java.util.Map;
 /**
  * @author Jeff Fischer
  */
-public class AdvancedCollectionMetadataProvider extends MetadataProviderAdapter {
+public class AdvancedCollectionFieldMetadataProvider extends FieldMetadataProviderAdapter {
 
     protected boolean canHandleFieldForTypeMetadata(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
         AdminPresentationMap map = addMetadataFromFieldTypeRequest.getRequestedField().getAnnotation(AdminPresentationMap.class);
@@ -39,9 +40,9 @@ public class AdvancedCollectionMetadataProvider extends MetadataProviderAdapter 
     }
 
     @Override
-    public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest, metadata)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         CollectionMetadata fieldMetadata = (CollectionMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute();
         if (StringUtils.isEmpty(fieldMetadata.getCollectionCeilingEntity())) {
@@ -58,6 +59,6 @@ public class AdvancedCollectionMetadataProvider extends MetadataProviderAdapter 
             }
         }
         metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(), fieldMetadata);
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 }

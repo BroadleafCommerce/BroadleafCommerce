@@ -31,7 +31,7 @@ import java.lang.reflect.ParameterizedType;
 /**
  * @author Jeff Fischer
  */
-public abstract class AbstractPersistenceProvider implements PersistenceProvider {
+public abstract class AbstractFieldPersistenceProvider implements FieldPersistenceProvider {
 
     protected Class<?> getListFieldType(Serializable instance, FieldManager fieldManager, Property property, PersistenceManager persistenceManager) {
         Class<?> returnType = null;

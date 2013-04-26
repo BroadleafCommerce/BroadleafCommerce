@@ -27,6 +27,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNo
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +39,7 @@ import java.lang.reflect.Field;
  */
 @Component("blMapFieldPersistenceProvider")
 @Scope("prototype")
-public class MapFieldPersistenceProvider extends BasicPersistenceProvider {
+public class MapFieldFieldPersistenceProvider extends BasicFieldPersistenceProvider {
 
     @Override
     protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
@@ -51,7 +52,7 @@ public class MapFieldPersistenceProvider extends BasicPersistenceProvider {
     }
 
     @Override
-    public boolean populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
+    public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
         try {
             //handle some additional field settings (if applicable)
             Class<?> valueType = null;
@@ -105,38 +106,38 @@ public class MapFieldPersistenceProvider extends BasicPersistenceProvider {
                 }
             } else {
                 //handle the map value set itself
-                if (!super.populateValue(populateValueRequest, instance)) {
-                    return false;
+                if (FieldProviderResponse.NOT_HANDLED==super.populateValue(populateValueRequest, instance)) {
+                    return FieldProviderResponse.NOT_HANDLED;
                 }
             }
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (extractValueRequest.getRequestedValue() != null && extractValueRequest.getRequestedValue() instanceof ValueAssignable) {
             ValueAssignable assignableValue = (ValueAssignable) extractValueRequest.getRequestedValue();
             String val = (String) assignableValue.getValue();
             property.setValue(val);
             property.setDisplayValue(extractValueRequest.getDisplayVal());
         } else {
-            if (!super.extractValue(extractValueRequest, property)) {
-                return false;
+            if (FieldProviderResponse.NOT_HANDLED==super.extractValue(extractValueRequest, property)) {
+                return FieldProviderResponse.NOT_HANDLED;
             }
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, BaseCtoConverter ctoConverter) {
-        return false;
+    public FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, BaseCtoConverter ctoConverter) {
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override
     public int getOrder() {
-        return PersistenceProvider.MAP_FIELD;
+        return FieldPersistenceProvider.MAP_FIELD;
     }
 }

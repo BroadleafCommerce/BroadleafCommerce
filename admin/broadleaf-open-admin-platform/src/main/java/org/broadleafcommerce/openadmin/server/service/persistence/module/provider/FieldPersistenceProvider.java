@@ -23,6 +23,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
@@ -33,22 +34,20 @@ import java.util.Map;
  * are being requested or set for the admin. This includes any special translations or transformations required to get
  * from the string representation in the admin back to the field on a Hibernate entity - and the reverse. Providers are
  * typically added in response to new admin presentation annotation support that requires special persistence behavior.
- * Note, {@link PersistenceProvider} instances are part of {@link org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule},
- * and therefore relate to variations on persistence of basic fields. For more exotic field types (e.g. Maps),
- * {@link org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule} are used (e.g.
- * {@link org.broadleafcommerce.openadmin.server.service.persistence.module.MapStructurePersistenceModule}).
- * Implementers should generally extend {@link PersistenceProviderAdapter}.
+ * Note, {@link FieldPersistenceProvider} instances are part of {@link org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule},
+ * and therefore relate to variations on persistence of basic fields. Implementers should generally
+ * extend {@link FieldPersistenceProviderAdapter}.
  *
  * @see org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule
  * @author Jeff Fischer
  */
-public interface PersistenceProvider extends Ordered {
+public interface FieldPersistenceProvider extends Ordered {
 
     //standard ordering constants for BLC providers
-    public static final int BASIC = 1000;
-    public static final int MAP_FIELD = 2000;
-    public static final int RULE = 3000;
-    public static final int MONEY = 3000;
+    public static final int BASIC = 10000;
+    public static final int MAP_FIELD = 20000;
+    public static final int RULE = 30000;
+    public static final int MONEY = 40000;
 
     /**
      * Set the property value on the target object. Implementations should translate and set the requestedValue
@@ -58,7 +57,7 @@ public interface PersistenceProvider extends Ordered {
      * @param instance the entity instance on which to set the value harvested from the request
      * @return whether or not the implementation handled the persistence request
      */
-    boolean populateValue(PopulateValueRequest populateValueRequest, Serializable instance);
+    FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance);
 
     /**
      * Retrieve the property value from the provided value. Implementations should translate the requestedValue
@@ -68,7 +67,7 @@ public interface PersistenceProvider extends Ordered {
      * @param property the property for the admin that contains the information harvested from the persistence value
      * @return whether or not the implementation handled the persistence request
      */
-    boolean extractValue(ExtractValueRequest extractValueRequest, Property property);
+    FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property);
 
     /**
      * Add criteria to the ctoConverter. The CtoConverter is used by the system to refine the fetch criteria
@@ -79,7 +78,7 @@ public interface PersistenceProvider extends Ordered {
      * @param ctoConverter search info should be added to converter. It is responsible for generating the final search criteria.
      * @return whether or not the implementation handled the persistence request
      */
-    boolean addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, BaseCtoConverter ctoConverter);
+    FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, BaseCtoConverter ctoConverter);
 
     /**
      * Filter the list of properties posted by the admin during and add or update. This is the property list
@@ -89,6 +88,6 @@ public interface PersistenceProvider extends Ordered {
      * @param properties the collection of properties to filter
      * @return whether or not the implementation handled the persistence request
      */
-    boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties);
+    FieldProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties);
 
 }

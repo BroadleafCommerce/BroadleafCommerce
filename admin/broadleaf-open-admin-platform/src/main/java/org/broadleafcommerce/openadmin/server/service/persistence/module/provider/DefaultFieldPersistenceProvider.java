@@ -20,6 +20,7 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -30,26 +31,27 @@ import java.io.Serializable;
  */
 @Component("blDefaultPersistenceProvider")
 @Scope("prototype")
-public class DefaultPersistenceProvider extends PersistenceProviderAdapter {
+public class DefaultFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
 
-    public boolean populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
+    @Override
+    public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
         try {
             populateValueRequest.getFieldManager().setFieldValue(instance,
                     populateValueRequest.getProperty().getName(), populateValueRequest.getRequestedValue());
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (extractValueRequest.getRequestedValue() != null) {
             String val = extractValueRequest.getRequestedValue().toString();
             property.setValue(val);
             property.setDisplayValue(extractValueRequest.getDisplayVal());
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
 }

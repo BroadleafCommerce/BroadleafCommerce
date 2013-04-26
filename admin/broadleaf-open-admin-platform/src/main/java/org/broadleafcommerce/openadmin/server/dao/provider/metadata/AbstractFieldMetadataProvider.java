@@ -41,7 +41,7 @@ import java.util.TreeMap;
 /**
  * @author Jeff Fischer
  */
-public abstract class AbstractMetadataProvider implements MetadataProvider {
+public abstract class AbstractFieldMetadataProvider implements FieldMetadataProvider {
 
     protected Map<String, Map<String, FieldMetadataOverride>> metadataOverrides;
 

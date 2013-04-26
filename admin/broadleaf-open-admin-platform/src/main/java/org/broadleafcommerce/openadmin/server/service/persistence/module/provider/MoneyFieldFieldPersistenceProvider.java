@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -42,13 +43,13 @@ public class MoneyFieldPersistenceProvider extends AbstractMoneyFieldPersistence
     }
 
     @Override
-    public boolean extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (!canHandleExtraction(extractValueRequest, property)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         
         if (extractValueRequest.getRequestedValue() == null) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         
         BigDecimal value = (BigDecimal) extractValueRequest.getRequestedValue();
@@ -57,11 +58,11 @@ public class MoneyFieldPersistenceProvider extends AbstractMoneyFieldPersistence
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         property.setDisplayValue(getFormattedDisplayValue(value, brc.getJavaLocale(), Money.defaultCurrency()));
         
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
     
     @Override
     public int getOrder() {
-        return PersistenceProvider.MONEY;
+        return FieldPersistenceProvider.MONEY;
     }
 }

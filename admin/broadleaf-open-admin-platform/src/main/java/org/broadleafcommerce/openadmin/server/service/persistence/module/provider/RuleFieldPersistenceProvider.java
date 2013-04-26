@@ -30,6 +30,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNo
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTOToMVELTranslator;
@@ -59,7 +60,7 @@ import java.util.Map;
  */
 @Component("blRulePersistenceProvider")
 @Scope("prototype")
-public class RulePersistenceProvider extends PersistenceProviderAdapter {
+public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
 
     protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
         return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
@@ -74,9 +75,9 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
     @Resource(name = "blRuleBuilderFieldServiceFactory")
     protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
 
-    public boolean populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
+    public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
         if (!canHandlePersistence(populateValueRequest, instance)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         try {
             switch (populateValueRequest.getMetadata().getFieldType()) {
@@ -152,13 +153,13 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (!canHandleExtraction(extractValueRequest, property)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         String val = null;
         ObjectMapper mapper = new ObjectMapper();
@@ -200,11 +201,11 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
                 }
             }
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
+    public FieldProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
         //This may contain rule Json fields - convert and filter out
         List<Property> propertyList = new ArrayList<Property>();
         propertyList.addAll(Arrays.asList(addFilterPropertiesRequest.getEntity().getProperties()));
@@ -235,7 +236,7 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
         }
         propertyList.addAll(additionalProperties);
         addFilterPropertiesRequest.getEntity().setProperties(propertyList.toArray(new Property[propertyList.size()]));
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     protected Property convertQuantityBasedRuleToJson(MVELToDataWrapperTranslator translator, ObjectMapper mapper,
@@ -412,6 +413,6 @@ public class RulePersistenceProvider extends PersistenceProviderAdapter {
 
     @Override
     public int getOrder() {
-        return PersistenceProvider.RULE;
+        return FieldPersistenceProvider.RULE;
     }
 }

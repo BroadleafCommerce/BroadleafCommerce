@@ -34,10 +34,11 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.MetadataProvider;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.FieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.codehaus.jackson.map.util.LRUMap;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
@@ -50,6 +51,8 @@ import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -67,9 +70,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
 
 /**
  * 
@@ -97,10 +97,10 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     protected EntityConfiguration entityConfiguration;
 
     @Resource(name="blMetadataProviders")
-    protected List<MetadataProvider> metadataProviders = new ArrayList<MetadataProvider>();
+    protected List<FieldMetadataProvider> fieldMetadataProviders = new ArrayList<FieldMetadataProvider>();
 
     @Resource(name="blDefaultMetadataProvider")
-    protected MetadataProvider defaultMetadataProvider;
+    protected FieldMetadataProvider defaultFieldMetadataProvider;
 
     @Resource(name="blAppConfigurationRemoteService")
     protected AppConfigurationService appConfigurationRemoteService;
@@ -361,21 +361,24 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
                     Field field = FieldManager.getSingleField(targetClass, property);
                     if (!Modifier.isStatic(field.getModifiers())) {
                         boolean handled = false;
-                        for (MetadataProvider provider : metadataProviders) {
-                            boolean response = provider.addMetadataFromFieldType(
+                        for (FieldMetadataProvider provider : fieldMetadataProviders) {
+                            FieldProviderResponse response = provider.addMetadataFromFieldType(
                                     new AddMetadataFromFieldTypeRequest(field, targetClass, null, new ForeignKey[]{},
                                             MergedPropertyType.PRIMARY, null, null, "",
                                             property, null, false, 0, attributesMap, presentationAttribute,
                                             ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(), field.getType(), this),
                                             mergedProperties);
-                            if (response) {
+                            if (FieldProviderResponse.NOT_HANDLED != response) {
                                 handled = true;
+                            }
+                            if (FieldProviderResponse.HANDLED_BREAK == response) {
+                                break;
                             }
                         }
                         if (!handled) {
                             //this provider is not included in the provider list on purpose - it is designed to handle basic
                             //AdminPresentation fields, and those fields not admin presentation annotated at all
-                            defaultMetadataProvider.addMetadataFromFieldType(
+                            defaultFieldMetadataProvider.addMetadataFromFieldType(
                                     new AddMetadataFromFieldTypeRequest(field, targetClass, null, new ForeignKey[]{},
                                             MergedPropertyType.PRIMARY, null, null, "", property,
                                             null, false, 0, attributesMap, presentationAttribute, ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(),
@@ -926,18 +929,21 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
             ) {
                 if (myField != null) {
                     boolean handled = false;
-                    for (MetadataProvider provider : metadataProviders) {
+                    for (FieldMetadataProvider provider : fieldMetadataProviders) {
                         FieldMetadata presentationAttribute = presentationAttributes.get(propertyName);
                         if (presentationAttribute != null) {
                             setExcludedBasedOnShowIfProperty(presentationAttribute);
                         }
-                        boolean response = provider.addMetadataFromFieldType(
+                        FieldProviderResponse response = provider.addMetadataFromFieldType(
                                 new AddMetadataFromFieldTypeRequest(myField, targetClass, foreignField, additionalForeignFields,
                                         mergedPropertyType, componentProperties, idProperty, prefix,
                                         propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition,
                                         presentationAttributes, presentationAttribute, null, type.getReturnedClass(), this), fields);
-                        if (response) {
+                        if (FieldProviderResponse.NOT_HANDLED != response) {
                             handled = true;
+                        }
+                        if (FieldProviderResponse.HANDLED_BREAK == response) {
+                            break;
                         }
                     }
                     if (!handled) {
@@ -1107,7 +1113,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         }
         //Don't include this property if it failed manyToOne inclusion and is not a specified foreign key
         if (includeField || propertyForeignKey || additionalForeignKeyIndexPosition >= 0) {
-            defaultMetadataProvider.addMetadataFromFieldType(
+            defaultFieldMetadataProvider.addMetadataFromFieldType(
                     new AddMetadataFromFieldTypeRequest(field, targetClass, foreignField, additionalForeignFields,
                             mergedPropertyType, componentProperties, idProperty, prefix, propertyName, type,
                             propertyForeignKey, additionalForeignKeyIndexPosition, presentationAttributes,
@@ -1306,19 +1312,19 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
         this.metadata = metadata;
     }
 
-    public List<MetadataProvider> getMetadataProviders() {
-        return metadataProviders;
+    public List<FieldMetadataProvider> getFieldMetadataProviders() {
+        return fieldMetadataProviders;
     }
 
-    public void setMetadataProviders(List<MetadataProvider> metadataProviders) {
-        this.metadataProviders = metadataProviders;
+    public void setFieldMetadataProviders(List<FieldMetadataProvider> fieldMetadataProviders) {
+        this.fieldMetadataProviders = fieldMetadataProviders;
     }
 
-    public MetadataProvider getDefaultMetadataProvider() {
-        return defaultMetadataProvider;
+    public FieldMetadataProvider getDefaultFieldMetadataProvider() {
+        return defaultFieldMetadataProvider;
     }
 
-    public void setDefaultMetadataProvider(MetadataProvider defaultMetadataProvider) {
-        this.defaultMetadataProvider = defaultMetadataProvider;
+    public void setDefaultFieldMetadataProvider(FieldMetadataProvider defaultFieldMetadataProvider) {
+        this.defaultFieldMetadataProvider = defaultFieldMetadataProvider;
     }
 }

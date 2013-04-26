@@ -39,6 +39,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -52,9 +53,9 @@ import java.util.Map;
  */
 @Component("blMapMetadataProvider")
 @Scope("prototype")
-public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
+public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataProvider {
 
-    private static final Log LOG = LogFactory.getLog(MapMetadataProvider.class);
+    private static final Log LOG = LogFactory.getLog(MapFieldMetadataProvider.class);
 
     protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         AdminPresentationMap annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationMap.class);
@@ -67,9 +68,9 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
     }
 
     @Override
-    public boolean addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleFieldForConfiguredMetadata(addMetadataRequest, metadata)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         AdminPresentationMap annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationMap.class);
         FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
@@ -77,13 +78,13 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
         buildMapMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(),
         metadata, info, override, addMetadataRequest.getDynamicEntityDao(), addMetadataRequest.getPrefix());
         setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleAnnotationOverride(overrideViaAnnotationRequest, metadata)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         Map<String, AdminPresentationMapOverride> presentationMapOverrides = new HashMap<String, AdminPresentationMapOverride>();
 
@@ -102,11 +103,11 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
                 }
             }
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
         Map<String, FieldMetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
@@ -145,17 +146,17 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
                 }
             }
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest, metadata)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         //do nothing but add the property without manipulation
         metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(), addMetadataFromFieldTypeRequest.getPresentationAttribute());
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     protected void buildAdminPresentationMapOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties,
@@ -542,6 +543,6 @@ public class MapMetadataProvider extends AdvancedCollectionMetadataProvider {
 
     @Override
     public int getOrder() {
-        return MetadataProvider.MAP;
+        return FieldMetadataProvider.MAP;
     }
 }

@@ -33,6 +33,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.hibernate.internal.TypeLocatorImpl;
 import org.hibernate.type.Type;
 import org.hibernate.type.TypeResolver;
@@ -47,9 +48,9 @@ import java.util.Map;
  */
 @Component("blMapFieldsMetadataProvider")
 @Scope("prototype")
-public class MapFieldsMetadataProvider extends DefaultMetadataProvider {
+public class MapFieldsFieldMetadataProvider extends DefaultFieldMetadataProvider {
 
-    private static final Log LOG = LogFactory.getLog(MapFieldsMetadataProvider.class);
+    private static final Log LOG = LogFactory.getLog(MapFieldsFieldMetadataProvider.class);
 
     protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         AdminPresentationMapFields annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationMapFields.class);
@@ -62,9 +63,9 @@ public class MapFieldsMetadataProvider extends DefaultMetadataProvider {
     }
 
     @Override
-    public boolean addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleFieldForConfiguredMetadata(addMetadataRequest, metadata)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         AdminPresentationMapFields annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationMapFields.class);
         for (AdminPresentationMapField mapField : annot.mapDisplayFields()) {
@@ -91,13 +92,13 @@ public class MapFieldsMetadataProvider extends DefaultMetadataProvider {
                 basicFieldMetadata.setManyToField(mapField.manyToField());
             }
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest, metadata)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         //look for any map field metadata that was previously added for the requested field
         for (Map.Entry<String, FieldMetadata> entry : addMetadataFromFieldTypeRequest.getPresentationAttributes().entrySet()) {
@@ -146,23 +147,23 @@ public class MapFieldsMetadataProvider extends DefaultMetadataProvider {
                         myType.getReturnedClass(), addMetadataFromFieldTypeRequest.getDynamicEntityDao()), metadata);
             }
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
         //TODO support annotation override
-        return false;
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
         //TODO support xml override
-        return false;
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override
     public int getOrder() {
-        return MetadataProvider.MAP_FIELD;
+        return FieldMetadataProvider.MAP_FIELD;
     }
 }

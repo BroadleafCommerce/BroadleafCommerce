@@ -23,12 +23,13 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.DefaultMetadataProvider;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.MetadataProvider;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.DefaultFieldMetadataProvider;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.FieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.hibernate.mapping.Property;
 import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
@@ -51,25 +52,28 @@ public class Metadata {
     private static final Log LOG = LogFactory.getLog(Metadata.class);
 
     @Resource(name="blMetadataProviders")
-    protected List<MetadataProvider> metadataProviders = new ArrayList<MetadataProvider>();
+    protected List<FieldMetadataProvider> fieldMetadataProviders = new ArrayList<FieldMetadataProvider>();
 
     @Resource(name="blDefaultMetadataProvider")
-    protected MetadataProvider defaultMetadataProvider;
+    protected FieldMetadataProvider defaultFieldMetadataProvider;
 
     public Map<String, FieldMetadata> getFieldPresentationAttributes(Class<?> parentClass, Class<?> targetClass, DynamicEntityDao dynamicEntityDao, String prefix) {
         Map<String, FieldMetadata> attributes = new HashMap<String, FieldMetadata>();
         Field[] fields = dynamicEntityDao.getAllFields(targetClass);
         for (Field field : fields) {
             boolean foundOneOrMoreHandlers = false;
-            for (MetadataProvider metadataProvider : metadataProviders) {
-                boolean response = metadataProvider.addMetadata(new AddMetadataRequest(field, parentClass, targetClass,
+            for (FieldMetadataProvider fieldMetadataProvider : fieldMetadataProviders) {
+                FieldProviderResponse response = fieldMetadataProvider.addMetadata(new AddMetadataRequest(field, parentClass, targetClass,
                         dynamicEntityDao, prefix), attributes);
-                if (response) {
+                if (FieldProviderResponse.NOT_HANDLED != response) {
                     foundOneOrMoreHandlers = true;
+                }
+                if (FieldProviderResponse.HANDLED_BREAK == response) {
+                    break;
                 }
             }
             if (!foundOneOrMoreHandlers) {
-                defaultMetadataProvider.addMetadata(new AddMetadataRequest(field, parentClass, targetClass,
+                defaultFieldMetadataProvider.addMetadata(new AddMetadataRequest(field, parentClass, targetClass,
                         dynamicEntityDao, prefix), attributes);
             }
         }
@@ -90,32 +94,38 @@ public class Metadata {
         Map<String, FieldMetadata> mergedProperties = propertyBuilder.execute(classAnnotatedPopulateManyToOneFields);
         for (int i = entities.length-1;i >= 0; i--) {
             boolean handled = false;
-            for (MetadataProvider metadataProvider : metadataProviders) {
-                boolean response = metadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
+            for (FieldMetadataProvider fieldMetadataProvider : fieldMetadataProviders) {
+                FieldProviderResponse response = fieldMetadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
                             isParentExcluded, dynamicEntityDao, prefix), mergedProperties);
-                if (response) {
+                if (FieldProviderResponse.NOT_HANDLED != response) {
                     handled = true;
+                }
+                if (FieldProviderResponse.HANDLED_BREAK == response) {
+                    break;
                 }
             }
             if (!handled) {
-                defaultMetadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
+                defaultFieldMetadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
                                          isParentExcluded, dynamicEntityDao, prefix), mergedProperties);
             }
         }
-        ((DefaultMetadataProvider) defaultMetadataProvider).overrideExclusionsFromXml(new OverrideViaXmlRequest(configurationKey,
+        ((DefaultFieldMetadataProvider) defaultFieldMetadataProvider).overrideExclusionsFromXml(new OverrideViaXmlRequest(configurationKey,
                 ceilingEntityFullyQualifiedClassname, prefix, isParentExcluded, dynamicEntityDao), mergedProperties);
 
         boolean handled = false;
-        for (MetadataProvider metadataProvider : metadataProviders) {
-            boolean response = metadataProvider.overrideViaXml(
+        for (FieldMetadataProvider fieldMetadataProvider : fieldMetadataProviders) {
+            FieldProviderResponse response = fieldMetadataProvider.overrideViaXml(
                     new OverrideViaXmlRequest(configurationKey, ceilingEntityFullyQualifiedClassname, prefix,
                             isParentExcluded, dynamicEntityDao), mergedProperties);
-            if (response) {
+            if (FieldProviderResponse.NOT_HANDLED != response) {
                 handled = true;
+            }
+            if (FieldProviderResponse.HANDLED_BREAK == response) {
+                break;
             }
         }
         if (!handled) {
-            defaultMetadataProvider.overrideViaXml(
+            defaultFieldMetadataProvider.overrideViaXml(
                                 new OverrideViaXmlRequest(configurationKey, ceilingEntityFullyQualifiedClassname, prefix,
                                         isParentExcluded, dynamicEntityDao), mergedProperties);
         }
@@ -156,34 +166,37 @@ public class Metadata {
         presentationAttribute.setInheritedFromType(targetClass.getName());
         presentationAttribute.setAvailableToTypes(new String[]{targetClass.getName()});
         boolean handled = false;
-        for (MetadataProvider metadataProvider : metadataProviders) {
-            boolean response = metadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(
+        for (FieldMetadataProvider fieldMetadataProvider : fieldMetadataProviders) {
+            FieldProviderResponse response = fieldMetadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(
                 componentProperties, type, secondaryType, entityType, propertyName, mergedPropertyType, dynamicEntityDao), presentationAttribute);
-            if (response) {
+            if (FieldProviderResponse.NOT_HANDLED != response) {
                 handled = true;
+            }
+            if (FieldProviderResponse.HANDLED_BREAK == response) {
+                break;
             }
         }
         if (!handled) {
-            defaultMetadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(
+            defaultFieldMetadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(
                     componentProperties, type, secondaryType, entityType, propertyName, mergedPropertyType, dynamicEntityDao), presentationAttribute);
         }
 
         return presentationAttribute;
     }
 
-    public MetadataProvider getDefaultMetadataProvider() {
-        return defaultMetadataProvider;
+    public FieldMetadataProvider getDefaultFieldMetadataProvider() {
+        return defaultFieldMetadataProvider;
     }
 
-    public void setDefaultMetadataProvider(MetadataProvider defaultMetadataProvider) {
-        this.defaultMetadataProvider = defaultMetadataProvider;
+    public void setDefaultFieldMetadataProvider(FieldMetadataProvider defaultFieldMetadataProvider) {
+        this.defaultFieldMetadataProvider = defaultFieldMetadataProvider;
     }
 
-    public List<MetadataProvider> getMetadataProviders() {
-        return metadataProviders;
+    public List<FieldMetadataProvider> getFieldMetadataProviders() {
+        return fieldMetadataProviders;
     }
 
-    public void setMetadataProviders(List<MetadataProvider> metadataProviders) {
-        this.metadataProviders = metadataProviders;
+    public void setFieldMetadataProviders(List<FieldMetadataProvider> fieldMetadataProviders) {
+        this.fieldMetadataProviders = fieldMetadataProviders;
     }
 }

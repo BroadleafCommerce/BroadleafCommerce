@@ -23,6 +23,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
@@ -31,26 +32,26 @@ import java.util.Map;
 /**
  * @author Jeff Fischer
  */
-public class PersistenceProviderAdapter extends AbstractPersistenceProvider {
+public class FieldPersistenceProviderAdapter extends AbstractFieldPersistenceProvider {
 
     @Override
-    public boolean addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, BaseCtoConverter ctoConverter) {
-        return false;
+    public FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, BaseCtoConverter ctoConverter) {
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public boolean populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
-        return false;
+    public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public boolean extractValue(ExtractValueRequest extractValueRequest, Property property) {
-        return false;
+    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) {
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public boolean filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
-        return false;
+    public FieldProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     @Override

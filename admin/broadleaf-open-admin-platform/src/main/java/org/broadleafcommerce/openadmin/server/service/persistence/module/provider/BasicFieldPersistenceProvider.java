@@ -33,6 +33,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNo
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -56,7 +57,7 @@ import java.util.StringTokenizer;
  */
 @Component("blBasicPersistenceProvider")
 @Scope("prototype")
-public class BasicPersistenceProvider extends PersistenceProviderAdapter {
+public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
 
     protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
         BasicFieldMetadata metadata = populateValueRequest.getMetadata();
@@ -94,9 +95,9 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
     }
 
     @Override
-    public boolean populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
+    public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
         if (!canHandlePersistence(populateValueRequest, instance)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         try {
             switch (populateValueRequest.getMetadata().getFieldType()) {
@@ -221,13 +222,13 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (!canHandleExtraction(extractValueRequest, property)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         try {
             if (extractValueRequest.getRequestedValue() != null) {
@@ -275,13 +276,13 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
         } catch (IllegalAccessException e) {
             throw new PersistenceException(e);
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, BaseCtoConverter ctoConverter) {
+    public FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, BaseCtoConverter ctoConverter) {
         if (!canHandleSearchMapping(addSearchMappingRequest, ctoConverter)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         AssociationPath associationPath;
         int dotIndex = addSearchMappingRequest.getPropertyName().lastIndexOf('.');
@@ -449,11 +450,11 @@ public class BasicPersistenceProvider extends PersistenceProviderAdapter {
                 }
                 break;
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
     public int getOrder() {
-        return PersistenceProvider.BASIC;
+        return FieldPersistenceProvider.BASIC;
     }
 }

@@ -37,6 +37,7 @@ import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -51,9 +52,9 @@ import java.util.Map;
  */
 @Component("blCollectionMetadataProvider")
 @Scope("prototype")
-public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvider {
+public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMetadataProvider {
 
-    private static final Log LOG = LogFactory.getLog(CollectionMetadataProvider.class);
+    private static final Log LOG = LogFactory.getLog(CollectionFieldMetadataProvider.class);
 
     protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         AdminPresentationCollection annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationCollection.class);
@@ -66,9 +67,9 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
     }
 
     @Override
-    public boolean addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleFieldForConfiguredMetadata(addMetadataRequest, metadata)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         AdminPresentationCollection annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationCollection
                 .class);
@@ -77,13 +78,13 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
         buildCollectionMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(),
                 metadata, info, override);
         setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
         if (!canHandleAnnotationOverride(overrideViaAnnotationRequest, metadata)) {
-            return false;
+            return FieldProviderResponse.NOT_HANDLED;
         }
         Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides = new HashMap<String, AdminPresentationCollectionOverride>();
 
@@ -101,11 +102,11 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
                 }
             }
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     @Override
-    public boolean overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
+    public FieldProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
         Map<String, FieldMetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
@@ -144,7 +145,7 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
                 }
             }
         }
-        return true;
+        return FieldProviderResponse.HANDLED;
     }
 
     protected void buildAdminPresentationCollectionOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationCollectionOverride> presentationCollectionOverrides, String propertyName, String key, DynamicEntityDao dynamicEntityDao) {
@@ -383,6 +384,6 @@ public class CollectionMetadataProvider extends AdvancedCollectionMetadataProvid
 
     @Override
     public int getOrder() {
-        return MetadataProvider.COLLECTION;
+        return FieldMetadataProvider.COLLECTION;
     }
 }
