@@ -44,6 +44,14 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
+import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -68,13 +76,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.lang.reflect.Proxy;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -355,46 +356,37 @@ public class SkuImpl implements Sku {
 
     @Override
     public Money getSalePrice() {
-
         Money returnPrice = null;
+        Money optionValueAdjustments = null;
 
-        // TODO:  See if there is a dynamic price for this SKU
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
-            if (dynamicPrices != null) {
-                returnPrice = dynamicPrices.getSalePrice();
-            } else {
+            // We have dynamic pricing, so we will pull the sale price from there
+            if (dynamicPrices == null) {
                 DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
                 Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
-
                 dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-                returnPrice = dynamicPrices.getSalePrice();
             }
-        } else {
-            if (salePrice != null) {
-                returnPrice = new Money(salePrice, Money.defaultCurrency());
-            }
-        }
-
-        // Get the price from the default SKU
-        if (returnPrice == null && hasDefaultSku()) {
-            returnPrice = lookupDefaultSku().getSalePrice();
-        }
-
-        Money optionValueAdjustments = null;
-        if (dynamicPrices != null) {
+            
+            returnPrice = dynamicPrices.getSalePrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
-        } else {
+        } else if (salePrice != null) {
+            // We have an explicitly set sale price directly on this entity. We will not apply any adjustments
+            return new Money(salePrice, Money.defaultCurrency());
+        } else if (hasDefaultSku()) {
+            // Otherwise, we'll pull the sale price from the default sku
+            returnPrice = lookupDefaultSku().getSalePrice();
             optionValueAdjustments = getProductOptionValueAdjustments();
         }
 
-        if (optionValueAdjustments == null) {
-            //return returnPrice;
-        } else {
-            returnPrice = returnPrice == null ? optionValueAdjustments : optionValueAdjustments.add(returnPrice);
+        if (returnPrice == null) {
+            return null;
+        }
+        
+        if (optionValueAdjustments != null) {
+            returnPrice = optionValueAdjustments.add(returnPrice);
         }
 
         return returnPrice;
-
     }
 
 
@@ -406,39 +398,33 @@ public class SkuImpl implements Sku {
     @Override
     public Money getRetailPrice() {
         Money returnPrice = null;
+        Money optionValueAdjustments = null;
 
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
-            if (dynamicPrices != null) {
-                returnPrice = dynamicPrices.getRetailPrice();
-            } else {
+            // We have dynamic pricing, so we will pull the retail price from there
+            if (dynamicPrices == null) {
                 DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
                 Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
-
                 dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-                returnPrice = dynamicPrices.getRetailPrice();
             }
-        } else {
-            if (retailPrice != null) {
-                returnPrice = new Money(retailPrice, Money.defaultCurrency());
-            }
-        }
-
-        // Get the price from the default SKU
-        if (returnPrice == null && hasDefaultSku()) {
-            returnPrice = lookupDefaultSku().getRetailPrice();
-        }
-
-        Money optionValueAdjustments = null;
-        if (dynamicPrices != null) {
+            
+            returnPrice = dynamicPrices.getRetailPrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
-        } else {
+        } else if (retailPrice != null) {
+            // We have an explicitly set retail price directly on this entity. We will not apply any adjustments
+            return new Money(retailPrice, Money.defaultCurrency());
+        } else if (hasDefaultSku()) {
+            // Otherwise, we'll pull the retail price from the default sku
+            returnPrice = lookupDefaultSku().getRetailPrice();
             optionValueAdjustments = getProductOptionValueAdjustments();
         }
-
-        if (optionValueAdjustments == null) {
-            //return returnPrice;
-        } else {
-            returnPrice = returnPrice == null ? optionValueAdjustments : optionValueAdjustments.add(returnPrice);
+        
+        if (returnPrice == null) {
+            throw new IllegalStateException("Retail price on Sku with id " + getId() + " was null");
+        }
+        
+        if (optionValueAdjustments != null) {
+            returnPrice = optionValueAdjustments.add(returnPrice);
         }
 
         return returnPrice;
