@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 
 /**
  * Persistence provider capable of extracting friendly display values for Money fields
@@ -35,7 +34,7 @@ import java.text.NumberFormat;
  */
 @Scope("prototype")
 @Component("blMoneyFieldPersistenceProvider")
-public class MoneyFieldPersistenceProvider extends PersistenceProviderAdapter {
+public class MoneyFieldPersistenceProvider extends AbstractMoneyFieldPersistenceProvider {
     
     
     protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
@@ -52,20 +51,11 @@ public class MoneyFieldPersistenceProvider extends PersistenceProviderAdapter {
             return false;
         }
         
-        // Set the raw value
-        BigDecimal bd = (BigDecimal) extractValueRequest.getRequestedValue();
-        NumberFormat valFormat = NumberFormat.getInstance();
-        valFormat.setMaximumFractionDigits(2);
-        valFormat.setMinimumFractionDigits(2);
-        String val = valFormat.format(bd);
-        property.setValue(val);
+        BigDecimal value = (BigDecimal) extractValueRequest.getRequestedValue();
+        property.setValue(getFormattedValue(value));
         
-        // Set the friendly, currency-formatted price
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        NumberFormat format = NumberFormat.getCurrencyInstance(brc.getJavaLocale());
-        format.setCurrency(Money.defaultCurrency());
-        BigDecimal value = new BigDecimal(val);
-        property.setDisplayValue(format.format(value));
+        property.setDisplayValue(getFormattedDisplayValue(value, brc.getJavaLocale(), Money.defaultCurrency()));
         
         return true;
     }
