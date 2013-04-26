@@ -101,26 +101,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 if (fmd.isProminent() != null && fmd.isProminent() 
                         && !VisibilityEnum.HIDDEN_ALL.equals(fmd.getVisibility())
                         && !VisibilityEnum.GRID_HIDDEN.equals(fmd.getVisibility())) {
-                    
-                    Field hf;
-                    if (fmd.getFieldType().equals(SupportedFieldType.EXPLICIT_ENUMERATION) ||
-                            fmd.getFieldType().equals(SupportedFieldType.BROADLEAF_ENUMERATION) ||
-                            fmd.getFieldType().equals(SupportedFieldType.DATA_DRIVEN_ENUMERATION) ||
-                            fmd.getFieldType().equals(SupportedFieldType.EMPTY_ENUMERATION)) {
-                        hf = new ComboField();
-                        ((ComboField) hf).setOptions(fmd.getEnumerationValues());
-                    } else {
-                        hf = new Field();
-                    }
-                    
-                    hf.withName(p.getName())
-                      .withFriendlyName(fmd.getFriendlyName())
-                      .withOrder(fmd.getGridOrder())
-                      .withColumnWidth(fmd.getColumnWidth())
-                      .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
-                    String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
-                    hf.setFieldType(fieldType);
-                    
+                    Field hf = createHeaderField(p, fmd);
                     headerFields.add(hf);
                 }
             }
@@ -128,6 +109,29 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, drs, sectionKey, 0, idProperty);
         return listGrid;
+    }
+    
+    protected Field createHeaderField(Property p, BasicFieldMetadata fmd) {
+        Field hf;
+        if (fmd.getFieldType().equals(SupportedFieldType.EXPLICIT_ENUMERATION) ||
+                fmd.getFieldType().equals(SupportedFieldType.BROADLEAF_ENUMERATION) ||
+                fmd.getFieldType().equals(SupportedFieldType.DATA_DRIVEN_ENUMERATION) ||
+                fmd.getFieldType().equals(SupportedFieldType.EMPTY_ENUMERATION)) {
+            hf = new ComboField();
+            ((ComboField) hf).setOptions(fmd.getEnumerationValues());
+        } else {
+            hf = new Field();
+        }
+        
+        hf.withName(p.getName())
+          .withFriendlyName(fmd.getFriendlyName())
+          .withOrder(fmd.getGridOrder())
+          .withColumnWidth(fmd.getColumnWidth())
+          .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
+        String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
+        hf.setFieldType(fieldType);
+        
+        return hf;
     }
 
     @Override
@@ -158,13 +162,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     if (md.isProminent() != null && md.isProminent() 
                             && !VisibilityEnum.HIDDEN_ALL.equals(md.getVisibility())
                             && !VisibilityEnum.GRID_HIDDEN.equals(md.getVisibility())) {
-                        Field hf = new Field()
-                                .withName(p.getName())
-                                .withFriendlyName(md.getFriendlyName())
-                                .withForeignKeyDisplayValueProperty(md.getForeignKeyDisplayValueProperty())
-                                .withOrder(md.getGridOrder());
-                        String fieldType = md.getFieldType() == null ? null : md.getFieldType().toString();
-                        hf.setFieldType(fieldType);
+                        Field hf = createHeaderField(p, md);
                         headerFields.add(hf);
                     }
                 }
@@ -178,12 +176,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     if (md.isProminent() != null && md.isProminent() 
                             && !VisibilityEnum.HIDDEN_ALL.equals(md.getVisibility())
                             && !VisibilityEnum.GRID_HIDDEN.equals(md.getVisibility())) {
-                        Field hf = new Field()
-                                .withName(p.getName())
-                                .withFriendlyName(md.getFriendlyName())
-                                .withOrder(md.getGridOrder());
-                        String fieldType = md.getFieldType() == null ? null : md.getFieldType().toString();
-                        hf.setFieldType(fieldType);
+                        Field hf = createHeaderField(p, md);
                         headerFields.add(hf);
                     }
                 }
@@ -199,16 +192,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             for (String fieldName : atcmd.getGridVisibleFields()) {
                 Property p = cmd.getPMap().get(fieldName);
-                Field hf = new Field()
-                        .withName(p.getName())
-                        .withFriendlyName(p.getMetadata().getFriendlyName());
-                if (p.getMetadata() instanceof BasicFieldMetadata) {
-                    BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
-                    hf.setOrder(md.getGridOrder());
-                    String fieldType = md.getFieldType() == null ? null : md.getFieldType().toString();
-                    hf.setFieldType(fieldType);
-                }
-
+                BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+                
+                Field hf = createHeaderField(p, md);
                 headerFields.add(hf);
             }
 
@@ -225,17 +211,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             MapMetadata mmd = (MapMetadata) fmd;
 
             Property p2 = cmd.getPMap().get("key");
-            Field hf = new Field()
-                    .withName(p2.getName())
-                    .withFriendlyName(p2.getMetadata().getFriendlyName());
-            
-            if (p2.getMetadata() instanceof BasicFieldMetadata) {
-                BasicFieldMetadata md = (BasicFieldMetadata) p2.getMetadata();
-                hf.setOrder(md.getGridOrder());
-                String fieldType = md.getFieldType() == null ? null : md.getFieldType().toString();
-                hf.setFieldType(fieldType);
-            }
-            
+            BasicFieldMetadata keyMd = (BasicFieldMetadata) p2.getMetadata();
+            Field hf = createHeaderField(p2, keyMd);
             headerFields.add(hf);
 
             for (Property p : cmd.getProperties()) {
@@ -245,12 +222,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         if (md.isProminent() != null && md.isProminent() 
                                 && !VisibilityEnum.HIDDEN_ALL.equals(md.getVisibility())
                                 && !VisibilityEnum.GRID_HIDDEN.equals(md.getVisibility())) {
-                            hf = new Field()
-                                    .withName(p.getName())
-                                    .withFriendlyName(md.getFriendlyName())
-                                    .withOrder(md.getGridOrder());
-                            String fieldType = md.getFieldType() == null ? null : md.getFieldType().toString();
-                            hf.setFieldType(fieldType);
+                            hf = createHeaderField(p, md);
                             headerFields.add(hf);
                         }
                     }
