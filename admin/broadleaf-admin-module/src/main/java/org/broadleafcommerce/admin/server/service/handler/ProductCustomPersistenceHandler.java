@@ -33,8 +33,9 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
-import javax.annotation.Resource;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
@@ -66,11 +67,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Product adminInstance = (Product) Class.forName(entity.getType()[0]).newInstance();
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            
-            if (entity.isValidationFailure()) {
-                return entity;
-            }
-            
+           
             adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
 
             CategoryProductXref categoryXref = new CategoryProductXrefImpl();
@@ -109,12 +106,8 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-
-            if (!entity.isValidationFailure()) {
-                adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
-            } else {
-                return entity;
-            }
+           
+            adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
 
             CategoryProductXref categoryXref = new CategoryProductXrefImpl();
             categoryXref.setCategory(adminInstance.getDefaultCategory());

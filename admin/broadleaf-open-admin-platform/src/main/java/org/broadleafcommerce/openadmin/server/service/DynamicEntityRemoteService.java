@@ -202,6 +202,10 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.add(persistencePackage);
         } catch (ServiceException e) {
+            if (e instanceof ValidationException || e.getCause() instanceof ValidationException) {
+                LOG.warn("Not saving entity as it has failed validation");
+                return ((ValidationException) e.getCause()).getEntity();
+            }
             String message = exploitProtectionService.cleanString(e.getMessage());
             throw recreateSpecificServiceException(e, message, e.getCause());
         }
@@ -220,6 +224,10 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.update(persistencePackage);
         } catch (ServiceException e) {
+            if (e.getCause() instanceof ValidationException) {
+                LOG.warn("Not saving entity as it has failed validation");
+                return ((ValidationException) e.getCause()).getEntity();
+            }
             String message = exploitProtectionService.cleanString(e.getMessage());
             throw recreateSpecificServiceException(e, message, e.getCause());
         }

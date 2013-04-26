@@ -21,8 +21,10 @@ import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
+import org.broadleafcommerce.openadmin.server.service.persistence.validation.EntityValidatorService;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
@@ -60,7 +62,25 @@ public interface RecordHelper {
     
     public Entity getRecord(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, Serializable record);
 
-    public Serializable createPopulatedInstance(Serializable instance, Entity entity, Map<String, FieldMetadata> mergedProperties, Boolean setId);
+    /**
+     * <p>Populates a Hibernate entity <b>instance</b> based on the values from <b>entity</b> (the DTO representation of
+     * <b>instance</b>) and the metadata from <b>mergedProperties</b>.</p>
+     * <p>While populating <b>instance</b>, validation is also performed using the {@link EntityValidatorService}. If this
+     * validation fails, then the instance is left unchanged and a {@link ValidationExcpetion} is thrown. In the common
+     * case, this exception bubbles up to the {@link DynamicRemoteService} which catches the exception and communicates
+     * appropriately to the invoker</p>
+     * 
+     * @param instance
+     * @param entity
+     * @param mergedProperties
+     * @param setId
+     * @throws ValidationException if after populating <b>instance</b> via the values in <b>entity</b> then
+     * {@link EntityValidatorService#validate(Entity, Serializable, Map)} returns false
+     * @return <b>instance</b> populated with the property values from <b>entity</b> according to the metadata specified
+     * in <b>mergedProperties</b>
+     * @see {@link EntityValidatorService}
+     */
+    public Serializable createPopulatedInstance(Serializable instance, Entity entity, Map<String, FieldMetadata> mergedProperties, Boolean setId) throws ValidationException;
     
     public Object getPrimaryKey(Entity entity, Map<String, FieldMetadata> mergedProperties);
     

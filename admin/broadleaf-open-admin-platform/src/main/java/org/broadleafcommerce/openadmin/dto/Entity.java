@@ -144,7 +144,8 @@ public class Entity implements Serializable {
     }
 
     /**
-     * Adds a single validation error to this entity. Note that in order to ensure that a 
+     * Adds a single validation error to this entity. This will also set the entire
+     * entity in an error state by invoking {@link #setValidationFailure(boolean)}.
      * 
      * @param fieldName - the field that is in error. This works on top-level properties (like a 'manufacturer' field on a
      * {@link Product} entity) but can also work on properties gleaned from a related entity (like
@@ -204,12 +205,16 @@ public class Entity implements Serializable {
 
     /**
      * Completely reset the validation errors for this Entity. In most cases it is more appropriate to use the convenience
-     * method for adding a single error via {@link #addValidationError(String, String)}.
+     * method for adding a single error via {@link #addValidationError(String, String)}. This will also set the entire
+     * entity in an error state by invoking {@link #setValidationFailure(boolean)}.
      * 
      * @param validationErrors
      * @see #addValidationError(String, String)
      */
     public void setValidationErrors(String[][] validationErrors) {
+        if (validationErrors != null && validationErrors.length > 0) {
+            setValidationFailure(true);
+        }
         this.validationErrors = validationErrors;
     }
 
