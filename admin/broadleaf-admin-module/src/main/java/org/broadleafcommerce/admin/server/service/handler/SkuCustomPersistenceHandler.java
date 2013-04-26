@@ -20,15 +20,6 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.AssociationPathElement;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider.FilterDataStrategy;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -65,7 +56,16 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 
-import javax.annotation.Resource;
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.AssociationPathElement;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider.FilterDataStrategy;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -79,6 +79,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
 
 /**
  * @author Phillip Verheyden
@@ -381,9 +383,13 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 //actually come back from the defaultSku (just like on the site)
                 for (Property property : entity.getProperties()) {
                     if (StringUtils.isEmpty(property.getValue())) {
-                        String propertyName = property.getName();
-                        String strValue = SkuCustomPersistenceHandler.getStringValueFromGetter(propertyName, sku, helper);
-                        property.setValue(strValue);
+                        if (property.getName().equals("retailPrice") || property.getName().equals("salePrice")) {
+                            property.setValue("(Not set)");
+                        } else {
+                            String propertyName = property.getName();
+                            String strValue = SkuCustomPersistenceHandler.getStringValueFromGetter(propertyName, sku, helper);
+                            property.setValue(strValue);
+                        }
                     }
                 }
 

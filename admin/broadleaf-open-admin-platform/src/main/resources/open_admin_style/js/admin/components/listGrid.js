@@ -24,7 +24,7 @@
             //$listGridContainer.find('.listgrid-body-wrapper').mCustomScrollbar('update');
             
             if (alert) {
-                this.showAlert($listGridContainer, alert);
+                this.showAlert($listGridContainer, alert.message, alert);
             }
         },
         
@@ -73,13 +73,14 @@
             });
         },
         
-        showAlert : function($container, options) {
+        showAlert : function($container, message, options) {
+            options = options || {};
     	    var alertType = options.alertType || '';
     	    
     	    var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass(alertType);
     	    var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
     	    
-    	    $alert.append(options.message);
+    	    $alert.append(message);
     	    $alert.append($closeLink);
     	    
     	    if (options.clearOtherAlerts) {

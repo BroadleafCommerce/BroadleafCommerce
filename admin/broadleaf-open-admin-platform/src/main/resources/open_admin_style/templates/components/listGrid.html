@@ -20,8 +20,14 @@
                     th:attr="data-columnwidth=${#strings.isEmpty(headerField.columnWidth) ? '' : headerField.columnWidth}"
                     th:style="${#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';'}"
                     scope="col">
+                    
+                    <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort}">
+                        <div class="listgrid-title">
+                            [[#{${headerField.friendlyName}}]]
+                        </div>
+                    </div>
     
-                    <div href="#" class="listgrid-headerBtn split dropdown">
+                    <div href="#" class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort}">
                         <div class="listgrid-title">
                             <i class="filter-icon"></i>
                             <i class="sort-icon"></i>
@@ -40,11 +46,17 @@
                 </th>
                 
                 <th width="65">
-                    <div class="listgrid-headerBtn split dropdown">
+                    <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort}">
+                        <div class="listgrid-title">
+                        Id
+                        </div>
+                    </div>
+                    
+                    <div class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort}">
                         <div class="listgrid-title">
                             <i class="filter-icon"></i>
                             <i class="sort-icon"></i>
-                            &nbsp;Id
+                            Id
                         </div>
                         
                         <span class="hide-for-small"></span>

@@ -54,6 +54,7 @@ public class ListGrid {
     protected int totalRecords;
     protected int startIndex;
     protected int pageSize;
+    protected Boolean canFilterAndSort;
     
     protected AddMethodType addMethodType;
     protected String listGridType;
@@ -139,6 +140,10 @@ public class ListGrid {
     public void setListGridType(Type listGridType) {
         this.listGridType = listGridType.toString().toLowerCase();
     }
+    
+    public Boolean getCanFilterAndSort() {
+        return canFilterAndSort == null ? true : canFilterAndSort;
+    }
 
     /* ************************** */
     /* STANDARD GETTERS / SETTERS */
@@ -219,9 +224,13 @@ public class ListGrid {
     public int getPageSize() {
         return pageSize;
     }
-
+    
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
+    }
+    
+    public void setCanFilterAndSort(Boolean canFilterAndSort) {
+        this.canFilterAndSort = canFilterAndSort;
     }
 
     public AddMethodType getAddMethodType() {
