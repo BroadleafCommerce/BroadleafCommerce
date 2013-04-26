@@ -37,7 +37,7 @@ import java.util.Map;
 public interface FieldMetadataProvider extends Ordered {
 
     //standard ordering constants for BLC providers
-    public static final int BASIC = 10000;
+    public static final int BASIC = Integer.MAX_VALUE;
     public static final int COLLECTION = 20000;
     public static final int ADORNED_TARGET = 30000;
     public static final int MAP = 40000;

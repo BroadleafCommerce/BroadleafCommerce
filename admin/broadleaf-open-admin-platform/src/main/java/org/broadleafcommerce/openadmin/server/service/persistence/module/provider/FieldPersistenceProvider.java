@@ -44,7 +44,7 @@ import java.util.Map;
 public interface FieldPersistenceProvider extends Ordered {
 
     //standard ordering constants for BLC providers
-    public static final int BASIC = 10000;
+    public static final int BASIC = Integer.MAX_VALUE;
     public static final int MAP_FIELD = 20000;
     public static final int RULE = 30000;
     public static final int MONEY = 40000;
