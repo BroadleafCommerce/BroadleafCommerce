@@ -54,7 +54,7 @@ public class Metadata {
     @Resource(name="blMetadataProviders")
     protected List<FieldMetadataProvider> fieldMetadataProviders = new ArrayList<FieldMetadataProvider>();
 
-    @Resource(name="blDefaultMetadataProvider")
+    @Resource(name= "blDefaultFieldMetadataProvider")
     protected FieldMetadataProvider defaultFieldMetadataProvider;
 
     public Map<String, FieldMetadata> getFieldPresentationAttributes(Class<?> parentClass, Class<?> targetClass, DynamicEntityDao dynamicEntityDao, String prefix) {

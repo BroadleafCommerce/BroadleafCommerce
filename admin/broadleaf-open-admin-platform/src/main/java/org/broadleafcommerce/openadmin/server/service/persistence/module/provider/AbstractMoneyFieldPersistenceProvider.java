@@ -26,7 +26,7 @@ import java.util.Locale;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public abstract class AbstractMoneyFieldPersistenceProvider extends PersistenceProviderAdapter {
+public abstract class AbstractMoneyFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
     
     public String getFormattedDisplayValue(BigDecimal value, Locale locale, Currency currency) {
         NumberFormat format = NumberFormat.getCurrencyInstance(locale);

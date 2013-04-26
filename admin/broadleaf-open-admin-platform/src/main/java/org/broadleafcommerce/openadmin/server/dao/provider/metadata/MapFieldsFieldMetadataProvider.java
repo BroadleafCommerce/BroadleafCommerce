@@ -46,7 +46,7 @@ import java.util.Map;
 /**
  * @author Jeff Fischer
  */
-@Component("blMapFieldsMetadataProvider")
+@Component("blMapFieldsFieldMetadataProvider")
 @Scope("prototype")
 public class MapFieldsFieldMetadataProvider extends DefaultFieldMetadataProvider {
 

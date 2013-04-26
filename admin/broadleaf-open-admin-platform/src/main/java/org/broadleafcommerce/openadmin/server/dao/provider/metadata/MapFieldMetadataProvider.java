@@ -51,7 +51,7 @@ import java.util.Map;
 /**
  * @author Jeff Fischer
  */
-@Component("blMapMetadataProvider")
+@Component("blMapFieldMetadataProvider")
 @Scope("prototype")
 public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataProvider {
 

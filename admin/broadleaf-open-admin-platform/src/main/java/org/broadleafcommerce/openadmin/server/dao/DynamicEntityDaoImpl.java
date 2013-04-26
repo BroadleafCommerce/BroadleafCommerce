@@ -99,7 +99,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     @Resource(name="blMetadataProviders")
     protected List<FieldMetadataProvider> fieldMetadataProviders = new ArrayList<FieldMetadataProvider>();
 
-    @Resource(name="blDefaultMetadataProvider")
+    @Resource(name= "blDefaultFieldMetadataProvider")
     protected FieldMetadataProvider defaultFieldMetadataProvider;
 
     @Resource(name="blAppConfigurationRemoteService")

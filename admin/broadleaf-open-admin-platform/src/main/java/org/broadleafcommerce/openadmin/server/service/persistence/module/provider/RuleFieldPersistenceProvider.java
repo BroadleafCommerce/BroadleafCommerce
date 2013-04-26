@@ -58,7 +58,7 @@ import java.util.Map;
 /**
  * @author Jeff Fischer
  */
-@Component("blRulePersistenceProvider")
+@Component("blRuleFieldPersistenceProvider")
 @Scope("prototype")
 public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
 

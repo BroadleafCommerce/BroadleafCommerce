@@ -50,7 +50,7 @@ import java.util.Map;
 /**
  * @author Jeff Fischer
  */
-@Component("blCollectionMetadataProvider")
+@Component("blCollectionFieldMetadataProvider")
 @Scope("prototype")
 public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMetadataProvider {
 

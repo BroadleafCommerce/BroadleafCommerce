@@ -111,7 +111,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     @Resource(name="blPersistenceProviders")
     protected List<FieldPersistenceProvider> fieldPersistenceProviders = new ArrayList<FieldPersistenceProvider>();
 
-    @Resource(name="blDefaultPersistenceProvider")
+    @Resource(name= "blDefaultFieldPersistenceProvider")
     protected FieldPersistenceProvider defaultFieldPersistenceProvider;
 
     public BasicPersistenceModule() {

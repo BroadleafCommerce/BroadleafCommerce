@@ -55,7 +55,7 @@ import java.util.StringTokenizer;
 /**
  * @author Jeff Fischer
  */
-@Component("blBasicPersistenceProvider")
+@Component("blBasicFieldPersistenceProvider")
 @Scope("prototype")
 public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
 

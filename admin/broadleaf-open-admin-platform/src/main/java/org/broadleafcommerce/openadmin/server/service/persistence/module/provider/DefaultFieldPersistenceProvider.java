@@ -29,7 +29,7 @@ import java.io.Serializable;
 /**
  * @author Jeff Fischer
  */
-@Component("blDefaultPersistenceProvider")
+@Component("blDefaultFieldPersistenceProvider")
 @Scope("prototype")
 public class DefaultFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
 

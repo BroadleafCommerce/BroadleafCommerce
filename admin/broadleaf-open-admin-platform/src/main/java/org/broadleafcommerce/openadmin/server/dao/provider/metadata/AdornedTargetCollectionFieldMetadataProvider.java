@@ -51,7 +51,7 @@ import java.util.Map;
 /**
  * @author Jeff Fischer
  */
-@Component("blAdornedTargetCollectionMetadataProvider")
+@Component("blAdornedTargetCollectionFieldMetadataProvider")
 @Scope("prototype")
 public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollectionFieldMetadataProvider {
 

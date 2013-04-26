@@ -84,11 +84,11 @@
     <bean id="blMetadataProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
-                <ref bean="blBasicMetadataProvider"/>
-                <ref bean="blCollectionMetadataProvider"/>
-                <ref bean="blAdornedTargetCollectionMetadataProvider"/>
-                <ref bean="blMapMetadataProvider"/>
-                <ref bean="blMapFieldsMetadataProvider"/>
+                <ref bean="blBasicFieldMetadataProvider"/>
+                <ref bean="blCollectionFieldMetadataProvider"/>
+                <ref bean="blAdornedTargetCollectionFieldMetadataProvider"/>
+                <ref bean="blMapFieldMetadataProvider"/>
+                <ref bean="blMapFieldsFieldMetadataProvider"/>
             </list>
         </property>
     </bean>
@@ -96,8 +96,8 @@
     <bean id="blPersistenceProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
-                <ref bean="blBasicPersistenceProvider"/>
-                <ref bean="blRulePersistenceProvider"/>
+                <ref bean="blBasicFieldPersistenceProvider"/>
+                <ref bean="blRuleFieldPersistenceProvider"/>
                 <ref bean="blMapFieldPersistenceProvider"/>
                 <ref bean="blMoneyFieldPersistenceProvider"/>
             </list>

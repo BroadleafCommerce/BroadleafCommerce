@@ -39,7 +39,7 @@ import java.lang.reflect.Field;
  */
 @Component("blMapFieldPersistenceProvider")
 @Scope("prototype")
-public class MapFieldFieldPersistenceProvider extends BasicFieldPersistenceProvider {
+public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
 
     @Override
     protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {

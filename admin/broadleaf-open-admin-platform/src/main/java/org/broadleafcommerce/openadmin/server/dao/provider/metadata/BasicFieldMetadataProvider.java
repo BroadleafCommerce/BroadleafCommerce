@@ -59,7 +59,7 @@ import java.util.Map;
 /**
  * @author Jeff Fischer
  */
-@Component("blBasicMetadataProvider")
+@Component("blBasicFieldMetadataProvider")
 @Scope("prototype")
 public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
 
