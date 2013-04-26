@@ -23,11 +23,9 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
  * @author Jeff Fischer
  */
 public interface SecurityVerifier {
+
     AdminUser getPersistentAdminUser();
 
     void securityCheck(String ceilingEntityFullyQualifiedName, EntityOperationType operationType) throws ServiceException;
 
-    boolean isEntitySecurityExplicit();
-
-    void setEntitySecurityExplicit(boolean entitySecurityExplicit);
 }

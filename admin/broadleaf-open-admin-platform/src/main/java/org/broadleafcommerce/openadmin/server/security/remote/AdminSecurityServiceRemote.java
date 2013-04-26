@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.server.security.remote;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
@@ -53,14 +55,13 @@ import javax.annotation.Resource;
 public class AdminSecurityServiceRemote implements AdminSecurityService, SecurityVerifier {
     
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
+    private static final Log LOG = LogFactory.getLog(AdminSecurityServiceRemote.class);
     
     @Resource(name="blAdminSecurityService")
     protected org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService securityService;
 
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
-
-    private boolean isEntitySecurityExplicit = false;
     
     @Override
     public org.broadleafcommerce.openadmin.server.security.remote.AdminUser getAdminUser() throws ServiceException {
@@ -132,20 +133,16 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
         }
         boolean isQualified = securityService.isUserQualifiedForOperationOnCeilingEntity(persistentAdminUser, permissionType, ceilingEntityFullyQualifiedName);
         if (!isQualified){
-            //If explicit security, then this check failed. However, if not explicit security, then check to make sure there is no configured security for this entity before allowing to pass
-            if (isEntitySecurityExplicit() || securityService.doesOperationExistForCeilingEntity(permissionType, ceilingEntityFullyQualifiedName)) {
-                throw new SecurityServiceException("Security Check Failed for entity operation: " + operationType.toString() + " (" + ceilingEntityFullyQualifiedName + ")");
+            SecurityServiceException ex = new SecurityServiceException("Security Check Failed for entity operation: " + operationType.toString() + " (" + ceilingEntityFullyQualifiedName + ")");
+            //check if the requested entity is not configured and warn
+            if (!securityService.doesOperationExistForCeilingEntity(permissionType, ceilingEntityFullyQualifiedName)) {
+                LOG.warn("Detected security request for an unregistered ceiling entity (" + ceilingEntityFullyQualifiedName + "). " +
+                        "As a result, the request failed. Please make sure to configure security for any ceiling entities " +
+                        "referenced via the admin. This is usually accomplished by adding records in the " +
+                        "BLC_ADMIN_PERMISSION_ENTITY table. Note, depending on how the entity in question is used, you " +
+                        "may need to add to BLC_ADMIN_PERMISSION, BLC_ADMIN_ROLE_PERMISSION_XREF and BLC_ADMIN_SEC_PERM_XREF.", ex);
             }
+            throw ex;
         }
-    }
-
-    @Override
-    public boolean isEntitySecurityExplicit() {
-        return isEntitySecurityExplicit;
-    }
-
-    @Override
-    public void setEntitySecurityExplicit(boolean entitySecurityExplicit) {
-        isEntitySecurityExplicit = entitySecurityExplicit;
     }
 }
