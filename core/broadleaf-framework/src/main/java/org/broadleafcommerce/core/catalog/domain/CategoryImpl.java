@@ -55,6 +55,16 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -75,15 +85,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 
 
@@ -322,6 +323,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @OneToMany(mappedBy = "category", targetEntity = CategorySearchFacetImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "categoryFacetsTitle", order = 1, tab = Presentation.Tab.Name.SearchFacets, tabOrder = Presentation.Tab.Order.SearchFacets)
     protected List<CategorySearchFacet> searchFacets  = new ArrayList<CategorySearchFacet>();
     
     @ManyToMany(targetEntity = SearchFacetImpl.class)
@@ -329,6 +331,12 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationAdornedTargetCollection(
+            joinEntityClass = "org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl",
+            targetObjectProperty = "searchFacet",
+            parentObjectProperty = "category",
+            friendlyName = "excludedFacetsTitle",
+            tab = Presentation.Tab.Name.SearchFacets, tabOrder = Presentation.Tab.Order.SearchFacets)
     protected List<SearchFacet> excludedSearchFacets = new ArrayList<SearchFacet>(10);
     
     @OneToMany(mappedBy = "category", targetEntity = CategoryAttributeImpl.class, cascade = {CascadeType.ALL})
@@ -1042,6 +1050,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
                 public static final String Media = "CategoryImpl_Media_Tab";
                 public static final String Advanced = "CategoryImpl_Advanced_Tab";
                 public static final String Products = "CategoryImpl_Products_Tab";
+                public static final String SearchFacets = "CategoryImpl_categoryFacetsTab";
             }
 
             public static class Order {
@@ -1050,6 +1059,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
                 public static final int Media = 3000;
                 public static final int Advanced = 4000;
                 public static final int Products = 5000;
+                public static final int SearchFacets = 3500;
             }
         }
 
