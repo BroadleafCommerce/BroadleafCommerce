@@ -85,4 +85,9 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
     public Boolean willHandleSecurity(PersistencePackage persistencePackage) {
         return false;
     }
+
+    @Override
+    public int getOrder() {
+        return CustomPersistenceHandler.DEFAULT_ORDER;
+    }
 }

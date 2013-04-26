@@ -24,6 +24,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.springframework.core.Ordered;
 
 /**
  * Custom Persistence Handlers provide a hook to override the normal persistence
@@ -38,7 +39,9 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
  *
  * @author Jeff Fischer
  */
-public interface CustomPersistenceHandler {
+public interface CustomPersistenceHandler extends Ordered {
+
+    public static final int DEFAULT_ORDER = Integer.MAX_VALUE;
 
     /**
      * Is this persistence handler capable of dealing with an inspect request from the admin

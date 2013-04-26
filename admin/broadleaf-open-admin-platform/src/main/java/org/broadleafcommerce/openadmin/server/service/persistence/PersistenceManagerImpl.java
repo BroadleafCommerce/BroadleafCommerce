@@ -423,6 +423,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 }
             }
         }
+        Collections.sort(cloned, new Comparator<CustomPersistenceHandler>() {
+            @Override
+            public int compare(CustomPersistenceHandler o1, CustomPersistenceHandler o2) {
+                return new Integer(o1.getOrder()).compareTo(new Integer(o2.getOrder()));
+            }
+        });
         return cloned;
     }
 
