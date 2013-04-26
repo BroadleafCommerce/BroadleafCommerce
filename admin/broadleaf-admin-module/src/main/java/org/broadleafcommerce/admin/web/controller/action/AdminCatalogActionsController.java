@@ -26,11 +26,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Controller that responds to custom catalog actions. These would normally be hooked up in customized controllers like 
@@ -48,7 +49,6 @@ public class AdminCatalogActionsController extends AdminAbstractController {
     /**
      * Invokes a separate service to generate a list of Skus for a particular {@link Product} and that {@link Product}'s
      * Product Options
-     * @return
      */
     @RequestMapping(value = "product/{productId}/{skusFieldName}/generate-skus",
                     method = RequestMethod.GET,

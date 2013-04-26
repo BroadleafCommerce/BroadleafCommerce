@@ -17,9 +17,10 @@
 package org.broadleafcommerce.admin.server.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.BLCCollectionUtils;
+import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
@@ -28,12 +29,13 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * 
@@ -110,19 +112,20 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
     protected boolean isSamePermutation(List<ProductOptionValue> perm1, List<ProductOptionValue> perm2) {
         if (perm1.size() == perm2.size()) {
             
-            Collection perm1Ids = CollectionUtils.collect(perm1, new Transformer() {
+            Collection<Long> perm1Ids = BLCCollectionUtils.collect(perm1, new TypedTransformer<Long>() {
                 @Override
-                public Object transform(Object input) {
+                public Long transform(Object input) {
                     return ((ProductOptionValue) input).getId();
                 }
             });
             
-            Collection perm2Ids = CollectionUtils.collect(perm2, new Transformer() {
+            Collection<Long> perm2Ids = BLCCollectionUtils.collect(perm2, new TypedTransformer<Long>() {
                 @Override
-                public Object transform(Object input) {
+                public Long transform(Object input) {
                     return ((ProductOptionValue) input).getId();
                 }
             });
+            
             return perm1Ids.containsAll(perm2Ids);
         }
         return false;
