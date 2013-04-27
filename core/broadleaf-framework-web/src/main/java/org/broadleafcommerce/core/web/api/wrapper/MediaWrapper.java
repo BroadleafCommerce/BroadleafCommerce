@@ -17,7 +17,7 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.common.media.domain.Media;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;

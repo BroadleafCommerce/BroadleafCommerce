@@ -54,7 +54,7 @@
     <bean id="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment" class="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.pricing.domain.ShippingRate" class="org.broadleafcommerce.core.pricing.domain.ShippingRateImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.offer.domain.OfferInfo" class="org.broadleafcommerce.core.offer.domain.OfferInfoImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.media.domain.Media" class="org.broadleafcommerce.core.media.domain.MediaImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.media.domain.Media" class="org.broadleafcommerce.core.media.domain.MediaImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.rating.domain.RatingSummary" class="org.broadleafcommerce.core.rating.domain.RatingSummaryImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.rating.domain.RatingDetail" class="org.broadleafcommerce.core.rating.domain.RatingDetailImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.rating.domain.ReviewDetail" class="org.broadleafcommerce.core.rating.domain.ReviewDetailImpl" scope="prototype"/>

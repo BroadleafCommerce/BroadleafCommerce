@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.media.domain;
 
+import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;

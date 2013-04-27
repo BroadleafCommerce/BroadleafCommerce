@@ -16,6 +16,7 @@
 package org.broadleafcommerce.core.web.api.endpoint.catalog;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
@@ -26,7 +27,6 @@ import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.web.api.wrapper.CategoriesWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper;

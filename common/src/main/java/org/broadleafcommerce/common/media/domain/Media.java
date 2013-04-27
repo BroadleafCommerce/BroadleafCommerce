@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.media.domain;
+package org.broadleafcommerce.common.media.domain;
 
 import java.io.Serializable;
 
