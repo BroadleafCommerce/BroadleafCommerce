@@ -33,6 +33,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -48,10 +53,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class })
@@ -65,41 +66,50 @@ public class CustomerImpl implements Customer {
 
     @Id
     @Column(name = "CUSTOMER_ID")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id", group = "CustomerImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id", group = "CustomerImpl_Primary_Key",
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Embedded
     protected Auditable auditable = new Auditable();
 
     @Column(name = "USER_NAME")
-    @AdminPresentation(friendlyName = "CustomerImpl_UserName", order=1, group = "CustomerImpl_Customer", prominent=true)
+    @AdminPresentation(friendlyName = "CustomerImpl_UserName", order = 4000, group = "CustomerImpl_Customer",
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected String username;
 
     @Column(name = "PASSWORD")
     @AdminPresentation(excluded = true)
     protected String password;
 
+    @Column(name = "EMAIL_ADDRESS")
+    @Index(name = "CUSTOMER_EMAIL_INDEX", columnNames = { "EMAIL_ADDRESS" })
+    @AdminPresentation(friendlyName = "CustomerImpl_Email_Address", order = 1000, group = "CustomerImpl_Customer",
+            prominent = true, gridOrder = 1000)
+    protected String emailAddress;
+
     @Column(name = "FIRST_NAME")
-    @AdminPresentation(friendlyName = "CustomerImpl_First_Name", order=2, group = "CustomerImpl_Customer", prominent=true)
+    @AdminPresentation(friendlyName = "CustomerImpl_First_Name", order = 2000, group = "CustomerImpl_Customer", 
+            prominent = true, gridOrder = 2000)
     protected String firstName;
 
     @Column(name = "LAST_NAME")
-    @AdminPresentation(friendlyName = "CustomerImpl_Last_Name", order=3, group = "CustomerImpl_Customer", prominent=true)
+    @AdminPresentation(friendlyName = "CustomerImpl_Last_Name", order = 3000, group = "CustomerImpl_Customer", 
+            prominent = true, gridOrder = 3000)
     protected String lastName;
-
-    @Column(name = "EMAIL_ADDRESS")
-    @Index(name="CUSTOMER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
-    @AdminPresentation(friendlyName = "CustomerImpl_Email_Address", order=4, group = "CustomerImpl_Customer")
-    protected String emailAddress;
 
     @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name="CUSTOMER_CHALLENGE_INDEX", columnNames={"CHALLENGE_QUESTION_ID"})
-    @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question",order=5, group = "CustomerImpl_Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question", order = 4000,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            excluded = true)
     protected ChallengeQuestion challengeQuestion;
 
     @Column(name = "CHALLENGE_ANSWER")
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Answer", order = 5000,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            excluded = true)
     protected String challengeAnswer;
 
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
@@ -107,20 +117,25 @@ public class CustomerImpl implements Customer {
     protected Boolean passwordChangeRequired = false;
 
     @Column(name = "RECEIVE_EMAIL")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Receive_Email",order=6, group = "CustomerImpl_Customer")
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Receive_Email",order=1000, 
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected Boolean receiveEmail = true;
 
     @Column(name = "IS_REGISTERED")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Registered", order=7,group = "CustomerImpl_Customer")
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Registered", order = 4000,
+            prominent = true, gridOrder = 4000)
     protected Boolean registered = false;
     
     @Column(name = "DEACTIVATED")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Deactivated", order=8,group = "CustomerImpl_Customer")
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Deactivated", order=3000,
+        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected Boolean deactivated = false;
 
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",order=9, group = "CustomerImpl_Customer", excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",order=4000,             
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+        excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Locale customerLocale;
     
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
@@ -128,27 +143,34 @@ public class CustomerImpl implements Customer {
     @MapKey(name="name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "CustomerAttributeImpl_Attribute_Name",
-        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name"
+            deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced
     )
     protected Map<String, CustomerAttribute> customerAttributes = new HashMap<String, CustomerAttribute>();
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Addresses")
+    @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Addresses", order = 1000,
+            addType = AddMethodType.PERSIST,
+            tab = Presentation.Tab.Name.Contact, tabOrder = Presentation.Tab.Order.Contact)
     protected List<CustomerAddress> customerAddresses = new ArrayList<CustomerAddress>();
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerPhoneImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Phones")
+    @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Phones", order = 2000,
+            addType = AddMethodType.PERSIST,
+            tab = Presentation.Tab.Name.Contact, tabOrder = Presentation.Tab.Order.Contact)
     protected List<CustomerPhone> customerPhones = new ArrayList<CustomerPhone>();
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerPaymentImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "CustomerImpl_Customer_Payments")
+    @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Payments", order = 3000,
+            addType = AddMethodType.PERSIST,
+            tab = Presentation.Tab.Name.Contact, tabOrder = Presentation.Tab.Order.Contact)
     protected List<CustomerPayment> customerPayments  = new ArrayList<CustomerPayment>();
 
     @Transient
@@ -455,5 +477,23 @@ public class CustomerImpl implements Customer {
         int result = 1;
         result = prime * result + ((username == null) ? 0 : username.hashCode());
         return result;
+    }
+
+    public static class Presentation {
+
+        public static class Tab {
+
+            public static class Name {
+
+                public static final String Contact = "CustomerImpl_Contact_Tab";
+                public static final String Advanced = "CustomerImpl_Advanced_Tab";
+            }
+
+            public static class Order {
+
+                public static final int Contact = 2000;
+                public static final int Advanced = 3000;
+            }
+        }
     }
 }
