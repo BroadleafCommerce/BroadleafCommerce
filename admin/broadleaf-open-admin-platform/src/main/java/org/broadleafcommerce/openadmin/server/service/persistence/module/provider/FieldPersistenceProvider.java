@@ -48,6 +48,7 @@ public interface FieldPersistenceProvider extends Ordered {
     public static final int MAP_FIELD = 20000;
     public static final int RULE = 30000;
     public static final int MONEY = 40000;
+    public static final int MEDIA = 50000;
 
     /**
      * Set the property value on the target object. Implementations should translate and set the requestedValue

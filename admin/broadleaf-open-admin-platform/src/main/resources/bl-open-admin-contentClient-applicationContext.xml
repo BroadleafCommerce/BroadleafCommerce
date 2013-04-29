@@ -97,9 +97,10 @@
         <property name="sourceList">
             <list>
                 <ref bean="blBasicFieldPersistenceProvider"/>
-                <ref bean="blRuleFieldPersistenceProvider"/>
+                <ref bean="blRuleFieldPersistenceProvider"/>                
                 <ref bean="blMapFieldPersistenceProvider"/>
                 <ref bean="blMoneyFieldPersistenceProvider"/>
+                <ref bean="blMediaFieldPersistenceProvider"/>                
             </list>
         </property>
     </bean>

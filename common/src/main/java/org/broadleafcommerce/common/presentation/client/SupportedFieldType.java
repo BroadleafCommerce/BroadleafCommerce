@@ -44,6 +44,7 @@ public enum SupportedFieldType {
     HIDDEN,
     ASSET,
     ASSET_URL,
+    MEDIA,
     RULE_SIMPLE,
     RULE_WITH_QUANTITY,
     STRING_LIST

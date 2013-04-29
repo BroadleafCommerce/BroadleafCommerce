@@ -1,0 +1,39 @@
+<dl class="tabs">
+    <dd class="active">
+        <a id="uploadAssetTab1Link" href="#uploadAssetTab1">Upload</a>
+    </dd>
+    <dd>
+        <a id="chooseExistingAssetTab3Link" href="#chooseExistingAssetTab3">Choose</a>
+    </dd>    
+</dl>    
+
+<script>
+    $('#fileupload').fileupload({
+        dataType: 'json',
+        done: function (e, data) {
+        	$("#imagePreview").attr("src",data.result.assetLarge);
+            $.each(data.result.files, function (index, file) {
+                $('<p/>').text(file.name).appendTo(document.body);
+            });
+        }
+    });  
+</script>
+
+<ul class="tabs-content">
+    <li class="active" id="uploadAssetTab1Tab">
+        <div style="width: 500px;">
+            <div style="float: left; width: 250px;">
+                <div class="imagePreviewContainer" style="width: 200px; height: 200px">
+                    <img id="imagePreview" src="http://i.stack.imgur.com/yZlqh.png" />            
+                </div>
+            </div>
+            <div class="uploadForm" style="float: left">
+                <p>Select your file to upload.</p>
+                <input id="fileupload" type="file" name="file" th:attr="data-url=@{${'/' + sectionKey + '/' + entityId + '/uploadAsset'}}"/>
+            </div>
+        </div>
+    </li>   
+    <li id="chooseExistingAssetTab3Tab">
+        TODO
+    </li>
+</ul>

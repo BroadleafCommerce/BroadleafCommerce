@@ -1,0 +1,22 @@
+<div class="asset-selector-container">  
+    <div class="mediaContainer" style="float:left; padding-right:30px">
+        <img class="assetSmallUrl" src="http://www.broadleafcommerce.com/img/broadleaf_logo.png" alt="Broadleaf Logo"/>
+        <p style="text-align:right">
+            <a class="show-asset-selector tiny button" th:href="@{${'/'+sectionKey+ '/' + entityForm.id + '/chooseAsset'}}">
+                Choose            
+            </a>
+        </p>
+    </div>
+    <div class="mediaInfo" style="float:left">
+        <!--  label th:for="${field.name}" th:text="#{${field.friendlyName}}" />
+        <input type="text" class="ten" th:field="*{fields['__${field.name}__'].value}" /  -->
+        
+        <label for="URL">URL</label>
+        <input style="width:200px" type="text" class="assetUrlName" name="URL" value="/product/myproduct.jpg" />
+        
+        <label for="altText">Alternate Text</label>
+        <input style="width:200px" type="text" class="assetAltText" name="altText" value="This is my alt. text" />              
+    </div>   
+    <br style="clear:both" />
+</div>
+
