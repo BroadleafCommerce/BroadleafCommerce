@@ -29,9 +29,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * Genericized version of the CartStateFilter. This was made to facilitate reuse between Servlet Filters, Portlet Filters and Spring MVC interceptors. Spring has an easy way of converting HttpRequests and PortletRequests into WebRequests via <br />
@@ -95,6 +96,10 @@ public class CartStateRequestProcessor implements BroadleafWebRequestProcessor {
             if (ruleMap == null) {
                 ruleMap = new HashMap<String, Object>();
             }
+            ruleMap.put("order", cart);
+
+            // Leaving the following line in for backwards compatibility, but all rules should use order as the 
+            // variable name.
             ruleMap.put("cart", cart);
             request.setAttribute(BLC_RULE_MAP_PARAM, ruleMap, WebRequest.SCOPE_REQUEST);
         }
