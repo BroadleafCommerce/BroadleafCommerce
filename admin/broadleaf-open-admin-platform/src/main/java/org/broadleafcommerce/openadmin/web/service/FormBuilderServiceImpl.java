@@ -105,6 +105,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     Field hf;
                     if (fmd.getFieldType().equals(SupportedFieldType.EXPLICIT_ENUMERATION) ||
                             fmd.getFieldType().equals(SupportedFieldType.BROADLEAF_ENUMERATION) ||
+                            fmd.getFieldType().equals(SupportedFieldType.DATA_DRIVEN_ENUMERATION) ||
                             fmd.getFieldType().equals(SupportedFieldType.EMPTY_ENUMERATION)) {
                         hf = new ComboField();
                         ((ComboField) hf).setOptions(fmd.getEnumerationValues());
@@ -354,6 +355,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     
                     if (fieldType.equals(SupportedFieldType.BROADLEAF_ENUMERATION.toString())
                             || fieldType.equals(SupportedFieldType.EXPLICIT_ENUMERATION.toString())
+                            || fieldType.equals(SupportedFieldType.DATA_DRIVEN_ENUMERATION.toString())
                             || fieldType.equals(SupportedFieldType.EMPTY_ENUMERATION.toString())) {
                         // We're dealing with fields that should render as drop-downs, so set their possible values
                         f = new ComboField();
