@@ -37,7 +37,6 @@ import java.math.BigDecimal;
 @Component("blMoneyFieldPersistenceProvider")
 public class MoneyFieldPersistenceProvider extends AbstractMoneyFieldPersistenceProvider {
     
-    
     protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
         return extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.MONEY;
     }

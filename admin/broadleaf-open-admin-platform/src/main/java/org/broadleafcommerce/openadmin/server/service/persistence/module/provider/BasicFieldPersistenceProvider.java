@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.AssociationPathElement;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
@@ -37,7 +35,9 @@ import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Embedded;
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.AssociationPathElement;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -51,6 +51,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
+import javax.persistence.Embedded;
 
 /**
  * @author Jeff Fischer
@@ -70,6 +72,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         return (metadata.getFieldType() == SupportedFieldType.BOOLEAN ||
                 metadata.getFieldType() == SupportedFieldType.DATE ||
                 metadata.getFieldType() == SupportedFieldType.DECIMAL ||
+                metadata.getFieldType() == SupportedFieldType.MONEY ||
                 metadata.getFieldType() == SupportedFieldType.INTEGER ||
                 metadata.getFieldType() == SupportedFieldType.EMAIL ||
                 metadata.getFieldType() == SupportedFieldType.FOREIGN_KEY ||
@@ -82,7 +85,14 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
 
     protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
         BasicFieldMetadata metadata = extractValueRequest.getMetadata();
-        //don't handle map fields here - we'll get them in a separate provider
+        
+        // MoneyFieldPersistenceProvider is responsible for handling extraction of Money fields. However, persisting
+        // Money fields can be handled in this basic field persistence provider.
+        if (metadata.getFieldType() == SupportedFieldType.MONEY) {
+            return false;
+        }
+        
+        // don't handle map fields here - we'll get them in a separate provider
         return detectBasicType(metadata, property);
     }
 
