@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.structure.service;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -49,13 +50,14 @@ import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author bpolster
@@ -248,6 +250,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
        Map<String, StructuredContentRule> ruleMap = sc.getStructuredContentMatchRules();
        if (ruleMap != null) {
            for (String ruleKey : ruleMap.keySet()) {
+                if (ruleMap.get(ruleKey).getMatchRule() == null) continue;
                if (ruleExpression == null) {
                    ruleExpression = new StringBuffer(ruleMap.get(ruleKey).getMatchRule());
                } else {

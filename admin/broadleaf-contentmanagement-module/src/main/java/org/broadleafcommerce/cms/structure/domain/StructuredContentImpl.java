@@ -39,6 +39,11 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -58,10 +63,6 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by bpolster.
@@ -156,7 +157,14 @@ public class StructuredContentImpl implements StructuredContent {
                     tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
                     group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
                     ruleIdentifier = RuleIdentifier.PRODUCT, friendlyName = "Generic_Product_Rule")
-            )
+                    ),
+            @AdminPresentationMapField(
+                fieldName = RuleIdentifier.ORDER_FIELD_KEY,
+                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 5,
+                    tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
+                    group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
+                    ruleIdentifier = RuleIdentifier.ORDER, friendlyName = "Generic_Order_Rule")
+                    )
         }
     )
     Map<String, StructuredContentRule> structuredContentMatchRules = new HashMap<String, StructuredContentRule>();
