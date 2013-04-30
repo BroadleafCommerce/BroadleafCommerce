@@ -131,6 +131,10 @@ fieldset {
 	margin: 0 0 25px 0;
 }
 
+fieldset:last-child {
+	margin-bottom: 0;
+}
+
 fieldset legend {
 	background-color: #FAFAFA;
 	border-width: 1px;
@@ -146,6 +150,14 @@ div.field-label {
 	font-weight: 600;
 	margin-bottom: 3px;
 	color: #4D4D4D;
+}
+
+.modal .entity-form-actions {
+	margin-top: 0;
+}
+
+.entity-form-actions {
+	margin-top: 20px;
 }
 
 .entity-form-tabs {

@@ -134,7 +134,7 @@ abbr { text-transform: none; }
   .show-for-print { display: inherit !important; } }
 /* Requires globals.css */
 /* Standard Forms ---------------------- */
-form { margin: 0; }
+form { margin: 0; margin-bottom: 15px; }
 
 .row form .row { margin: 0 -6px; }
 .row form .row .column, .row form .row .columns { padding: 0 6px; }
@@ -627,7 +627,7 @@ ul.orbit-bullets li.active.has-thumb { background-position: 0 0; border-top: 2px
 .tabs.four-up dt, .tabs.four-up dd, .tabs.four-up li { width: 25%; }
 .tabs.five-up dt, .tabs.five-up dd, .tabs.five-up li { width: 20%; }
 
-ul.tabs-content { display: block; margin: 0 0 20px; padding: 0; }
+ul.tabs-content { display: block; margin: 0; padding: 0; }
 
 /* Modified by APA */
 ul.tabs-content > li { display: none; }
