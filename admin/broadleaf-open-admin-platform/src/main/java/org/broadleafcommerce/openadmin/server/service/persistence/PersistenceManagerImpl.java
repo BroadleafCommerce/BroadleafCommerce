@@ -16,14 +16,12 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -35,6 +33,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
+import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerFilter;
@@ -48,9 +47,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,6 +57,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 @Component("blPersistenceManager")
 @Scope("prototype")
@@ -297,25 +299,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
             if (handler.canHandleUpdate(persistencePackage)) {
                 if (!handler.willHandleSecurity(persistencePackage)) {
-                    Entity entity = persistencePackage.getEntity();
-                    for (Property p : entity.getProperties()) {
-                        if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
-                            adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.UPDATE);
-                            break;
-                        }
-                    }
+                    adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.UPDATE);
                 }
                 Entity response = handler.update(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
                 return postUpdate(response, persistencePackage);
             }
         }
-        Entity entity = persistencePackage.getEntity();
-        for (Property p : entity.getProperties()) {
-            if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
-                adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.UPDATE);
-                break;
-            }
-        }
+        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.UPDATE);
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
         Entity response = myModule.update(persistencePackage);
         return postUpdate(response, persistencePackage);
@@ -332,25 +322,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
             if (handler.canHandleRemove(persistencePackage)) {
                 if (!handler.willHandleSecurity(persistencePackage)) {
-                    Entity entity = persistencePackage.getEntity();
-                    for (Property p : entity.getProperties()) {
-                        if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
-                            adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.REMOVE);
-                            break;
-                        }
-                    }
+                    adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.REMOVE);
                 }
                 handler.remove(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
                 return;
             }
         }
-        Entity entity = persistencePackage.getEntity();
-        for (Property p : entity.getProperties()) {
-            if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
-                adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.REMOVE);
-                break;
-            }
-        }
+        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.REMOVE);
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType());
         myModule.remove(persistencePackage);
     }
