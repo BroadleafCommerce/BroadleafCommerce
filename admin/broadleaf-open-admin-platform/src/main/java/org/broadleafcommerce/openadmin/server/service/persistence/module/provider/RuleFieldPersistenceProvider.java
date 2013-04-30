@@ -254,7 +254,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             quantityProperty.setValue(quantityBasedRule.getQuantity().toString());
             Property idProperty = new Property();
             idProperty.setName("id");
-            idProperty.setValue(quantityBasedRule.getId().toString());
+            idProperty.setValue(String.valueOf(quantityBasedRule.getId()));
             properties[0] = mvelProperty;
             properties[1] = quantityProperty;
             properties[2] = idProperty;

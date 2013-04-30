@@ -23,10 +23,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * Handles admin operations for the {@link Offer} entity. Certain Offer fields should only render when specific values
@@ -54,6 +56,15 @@ public class AdminOfferController extends AdminBasicEntityController {
             @PathVariable Map<String, String> pathVars,
             @PathVariable String id) throws Exception {
         String view = super.viewEntityForm(request, response, model, pathVars, id);
+        model.addAttribute("additionalControllerClasses", "offer-form");
+        return view;
+    }
+    
+    @RequestMapping(value = "/add", method = RequestMethod.GET)
+    public String viewAddEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
+            @RequestParam(defaultValue = "") String entityType) throws Exception {
+        String view = super.viewAddEntityForm(request, response, model, pathVars, entityType);
         model.addAttribute("additionalControllerClasses", "offer-form");
         return view;
     }

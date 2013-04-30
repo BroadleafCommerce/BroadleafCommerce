@@ -16,13 +16,7 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -49,14 +43,23 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 
-import javax.annotation.Resource;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
+import com.anasoft.os.daofusion.criteria.AssociationPath;
+import com.anasoft.os.daofusion.criteria.FilterCriterion;
+import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
+import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
+import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
+import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 /**
  * The main reason for this persistence handler is to support {@link OfferCode}, which is not directly related
@@ -75,7 +78,8 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
 
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
-        return persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(Offer.class.getName());
+        return persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(Offer.class.getName())
+            || persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(OfferImpl.class.getName());
     }
 
     @Override
@@ -110,8 +114,10 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", OfferImpl.class.getName(), null)});
             Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective);
             BasicFieldMetadata metadata = (BasicFieldMetadata) offerCodeMergedProperties.get("offerCode");
+            metadata.setAvailableToTypes(ArrayUtils.addAll(metadata.getAvailableToTypes(), new String[] { OfferImpl.class.getName() }));
             mergedProperties.put("offerCode.offerCode", metadata);
             BasicFieldMetadata metadata2 = (BasicFieldMetadata) offerCodeMergedProperties.get("id");
+            metadata2.setAvailableToTypes(ArrayUtils.addAll(metadata2.getAvailableToTypes(), new String[] { OfferImpl.class.getName() }));
             mergedProperties.put("offerCode.id", metadata2);
 
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
@@ -203,6 +209,7 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             Offer offerInstance = (Offer) Class.forName(entity.getType()[0]).newInstance();
             Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective);
             offerInstance = (Offer) helper.createPopulatedInstance(offerInstance, entity, offerProperties, false);
+            offerInstance = (Offer) dynamicEntityDao.merge(offerInstance);
             
             OfferCode offerCode = null;
             if (entity.findProperty("deliveryType").getValue().equals("CODE")) {
