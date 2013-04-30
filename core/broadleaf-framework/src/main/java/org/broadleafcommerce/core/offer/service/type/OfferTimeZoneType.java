@@ -32,8 +32,8 @@ public class OfferTimeZoneType implements Serializable, BroadleafEnumerationType
 
     private static final Map<String, OfferTimeZoneType> TYPES = new LinkedHashMap<String, OfferTimeZoneType>();
 
-    public static final OfferTimeZoneType APPLICATION = new OfferTimeZoneType("SERVER", "Server");
-    public static final OfferTimeZoneType CUSTOMER = new OfferTimeZoneType("APPLICATION", "Application Supplied");
+    public static final OfferTimeZoneType SERVER = new OfferTimeZoneType("SERVER", "Server");
+    public static final OfferTimeZoneType APPLICATION = new OfferTimeZoneType("APPLICATION", "Application Supplied");
     public static final OfferTimeZoneType CST = new OfferTimeZoneType("CST", "CST", true);
     public static final OfferTimeZoneType GMT = new OfferTimeZoneType("UTC", "UTC", true);
     public static OfferTimeZoneType getInstance(final String type) {

@@ -44,6 +44,13 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -60,12 +67,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 @Entity
 @Table(name = "BLC_OFFER")
@@ -143,7 +144,7 @@ public class OfferImpl implements Offer, Status {
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Priority", order = 7, 
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
-    protected int priority;
+    protected Integer priority;
 
     @Column(name = "START_DATE")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Start_Date", order = 1,
@@ -159,7 +160,7 @@ public class OfferImpl implements Offer, Status {
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable",
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
-    protected boolean stackable;
+    protected Boolean stackable;
 
     @Column(name = "TARGET_SYSTEM")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Target_System",
@@ -170,7 +171,7 @@ public class OfferImpl implements Offer, Status {
     @Column(name = "APPLY_TO_SALE_PRICE")
     @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Sale_Price", order = 3000,
         group = Presentation.Group.Name.Amount, groupOrder = Presentation.Group.Order.Amount)
-    protected boolean applyToSalePrice;
+    protected Boolean applyToSalePrice;
 
     @Column(name = "APPLIES_TO_RULES")
     @AdminPresentation(excluded = true)
@@ -200,7 +201,7 @@ public class OfferImpl implements Offer, Status {
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
         visibility = VisibilityEnum.HIDDEN_ALL)
-    protected boolean combinableWithOtherOffers;  
+    protected Boolean combinableWithOtherOffers;
 
     @Column(name = "OFFER_DELIVERY_TYPE", nullable=false)
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Delivery_Type", order = 5000,
@@ -214,7 +215,7 @@ public class OfferImpl implements Offer, Status {
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order", order = 7,
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
-    protected int maxUsesPerOrder;
+    protected Integer maxUsesPerOrder;
 
     @Column(name = "MAX_USES_PER_CUSTOMER")
     @AdminPresentation(friendlyName = "OfferImpl_Max_Uses_Per_Customer", order = 8,
@@ -407,7 +408,7 @@ public class OfferImpl implements Offer, Status {
 
     @Override
     public int getPriority() {
-        return priority;
+        return priority == null ? 0 : priority;
     }
 
     @Override
@@ -446,7 +447,7 @@ public class OfferImpl implements Offer, Status {
      */
     @Override
     public boolean isStackable() {
-        return stackable;
+        return stackable == null ? false : stackable;
     }
 
     /**
@@ -477,7 +478,7 @@ public class OfferImpl implements Offer, Status {
 
     @Override
     public boolean getApplyDiscountToSalePrice() {
-        return applyToSalePrice;
+        return applyToSalePrice == null ? false : applyToSalePrice;
     }
 
     @Override
@@ -534,7 +535,7 @@ public class OfferImpl implements Offer, Status {
      */
     @Override
     public boolean isCombinableWithOtherOffers() {
-        return combinableWithOtherOffers;
+        return combinableWithOtherOffers == null ? false : combinableWithOtherOffers;
     }
 
     /**
@@ -574,7 +575,7 @@ public class OfferImpl implements Offer, Status {
     }
 
     public int getMaxUsesPerOrder() {
-        return maxUsesPerOrder;
+        return maxUsesPerOrder == null ? 0 : maxUsesPerOrder;
     }
 
     public void setMaxUsesPerOrder(int maxUsesPerOrder) {
@@ -583,12 +584,12 @@ public class OfferImpl implements Offer, Status {
 
     @Override
     public int getMaxUses() {
-        return maxUsesPerOrder;
+        return getMaxUsesPerOrder();
     }
 
     @Override
     public void setMaxUses(int maxUses) {
-        this.maxUsesPerOrder = maxUses;
+        setMaxUsesPerOrder(maxUses);
     }
 
     @Override
