@@ -450,7 +450,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     @Override
     public EntityForm createEntityForm(ClassMetadata cmd, Entity entity)
             throws ServiceException {
-        EntityForm ef = createEntityForm(cmd);
+        EntityForm ef = createStandardEntityForm();
+        populateEntityForm(cmd, entity, ef);
         return ef;
     }
 
