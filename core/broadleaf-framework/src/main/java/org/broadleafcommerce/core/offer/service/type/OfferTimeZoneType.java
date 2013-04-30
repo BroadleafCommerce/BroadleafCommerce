@@ -23,36 +23,41 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * An extendible enumeration of offer rule types.
+ * An extendible enumeration of offer types.
  *
  */
-public class OfferRuleType implements Serializable, BroadleafEnumerationType {
+public class OfferTimeZoneType implements Serializable, BroadleafEnumerationType {
     
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OfferRuleType> TYPES = new LinkedHashMap<String, OfferRuleType>();
+    private static final Map<String, OfferTimeZoneType> TYPES = new LinkedHashMap<String, OfferTimeZoneType>();
 
-    public static final OfferRuleType ORDER = new OfferRuleType("ORDER", "Order");
-    public static final OfferRuleType FULFILLMENT_GROUP = new OfferRuleType("FULFILLMENT_GROUP", "Fulfillment Group");
-    public static final OfferRuleType CUSTOMER = new OfferRuleType("CUSTOMER", "Customer");
-    public static final OfferRuleType TIME = new OfferRuleType("TIME", "Time");
-
-    public static OfferRuleType getInstance(final String type) {
+    public static final OfferTimeZoneType APPLICATION = new OfferTimeZoneType("SERVER", "Server");
+    public static final OfferTimeZoneType CUSTOMER = new OfferTimeZoneType("APPLICATION", "Application Supplied");
+    public static final OfferTimeZoneType CST = new OfferTimeZoneType("CST", "CST", true);
+    public static final OfferTimeZoneType GMT = new OfferTimeZoneType("UTC", "UTC", true);
+    public static OfferTimeZoneType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
     private String friendlyType;
+    private Boolean javaStandardTimeZone;
 
-    public OfferRuleType() {
+
+    public OfferTimeZoneType() {
         //do nothing
     }
 
-    public OfferRuleType(final String type, final String friendlyType) {
-        this.friendlyType = friendlyType;
-        setType(type);
+    public OfferTimeZoneType(final String type, final String friendlyType) {
+        this(type, friendlyType, false);
     }
 
+    public OfferTimeZoneType(final String type, final String friendlyType, Boolean javaStandardTimeZone) {
+        this.friendlyType = friendlyType;
+        setType(type);
+        setJavaStandardTimeZone(javaStandardTimeZone);
+    }
     public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
@@ -68,6 +73,13 @@ public class OfferRuleType implements Serializable, BroadleafEnumerationType {
         return friendlyType;
     }
 
+    public Boolean getJavaStandardTimeZone() {
+        return javaStandardTimeZone;
+    }
+
+    public void setJavaStandardTimeZone(Boolean javaStandardTimeZone) {
+        this.javaStandardTimeZone = javaStandardTimeZone;
+    }
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -84,7 +96,7 @@ public class OfferRuleType implements Serializable, BroadleafEnumerationType {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        OfferRuleType other = (OfferRuleType) obj;
+        OfferTimeZoneType other = (OfferTimeZoneType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;

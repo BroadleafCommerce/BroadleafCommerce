@@ -14,31 +14,18 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.offer.domain;
+package org.broadleafcommerce.core.offer.service.processor;
 
-
-import org.broadleafcommerce.core.offer.service.type.OfferTimeZoneType;
+import org.broadleafcommerce.core.offer.domain.Offer;
 
 import java.util.List;
 
+
 /**
- * Add advanced offer support to an Offer
- * 
  * @author Priyesh Patel
  */
-public interface AdvancedOffer {
-
-    List<OfferTier> getOfferTiers();
-
-    void setOfferTiers(List<OfferTier> offerTiers);
-
-    boolean isTieredOffer();
-
-    void setTieredOffer(boolean isTieredOffer);
+public interface AbstractBaseProcessorExtensionListener {
     
-    public OfferTimeZoneType getOfferTimeZoneType();
-
-    public void setOfferTimeZoneType(OfferTimeZoneType offerTimeZoneType);
-
+    public List<Offer> removeAdditionalOffers(List<Offer> offers, AbstractBaseProcessor processor);
 
 }

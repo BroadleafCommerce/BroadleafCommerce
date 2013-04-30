@@ -46,6 +46,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 /**
  * 
  * @author jfischer
@@ -55,7 +57,9 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
     private static final Log LOG = LogFactory.getLog(AbstractBaseProcessor.class);
     private static final Map EXPRESSION_CACHE = new LRUMap(1000);
-    
+    @Resource(name = "blAbstractBaseProcessorExtensionManager")
+    protected AbstractBaseProcessorExtensionListener extensionManager;
+
     protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
         CandidatePromotionItems candidates = new CandidatePromotionItems();
         if (offer.getQualifyingItemCriteria() == null || offer.getQualifyingItemCriteria().size() == 0) {
@@ -286,10 +290,14 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         List<Offer> filteredOffers = new ArrayList<Offer>();
         if (offers != null && !offers.isEmpty()) {
             filteredOffers = removeOutOfDateOffers(offers);
+            if (extensionManager != null) {
+                filteredOffers = extensionManager.removeAdditionalOffers(filteredOffers, this);
+            }
             filteredOffers = removeInvalidCustomerOffers(filteredOffers, customer);
         }
         return filteredOffers;
     }
+
 
     /**
      * Removes all out of date offers.  If an offer does not have a start date, or the start

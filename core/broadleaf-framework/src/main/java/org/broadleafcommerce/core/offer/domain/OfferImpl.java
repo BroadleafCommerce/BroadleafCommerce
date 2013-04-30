@@ -288,6 +288,12 @@ public class OfferImpl implements Offer, Status {
                     ruleIdentifier = RuleIdentifier.CUSTOMER, friendlyName = "OfferImpl_Customer_Rule")
             ),
             @AdminPresentationMapField(
+                    fieldName = RuleIdentifier.TIME_FIELD_KEY,
+                            fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE,
+                                    group = Presentation.Group.Name.ActivityRange, groupOrder = Presentation.Group.Order.ActivityRange,
+                                    ruleIdentifier = RuleIdentifier.TIME, friendlyName = "OfferImpl_Time_Rule")
+            ),
+            @AdminPresentationMapField(
                 fieldName = RuleIdentifier.ORDER_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
                     group = Presentation.Group.Name.Qualifiers, groupOrder = Presentation.Group.Order.Qualifiers,
@@ -297,7 +303,7 @@ public class OfferImpl implements Offer, Status {
                 fieldName = RuleIdentifier.FULFILLMENT_GROUP_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
                     group = Presentation.Group.Name.Qualifiers, groupOrder = Presentation.Group.Order.Qualifiers,
-                    ruleIdentifier = RuleIdentifier.FULFILLMENTGROUP, friendlyName = "OfferImpl_FG_Rule")
+                                    ruleIdentifier = RuleIdentifier.FULFILLMENTGROUP, friendlyName = "OfferImpl_FG_Rule")
             )
         }
     )

@@ -102,5 +102,5 @@
     <bean id="blOrderServiceExtensionManager" class="org.broadleafcommerce.core.order.service.OrderServiceExtensionManager" />
     <bean id="blOrderDaoExtensionManager" class="org.broadleafcommerce.core.order.dao.OrderDaoExtensionManager" />
     <bean id="blOfferServiceExtensionManager" class="org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager" />
-
+    <bean id="blAbstractBaseProcessorExtensionManager" class="org.broadleafcommerce.core.offer.service.processor.AbstractBaseProcessorExtensionManager" />
 </beans>
