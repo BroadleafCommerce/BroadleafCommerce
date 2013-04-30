@@ -18,12 +18,16 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
@@ -307,6 +311,19 @@ public class SkuImpl implements Sku {
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
+    
+    /**
+     * Note that this field is not the target of the currencyCodeField attribute on either retailPrice or salePrice.
+     * This is because SKUs are special in that we want to return the currency on this SKU if there is one, falling back
+     * to the defaultSku's currency if possible.
+     */
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @JoinColumn(name = "CURRENCY_CODE")
+    @AdminPresentation(friendlyName = "SkuImpl_Currency", order = 3000,
+        tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced, 
+        group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced)
+    @AdminPresentationToOneLookup(lookupType = LookupType.DROPDOWN, lookupDisplayProperty = "friendlyName")
+    protected BroadleafCurrency currency;
 
     @Override
     public Long getId() {
@@ -371,7 +388,7 @@ public class SkuImpl implements Sku {
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
         } else if (salePrice != null) {
             // We have an explicitly set sale price directly on this entity. We will not apply any adjustments
-            return new Money(salePrice, Money.defaultCurrency());
+            return new Money(salePrice, getCurrency());
         } else if (hasDefaultSku()) {
             // Otherwise, we'll pull the sale price from the default sku
             returnPrice = lookupDefaultSku().getSalePrice();
@@ -383,7 +400,7 @@ public class SkuImpl implements Sku {
         }
         
         if (optionValueAdjustments != null) {
-            returnPrice = optionValueAdjustments.add(returnPrice);
+            returnPrice = returnPrice.add(optionValueAdjustments);
         }
 
         return returnPrice;
@@ -412,7 +429,7 @@ public class SkuImpl implements Sku {
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
         } else if (retailPrice != null) {
             // We have an explicitly set retail price directly on this entity. We will not apply any adjustments
-            return new Money(retailPrice, Money.defaultCurrency());
+            return new Money(retailPrice, getCurrency());
         } else if (hasDefaultSku()) {
             // Otherwise, we'll pull the retail price from the default sku
             returnPrice = lookupDefaultSku().getRetailPrice();
@@ -424,7 +441,7 @@ public class SkuImpl implements Sku {
         }
         
         if (optionValueAdjustments != null) {
-            returnPrice = optionValueAdjustments.add(returnPrice);
+            returnPrice = returnPrice.add(optionValueAdjustments);
         }
 
         return returnPrice;
@@ -778,6 +795,20 @@ public class SkuImpl implements Sku {
     @Override
     public void setSkuAttributes(Map<String, SkuAttribute> skuAttributes) {
         this.skuAttributes = skuAttributes;
+    }
+    
+    @Override
+    public BroadleafCurrency getCurrency() {
+        if (currency == null && hasDefaultSku()) {
+            return lookupDefaultSku().getCurrency();
+        } else {
+            return currency;
+        }
+    }
+
+    @Override
+    public void setCurrency(BroadleafCurrency currency) {
+        this.currency = currency;
     }
 
     @Override

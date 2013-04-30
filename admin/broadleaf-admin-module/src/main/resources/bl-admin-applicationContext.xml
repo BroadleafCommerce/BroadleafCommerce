@@ -172,5 +172,13 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="blPersistenceProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <ref bean="blSkuPricingPersistenceProvider"/>
+            </list>
+        </property>
+    </bean>
 
 </beans>

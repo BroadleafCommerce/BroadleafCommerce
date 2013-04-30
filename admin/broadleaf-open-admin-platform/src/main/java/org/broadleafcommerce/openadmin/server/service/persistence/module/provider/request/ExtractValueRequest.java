@@ -22,6 +22,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -38,8 +39,11 @@ public class ExtractValueRequest {
     private String displayVal;
     private final PersistenceManager persistenceManager;
     private final DataFormatProvider dataFormatProvider;
+    private final Serializable entity;
 
-    public ExtractValueRequest(List<Property> props, FieldManager fieldManager, BasicFieldMetadata metadata, Object requestedValue, String displayVal, PersistenceManager persistenceManager, DataFormatProvider dataFormatProvider) {
+    public ExtractValueRequest(List<Property> props, FieldManager fieldManager, BasicFieldMetadata metadata, 
+            Object requestedValue, String displayVal, PersistenceManager persistenceManager, 
+            DataFormatProvider dataFormatProvider, Serializable entity) {
         this.props = props;
         this.fieldManager = fieldManager;
         this.metadata = metadata;
@@ -47,6 +51,7 @@ public class ExtractValueRequest {
         this.displayVal = displayVal;
         this.persistenceManager = persistenceManager;
         this.dataFormatProvider = dataFormatProvider;
+        this.entity = entity;
     }
 
     public List<Property> getProps() {
@@ -80,4 +85,9 @@ public class ExtractValueRequest {
     public void setDisplayVal(String displayVal) {
         this.displayVal = displayVal;
     }
+    
+    public Serializable getEntity() {
+        return entity;
+    }
+    
 }

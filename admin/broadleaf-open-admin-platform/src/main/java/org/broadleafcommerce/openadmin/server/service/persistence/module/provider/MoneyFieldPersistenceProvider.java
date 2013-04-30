@@ -20,13 +20,12 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
+import java.util.Currency;
+import java.util.Locale;
 
 /**
  * Persistence provider capable of extracting friendly display values for Money fields
@@ -37,31 +36,25 @@ import java.math.BigDecimal;
 @Component("blMoneyFieldPersistenceProvider")
 public class MoneyFieldPersistenceProvider extends AbstractMoneyFieldPersistenceProvider {
     
-    protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
-        return extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.MONEY;
-    }
-
-    @Override
-    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
-        if (!canHandleExtraction(extractValueRequest, property)) {
-            return FieldProviderResponse.NOT_HANDLED;
-        }
-        
-        if (extractValueRequest.getRequestedValue() == null) {
-            return FieldProviderResponse.NOT_HANDLED;
-        }
-        
-        BigDecimal value = (BigDecimal) extractValueRequest.getRequestedValue();
-        property.setValue(getFormattedValue(value));
-        
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        property.setDisplayValue(getFormattedDisplayValue(value, brc.getJavaLocale(), Money.defaultCurrency()));
-        
-        return FieldProviderResponse.HANDLED;
-    }
-    
     @Override
     public int getOrder() {
         return FieldPersistenceProvider.MONEY;
     }
+    
+    @Override
+    protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
+        return extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.MONEY;
+    }
+    
+    @Override
+    protected Locale getLocale(ExtractValueRequest extractValueRequest, Property property) {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        return brc.getJavaLocale();
+    }
+
+    @Override
+    protected Currency getCurrency(ExtractValueRequest extractValueRequest, Property property) {
+        return Money.defaultCurrency();
+    }
+    
 }

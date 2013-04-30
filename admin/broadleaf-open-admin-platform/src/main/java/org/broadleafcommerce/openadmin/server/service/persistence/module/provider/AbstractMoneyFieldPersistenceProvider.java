@@ -16,6 +16,11 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
+import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Currency;
@@ -28,17 +33,35 @@ import java.util.Locale;
  */
 public abstract class AbstractMoneyFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
     
-    public String getFormattedDisplayValue(BigDecimal value, Locale locale, Currency currency) {
-        NumberFormat format = NumberFormat.getCurrencyInstance(locale);
-        format.setCurrency(currency);
-        return format.format(value);
-    }
-    
-    public String getFormattedValue(BigDecimal value) {
+    @Override
+    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+        if (!canHandleExtraction(extractValueRequest, property)) {
+            return FieldProviderResponse.NOT_HANDLED;
+        }
+        
+        if (extractValueRequest.getRequestedValue() == null) {
+            return FieldProviderResponse.NOT_HANDLED;
+        }
+        
+        BigDecimal value = (BigDecimal) extractValueRequest.getRequestedValue();
         NumberFormat format = NumberFormat.getInstance();
         format.setMaximumFractionDigits(2);
         format.setMinimumFractionDigits(2);
-        return format.format(value);
+        property.setValue(format.format(value));
+        
+        Locale locale = getLocale(extractValueRequest, property);
+        Currency currency = getCurrency(extractValueRequest, property);
+        format = NumberFormat.getCurrencyInstance(locale);
+        format.setCurrency(currency);
+        property.setDisplayValue(format.format(value));
+        
+        return FieldProviderResponse.HANDLED_BREAK;
     }
+    
+    protected abstract boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property);
+    
+    protected abstract Locale getLocale(ExtractValueRequest extractValueRequest, Property property);
+    
+    protected abstract Currency getCurrency(ExtractValueRequest extractValueRequest, Property property);
     
 }
