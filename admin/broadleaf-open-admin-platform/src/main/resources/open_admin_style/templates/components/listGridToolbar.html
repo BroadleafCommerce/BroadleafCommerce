@@ -7,7 +7,9 @@
 <div class="listgrid-toolbar">
         
     <div th:remove="tag"
-        th:if="${(hideActionButtons == null or hideActionButtons == 'false') and (listGrid.subCollectionFieldName != null)}">
+        th:if="${(hideActionButtons == null or hideActionButtons == 'false') and 
+                 (listGrid.subCollectionFieldName != null) and
+                 (!listGrid.readOnly)}">
         
         <ul class="inline-list small-spacing">
             <li th:each="action : ${listGrid.toolbarActions}">

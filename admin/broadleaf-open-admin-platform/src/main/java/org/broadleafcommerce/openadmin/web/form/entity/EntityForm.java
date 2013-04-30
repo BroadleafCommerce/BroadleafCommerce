@@ -245,6 +245,28 @@ public class EntityForm {
         getDynamicFormInfos().put(name, info);
     }
     
+    public void setReadOnly() {
+        if (getFields() != null) {
+            for (Entry<String, Field> entry : getFields().entrySet()) {
+                entry.getValue().setReadOnly(true);
+            }
+        }
+        
+        if (getAllListGrids() != null) {
+            for (ListGrid lg : getAllListGrids()) {
+                lg.setReadOnly(true);
+            }
+        }
+        
+        if (getDynamicForms() != null) {
+            for (Entry<String, EntityForm> entry : getDynamicForms().entrySet()) {
+                entry.getValue().setReadOnly();
+            }
+        }
+        
+        actions.clear();
+    }
+    
     /* *********************** */
     /* GENERIC GETTERS/SETTERS */
     /* *********************** */

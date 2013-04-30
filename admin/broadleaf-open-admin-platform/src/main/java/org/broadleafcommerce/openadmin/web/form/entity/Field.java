@@ -42,6 +42,7 @@ public class Field {
     protected String columnWidth;
     protected Boolean isVisible;
     protected Boolean isAlternateOrdering;
+    protected Boolean isReadOnly;
     
     /* ************ */
     /* WITH METHODS */
@@ -101,6 +102,11 @@ public class Field {
         setColumnWidth(columnWidth);
         return this;
     }
+    
+    public Field withReadOnly(Boolean isReadOnly) {
+        setReadOnly(isReadOnly);
+        return this;
+    }
 
     /* ************************ */
     /* CUSTOM GETTERS / SETTERS */
@@ -145,6 +151,10 @@ public class Field {
      */
     public boolean getCanLinkToExternalEntity() {
         return SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString().equals(fieldType);
+    }
+
+    public Boolean getReadOnly() {
+        return isReadOnly == null ? false : isReadOnly;
     }
     
     /* ************************** */
@@ -242,4 +252,9 @@ public class Field {
     public void setAlternateOrdering(Boolean alternateOrdering) {
         this.isAlternateOrdering = alternateOrdering;
     }
+    
+    public void setReadOnly(Boolean readOnly) {
+        this.isReadOnly = readOnly;
+    }
+    
 }

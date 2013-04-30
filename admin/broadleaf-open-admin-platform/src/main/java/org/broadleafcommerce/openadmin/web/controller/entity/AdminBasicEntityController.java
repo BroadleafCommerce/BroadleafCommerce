@@ -279,6 +279,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         setModelAttributes(model, sectionKey);
         
         if (isAjaxRequest(request)) {
+            entityForm.setReadOnly();
             model.addAttribute("viewType", "modal/entityView");
             model.addAttribute("modalHeaderType", "viewEntity");
             return "modules/modalContainer";
@@ -357,6 +358,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             setModelAttributes(model, sectionKey);
             
             if (isAjaxRequest(request)) {
+                entityForm.setReadOnly();
                 model.addAttribute("viewType", "modal/entityView");
                 model.addAttribute("modalHeaderType", "viewEntity");
                 return "modules/modalContainer";

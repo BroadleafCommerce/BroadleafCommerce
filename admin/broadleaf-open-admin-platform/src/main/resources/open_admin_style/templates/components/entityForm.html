@@ -39,7 +39,13 @@
                      blc_admin:component_id="${field}"
                      th:classappend="${!field.isVisible}? 'hidden'">
                     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
-                    <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
+                    
+                    <div th:if="${field.readOnly}" th:remove="tag">
+                        <div th:substituteby="fields/readonly" />
+                    </div>
+                    <div th:unless="${field.readOnly}" th:remove="tag">
+                        <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
+                    </div>
                 </div>
             </fieldset>
             

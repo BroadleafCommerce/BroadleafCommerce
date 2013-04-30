@@ -401,6 +401,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withFriendlyName(fmd.getFriendlyName())
                          .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
                          .withRequired(required)
+                         .withReadOnly(fmd.getReadOnly())
                          .withAlternateOrdering((Boolean) fmd.getAdditionalMetadata().get(Field.ALTERNATE_ORDERING));
 
                     if (StringUtils.isBlank(f.getFriendlyName())) {

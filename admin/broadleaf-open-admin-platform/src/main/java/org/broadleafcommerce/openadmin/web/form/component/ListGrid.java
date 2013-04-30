@@ -55,6 +55,7 @@ public class ListGrid {
     protected int startIndex;
     protected int pageSize;
     protected Boolean canFilterAndSort;
+    protected Boolean isReadOnly;
     
     protected AddMethodType addMethodType;
     protected String listGridType;
@@ -142,7 +143,15 @@ public class ListGrid {
     }
     
     public Boolean getCanFilterAndSort() {
-        return canFilterAndSort == null ? true : canFilterAndSort;
+        return !getReadOnly() && (canFilterAndSort == null ? true : canFilterAndSort);
+    }
+
+    public Boolean getReadOnly() {
+        return isReadOnly == null ? false : isReadOnly;
+    }
+    
+    public Boolean getClickable() {
+        return !getReadOnly() && !"main".equals(listGridType);
     }
 
     /* ************************** */
@@ -291,6 +300,10 @@ public class ListGrid {
     
     public void setPathOverride(String pathOverride) {
         this.pathOverride = pathOverride;
+    }
+    
+    public void setReadOnly(Boolean readOnly) {
+        this.isReadOnly = readOnly;
     }
     
 }

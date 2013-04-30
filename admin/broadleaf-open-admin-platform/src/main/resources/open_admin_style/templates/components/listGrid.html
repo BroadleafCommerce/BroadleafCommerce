@@ -1,7 +1,5 @@
 <comment th:remove="all">
 <!-- This component represents a list grid toolbar -->
-<!-- Additional parameters that can be specified include: -->
-<!--    hideActionButtons - if set to true, will not render the sort/filter buttons -->
 </comment>
 
 <div class="listgrid-header-wrapper">
@@ -82,7 +80,7 @@
             
             <tr th:each="record : ${listGrid.records}"
                 th:unless="${#lists.isEmpty(listGrid.records)}"
-                th:classappend="${listGrid.listGridType != 'main'}? 'clickable'"
+                th:classappend="${listGrid.clickable}? 'clickable'"
                 th:attr="data-link=@{${record.path}},
                          data-index=${record.index}">
                 
