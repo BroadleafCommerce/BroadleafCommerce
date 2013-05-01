@@ -55,20 +55,23 @@ public class ProductOptionDisplayProcessor extends AbstractLocalVariableDefiniti
     protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
         initServices(arguments);
         HashMap<String, String> productOptionDisplayValues = new HashMap<String, String>();
-
-        DiscreteOrderItem orderItem = (DiscreteOrderItem) StandardExpressionProcessor.processExpression(arguments,
-                element.getAttributeValue("orderItem"));
-
         Map<String, Object> newVars = new HashMap<String, Object>();
-        for (String i : orderItem.getOrderItemAttributes().keySet()) {
-            for (ProductOption option : orderItem.getProduct().getProductOptions()) {
-                if (option.getAttributeName().equals(i) && !StringUtils.isEmpty(orderItem.getOrderItemAttributes().get(i).toString())) {
-                    productOptionDisplayValues.put(option.getLabel(), orderItem.getOrderItemAttributes().get(i).toString());
+        if (StandardExpressionProcessor.processExpression(arguments,
+                element.getAttributeValue("orderItem")) instanceof DiscreteOrderItem) {
+
+            DiscreteOrderItem orderItem = (DiscreteOrderItem) StandardExpressionProcessor.processExpression(arguments,
+                    element.getAttributeValue("orderItem"));
+
+            for (String i : orderItem.getOrderItemAttributes().keySet()) {
+                for (ProductOption option : orderItem.getProduct().getProductOptions()) {
+                    if (option.getAttributeName().equals(i) && !StringUtils.isEmpty(orderItem.getOrderItemAttributes().get(i).toString())) {
+                        productOptionDisplayValues.put(option.getLabel(), orderItem.getOrderItemAttributes().get(i).toString());
+                    }
                 }
             }
         }
         newVars.put("productOptionDisplayValues", productOptionDisplayValues);
-        
+
         return newVars;
     }
 
