@@ -465,6 +465,8 @@ public interface Sku extends Serializable {
     /**
      * Sets the currency for this Sku
      * 
+     * Note: Currency is ignored when using dynamic pricing
+     * 
      * @param currency
      */
     public void setCurrency(BroadleafCurrency currency);
@@ -472,6 +474,9 @@ public interface Sku extends Serializable {
     /**
      * Returns the currency for this sku if there is one set. If there is not, it will return the currency for the
      * default sku if this is not the default sku. Note that it is possible for this method to return null.
+     * 
+     * <b>Note: When using dynamic pricing, this method is unreliable and should not be called outside of the 
+     * Broadleaf admin</b>
      * 
      * @return the currency for this sku
      */

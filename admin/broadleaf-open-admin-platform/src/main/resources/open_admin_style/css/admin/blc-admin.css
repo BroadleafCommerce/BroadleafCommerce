@@ -11,7 +11,6 @@ body {
 
 html {
 	overflow: -moz-scrollbars-vertical; 
-	overflow-y: scroll;
 }
 
 [role="main"] {
@@ -697,7 +696,7 @@ table.table-hover tbody tr.draggable:hover {
     width: 20px;
     cursor: pointer;
     position: absolute;
-    right: -1px;
+    right: -10px;
     background: #F5F5F5;
     -webkit-transition: background-color 0.15s ease-in-out;
     -moz-transition: background-color 0.15s ease-in-out;
@@ -934,7 +933,7 @@ table tbody tr:nth-child(odd) {
 }
 
 .listgrid-header-wrapper table.list-grid-table thead tr th {
-	overflow: visible;
+	overflow: hidden;
 }
 
 table.list-grid-table thead tr.width-control-header {

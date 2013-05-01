@@ -1,6 +1,6 @@
 <dl class="tabs" th:if="${listGrid.listGridType == 'adorned_with_form'}">
     <dd class="active">
-        <a id="adornedModalTab1Link" href="#adornedModalTab1">1. Pick Entity</a>
+        <a id="adornedModalTab1Link" href="#adornedModalTab1" th:inline="text">1. Pick [[#{${listGrid.friendlyName}}]]</a>
     </dd>
     <dd>
         <a id="adornedModalTab2Link" href="#adornedModalTab2">2. Additional Fields</a>

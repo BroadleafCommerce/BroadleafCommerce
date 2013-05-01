@@ -601,6 +601,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             ListGrid listGrid = formService.buildMainListGrid(drs, collectionMetadata, sectionKey);
             listGrid.setSubCollectionFieldName(collectionField);
             listGrid.setPathOverride(request.getRequestURL().toString());
+            listGrid.setFriendlyName(collectionMetadata.getPolymorphicEntities().getFriendlyName());
             EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
 
             if (fmd.getMaintainedAdornedTargetFields().length > 0) {

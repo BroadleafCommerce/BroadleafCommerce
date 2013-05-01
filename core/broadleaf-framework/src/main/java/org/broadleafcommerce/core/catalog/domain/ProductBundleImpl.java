@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
@@ -28,6 +29,10 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,9 +40,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -49,7 +51,12 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "PRICING_MODEL")
-    @AdminPresentation(friendlyName = "productBundlePricingModel", helpText="productBundlePricingModelHelp", requiredOverride=RequiredOverride.REQUIRED, group="productBundleGroup", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType")
+    @AdminPresentation(friendlyName = "productBundlePricingModel", 
+        group = "productBundleGroup",
+        helpText = "productBundlePricingModelHelp", 
+        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
+        broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType",
+        requiredOverride = RequiredOverride.REQUIRED)
     protected String pricingModel;
 
     @Column(name = "AUTO_BUNDLE")
@@ -72,6 +79,10 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationAdornedTargetCollection(friendlyName = "skuBundleItemsTitle",
+        targetObjectProperty = "sku", 
+        maintainedAdornedTargetFields = { "quantity", "itemSalePrice" }, 
+        gridVisibleFields = { "name", "quantity", "itemSalePrice" })
     protected List<SkuBundleItem> skuBundleItems = new ArrayList<SkuBundleItem>();
     
     @Override

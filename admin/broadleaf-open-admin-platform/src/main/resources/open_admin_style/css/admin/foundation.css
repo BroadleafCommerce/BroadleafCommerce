@@ -686,7 +686,7 @@ div.alert-box a.close:hover, div.alert-box a.close:focus { opacity: 0.4; }
 .has-tip:hover, .has-tip:focus { border-bottom: dotted 1px #196177; color: #2ba6cb; }
 .has-tip.tip-left, .has-tip.tip-right { float: none !important; }
 
-.tooltip { display: none; background: black; background: rgba(0, 0, 0, 0.85); position: absolute; color: white; font-weight: bold; font-size: 12px; padding: 5px; z-index: 999; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; line-height: normal; }
+.tooltip { display: none; background: black; background: rgba(0, 0, 0, 0.85); position: absolute; color: white; font-weight: bold; font-size: 12px; padding: 5px; z-index: 222999; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; line-height: normal; }
 .tooltip > .nub { display: block; width: 0; height: 0; border: solid 5px; border-color: transparent transparent black transparent; border-color: transparent transparent rgba(0, 0, 0, 0.85) transparent; position: absolute; top: -10px; left: 10px; }
 .tooltip.tip-override > .nub { border-color: transparent transparent black transparent !important; border-color: transparent transparent rgba(0, 0, 0, 0.85) transparent !important; top: -10px !important; }
 .tooltip.tip-top > .nub, .tooltip.tip-centered-top > .nub { border-color: black transparent transparent transparent; border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent; top: auto; bottom: -10px; }

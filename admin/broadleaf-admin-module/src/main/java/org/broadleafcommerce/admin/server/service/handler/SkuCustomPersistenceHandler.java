@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -141,10 +142,11 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     protected Boolean canHandle(PersistencePackage persistencePackage, OperationType operationType) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-
             Class testClass = Class.forName(ceilingEntityFullyQualifiedClassname);
-            return Sku.class.isAssignableFrom(testClass) && //ArrayUtils.isEmpty(persistencePackage.getCustomCriteria()) &&
-                    OperationType.BASIC.equals(operationType);
+            return Sku.class.isAssignableFrom(testClass) && 
+                    //ArrayUtils.isEmpty(persistencePackage.getCustomCriteria()) &&
+                    OperationType.BASIC.equals(operationType) && 
+                    (persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST) == null);
         } catch (ClassNotFoundException e) {
             return false;
         }
@@ -230,6 +232,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         metadata.setBroadleafEnumeration("");
         metadata.setReadOnly(true);
         metadata.setRequiredOverride(false);
+        metadata.setGridOrder(Integer.MAX_VALUE);
 
         return metadata;
     }

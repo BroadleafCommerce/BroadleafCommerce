@@ -18,6 +18,7 @@ package org.broadleafcommerce.admin.web.controller.entity;
 
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundleImpl;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -170,8 +171,17 @@ public class AdminProductController extends AdminBasicEntityController {
                                                                 .withUrlPostfix("/generate-skus");
         
         ListGrid skusGrid = form.findListGrid("additionalSkus");
-        skusGrid.addToolbarAction(generateSkusAction);
-        skusGrid.setCanFilterAndSort(false);
+        if (skusGrid != null) {
+            skusGrid.addToolbarAction(generateSkusAction);
+            skusGrid.setCanFilterAndSort(false);
+        }
+        
+        // When we're dealing with product bundles, we don't want to render the product options and additional skus
+        // list grids. Remove them from the form.
+        if (form.getEntityType().equals(ProductBundleImpl.class.getName())) {
+            form.removeListGrid("additionalSkus");
+            form.removeListGrid("productOptions");
+        }
         
         return view;
     }

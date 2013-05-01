@@ -585,11 +585,14 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             throws ServiceException {
         // Get the form with values for this entity
         populateEntityForm(cmd, entity, ef);
-
+        
         // Attach the sub-collection list grids and specialty UI support
         for (Property p : cmd.getProperties()) {
-
             if (p.getMetadata() instanceof BasicFieldMetadata) {
+                continue;
+            }
+            
+            if (!ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), entity.getType()[0])) {
                 continue;
             }
 
@@ -639,10 +642,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         Property entityProp = entity.findProperty("id");
         field.setValue(entityProp.getValue());
 
-        field = ef.getFields().get(adornedList.getSortField());
-        entityProp = entity.findProperty(adornedList.getSortField());
-        if (entityProp != null) {
-            field.setValue(entityProp.getValue());
+        if (StringUtils.isNotBlank(adornedList.getSortField())) {
+            field = ef.getFields().get(adornedList.getSortField());
+            entityProp = entity.findProperty(adornedList.getSortField());
+            if (field != null && entityProp != null) {
+                field.setValue(entityProp.getValue());
+            }
         }
     }
 
@@ -690,10 +695,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 .withIdOverride("adornedTargetIdProperty");
         ef.addHiddenField(f);
 
-        f = new Field()
-                .withName(adornedList.getSortField())
-                .withFieldType(SupportedFieldType.HIDDEN.toString());
-        ef.addHiddenField(f);
+        if (StringUtils.isNotBlank(adornedList.getSortField())) {
+            f = new Field()
+                    .withName(adornedList.getSortField())
+                    .withFieldType(SupportedFieldType.HIDDEN.toString());
+            ef.addHiddenField(f);
+        }
 
         return ef;
     }

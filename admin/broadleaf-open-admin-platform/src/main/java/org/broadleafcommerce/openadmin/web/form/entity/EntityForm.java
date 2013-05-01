@@ -174,6 +174,37 @@ public class EntityForm {
         
         return fieldToRemove;
     }
+    
+    public void removeTab(Tab tab) {
+        tabs.remove(tab);
+    }
+    
+    public ListGrid removeListGrid(String subCollectionFieldName) {
+        ListGrid lgToRemove = null;
+        Tab containingTab = null;
+
+        findLg: {
+            for (Tab tab : tabs) {
+                for (ListGrid lg : tab.getListGrids()) {
+                    if (subCollectionFieldName.equals(lg.getSubCollectionFieldName())) {
+                        lgToRemove = lg;
+                        containingTab = tab;
+                        break findLg;
+                    }
+                }
+            }
+        }
+
+        if (lgToRemove != null) {
+            containingTab.removeListGrid(lgToRemove);
+        }
+        
+        if (containingTab.getListGrids().size() == 0 && containingTab.getFields().size() == 0) {
+            removeTab(containingTab);
+        }
+        
+        return lgToRemove;
+    }
 
     public void addHiddenField(Field field) {
         addField(field, HIDDEN_GROUP, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
