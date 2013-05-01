@@ -14,7 +14,7 @@
     </div>
     <div class="five columns">
         <ul class="button-group" style="float: right;">
-            <li>
+            <li th:unless="${cannotCreate}">
                 <a th:href="@{${sectionKey} + '/add'}" class="button small radius dark add-main-entity" th:inline="text">
                     <i class="icon-plus"></i> &nbsp; Add [[#{${entityFriendlyName}}]]
                 </a>

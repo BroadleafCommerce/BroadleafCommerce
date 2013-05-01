@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -37,6 +38,8 @@ import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
+import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
@@ -102,6 +105,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
     @Resource(name = "blEntityFormValidator")
     protected EntityFormValidator entityValidator;
     
+    @Resource(name="blAdminSecurityRemoteService")
+    protected SecurityVerifier adminRemoteSecurityService;
+    
     // ******************************************
     // REQUEST-MAPPING BOUND CONTROLLER METHODS *
     // ******************************************
@@ -131,6 +137,15 @@ public class AdminBasicEntityController extends AdminAbstractController {
         DynamicResultSet drs =  service.getRecords(ppr);
 
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey);
+        
+        // If the user does not have create permissions, we will remove the add new button
+        try {
+            adminRemoteSecurityService.securityCheck(sectionClassName, EntityOperationType.ADD);
+        } catch (ServiceException e) {
+            if (e instanceof SecurityServiceException) {
+                model.addAttribute("cannotCreate", true);
+            }
+        }
 
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -277,6 +292,15 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("currentUrl", request.getRequestURL().toString());
 
         setModelAttributes(model, sectionKey);
+        
+        // If the user does not have edit permissions, we will go ahead and make the form read only to prevent confusion
+        try {
+            adminRemoteSecurityService.securityCheck(sectionClassName, EntityOperationType.UPDATE);
+        } catch (ServiceException e) {
+            if (e instanceof SecurityServiceException) {
+                entityForm.setReadOnly();
+            }
+        }
         
         if (isAjaxRequest(request)) {
             entityForm.setReadOnly();
