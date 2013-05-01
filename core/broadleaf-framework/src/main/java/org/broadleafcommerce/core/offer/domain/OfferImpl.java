@@ -112,9 +112,8 @@ public class OfferImpl implements Offer, Status {
 
     @Column(name = "MARKETING_MESSASGE")
     @Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnNames = { "MARKETING_MESSASGE" })
-    @AdminPresentation(friendlyName = "OfferImpl_marketingMessage", order = 4000, 
-        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-        group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
+    @AdminPresentation(friendlyName = "OfferImpl_marketingMessage", order = 6000,
+            group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
     protected String marketingMessage;
 
     @Column(name = "OFFER_TYPE", nullable=false)
@@ -169,8 +168,9 @@ public class OfferImpl implements Offer, Status {
     protected String targetSystem;
 
     @Column(name = "APPLY_TO_SALE_PRICE")
-    @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Sale_Price", order = 3000,
-        group = Presentation.Group.Name.Amount, groupOrder = Presentation.Group.Order.Amount)
+    @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Sale_Price",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
     protected Boolean applyToSalePrice;
 
     @Column(name = "APPLIES_TO_RULES")

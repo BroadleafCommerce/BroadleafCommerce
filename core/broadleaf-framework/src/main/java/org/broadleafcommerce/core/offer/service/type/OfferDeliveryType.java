@@ -37,9 +37,9 @@ public class OfferDeliveryType implements Serializable, BroadleafEnumerationType
 
     private static final Map<String, OfferDeliveryType> TYPES = new LinkedHashMap<String, OfferDeliveryType>();
 
-    public static final OfferDeliveryType AUTOMATIC = new OfferDeliveryType("AUTOMATIC", "Automatic");
-    public static final OfferDeliveryType MANUAL = new OfferDeliveryType("MANUAL", "Manual");
-    public static final OfferDeliveryType CODE = new OfferDeliveryType("CODE", "Code");
+    public static final OfferDeliveryType AUTOMATIC = new OfferDeliveryType("AUTOMATIC", "Automatically");
+    public static final OfferDeliveryType CODE = new OfferDeliveryType("CODE", "Using Shared Code");
+    public static final OfferDeliveryType MANUAL = new OfferDeliveryType("MANUAL", "Via Application or Shared Code");
 
     public static OfferDeliveryType getInstance(final String type) {
         return TYPES.get(type);

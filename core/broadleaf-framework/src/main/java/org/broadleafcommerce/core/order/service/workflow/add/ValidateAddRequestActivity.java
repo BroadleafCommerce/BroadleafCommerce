@@ -99,7 +99,7 @@ public class ValidateAddRequestActivity extends BaseActivity {
             request.getItemRequest().setSkuId(sku.getId());
         }
         
-        if (request.getOrder().getCurrency() != null && !request.getOrder().getCurrency().equals(sku.getCurrency())) {
+        if (request.getOrder().getCurrency() != null && sku.getCurrency() != null && !request.getOrder().getCurrency().equals(sku.getCurrency())) {
             throw new IllegalArgumentException("Cannot have items with differing currencies in one cart");
         }
         

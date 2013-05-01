@@ -31,10 +31,10 @@ public class OfferType implements Serializable, BroadleafEnumerationType {
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, OfferType> TYPES = new LinkedHashMap<String, OfferType>();
-
+    public static final OfferType ORDER_ITEM = new OfferType("ORDER_ITEM", "Order Item");
     public static final OfferType ORDER = new OfferType("ORDER", "Order");
     public static final OfferType FULFILLMENT_GROUP = new OfferType("FULFILLMENT_GROUP", "Fulfillment Group");
-    public static final OfferType ORDER_ITEM = new OfferType("ORDER_ITEM", "Order Item");
+
 
     public static OfferType getInstance(final String type) {
         return TYPES.get(type);
