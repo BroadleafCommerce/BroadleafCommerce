@@ -16,16 +16,14 @@
 
 package org.broadleafcommerce.common.security;
 
-import org.broadleafcommerce.common.util.StringUtil;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.springframework.security.core.AuthenticationException;
-
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
@@ -45,6 +43,11 @@ public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticati
         String failureUrlParam = StringUtil.cleanseUrlString(request.getParameter("failureUrl"));
         String successUrlParam = StringUtil.cleanseUrlString(request.getParameter("successUrl"));
         String failureUrl = StringUtils.trimToNull(failureUrlParam);
+
+        // Verify that the url passed in is a servlet path and not a link redirecting away from the webapp.
+        failureUrl = validateUrlParam(failureUrl);
+        successUrlParam = validateUrlParam(successUrlParam);
+
         if (failureUrl == null) {
             failureUrl = StringUtils.trimToNull(defaultFailureUrl);
         }
@@ -61,6 +64,15 @@ public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticati
         } else {
             super.onAuthenticationFailure(request, response, exception);
         }
+    }
+
+    public String validateUrlParam(String url) {
+        if (url != null) {
+            if (url.contains("http") || url.contains("www") || url.contains(".")) {
+                return null;
+            }
+        }
+        return url;
     }
 
 }
