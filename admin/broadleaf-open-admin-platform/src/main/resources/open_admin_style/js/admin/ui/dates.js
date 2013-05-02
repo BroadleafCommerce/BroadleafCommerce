@@ -57,8 +57,8 @@
                 
                 // Next, we'll parse the timezone ourselves
                 var timezone = result.toString();
-                timezone = timezone.substring(timezone.indexOf('GMT') + 3);
-                timezone = timezone.substring(0, timezone.indexOf(' '));
+                var regexTimezone = /.*([\+\-][0-9]{4}).*/;
+                timezone = timezone.replace(regexTimezone, "$1");
                 
                 // Now, let's convert it to the server format
                 var serverDate = $.datepicker.formatDate(this.blcDateFormat, result);
