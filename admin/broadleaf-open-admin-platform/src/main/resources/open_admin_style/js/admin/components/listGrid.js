@@ -65,7 +65,6 @@
             var $tds = $container.find('td');
             $tds.each(function(index, element) {
                 var $element = $(element);
-                console.log($element.data('fieldvalue') + ' ' + $element.isOverflowed());
                 if ($element.isOverflowed()) {
                     $element.addClass('has-tip tip-top');
                     $element.attr('title', $element.data('fieldvalue'));

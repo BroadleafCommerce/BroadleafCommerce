@@ -167,6 +167,14 @@ $(document).ready(function() {
         $(this).closest('.filter-fields').find('input.listgrid-criteria-input').val('');
         $(this).attr('disabled', 'disabled');
         $(this).closest('ul').find('div.filter-fields .listgrid-filter').click();
+        
+        var $tbody = $(this).closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
+        
+        if ($tbody.data('listgridtype') == 'main') {
+            var name = $(this).closest('.filter-fields').find('input.listgrid-criteria-input').data('name');
+            BLCAdmin.history.replaceUrlParameter(name, null);
+        }
+            
         return false;
     });
 
@@ -229,7 +237,7 @@ $(document).ready(function() {
         nonBlankInputs = nonBlankInputs.concat($.makeArray(sorts));
         
         var $tbody = $(this).closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
-        BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);
+        //BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);
         BLC.ajax({
             url: $(this).closest('.filter-fields').data('action'),
             type: "GET",

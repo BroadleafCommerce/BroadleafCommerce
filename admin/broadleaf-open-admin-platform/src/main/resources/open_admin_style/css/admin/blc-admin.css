@@ -622,7 +622,6 @@ table.table-hover tbody tr.draggable:hover {
 }
 
 .listgrid-headerBtn.dropdown ul.no-hover.show-dropdown.first {
-    left: 0;
 }
 
 .listgrid-headerBtn.dropdown:hover > ul.no-hover {
@@ -933,7 +932,7 @@ table tbody tr:nth-child(odd) {
 }
 
 .listgrid-header-wrapper table.list-grid-table thead tr th {
-	overflow: hidden;
+	overflow: visible;
 }
 
 table.list-grid-table thead tr.width-control-header {

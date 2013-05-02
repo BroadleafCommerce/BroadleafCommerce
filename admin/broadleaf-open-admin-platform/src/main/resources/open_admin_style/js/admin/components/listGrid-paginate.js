@@ -300,7 +300,7 @@
                 var url = BLCAdmin.history.getUrlWithParameter('startIndex', startIndex, null, baseUrl);
                 url = BLCAdmin.history.getUrlWithParameter('maxIndex', maxIndex, null, url);
                 
-                console.log('Loading more records -- ' + url);
+                //console.log('Loading more records -- ' + url);
                 
                 BLC.ajax({ url: url, type: 'GET' }, function(data) {
                     var $newTbody = $(data.trim()).find('tbody');
@@ -344,7 +344,7 @@
         
         scrollToIndex : function($tbody, index) {
             var offset = index * this.getRowHeight($tbody);
-            console.log('scrolling to ' + offset);
+            //console.log('scrolling to ' + offset);
             $tbody.closest('.listgrid-body-wrapper').find('.mCSB_container').css('top', '-' + offset + 'px');
         },
         

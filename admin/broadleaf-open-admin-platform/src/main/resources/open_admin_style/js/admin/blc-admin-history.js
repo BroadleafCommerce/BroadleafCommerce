@@ -37,13 +37,17 @@
                 paramObj = JSON.parse('{"' + decodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
             }
             
-            // Update the desired parameter to its new value
-            if ($.isArray(param)) {
-                $(param).each(function(index, param) {
-                    paramObj[param[index]] = value[index];
-                });
+            if (value == null) {
+                delete paramObj[param];
             } else {
-                paramObj[param] = value;
+                // Update the desired parameter to its new value
+                if ($.isArray(param)) {
+                    $(param).each(function(index, param) {
+                        paramObj[param[index]] = value[index];
+                    });
+                } else {
+                    paramObj[param] = value;
+                }
             }
             
             // Reassemble the new url
@@ -59,10 +63,8 @@
         },
         
         replaceUrlParameter : function(param, value, state) {
-            if (value != undefined) {
-                var newUrl = this.getUrlWithParameter(param, value, state);
-                this.replaceUrl(newUrl, state);
-            }
+            var newUrl = this.getUrlWithParameter(param, value, state);
+            this.replaceUrl(newUrl, state);
         },
     
         popState : function(url, state, event) {
