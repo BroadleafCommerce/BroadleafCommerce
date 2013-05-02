@@ -4,16 +4,19 @@
         <blc_admin:admin_module resultVar="adminMenu" />
         
         <ul class="blc-accordion">
-            <li class="blc-module" th:each="module : ${adminMenu.adminModules}" th:inline="text">
+            <li class="blc-module" th:each="module : ${adminMenu.adminModules}" th:inline="text"
+                    th:classappend="${currentAdminModule != null and currentAdminModule.id == module.id}? 'active'">
                 <div class="title">
                     <h5>
                         <i th:class="${module.icon}"></i>
                         [[#{${module.moduleKey}}]]
                     </h5>
                 </div>
-                <div class="content">
+                <div class="content" 
+                    th:style="${(currentAdminModule != null and currentAdminModule.id == module.id) ? '' : 'display: none;'}">
                     <ul>
-                        <li th:each="section : ${module.sections}" th:classappend="${(currentAdminSection != null) and (currentAdminSection.id == section.id) ? 'active' : ''}">
+                        <li th:each="section : ${module.sections}" 
+                            th:classappend="${(currentAdminSection != null) and (currentAdminSection.id == section.id) ? 'active' : ''}">
                             <a blc_admin:admin_section_href="${section}">
                                 [[#{${module.moduleKey} + '.' + ${section.sectionKey}}]]
                             </a>
