@@ -17,6 +17,8 @@ var BLCAdmin = (function($) {
 			backdrop: (modals.length < 1)
 		});
 		
+		BLCAdmin.setModalMaxHeight($data);
+		
 		// If we already have an active modal, we need to modify its z-index so that it will be
 		// hidden by the current backdrop
 		if (modals.length > 0) {
@@ -73,6 +75,16 @@ var BLCAdmin = (function($) {
             for (var i = 0; i < preFormSubmitHandlers.length; i++) {
                 preFormSubmitHandlers[i]($form);
             }
+    	},
+    	
+    	setModalMaxHeight : function($modal) {
+    		// Resize the modal height to the user's browser
+    		var availableHeight = $(window).height()
+    		    - $modal.find('.modal-header').outerHeight()
+    		    - $modal.find('.modal-footer').outerHeight()
+    		    - ($(window).height() * .1);
+    		
+    		$modal.find('.modal-body').css('max-height', availableHeight);
     	},
     	
     	initializeModalTabs : function($data) {
@@ -138,6 +150,7 @@ var BLCAdmin = (function($) {
         		    
         			BLCAdmin.initializeModalTabs(BLCAdmin.currentModal());
         			BLCAdmin.initializeModalButtons(BLCAdmin.currentModal());
+        		    BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
         		});
     		} else {
     		    showLinkAsModal(link);

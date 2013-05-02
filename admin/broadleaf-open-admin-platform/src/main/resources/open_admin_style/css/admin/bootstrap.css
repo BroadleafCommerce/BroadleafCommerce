@@ -53,7 +53,7 @@
 }
 .modal {
   position: fixed;
-  top: 10%;
+  top: 5%;
   left: 50%;
   z-index: 1050;
   width: 800px;
@@ -96,7 +96,7 @@
 .modal-body {
   position: relative;
   overflow-y: auto;
-  max-height: 600px;
+  max-height: 500px;
   padding: 15px;
 }
 .modal-form {
