@@ -554,7 +554,6 @@ table.table-hover tbody tr.draggable:hover {
 
 .listgrid-headerBtn.dropdown > ul li {
     width: 100%;
-    cursor: pointer;
     padding: 0;
     min-height: 18px;
     line-height: 18px;
@@ -599,8 +598,6 @@ table.table-hover tbody tr.draggable:hover {
 }
 
 .listgrid-headerBtn.dropdown > ul li:hover, .listgrid-headerBtn.dropdown > ul li:focus {
-    background-color: #e3f4f9;
-    color: #222;
 }
 
 .listgrid-headerBtn.dropdown > ul li.divider {
@@ -608,7 +605,7 @@ table.table-hover tbody tr.draggable:hover {
     padding: 0;
     height: 1px;
     margin: 4px 0;
-    background: #ededed;
+    background: #ddd;
 }
 
 .listgrid-headerBtn.dropdown.up > ul {
@@ -824,11 +821,18 @@ table.table-hover tbody tr.draggable:hover {
 }
 
 .listgrid-headerBtn.dropdown button.listgrid-clear-sort {
-    margin-left: 12px;
+    margin-left: 2px;
 }
 
-.listgrid-headerBtn.dropdown > ul > li > div.filter-fields {
+.listgrid-criteria-container input {
+	width: 100%;
+	margin-bottom: 4px;
+}
+
+.listgrid-headerBtn.dropdown > ul > li > div.filter-fields,
+.listgrid-headerBtn.dropdown > ul > li > div.sort-fields {
     padding: 10px;
+    text-align: center;
 }
 
 .table-width-container {
@@ -839,7 +843,7 @@ table.table-hover tbody tr.draggable:hover {
 }
 
 input[type="text"].listgrid-criteria-input {
-    margin: 0px;
+    margin: 0 0 5px;
 }
 
 button.listgrid-filter {

@@ -132,7 +132,7 @@ $(document).ready(function() {
      * Handler that fires whenever a sorting link is clicked, sort ascending or descending. This will also modify the
      * sort value input for the closet sort input for this list grid header
      */
-    $('body').on('click', 'a.sort', function() {
+    $('body').on('click', '.sort-fields button', function() {
         //reset any of the currently active sorts on all the fields in the grid
         BLCAdmin.listGrid.filter.clearActiveSorts($(this));
         
@@ -153,6 +153,9 @@ $(document).ready(function() {
 
         //submit the form just for this particular field since this is the only sort that changed
         $(this).closest('ul').find('div.filter-fields .listgrid-filter').click();
+        
+        //enable the clear sort button
+        $(this).closest('.sort-fields').find('.listgrid-clear-sort').removeAttr('disabled');
         return false;
     });
     
@@ -245,8 +248,9 @@ $(document).ready(function() {
         }, function(data) {
             
             if ($tbody.data('listgridtype') == 'main') {
+                
                 $(nonBlankInputs).each(function(index, input) {
-                    BLCAdmin.history.replaceUrlParameter(input.name, input.value);
+                    BLCAdmin.history.replaceUrlParameter($(input).data('name'), input.value);
                 });
             }
             BLCAdmin.listGrid.hideLoadingSpinner($tbody);

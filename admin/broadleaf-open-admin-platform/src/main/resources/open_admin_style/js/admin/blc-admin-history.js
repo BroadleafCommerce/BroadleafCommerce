@@ -37,7 +37,7 @@
                 paramObj = JSON.parse('{"' + decodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
             }
             
-            if (value == null) {
+            if (value == null || value == "") {
                 delete paramObj[param];
             } else {
                 // Update the desired parameter to its new value

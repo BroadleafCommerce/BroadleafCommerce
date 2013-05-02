@@ -1,14 +1,26 @@
 <div th:if="${!listGrid.sortable}" th:remove="tag" >
-    <li><a class="sort down" href="#">Sort A - Z</a></li>
-    <li><a class="sort up" href="#">Sort Z - A</a></li>
-    <li><button class="listgrid-clear-sort tiny radius dark button" disabled="disabled"><i class="icon-remove"></i>Clear Sort</button></li>
+    <li>
+        <div class="sort-fields">
+            <button class="tiny radius dark button down">
+                Sort A-Z
+            </button>
+            <button class="tiny radius dark button up">
+                Sort Z-A
+            </button>
+            <button class="listgrid-clear-sort tiny radius dark button" disabled="disabled">
+                <i class="icon-remove"></i>Clear Sort
+            </button>
+        </div>
+    </li>
+<!--     <li><a class="sort down" href="#">Sort A - Z</a></li> -->
+<!--     <li><a class="sort up" href="#">Sort Z - A</a></li> -->
+<!--     <li><button class="listgrid-clear-sort tiny radius dark button" disabled="disabled"><i class="icon-remove"></i>Clear Sort</button></li> -->
     <li class="divider"></li>
 </div>
 <li>
     <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}">
         <input type="hidden" class="sort-property" data-name="sortProperty" th:value="${fieldName}" />
         <input type="hidden" class="sort-direction" data-name="sortDirection" />
-        <label>Filter:</label>
         <div class="listgrid-criteria" th:attr="data-field-index=${index}">
             <div class="listgrid-criteria-container">
                 <div th:remove="element"
