@@ -65,7 +65,14 @@
         <property name="order" value="300"/> 
     </bean>  
 
+    <bean id="blAdminMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
+                
     <bean id="blAdminWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+        <property name="messageResolvers">
+            <set>
+                <ref bean="blAdminMessageResolver" />
+            </set>
+        </property>
         <property name="templateResolvers">
             <set>
                 <ref bean="blAdminWebCustomTemplateResolver" />
