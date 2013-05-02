@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -57,23 +58,27 @@ public class CustomFieldImpl implements CustomField {
     protected Long id;
 
     @Column(name = "CUSTOM_FIELD_TARGET", nullable=false)
-    @AdminPresentation(friendlyName = "CustomFieldImpl_Custom_Field_Target", order = 1, prominent = true, gridOrder = 3,
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Custom_Field_Target", order = 1, prominent = true, gridOrder = 1,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "com.broadleafcommerce.customfield.service.type.CustomFieldTargetType")
+            broadleafEnumeration = "com.broadleafcommerce.customfield.service.type.CustomFieldTargetType",
+            requiredOverride = RequiredOverride.REQUIRED)
     protected String customFieldTarget;
 
-    @Column(name = "LABEL", nullable=false)
-    @AdminPresentation(friendlyName = "CustomFieldImpl_Label", order = 2, prominent = true, gridOrder = 1)
-    protected String label;
-
     @Column(name = "FRIENDLY_NAME", nullable=false)
-    @AdminPresentation(friendlyName = "CustomFieldImpl_Friendly_name", order = 3, prominent = true, gridOrder = 2)
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Friendly_name", order = 2, prominent = true, gridOrder = 2,
+            requiredOverride = RequiredOverride.REQUIRED)
     protected String friendlyName;
+
+    @Column(name = "ATTR_NAME", nullable = false)
+    @AdminPresentation(friendlyName = "CustomFieldImpl_Attribute_Name", order = 3, prominent = true, gridOrder = 3,
+            requiredOverride = RequiredOverride.REQUIRED)
+    protected String attributeName;
 
     @Column(name = "CUSTOM_FIELD_TYPE", nullable=false)
     @AdminPresentation(friendlyName = "CustomFieldImpl_Custom_Field_Type", order = 4, prominent = true, gridOrder = 4,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "com.broadleafcommerce.customfield.service.type.CustomFieldType")
+            broadleafEnumeration = "com.broadleafcommerce.customfield.service.type.CustomFieldType",
+            requiredOverride = RequiredOverride.REQUIRED)
     protected String customFieldType;
 
     @Column(name = "SHOW_FIELD_ON_FORM")
@@ -147,13 +152,13 @@ public class CustomFieldImpl implements CustomField {
     }
 
     @Override
-    public String getLabel() {
-        return label;
+    public String getAttributeName() {
+        return attributeName;
     }
 
     @Override
-    public void setLabel(String label) {
-        this.label = label;
+    public void setAttributeName(String attributeName) {
+        this.attributeName = attributeName;
     }
 
     public String getFriendlyName() {

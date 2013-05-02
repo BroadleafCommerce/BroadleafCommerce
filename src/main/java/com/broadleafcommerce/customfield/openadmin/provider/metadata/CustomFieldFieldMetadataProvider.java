@@ -1,9 +1,5 @@
 package com.broadleafcommerce.customfield.openadmin.provider.metadata;
 
-import com.broadleafcommerce.customfield.domain.CustomField;
-import com.broadleafcommerce.customfield.service.CustomFieldInfo;
-import com.broadleafcommerce.customfield.service.CustomFieldService;
-import com.broadleafcommerce.customfield.service.type.CustomFieldType;
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -21,10 +17,16 @@ import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import com.broadleafcommerce.customfield.domain.CustomField;
+import com.broadleafcommerce.customfield.service.CustomFieldInfo;
+import com.broadleafcommerce.customfield.service.CustomFieldService;
+import com.broadleafcommerce.customfield.service.type.CustomFieldType;
+
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
@@ -90,11 +92,11 @@ public class CustomFieldFieldMetadataProvider extends MapFieldsFieldMetadataProv
             override.setExplicitFieldType(myType);
             override.setGroup(customField.getGroupName());
             override.setOrder(customField.getFieldOrder()==null?99999:customField.getFieldOrder());
-            override.setName(customField.getLabel());
+            override.setName(customField.getAttributeName());
             override.setFriendlyName(customField.getFriendlyName());
 
             FieldInfo myInfo = new FieldInfo();
-            myInfo.setName(addMetadataRequest.getRequestedField().getName() + FieldManager.MAPFIELDSEPARATOR + customField.getLabel());
+            myInfo.setName(addMetadataRequest.getRequestedField().getName() + FieldManager.MAPFIELDSEPARATOR + customField.getAttributeName());
             buildBasicMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, myInfo, override, addMetadataRequest.getDynamicEntityDao());
             setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, myInfo);
             BasicFieldMetadata basicFieldMetadata = (BasicFieldMetadata) metadata.get(myInfo.getName());

@@ -18,20 +18,22 @@
 
 package com.broadleafcommerce.customfield.service;
 
-import com.broadleafcommerce.customfield.domain.CustomField;
-import com.broadleafcommerce.customfield.service.type.CustomFieldTargetType;
-import com.broadleafcommerce.customfield.service.type.CustomFieldType;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
 
-import javax.annotation.Resource;
+import com.broadleafcommerce.customfield.domain.CustomField;
+import com.broadleafcommerce.customfield.service.type.CustomFieldTargetType;
+import com.broadleafcommerce.customfield.service.type.CustomFieldType;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * Allows the custom field module to contribute dynamically obtained fields to the field list in the rule
@@ -61,7 +63,7 @@ public class CustomFieldRuleBuilderFieldServiceFactoryAOP {
                         fieldName.append(CustomFieldInfo.RULE_BUILDER_TYPE_PREFIXES.get(response.getName()).get(targetType));
                         fieldName.append(CustomFieldInfo.CUSTOM_FIELD_FIELD_NAMES.get(targetType.getType()));
                         fieldName.append(FieldManager.MAPFIELDSEPARATOR);
-                        fieldName.append(customField.getLabel());
+                        fieldName.append(customField.getAttributeName());
 
                         tempList.add(new FieldData.Builder()
                             .label(targetType.getFriendlyType() + " - " + customField.getFriendlyName())
