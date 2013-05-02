@@ -197,13 +197,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("entityTypes", entityTypes);
             model.addAttribute("viewType", "modal/entityTypeSelection");
         } else {
-            ClassMetadata specificTypeMd = service.getClassMetadata(getSectionPersistencePackageRequest(entityType));
-            EntityForm entityForm = formService.createEntityForm(specificTypeMd);
+            EntityForm entityForm = formService.createEntityForm(cmd);
             
             // We need to make sure that the ceiling entity is set to the interface and the specific entity type
             // is set to the type we're going to be creating.
             entityForm.setCeilingEntityClassname(cmd.getCeilingType());
-            entityForm.setEntityType(specificTypeMd.getCeilingType());
+            entityForm.setEntityType(entityType);
             
             // When we initially build the class metadata (and thus, the entity form), we had all of the possible
             // polymorphic fields built out. Now that we have a concrete entity type to render, we can remove the
@@ -214,6 +213,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("viewType", "modal/entityAdd");
         }
 
+        model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", "addEntity");
         setModelAttributes(model, sectionKey);

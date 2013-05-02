@@ -22,6 +22,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.BLCCollectionUtils;
+import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
@@ -58,6 +60,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,14 +122,25 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
             PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", OfferImpl.class.getName(), null)});
             Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective);
+            
+            Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
+            Collection<String> tempList = BLCCollectionUtils.collect(Arrays.asList(entityClasses), new TypedTransformer<String>() {
+                @Override
+                public String transform(Object input) {
+                    Class<?> clazz = (Class<?>) input;
+                    return clazz.getName();
+                }
+            });
+            String[] entityClassNames = tempList.toArray(new String[0]);
+            
             BasicFieldMetadata metadata = (BasicFieldMetadata) offerCodeMergedProperties.get("offerCode");
-            metadata.setAvailableToTypes(ArrayUtils.addAll(metadata.getAvailableToTypes(), new String[] { OfferImpl.class.getName() }));
+            metadata.setAvailableToTypes(ArrayUtils.addAll(metadata.getAvailableToTypes(), entityClassNames));
             mergedProperties.put("offerCode.offerCode", metadata);
+            
             BasicFieldMetadata metadata2 = (BasicFieldMetadata) offerCodeMergedProperties.get("id");
-            metadata2.setAvailableToTypes(ArrayUtils.addAll(metadata2.getAvailableToTypes(), new String[] { OfferImpl.class.getName() }));
+            metadata2.setAvailableToTypes(ArrayUtils.addAll(metadata2.getAvailableToTypes(), entityClassNames));
             mergedProperties.put("offerCode.id", metadata2);
 
-            Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
             ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
             
             DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);

@@ -10,7 +10,7 @@
             </span>
             
             <span th:case="'addEntity'" th:remove="tag">
-                Add New [[${currentAdminSection.name}]]
+                Add New [[#{${entityFriendlyName}}]]
             </span>
             
             <span th:case="'addCollectionItem'" th:remove="tag">
