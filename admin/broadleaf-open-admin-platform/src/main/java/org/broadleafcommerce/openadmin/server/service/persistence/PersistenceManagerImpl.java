@@ -48,8 +48,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
