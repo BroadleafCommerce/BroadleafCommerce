@@ -19,11 +19,11 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 import org.broadleafcommerce.common.value.Searchable;
 import org.broadleafcommerce.common.value.ValueAssignable;
 import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -132,7 +133,7 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
     }
 
     @Override
-    public FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, BaseCtoConverter ctoConverter) {
+    public FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, List<FilterMapping> filterMappings) {
         return FieldProviderResponse.NOT_HANDLED;
     }
 

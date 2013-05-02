@@ -28,7 +28,6 @@ import org.broadleafcommerce.openadmin.dto.BatchPersistencePackage;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
-import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -40,10 +39,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.lang.reflect.Constructor;
 import java.util.Map;
-
-import javax.annotation.Resource;
 /**
  * @author jfischer
  */
@@ -157,32 +155,14 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
         exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
-
-        com.anasoft.os.daofusion.cto.client.CriteriaTransferObject targetCto = translateCto(cto);
-
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
-            return persistenceManager.fetch(persistencePackage, targetCto);
+            return persistenceManager.fetch(persistencePackage, cto);
         } catch (ServiceException e) {
             String message = exploitProtectionService.cleanString(e.getMessage());
             throw recreateSpecificServiceException(e, message, e.getCause());
         }
-    }
-
-    protected com.anasoft.os.daofusion.cto.client.CriteriaTransferObject translateCto(CriteriaTransferObject cto) {
-        com.anasoft.os.daofusion.cto.client.CriteriaTransferObject targetCto = new com.anasoft.os.daofusion.cto.client.CriteriaTransferObject();
-        targetCto.setFirstResult(cto.getFirstResult());
-        targetCto.setMaxResults(cto.getMaxResults());
-        for (String propertyId : cto.getPropertyIdSet()) {
-            FilterAndSortCriteria criteria = cto.get(propertyId);
-            com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria targetCriteria = new com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria(propertyId);
-            targetCriteria.setFilterValues(criteria.getFilterValues());
-            targetCriteria.setIgnoreCase(criteria.getIgnoreCase());
-            targetCriteria.setSortAscending(criteria.getSortAscending());
-            targetCto.add(targetCriteria);
-        }
-        return targetCto;
     }
 
     protected void cleanEntity(Entity entity) throws ServiceException {

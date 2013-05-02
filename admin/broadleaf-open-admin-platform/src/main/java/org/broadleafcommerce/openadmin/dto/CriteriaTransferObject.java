@@ -16,113 +16,75 @@
 
 package org.broadleafcommerce.openadmin.dto;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectConverter;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
- * Generic persistent entity criteria transfer object
- * used by the {@link CriteriaTransferObjectConverter}.
+ * Generic persistent entity criteria transfer object.
+ * Provides a storage mechanism for query related information regarding an entity.
  * 
- * <p>
- * 
- * Criteria transfer object pattern allows client-side
- * components to construct <em>serializable</em> versions
- * of {@link PersistentEntityCriteria} instances, which can
- * then be passed through the chosen communication mechanism
- * to the remote (server-side) component. This way, the user
- * can create persistent entity criteria on the client side
- * and use {@link CriteriaTransferObjectConverter} to transform
- * them into corresponding {@link PersistentEntityCriteria}
- * instances seamlessly on the server.
- * 
- * <p>
- * 
- * This class essentially acts as map-based container for
- * {@link FilterAndSortCriteria} instances, defining basic
- * entity criteria for target entity properties on the client.
- * 
- * @see FilterAndSortCriteria
- * @see CriteriaTransferObjectConverter
- * @see PersistentEntityCriteria
- * 
- * @author vojtech.szocs
+ * @author Jeff Fischer
  */
-public class CriteriaTransferObject implements Serializable {
+public class CriteriaTransferObject {
 
-    private static final long serialVersionUID = 8405827510072180355L;
-    
     private Integer firstResult;
     private Integer maxResults;
     
     private Map<String, FilterAndSortCriteria> criteriaMap = new HashMap<String, FilterAndSortCriteria>();
     
     /**
-     * @return Index of the starting element or <tt>null</tt>
-     * representing no constraints on this paging parameter.
+     * The index of records in the database for which a fetch will start.
+     *
+     * @return the index to start, or null
      */
     public Integer getFirstResult() {
         return firstResult;
     }
     
     /**
-     * @param firstResult Index of the starting element or
-     * <tt>null</tt> representing no constraints on this
-     * paging parameter.
+     * The index of records in the datastore for which a fetch will start.
+     *
+     * @param firstResult the index to start, or null
      */
     public void setFirstResult(Integer firstResult) {
         this.firstResult = firstResult;
     }
     
     /**
-     * @return Maximum number of elements to return or
-     * <tt>null</tt> representing no constraints on this
-     * paging parameter.
+     * The max number of records from the datastore to return.
+     *
+     * @return the max records, or null
      */
     public Integer getMaxResults() {
         return maxResults;
     }
     
     /**
-     * @param maxResults Maximum number of elements to return
-     * or <tt>null</tt> representing no constraints on this
-     * paging parameter.
+     * The max number of records from the datastore to return.
+     *
+     * @param maxResults the max records, or null
      */
     public void setMaxResults(Integer maxResults) {
         this.maxResults = maxResults;
     }
     
     /**
-     * Adds the given {@link FilterAndSortCriteria} instance
-     * to this transfer object.
+     * Add a {@link FilterAndSortCriteria} instance. Contains information about which records are retrieved
+     * and in what direction they're sorted.
      * 
-     * <p>
-     * 
-     * Note that the <tt>propertyId</tt> of the given
-     * {@link FilterAndSortCriteria} instance must be unique
-     * within the transfer object (in other words, existing
-     * {@link FilterAndSortCriteria} with same <tt>propertyId</tt>
-     * will be replaced by this method).
-     * 
-     * @param criteria {@link FilterAndSortCriteria} instance
-     * to add.
+     * @param criteria {@link FilterAndSortCriteria}
      */
     public void add(FilterAndSortCriteria criteria) {
         criteriaMap.put(criteria.getPropertyId(), criteria);
     }
     
     /**
-     * Adds all of the given {@link FilterAndSortCriteria} instances
-     * to this transfer object.
+     * Add all {@link FilterAndSortCriteria} instances. Contains information about which records are retrieved
+     * and in what direction they're sorted.
      * 
-     * @param criterias
-     * 
-     * @see #add(FilterAndSortCriteria)
+     * @param criterias the list of {@link FilterAndSortCriteria} instances to add
      */
     public void addAll(Collection<FilterAndSortCriteria> criterias) {
         for (FilterAndSortCriteria fasc : criterias) {
@@ -131,52 +93,20 @@ public class CriteriaTransferObject implements Serializable {
     }
 
     /**
-     * Adds all of the given {@link FilterAndSortCriteria} instances
-     * to this transfer object.
-     * 
-     * @param criterias
-     * 
-     * @see #add(FilterAndSortCriteria)
+     * Retrieve the added {@link FilterAndSortCriteria} instances organized into a map
+     *
+     * @return the {@link FilterAndSortCriteria} instances as a map
      */
-    public void addAll(FilterAndSortCriteria[] criterias) {
-        for (FilterAndSortCriteria fasc : criterias) {
-            add(fasc);
-        }
+    public Map<String, FilterAndSortCriteria> getCriteriaMap() {
+        return criteriaMap;
     }
 
-    /**
-     * Returns a {@link FilterAndSortCriteria} instance
-     * with the given <tt>propertyId</tt>.
-     * 
-     * <p>
-     * 
-     * When not found, the method creates and adds
-     * an empty {@link FilterAndSortCriteria} instance
-     * to the transfer object automatically.
-     * 
-     * @param propertyId Symbolic persistent entity property
-     * identifier.
-     * @return {@link FilterAndSortCriteria} instance with
-     * the given <tt>propertyId</tt>.
-     */
-    public FilterAndSortCriteria get(String propertyId) {
-        if (!criteriaMap.containsKey(propertyId))
-            add(new FilterAndSortCriteria(propertyId));
-        
-        return criteriaMap.get(propertyId);
+    public FilterAndSortCriteria get(String name) {
+        if (criteriaMap.containsKey(name)) {
+            return criteriaMap.get(name);
+        }
+        FilterAndSortCriteria criteria = new FilterAndSortCriteria(name);
+        criteriaMap.put(name, criteria);
+        return criteriaMap.get(name);
     }
-    
-    /**
-     * Returns a set of symbolic persistent entity property
-     * identifiers (<tt>propertyId</tt> values) for
-     * {@link FilterAndSortCriteria} instances contained
-     * within this transfer object.
-     * 
-     * @return Set of symbolic persistent entity property
-     * identifiers (<tt>propertyId</tt> values).
-     */
-    public Set<String> getPropertyIdSet() {
-        return criteriaMap.keySet();
-    }
-    
 }

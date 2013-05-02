@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;

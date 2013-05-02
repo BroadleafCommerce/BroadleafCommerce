@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,30 +28,34 @@ import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
-
+import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -139,27 +144,36 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective);
-            BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, Offer.class.getName(), offerProperties);
-            PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, Offer.class.getName());
+            List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, Offer.class.getName(), offerProperties);
             
             //If necessary, filter out the archived Offers
             if (!persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
-                SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
-                    @Override
-                    public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-                        return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
-                    }
-                };
-                FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);
-                ((NestedPropertyCriteria) queryCriteria).add(filterCriterion);
+                FilterMapping filterMapping = new FilterMapping()
+                    .withFieldPath(new FieldPath().withTargetProperty("archiveStatus.archived"))
+                    .withFilterValues(new EmptyFilterValues())
+                    .withRestriction(new Restriction()
+                            .withPredicateProvider(new PredicateProvider<Character, Character>() {
+                                @Override
+                                public Predicate buildPredicate(CriteriaBuilder builder,
+                                                                FieldPathBuilder fieldPathBuilder,
+                                                                From root, String ceilingEntity,
+                                                                String fullPropertyName, Path<Character> explicitPath,
+                                                                List<Character> directValues) {
+                                    return builder.or(builder.equal(explicitPath, 'N'), builder.isNull(explicitPath));
+                                }
+                            })
+                    );
+                filterMappings.add(filterMapping);
             }
-            
-            List<Serializable> records = dynamicEntityDao.query(queryCriteria, Offer.class);
+            List<Serializable> records = helper.getPersistentRecords(Offer.class.getName(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
+
             Entity[] entities = helper.getRecords(offerProperties, records);
 
             addAssociatedOfferCodes(dynamicEntityDao, helper, entities);
 
-            int totalRecords = helper.getTotalRecords(persistencePackage, cto, ctoConverter);
+            int totalRecords = helper.getTotalRecords(StringUtils.isEmpty(persistencePackage.getFetchTypeFullyQualifiedClassname())?
+                    persistencePackage.getCeilingEntityFullyQualifiedClassname():persistencePackage.getFetchTypeFullyQualifiedClassname(),
+                    filterMappings);
             DynamicResultSet response = new DynamicResultSet(null, entities, totalRecords);
             
             return response;
@@ -178,10 +192,9 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             CriteriaTransferObject offerCodeCto = new CriteriaTransferObject();
             FilterAndSortCriteria filterCriteria = offerCodeCto.get("offer");
             filterCriteria.setFilterValue(record.findProperty("id").getValue());
-            BaseCtoConverter offerCodeCtoConverter = helper.getCtoConverter(offerCodePersistencePerspective, offerCodeCto, OfferCode.class.getName(), offerCodeMergedProperties);
-
-            PersistentEntityCriteria offerCodeQueryCriteria = offerCodeCtoConverter.convert(offerCodeCto, OfferCode.class.getName());
-            List<Serializable> offerCodes = dynamicEntityDao.query(offerCodeQueryCriteria, OfferCode.class);
+            List<FilterMapping> filterMappings = helper.getFilterMappings(offerCodePersistencePerspective,
+                    offerCodeCto, OfferCode.class.getName(), offerCodeMergedProperties);
+            List<Serializable> offerCodes = helper.getPersistentRecords(OfferCode.class.getName(), filterMappings, null, null);
             Entity[] offerCodeEntities = helper.getRecords(offerCodeMergedProperties, offerCodes, null, null);
 
             if (offerCodeEntities.length > 0) {

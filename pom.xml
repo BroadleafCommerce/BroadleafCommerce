@@ -1003,21 +1003,6 @@
                 </exclusions>
             </dependency>
 
-            <!--Admin Libraries-->
-            <dependency>
-                <groupId>com.anasoft.os</groupId>
-                <artifactId>daofusion-core</artifactId>
-                <version>1.2.0</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.anasoft.os</groupId>
-                <artifactId>daofusion-core</artifactId>
-                <version>1.2.0</version>
-                <scope>compile</scope>
-                <classifier>sources</classifier>
-            </dependency>
-
             <!--Persistence Libraries-->
             <dependency>
                 <groupId>commons-pool</groupId>

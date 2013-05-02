@@ -16,40 +16,38 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
-import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -75,15 +73,49 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
         }
     }
 
-    public BaseCtoConverter getAdornedTargetCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, Map<String, FieldMetadata> mergedProperties, AdornedTargetList adornedTargetList) throws ClassNotFoundException {
-        BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, adornedTargetList.getAdornedTargetEntityClassname(), mergedProperties);
-        ctoConverter.addLongEQMapping(adornedTargetList.getAdornedTargetEntityClassname(), adornedTargetList.getCollectionFieldName(), AssociationPath.ROOT, adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty());
-        ctoConverter.addLongEQMapping(adornedTargetList.getAdornedTargetEntityClassname(), adornedTargetList.getCollectionFieldName() + "Target", AssociationPath.ROOT, adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty());
-        return ctoConverter;
+    public List<FilterMapping> getAdornedTargetFilterMappings(PersistencePerspective persistencePerspective,
+                    CriteriaTransferObject cto, Map<String, FieldMetadata> mergedProperties,
+                    AdornedTargetList adornedTargetList) throws ClassNotFoundException {
+        List<FilterMapping> filterMappings = getFilterMappings(persistencePerspective, cto, adornedTargetList.
+                getAdornedTargetEntityClassname(), mergedProperties);
+        FilterMapping filterMapping = new FilterMapping()
+            .withFieldPath(new FieldPath()
+                    .withTargetProperty(adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty()))
+            .withFilterValues(cto.get(adornedTargetList.getCollectionFieldName()).getFilterValues())
+            .withRestriction(new Restriction()
+                .withPredicateProvider(new PredicateProvider<String, String>() {
+                    @Override
+                    public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
+                                                    String ceilingEntity, String fullPropertyName, Path<String> explicitPath,
+                                                    List<String> directValues) {
+                        return builder.equal(explicitPath, Long.parseLong(directValues.get(0)));
+                    }
+                })
+            );
+        filterMappings.add(filterMapping);
+        FilterMapping filterMapping2 = new FilterMapping()
+            .withFieldPath(new FieldPath()
+                    .withTargetProperty(adornedTargetList.getTargetObjectPath() + "." +
+                                        adornedTargetList.getTargetIdProperty()))
+            .withFilterValues(cto.get(adornedTargetList.getCollectionFieldName() + "Target").getFilterValues())
+            .withRestriction(new Restriction()
+                .withPredicateProvider(new PredicateProvider<String, String>() {
+                    @Override
+                    public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
+                                                    String ceilingEntity, String fullPropertyName, Path<String> explicitPath,
+                                                    List<String> directValues) {
+                        return builder.equal(explicitPath, Long.parseLong(directValues.get(0)));
+                    }
+                })
+            );
+        filterMappings.add(filterMapping2);
+
+        return filterMappings;
     }
 
     protected Serializable createPopulatedAdornedTargetInstance(AdornedTargetList adornedTargetList, Entity entity) throws InstantiationException, IllegalAccessException, ClassNotFoundException, NumberFormatException, InvocationTargetException, NoSuchMethodException {
-        Serializable instance = (Serializable) Class.forName(StringUtils.isEmpty(adornedTargetList.getAdornedTargetEntityPolymorphicType())? adornedTargetList.getAdornedTargetEntityClassname(): adornedTargetList.getAdornedTargetEntityPolymorphicType()).newInstance();
+        Serializable instance = (Serializable) Class.forName(StringUtils.isEmpty(adornedTargetList
+                .getAdornedTargetEntityPolymorphicType())? adornedTargetList.getAdornedTargetEntityClassname(): adornedTargetList.getAdornedTargetEntityPolymorphicType()).newInstance();
         String targetPath = adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty();
         String linkedPath = adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty();
         getFieldManager().setFieldValue(instance, linkedPath, Long.valueOf(entity.findProperty(linkedPath).getValue()));
@@ -186,9 +218,8 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             filterCriteriaInsertedLinked.setFilterValue(entity.findProperty(adornedTargetList.getInverse() ? targetPath : linkedPath).getValue());
             FilterAndSortCriteria filterCriteriaInsertedTarget = ctoInserted.get(adornedTargetList.getCollectionFieldName() + "Target");
             filterCriteriaInsertedTarget.setFilterValue(entity.findProperty(adornedTargetList.getInverse() ? linkedPath : targetPath).getValue());
-            BaseCtoConverter ctoConverterInserted = getAdornedTargetCtoConverter(persistencePerspective, ctoInserted, mergedProperties, adornedTargetList);
-            PersistentEntityCriteria queryCriteriaInserted = ctoConverterInserted.convert(ctoInserted, adornedTargetList.getAdornedTargetEntityClassname());
-            List<Serializable> recordsInserted = persistenceManager.getDynamicEntityDao().query(queryCriteriaInserted, Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
+            List<FilterMapping> filterMappingsInserted = getAdornedTargetFilterMappings(persistencePerspective, ctoInserted, mergedProperties, adornedTargetList);
+            List<Serializable> recordsInserted = getPersistentRecords(adornedTargetList.getAdornedTargetEntityClassname(), filterMappingsInserted, ctoInserted.getFirstResult(), ctoInserted.getMaxResults());
             if (recordsInserted.size() > 0) {
                 payload = getRecords(mergedPropertiesTarget, recordsInserted, mergedProperties, adornedTargetList.getTargetObjectPath())[0];
             } else {
@@ -205,14 +236,15 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     filterCriteria.setFilterValue(entity.findProperty(adornedTargetList.getInverse() ? targetPath : linkedPath).getValue());
                     FilterAndSortCriteria sortCriteria = cto.get(adornedTargetList.getSortField());
                     sortCriteria.setSortAscending(adornedTargetList.getSortAscending());
-                    BaseCtoConverter ctoConverter = getAdornedTargetCtoConverter(persistencePerspective, cto, mergedProperties, adornedTargetList);
-                    int totalRecords = getTotalRecords(persistencePackage, cto, ctoConverter);
+                    List<FilterMapping> filterMappings = getAdornedTargetFilterMappings(persistencePerspective, cto,
+                            mergedProperties, adornedTargetList);
+                    int totalRecords = getTotalRecords(adornedTargetList.getAdornedTargetEntityClassname(), filterMappings);
                     fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), Long.valueOf(totalRecords + 1));
                 }
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
                 persistenceManager.getDynamicEntityDao().clear();
 
-                List<Serializable> recordsInserted2 = persistenceManager.getDynamicEntityDao().query(queryCriteriaInserted, Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
+                List<Serializable> recordsInserted2 = getPersistentRecords(adornedTargetList.getAdornedTargetEntityClassname(), filterMappingsInserted, ctoInserted.getFirstResult(), ctoInserted.getMaxResults());
 
                 payload = getRecords(mergedPropertiesTarget, recordsInserted2, mergedProperties, adornedTargetList.getTargetObjectPath())[0];
             }
@@ -325,48 +357,13 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             filterCriteriaInsertedLinked.setFilterValue(entity.findProperty(adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty()).getValue());
             FilterAndSortCriteria filterCriteriaInsertedTarget = ctoInserted.get(adornedTargetList.getCollectionFieldName() + "Target");
             filterCriteriaInsertedTarget.setFilterValue(entity.findProperty(adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty()).getValue());
-            BaseCtoConverter ctoConverterInserted = getAdornedTargetCtoConverter(persistencePerspective, ctoInserted, mergedProperties, adornedTargetList);
-            PersistentEntityCriteria queryCriteriaInserted = ctoConverterInserted.convert(ctoInserted, adornedTargetList.getAdornedTargetEntityClassname());
-            List<Serializable> recordsInserted = persistenceManager.getDynamicEntityDao().query(queryCriteriaInserted, Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
+            List<FilterMapping> filterMappings = getAdornedTargetFilterMappings(persistencePerspective, ctoInserted, mergedProperties, adornedTargetList);
+            List<Serializable> recordsInserted = getPersistentRecords(adornedTargetList.getAdornedTargetEntityClassname(), filterMappings, ctoInserted.getFirstResult(), ctoInserted.getMaxResults());
 
             persistenceManager.getDynamicEntityDao().remove(recordsInserted.get(0));
         } catch (Exception e) {
             LOG.error("Problem removing entity", e);
             throw new ServiceException("Problem removing entity : " + e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public int getTotalRecords(PersistencePackage persistencePackage, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) {
-        AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
-        PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), adornedTargetList.getAdornedTargetEntityClassname());
-
-        Class<?>[] entities;
-        try {
-            entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
-        } catch (ClassNotFoundException e) {
-            throw new PersistenceException(e);
-        }
-        boolean isArchivable = false;
-        for (Class<?> entity : entities) {
-            if (Status.class.isAssignableFrom(entity)) {
-                isArchivable = true;
-                break;
-            }
-        }
-        if (isArchivable && !persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
-            SimpleFilterCriterionProvider criterionProvider = new SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
-                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-                    return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
-                }
-            };
-            FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);
-            ((NestedPropertyCriteria) countCriteria).add(filterCriterion);
-        }
-        try {
-            return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
-        } catch (ClassNotFoundException e) {
-            throw new PersistenceException(e);
         }
     }
 
@@ -396,10 +393,8 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             AdornedTargetRetrieval adornedTargetRetrieval = new AdornedTargetRetrieval(persistencePerspective, adornedTargetList, cto).invokeForFetch();
             List<Serializable> records = adornedTargetRetrieval.getRecords();
             Map<String, FieldMetadata> mergedProperties = adornedTargetRetrieval.getMergedProperties();
-            BaseCtoConverter ctoConverter = adornedTargetRetrieval.getCtoConverter();
-            
             payload = getRecords(mergedPropertiesTarget, records, mergedProperties, adornedTargetList.getTargetObjectPath());
-            totalRecords = getTotalRecords(persistencePackage, cto, ctoConverter);
+            totalRecords = getTotalRecords(adornedTargetList.getAdornedTargetEntityClassname(), adornedTargetRetrieval.getFilterMappings());
         } catch (Exception e) {
             LOG.error("Problem fetching results for " + adornedTargetList.getAdornedTargetEntityClassname(), e);
             throw new ServiceException("Unable to fetch results for " + adornedTargetList.getAdornedTargetEntityClassname(), e);
@@ -417,7 +412,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
         private Map<String, FieldMetadata> mergedProperties;
         private List<Serializable> records;
         private int index;
-        private BaseCtoConverter ctoConverter;
+        private List<FilterMapping> filterMappings;
         private CriteriaTransferObject cto;
 
         // This constructor is used by the update method
@@ -445,8 +440,8 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             return index;
         }
         
-        public BaseCtoConverter getCtoConverter() {
-            return ctoConverter;
+        public List<FilterMapping> getFilterMappings() {
+            return filterMappings;
         }
 
         public AdornedTargetRetrieval invokeForFetch() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, FieldNotAvailableException, NoSuchFieldException {
@@ -494,9 +489,8 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     persistencePerspective.getConfigurationKey(),
                     ""
             );
-            ctoConverter = getAdornedTargetCtoConverter(persistencePerspective, cto, mergedProperties, adornedTargetList);
-            PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, adornedTargetList.getAdornedTargetEntityClassname());
-            records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(adornedTargetList.getAdornedTargetEntityClassname()));
+            filterMappings = getAdornedTargetFilterMappings(persistencePerspective, cto, mergedProperties, adornedTargetList);
+            records = getPersistentRecords(adornedTargetList.getAdornedTargetEntityClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
         }
         
     }

@@ -125,7 +125,7 @@ public interface AdminEntityService {
      * @throws ServiceException
      */
     public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity, 
-            Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex) 
+            Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex)
             throws ServiceException;
     /**
      * Returns all records for all subcollections of the specified request and its primary key

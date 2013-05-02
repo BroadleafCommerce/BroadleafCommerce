@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
@@ -39,6 +38,7 @@ import org.broadleafcommerce.common.web.SandBoxContext;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;

@@ -174,15 +174,6 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.anasoft.os</groupId>
-            <artifactId>daofusion-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.anasoft.os</groupId>
-            <artifactId>daofusion-core</artifactId>
-            <classifier>sources</classifier>
-        </dependency>
-        <dependency>
             <groupId>commons-pool</groupId>
             <artifactId>commons-pool</artifactId>
         </dependency>

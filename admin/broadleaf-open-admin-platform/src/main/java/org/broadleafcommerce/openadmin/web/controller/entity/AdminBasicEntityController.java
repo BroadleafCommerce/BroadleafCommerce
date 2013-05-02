@@ -36,6 +36,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -67,16 +68,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to 
@@ -1087,7 +1087,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
     }
     
     /**
-     * <p>Helper method to return an array of {@link FilterAndSortCriteria} based on a map of propertyName -> list of criteria
+     * <p>Helper method to return an array of {@link org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria} based on a map of propertyName -> list of criteria
      * value. This will also grab the sorts off of the request parameters, if any.</p>
      * 
      * <p>The multi-valued map allows users to specify multiple criteria values per property, as well as multiple sort
@@ -1102,19 +1102,19 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * 
      * @param requestParams usually a {@link MultiValueMap} that has been bound by a controller to receive all of the
      * request parameters that are not explicitly named
-     * @return the final array of {@link FilterAndSortCriteria} to pass to the fetch
+     * @return the final array of {@link org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria} to pass to the fetch
      * 
      * @see {@link #getSortPropertyNames(Map)}
      * @see {@link #getSortDirections(Map)}
      */
-    protected FilterAndSortCriteria[] getCriteria(Map<String, List<String>> requestParams) {        
+    protected FilterAndSortCriteria[] getCriteria(Map<String, List<String>> requestParams) {
         if (requestParams == null || requestParams.isEmpty()) {
             return null;
         }
         
         List<FilterAndSortCriteria> result = new ArrayList<FilterAndSortCriteria>();
         for (Entry<String, List<String>> entry : requestParams.entrySet()) {
-            if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER) && 
+            if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER) &&
                     !entry.getKey().equals(FilterAndSortCriteria.SORT_DIRECTION_PARAMETER)) {
                 FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), entry.getValue());
                 result.add(fasCriteria);
@@ -1133,7 +1133,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 }
             });
             for (int i = 0; i < sortProperties.size(); i++) {
-                boolean sortAscending = FilterAndSortCriteria.SortDirection.ASCENDING.toString().equals(sortDirections.get(i));
+                boolean sortAscending = SortDirection.ASCENDING.toString().equals(sortDirections.get(i));
                 FilterAndSortCriteria propertyCriteria = fasMap.get(sortProperties.get(i));
                 //If there is already criteria for this property, attach the sort to that. Otherwise, create some new
                 //FilterAndSortCriteria for the sort

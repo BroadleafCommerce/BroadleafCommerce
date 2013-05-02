@@ -18,7 +18,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
@@ -27,6 +27,7 @@ import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,7 +36,7 @@ import java.util.Map;
 public class FieldPersistenceProviderAdapter extends AbstractFieldPersistenceProvider {
 
     @Override
-    public FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, BaseCtoConverter ctoConverter) {
+    public FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, List<FilterMapping> filterMappings) {
         return FieldProviderResponse.NOT_HANDLED;
     }
 

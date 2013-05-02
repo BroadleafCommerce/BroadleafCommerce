@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -38,10 +39,15 @@ import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
-import org.broadleafcommerce.openadmin.server.cto.FilterCriterionProviders;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaTranslator;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
@@ -49,22 +55,17 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.EntityValidatorService;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.anasoft.os.daofusion.criteria.AssociationPath;
-import com.anasoft.os.daofusion.criteria.FilterCriterion;
-import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
-
+import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -115,6 +116,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Resource(name= "blDefaultFieldPersistenceProvider")
     protected FieldPersistenceProvider defaultFieldPersistenceProvider;
+
+    @Resource(name="blCriteriaTranslator")
+    protected CriteriaTranslator criteriaTranslator;
+
+    @Resource(name="blRestrictionFactory")
+    protected RestrictionFactory restrictionFactory;
 
     public BasicPersistenceModule() {
         decimalFormat = (DecimalFormat) NumberFormat.getInstance(Locale.US);
@@ -589,25 +596,22 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     }
 
     @Override
-    public BaseCtoConverter getCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedUnfilteredProperties) {
-        return getCtoConverter(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedUnfilteredProperties, null);
-    }
-
-    @Override
-    public BaseCtoConverter getCtoConverter(PersistencePerspective persistencePerspective, CriteriaTransferObject cto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedUnfilteredProperties, FilterCriterionProviders criterionProviders) {
+    public List<FilterMapping> getFilterMappings(PersistencePerspective persistencePerspective,
+                                                 CriteriaTransferObject cto,
+                                                 String ceilingEntityFullyQualifiedClassname,
+                                                 Map<String, FieldMetadata> mergedUnfilteredProperties,
+                                                 RestrictionFactory customRestrictionFactory) {
         Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
-        BaseCtoConverter ctoConverter = (BaseCtoConverter) applicationContext.getBean("blBaseCtoConverter");
-        if (criterionProviders != null) {
-            ctoConverter.setFilterCriterionProviders(criterionProviders);
-        }
-        for (String propertyId : cto.getPropertyIdSet()) {
+        List<FilterMapping> filterMappings = new ArrayList<FilterMapping>();
+        for (String propertyId : cto.getCriteriaMap().keySet()) {
             if (mergedProperties.containsKey(propertyId)) {
                 boolean handled = false;
                 for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
                     FieldProviderResponse response = fieldPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
                                     ceilingEntityFullyQualifiedClassname, mergedProperties,
-                                    propertyId, getFieldManager(), this), ctoConverter);
+                                    propertyId, getFieldManager(), this, customRestrictionFactory==null?restrictionFactory
+                                    :customRestrictionFactory), filterMappings);
                     if (FieldProviderResponse.NOT_HANDLED != response) {
                         handled = true;
                     }
@@ -619,56 +623,20 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     defaultFieldPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
                                     ceilingEntityFullyQualifiedClassname, mergedProperties, propertyId,
-                                    getFieldManager(), this), ctoConverter);
+                                    getFieldManager(), this, customRestrictionFactory==null?restrictionFactory
+                                                                        :customRestrictionFactory), filterMappings);
                 }
-            } else {
-                ctoConverter.addEmptyMapping(ceilingEntityFullyQualifiedClassname, propertyId);
             }
         }
-        if (cto.getPropertyIdSet().isEmpty()) {
-            ctoConverter.addEmptyMapping(ceilingEntityFullyQualifiedClassname, "");
-        }
-        return ctoConverter;
+        return filterMappings;
     }
 
     @Override
-    public int getTotalRecords(PersistencePackage persistencePackage, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) {
-        PersistentEntityCriteria countCriteria = getCountCriteria(persistencePackage, cto, ctoConverter);
-        try {
-            return persistenceManager.getDynamicEntityDao().count(countCriteria, Class.forName(StringUtils.isEmpty(persistencePackage.getFetchTypeFullyQualifiedClassname()) ? persistencePackage.getCeilingEntityFullyQualifiedClassname() : persistencePackage.getFetchTypeFullyQualifiedClassname()));
-        } catch (Exception e) {
-            throw new PersistenceException(e);
-        }
-    }
-
-    @Override
-    public PersistentEntityCriteria getCountCriteria(PersistencePackage persistencePackage, CriteriaTransferObject cto, BaseCtoConverter ctoConverter) {
-        PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), persistencePackage.getCeilingEntityFullyQualifiedClassname());
-
-        Class<?>[] entities;
-        try {
-            entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
-        } catch (ClassNotFoundException e) {
-            throw new PersistenceException(e);
-        }
-        boolean isArchivable = false;
-        for (Class<?> entity : entities) {
-            if (Status.class.isAssignableFrom(entity)) {
-                isArchivable = true;
-                break;
-            }
-        }
-        if (isArchivable && !persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
-            SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
-                @Override
-                public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-                    return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
-                }
-            };
-            FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);
-            ((NestedPropertyCriteria) countCriteria).add(filterCriterion);
-        }
-        return countCriteria;
+    public List<FilterMapping> getFilterMappings(PersistencePerspective persistencePerspective,
+                                                 CriteriaTransferObject cto,
+                                                 String ceilingEntityFullyQualifiedClassname,
+                                                 Map<String, FieldMetadata> mergedUnfilteredProperties) {
+        return getFilterMappings(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedUnfilteredProperties, null);
     }
 
     @Override
@@ -880,8 +848,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 persistencePerspective.getConfigurationKey(),
                 ""
             );
-            BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedProperties);
-            PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);
+            List<FilterMapping> filterMappings = getFilterMappings(persistencePerspective, cto, persistencePackage
+                    .getFetchTypeFullyQualifiedClassname(), mergedProperties);
+
             boolean isArchivable = false;
             for (Class<?> entity : entities) {
                 if (Status.class.isAssignableFrom(entity)) {
@@ -890,25 +859,44 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 }
             }
             if (isArchivable && !persistencePerspective.getShowArchivedFields()) {
-                SimpleFilterCriterionProvider criterionProvider = new  SimpleFilterCriterionProvider(SimpleFilterCriterionProvider.FilterDataStrategy.NONE, 0) {
-                    @Override
-                    public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
-                        return Restrictions.or(Restrictions.eq(targetPropertyName, 'N'), Restrictions.isNull(targetPropertyName));
-                    }
-                };
-                FilterCriterion filterCriterion = new FilterCriterion(AssociationPath.ROOT, "archiveStatus.archived", criterionProvider);
-                ((NestedPropertyCriteria) queryCriteria).add(filterCriterion);
+                FilterMapping filterMapping = new FilterMapping()
+                    .withFieldPath(new FieldPath().withTargetProperty("archiveStatus.archived"))
+                    .withFilterValues(new EmptyFilterValues())
+                    .withRestriction(new Restriction()
+                            .withPredicateProvider(new PredicateProvider<Character, Character>() {
+                                @Override
+                                public Predicate buildPredicate(CriteriaBuilder builder,
+                                                                FieldPathBuilder fieldPathBuilder,
+                                                                From root, String ceilingEntity,
+                                                                String fullPropertyName, Path<Character> explicitPath,
+                                                                List<Character> directValues) {
+                                    return builder.or(builder.equal(explicitPath, 'N'), builder.isNull(explicitPath));
+                                }
+                            })
+                    );
+                filterMappings.add(filterMapping);
             }
-            List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(persistencePackage.getFetchTypeFullyQualifiedClassname()));
-
+            List<Serializable> records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
             payload = getRecords(mergedProperties, records, null, null);
-            totalRecords = getTotalRecords(persistencePackage, cto, ctoConverter);
+            totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings);
+
         } catch (Exception e) {
             LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
         }
 
         return new DynamicResultSet(null, payload, totalRecords);
+    }
+
+    @Override
+    public Integer getTotalRecords(String ceilingEntity, List<FilterMapping> filterMappings) {
+        return ((Long) criteriaTranslator.translateCountQuery(persistenceManager.getDynamicEntityDao(),
+                ceilingEntity, filterMappings).getSingleResult()).intValue();
+    }
+
+    @Override
+    public List<Serializable> getPersistentRecords(String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults) {
+        return criteriaTranslator.translateQuery(persistenceManager.getDynamicEntityDao(), ceilingEntity, filterMappings, firstResult, maxResults).getResultList();
     }
 
     @Override
@@ -943,4 +931,31 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         this.fieldPersistenceProviders = fieldPersistenceProviders;
     }
 
+    public CriteriaTranslator getCriteriaTranslator() {
+        return criteriaTranslator;
+    }
+
+    public void setCriteriaTranslator(CriteriaTranslator criteriaTranslator) {
+        this.criteriaTranslator = criteriaTranslator;
+    }
+
+    public EntityValidatorService getEntityValidatorService() {
+        return entityValidatorService;
+    }
+
+    public void setEntityValidatorService(EntityValidatorService entityValidatorService) {
+        this.entityValidatorService = entityValidatorService;
+    }
+
+    public RestrictionFactory getRestrictionFactory() {
+        return restrictionFactory;
+    }
+
+    public void setRestrictionFactory(RestrictionFactory restrictionFactory) {
+        this.restrictionFactory = restrictionFactory;
+    }
+
+    public PersistenceManager getPersistenceManager() {
+        return persistenceManager;
+    }
 }

@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +25,7 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.value.ValueAssignable;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -37,7 +36,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SimpleValueMapStructure;
-import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.hibernate.mapping.PersistentClass;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -498,14 +497,14 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                 );
             }
             Map<String, FieldMetadata> valueMergedProperties = filterOutCollectionMetadata(valueUnfilteredMergedProperties);
-            
-            BaseCtoConverter ctoConverter = getCtoConverter(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedProperties);
-            PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, ceilingEntityFullyQualifiedClassname);
-            totalRecords = getTotalRecords(persistencePackage, cto, ctoConverter);
+
+            List<FilterMapping> filterMappings = getFilterMappings(persistencePerspective, cto, persistencePackage
+                                .getFetchTypeFullyQualifiedClassname(), mergedProperties);
+            totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings);
             if (totalRecords > 1) {
                 throw new ServiceException("Queries to retrieve an entity containing a MapStructure must return only 1 entity. Your query returned ("+totalRecords+") values.");
             }
-            List<Serializable> records = persistenceManager.getDynamicEntityDao().query(queryCriteria, Class.forName(persistencePackage.getFetchTypeFullyQualifiedClassname()));
+            List<Serializable> records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
             Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(records.get(0).getClass().getName(),
                             persistencePerspective);
             payload = getMapRecords(records.get(0), mapStructure, ceilingMergedProperties, valueMergedProperties, null);
@@ -521,4 +520,5 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
         
         return results;
     }
+
 }

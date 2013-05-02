@@ -83,4 +83,69 @@
         </property>
     </bean>
 
+    <bean id="blStringLikeRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blStringLikeFilterValueConverter"/>
+        <property name="predicateProvider" ref="blLikePredicateProvider"/>
+    </bean>
+
+    <bean id="blBooleanRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blBooleanFilterValueConverter"/>
+        <property name="predicateProvider" ref="blEqPredicateProvider"/>
+    </bean>
+
+    <bean id="blCharacterRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blCharacterFilterValueConverter"/>
+        <property name="predicateProvider" ref="blEqPredicateProvider"/>
+    </bean>
+
+    <bean id="blBetweenDateRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blNullAwareDateFilterValueConverter"/>
+        <property name="predicateProvider" ref="blBetweenDatePredicateProvider"/>
+    </bean>
+
+    <bean id="blBetweenDecimalRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blDecimalFilterValueConverter"/>
+        <property name="predicateProvider" ref="blBetweenPredicateProvider"/>
+    </bean>
+
+    <bean id="blBetweenLongRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blLongFilterValueConverter"/>
+        <property name="predicateProvider" ref="blBetweenPredicateProvider"/>
+    </bean>
+
+    <bean id="blCollectionSizeEqualRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blIntegerFilterValueConverter"/>
+        <property name="predicateProvider" ref="blCollectionSizeEqualPredicateProvider"/>
+    </bean>
+
+    <bean id="blIsNullLongRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="predicateProvider" ref="blIsNullPredicateProvider"/>
+    </bean>
+
+    <bean id="blStringEqualRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blStringFilterValueConverter"/>
+        <property name="predicateProvider" ref="blEqPredicateProvider"/>
+    </bean>
+
+    <bean id="blLongEqualRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blLongFilterValueConverter"/>
+        <property name="predicateProvider" ref="blEqPredicateProvider"/>
+    </bean>
+
+    <bean id="blRestrictionFactoryMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="STRING_LIKE" value-ref="blStringLikeRestriction"/>
+                <entry key="BOOLEAN" value-ref="blBooleanRestriction"/>
+                <entry key="CHARACTER" value-ref="blCharacterRestriction"/>
+                <entry key="DATE" value-ref="blBetweenDateRestriction"/>
+                <entry key="DECIMAL" value-ref="blBetweenDecimalRestriction"/>
+                <entry key="LONG" value-ref="blBetweenLongRestriction"/>
+                <entry key="COLLECTION_SIZE_EQUAL" value-ref="blCollectionSizeEqualRestriction"/>
+                <entry key="IS_NULL_LONG" value-ref="blIsNullLongRestriction"/>
+                <entry key="STRING_EQUAL" value-ref="blStringEqualRestriction"/>
+                <entry key="LONG_EQUAL" value-ref="blLongEqualRestriction"/>
+            </map>
+        </property>
+    </bean>
 </beans>

@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -262,7 +263,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     protected DynamicResultSet postFetch(DynamicResultSet resultSet, PersistencePackage persistencePackage, 
-            CriteriaTransferObject cto) 
+            CriteriaTransferObject cto)
             throws ServiceException {
         // Expose the start index so that we can utilize when building the UI
         resultSet.setStartIndex(cto.getFirstResult());

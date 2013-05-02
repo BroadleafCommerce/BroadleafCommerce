@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;

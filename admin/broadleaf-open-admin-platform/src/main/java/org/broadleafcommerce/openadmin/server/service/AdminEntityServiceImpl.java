@@ -45,6 +45,7 @@ import org.springframework.util.Assert;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -521,7 +522,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         CriteriaTransferObject cto = getDefaultCto();
         if (request.getFilterAndSortCriteria() != null) {
-            cto.addAll(request.getFilterAndSortCriteria());
+            cto.addAll(Arrays.asList(request.getFilterAndSortCriteria()));
         }
         
         if (request.getStartIndex() == null) {

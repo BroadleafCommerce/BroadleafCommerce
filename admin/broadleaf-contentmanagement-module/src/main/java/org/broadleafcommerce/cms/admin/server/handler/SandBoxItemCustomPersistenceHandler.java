@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
-import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -26,12 +23,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl;
@@ -43,6 +40,7 @@ import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityServ
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
@@ -198,15 +196,13 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(SandBoxItem.class.getName(), persistencePerspective);
             cto.get("sandBoxId").setFilterValue(currentSandBox.getId().toString());
             cto.get("archivedFlag").setFilterValue(Boolean.FALSE.toString());
-            BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, SandBoxItem.class.getName(), originalProps);
-            PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, SandBoxItem.class.getName());
+            List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, SandBoxItem.class.getName(), originalProps);
 
             //declare SandBoxItemImpl explicitly, as we do not want to retrieve other polymorphic types (e.g. WorkflowSandBoxItemImpl)
-            List<Serializable> records = dynamicEntityDao.query(queryCriteria, SandBoxItemImpl.class);
+            List<Serializable> records = helper.getPersistentRecords(SandBoxItem.class.getName(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
             Entity[] results = helper.getRecords(originalProps, records);
 
-            PersistentEntityCriteria countCriteria = ctoConverter.convert(new CriteriaTransferObjectCountWrapper(cto).wrap(), ceilingEntityFullyQualifiedClassname);
-            int totalRecords = dynamicEntityDao.count(countCriteria, SandBoxItemImpl.class);
+            int totalRecords = helper.getTotalRecords(SandBoxItem.class.getName(), filterMappings);
 
             DynamicResultSet response = new DynamicResultSet(results, totalRecords);
 

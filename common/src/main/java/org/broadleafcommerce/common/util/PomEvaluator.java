@@ -53,8 +53,7 @@ public class PomEvaluator {
     private static Category PLEXUS = new Category("Codehaus Plexus Library", LicenseType.APACHE2, FrameworkType.XML, SPRING, APACHE_FOUNDATION);
     private static Category ASM = new Category("OW2 ASM libraries", LicenseType.OW2, FrameworkType.GENERAL, APACHE_FOUNDATION, GOOGLE);
     private static Category CGLIB = new Category("CGLIB libraries", LicenseType.APACHE2, FrameworkType.GENERAL, SPRING, HIBERNATE);
-    private static Category DAOFUSION = new Category("Anasoft DaoFusion libraries", LicenseType.LGPL, FrameworkType.PERSISTENCE, HIBERNATE);
-    private static Category JERSEY = new Category("Anasoft DaoFusion libraries", LicenseType.LGPL, FrameworkType.XML);
+    private static Category JERSEY = new Category("Jersey Libraries", LicenseType.LGPL, FrameworkType.XML);
     private static Category XSTREAM = new Category("Codehaus XML parsing library", LicenseType.XSTREAM_BSD, FrameworkType.XML);
     private static Category JODA_TIME = new Category("Date and time utilities", LicenseType.APACHE2, FrameworkType.UTILITY, APACHE_FOUNDATION);
     private static Category TRANSMORPH = new Category("Entropy Transmorph - SalesForce.com", LicenseType.APACHE2, FrameworkType.UTILITY);    
@@ -136,9 +135,6 @@ public class PomEvaluator {
 
         // CGLIB
         knownLibraries.put("cglib", CGLIB);
-
-        // DaoFusion - Used by admin to convert filter data into Hibernate searches
-        knownLibraries.put("com.anasoft.os", DAOFUSION);
 
         // Jersey - used for REST services
         knownLibraries.put("com.sun.jersey", JERSEY);

@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -40,7 +39,7 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
+public interface DynamicEntityDao {
 
     public abstract Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass);
 
@@ -94,8 +93,6 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
     public List<Type> getPropertyTypes(Class<?> entityClass);
 
     public List<String> getPropertyNames(Class<?> entityClass);
-
-    public abstract Criteria getCriteria(PersistentEntityCriteria entityCriteria, Class<?> entityClass);
 
     public Criteria createCriteria(Class<?> entityClass);
 

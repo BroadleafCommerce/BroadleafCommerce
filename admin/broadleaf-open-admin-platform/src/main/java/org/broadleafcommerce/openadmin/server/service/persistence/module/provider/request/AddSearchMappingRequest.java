@@ -16,11 +16,12 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
 
 import java.util.Map;
 
@@ -38,11 +39,12 @@ public class AddSearchMappingRequest {
     private final String propertyName;
     private final FieldManager fieldManager;
     private final DataFormatProvider dataFormatProvider;
+    private final RestrictionFactory restrictionFactory;
 
     public AddSearchMappingRequest(PersistencePerspective persistencePerspective, CriteriaTransferObject
             requestedCto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedProperties,
                                    String propertyName, FieldManager fieldManager,
-                                   DataFormatProvider dataFormatProvider) {
+                                   DataFormatProvider dataFormatProvider, RestrictionFactory restrictionFactory) {
         this.persistencePerspective = persistencePerspective;
         this.requestedCto = requestedCto;
         this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
@@ -50,6 +52,7 @@ public class AddSearchMappingRequest {
         this.propertyName = propertyName;
         this.fieldManager = fieldManager;
         this.dataFormatProvider = dataFormatProvider;
+        this.restrictionFactory = restrictionFactory;
     }
 
     public PersistencePerspective getPersistencePerspective() {
@@ -78,5 +81,9 @@ public class AddSearchMappingRequest {
     
     public DataFormatProvider getDataFormatProvider() {
         return dataFormatProvider;
+    }
+
+    public RestrictionFactory getRestrictionFactory() {
+        return restrictionFactory;
     }
 }

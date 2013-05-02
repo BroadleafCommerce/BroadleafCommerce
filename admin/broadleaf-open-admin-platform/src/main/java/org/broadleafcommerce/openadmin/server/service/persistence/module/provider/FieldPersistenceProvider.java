@@ -18,7 +18,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
@@ -27,6 +27,7 @@ import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -76,10 +77,10 @@ public interface FieldPersistenceProvider extends Ordered {
      * and is generally used to drive the criteria added to CtoConverter.
      *
      * @param addSearchMappingRequest contains the requested cto and support classes.
-     * @param ctoConverter search info should be added to converter. It is responsible for generating the final search criteria.
+     * @param filterMappings filter criteria should be added here. It is used to generate the final search criteria.
      * @return whether or not the implementation handled the persistence request
      */
-    FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, BaseCtoConverter ctoConverter);
+    FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, List<FilterMapping> filterMappings);
 
     /**
      * Filter the list of properties posted by the admin during and add or update. This is the property list

@@ -40,6 +40,7 @@ import org.broadleafcommerce.openadmin.server.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.codehaus.jackson.map.util.LRUMap;
+import org.hibernate.Criteria;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
@@ -78,7 +79,7 @@ import java.util.Map;
  */
 @Component("blDynamicEntityDao")
 @Scope("prototype")
-public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable> implements DynamicEntityDao {
+public class DynamicEntityDaoImpl implements DynamicEntityDao {
     
     private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
     protected static final Object LOCK_OBJECT = new Object();
@@ -106,8 +107,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     protected AppConfigurationService appConfigurationRemoteService;
 
     @Override
-    public Class<? extends Serializable> getEntityClass() {
-        throw new IllegalArgumentException("Must supply the entity class to query and count method calls! Default entity not supported!");
+    public Criteria createCriteria(Class<?> entityClass) {
+        return ((HibernateEntityManager) getStandardEntityManager()).getSession().createCriteria(entityClass);
     }
     
     @Override
