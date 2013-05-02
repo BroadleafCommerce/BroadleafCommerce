@@ -16,15 +16,12 @@
 
 package org.broadleafcommerce.core.web.controller.account;
 
-import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.CustomerAddressValidator;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
-import org.broadleafcommerce.profile.core.domain.Phone;
-import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
@@ -39,8 +36,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 import java.beans.PropertyEditorSupport;
 import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 public class BroadleafManageCustomerAddressesController extends BroadleafAbstractController {
 
@@ -188,20 +189,12 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
         return getCustomerAddressesRedirect();
     }
 
-    public static String getCustomerAddressesView() {
+    public String getCustomerAddressesView() {
         return customerAddressesView;
     }
 
-    public static void setCustomerAddressesView(String customerAddressesView) {
-        BroadleafManageCustomerAddressesController.customerAddressesView = customerAddressesView;
-    }
-
-    public static String getCustomerAddressesRedirect() {
+    public String getCustomerAddressesRedirect() {
         return customerAddressesRedirect;
-    }
-
-    public static void setCustomerAddressesRedirect(String customerAddressesRedirect) {
-        BroadleafManageCustomerAddressesController.customerAddressesRedirect = customerAddressesRedirect;
     }
 
     public String getAddressUpdatedMessage() {

@@ -44,6 +44,15 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.springframework.util.ClassUtils;
+
+import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
@@ -369,7 +378,7 @@ public class SkuImpl implements Sku {
                 returnPrice = dynamicPrices.getSalePrice();
             } else {
                 DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
-                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
+                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(getClass()), handler);
 
                 dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
                 returnPrice = dynamicPrices.getSalePrice();
@@ -417,7 +426,7 @@ public class SkuImpl implements Sku {
                 returnPrice = dynamicPrices.getRetailPrice();
             } else {
                 DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
-                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
+                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(getClass()), handler);
 
                 dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
                 returnPrice = dynamicPrices.getRetailPrice();
