@@ -44,16 +44,6 @@ import org.springframework.core.io.ResourceLoader;
  */
 public class BroadleafMergeResourceBundleMessageSource extends ReloadableResourceBundleMessageSource {
 
-    public BroadleafMergeResourceBundleMessageSource() {
-        /*
-        change the default behavior of message acquisition such that if a translation is not found for a code,
-        then return the code itself. This allows Broadleaf admin field, group, etc... names to be returned exactly
-        as they are declared, rather than requiring a resource bundle resolution.
-         */
-        //FIXME this should be changed to true after valid translation items are identified and resolved
-        this.setUseCodeAsDefaultMessage(false);
-    }
-
     /**
      * The super implementation ensures the basenames defined at the beginning take precedence. We require the opposite in
      * order to be in line with previous assumptions about the applicationContext merge process (meaning, beans defined in

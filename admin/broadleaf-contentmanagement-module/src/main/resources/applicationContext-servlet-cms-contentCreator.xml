@@ -13,6 +13,8 @@
     <aop:config/>
 
     <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
+        <property name="useCodeAsDefaultMessage" value="${messages.useCodeAsDefaultMessage}" />
+        <property name="cacheSeconds" value="${messages.cacheSeconds}" />
         <property name="basenames">
             <list>
                 <value>classpath:/messages/ContentManagementMessages</value>
