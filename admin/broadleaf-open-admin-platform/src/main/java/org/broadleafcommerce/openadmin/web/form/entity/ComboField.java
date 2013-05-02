@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.form.entity;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class ComboField extends Field {
 
-    protected Map<String, String> options = new HashMap<String, String>();
+    protected Map<String, String> options = new LinkedHashMap<String, String>();
 
     /* *********** */
     /* ADD METHODS */

@@ -26,14 +26,14 @@ import java.util.Map;
  * An extendible enumeration of offer types.
  *
  */
-public class OfferType implements Serializable, BroadleafEnumerationType {
+public class OfferType implements Serializable, BroadleafEnumerationType, Comparable<OfferType> {
     
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, OfferType> TYPES = new LinkedHashMap<String, OfferType>();
-    public static final OfferType ORDER_ITEM = new OfferType("ORDER_ITEM", "Order Item");
-    public static final OfferType ORDER = new OfferType("ORDER", "Order");
-    public static final OfferType FULFILLMENT_GROUP = new OfferType("FULFILLMENT_GROUP", "Fulfillment Group");
+    public static final OfferType ORDER_ITEM = new OfferType("ORDER_ITEM", "Order Item", 1000);
+    public static final OfferType ORDER = new OfferType("ORDER", "Order", 2000);
+    public static final OfferType FULFILLMENT_GROUP = new OfferType("FULFILLMENT_GROUP", "Fulfillment Group", 3000);
 
 
     public static OfferType getInstance(final String type) {
@@ -42,14 +42,16 @@ public class OfferType implements Serializable, BroadleafEnumerationType {
 
     private String type;
     private String friendlyType;
+    private int order;    
 
     public OfferType() {
         //do nothing
     }
 
-    public OfferType(final String type, final String friendlyType) {
+    public OfferType(final String type, final String friendlyType, int order) {
         this.friendlyType = friendlyType;
         setType(type);
+        setOrder(order);
     }
 
     public void setType(final String type) {
@@ -65,6 +67,14 @@ public class OfferType implements Serializable, BroadleafEnumerationType {
 
     public String getFriendlyType() {
         return friendlyType;
+    }
+    
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     @Override
@@ -90,6 +100,11 @@ public class OfferType implements Serializable, BroadleafEnumerationType {
         } else if (!type.equals(other.type))
             return false;
         return true;
+    }
+    
+    @Override
+    public int compareTo(OfferType arg0) {
+        return this.order - arg0.order;
     }
 
 }
