@@ -143,14 +143,13 @@ var BLCAdmin = (function($) {
         			// Create a modal out of the server response
         			var $data = $(data);
         			
-        			BLCAdmin.initializeFields($data);
-        			
         			$data = $data.children();
         		    BLCAdmin.currentModal().empty().append($data);
         		    
         			BLCAdmin.initializeModalTabs(BLCAdmin.currentModal());
         			BLCAdmin.initializeModalButtons(BLCAdmin.currentModal());
         		    BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
+        			BLCAdmin.initializeFields();
         		});
     		} else {
     		    showLinkAsModal(link);

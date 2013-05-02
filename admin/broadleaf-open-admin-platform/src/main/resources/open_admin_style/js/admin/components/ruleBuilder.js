@@ -76,9 +76,10 @@
             $container.hide();
         },
         
-        initializeCondition : function(condition) {
-            $('#' + condition.containerId).conditionsBuilder(condition.json);
-            condition.builder = $('#' + condition.containerId).conditionsBuilder('builder');
+        initializeCondition : function($container, condition) {
+            var $builder = $container.find('#' + condition.containerId);
+            $builder.conditionsBuilder(condition.json);
+            condition.builder = $builder.conditionsBuilder('builder');
         }
         
     };
@@ -92,7 +93,7 @@
                 data = $this.data('data'),
                 condition = BLCAdmin.conditions.addCondition(hiddenId, containerId, fields, data);
             
-            BLCAdmin.conditions.initializeCondition(condition);
+            BLCAdmin.conditions.initializeCondition($this.parent(), condition);
         });
     
         $container.find('.rule-builder-required-field').each(function(index, element) {
