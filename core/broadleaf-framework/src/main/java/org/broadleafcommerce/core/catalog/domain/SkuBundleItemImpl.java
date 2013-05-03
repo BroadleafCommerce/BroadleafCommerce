@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.lang.ClassUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -33,6 +34,7 @@ import org.hibernate.annotations.Parameter;
 
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -117,8 +119,9 @@ public class SkuBundleItemImpl implements SkuBundleItem {
                 returnPrice = dynamicPrices.getSalePrice();
             } else {
                 DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(sku, salePrice);
-                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
-                
+                List<Class<?>> list = ClassUtils.getAllInterfaces(getClass());
+                Class<?>[] intfArray = list.toArray(new Class<?>[list.size()]);
+                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), intfArray, handler);
                 dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
                 returnPrice = dynamicPrices.getSalePrice();
             }
