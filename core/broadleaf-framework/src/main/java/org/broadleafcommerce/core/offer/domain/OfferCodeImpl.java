@@ -20,8 +20,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.annotations.Cache;
@@ -29,6 +27,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,25 +44,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "BLC_OFFER_CODE")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-@AdminPresentationOverrides(
-    {
-        @AdminPresentationOverride(name="offer.appliesToOrderRules", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.appliesToFulfillmentGroupRules", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.appliesToCustomerRules", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.maxUses", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.uses", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.targetItemCriteria", value=@AdminPresentation(excluded = true))
-    }
-)
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OfferCodeImpl_baseOfferCode")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferCodeImpl_baseOfferCode")
 public class OfferCodeImpl implements OfferCode {
 
     public static final long serialVersionUID = 1L;
@@ -97,16 +86,19 @@ public class OfferCodeImpl implements OfferCode {
     protected String offerCode;
 
     @Column(name = "START_DATE")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Start_Date")
-    protected Date startDate;
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Start_Date", order = 6100,
+            group = OfferImpl.Presentation.Group.Name.Description, groupOrder = OfferImpl.Presentation.Group.Order.Description)
+    protected Date offerCodeStartDate;
 
     @Column(name = "END_DATE")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_End_Date")
-    protected Date endDate;
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_End_Date", order = 6200,
+            group = OfferImpl.Presentation.Group.Name.Description, groupOrder = OfferImpl.Presentation.Group.Order.Description)
+    protected Date offerCodeEndDate;
 
     @Column(name = "MAX_USES")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Max_Uses")
-    protected int maxUses;
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Max_Uses", order = 6300,
+            group = OfferImpl.Presentation.Group.Name.Description, groupOrder = OfferImpl.Presentation.Group.Order.Description)
+    protected Integer maxUses;
 
     @Column(name = "USES")
     @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Uses", visibility = VisibilityEnum.HIDDEN_ALL)
@@ -163,19 +155,19 @@ public class OfferCodeImpl implements OfferCode {
     }
 
     public Date getStartDate() {
-        return startDate;
+        return offerCodeStartDate;
     }
 
     public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+        this.offerCodeStartDate = startDate;
     }
 
     public Date getEndDate() {
-        return endDate;
+        return offerCodeEndDate;
     }
 
     public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+        this.offerCodeEndDate = endDate;
     }
 
     public List<Order> getOrders() {

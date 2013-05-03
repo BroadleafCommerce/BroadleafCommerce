@@ -144,13 +144,13 @@ public class SkuImpl implements Sku {
 
     @Column(name = "NAME")
     @Index(name = "SKU_NAME_INDEX", columnNames = {"NAME"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order = 1000,
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order = ProductImpl.Presentation.FieldOrder.NAME,
         group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
         prominent = true, gridOrder = 1, columnWidth = "300px")
     protected String name;
 
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Description", order = 2000, 
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Description", order = ProductImpl.Presentation.FieldOrder.SHORT_DESCRIPTION, 
         group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
         largeEntry = true, 
         excluded = true)
@@ -159,7 +159,7 @@ public class SkuImpl implements Sku {
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description", order=3000, 
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description", order = ProductImpl.Presentation.FieldOrder.LONG_DESCRIPTION,
         group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
         largeEntry = true, 
         fieldType = SupportedFieldType.HTML_BASIC)

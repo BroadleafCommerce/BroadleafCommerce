@@ -49,6 +49,15 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -68,14 +77,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -126,7 +127,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
     protected Long id;
     
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order = 5000, 
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order = Presentation.FieldOrder.URL,
         group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General, 
         prominent = true, gridOrder = 3, columnWidth = "200px",
         requiredOverride = RequiredOverride.REQUIRED)
@@ -152,7 +153,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
     protected String model;
 
     @Column(name = "MANUFACTURE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", order = 2000,
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", order = Presentation.FieldOrder.MANUFACTURER,
         group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General, 
         prominent = true, gridOrder = 4)
     protected String manufacturer;
@@ -213,7 +214,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order = 4000,
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order = Presentation.FieldOrder.DEFAULT_CATEGORY,
         group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General, 
         prominent = true, gridOrder = 2, 
         requiredOverride = RequiredOverride.REQUIRED)
@@ -839,6 +840,16 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
                 public static final int Badges = 1000;
                 public static final int Shipping = 1000;
             }
+        }
+
+        public static class FieldOrder {
+
+            public static final int NAME = 1000;
+            public static final int SHORT_DESCRIPTION = 2000;
+            public static final int LONG_DESCRIPTION = 3000;
+            public static final int DEFAULT_CATEGORY = 4000;
+            public static final int MANUFACTURER = 5000;
+            public static final int URL = 6000;
         }
     }
 

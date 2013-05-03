@@ -52,7 +52,8 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @Column(name = "PRICING_MODEL")
     @AdminPresentation(friendlyName = "productBundlePricingModel", 
-        group = "productBundleGroup",
+            group = ProductImpl.Presentation.Group.Name.Price,
+            order = 1,
         helpText = "productBundlePricingModelHelp", 
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType",

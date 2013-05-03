@@ -22,10 +22,12 @@ import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
@@ -35,6 +37,7 @@ import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleTyp
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -45,9 +48,11 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -96,12 +101,30 @@ public class OfferImpl implements Offer, Status {
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Id", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
+    @OneToMany(mappedBy = "offer", targetEntity = OfferCodeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @BatchSize(size = 50)
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST,
+            friendlyName = "offerCodeTitle",
+            order = 1,
+            tab = Presentation.Tab.Name.Codes,
+            tabOrder = Presentation.Tab.Order.Codes)
+    protected List<OfferCode> offerCodes = new ArrayList<OfferCode>(100);
+
     @Column(name = "OFFER_NAME", nullable=false)
     @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Name", order = 1000, 
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         prominent = true, gridOrder = 1)
     protected String name;
+
+    public List<OfferCode> getOfferCodes() {
+        return offerCodes;
+    }
+
+    public void setOfferCodes(List<OfferCode> offerCodes) {
+        this.offerCodes = offerCodes;
+    }
 
     @Column(name = "OFFER_DESCRIPTION")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = 2000, 
@@ -768,11 +791,15 @@ public class OfferImpl implements Offer, Status {
     public static class Presentation {
         public static class Tab {
             public static class Name {
+
+                public static final String Codes = "OfferImpl_Codes_Tab";
                 public static final String Advanced = "OfferImpl_Advanced_Tab";
             }
             
             public static class Order {
-                public static final int Advanced = 1000;
+
+                public static final int Codes = 1000;
+                public static final int Advanced = 2000;
             }
         }
             
