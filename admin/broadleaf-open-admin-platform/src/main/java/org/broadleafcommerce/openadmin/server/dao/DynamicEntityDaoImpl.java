@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -52,8 +53,6 @@ import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -71,6 +70,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 /**
  * 
@@ -106,6 +108,9 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     @Resource(name="blAppConfigurationRemoteService")
     protected AppConfigurationService appConfigurationRemoteService;
 
+    @Resource(name="blDynamicDaoHelperImpl")
+    protected DynamicDaoHelper dynamicDaoHelper;
+    
     @Override
     public Criteria createCriteria(Class<?> entityClass) {
         return ((HibernateEntityManager) getStandardEntityManager()).getSession().createCriteria(entityClass);
@@ -740,18 +745,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
 
     @Override
     public Map<String, Object> getIdMetadata(Class<?> entityClass) {
-        Map<String, Object> response = new HashMap<String, Object>();
-        SessionFactory sessionFactory = getSessionFactory();
-        ClassMetadata metadata = sessionFactory.getClassMetadata(entityClass);
-        if (metadata == null) {
-            return null;
-        }
-        String idProperty = metadata.getIdentifierPropertyName();
-        response.put("name", idProperty);
-        Type idType = metadata.getIdentifierType();
-        response.put("type", idType);
-
-        return response;
+        return dynamicDaoHelper.getIdMetadata(entityClass, (HibernateEntityManager) standardEntityManager);
     }
 
     @Override

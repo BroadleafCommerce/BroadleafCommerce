@@ -28,11 +28,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
 
-import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
 
 /**
  * 
