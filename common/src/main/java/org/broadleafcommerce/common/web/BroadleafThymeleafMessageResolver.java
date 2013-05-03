@@ -16,85 +16,63 @@
 
 package org.broadleafcommerce.common.web;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.context.NoSuchMessageException;
+import org.broadleafcommerce.common.i18n.service.I18NService;
 import org.thymeleaf.Arguments;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.exceptions.ConfigurationException;
 import org.thymeleaf.messageresolver.AbstractMessageResolver;
 import org.thymeleaf.messageresolver.MessageResolution;
-import org.thymeleaf.spring3.messageresolver.SpringMessageResolver;
 import org.thymeleaf.util.Validate;
 
 import java.util.Locale;
 
-public class BroadleafThymeleafMessageResolver extends AbstractMessageResolver implements MessageSourceAware {
-    
+import javax.annotation.Resource;
+
+/**
+ * This implementation will check to see if the key matches the known i18n value key. If that is the case, we will attempt 
+ * to translate the requested field value for the entity/key. If not, we will delegate to other message resolvers.
+ * 
+ * @author Andre Azzolini (apazzolini)
+ */
+public class BroadleafThymeleafMessageResolver extends AbstractMessageResolver {
     protected static final Log LOG = LogFactory.getLog(BroadleafThymeleafMessageResolver.class);
+    protected static final String I18N_VALUE_KEY = "value";
     
-    protected MessageSource messageSource;
+    @Resource(name = "blI18NService")
+    protected I18NService i18nService;
     
-    public BroadleafThymeleafMessageResolver() {
-        super();
-    }
-    
+    /**
+     * Resolve a translated value of an object's property.
+     * 
+     * @param args
+     * @param key
+     * @param messageParams
+     * @return the resolved message
+     */
     public MessageResolution resolveMessage(final Arguments args, final String key, final Object[] messageParams) {
         Validate.notNull(args, "args cannot be null");
         Validate.notNull(args.getContext().getLocale(), "Locale in context cannot be null");
         Validate.notNull(key, "Message key cannot be null");
         
-        if (LOG.isTraceEnabled()) {
-            LOG.trace(String.format("Thread %s resolving message with key \"%s\" for template \"%s\" and " +
-            		"locale \"%s\". Messages will be retrieved from Spring's MessageSource infrastructure.", 
-            		TemplateEngine.threadIndex(), key, args.getTemplateName(), args.getContext().getLocale()));
-        }
-        
-        try {
+        if (I18N_VALUE_KEY.equals(key)) {
+            Object entity = messageParams[0];
+            String property = (String) messageParams[1];
             Locale locale = args.getContext().getLocale();
-            final String resolvedMessage = this.messageSource.getMessage(key, messageParams, locale);
-            return new MessageResolution(resolvedMessage);
-        } catch (NoSuchMessageException e) {
-            return null;
+            
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(String.format("Attempting to resolve translated value for object %s, property %s, locale %s",
+                        entity, property, locale));
+            }
+            
+            String resolvedMessage = i18nService.getTranslatedValue(entity, property, locale);
+            
+            if (StringUtils.isNotBlank(resolvedMessage)) {
+                return new MessageResolution(resolvedMessage);
+            }
         }
-    }
-    
-    protected boolean isI18NFieldValueKey(final Arguments args, final String key, final Object[] messageParams) {
-        
-        return false;
-    }
-    
-    protected MessageResolution getI18NFieldTranslation(String key) {
         
         return null;
     }
-    
-    public final MessageSource getMessageSource() {
-        checkInitialized();
-        return this.messageSource;
-    }
-    
-    protected final MessageSource unsafeGetMessageSource() {
-        return this.messageSource;
-    }
-    
-    public void setMessageSource(final MessageSource messageSource) {
-        checkNotInitialized();
-        this.messageSource = messageSource;
-    }
-    
-    @Override
-    protected final void initializeSpecific() {
-        if (this.messageSource == null) {
-            throw new ConfigurationException(
-                    "Cannot initialize " + SpringMessageResolver.class.getSimpleName() + 
-                    ": MessageSource has not been set. Either define this object as " +
-                    "a Spring bean (which will automatically set the MessageSource) or, " +
-                    "if you instance it directly, set the MessageSource manually using its "+
-                    "corresponding setter method.");
-        }
-    }
-    
+
 }

@@ -71,6 +71,7 @@
         <property name="messageResolvers">
             <set>
                 <ref bean="blAdminMessageResolver" />
+                <bean class="org.thymeleaf.spring3.messageresolver.SpringMessageResolver" />
             </set>
         </property>
         <property name="templateResolvers">
