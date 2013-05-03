@@ -52,21 +52,25 @@ public interface FieldPersistenceProvider extends Ordered {
     public static final int MEDIA = 50000;
 
     /**
-     * Set the property value on the target object. Implementations should translate and set the requestedValue
-     * field from the request on the instance parameter.
+     * Set the property value on the target object. Implementations should translate the requestedValue
+     * field from the request and set on the <tt>instance</tt> parameter. You are basically taking the string value
+     * submitted by the admin application and converting it into the format required to set on the target
+     * field of <tt>instance</tt> (which should be a JPA managed entity). Used during admin create and update events.
      *
      * @param populateValueRequest contains the requested value and support classes.
-     * @param instance the entity instance on which to set the value harvested from the request
+     * @param instance the persistence entity instance on which to set the value harvested from the request
      * @return whether or not the implementation handled the persistence request
      */
     FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance);
 
     /**
-     * Retrieve the property value from the provided value. Implementations should translate the requestedValue
-     * and set on the property parameter.
+     * Retrieve the property value from the requestedValue field from the request. Implementations should translate the requestedValue
+     * and set on the property parameter. The requestedValue is the field value taken from the JPA managed entity instance.
+     * You are taking this field value and converting it into a string representation appropriate for the <tt>property</tt>
+     * instance parameter. Used during admin fetch events.
      *
      * @param extractValueRequest contains the requested value and support classes.
-     * @param property the property for the admin that contains the information harvested from the persistence value
+     * @param property the property for the admin that will contain the information harvested from the persistence value
      * @return whether or not the implementation handled the persistence request
      */
     FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property);
