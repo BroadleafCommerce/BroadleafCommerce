@@ -97,7 +97,15 @@
     
     <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring3.dialect.SpringStandardDialect" />
     
+    <bean id="blAdminMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
+                
     <bean id="blWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+        <property name="messageResolvers">
+            <set>
+                <ref bean="blAdminMessageResolver" />
+                <bean class="org.thymeleaf.spring3.messageresolver.SpringMessageResolver" />
+            </set>
+        </property>
         <property name="templateResolvers">
             <set>
                 <ref bean="blWebTemplateResolver" />

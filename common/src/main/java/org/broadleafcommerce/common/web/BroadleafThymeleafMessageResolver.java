@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.web;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.i18n.service.I18NService;
+import org.broadleafcommerce.common.i18n.service.TranslationService;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.messageresolver.AbstractMessageResolver;
 import org.thymeleaf.messageresolver.MessageResolution;
@@ -37,10 +37,10 @@ import javax.annotation.Resource;
  */
 public class BroadleafThymeleafMessageResolver extends AbstractMessageResolver {
     protected static final Log LOG = LogFactory.getLog(BroadleafThymeleafMessageResolver.class);
-    protected static final String I18N_VALUE_KEY = "value";
+    protected static final String I18N_VALUE_KEY = "translate";
     
-    @Resource(name = "blI18NService")
-    protected I18NService i18nService;
+    @Resource(name = "blTranslationService")
+    protected TranslationService translationService;
     
     /**
      * Resolve a translated value of an object's property.
@@ -65,7 +65,7 @@ public class BroadleafThymeleafMessageResolver extends AbstractMessageResolver {
                         entity, property, locale));
             }
             
-            String resolvedMessage = i18nService.getTranslatedValue(entity, property, locale);
+            String resolvedMessage = translationService.getTranslatedValue(entity, property, locale);
             
             if (StringUtils.isNotBlank(resolvedMessage)) {
                 return new MessageResolution(resolvedMessage);
