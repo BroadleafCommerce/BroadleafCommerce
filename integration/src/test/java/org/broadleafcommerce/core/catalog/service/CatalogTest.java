@@ -56,6 +56,7 @@ public class CatalogTest extends BaseTest {
         category2 = catalogService.saveCategory(category2);
         Category category3 = new CategoryImpl();
         category3.setName("SuperCategory");
+        category3 = catalogService.saveCategory(category3);
 
         CategoryXref temp = new CategoryXrefImpl();
         temp.setCategory(category);
@@ -83,6 +84,7 @@ public class CatalogTest extends BaseTest {
         Sku newDefaultSku = new SkuImpl();
         newDefaultSku = catalogService.saveSku(newDefaultSku);
         newProduct.setDefaultSku(newDefaultSku);
+        newProduct.setName("Lavender Soap");
 
         Calendar activeStartCal = Calendar.getInstance();
         activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
@@ -90,6 +92,7 @@ public class CatalogTest extends BaseTest {
 //        newProduct.setAllParentCategories(allParentCategories);
         newProduct.setDefaultCategory(category);
         newProduct.getAllParentCategoryXrefs().clear();
+        newProduct = catalogService.saveProduct(newProduct);
 
         CategoryProductXref categoryXref = new CategoryProductXrefImpl();
         categoryXref.setProduct(newProduct);
@@ -98,11 +101,10 @@ public class CatalogTest extends BaseTest {
 
         CategoryProductXref categoryXref2 = new CategoryProductXrefImpl();
         categoryXref2.setProduct(newProduct);
-        categoryXref2.setCategory(category);
+        categoryXref2.setCategory(category2);
         newProduct.getAllParentCategoryXrefs().add(categoryXref2);
-        
-        newProduct.setName("Lavender Soap");
         newProduct = catalogService.saveProduct(newProduct);
+
         Long newProductId = newProduct.getId();
 
         Product testProduct = catalogService.findProductById(newProductId);

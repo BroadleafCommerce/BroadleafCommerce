@@ -44,9 +44,13 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
     @Override
     protected void setUp() {
         orderItemFieldService = new OrderItemFieldServiceImpl();
+        orderItemFieldService.init();
         customerFieldService = new CustomerFieldServiceImpl();
+        customerFieldService.init();
         orderFieldService = new OrderFieldServiceImpl();
+        orderFieldService.init();
         fulfillmentGroupFieldService = new FulfillmentGroupFieldServiceImpl();
+        fulfillmentGroupFieldService.init();
     }
 
     /**
@@ -59,7 +63,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         Property[] properties = new Property[3];
         Property mvelProperty = new Property();
         mvelProperty.setName("orderItemMatchRule");
-        mvelProperty.setValue("MVEL.eval(\"toUpperCase()\",discreteOrderItem.category.name)==MVEL.eval(\"toUpperCase()\",\"merchandise\")");
+        mvelProperty.setValue("MVEL.eval(\"toUpperCase()\",discreteOrderItem.?category.?name)==MVEL.eval(\"toUpperCase()\",\"merchandise\")");
         Property quantityProperty = new Property();
         quantityProperty.setName("quantity");
         quantityProperty.setValue("1");
@@ -233,7 +237,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         Property[] properties = new Property[1];
         Property mvelProperty = new Property();
         mvelProperty.setName("matchRule");
-        mvelProperty.setValue("fulfillmentGroup.address.state.name==\"Texas\"&&(fulfillmentGroup.retailShippingPrice.getAmount()>=99&&fulfillmentGroup.retailShippingPrice.getAmount()<=199)");
+        mvelProperty.setValue("fulfillmentGroup.address.state.name==\"Texas\"&&(fulfillmentGroup.retailFulfillmentPrice.getAmount()>=99&&fulfillmentGroup.retailFulfillmentPrice.getAmount()<=199)");
         properties[0] = mvelProperty;
         Entity[] entities = new Entity[1];
         Entity entity = new Entity();
@@ -254,7 +258,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
         assert(dataWrapper.getData().get(0).getGroups().get(1) instanceof ExpressionDTO);
         ExpressionDTO e2 = (ExpressionDTO) dataWrapper.getData().get(0).getGroups().get(1);
-        assert(e2.getName().equals("retailShippingPrice"));
+        assert(e2.getName().equals("retailFulfillmentPrice"));
         assert(e2.getOperator().equals(BLCOperator.BETWEEN_INCLUSIVE.name()));
         assert(e2.getStart().equals("99"));
         assert(e2.getEnd().equals("199"));

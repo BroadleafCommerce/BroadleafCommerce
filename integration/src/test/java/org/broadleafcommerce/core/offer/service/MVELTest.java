@@ -21,6 +21,7 @@ import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
@@ -134,8 +135,10 @@ public class MVELTest extends BaseTest {
     public void testOfferAppliesToSpecificItems() {
 
         DiscreteOrderItemImpl orderItem = new DiscreteOrderItemImpl();
-        orderItem.setSku(new SkuImpl());
-        orderItem.getSku().setId(1234L);
+        Sku sku = new SkuImpl();
+        sku.setRetailPrice(new Money("1"));
+        sku.setId(1234L);
+        orderItem.setSku(sku);
         OfferImpl offer = new OfferImpl();
         offer.setType(OfferType.ORDER_ITEM);
 

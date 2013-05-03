@@ -40,9 +40,13 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
     @Override
     protected void setUp() {
         orderItemFieldService = new OrderItemFieldServiceImpl();
+        orderItemFieldService.init();
         customerFieldService = new CustomerFieldServiceImpl();
+        customerFieldService.init();
         orderFieldService = new OrderFieldServiceImpl();
+        orderFieldService.init();
         fulfillmentGroupFieldService = new FulfillmentGroupFieldServiceImpl();
+        fulfillmentGroupFieldService.init();
     }
 
     /**
@@ -72,7 +76,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         expressionDTO.setValue("merchandise");
 
         String translated = translator.createMVEL("discreteOrderItem", expressionDTO, orderItemFieldService);
-        String mvel = "MVEL.eval(\"toUpperCase()\",discreteOrderItem.category.name)==MVEL.eval(\"toUpperCase()\",\"merchandise\")";
+        String mvel = "MvelHelper.toUpperCase(discreteOrderItem.?category.?name)==MvelHelper.toUpperCase(\"merchandise\")";
         assert(mvel.equals(translated));
     }
 
@@ -105,21 +109,22 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         DataDTO dataDTO = new DataDTO();
         dataDTO.setGroupOperator(BLCOperator.AND.name());
 
-        ExpressionDTO e1 = new ExpressionDTO();
-        e1.setName("emailAddress");
-        e1.setOperator(BLCOperator.NOT_EQUAL_FIELD.name());
-        e1.setValue("username");
+        //not currently supported
+//        ExpressionDTO e1 = new ExpressionDTO();
+//        e1.setName("emailAddress");
+//        e1.setOperator(BLCOperator.NOT_EQUAL_FIELD.name());
+//        e1.setValue("username");
 
         ExpressionDTO e2 = new ExpressionDTO();
         e2.setName("deactivated");
         e2.setOperator(BLCOperator.EQUALS.name());
         e2.setValue("true");
 
-        dataDTO.getGroups().add(e1);
+        //dataDTO.getGroups().add(e1);
         dataDTO.getGroups().add(e2);
 
         String translated = translator.createMVEL("customer", dataDTO, customerFieldService);
-        String mvel = "customer.emailAddress!=customer.username&&customer.deactivated==true";
+        String mvel = "customer.?deactivated==true";
         assert (mvel.equals(translated));
     }
 
@@ -189,7 +194,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         dataDTO.getGroups().add(d1);
 
         String translated = translator.createMVEL("order", dataDTO, orderFieldService);
-        String mvel = "order.subTotal.getAmount()>=100&&(order.currency.defaultFlag==true||order.locale.localeCode==\"my\")";
+        String mvel = "order.?subTotal.getAmount()>=100&&(order.?currency.?defaultFlag==true||order.?locale.?localeCode==\"my\")";
         assert (mvel.equals(translated));
     }
 
@@ -244,7 +249,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         d1.getGroups().add(d1e1);
 
         String d1Translated = translator.createMVEL("discreteOrderItem", d1, orderItemFieldService);
-        String d1Mvel = "discreteOrderItem.category.name==\"test category\"";
+        String d1Mvel = "discreteOrderItem.?category.?name==\"test category\"";
         assert(d1Mvel.equals(d1Translated));
 
         DataDTO d2 = new DataDTO();
@@ -262,7 +267,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         d2.getGroups().add(d2e2);
 
         String d2Translated = translator.createMVEL("discreteOrderItem", d2, orderItemFieldService);
-        String d2Mvel = "!(discreteOrderItem.product.manufacturer==\"test manufacturer\"&&discreteOrderItem.product.model==\"test model\")";
+        String d2Mvel = "!(discreteOrderItem.?product.?manufacturer==\"test manufacturer\"&&discreteOrderItem.?product.?model==\"test model\")";
         assert (d2Mvel.equals(d2Translated));
 
     }
@@ -303,7 +308,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         e1.setValue("Texas");
 
         ExpressionDTO e2 = new ExpressionDTO();
-        e2.setName("retailShippingPrice");
+        e2.setName("retailFulfillmentPrice");
         e2.setOperator(BLCOperator.BETWEEN_INCLUSIVE.name());
         e2.setStart("99");
         e2.setEnd("199");
@@ -312,7 +317,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         dataDTO.getGroups().add(e2);
 
         String translated = translator.createMVEL("fulfillmentGroup", dataDTO, fulfillmentGroupFieldService);
-        String mvel = "fulfillmentGroup.address.state.name==\"Texas\"&&(fulfillmentGroup.retailShippingPrice.getAmount()>=99&&fulfillmentGroup.retailShippingPrice.getAmount()<=199)";
+        String mvel = "fulfillmentGroup.?address.?state.?name==\"Texas\"&&(fulfillmentGroup.?retailFulfillmentPrice.getAmount()>=99&&fulfillmentGroup.?retailFulfillmentPrice.getAmount()<=199)";
         assert (mvel.equals(translated));
     }
 }

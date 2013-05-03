@@ -193,6 +193,8 @@ public class BandedPriceFulfillmentTest extends TestCase {
         for (int i = 0; i < orderItemsToCreate; i++) {
             DiscreteOrderItem orderItem = new DiscreteOrderItemImpl();
             Sku sku = new SkuImpl();
+            //set the sku price to some arbitrary amount - won't matter because the test is based on order item price
+            sku.setRetailPrice(new Money("1"));
             orderItem.setSku(sku);
 
             if (flatRates != null && i < flatRates.length) {

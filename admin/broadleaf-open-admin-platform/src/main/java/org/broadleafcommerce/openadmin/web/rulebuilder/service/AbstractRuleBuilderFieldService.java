@@ -47,7 +47,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
 
     protected DynamicEntityDao dynamicEntityDao;
     protected ApplicationContext applicationContext;
-    protected List<FieldData> fields;
+    protected List<FieldData> fields = new ArrayList<FieldData>();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
