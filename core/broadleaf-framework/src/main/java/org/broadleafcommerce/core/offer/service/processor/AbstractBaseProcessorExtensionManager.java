@@ -46,4 +46,12 @@ public class AbstractBaseProcessorExtensionManager implements AbstractBaseProces
         return offers;
     }
 
+    @Override
+    public List<Offer> removeOutOfDateOffers(List<Offer> offers, AbstractBaseProcessor processor) {
+        for (AbstractBaseProcessorExtensionListener listener : listeners) {
+            offers = listener.removeOutOfDateOffers(offers, processor);
+        }
+        return offers;
+    }
+
 }

@@ -28,4 +28,6 @@ public interface AbstractBaseProcessorExtensionListener {
     
     public List<Offer> removeAdditionalOffers(List<Offer> offers, AbstractBaseProcessor processor);
 
+    public List<Offer> removeOutOfDateOffers(List<Offer> offers, AbstractBaseProcessor abstractBaseProcessor);
+
 }

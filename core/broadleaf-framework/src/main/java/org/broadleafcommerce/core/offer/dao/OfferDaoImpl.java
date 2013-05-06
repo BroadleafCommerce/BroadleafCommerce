@@ -29,13 +29,18 @@ import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.stereotype.Repository;
+
+import java.util.Calendar;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 @Repository("blOfferDao")
 public class OfferDaoImpl implements OfferDao {
@@ -113,10 +118,18 @@ public class OfferDaoImpl implements OfferDao {
 
     public List<Offer> readOffersByAutomaticDeliveryType() {
         //em.flush();
-        Query query = em.createNamedQuery("BC_READ_OFFERS_BY_AUTOMATIC_DELIVERY_TYPE");
-        query.setParameter("specifiedDate", SystemTime.asDate());
-        List<Offer> result = query.getResultList();
-        return result;
+
+        Criteria criteria = ((HibernateEntityManager) em).getSession().createCriteria(OfferImpl.class);
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(SystemTime.asDate());
+        c.add(Calendar.DATE, +1);
+        criteria.add(Restrictions.lt("startDate", c.getTime()));
+        c.add(Calendar.DATE, -2);
+        criteria.add(Restrictions.gt("endDate", c.getTime()));
+        criteria.add(Restrictions.or(Restrictions.eq("archiveStatus.archived", 'N'), Restrictions.isNull("archiveStatus.archived")));
+        return criteria.list();
+
     }
 
 }
