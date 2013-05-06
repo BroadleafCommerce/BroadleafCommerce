@@ -19,6 +19,8 @@ package org.broadleafcommerce.openadmin.web.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
+import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
+import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -47,6 +49,9 @@ public class AdminTranslationController extends AdminAbstractController {
     @Resource(name = "blTranslationFormBuilderService")
     protected TranslationFormBuilderService formService;
     
+    @Resource(name="blAdminSecurityRemoteService")
+    protected SecurityVerifier adminRemoteSecurityService;
+    
     /**
      * Invoked when the translation button is clicked on a given translatable field
      * 
@@ -61,6 +66,8 @@ public class AdminTranslationController extends AdminAbstractController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute TranslationForm form, BindingResult result) throws Exception {
+        adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
+
         List<Translation> translations = 
                 translationService.getTranslations(form.getCeilingEntity(), form.getEntityId(), form.getPropertyName());
         ListGrid lg = formService.buildListGrid(translations);
@@ -87,6 +94,8 @@ public class AdminTranslationController extends AdminAbstractController {
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String showAddTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute TranslationForm form, BindingResult result) throws Exception {
+        adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
+        
         EntityForm entityForm = formService.buildTranslationForm(form);
         
         model.addAttribute("entityForm", entityForm);
@@ -114,15 +123,19 @@ public class AdminTranslationController extends AdminAbstractController {
     public String addTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute EntityForm entityForm, BindingResult result) throws Exception {
         TranslationForm form = getTranslationForm(entityForm);
+        
+        adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.UPDATE);
+        
         translationService.save(form.getCeilingEntity(), form.getEntityId(), form.getPropertyName(), form.getLocaleCode(), 
                 form.getTranslatedValue());
-        
         return viewTranslation(request, response, model, form, result);
     }
     
     @RequestMapping(value = "/update", method = RequestMethod.GET)
     public String showUpdateTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute TranslationForm form, BindingResult result) throws Exception {
+        adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
+        
         EntityForm entityForm = formService.buildTranslationForm(form);
         entityForm.setId(String.valueOf(form.getTranslationId()));
         
@@ -148,8 +161,10 @@ public class AdminTranslationController extends AdminAbstractController {
     public String updateTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute EntityForm entityForm, BindingResult result) throws Exception {
         TranslationForm form = getTranslationForm(entityForm);
-        translationService.update(form.getTranslationId(), form.getLocaleCode(), form.getTranslatedValue());
         
+        adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.UPDATE);
+        
+        translationService.update(form.getTranslationId(), form.getLocaleCode(), form.getTranslatedValue());
         return viewTranslation(request, response, model, form, result);
     }
     
@@ -168,6 +183,8 @@ public class AdminTranslationController extends AdminAbstractController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String deleteTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute TranslationForm form, BindingResult result) throws Exception {
+        adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.UPDATE);
+        
         translationService.deleteTranslationById(form.getTranslationId());
         return viewTranslation(request, response, model, form, result);
     }
