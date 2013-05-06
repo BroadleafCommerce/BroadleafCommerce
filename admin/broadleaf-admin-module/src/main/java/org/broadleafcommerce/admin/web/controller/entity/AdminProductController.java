@@ -19,6 +19,8 @@ package org.broadleafcommerce.admin.web.controller.entity;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundleImpl;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -78,6 +80,10 @@ public class AdminProductController extends AdminBasicEntityController {
                 .withCustomCriteria(new String[] { id });
 
         ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
+        if (collectionMetadata.getCeilingType().equals(SkuImpl.class.getName())) {
+            collectionMetadata.setCeilingType(Sku.class.getName());
+        }
+        
         EntityForm entityForm = formService.createEntityForm(collectionMetadata);
         
         entityForm.getActions().remove(DefaultEntityFormActions.DELETE);
@@ -106,6 +112,10 @@ public class AdminProductController extends AdminBasicEntityController {
         // Find the metadata and the entity for the selected sku
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
         ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
+        if (collectionMetadata.getCeilingType().equals(SkuImpl.class.getName())) {
+            collectionMetadata.setCeilingType(Sku.class.getName());
+        }
+        
         Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata);
         
         // Find the records for all subcollections of Sku
