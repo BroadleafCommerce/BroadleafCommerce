@@ -36,6 +36,7 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
     private static final Map<String, TranslatedEntity> TYPES = new LinkedHashMap<String, TranslatedEntity>();
 
     public static final TranslatedEntity PRODUCT = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.Product", "Product");
+    public static final TranslatedEntity SKU = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.Sku", "Sku");
 
     public static TranslatedEntity getInstance(final String type) {
         return TYPES.get(type);
