@@ -49,8 +49,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Embedded;
-
 /**
  * @author Jeff Fischer
  */
@@ -62,7 +60,12 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         BasicFieldMetadata metadata = populateValueRequest.getMetadata();
         Property property = populateValueRequest.getProperty();
         //don't handle map fields here - we'll get them in a separate provider
-        return detectBasicType(metadata, property);
+        boolean response = detectBasicType(metadata, property);
+        if (!response) {
+            //we'll allow this provider to handle money filter mapping for persistence
+            response = metadata.getFieldType() == SupportedFieldType.MONEY;
+        }
+        return response;
     }
 
     protected boolean detectBasicType(BasicFieldMetadata metadata, Property property) {
