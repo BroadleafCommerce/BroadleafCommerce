@@ -20,26 +20,18 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 /**
- * JAXRS endpoint for exposing Customer as RESTful services.
+ * This endpoint depends on JAX-RS.  It should be extended by components that actually wish 
+ * to provide an endpoint.  The annotations such as @Path, @Scope, @Context, @PathParam, @QueryParam, 
+ * @GET, @POST, @PUT, and @DELETE are purposely not provided here to allow implementors finer control over 
+ * the details of the endpoint.
  * <p/>
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@Component("blRestCustomerEndpoint")
-@Scope("singleton")
-@Path("/customer/")
-@Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-@Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CustomerEndpoint implements ApplicationContextAware {
 
     @Resource(name="blCustomerService")

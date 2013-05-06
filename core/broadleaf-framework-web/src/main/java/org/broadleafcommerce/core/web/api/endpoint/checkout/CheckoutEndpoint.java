@@ -37,36 +37,27 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 /**
- * JAXRS endpoint for exposing the checkout process as a set of RESTful services.
+ * This endpoint depends on JAX-RS to provide checkout services.  It should be extended by components that actually wish 
+ * to provide an endpoint.  The annotations such as @Path, @Scope, @Context, @PathParam, @QueryParam, 
+ * @GET, @POST, @PUT, and @DELETE are purposely not provided here to allow implementors finer control over 
+ * the details of the endpoint.
  * <p/>
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@Component("blRestCheckoutEndpoint")
-@Scope("singleton")
-@Path("/cart/checkout/")
-@Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-@Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CheckoutEndpoint implements ApplicationContextAware {
 
     @Resource(name="blCheckoutService")
@@ -87,11 +78,9 @@ public class CheckoutEndpoint implements ApplicationContextAware {
         this.context = applicationContext;
     }
 
-    @POST
-    @Path("payment/response")
     //This should only be called for modules that need to engage the workflow directly without doing a complete checkout.
     //e.g. PayPal for doing an authorize and retrieving the redirect: url to PayPal
-    public PaymentResponseItemWrapper executePayment(@Context HttpServletRequest request, PaymentReferenceMapWrapper mapWrapper) {
+    public PaymentResponseItemWrapper executePayment(HttpServletRequest request, PaymentReferenceMapWrapper mapWrapper) {
         Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
@@ -106,7 +95,7 @@ public class CheckoutEndpoint implements ApplicationContextAware {
                         CompositePaymentResponse compositePaymentResponse = compositePaymentService.executePayment(cart, payments);
                         PaymentResponseItem responseItem = compositePaymentResponse.getPaymentResponse().getResponseItems().get(paymentInfo);
 
-                        PaymentResponseItemWrapper paymentResponseItemWrapper = (PaymentResponseItemWrapper) context.getBean(PaymentResponseItemWrapper.class);
+                        PaymentResponseItemWrapper paymentResponseItemWrapper = context.getBean(PaymentResponseItemWrapper.class);
                         paymentResponseItemWrapper.wrap(responseItem, request);
 
                         return paymentResponseItemWrapper;
@@ -120,8 +109,7 @@ public class CheckoutEndpoint implements ApplicationContextAware {
         throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
-    @POST
-    public OrderWrapper performCheckout(@Context HttpServletRequest request, List<PaymentReferenceMapWrapper> mapWrappers) {
+    public OrderWrapper performCheckout(HttpServletRequest request, List<PaymentReferenceMapWrapper> mapWrappers) {
         Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {

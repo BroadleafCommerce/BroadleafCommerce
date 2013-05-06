@@ -35,42 +35,27 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.Set;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
 /**
- * JAXRS endpoint for providing RESTful services related to the shopping cart.
+ * This endpoint depends on JAX-RS to provide cart services.  It should be extended by components that actually wish 
+ * to provide an endpoint.  The annotations such as @Path, @Scope, @Context, @PathParam, @QueryParam, 
+ * @GET, @POST, @PUT, and @DELETE are purposely not provided here to allow implementors finer control over 
+ * the details of the endpoint.
  *
  * <p/>
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@Component("blRestCartEndpoint")
-@Scope("singleton")
-@Path("/cart/")
-@Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-@Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class CartEndpoint implements ApplicationContextAware {
 
     @Resource(name="blOrderService")
@@ -94,8 +79,7 @@ public class CartEndpoint implements ApplicationContextAware {
      *
      * @return the cart for the customer
      */
-    @GET
-    public OrderWrapper findCartForCustomer(@Context HttpServletRequest request) {
+    public OrderWrapper findCartForCustomer(HttpServletRequest request) {
         Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
@@ -119,8 +103,7 @@ public class CartEndpoint implements ApplicationContextAware {
      *
      * @return the cart for the customer
      */
-    @POST
-    public OrderWrapper createNewCartForCustomer(@Context HttpServletRequest request) {
+    public OrderWrapper createNewCartForCustomer(HttpServletRequest request) {
         Customer customer = CustomerState.getCustomer(request);
 
         if (customer == null) {
@@ -155,15 +138,13 @@ public class CartEndpoint implements ApplicationContextAware {
      * @param priceOrder
      * @return OrderWrapper
      */
-    @POST
-    @Path("{categoryId}/{productId}")
-    public OrderWrapper addSkuToOrder(@Context HttpServletRequest request,
-                                      @Context UriInfo uriInfo,
-                                      @PathParam("categoryId") Long categoryId,
-                                      @PathParam("productId") Long productId,
-                                      @QueryParam("skuId") Long skuId,
-                                      @QueryParam("quantity") @DefaultValue("1") int quantity,
-                                      @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+    public OrderWrapper addSkuToOrder(HttpServletRequest request,
+            UriInfo uriInfo,
+            Long categoryId,
+            Long productId,
+            Long skuId,
+            int quantity,
+            boolean priceOrder) {
         Customer customer = CustomerState.getCustomer(request);
         
         if (customer != null) {
@@ -227,11 +208,9 @@ public class CartEndpoint implements ApplicationContextAware {
         throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
-    @DELETE
-    @Path("items/{itemId}")
-    public OrderWrapper removeItemFromOrder(@Context HttpServletRequest request,
-                                            @PathParam("itemId") Long itemId,
-                                            @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+    public OrderWrapper removeItemFromOrder(HttpServletRequest request,
+            Long itemId,
+            boolean priceOrder) {
         Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
@@ -261,12 +240,10 @@ public class CartEndpoint implements ApplicationContextAware {
         throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
-    @PUT
-    @Path("items/{itemId}")
-    public OrderWrapper updateItemQuantity(@Context HttpServletRequest request,
-                                               @PathParam("itemId") Long itemId,
-                                               @QueryParam("quantity") Integer quantity,
-                                               @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+    public OrderWrapper updateItemQuantity(HttpServletRequest request,
+            Long itemId,
+            Integer quantity,
+            boolean priceOrder) {
         Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
@@ -305,12 +282,9 @@ public class CartEndpoint implements ApplicationContextAware {
         throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
-
-    @POST
-    @Path("offer")
-    public OrderWrapper addOfferCode(@Context HttpServletRequest request,
-                                     @QueryParam("promoCode") String promoCode,
-                                     @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+    public OrderWrapper addOfferCode(HttpServletRequest request,
+            String promoCode,
+            boolean priceOrder) {
         Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
@@ -335,11 +309,9 @@ public class CartEndpoint implements ApplicationContextAware {
         throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
-    @DELETE
-    @Path("offer")
-    public OrderWrapper removeOfferCode(@Context HttpServletRequest request,
-                                        @QueryParam("promoCode") String promoCode,
-                                        @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+    public OrderWrapper removeOfferCode(HttpServletRequest request,
+            String promoCode,
+            boolean priceOrder) {
         Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
@@ -362,10 +334,8 @@ public class CartEndpoint implements ApplicationContextAware {
         throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
-    @DELETE
-    @Path("offers")
-    public OrderWrapper removeAllOfferCodes(@Context HttpServletRequest request,
-                                        @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+    public OrderWrapper removeAllOfferCodes(HttpServletRequest request,
+            boolean priceOrder) {
         Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {

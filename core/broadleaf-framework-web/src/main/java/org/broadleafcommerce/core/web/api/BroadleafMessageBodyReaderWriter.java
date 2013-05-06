@@ -15,15 +15,26 @@
  */
 package org.broadleafcommerce.core.web.api;
 
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
 import com.sun.jersey.core.impl.provider.entity.XMLListElementProvider;
 import com.sun.jersey.core.impl.provider.entity.XMLRootElementProvider;
 import com.sun.jersey.json.impl.provider.entity.JSONListElementProvider;
 import com.sun.jersey.json.impl.provider.entity.JSONRootElementProvider;
 import com.sun.jersey.spi.inject.Injectable;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -41,16 +52,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLInputFactory;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <p>
@@ -67,7 +68,6 @@ import java.util.Map;
  * @see com.sun.jersey.core.impl.provider.entity.XMLListElementProvider
  * 
  */
-@Component
 @Provider
 @Produces(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
         MediaType.TEXT_XML })
@@ -313,8 +313,8 @@ public class BroadleafMessageBodyReaderWriter implements
      */
     private class ParameterizedTypeImpl implements ParameterizedType {
 
-        private Type[] actualTypeArguments;
-        private Class<?> rawType;
+        private final Type[] actualTypeArguments;
+        private final Class<?> rawType;
         private Type ownerType;
 
         public ParameterizedTypeImpl(Type[] actualTypeArguments,
@@ -364,10 +364,12 @@ public class BroadleafMessageBodyReaderWriter implements
     protected void initializeTypeMap() {
         if (this.typeMap == null) {
             synchronized(this) {
-                this.typeMap = new HashMap<String, Class<?>>();
-                Map<String, Object> apiWrappers = applicationContext.getBeansWithAnnotation(XmlRootElement.class);
-                for (Object obj : apiWrappers.values()) {
-                    this.typeMap.put(obj.getClass().getName(), obj.getClass());
+                if (this.typeMap == null) {
+                    this.typeMap = new HashMap<String, Class<?>>();
+                    Map<String, Object> apiWrappers = applicationContext.getBeansWithAnnotation(XmlRootElement.class);
+                    for (Object obj : apiWrappers.values()) {
+                        this.typeMap.put(obj.getClass().getName(), obj.getClass());
+                    }
                 }
             }
         }

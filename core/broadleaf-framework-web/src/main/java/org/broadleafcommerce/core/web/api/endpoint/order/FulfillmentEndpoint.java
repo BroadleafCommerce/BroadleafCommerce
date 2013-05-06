@@ -33,39 +33,24 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 /**
- * JAXRS endpoint for exposing the fulfillment group process as a set of RESTful services.
+ * This endpoint depends on JAX-RS.  It should be extended by components that actually wish 
+ * to provide an endpoint.  The annotations such as @Path, @Scope, @Context, @PathParam, @QueryParam, 
+ * @GET, @POST, @PUT, and @DELETE are purposely not provided here to allow implementors finer control over 
+ * the details of the endpoint.
  * <p/>
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-@Component("blRestFulfillmentEndpoint")
-@Scope("singleton")
-@Path("/cart/fulfillment/")
-@Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-@Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class FulfillmentEndpoint implements ApplicationContextAware {
 
     @Resource(name="blCheckoutService")
@@ -79,15 +64,12 @@ public class FulfillmentEndpoint implements ApplicationContextAware {
 
     protected ApplicationContext context;
 
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.context = applicationContext;
     }
 
-    @GET
-    @Path("groups")
-    public List<FulfillmentGroupWrapper> findFulfillmentGroupsForOrder(@Context HttpServletRequest request) {
+    public List<FulfillmentGroupWrapper> findFulfillmentGroupsForOrder(HttpServletRequest request) {
         Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
@@ -107,10 +89,8 @@ public class FulfillmentEndpoint implements ApplicationContextAware {
         throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
-    @DELETE
-    @Path("groups")
-    public OrderWrapper removeAllFulfillmentGroupsFromOrder(@Context HttpServletRequest request,
-                                                            @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+    public OrderWrapper removeAllFulfillmentGroupsFromOrder(HttpServletRequest request,
+            boolean priceOrder) {
         Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
@@ -130,11 +110,9 @@ public class FulfillmentEndpoint implements ApplicationContextAware {
         throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
-    @POST
-    @Path("group")
-    public FulfillmentGroupWrapper addFulfillmentGroupToOrder(@Context HttpServletRequest request,
-                                                              FulfillmentGroupWrapper wrapper,
-                                                              @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+    public FulfillmentGroupWrapper addFulfillmentGroupToOrder(HttpServletRequest request,
+            FulfillmentGroupWrapper wrapper,
+            boolean priceOrder) {
         Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
@@ -159,12 +137,10 @@ public class FulfillmentEndpoint implements ApplicationContextAware {
         throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
 
-    @PUT
-    @Path("group/{fulfillmentGroupId}")
-    public FulfillmentGroupWrapper addItemToFulfillmentGroup(@Context HttpServletRequest request,
-                                                                 @PathParam("fulfillmentGroupId") Long fulfillmentGroupId,
-                                                                 FulfillmentGroupItemWrapper wrapper,
-                                                                 @QueryParam("priceOrder") @DefaultValue("true") boolean priceOrder) {
+    public FulfillmentGroupWrapper addItemToFulfillmentGroup(HttpServletRequest request,
+            Long fulfillmentGroupId,
+            FulfillmentGroupItemWrapper wrapper,
+            boolean priceOrder) {
         Customer customer = CustomerState.getCustomer(request);
 
         if (customer != null) {
