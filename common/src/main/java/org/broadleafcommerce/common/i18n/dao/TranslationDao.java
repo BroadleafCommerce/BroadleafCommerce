@@ -4,6 +4,7 @@ package org.broadleafcommerce.common.i18n.dao;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,6 +29,13 @@ public interface TranslationDao {
     public Translation create();
 
     /**
+     * Deletes the given translation
+     * 
+     * @param translation
+     */
+    public void delete(Translation translation);
+
+    /**
      * Returns a map that holds the following data for the given entity:
      *  "name" --> idProperty (the name of the id property, always a String)
      *  "type" --> idProperty's type (usually either Long or String)
@@ -44,6 +52,16 @@ public interface TranslationDao {
      * @return the translation
      */
     public Translation readTranslationById(Long translationId);
+    
+    /**
+     * Reads all translations for a given field
+     * 
+     * @param entity
+     * @param entityId
+     * @param fieldName
+     * @return the list of translations
+     */
+    public List<Translation> readTranslations(TranslatedEntity entity, String entityId, String fieldName);
 
     /**
      * Reads a translation for the requested parameters. Returns null if there is no translation found

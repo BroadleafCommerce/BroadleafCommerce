@@ -114,6 +114,7 @@ public class FieldMetadataOverride {
     private Serializable[][] optionFilterValues;
     private String showIfProperty;
     private String ruleIdentifier;
+    private Boolean translatable;
     private LookupType lookupType;
 
     //@AdminPresentationMapField derived fields
@@ -301,6 +302,14 @@ public class FieldMetadataOverride {
 
     public Boolean getReadOnly() {
         return readOnly;
+    }
+    
+    public Boolean getTranslatable() {
+        return translatable;
+    }
+    
+    public void setTranslatable(Boolean translatable) {
+        this.translatable = translatable;
     }
 
     public String getTab() {

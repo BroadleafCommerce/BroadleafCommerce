@@ -167,7 +167,7 @@ $(document).ready(function() {
     /**
      * The rowSelected handler for the inline list grid ...
      */
-    $('body').on('listGrid-inline-rowSelected', function(event, link, fields, currentUrl) {
+    function inlineRowSelected(event, link, fields, currentUrl) {
         var $tr = $('tr[data-link="' + link + '"]');
         var currentlySelected = $tr.hasClass('selected');
         var $listGridContainer = $tr.closest('.listgrid-container');
@@ -179,6 +179,12 @@ $(document).ready(function() {
         }
         
         BLCAdmin.listGrid.updateToolbarRowActionButtons($listGridContainer);
+    }
+    $('body').on('listGrid-inline-rowSelected', function(event, link, fields, currentUrl) {
+        inlineRowSelected(event, link, fields, currentUrl);
+    });
+    $('body').on('listGrid-translation-rowSelected', function(event, link, fields, currentUrl) {
+        inlineRowSelected(event, link, fields, currentUrl);
     });
     
     /**

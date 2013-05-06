@@ -11,7 +11,9 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,25 +29,63 @@ public class TranslationServiceImpl implements TranslationService {
     protected TranslationDao dao;
     
     @Override
+    @Transactional("blTransactionManager")
     public Translation save(Translation translation) {
         return dao.save(translation);
     }
     
     @Override
-    public Translation save(TranslatedEntity entityType, String entityId, String fieldName, String localeCode, 
+    @Transactional("blTransactionManager")
+    public Translation save(String entityType, String entityId, String fieldName, String localeCode, 
             String translatedValue) {
-        Translation translation = dao.create();
-        translation.setEntityType(entityType);
-        translation.setEntityId(entityId);
-        translation.setFieldName(fieldName);
-        translation.setLocaleCode(localeCode);
+        TranslatedEntity te = TranslatedEntity.getInstance(entityType);
+        
+        Translation translation = getTranslation(te, entityId, fieldName, localeCode);
+        
+        if (translation == null) {
+            translation = dao.create();
+            translation.setEntityType(te);
+            translation.setEntityId(entityId);
+            translation.setFieldName(fieldName);
+            translation.setLocaleCode(localeCode);
+        }
+        
         translation.setTranslatedValue(translatedValue);
-        return dao.save(translation);
+        return save(translation);
+    }
+    
+    @Override
+    @Transactional("blTransactionManager")
+    public Translation update(Long translationId, String localeCode, String translatedValue) {
+        Translation t = dao.readTranslationById(translationId);
+        
+        // Check to see if there is another translation that matches this updated one. We'll remove it if it exists
+        Translation t2 = dao.readTranslation(t.getEntityType(), t.getEntityId(), t.getFieldName(), localeCode);
+        if (t2 != null && t != t2) {
+            dao.delete(t2);
+        }
+        
+        t.setLocaleCode(localeCode);
+        t.setTranslatedValue(translatedValue);
+        return save(t);
+    }
+    
+    @Override
+    @Transactional("blTransactionManager")
+    public void deleteTranslationById(Long translationId) {
+        Translation t = dao.readTranslationById(translationId);
+        dao.delete(t);
     }
     
     @Override
     public Translation getTranslation(TranslatedEntity entity, String entityId, String fieldName, String localeCode) {
         return dao.readTranslation(entity, entityId, fieldName, localeCode);
+    }
+    
+    @Override
+    public List<Translation> getTranslations(String ceilingEntityClassname, String entityId, String property) {
+        TranslatedEntity entityType = TranslatedEntity.getInstance(ceilingEntityClassname);
+        return dao.readTranslations(entityType, entityId, property);
     }
     
     @Override

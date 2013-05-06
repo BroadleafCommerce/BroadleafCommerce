@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 import java.util.ArrayList;
@@ -207,6 +208,9 @@ public class EntityForm {
     }
 
     public void addHiddenField(Field field) {
+        if (StringUtils.isBlank(field.getFieldType())) {
+            field.setFieldType(SupportedFieldType.HIDDEN.toString());
+        }
         addField(field, HIDDEN_GROUP, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
     }
 

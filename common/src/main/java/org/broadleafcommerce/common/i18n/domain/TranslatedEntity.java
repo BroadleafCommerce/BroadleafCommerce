@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.BroadleafEnumerationType;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * An extensible enumeration of entities that have translatable fields. Any entity that wishes to have a translatable
@@ -38,6 +39,16 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
 
     public static TranslatedEntity getInstance(final String type) {
         return TYPES.get(type);
+    }
+    
+    public static TranslatedEntity getInstanceFromFriendlyType(final String friendlyType) {
+        for (Entry<String, TranslatedEntity> entry : TYPES.entrySet()) {
+            if (entry.getValue().getFriendlyType().equals(friendlyType)) {
+                return entry.getValue();
+            }
+        }
+        
+        return null;
     }
 
     private String type;

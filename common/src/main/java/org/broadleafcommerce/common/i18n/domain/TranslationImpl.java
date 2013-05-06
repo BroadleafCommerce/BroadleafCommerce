@@ -66,12 +66,12 @@ public class TranslationImpl implements Serializable, Translation {
 
     @Override
     public TranslatedEntity getEntityType() {
-        return TranslatedEntity.getInstance(entityType);
+        return TranslatedEntity.getInstanceFromFriendlyType(entityType);
     }
 
     @Override
     public void setEntityType(TranslatedEntity entityType) {
-        this.entityType = entityType.getType();
+        this.entityType = entityType.getFriendlyType();
     }
 
     /* ************************** */

@@ -1,0 +1,8 @@
+<div class="listgrid-container">
+    <span class="translation-ceiling hidden" th:text="${form.ceilingEntity}" />
+    <span class="translation-id hidden" th:text="${form.entityId}" />
+    <span class="translation-property hidden" th:text="${form.propertyName}" />
+    
+    <div th:include="components/listGridToolbar" th:remove="tag" />
+    <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
+</div>

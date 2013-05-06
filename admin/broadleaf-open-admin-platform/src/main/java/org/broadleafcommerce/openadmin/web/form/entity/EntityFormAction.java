@@ -20,7 +20,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 
 
 
-public class EntityFormAction {
+public class EntityFormAction implements Cloneable {
     
     protected String buttonType = "button";
     protected String buttonClass = "";
@@ -28,6 +28,7 @@ public class EntityFormAction {
     protected String iconClass = "";
     protected String displayText = "";
     
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof EntityFormAction) {
             EntityFormAction that = (EntityFormAction) obj;
@@ -39,6 +40,17 @@ public class EntityFormAction {
                 .build();
         }
         return false;
+    }
+    
+    @Override
+    public EntityFormAction clone() {
+        EntityFormAction cloned = new EntityFormAction();
+        cloned.buttonType = buttonType;
+        cloned.buttonClass = buttonClass;
+        cloned.urlPostfix = urlPostfix;
+        cloned.iconClass = iconClass;
+        cloned.displayText = displayText;
+        return cloned;
     }
     
     public EntityFormAction withButtonType(String buttonType) {

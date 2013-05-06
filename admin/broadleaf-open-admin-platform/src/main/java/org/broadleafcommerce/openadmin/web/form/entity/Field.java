@@ -43,6 +43,7 @@ public class Field {
     protected Boolean isVisible;
     protected Boolean isAlternateOrdering;
     protected Boolean isReadOnly;
+    protected Boolean isTranslatable;
     
     /* ************ */
     /* WITH METHODS */
@@ -107,6 +108,11 @@ public class Field {
         setReadOnly(isReadOnly);
         return this;
     }
+    
+    public Field withTranslatable(Boolean isTranslatable) {
+        setTranslatable(isTranslatable);
+        return this;
+    }
 
     /* ************************ */
     /* CUSTOM GETTERS / SETTERS */
@@ -156,6 +162,15 @@ public class Field {
     public Boolean getReadOnly() {
         return isReadOnly == null ? false : isReadOnly;
     }
+    
+    public Boolean getAlternateOrdering() {
+        return isAlternateOrdering == null ? false : isAlternateOrdering;
+    }
+    
+    public Boolean getTranslatable() {
+        return isTranslatable == null ? false : isTranslatable;
+    }
+    
     
     /* ************************** */
     /* STANDARD GETTERS / SETTERS */
@@ -245,16 +260,16 @@ public class Field {
         this.isVisible = isVisible;
     }
 
-    public Boolean getAlternateOrdering() {
-        return isAlternateOrdering == null ? false : isAlternateOrdering;
-    }
-
     public void setAlternateOrdering(Boolean alternateOrdering) {
         this.isAlternateOrdering = alternateOrdering;
     }
     
     public void setReadOnly(Boolean readOnly) {
         this.isReadOnly = readOnly;
+    }
+    
+    public void setTranslatable(Boolean translatable) {
+        this.isTranslatable = translatable;
     }
     
 }

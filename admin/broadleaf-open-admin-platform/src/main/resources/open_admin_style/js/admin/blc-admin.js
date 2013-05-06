@@ -125,7 +125,12 @@ var BLCAdmin = (function($) {
     	        type : "GET"
     	    }, function(data) {
     			// Create a modal out of the server response
-    			var $data = $(data);
+    	        var $data;
+    	        if (data.trim) {
+    	            $data = $(data.trim());
+    	        } else {
+    	            $data = $(data);
+    	        }
     			$data.attr('id', 'modal' + modals.length);
     			$('body').append($data);
     			

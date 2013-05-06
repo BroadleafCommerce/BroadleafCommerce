@@ -21,6 +21,18 @@
                 Select [[#{${collectionProperty.metadata.friendlyName}}]]
             </span>
             
+            <span th:case="'translation'" th:remove="tag">
+                Field Translations
+            </span>
+            
+            <span th:case="'addTranslation'" th:remove="tag">
+                Add Translation
+            </span>
+            
+            <span th:case="'updateTranslation'" th:remove="tag">
+                Edit Translation
+            </span>
+            
             <span th:case="*" th:remove="tag">
                 Modal Header
             </span>

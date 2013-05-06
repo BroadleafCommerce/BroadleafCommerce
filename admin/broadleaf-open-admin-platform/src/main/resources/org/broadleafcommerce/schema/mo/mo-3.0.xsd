@@ -180,6 +180,7 @@
             <xsd:enumeration value="ruleIdentifier"/>
             <xsd:enumeration value="showIfProperty"/>
             <xsd:enumeration value="forceFreeFormKeys"/>
+            <xsd:enumeration value="translatable"/>
         </xsd:restriction>
     </xsd:simpleType>
 </xsd:schema>

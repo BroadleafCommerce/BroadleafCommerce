@@ -25,7 +25,7 @@ package org.broadleafcommerce.openadmin.web.form.component;
  * @see {@link ListGrid#addRowAction(ListGridAction)}
  * @see {@link ListGrid#addToolbarAction(ListGridAction)}
  */
-public class ListGridAction {
+public class ListGridAction implements Cloneable {
     
     protected String buttonClass = "";
     protected String urlPostfix = "";
@@ -126,4 +126,13 @@ public class ListGridAction {
         this.displayText = displayText;
     }
 
+    @Override
+    public ListGridAction clone() {
+        ListGridAction cloned = new ListGridAction();
+        cloned.buttonClass = buttonClass;
+        cloned.displayText = displayText;
+        cloned.iconClass = iconClass;
+        cloned.urlPostfix = urlPostfix;
+        return cloned;
+    }
 }

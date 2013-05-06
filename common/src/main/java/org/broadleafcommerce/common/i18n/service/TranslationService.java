@@ -4,6 +4,7 @@ package org.broadleafcommerce.common.i18n.service;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 
+import java.util.List;
 import java.util.Locale;
 
 public interface TranslationService {
@@ -17,7 +18,10 @@ public interface TranslationService {
     public Translation save(Translation translation);
 
     /**
-     * Creates a new translation object for the requested parameters, saves it, and returns the saved instance
+     * Creates a new translation object for the requested parameters, saves it, and returns the saved instance.
+     * 
+     * <b>Note: This method will overwrite a previously existing translation if it matches on entityType, entityId, 
+     * fieldName, and localeCode.</b>
      * 
      * @param entityType
      * @param entityId
@@ -26,8 +30,35 @@ public interface TranslationService {
      * @param translatedValue
      * @return the persisted translation
      */
-    public Translation save(TranslatedEntity entityType, String entityId, String fieldName, String localeCode, 
+    public Translation save(String entityType, String entityId, String fieldName, String localeCode, 
             String translatedValue);
+    
+    /**
+     * Updates the given translation id with the new locale code and translated value
+     * 
+     * @param translationId
+     * @param localeCode
+     * @param translatedValue
+     * @return the persisted translation
+     */
+    public Translation update(Long translationId, String localeCode, String translatedValue);
+    
+    /**
+     * Deletes the given translations
+     * 
+     * @param translationId
+     */
+    public void deleteTranslationById(Long translationId);
+    
+    /**
+     * Finds all current translations for the specified field
+     * 
+     * @param ceilingEntityClassname
+     * @param entityId
+     * @param property
+     * @return the list of translations
+     */
+    public List<Translation> getTranslations(String ceilingEntityClassname, String entityId, String property);
     
     /**
      * Attempts to find the translation object for the given parameters
@@ -55,5 +86,6 @@ public interface TranslationService {
      * @return the translated value of the property for the given entity
      */
     public String getTranslatedValue(Object entity, String property, Locale locale);
+
 
 }

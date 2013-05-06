@@ -150,6 +150,9 @@ div.field-label {
 	margin-bottom: 3px;
 	color: #4D4D4D;
 }
+div.field-label.inline {
+	display: inline-block;
+}
 
 .modal .entity-form-actions {
 	margin-top: 0;

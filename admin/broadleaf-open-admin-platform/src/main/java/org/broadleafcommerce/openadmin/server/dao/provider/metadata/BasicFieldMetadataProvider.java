@@ -336,6 +336,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setShowIfProperty(annot.showIfProperty());
             override.setCurrencyCodeField(annot.currencyCodeField());
             override.setRuleIdentifier(annot.ruleIdentifier());
+            override.setTranslatable(annot.translatable());
 
             if (annot.validationConfigurations().length != 0) {
                 ValidationConfiguration[] configurations = annot.validationConfigurations();
@@ -554,6 +555,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (basicFieldMetadata.getLookupType()!=null) {
             metadata.setLookupType(basicFieldMetadata.getLookupType());
+        }
+        if (basicFieldMetadata.getTranslatable() != null) {
+            metadata.setTranslatable(basicFieldMetadata.getTranslatable());
         }
 
         attributes.put(field.getName(), metadata);

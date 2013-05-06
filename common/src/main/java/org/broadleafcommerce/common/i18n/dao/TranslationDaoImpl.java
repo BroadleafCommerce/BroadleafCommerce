@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -57,6 +58,11 @@ public class TranslationDaoImpl implements TranslationDao {
     }
     
     @Override
+    public void delete(Translation translation) {
+        em.remove(translation);
+    }
+    
+    @Override
     public Map<String, Object> getIdPropertyMetadata(TranslatedEntity entity) {
         Class<?> implClass = entityConfiguration.lookupEntityClass(entity.getType());
         return dynamicDaoHelper.getIdMetadata(implClass, (HibernateEntityManager) em);
@@ -65,6 +71,26 @@ public class TranslationDaoImpl implements TranslationDao {
     @Override
     public Translation readTranslationById(Long translationId) {
         return em.find(TranslationImpl.class, translationId);
+    }
+    
+    @Override
+    public List<Translation> readTranslations(TranslatedEntity entity, String entityId, String fieldName) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
+        Root<TranslationImpl> translation = criteria.from(TranslationImpl.class);
+
+        criteria.select(translation);
+        criteria.where(builder.equal(translation.get("entityType"), entity.getFriendlyType()),
+            builder.equal(translation.get("entityId"), entityId),
+            builder.equal(translation.get("fieldName"), fieldName)
+        );
+
+        try {
+            return em.createQuery(criteria).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+        
     }
 
     @Override

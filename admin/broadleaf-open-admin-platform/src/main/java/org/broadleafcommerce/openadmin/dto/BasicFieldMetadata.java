@@ -77,6 +77,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     private Boolean toOneLookupCreatedViaAnnotation;
     private String ruleIdentifier;
     private LookupType lookupType;
+    private Boolean translatable;
 
     //for MapFields
     private String mapFieldValueClass;
@@ -454,6 +455,14 @@ public class BasicFieldMetadata extends FieldMetadata {
     public void setLookupType(LookupType lookupType) {
         this.lookupType = lookupType;
     }
+    
+    public Boolean getTranslatable() {
+        return translatable;
+    }
+    
+    public void setTranslatable(Boolean translatable) {
+        this.translatable = translatable;
+    }
 
     @Override
     public FieldMetadata cloneFieldMetadata() {
@@ -525,6 +534,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.searchable = searchable;
         metadata.manyToField = manyToField;
         metadata.lookupType = lookupType;
+        metadata.translatable = translatable;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 

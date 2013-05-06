@@ -278,9 +278,8 @@ public @interface AdminPresentation {
     String showIfProperty() default "";
     
     /**
-     * Optional - If you have FieldType set to SupportedFieldType.MONEY,      *
+     * Optional - If you have FieldType set to SupportedFieldType.MONEY,
      * then you can specify a money currency property field.
-     * 
      * 
      * @return the currency property field
      */
@@ -296,4 +295,11 @@ public @interface AdminPresentation {
      * @return The identifier value that denotes what type of rule builder this is - especially influences the fields that are available in the UI
      */
     String ruleIdentifier() default "";
+    
+    /**
+     * <p>Optional - marks this field as being translatable, which will render the translations modal in the admin UI</p>
+     * 
+     * @return whether or not this field is translatable
+     */
+    boolean translatable() default false;
 }

@@ -77,7 +77,8 @@ public class ListGrid {
         BASIC,
         ADORNED,
         ADORNED_WITH_FORM,
-        MAP
+        MAP,
+        TRANSLATION
     }
     
     /* ************** */
