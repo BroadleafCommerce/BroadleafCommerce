@@ -124,8 +124,12 @@ public class OfferDaoImpl implements OfferDao {
         Calendar c = Calendar.getInstance();
         c.setTime(SystemTime.asDate());
         c.add(Calendar.DATE, +1);
+        //offer.startDate-1<currentTime
         criteria.add(Restrictions.lt("startDate", c.getTime()));
-        c.add(Calendar.DATE, -2);
+        c = Calendar.getInstance();
+        c.setTime(SystemTime.asDate());
+        c.add(Calendar.DATE, -1);
+        //offer.endDate+1>currentTime
         criteria.add(Restrictions.gt("endDate", c.getTime()));
         criteria.add(Restrictions.or(Restrictions.eq("archiveStatus.archived", 'N'), Restrictions.isNull("archiveStatus.archived")));
         return criteria.list();

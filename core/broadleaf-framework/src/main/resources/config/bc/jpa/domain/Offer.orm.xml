@@ -3,13 +3,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
-    <named-query name="BC_READ_OFFERS_BY_AUTOMATIC_DELIVERY_TYPE" >
-        <query>SELECT offer FROM org.broadleafcommerce.core.offer.domain.Offer offer
-        WHERE offer.deliveryType = 'AUTOMATIC'
-        AND (offer.startDate &lt;= :specifiedDate OR offer.startDate = null)
-        AND (offer.endDate &gt; :specifiedDate OR offer.endDate = null)
-        AND (offer.archiveStatus.archived IS NULL OR offer.archiveStatus.archived = 'N')</query>
-    </named-query>
 
     <named-query name="BC_READ_CUSTOMER_OFFER_BY_CUSTOMER_ID" >
         <query>SELECT customerOffer FROM org.broadleafcommerce.core.offer.domain.CustomerOffer customerOffer
