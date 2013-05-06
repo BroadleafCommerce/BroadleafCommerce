@@ -28,9 +28,11 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -61,6 +63,9 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
     @Resource(name = "messageSource")
     private MessageSource messageSource;
 
+    @Resource(name = "blTimeZoneResolver")
+    private BroadleafTimeZoneResolver broadleafTimeZoneResolver;
+
     @Override
     public void process(WebRequest request) throws SiteNotFoundException {
         Site site = siteResolver.resolveSite(request);
@@ -76,6 +81,7 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
         BroadleafRequestContext.setBroadleafRequestContext(brc);
 
         Locale locale = localeResolver.resolveLocale(request);
+        TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
         BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
 
         SandBox currentSandbox = sandboxResolver.resolveSandBox(request, site);
@@ -92,7 +98,7 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
         brc.setSandbox(currentSandbox);
         brc.setTheme(theme);
         brc.setMessageSource(messageSource);
-
+        brc.setTimeZone(timeZone);
         Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute("blRuleMap", WebRequest.SCOPE_REQUEST);
         if (ruleMap == null) {
             LOG.trace("Creating ruleMap and adding in Locale.");

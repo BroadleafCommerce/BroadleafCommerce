@@ -28,11 +28,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Convenient holder class for various objects to be automatically available on thread local without invoking the various
@@ -66,6 +68,7 @@ public class BroadleafRequestContext {
     protected WebRequest webRequest;
     protected SandBox sandbox;
     protected Locale locale;
+    protected TimeZone timeZone;
     protected BroadleafCurrency broadleafCurrency;
     protected Site site;
     protected Theme theme;
@@ -298,5 +301,13 @@ public class BroadleafRequestContext {
 
     public void setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource;
+    }
+
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
     }
 }
