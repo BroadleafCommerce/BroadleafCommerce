@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -164,6 +165,9 @@ public class SkuImpl implements Sku {
         largeEntry = true, 
         fieldType = SupportedFieldType.HTML_BASIC)
     protected String longDescription;
+
+    @Column(name = "TAX_CODE")
+    protected String taxCode;
 
     @Column(name = "TAXABLE_FLAG")
     @Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"})
@@ -854,6 +858,19 @@ public class SkuImpl implements Sku {
         int result = 1;
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         return result;
+    }
+
+    @Override
+    public String getTaxCode() {
+        if (StringUtils.isEmpty(this.taxCode)) {
+            this.product.getTaxCode();
+        }
+        return this.taxCode;
+    }
+
+    @Override
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
     }
 
 }

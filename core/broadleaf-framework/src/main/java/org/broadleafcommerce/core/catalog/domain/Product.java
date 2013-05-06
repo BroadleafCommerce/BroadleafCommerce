@@ -707,4 +707,16 @@ public interface Product extends Serializable {
      */
     @Deprecated
     public void setAllParentCategories(List<Category> allParentCategories);
+
+    /**
+     * Returns the tax code of the product. If the tax code is null, then returns the tax code of this products category.
+     * @return taxCode
+     */
+    public String getTaxCode();
+
+    /**
+     * Sets the tax code for this product.
+     * @param taxCode
+     */
+    public void setTaxCode(String taxCode);
 }

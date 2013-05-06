@@ -482,4 +482,19 @@ public interface Sku extends Serializable {
      */
     public BroadleafCurrency getCurrency();
 
+    /**
+     * Returns the Tax Code for this particular Entity.
+     * 
+     *  If the current Tax Code on the Sku is null, the Product tax code will be returned.
+     * @return taxCode
+     */
+    public String getTaxCode();
+
+    /**
+     * Sets the tax code for this SKU
+     * 
+     * @param taxCode
+     */
+    public void setTaxCode(String taxCode);
+
 }

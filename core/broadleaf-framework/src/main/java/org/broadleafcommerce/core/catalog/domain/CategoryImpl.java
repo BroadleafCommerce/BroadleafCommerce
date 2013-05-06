@@ -186,6 +186,9 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
             excluded = true)
     protected String description;
 
+    @Column(name = "TAX_CODE")
+    protected String taxCode;
+
     @Column(name = "ACTIVE_START_DATE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order = 1000,
             group = Presentation.Group.Name.ActiveDateRange, groupOrder = Presentation.Group.Order.ActiveDateRange)
@@ -1084,6 +1087,16 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @Override
     public String getMainEntityName() {
         return getName();
+    }
+
+    @Override
+    public String getTaxCode() {
+        return this.taxCode;
+    }
+
+    @Override
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
     }
 
 }

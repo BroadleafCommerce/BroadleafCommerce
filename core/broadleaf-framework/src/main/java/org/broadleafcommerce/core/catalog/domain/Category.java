@@ -625,4 +625,16 @@ public interface Category extends Serializable {
      */
     @Deprecated
     public void setAllProducts(@Nonnull List<Product> allProducts);
+
+    /**
+     * Returns the tax code of this category.
+     * @return taxCode
+     */
+    public String getTaxCode();
+
+    /**
+     * Sets the tax code of this category.
+     * @param taxCode
+     */
+    public void setTaxCode(String taxCode);
 }

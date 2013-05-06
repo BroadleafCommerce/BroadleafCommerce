@@ -158,6 +158,9 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
         prominent = true, gridOrder = 4)
     protected String manufacturer;
     
+    @Column(name = "TAX_CODE")
+    protected String taxCode;
+
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
     @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product",
         tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
@@ -851,6 +854,19 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
             public static final int MANUFACTURER = 5000;
             public static final int URL = 6000;
         }
+    }
+
+    @Override
+    public String getTaxCode() {
+        if (StringUtils.isEmpty(this.taxCode)) {
+            return this.defaultCategory.getTaxCode();
+        }
+        return this.taxCode;
+    }
+
+    @Override
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
     }
 
 }
