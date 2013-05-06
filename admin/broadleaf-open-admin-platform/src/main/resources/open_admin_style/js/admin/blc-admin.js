@@ -17,8 +17,6 @@ var BLCAdmin = (function($) {
 			backdrop: (modals.length < 1)
 		});
 		
-		BLCAdmin.setModalMaxHeight($data);
-		
 		// If we already have an active modal, we need to modify its z-index so that it will be
 		// hidden by the current backdrop
 		if (modals.length > 0) {
@@ -55,6 +53,7 @@ var BLCAdmin = (function($) {
 		
 		BLCAdmin.initializeModalTabs($data);
         BLCAdmin.initializeModalButtons($data);
+		BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
 		BLCAdmin.initializeFields();
 	}
 	
@@ -253,3 +252,13 @@ BLC.defaultErrorHandler = function(data) {
     
     BLCAdmin.showElementAsModal($data);
 }
+
+$(document).ready(function() {
+    $(window).resize(function() {
+        $.doTimeout('resize', 150, function() {
+            if (BLCAdmin.currentModal() != null) {
+                BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
+            }
+        });
+    });
+});
