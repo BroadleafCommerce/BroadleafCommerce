@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.cache.Hydrated;
 import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
@@ -162,7 +163,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Name", order = 1000,
             group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
-            prominent = true, gridOrder = 1, columnWidth = "300px")
+            prominent = true, gridOrder = 1, columnWidth = "300px",
+            translatable = true)
     protected String name;
 
     @Column(name = "URL")
@@ -183,7 +185,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Description",
             group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
             largeEntry = true,
-            excluded = true)
+            excluded = true,
+            translatable = true)
     protected String description;
 
     @Column(name = "TAX_CODE")
@@ -211,7 +214,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order = 3000,
             group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
             largeEntry = true,
-            fieldType = SupportedFieldType.HTML_BASIC)
+            fieldType = SupportedFieldType.HTML_BASIC,
+            translatable = true)
     protected String longDescription;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
@@ -369,6 +373,9 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
+    
+    @Transient
+    protected Map<String, String> translationCache = new HashMap<String, String>();
 
     @Transient
     @Hydrated(factoryMethod = "createChildCategoryURLMap")
@@ -404,7 +411,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
 
     @Override
     public String getName() {
-        return name;
+        return DynamicTranslationProvider.getValue(this, "name", name, translationCache);
     }
 
     @Override
@@ -453,7 +460,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
 
     @Override
     public String getDescription() {
-        return description;
+        return DynamicTranslationProvider.getValue(this, "description", description, translationCache);
     }
 
     @Override
@@ -509,7 +516,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
 
     @Override
     public String getLongDescription() {
-        return longDescription;
+        return DynamicTranslationProvider.getValue(this, "longDescription", longDescription, translationCache);
     }
 
     @Override

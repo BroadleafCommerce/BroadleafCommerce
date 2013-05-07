@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -147,14 +148,16 @@ public class SkuImpl implements Sku {
     @Index(name = "SKU_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order = ProductImpl.Presentation.FieldOrder.NAME,
         group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
-        prominent = true, gridOrder = 1, columnWidth = "300px")
+        prominent = true, gridOrder = 1, columnWidth = "300px",
+        translatable = true)
     protected String name;
 
     @Column(name = "DESCRIPTION")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Description", order = ProductImpl.Presentation.FieldOrder.SHORT_DESCRIPTION, 
         group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
         largeEntry = true, 
-        excluded = true)
+        excluded = true,
+        translatable = true)
     protected String description;
 
     @Lob
@@ -163,7 +166,8 @@ public class SkuImpl implements Sku {
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Large_Description", order = ProductImpl.Presentation.FieldOrder.LONG_DESCRIPTION,
         group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
         largeEntry = true, 
-        fieldType = SupportedFieldType.HTML_BASIC)
+        fieldType = SupportedFieldType.HTML_BASIC,
+        translatable = true)
     protected String longDescription;
 
     @Column(name = "TAX_CODE")
@@ -329,6 +333,9 @@ public class SkuImpl implements Sku {
         group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced)
     @AdminPresentationToOneLookup(lookupType = LookupType.DROPDOWN, lookupDisplayProperty = "friendlyName")
     protected BroadleafCurrency currency;
+    
+    @Transient
+    protected Map<String, String> translationCache = new HashMap<String, String>();
 
     @Override
     public Long getId() {
@@ -477,7 +484,7 @@ public class SkuImpl implements Sku {
             return lookupDefaultSku().getName();
         }
         
-        return name;
+        return DynamicTranslationProvider.getValue(this, "name", name, translationCache);
     }
 
     @Override
@@ -491,7 +498,7 @@ public class SkuImpl implements Sku {
             return lookupDefaultSku().getDescription();
         }
         
-        return description;
+        return DynamicTranslationProvider.getValue(this, "description", description, translationCache);
     }
 
     @Override
@@ -505,7 +512,7 @@ public class SkuImpl implements Sku {
             return lookupDefaultSku().getLongDescription();
         }
         
-        return longDescription;
+        return DynamicTranslationProvider.getValue(this, "longDescription", longDescription, translationCache);
     }
 
     @Override

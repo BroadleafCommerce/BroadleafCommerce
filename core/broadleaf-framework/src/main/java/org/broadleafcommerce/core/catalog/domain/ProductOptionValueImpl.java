@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -27,6 +28,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,7 +41,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.math.BigDecimal;
+import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -60,7 +65,9 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     protected Long id;
 
     @Column(name = "ATTRIBUTE_VALUE")
-    @AdminPresentation(friendlyName = "productOptionValue_attributeValue", prominent = true)
+    @AdminPresentation(friendlyName = "productOptionValue_attributeValue", 
+        prominent = true,
+        translatable = true)
     protected String attributeValue;
 
     @Column(name = "DISPLAY_ORDER")
@@ -74,6 +81,9 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @ManyToOne(targetEntity = ProductOptionImpl.class)
     @JoinColumn(name = "PRODUCT_OPTION_ID")
     protected ProductOption productOption;
+    
+    @Transient
+    protected Map<String, String> translationCache = new HashMap<String, String>();
 
     @Override
     public Long getId() {
@@ -87,7 +97,7 @@ public class ProductOptionValueImpl implements ProductOptionValue {
 
     @Override
     public String getAttributeValue() {
-        return attributeValue;
+        return DynamicTranslationProvider.getValue(this, "attributeValue", attributeValue, translationCache);
     }
 
     @Override
