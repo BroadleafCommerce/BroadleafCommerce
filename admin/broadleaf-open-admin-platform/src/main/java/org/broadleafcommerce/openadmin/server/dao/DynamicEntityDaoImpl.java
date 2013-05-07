@@ -740,7 +740,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
 
     @Override
     public SessionFactory getSessionFactory() {
-        return ((HibernateEntityManager) standardEntityManager).getSession().getSessionFactory();
+        return dynamicDaoHelper.getSessionFactory((HibernateEntityManager) standardEntityManager);
     }
 
     @Override
@@ -750,18 +750,12 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
 
     @Override
     public List<String> getPropertyNames(Class<?> entityClass) {
-        ClassMetadata metadata = getSessionFactory().getClassMetadata(entityClass);
-        List<String> propertyNames = new ArrayList<String>();
-        Collections.addAll(propertyNames, metadata.getPropertyNames());
-        return propertyNames;
+        return dynamicDaoHelper.getPropertyNames(entityClass, (HibernateEntityManager) standardEntityManager);
     }
 
     @Override
     public List<Type> getPropertyTypes(Class<?> entityClass) {
-        ClassMetadata metadata = getSessionFactory().getClassMetadata(entityClass);
-        List<Type> propertyTypes = new ArrayList<Type>();
-        Collections.addAll(propertyTypes, metadata.getPropertyTypes());
-        return propertyTypes;
+        return dynamicDaoHelper.getPropertyTypes(entityClass, (HibernateEntityManager) standardEntityManager);
     }
 
     protected Map<String, FieldMetadata> getPropertiesForEntityClass(
