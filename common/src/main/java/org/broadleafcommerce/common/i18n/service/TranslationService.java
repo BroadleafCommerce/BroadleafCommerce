@@ -78,7 +78,7 @@ public interface TranslationService {
      * 
      * If a country is set on the locale (locale code en_GB for example), we will first look for a translation that matches
      * en_GB, and then look for a translation for en. If a translated value for the given locale is not available, 
-     * it will return the default value of the property from the entity directly.
+     * it will return null.
      * 
      * @param entity
      * @param property

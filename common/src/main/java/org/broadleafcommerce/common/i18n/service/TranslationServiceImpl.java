@@ -90,19 +90,6 @@ public class TranslationServiceImpl implements TranslationService {
     
     @Override
     public String getTranslatedValue(Object entity, String property, Locale locale) {
-        // Get the value of this property straight from the entity. We will fall back on this if we do not
-        // find a translation for the property
-        String entityPropertyValue = null;
-        try {
-            Object rawPropertyValue = PropertyUtils.getSimpleProperty(entity, property);
-            if (rawPropertyValue != null) {
-                entityPropertyValue = String.valueOf(rawPropertyValue);
-            }
-        } catch (Exception e) {
-            String msg = e.getMessage();
-            LOG.warn(String.format("Unable to find a value for property %s in object %s, %s", property, entity, msg));
-        }
-        
         // Attempt to get a translated value for this property to override the default value
         TranslatedEntity entityType = getEntityType(entity);
         String entityId = getEntityId(entity, entityType);
@@ -123,10 +110,10 @@ public class TranslationServiceImpl implements TranslationService {
         
         // If we have a match on a translation, use that instead of what we found on the entity
         if (translation != null && StringUtils.isNotBlank(translation.getTranslatedValue())) {
-            entityPropertyValue = translation.getTranslatedValue();
+            return translation.getTranslatedValue();
         }
         
-        return entityPropertyValue;
+        return null;
     }
     
     protected TranslatedEntity getEntityType(Class<?> entityClass) {
