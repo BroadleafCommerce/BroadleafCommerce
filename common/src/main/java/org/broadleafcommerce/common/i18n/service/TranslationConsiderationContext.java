@@ -31,7 +31,8 @@ public class TranslationConsiderationContext {
     }
     
     public static Boolean getTranslationConsiderationContext() {
-        return TranslationConsiderationContext.translationConsiderationContext.get();
+        Boolean val = TranslationConsiderationContext.translationConsiderationContext.get();
+        return val == null ? false : val;
     }
     
     public static void setTranslationConsiderationContext(Boolean isEnabled) {
