@@ -173,6 +173,14 @@
         </property>
     </bean>
     
+    <bean id="blAdminTranslationControllerExtensionManager" class="org.broadleafcommerce.openadmin.web.controller.AdminTranslationControllerExtensionManager">
+        <property name="listeners">
+            <list>
+                <bean class="org.broadleafcommerce.admin.web.controller.AdminProductTranslationExtensionListener" />
+            </list>
+        </property>
+    </bean>
+    
     <bean id="blPersistenceProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>

@@ -49,8 +49,11 @@ public class AdminTranslationController extends AdminAbstractController {
     @Resource(name = "blTranslationFormBuilderService")
     protected TranslationFormBuilderService formService;
     
-    @Resource(name="blAdminSecurityRemoteService")
+    @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
+    
+    @Resource(name = "blAdminTranslationControllerExtensionManager")
+    protected AdminTranslationControllerExtensionListener extensionManager;
     
     /**
      * Invoked when the translation button is clicked on a given translatable field
@@ -66,6 +69,8 @@ public class AdminTranslationController extends AdminAbstractController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute TranslationForm form, BindingResult result) throws Exception {
+        extensionManager.applyTransformation(form);
+        
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
 
         List<Translation> translations = 

@@ -38,7 +38,7 @@ public class TranslationServiceImpl implements TranslationService {
     @Transactional("blTransactionManager")
     public Translation save(String entityType, String entityId, String fieldName, String localeCode, 
             String translatedValue) {
-        TranslatedEntity te = TranslatedEntity.getInstance(entityType);
+        TranslatedEntity te = getEntityType(entityType);
         
         Translation translation = getTranslation(te, entityId, fieldName, localeCode);
         
@@ -84,7 +84,7 @@ public class TranslationServiceImpl implements TranslationService {
     
     @Override
     public List<Translation> getTranslations(String ceilingEntityClassname, String entityId, String property) {
-        TranslatedEntity entityType = TranslatedEntity.getInstance(ceilingEntityClassname);
+        TranslatedEntity entityType = getEntityType(ceilingEntityClassname);
         return dao.readTranslations(entityType, entityId, property);
     }
     
@@ -129,18 +129,31 @@ public class TranslationServiceImpl implements TranslationService {
         return entityPropertyValue;
     }
     
-    protected TranslatedEntity getEntityType(Object entity) {
+    protected TranslatedEntity getEntityType(Class<?> entityClass) {
         for (Entry<String, TranslatedEntity> entry : TranslatedEntity.getTypes().entrySet()) {
             try {
                 Class<?> clazz = Class.forName(entry.getKey());
-                if (clazz.isAssignableFrom(entity.getClass())) {
+                if (clazz.isAssignableFrom(entityClass)) {
                     return entry.getValue();
                 }
             } catch (ClassNotFoundException e) {
                 throw new IllegalArgumentException("TranslatedEntity type was not set to a known class", e);
             }
         }
-        throw new IllegalArgumentException(entity.getClass().getName() + " is not a known translatable class");
+        throw new IllegalArgumentException(entityClass.getName() + " is not a known translatable class");
+    }
+    
+    protected TranslatedEntity getEntityType(Object entity) {
+        return getEntityType(entity.getClass());
+    }
+    
+    protected TranslatedEntity getEntityType(String className) {
+        try {
+            Class<?> clazz = Class.forName(className);
+            return getEntityType(clazz);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException(className + " is not a known translatable class");
+        }
     }
     
     protected String getEntityId(Object entity, TranslatedEntity entityType) {
