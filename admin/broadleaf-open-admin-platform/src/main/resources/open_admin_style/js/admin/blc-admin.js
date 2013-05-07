@@ -253,6 +253,28 @@ BLC.defaultErrorHandler = function(data) {
     BLCAdmin.showElementAsModal($data);
 }
 
+BLC.addPreAjaxCallbackHandler(function($data) {
+    var $loginForm = $data.find('form').filter(function() {
+        return $(this).attr('action').indexOf('login_admin_post') >= 0;
+    });
+    
+    if ($loginForm.length > 0) {
+        var currentPath = window.location.href;
+        if (currentPath.indexOf('?') >= 0) {
+            currentPath += '&'
+        } else {
+            currentPath += '?'
+        }
+        currentPath += 'sessionTimeout=true';
+        
+        window.location = currentPath;
+        
+        return false;
+    }
+    
+    return true;
+});
+
 $(document).ready(function() {
     $(window).resize(function() {
         $.doTimeout('resize', 150, function() {

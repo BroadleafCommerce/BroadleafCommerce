@@ -2,17 +2,35 @@
 var BLC = (function($) {
     
     var redirectUrlDiv = "blc-redirect-url",
-        extraDataDiv   = "blc-extra-data";
+        extraDataDiv   = "blc-extra-data",
+        preAjaxCallbackHandlers = [];
+    
+    function addPreAjaxCallbackHandler(fn) {
+        preAjaxCallbackHandlers.push(fn);
+    }
+    
+    /**
+     * Runs all currently registered pre-ajax-callback handlers. If any such handler returns false,
+     * we will stop invocation of additional handlers as well as the callback function.
+     */
+    function runPreAjaxCallbackHandlers($data) {
+        for (var i = 0; i < preAjaxCallbackHandlers.length; i++) {
+            if (!preAjaxCallbackHandlers[i]($data)) {
+                return false;
+            }
+        }
+        return true;
+    }
     
     function redirectIfNecessary($data) {
         if ($data.attr('id') == redirectUrlDiv) {
             var redirectUrl = $data.text();
             if (redirectUrl != null && redirectUrl !== "") {
                 window.location = redirectUrl;
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
     
     function getExtraData($data) {
@@ -34,7 +52,7 @@ var BLC = (function($) {
                 $data = $(data);
             }
             
-            if (!redirectIfNecessary($data)) {
+            if (runPreAjaxCallbackHandlers($data)) {
                 var extraData = getExtraData($data);
                 callback(data, extraData);
             }
@@ -102,7 +120,12 @@ var BLC = (function($) {
         return //BLC-THEME-VARIABLES
     }
     
+    addPreAjaxCallbackHandler(function($data) {
+        return BLC.redirectIfNecessary($data);
+    });
+    
     return {
+        addPreAjaxCallbackHandler : addPreAjaxCallbackHandler,
         redirectIfNecessary : redirectIfNecessary,
         getExtraData : getExtraData,
         ajax : ajax,

@@ -3,6 +3,9 @@
         <div class="alert-box alert" th:unless="${#strings.isEmpty(param.login_error)}">
             <div th:unless="${#strings.isEmpty(param.login_error)}">Invalid username / password combination.</div>
         </div>
+        <div class="alert-box alert" th:unless="${#strings.isEmpty(param.sessionTimeout)}">
+            Your session has timed out. Please login again.
+        </div>
         <div class="alert-box success" th:unless="${#strings.isEmpty(param.messageCode)}">            
             <div th:if="${param.messageCode[0] == 'usernameSent'}">Your username was sent to the email address on file.</div>
             <div th:if="${param.messageCode[0] == 'passwordReset'}">Your password has been reset.<br/>  Please login with your new password.</div>
