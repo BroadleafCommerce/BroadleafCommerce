@@ -40,6 +40,11 @@
             th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}">
             <i class="icon-search"></i>&nbsp;Lookup
         </button>
-        
+
+        <span th:if="${field.canLinkToExternalEntity}" th:remove="tag">
+           <a th:href="@{${field.entityViewPath}}" class="modal-view">
+                <i class="icon-external-link"></i>
+           </a>
+        </span>
     </div>
 </div>

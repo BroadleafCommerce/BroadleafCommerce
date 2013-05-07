@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -60,7 +62,7 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "BLC_CUSTOMER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_NAME" }))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCustomerElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "CustomerImpl_baseCustomer")
-public class CustomerImpl implements Customer {
+public class CustomerImpl implements Customer, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -442,6 +444,14 @@ public class CustomerImpl implements Customer {
     @Override
     public void setCustomerPayments(List<CustomerPayment> customerPayments) {
         this.customerPayments = customerPayments;
+    }
+
+    @Override
+    public String getMainEntityName() {
+        if (!StringUtils.isEmpty(getFirstName()) && !StringUtils.isEmpty(getLastName())) {
+            return getFirstName() + " " + getLastName();
+        }
+        return String.valueOf(getId());
     }
 
     @Override

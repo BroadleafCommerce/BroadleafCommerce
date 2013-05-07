@@ -50,6 +50,10 @@ public class AdminStructuredContentController extends AdminBasicEntityController
     
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
+        //allow external links to work for ToOne items
+        if (super.getSectionKey(pathVars) != null) {
+            return super.getSectionKey(pathVars);
+        }
         return SECTION_KEY;
     }
 

@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -262,14 +263,33 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         val = extractValueRequest.getFieldManager().getFieldValue
                                 (extractValueRequest.getRequestedValue(), extractValueRequest.getMetadata().getForeignKeyProperty()).toString();
                         //see if there's a name property and use it for the display value
-                        Object temp = null;
-                        try {
-                            temp = extractValueRequest.getFieldManager().getFieldValue(extractValueRequest.getRequestedValue(), extractValueRequest.getMetadata().getForeignKeyDisplayValueProperty());
-                        } catch (FieldNotAvailableException e) {
-                            //do nothing
+                        String entityName = null;
+                        if (extractValueRequest.getRequestedValue() instanceof AdminMainEntity) {
+                            entityName = ((AdminMainEntity) extractValueRequest.getRequestedValue()).getMainEntityName();
                         }
+
+                        Object temp = null;
+                        if (!StringUtils.isEmpty(extractValueRequest.getMetadata().getForeignKeyDisplayValueProperty())) {
+                            String nameProperty = extractValueRequest.getMetadata().getForeignKeyDisplayValueProperty();
+                            try {
+                                temp = extractValueRequest.getFieldManager().getFieldValue(extractValueRequest.getRequestedValue(), nameProperty);
+                            } catch (FieldNotAvailableException e) {
+                                //do nothing
+                            }
+                        }
+
+                        if (temp == null && StringUtils.isEmpty(entityName)) {
+                            try {
+                                temp = extractValueRequest.getFieldManager().getFieldValue(extractValueRequest.getRequestedValue(), "name");
+                            } catch (FieldNotAvailableException e) {
+                                //do nothing
+                            }
+                        }
+
                         if (temp != null) {
                             extractValueRequest.setDisplayVal(temp.toString());
+                        } else if (!StringUtils.isEmpty(entityName)) {
+                            extractValueRequest.setDisplayVal(entityName);
                         }
                     } catch (FieldNotAvailableException e) {
                         throw new IllegalArgumentException(e);

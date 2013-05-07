@@ -40,10 +40,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * Handles admin operations for the {@link Product} entity. Editing a product requires custom criteria in order to properly
@@ -60,6 +59,10 @@ public class AdminProductController extends AdminBasicEntityController {
     
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
+        //allow external links to work for ToOne items
+        if (super.getSectionKey(pathVars) != null) {
+            return super.getSectionKey(pathVars);
+        }
         return SECTION_KEY;
     }
     

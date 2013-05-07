@@ -38,7 +38,7 @@ public @interface AdminPresentationToOneLookup {
      *
      * @return the property on the lookup class containing the displayable value
      */
-    String lookupDisplayProperty() default "name";
+    String lookupDisplayProperty() default "";
 
     /**
      * <p>Optional - only required if you need to specially handle crud operations for this

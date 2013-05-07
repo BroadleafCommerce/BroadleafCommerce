@@ -27,7 +27,7 @@ public class TranslationConsiderationContext {
     private static final ThreadLocal<Boolean> translationConsiderationContext = new ThreadLocal<Boolean>();
     
     public static boolean hasTranslation() {
-        return getTranslationConsiderationContext() && getTranslationService() != null;
+        return getTranslationConsiderationContext() != null && getTranslationConsiderationContext() && getTranslationService() != null;
     }
     
     public static Boolean getTranslationConsiderationContext() {

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -27,6 +29,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -94,7 +97,7 @@ import java.util.Map;
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationOverrides(
     value = {
-        @AdminPresentationOverride(name="customer", mergeValue = @AdminPresentationMerge(
+        /*@AdminPresentationOverride(name="customer", mergeValue = @AdminPresentationMerge(
                 mergeEntries = {
                         //set all customer fields to not prominent, and go ahead and hide them all
                         @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.prominent, booleanOverrideValue = false),
@@ -112,13 +115,7 @@ import java.util.Map;
                         //override the hide form above to show name
                         @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded, booleanOverrideValue = false)
                 })
-        ),
-        @AdminPresentationOverride(name="locale", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        //hide all locale related fields
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded, booleanOverrideValue = true)
-                })
-        ),
+        ),*/
         @AdminPresentationOverride(name="currency", mergeValue = @AdminPresentationMerge(
                 mergeEntries = {
                         @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.prominent, booleanOverrideValue = false)
@@ -128,7 +125,7 @@ import java.util.Map;
     collections = @AdminPresentationCollectionOverride(name="customer.customerAttributes", value=@AdminPresentationCollection(excluded = true, addType = AddMethodType.PERSIST))
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderImpl_baseOrder")
-public class OrderImpl implements Order {
+public class OrderImpl implements Order, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -143,47 +140,49 @@ public class OrderImpl implements Order {
 
     @Column(name = "NAME")
     @Index(name="ORDER_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Name", group = "OrderImpl_Order", order=1, prominent=true)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Name", group = "OrderImpl_Order", order=1000, prominent=true, groupOrder = 1000)
     protected String name;
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     @Index(name="ORDER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
+    @AdminPresentation(friendlyName = "Customer", group = "OrderImpl_Order", order=2000, groupOrder = 1000)
+    @AdminPresentationToOneLookup()
     protected Customer customer;
 
     @Column(name = "ORDER_STATUS")
     @Index(name="ORDER_STATUS_INDEX", columnNames={"ORDER_STATUS"})
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Status", group = "OrderImpl_Order", order=2, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus")
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Status", group = "OrderImpl_Order", order=4000, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus", groupOrder = 1000)
     protected String status;
 
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Tax", group = "OrderImpl_Order", order=9, fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Tax", group = "OrderImpl_Order", order=7000, fieldType=SupportedFieldType.MONEY, groupOrder = 1000)
     protected BigDecimal totalTax;
 
     @Column(name = "TOTAL_SHIPPING", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Shipping", group = "OrderImpl_Order", order=10, fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Shipping", group = "OrderImpl_Order", order=8000, fieldType=SupportedFieldType.MONEY, groupOrder = 1000)
     protected BigDecimal totalFulfillmentCharges;
 
     @Column(name = "ORDER_SUBTOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = "OrderImpl_Order", order=3, fieldType=SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode")
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = "OrderImpl_Order", order=5000, fieldType=SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode", groupOrder = 1000)
     protected BigDecimal subTotal;
 
     @Column(name = "ORDER_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = "OrderImpl_Order", order=1, fieldType= SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode")
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = "OrderImpl_Order", order=3000, fieldType= SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode", groupOrder = 1000)
     protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Submit_Date", group = "OrderImpl_Order", order=12)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Submit_Date", group = "OrderImpl_Order", order=9000, groupOrder = 1000)
     protected Date submitDate;
 
     @Column(name = "ORDER_NUMBER")
     @Index(name="ORDER_NUMBER_INDEX", columnNames={"ORDER_NUMBER"})
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Number", group = "OrderImpl_Order", order=3, prominent=true)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Number", group = "OrderImpl_Order", order=6000, prominent=true, groupOrder = 1000)
     private String orderNumber;
 
     @Column(name = "EMAIL_ADDRESS")
     @Index(name="ORDER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Email_Address", group = "OrderImpl_Order", order=13)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Email_Address", group = "OrderImpl_Order", order=10000, groupOrder = 1000)
     protected String emailAddress;
 
     @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
@@ -228,12 +227,12 @@ public class OrderImpl implements Order {
     
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "BroadleafCurrency_Currency_Code", order=1, group = "BroadleafCurrency_Details")
+    @AdminPresentation(friendlyName = "BroadleafCurrency_Currency_Code", order=1000, group = "BroadleafCurrency_Details", groupOrder = 2000)
     protected BroadleafCurrency currency;
 
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "LocaleImpl_Code", order=1, group = "LocaleImpl_Details")
+    @AdminPresentation(excluded = true)
     protected Locale locale;
 
     @Override
@@ -637,6 +636,25 @@ public class OrderImpl implements Order {
             return (orderAdjustmentsValue.compareTo(BigDecimal.ZERO) != 0);
         }
         return false;
+    }
+
+    @Override
+    public String getMainEntityName() {
+        String customerName = null;
+        String orderNumber = getOrderNumber();
+        if (!StringUtils.isEmpty(getCustomer().getFirstName()) && !StringUtils.isEmpty(getCustomer().getLastName())) {
+            customerName = getCustomer().getFirstName() + " " + getCustomer().getLastName();
+        }
+        if (!StringUtils.isEmpty(orderNumber) && !StringUtils.isEmpty(customerName)) {
+            return orderNumber + " - " + customerName;
+        }
+        if (!StringUtils.isEmpty(orderNumber)) {
+            return orderNumber;
+        }
+        if (!StringUtils.isEmpty(customerName)) {
+            return customerName;
+        }
+        return "";
     }
 
     @Override
