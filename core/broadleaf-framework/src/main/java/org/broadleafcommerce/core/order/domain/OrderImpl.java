@@ -31,8 +31,11 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationCollectionOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationPropertyType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
@@ -91,13 +94,36 @@ import java.util.Map;
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationOverrides(
     value = {
-        @AdminPresentationOverride(name="customer.auditable", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="customer.challengeQuestion", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="customer.challengeAnswer", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="customer.passwordChangeRequired", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="customer.receiveEmail", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="customer.registered", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="locale.defaultCurrency", value=@AdminPresentation(excluded = true))
+        @AdminPresentationOverride(name="customer", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        //set all customer fields to not prominent, and go ahead and hide them all
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.prominent, booleanOverrideValue = false),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded, booleanOverrideValue = true)
+                })
+        ),
+        @AdminPresentationOverride(name="customer.firstName", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        //override the hide from above to show name
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded, booleanOverrideValue = false)
+                })
+        ),
+        @AdminPresentationOverride(name="customer.lastName", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        //override the hide form above to show name
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded, booleanOverrideValue = false)
+                })
+        ),
+        @AdminPresentationOverride(name="locale", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        //hide all locale related fields
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded, booleanOverrideValue = true)
+                })
+        ),
+        @AdminPresentationOverride(name="currency", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.prominent, booleanOverrideValue = false)
+                })
+        )
     },
     collections = @AdminPresentationCollectionOverride(name="customer.customerAttributes", value=@AdminPresentationCollection(excluded = true, addType = AddMethodType.PERSIST))
 )

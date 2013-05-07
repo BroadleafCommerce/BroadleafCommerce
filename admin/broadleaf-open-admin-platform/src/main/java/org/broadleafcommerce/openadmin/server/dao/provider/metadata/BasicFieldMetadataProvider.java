@@ -31,8 +31,11 @@ import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationDataDrivenEnumerationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationPropertyType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationToOneLookupOverride;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -95,9 +98,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (!canHandleAnnotationOverride(overrideViaAnnotationRequest, metadata)) {
             return FieldProviderResponse.NOT_HANDLED;
         }
-        Map<String, AdminPresentationOverride> presentationOverrides = new HashMap<String, AdminPresentationOverride>();
-        Map<String, AdminPresentationToOneLookupOverride> presentationToOneLookupOverrides = new HashMap<String, AdminPresentationToOneLookupOverride>();
-        Map<String, AdminPresentationDataDrivenEnumerationOverride> presentationDataDrivenEnumerationOverrides = new HashMap<String, AdminPresentationDataDrivenEnumerationOverride>();
+        Map<String, AdminPresentationOverride> presentationOverrides = new LinkedHashMap<String, AdminPresentationOverride>();
+        Map<String, AdminPresentationToOneLookupOverride> presentationToOneLookupOverrides = new LinkedHashMap<String, AdminPresentationToOneLookupOverride>();
+        Map<String, AdminPresentationDataDrivenEnumerationOverride> presentationDataDrivenEnumerationOverrides = new LinkedHashMap<String, AdminPresentationDataDrivenEnumerationOverride>();
 
         AdminPresentationOverrides myOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationOverrides.class);
         if (myOverrides != null) {
@@ -239,11 +242,20 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
     }
 
+    protected Map<AdminPresentationPropertyType, AdminPresentationMergeEntry> getAdminPresentationEntries(AdminPresentationMergeEntry[] entries) {
+        Map<AdminPresentationPropertyType, AdminPresentationMergeEntry> response = new HashMap<AdminPresentationPropertyType, AdminPresentationMergeEntry>();
+        for (AdminPresentationMergeEntry entry : entries) {
+            response.put(entry.propertyType(), entry);
+        }
+        return response;
+    }
+
     protected void buildAdminPresentationOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationOverride> presentationOverrides, String propertyName, String key, DynamicEntityDao dynamicEntityDao) {
         AdminPresentationOverride override = presentationOverrides.get(propertyName);
         if (override != null) {
             AdminPresentation annot = override.value();
-            if (annot != null) {
+            AdminPresentationMerge merge = override.mergeValue();
+            if (annot != null && ArrayUtils.isEmpty(merge.mergeEntries())) {
                 String testKey = prefix + key;
                 if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
                     FieldMetadata metadata = mergedProperties.get(key);
@@ -262,11 +274,15 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                         metadata.setExcluded(false);
                     }
                 }
+            }
+            if (annot != null || !ArrayUtils.isEmpty(merge.mergeEntries()) || !ArrayUtils.isEmpty(merge.validationConfigurations())) {
                 if (!(mergedProperties.get(key) instanceof BasicFieldMetadata)) {
                     return;
                 }
                 BasicFieldMetadata serverMetadata = (BasicFieldMetadata) mergedProperties.get(key);
-                if (serverMetadata.getTargetClass() != null) {
+                if (!ArrayUtils.isEmpty(merge.mergeEntries()) || !ArrayUtils.isEmpty(merge.validationConfigurations())) {
+                    overrideMergeMetadata(serverMetadata, merge);
+                } else if (serverMetadata.getTargetClass() != null) {
                     try {
                         Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
                         Class<?> parentClass = null;
@@ -309,6 +325,103 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
     }
 
+    protected void overrideMergeMetadata(BasicFieldMetadata basicFieldMetadata, AdminPresentationMerge merge) {
+        Map<AdminPresentationPropertyType, AdminPresentationMergeEntry> overrideValues = getAdminPresentationEntries(merge.mergeEntries());
+        ValidationConfiguration[] configurations = merge.validationConfigurations();
+
+        for (Map.Entry<AdminPresentationPropertyType, AdminPresentationMergeEntry> entry : overrideValues.entrySet()) {
+            String stringValue = entry.getValue().overrideValue();
+            switch (entry.getKey()) {
+                case friendlyName:
+                    basicFieldMetadata.setFriendlyName(stringValue);
+                    break;
+                case securityLevel:
+                    basicFieldMetadata.setSecurityLevel(stringValue);
+                    break;
+                case group:
+                    basicFieldMetadata.setGroup(stringValue);
+                    break;
+                case tab:
+                    basicFieldMetadata.setTab(stringValue);
+                    break;
+                case columnWidth:
+                    basicFieldMetadata.setColumnWidth(stringValue);
+                    break;
+                case broadleafEnumeration:
+                    basicFieldMetadata.setBroadleafEnumeration(stringValue);
+                    break;
+                case tooltip:
+                    basicFieldMetadata.setTooltip(stringValue);
+                    break;
+                case helpText:
+                    basicFieldMetadata.setHelpText(stringValue);
+                    break;
+                case hint:
+                    basicFieldMetadata.setHint(stringValue);
+                    break;
+                case showIfProperty:
+                    basicFieldMetadata.setShowIfProperty(stringValue);
+                    break;
+                case currencyCodeField:
+                    basicFieldMetadata.setCurrencyCodeField(stringValue);
+                    break;
+                case ruleIdentifier:
+                    basicFieldMetadata.setRuleIdentifier(stringValue);
+                    break;
+                case order:
+                    basicFieldMetadata.setOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():Integer.parseInt(stringValue));
+                    break;
+                case gridOrder:
+                    basicFieldMetadata.setGridOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():Integer.parseInt(stringValue));
+                    break;
+                case visibility:
+                    basicFieldMetadata.setVisibility(VisibilityEnum.valueOf(stringValue));
+                    break;
+                case fieldType:
+                    basicFieldMetadata.setFieldType(SupportedFieldType.valueOf(stringValue));
+                    break;
+                case groupOrder:
+                    basicFieldMetadata.setGroupOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():Integer.parseInt(stringValue));
+                    break;
+                case groupCollapsed:
+                    basicFieldMetadata.setGroupCollapsed(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():Boolean.parseBoolean(stringValue));
+                    break;
+                case tabOrder:
+                    basicFieldMetadata.setTabOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():Integer.parseInt(stringValue));
+                    break;
+                case largeEntry:
+                    basicFieldMetadata.setLargeEntry(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():Boolean.parseBoolean(stringValue));
+                    break;
+                case prominent:
+                    basicFieldMetadata.setProminent(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():Boolean.parseBoolean(stringValue));
+                    break;
+                case readOnly:
+                    basicFieldMetadata.setReadOnly(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():Boolean.parseBoolean(stringValue));
+                    break;
+                case requiredOverride:
+                    basicFieldMetadata.setRequiredOverride(RequiredOverride.REQUIRED==RequiredOverride.valueOf(stringValue));
+                    break;
+                case excluded:
+                    basicFieldMetadata.setExcluded(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():Boolean.parseBoolean(stringValue));
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unrecognized type: " + entry.getKey().toString());
+            }
+        }
+
+        for (ValidationConfiguration configuration : configurations) {
+            ConfigurationItem[] items = configuration.configurationItems();
+            Map<String, String> itemMap = new HashMap<String, String>();
+            for (ConfigurationItem item : items) {
+                itemMap.put(item.itemName(), item.itemValue());
+            }
+            if (basicFieldMetadata.getValidationConfigurations() == null) {
+                basicFieldMetadata.setValidationConfigurations(new LinkedHashMap<String, Map<String, String>>(5));
+            }
+            basicFieldMetadata.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
+        }
+    }
+
     protected FieldMetadataOverride constructBasicMetadataOverride(AdminPresentation annot, AdminPresentationToOneLookup toOneLookup,
                                                                    AdminPresentationDataDrivenEnumeration dataDrivenEnumeration) {
         if (annot != null) {
@@ -337,20 +450,10 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setCurrencyCodeField(annot.currencyCodeField());
             override.setRuleIdentifier(annot.ruleIdentifier());
             override.setTranslatable(annot.translatable());
+            override.setRequiredOverride(RequiredOverride.REQUIRED==annot.requiredOverride());
 
             if (annot.validationConfigurations().length != 0) {
-                ValidationConfiguration[] configurations = annot.validationConfigurations();
-                for (ValidationConfiguration configuration : configurations) {
-                    ConfigurationItem[] items = configuration.configurationItems();
-                    Map<String, String> itemMap = new HashMap<String, String>();
-                    for (ConfigurationItem item : items) {
-                        itemMap.put(item.itemName(), item.itemValue());
-                    }
-                    if (override.getValidationConfigurations() == null) {
-                        override.setValidationConfigurations(new LinkedHashMap<String, Map<String, String>>(5));
-                    }
-                    override.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
-                }
+                processValidationAnnotations(annot.validationConfigurations(), override);
             }
             if (annot.requiredOverride()!= RequiredOverride.IGNORED) {
                 override.setRequiredOverride(annot.requiredOverride()==RequiredOverride.REQUIRED);
@@ -391,6 +494,20 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             return override;
         }
         throw new IllegalArgumentException("AdminPresentation annotation not found on field");
+    }
+
+    protected void processValidationAnnotations(ValidationConfiguration[] configurations, FieldMetadataOverride override) {
+        for (ValidationConfiguration configuration : configurations) {
+            ConfigurationItem[] items = configuration.configurationItems();
+            Map<String, String> itemMap = new HashMap<String, String>();
+            for (ConfigurationItem item : items) {
+                itemMap.put(item.itemName(), item.itemValue());
+            }
+            if (override.getValidationConfigurations() == null) {
+                override.setValidationConfigurations(new LinkedHashMap<String, Map<String, String>>(5));
+            }
+            override.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
+        }
     }
 
     protected void buildBasicMetadata(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes,
