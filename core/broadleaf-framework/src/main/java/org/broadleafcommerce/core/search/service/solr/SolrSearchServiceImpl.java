@@ -54,8 +54,6 @@ import org.broadleafcommerce.core.search.service.SearchService;
 import org.springframework.beans.factory.DisposableBean;
 import org.xml.sax.SAXException;
 
-import javax.annotation.Resource;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -73,6 +71,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * An implementation of SearchService that uses Solr.
@@ -105,11 +106,16 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     public SolrSearchServiceImpl(String solrServer) throws IOException, ParserConfigurationException, SAXException {
         if ("solrhome".equals(solrServer)) {
+
             final String baseTempPath = System.getProperty("java.io.tmpdir");
 
-            File tempDir = new File(baseTempPath + File.separator + "solrhome");
+            File tempDir = new File(baseTempPath + File.separator + System.getProperty("user.name") + File.separator + "solrhome");
+            if (System.getProperty("tmpdir.solrhome") != null) {
+                //allow for an override of tmpdir
+                tempDir = new File(System.getProperty("tmpdir.solrhome"));
+            }
             if (!tempDir.exists()) {
-                tempDir.mkdir();
+                tempDir.mkdirs();
             }
 
             solrServer = tempDir.getAbsolutePath();
