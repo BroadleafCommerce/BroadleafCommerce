@@ -1,5 +1,9 @@
 package org.broadleafcommerce.common.i18n.service;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -27,6 +31,8 @@ public class TranslationServiceImpl implements TranslationService {
     
     @Resource(name = "blTranslationDao")
     protected TranslationDao dao;
+    
+    protected Cache cache;
     
     @Override
     @Transactional("blTransactionManager")
@@ -100,15 +106,29 @@ public class TranslationServiceImpl implements TranslationService {
             localeCountryCode += "_" + locale.getCountry();
         }
         
-        // First, we'll try to look up a country language combo (en_GB)
-        Translation translation = getTranslation(entityType, entityId, property, localeCountryCode);
+        Translation translation = null;
         
-        // If we don't find one, let's try just the language (en)
-        if (translation == null) {
-            translation = getTranslation(entityType, entityId, property, localeCode);
+        // First, we'll try to look up a country language combo (en_GB), utilizing the cache
+        String countryCacheKey = getCacheKey(entityType, entityId, property, localeCountryCode);
+        if (getCache().isKeyInCache(countryCacheKey)) {
+            translation = (Translation) getCache().get(countryCacheKey).getObjectValue();
+        } else {
+            translation = getTranslation(entityType, entityId, property, localeCountryCode);
+            getCache().put(new Element(countryCacheKey, translation));
         }
         
-        // If we have a match on a translation, use that instead of what we found on the entity
+        // If we don't find one, let's try just the language (en), again utilizing the cache
+        if (translation == null) {
+            String nonCountryCacheKey = getCacheKey(entityType, entityId, property, localeCode);
+            if (getCache().isKeyInCache(nonCountryCacheKey)) {
+                translation = (Translation) getCache().get(nonCountryCacheKey).getObjectValue();
+            } else {
+                translation = getTranslation(entityType, entityId, property, localeCode);
+                getCache().put(new Element(nonCountryCacheKey, translation));
+            }
+        }
+        
+        // If we have a match on a translation, use that instead of what we found on the entity.
         if (translation != null && StringUtils.isNotBlank(translation.getTranslatedValue())) {
             return translation.getTranslatedValue();
         }
@@ -167,6 +187,17 @@ public class TranslationServiceImpl implements TranslationService {
         
         throw new IllegalArgumentException(String.format("Could not retrieve value for id property. Object: [%s], " +
         		"ID Property: [%s], ID Type: [%s]", entity, idProperty, idType));
+    }
+    
+    protected String getCacheKey(TranslatedEntity entityType, String entityId, String property, String localeCode) {
+        return StringUtils.join(new String[] { entityType.getFriendlyType(), entityId, property, localeCode }, "|");
+    }
+    
+    protected Cache getCache() {
+        if (cache == null) {
+            cache = CacheManager.getInstance().getCache("blTranslationElements");
+        }
+        return cache;
     }
 
 }

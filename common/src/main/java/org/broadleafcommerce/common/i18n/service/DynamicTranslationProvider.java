@@ -20,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Convenience class to provide dynamic field translations.
@@ -33,23 +32,12 @@ public class DynamicTranslationProvider {
      * If translations are enabled, this method will look for a translation for the specified field. If translations are
      * disabled or if this particular field did not have a translation, it will return back the defaultValue.
      * 
-     * If the cache parameter is not null, we will first attempt to resolve the translation from the map before asking
-     * the translation service for a value. If it is not null and the property did not have a value in the map, we will
-     * cache the result.
-     * 
      * @param obj
      * @param field
      * @param defaultValue
-     * @param cache - an optional map that will cache field name to translated value
      * @return the translated value
      */
-    public static String getValue(Object obj, String field, final String defaultValue, Map<String, String> cache) {
-        // If this field is in the cache, that means we have already calculated the appropriate translation
-        // for this request.
-        if (cache != null && cache.containsKey(field)) {
-            return cache.get(field);
-        }
-        
+    public static String getValue(Object obj, String field, final String defaultValue) {
         String valueToReturn = defaultValue;
         
         if (TranslationConsiderationContext.hasTranslation()) {
@@ -60,10 +48,6 @@ public class DynamicTranslationProvider {
             if (StringUtils.isNotBlank(translatedValue)) {
                 valueToReturn = translatedValue;
             }
-        }
-        
-        if (cache != null) {
-            cache.put(field, valueToReturn);
         }
             
         return valueToReturn;

@@ -37,6 +37,7 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
 
     public static final TranslatedEntity PRODUCT = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.Product", "Product");
     public static final TranslatedEntity SKU = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.Sku", "Sku");
+    public static final TranslatedEntity CATEGORY = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.Category", "Category");
     public static final TranslatedEntity PRODUCT_OPTION = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.ProductOption", "ProdOption");
     public static final TranslatedEntity PRODUCT_OPTION_VALUE = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.ProductOptionValue", "ProdOptionVal");
 

@@ -32,9 +32,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -50,7 +48,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -128,9 +125,6 @@ public class ProductOptionImpl implements ProductOption {
     @BatchSize(size = 50)
     protected List<Product> products;
     
-    @Transient
-    protected Map<String, String> translationCache = new HashMap<String, String>();
-    
     @Override
     public Long getId() {
         return id;
@@ -163,7 +157,7 @@ public class ProductOptionImpl implements ProductOption {
     
     @Override
     public String getLabel() {
-        return DynamicTranslationProvider.getValue(this, "label", label, translationCache);
+        return DynamicTranslationProvider.getValue(this, "label", label);
     }
     
     @Override

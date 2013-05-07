@@ -14,6 +14,14 @@
         <property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
         <property name="persistenceUnitName" value="blPU"/>
     </bean>
+    
+    <bean id="blMergedCacheConfigLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:bl-common-ehcache.xml</value>
+            </list>
+        </property>
+    </bean>
 
     <bean id="blMergedPersistenceXmlLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">

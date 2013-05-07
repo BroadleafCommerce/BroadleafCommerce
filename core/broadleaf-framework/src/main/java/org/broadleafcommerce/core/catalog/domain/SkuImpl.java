@@ -333,9 +333,6 @@ public class SkuImpl implements Sku {
         group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced)
     @AdminPresentationToOneLookup(lookupType = LookupType.DROPDOWN, lookupDisplayProperty = "friendlyName")
     protected BroadleafCurrency currency;
-    
-    @Transient
-    protected Map<String, String> translationCache = new HashMap<String, String>();
 
     @Override
     public Long getId() {
@@ -484,7 +481,7 @@ public class SkuImpl implements Sku {
             return lookupDefaultSku().getName();
         }
         
-        return DynamicTranslationProvider.getValue(this, "name", name, translationCache);
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
@@ -498,7 +495,7 @@ public class SkuImpl implements Sku {
             return lookupDefaultSku().getDescription();
         }
         
-        return DynamicTranslationProvider.getValue(this, "description", description, translationCache);
+        return DynamicTranslationProvider.getValue(this, "description", description);
     }
 
     @Override
@@ -512,7 +509,7 @@ public class SkuImpl implements Sku {
             return lookupDefaultSku().getLongDescription();
         }
         
-        return DynamicTranslationProvider.getValue(this, "longDescription", longDescription, translationCache);
+        return DynamicTranslationProvider.getValue(this, "longDescription", longDescription);
     }
 
     @Override

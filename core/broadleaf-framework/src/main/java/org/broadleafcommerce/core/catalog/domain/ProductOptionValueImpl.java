@@ -29,8 +29,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,7 +39,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -81,9 +78,6 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @ManyToOne(targetEntity = ProductOptionImpl.class)
     @JoinColumn(name = "PRODUCT_OPTION_ID")
     protected ProductOption productOption;
-    
-    @Transient
-    protected Map<String, String> translationCache = new HashMap<String, String>();
 
     @Override
     public Long getId() {
@@ -97,7 +91,7 @@ public class ProductOptionValueImpl implements ProductOptionValue {
 
     @Override
     public String getAttributeValue() {
-        return DynamicTranslationProvider.getValue(this, "attributeValue", attributeValue, translationCache);
+        return DynamicTranslationProvider.getValue(this, "attributeValue", attributeValue);
     }
 
     @Override

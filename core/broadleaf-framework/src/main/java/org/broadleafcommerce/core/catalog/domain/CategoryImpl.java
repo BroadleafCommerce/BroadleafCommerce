@@ -373,9 +373,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
-    
-    @Transient
-    protected Map<String, String> translationCache = new HashMap<String, String>();
 
     @Transient
     @Hydrated(factoryMethod = "createChildCategoryURLMap")
@@ -411,7 +408,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
 
     @Override
     public String getName() {
-        return DynamicTranslationProvider.getValue(this, "name", name, translationCache);
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
@@ -460,7 +457,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
 
     @Override
     public String getDescription() {
-        return DynamicTranslationProvider.getValue(this, "description", description, translationCache);
+        return DynamicTranslationProvider.getValue(this, "description", description);
     }
 
     @Override
@@ -516,7 +513,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
 
     @Override
     public String getLongDescription() {
-        return DynamicTranslationProvider.getValue(this, "longDescription", longDescription, translationCache);
+        return DynamicTranslationProvider.getValue(this, "longDescription", longDescription);
     }
 
     @Override
