@@ -117,7 +117,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
 
         for (String propertyName : presentationOverrides.keySet()) {
             for (String key : metadata.keySet()) {
-                if (key.startsWith(propertyName)) {
+                if (StringUtils.isEmpty(propertyName) || key.startsWith(propertyName)) {
                     buildAdminPresentationOverride(overrideViaAnnotationRequest.getPrefix(), overrideViaAnnotationRequest.getParentExcluded(), metadata, presentationOverrides, propertyName, key, overrideViaAnnotationRequest.getDynamicEntityDao());
                 }
             }

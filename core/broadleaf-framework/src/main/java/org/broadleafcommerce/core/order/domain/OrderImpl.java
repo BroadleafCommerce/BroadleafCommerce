@@ -97,27 +97,15 @@ import java.util.Map;
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationOverrides(
     value = {
-        /*@AdminPresentationOverride(name="customer", mergeValue = @AdminPresentationMerge(
+        @AdminPresentationOverride(name="", mergeValue = @AdminPresentationMerge(
                 mergeEntries = {
-                        //set all customer fields to not prominent, and go ahead and hide them all
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.prominent, booleanOverrideValue = false),
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded, booleanOverrideValue = true)
+                        //make all fields that appear in the order form readonly
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.readOnly, booleanOverrideValue = true)
                 })
         ),
-        @AdminPresentationOverride(name="customer.firstName", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        //override the hide from above to show name
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded, booleanOverrideValue = false)
-                })
-        ),
-        @AdminPresentationOverride(name="customer.lastName", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        //override the hide form above to show name
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded, booleanOverrideValue = false)
-                })
-        ),*/
         @AdminPresentationOverride(name="currency", mergeValue = @AdminPresentationMerge(
                 mergeEntries = {
+                        //don't allow currency fields to be prominent
                         @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.prominent, booleanOverrideValue = false)
                 })
         )
