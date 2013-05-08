@@ -27,14 +27,12 @@ import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.endpoint.catalog.CatalogEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -56,7 +54,7 @@ import javax.ws.rs.core.UriInfo;
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-public class CartEndpoint implements ApplicationContextAware {
+public abstract class CartEndpoint extends BaseEndpoint {
 
     @Resource(name="blOrderService")
     protected OrderService orderService;
@@ -66,13 +64,6 @@ public class CartEndpoint implements ApplicationContextAware {
 
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
-
-    protected ApplicationContext context;
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
-    }
 
    /**
      * Search for {@code Order} by {@code Customer}

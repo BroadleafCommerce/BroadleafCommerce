@@ -29,14 +29,12 @@ import org.broadleafcommerce.core.payment.service.CompositePaymentService;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.service.workflow.CompositePaymentResponse;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,7 +56,7 @@ import javax.ws.rs.core.Response;
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-public class CheckoutEndpoint implements ApplicationContextAware {
+public abstract class CheckoutEndpoint extends BaseEndpoint {
 
     @Resource(name="blCheckoutService")
     protected CheckoutService checkoutService;
@@ -70,13 +68,6 @@ public class CheckoutEndpoint implements ApplicationContextAware {
 
     @Resource(name="blOrderService")
     protected OrderService orderService;
-
-    protected ApplicationContext context;
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
-    }
 
     //This should only be called for modules that need to engage the workflow directly without doing a complete checkout.
     //e.g. PayPal for doing an authorize and retrieving the redirect: url to PayPal

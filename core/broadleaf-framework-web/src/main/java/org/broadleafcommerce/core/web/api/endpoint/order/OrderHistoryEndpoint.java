@@ -19,12 +19,10 @@ package org.broadleafcommerce.core.web.api.endpoint.order;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,17 +41,10 @@ import javax.ws.rs.core.Response;
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-public class OrderHistoryEndpoint implements ApplicationContextAware {
+public abstract class OrderHistoryEndpoint extends BaseEndpoint {
 
     @Resource(name="blOrderService")
     protected OrderService orderService;
-
-    protected ApplicationContext context;
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
-    }
 
     public List<OrderWrapper> findOrdersForCustomer(HttpServletRequest request,
             String orderStatus) {

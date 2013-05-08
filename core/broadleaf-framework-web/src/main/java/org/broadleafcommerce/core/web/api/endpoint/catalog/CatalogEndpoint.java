@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.CategoriesWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper;
@@ -37,9 +38,6 @@ import org.broadleafcommerce.core.web.api.wrapper.ProductWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.RelatedProductWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuWrapper;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -73,12 +71,10 @@ import javax.ws.rs.core.Response;
  *
  * User: Kelly Tisdell
  */
-public abstract class CatalogEndpoint implements ApplicationContextAware {
+public abstract class CatalogEndpoint extends BaseEndpoint {
 
     @Resource(name="blCatalogService")
     protected CatalogService catalogService;
-
-    protected ApplicationContext context;
 
     //We don't inject this here because of a few dependency issues. Instead, we look this up dynamically
     //using the ApplicationContext
@@ -459,11 +455,6 @@ public abstract class CatalogEndpoint implements ApplicationContextAware {
             return wrapper;
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND);
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
     }
 
     protected StaticAssetService getStaticAssetService() {

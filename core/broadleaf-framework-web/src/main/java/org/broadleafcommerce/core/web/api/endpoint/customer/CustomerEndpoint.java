@@ -16,10 +16,8 @@
 
 package org.broadleafcommerce.core.web.api.endpoint.customer;
 
+import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Resource;
 
@@ -32,16 +30,9 @@ import javax.annotation.Resource;
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-public class CustomerEndpoint implements ApplicationContextAware {
+public abstract class CustomerEndpoint extends BaseEndpoint {
 
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
-
-    protected ApplicationContext context;
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
-    }
 
 }

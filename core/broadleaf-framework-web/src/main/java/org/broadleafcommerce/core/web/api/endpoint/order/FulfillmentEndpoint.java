@@ -25,14 +25,12 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupItemWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +49,7 @@ import javax.ws.rs.core.Response;
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-public class FulfillmentEndpoint implements ApplicationContextAware {
+public abstract class FulfillmentEndpoint extends BaseEndpoint {
 
     @Resource(name="blCheckoutService")
     protected CheckoutService checkoutService;
@@ -61,13 +59,6 @@ public class FulfillmentEndpoint implements ApplicationContextAware {
     
     @Resource(name="blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
-
-    protected ApplicationContext context;
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
-    }
 
     public List<FulfillmentGroupWrapper> findFulfillmentGroupsForOrder(HttpServletRequest request) {
         Customer customer = CustomerState.getCustomer(request);
