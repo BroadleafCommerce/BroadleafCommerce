@@ -423,14 +423,19 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * @throws InvocationTargetException 
      * @throws IllegalAccessException 
      */
-    public static String getStringValueFromGetter(String propertyName, Sku sku, RecordHelper helper) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, FieldNotAvailableException {
+    public static String getStringValueFromGetter(String propertyName, Sku sku, RecordHelper helper) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         //only attempt the getter on the first-level Sku properties
         if (propertyName.contains(".")) {
             StringTokenizer tokens = new StringTokenizer(propertyName, ".");
             propertyName = tokens.nextToken();
         }
 
-        Object value = helper.getFieldManager().getFieldValue(sku, propertyName);
+        Object value = null;
+        try {
+            value = helper.getFieldManager().getFieldValue(sku, propertyName);
+        } catch (FieldNotAvailableException e) {
+            //do nothing
+        }
 
         String strVal;
         if (value == null) {
