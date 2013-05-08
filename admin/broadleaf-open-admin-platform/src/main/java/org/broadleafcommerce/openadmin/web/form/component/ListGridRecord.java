@@ -30,6 +30,7 @@ public class ListGridRecord {
     protected ListGrid listGrid;
     protected String id;
     protected List<Field> fields = new ArrayList<Field>();
+    protected List<Field> hiddenFields = new ArrayList<Field>();
     
     /**
      * Convenience map keyed by the field name. Used to guarantee field ordering with header fields within a ListGrid
@@ -82,7 +83,15 @@ public class ListGridRecord {
     public void setFields(List<Field> fields) {
         this.fields = fields;
     }
-    
+
+    public List<Field> getHiddenFields() {
+        return hiddenFields;
+    }
+
+    public void setHiddenFields(List<Field> hiddenFields) {
+        this.hiddenFields = hiddenFields;
+    }
+
     /**
      * Returns a {@link Field} in this record for a particular field name. Used when displaying a {@link ListGrid} in order
      * to guarantee proper field ordering
@@ -112,4 +121,22 @@ public class ListGridRecord {
         fieldMap = null;
     }
 
+    public String getHiddenFieldsJson() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        sb.append("\"hiddenFields\":[");
+        for (int j=0;j<hiddenFields.size();j++) {
+            sb.append("{\"name\":\"");
+            sb.append(hiddenFields.get(j).getName());
+            sb.append("\",\"val\":\"");
+            sb.append(hiddenFields.get(j).getValue());
+            sb.append("\"}");
+            if (j < hiddenFields.size()-1) {
+                sb.append(",");
+            }
+        }
+        sb.append("]}");
+
+        return sb.toString();
+    }
 }

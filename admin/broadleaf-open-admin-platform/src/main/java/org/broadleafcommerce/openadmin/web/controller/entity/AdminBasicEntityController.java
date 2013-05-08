@@ -428,18 +428,18 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param response
      * @param model
      * @param pathVars
+     * @param owningClass
      * @param collectionField
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{collectionField:.*}/select", method = RequestMethod.GET)
+    @RequestMapping(value = "{owningClass:.*}/{collectionField:.*}/select", method = RequestMethod.GET)
     public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
+            @PathVariable String owningClass,
             @PathVariable String collectionField,
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
-        String sectionKey = getSectionKey(pathVars);
-        String mainClassName = getClassNameForSection(sectionKey);
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, requestParams);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams);
         ClassMetadata mainMetadata = service.getClassMetadata(ppr);
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
@@ -452,7 +452,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         
         if (md instanceof BasicFieldMetadata) {
             DynamicResultSet drs = service.getRecords(ppr);
-            ListGrid listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, sectionKey);
+            ListGrid listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, owningClass);
 
             model.addAttribute("listGrid", listGrid);
             model.addAttribute("viewType", "modal/simpleSelectEntity");
@@ -461,7 +461,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", "selectCollectionItem");
         model.addAttribute("collectionProperty", collectionProperty);
-        setModelAttributes(model, sectionKey);
+        setModelAttributes(model, owningClass);
         return "modules/modalContainer";
     }
     
@@ -667,7 +667,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id:[0-9]*}/{collectionField:.*}/{collectionItemId:[0-9]*}", method = RequestMethod.GET)
     public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable String id,

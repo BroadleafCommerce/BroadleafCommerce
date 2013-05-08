@@ -22,6 +22,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaDto;
@@ -139,7 +140,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
           .withOrder(fmd.getGridOrder())
           .withColumnWidth(fmd.getColumnWidth())
           .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
-          .withForeignKeyClass(fmd.getForeignKeyClass());
+          .withForeignKeyClass(fmd.getForeignKeyClass())
+          .withOwningEntityClass(fmd.getOwningClass() != null ? fmd.getOwningClass() : fmd.getTargetClass());
         String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
         hf.setFieldType(fieldType);
         
@@ -318,6 +320,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 }
             }
 
+            if (e.findProperty(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY) != null) {
+                Field hiddenField = new Field().withName(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY);
+                hiddenField.setValue(e.findProperty(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY).getValue());
+                record.getHiddenFields().add(hiddenField);
+            }
+
             listGrid.getRecords().add(record);
         }
 
@@ -387,6 +395,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withFriendlyName(fmd.getFriendlyName())
                          .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
                          .withForeignKeyClass(fmd.getForeignKeyClass())
+                         .withOwningEntityClass(fmd.getOwningClass()!=null?fmd.getOwningClass():fmd.getTargetClass())
                          .withRequired(required)
                          .withReadOnly(fmd.getReadOnly())
                          .withTranslatable(fmd.getTranslatable())

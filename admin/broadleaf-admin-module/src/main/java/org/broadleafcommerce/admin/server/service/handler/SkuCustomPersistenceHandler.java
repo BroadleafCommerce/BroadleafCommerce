@@ -51,6 +51,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
@@ -408,36 +409,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
     }
 
-//    /**
-//     * Returns the Hibernate criteria with the proper table aliases based on the PersistentEntityCriteria representation.
-//     * Should be used in a fetch for both the row count criteria and actual fetch criteria. This will also apply the given
-//     * CTO onto returned Hibernate criteria
-//     *
-//     * This can also be used if you are attempting to filter on an object that could contain a Sku 'ToOne'
-//     * relationship that might need to be filtered on. For instance, InventoryImpl has a 'Sku' property called 'sku'. In
-//     * this scenario, the <b>skuPropertyPrefix</b> would be 'sku'.
-//     *
-//     * @return
-//     */
-//    public static Criteria getSkuCriteria(PersistentEntityCriteria criteria,
-//                                      Class entityClass,
-//                                      DynamicEntityDao deDao,
-//                                      String skuPropertyPrefix) {
-//        Criteria hibernateCriteria = deDao.createCriteria(entityClass);
-//        //Join these with left joins so that I get default Skus (that do not have this relationship) back as well
-//        if (StringUtils.isNotEmpty(skuPropertyPrefix)) {
-//            hibernateCriteria.createAlias(skuPropertyPrefix, skuPropertyPrefix);
-//            skuPropertyPrefix += ".";
-//        }
-//        if (skuPropertyPrefix == null) {
-//            skuPropertyPrefix = "";
-//        }
-//        hibernateCriteria.createAlias(skuPropertyPrefix + "product", "product", CriteriaSpecification.LEFT_JOIN)
-//                         .createAlias("product.defaultSku", "defaultSku", CriteriaSpecification.LEFT_JOIN);
-//        criteria.apply(hibernateCriteria);
-//        return hibernateCriteria;
-//    }
-
     /**
      * Under the covers this uses PropertyUtils to call the getter of the property name for the given Sku, then undergoes
      * conversion according to the formatters from <b>helper</b>.  This also attempts to only get the first-level properties
@@ -452,19 +423,14 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * @throws InvocationTargetException 
      * @throws IllegalAccessException 
      */
-    public static String getStringValueFromGetter(String propertyName, Sku sku, RecordHelper helper) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public static String getStringValueFromGetter(String propertyName, Sku sku, RecordHelper helper) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, FieldNotAvailableException {
         //only attempt the getter on the first-level Sku properties
         if (propertyName.contains(".")) {
             StringTokenizer tokens = new StringTokenizer(propertyName, ".");
             propertyName = tokens.nextToken();
         }
 
-        Object value;
-        try {
-            value = PropertyUtils.getProperty(sku, propertyName);
-        } catch (NoSuchMethodException e) {
-            return null;
-        }
+        Object value = helper.getFieldManager().getFieldValue(sku, propertyName);
 
         String strVal;
         if (value == null) {

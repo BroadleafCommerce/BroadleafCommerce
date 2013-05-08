@@ -82,7 +82,8 @@
                 th:unless="${#lists.isEmpty(listGrid.records)}"
                 th:classappend="${listGrid.clickable}? 'clickable'"
                 th:attr="data-link=@{${record.path}},
-                         data-index=${record.index}">
+                         data-index=${record.index},
+                         data-hiddenfields=${record.getHiddenFieldsJson()}">
                 
                 <td th:each="headerField : ${record.listGrid.headerFields}"
                     th:switch="${listGrid.listGridType}"
@@ -132,7 +133,8 @@
                 </td>
                 
                 <td data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
-                
+
+
             </tr>
             
         </tbody>

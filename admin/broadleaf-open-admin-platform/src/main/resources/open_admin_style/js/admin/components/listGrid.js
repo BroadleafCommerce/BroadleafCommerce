@@ -48,6 +48,14 @@
                 var value = $(this).data('fieldvalue');
                 fields[fieldName] = value;
             });
+
+            //add hidden fields to the array
+            var hiddenFields = $tr.data('hiddenfields');
+            for (j=0;j<hiddenFields.hiddenFields.length;j++) {
+                var fieldName = hiddenFields.hiddenFields[j].name;
+                var value = hiddenFields.hiddenFields[j].val;
+                fields[fieldName] = value;
+            }
             
             return fields;
         },

@@ -23,7 +23,9 @@ package org.broadleafcommerce.common.admin.domain;
  * @author Andre Azzolini (apazzolini)
  */
 public interface AdminMainEntity {
-    
+
+    public static final String MAIN_ENTITY_NAME_PROPERTY = "__adminMainEntity";
+
     /**
      * @return the display name of this entity for the admin screen
      */

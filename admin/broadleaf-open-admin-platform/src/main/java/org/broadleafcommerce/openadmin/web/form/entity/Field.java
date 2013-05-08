@@ -35,6 +35,7 @@ public class Field {
     protected String displayValue;
     protected String foreignKeyDisplayValueProperty;
     protected String foreignKeyClass;
+    protected String owningEntityClass;
     protected String idOverride;
     protected Integer order;
     protected String onChangeTrigger;
@@ -83,6 +84,11 @@ public class Field {
 
     public Field withForeignKeyClass(String foreignKeyClass) {
         setForeignKeyClass(foreignKeyClass);
+        return this;
+    }
+
+    public Field withOwningEntityClass(String owningEntityClass) {
+        setOwningEntityClass(owningEntityClass);
         return this;
     }
     
@@ -300,6 +306,14 @@ public class Field {
 
     public void setForeignKeyClass(String foreignKeyClass) {
         this.foreignKeyClass = foreignKeyClass;
+    }
+
+    public String getOwningEntityClass() {
+        return owningEntityClass;
+    }
+
+    public void setOwningEntityClass(String owningEntityClass) {
+        this.owningEntityClass = owningEntityClass;
     }
 
     public void setMainEntityLink(Boolean isMainEntityLink) {

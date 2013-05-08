@@ -196,7 +196,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 metadata.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                 metadata.setExplicitFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                 metadata.setLookupDisplayProperty(annot.lookupDisplayProperty());
-                metadata.setForeignKeyDisplayValueProperty(annot.lookupDisplayProperty());
+                if (!StringUtils.isEmpty(annot.lookupDisplayProperty())) {
+                    metadata.setForeignKeyDisplayValueProperty(annot.lookupDisplayProperty());
+                }
                 metadata.setCustomCriteria(annot.customCriteria());
                 metadata.setUseServerSideInspectionCache(annot.useServerSideInspectionCache());
             }
