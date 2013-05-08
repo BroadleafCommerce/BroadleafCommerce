@@ -849,10 +849,11 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
 
             public static final int NAME = 1000;
             public static final int SHORT_DESCRIPTION = 2000;
-            public static final int LONG_DESCRIPTION = 3000;
-            public static final int DEFAULT_CATEGORY = 4000;
-            public static final int MANUFACTURER = 5000;
-            public static final int URL = 6000;
+            public static final int PRIMARY_MEDIA = 3000;
+            public static final int LONG_DESCRIPTION = 4000;
+            public static final int DEFAULT_CATEGORY = 5000;
+            public static final int MANUFACTURER = 6000;
+            public static final int URL = 7000;
         }
     }
 

@@ -8,16 +8,37 @@
 </dl>    
 
 <script>
-    $('#fileupload').fileupload({
-        dataType: 'json',
-        done: function (e, data) {
-        	$("#imagePreview").attr("src",data.result.assetLarge);
-            $.each(data.result.files, function (index, file) {
-                $('<p/>').text(file.name).appendTo(document.body);
-            });
-        }
-    });  
+$('#blcUploadButton').click(function() {
+    $('#blcFileInputField').trigger('click');
+
+});
+
+function assetChanged() {
+	$('#blcUploadButton').hide();
+	$('#blcUploadingMessage').html("Loading ...");
+	$('#blcUploadingMessage').show();
+    $('#blcUploadFileForm').submit();
+}
+
+$('#upload_target').load(function(){
+    var json = $.parseJSON($("#upload_target").contents().text());
+    $("#imagePreview").attr("src",json.assetLarge);
+    $('#blcUploadingMessage').hide();
+    $('div.asset-selector-container').trigger('assetInfoSelected', json);
+});
+
 </script>
+
+<!--  Work around for non-HTML5 browsers.   The upload request result will be sent to this iframe where it
+  can be processed like ajax. -->
+<iframe id="upload_target" name="upload_target" style="display: none; height: 10px; width: 10px;"></iframe>
+
+<form method="post" id="blcUploadFileForm"
+    enctype="multipart/form-data"  
+    th:attr="action=@{${'/' + sectionKey + '/' + entityId + '/uploadAsset'}}"
+    target="upload_target" >
+    <input type="file" name="file" id="blcFileInputField" style="display:none;" onchange="assetChanged();"/>   
+</form>     
 
 <ul class="tabs-content">
     <li class="active" id="uploadAssetTab1Tab">
@@ -28,9 +49,9 @@
                 </div>
             </div>
             <div class="uploadForm" style="float: left">
-                <p>Select your file to upload.</p>
-                <input id="fileupload" type="file" name="file" th:attr="data-url=@{${'/' + sectionKey + '/' + entityId + '/uploadAsset'}}"/>
-            </div>
+                <div id="blcUploadButton" class="button">Click to Upload</div> 
+                <div id="blcUploadingMessage" style="display:none;">"Loading ..."</div>          
+            </div>         
         </div>
     </li>   
     <li id="chooseExistingAssetTab3Tab">

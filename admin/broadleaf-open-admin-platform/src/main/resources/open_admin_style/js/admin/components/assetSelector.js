@@ -1,13 +1,5 @@
 $(document).ready(function() {
-	
-    /**
-     * The rowSelected handler for a toOne list grid needs to trigger the specific valueSelected handler 
-     * for the field that we are performing the to-one lookup on.
-     */
-    $('body').on('asset-selected', function(event, link, fields, currentUrl) {
-        $('div.asset-selector-container').trigger('assetInfoSelected', fields);
-    });
-		
+			
 	/**
 	 * This handler will fire when the choose image button is clicked on the RTE control or as
 	 * part of a form dialogue.
@@ -21,9 +13,14 @@ $(document).ready(function() {
     	
     	$container.on('assetInfoSelected', function(event, fields) {
     		var $this = $(this);
+    		    		   
+    		$this.find('input.assetUrl').val(fields['assetUrl']);
+    		$this.find('img.assetSmallUrl').attr("src",fields['assetThumbnail']);
     		
-    		$this.find('input.assetInfo').val(fields['id']);
-    		$this.find('input.assetSmallUrl').val(fields['assetSmallUrl']);
+    		var mediaItem = $this.find('input.mediaItem');
+    		var mediaJson = jQuery.parseJSON(mediaItem.val());
+    		mediaJson.url = fields['assetUrl'];
+    		mediaItem.val(JSON.stringify(mediaJson));
     		
 			BLCAdmin.currentModal().modal('hide');
     	});

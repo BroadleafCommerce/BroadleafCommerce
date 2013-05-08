@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
 import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -114,8 +115,9 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         if (extractValueRequest.getRequestedValue() != null) {
             if (extractValueRequest.getRequestedValue() instanceof Media) {
                 Media media = (Media) extractValueRequest.getRequestedValue();
-                Property jsonProperty = convertMediaToJson(media, extractValueRequest.getMetadata().getName() + "Json");
-                extractValueRequest.getProps().add(jsonProperty);
+                String jsonString = convertMediaToJson(media);
+                property.setValue(jsonString);
+                property.setDisplayValue(extractValueRequest.getDisplayVal());
             } else {
                 throw new UnsupportedOperationException("MEDIA type is currently only supported on fields of type Media");
             }
@@ -125,7 +127,6 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
 
     @Override
     public FieldProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
-        //This may contain rule Json fields - convert and filter out
         // BP:  Basically copied this from RuleFieldPersistenceProvider
         List<Property> propertyList = new ArrayList<Property>();
         propertyList.addAll(Arrays.asList(addFilterPropertiesRequest.getEntity().getProperties()));
@@ -163,25 +164,20 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         return FieldPersistenceProvider.MEDIA;
     }
 
-    protected Property convertMediaToJson(Media media, String jsonProp) {
+    protected String convertMediaToJson(Media media) {
         String json;
         try {
             ObjectMapper om = new ObjectMapper();
-            json = om.writeValueAsString(media);
+            return om.writeValueAsString(media);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        Property p = new Property();
-        p.setName(jsonProp);
-        p.setValue(json);
-
-        return p;
     }
     
     protected Media convertJsonToMedia(String jsonProp) {
         try {
             ObjectMapper om = new ObjectMapper();
-            return om.readValue(jsonProp, Media.class);
+            return om.readValue(jsonProp, MediaImpl.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

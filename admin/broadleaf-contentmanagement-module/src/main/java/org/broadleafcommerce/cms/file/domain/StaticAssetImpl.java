@@ -37,6 +37,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -55,8 +58,6 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -93,7 +94,9 @@ public class StaticAssetImpl implements StaticAsset {
     protected AdminAuditable auditable = new AdminAuditable();
 
     @Column (name = "NAME", nullable = false)
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Item_Name", order=1, group = "StaticAssetImpl_Details", requiredOverride = RequiredOverride.NOT_REQUIRED)
+    @AdminPresentation(friendlyName = "StaticAssetImpl_Item_Name", order = 1, group = "StaticAssetImpl_Details",
+            requiredOverride = RequiredOverride.NOT_REQUIRED,
+            prominent = true)
     protected String name;
 
     /*@ManyToOne(targetEntity = SiteImpl.class)
@@ -103,7 +106,9 @@ public class StaticAssetImpl implements StaticAsset {
     protected Site site;
 
     @Column(name ="FULL_URL", nullable = false)
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Full_URL", order=2, group = "StaticAssetImpl_Details", requiredOverride = RequiredOverride.NOT_REQUIRED)
+    @AdminPresentation(friendlyName = "StaticAssetImpl_Full_URL", order = 2,
+            group = "StaticAssetImpl_Details", requiredOverride = RequiredOverride.NOT_REQUIRED,
+            prominent = true)
     @Index(name="ASST_FULL_URL_INDX", columnNames={"FULL_URL"})
     protected String fullUrl;
 

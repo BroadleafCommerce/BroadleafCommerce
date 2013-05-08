@@ -24,11 +24,13 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -38,7 +40,6 @@ import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPrici
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
@@ -235,16 +236,19 @@ public class SkuImpl implements Sku {
         keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
         deleteEntityUponRemove = true,
         mediaField = "url",
-        keys = {
-                @AdminPresentationMapKey(keyName = "primary", friendlyKeyName = "mediaPrimary"),
-                @AdminPresentationMapKey(keyName = "alt1", friendlyKeyName = "mediaAlternate1"),
-                @AdminPresentationMapKey(keyName = "alt2", friendlyKeyName = "mediaAlternate2"),
-                @AdminPresentationMapKey(keyName = "alt3", friendlyKeyName = "mediaAlternate3"),
-                @AdminPresentationMapKey(keyName = "alt4", friendlyKeyName = "mediaAlternate4"),
-                @AdminPresentationMapKey(keyName = "alt5", friendlyKeyName = "mediaAlternate5"),
-                @AdminPresentationMapKey(keyName = "alt6", friendlyKeyName = "mediaAlternate6")
-        }
+            forceFreeFormKeys = true
     )
+    @AdminPresentationMapFields(
+            mapDisplayFields = {
+                    @AdminPresentationMapField(
+                            fieldName = "primary",
+                            fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.MEDIA,
+                                    group = ProductImpl.Presentation.Group.Name.General,
+                                    groupOrder = ProductImpl.Presentation.Group.Order.General,
+                                    order = ProductImpl.Presentation.FieldOrder.PRIMARY_MEDIA,
+                                    friendlyName = "SkuImpl_Primary_Media")
+                    )
+            })
     protected Map<String, Media> skuMedia = new HashMap<String, Media>();
 
     /**

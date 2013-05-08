@@ -1,2 +1,14 @@
-<div class="field-label" th:text="#{${field.friendlyName}}" />
-<input type="text" class="twelve" th:field="*{fields['__${field.name}__'].value}" />
+<div class="asset-selector-container">  
+    <div class="field-label" th:text="#{${field.friendlyName}}" />
+    <input type="hidden" class="assetUrl" th:field="*{fields['__${field.name}__'].value}" />
+
+    <div class="mediaContainer" style="float:left; padding-right:30px">
+        <img class="assetSmallUrl" th:src="*{fields['__${field.name}__'].value} +'?smallAdminThumbnail'"/>
+    </div>
+    <div style="float:left">        
+        <a class="show-asset-selector tiny button" th:href="@{${'/'+sectionKey+ '/' + entityForm.id + '/chooseAsset'}}">
+            Choose            
+        </a>        
+    </div>
+    <br style="clear:both" />
+</div>

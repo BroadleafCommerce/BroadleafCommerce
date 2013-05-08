@@ -106,8 +106,8 @@
             <map>
                 <entry key="smallAdminThumbnail">
                     <map>
-                        <entry key="resize-width-amount" value="20"/>
-                        <entry key="resize-height-amount" value="20"/>
+                        <entry key="resize-width-amount" value="30"/>
+                        <entry key="resize-height-amount" value="30"/>
                         <entry key="resize-high-quality" value="false"/>
                         <entry key="resize-maintain-aspect-ratio" value="true"/>
                         <entry key="resize-reduce-only" value="true"/>

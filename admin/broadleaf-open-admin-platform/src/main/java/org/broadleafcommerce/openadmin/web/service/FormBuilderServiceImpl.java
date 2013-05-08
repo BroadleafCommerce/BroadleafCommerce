@@ -20,7 +20,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.media.domain.MediaDto;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -47,6 +51,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPe
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
+import org.broadleafcommerce.openadmin.web.form.component.MediaField;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilderField;
 import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
@@ -75,6 +80,8 @@ import javax.annotation.Resource;
  */
 @Service("blFormBuilderService")
 public class FormBuilderServiceImpl implements FormBuilderService {
+
+    private static final Log LOG = LogFactory.getLog(FormBuilderServiceImpl.class);
 
     @Resource(name = "blAdminEntityService")
     protected AdminEntityService adminEntityService;
@@ -357,6 +364,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         // modal, so we'll provision the combo field here. Available options will be set as part of a
                         // subsequent operation
                         f = new ComboField();
+                    } else if (fieldType.equals(SupportedFieldType.MEDIA.toString())) {
+                        f = new MediaField();
                     } else {
                         // Create a default field since there was no specialized handler
                         f = new Field();
@@ -459,6 +468,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             if (dw != null) {
                                 rbf.setDataWrapper(dw);
                             }
+                        }
+                        if (basicFM.getFieldType() == SupportedFieldType.MEDIA) {
+                            field.setValue(entityProp.getValue());
+                            field.setDisplayValue(entityProp.getDisplayValue());
+                            MediaField mf = (MediaField) field;
+                            mf.setMedia(convertJsonToMedia(entityProp.getValue()));
                         } else {
                             field.setValue(entityProp.getValue());
                             field.setDisplayValue(entityProp.getDisplayValue());
@@ -472,6 +487,18 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (p != null) {
             ef.setMainEntityName(p.getValue());
         }
+    }
+
+    protected Media convertJsonToMedia(String json) {
+        if (json != null && !"".equals(json)) {
+            try {
+                ObjectMapper om = new ObjectMapper();
+                return om.readValue(json, MediaDto.class);
+            } catch (Exception e) {
+                LOG.warn("Error parsing json to media " + json, e);
+            }
+        }
+        return new MediaDto();
     }
 
     /**

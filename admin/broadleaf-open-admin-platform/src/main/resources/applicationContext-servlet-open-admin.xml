@@ -19,6 +19,11 @@
         <property name="order" value="1"/>
     </bean>
     
+    <bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">     
+        <property name="maxUploadSize" value="${asset.server.max.uploadable.file.size}"/>
+    </bean>    
+    
     <mvc:annotation-driven/>
     
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">

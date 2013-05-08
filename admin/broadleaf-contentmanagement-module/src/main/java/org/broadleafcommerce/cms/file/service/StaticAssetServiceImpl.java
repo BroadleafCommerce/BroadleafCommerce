@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.cms.file.service;
 
-import eu.medsea.mimeutil.MimeType;
-import eu.medsea.mimeutil.MimeUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,7 +41,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
+import eu.medsea.mimeutil.MimeType;
+import eu.medsea.mimeutil.MimeUtil;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -51,6 +51,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import javax.annotation.Resource;
 
 /**
  * Created by bpolster.
@@ -103,25 +105,6 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
             LOG.warn("No extension provided for asset : " + fileName);
             return null;
         }
-    }
-
-    protected String getMimeType(MultipartFile file) {
-        Collection mimeTypes = MimeUtil.getMimeTypes(file.getOriginalFilename());
-        if (!mimeTypes.isEmpty()) {
-            MimeType mimeType = (MimeType) mimeTypes.iterator().next();
-            return mimeType.toString();
-        } else {
-            try {
-                mimeTypes = MimeUtil.getMimeTypes(file.getInputStream());
-                if (!mimeTypes.isEmpty()) {
-                    MimeType mimeType = (MimeType) mimeTypes.iterator().next();
-                    return mimeType.toString();
-                }
-            } catch (IOException ioe) {
-                throw new RuntimeException(ioe);
-            }
-        }
-        return null;
     }
 
     /**
@@ -212,7 +195,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
         }
 
         newAsset.setName(file.getOriginalFilename());
-        newAsset.setMimeType(getMimeType(file));
+        newAsset.setMimeType(file.getContentType());
         newAsset.setFileExtension(getFileExtension(file.getOriginalFilename()));
         newAsset.setFileSize(file.getSize());
         newAsset.setFullUrl(fullUrl);

@@ -20,14 +20,6 @@ import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactProcessor
 import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.EffectsManager;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.BufferedOutputStream;
@@ -36,6 +28,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 /**
  * Created by IntelliJ IDEA.
@@ -90,7 +91,7 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
             Iterator<ImageReader> iter = ImageIO.getImageReaders(ImageIO.createImageInputStream(artifactStream));
             ImageReader reader = iter.next();
             String formatName = reader.getFormatName();
-            ((ByteArrayInputStream) artifactStream).reset();
+            artifactStream.reset();
             BufferedImage image = ImageIO.read(ImageIO.createImageInputStream(artifactStream));
 
             //before

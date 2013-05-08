@@ -13,6 +13,7 @@
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminModuleImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl</class>
+        <class>org.broadleafcommerce.common.media.domain.MediaImpl</class>
         <class>org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl</class>
         <class>org.broadleafcommerce.openadmin.server.domain.SandBoxActionImpl</class>
         <exclude-unlisted-classes/>
