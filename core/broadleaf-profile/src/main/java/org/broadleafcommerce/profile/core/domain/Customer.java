@@ -127,4 +127,8 @@ public interface Customer extends Serializable {
     public List<CustomerPayment> getCustomerPayments();
 
     public void setCustomerPayments(List<CustomerPayment> customerPayments);
+
+    public String getTaxExemption();
+
+    public void setTaxExemption(String exemption);
 }

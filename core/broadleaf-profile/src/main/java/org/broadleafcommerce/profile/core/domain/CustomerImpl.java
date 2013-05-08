@@ -190,6 +190,8 @@ public class CustomerImpl implements Customer, AdminMainEntity {
     @Transient
     protected boolean loggedIn;
 
+    protected String taxExemption;
+
     @Override
     public Long getId() {
         return id;
@@ -505,5 +507,15 @@ public class CustomerImpl implements Customer, AdminMainEntity {
                 public static final int Advanced = 3000;
             }
         }
+    }
+
+    @Override
+    public String getTaxExemption() {
+        return this.taxExemption;
+    }
+
+    @Override
+    public void setTaxExemption(String exemption) {
+        this.taxExemption = exemption;
     }
 }
