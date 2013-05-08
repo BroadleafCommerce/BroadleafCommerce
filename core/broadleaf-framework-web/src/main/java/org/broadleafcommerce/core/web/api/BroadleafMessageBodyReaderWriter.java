@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.web.api;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Scope;
 
 import com.sun.jersey.core.impl.provider.entity.XMLListElementProvider;
 import com.sun.jersey.core.impl.provider.entity.XMLRootElementProvider;
@@ -68,6 +69,7 @@ import javax.xml.stream.XMLInputFactory;
  * @see com.sun.jersey.core.impl.provider.entity.XMLListElementProvider
  * 
  */
+@Scope("prototype")
 @Provider
 @Produces(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
         MediaType.TEXT_XML })
@@ -76,6 +78,8 @@ import javax.xml.stream.XMLInputFactory;
 public class BroadleafMessageBodyReaderWriter implements
         MessageBodyReader<Object>, MessageBodyWriter<Object>, ContextResolver<JAXBContext>,
         ApplicationContextAware {
+
+    protected static HashMap<String, Class<?>> typeMap = null;
 
     protected ApplicationContext applicationContext;
 
@@ -89,7 +93,6 @@ public class BroadleafMessageBodyReaderWriter implements
     protected Injectable<SAXParserFactory> spf;
     
     protected JAXBContext jaxbContext = null;
-    protected HashMap<String, Class<?>> typeMap = null;
 
     protected XMLListElementProvider.App xmlListProvider;
     protected JSONListElementProvider.App jsonListProvider;
@@ -311,7 +314,7 @@ public class BroadleafMessageBodyReaderWriter implements
     /*
      * This is based on the Sun / Oracle implementation of a similar class
      */
-    private class ParameterizedTypeImpl implements ParameterizedType {
+    protected class ParameterizedTypeImpl implements ParameterizedType {
 
         private final Type[] actualTypeArguments;
         private final Class<?> rawType;
@@ -362,13 +365,13 @@ public class BroadleafMessageBodyReaderWriter implements
     }
     
     protected void initializeTypeMap() {
-        if (this.typeMap == null) {
-            synchronized(this) {
-                if (this.typeMap == null) {
-                    this.typeMap = new HashMap<String, Class<?>>();
+        if (typeMap == null) {
+            synchronized (this.getClass()) {
+                if (typeMap == null) {
+                    typeMap = new HashMap<String, Class<?>>();
                     Map<String, Object> apiWrappers = applicationContext.getBeansWithAnnotation(XmlRootElement.class);
                     for (Object obj : apiWrappers.values()) {
-                        this.typeMap.put(obj.getClass().getName(), obj.getClass());
+                        typeMap.put(obj.getClass().getName(), obj.getClass());
                     }
                 }
             }
