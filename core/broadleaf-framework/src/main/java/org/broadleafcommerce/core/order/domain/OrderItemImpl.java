@@ -68,19 +68,7 @@ import java.util.Map;
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationOverrides(
     {
-        @AdminPresentationOverride(name="giftWrapOrderItem", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="skuBundleItem", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="product.defaultCategory", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="product.name", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="product.description", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="product.longDescription", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="product.activeStartDate", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="product.activeEndDate", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="product.sku", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="product.defaultSku", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="sku.name", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="sku.salePrice", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="sku.retailPrice", value=@AdminPresentation(excluded = true)),
         @AdminPresentationOverride(name="bundleOrderItem", value=@AdminPresentation(excluded = true))
     }
 )
@@ -161,11 +149,9 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     
     @Column(name = "ORDER_ITEM_TYPE")
     @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
-    @AdminPresentation(excluded = true)
     protected String orderItemType;
 
     @Column(name = "ITEM_TAXABLE_FLAG")
-    @AdminPresentation(excluded = true)
     protected Boolean itemTaxable;
 
     @Column(name = "RETAIL_PRICE_OVERRIDE")
@@ -175,7 +161,6 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     protected Boolean salePriceOverride;
 
     @Column(name = "DISCOUNTS_ALLOWED")
-    @AdminPresentation(excluded = true)
     protected Boolean discountsAllowed;
 
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)

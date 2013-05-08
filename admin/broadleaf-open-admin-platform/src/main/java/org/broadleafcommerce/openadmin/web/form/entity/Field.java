@@ -18,7 +18,6 @@ package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 
 
 
@@ -35,6 +34,7 @@ public class Field {
     protected String value;
     protected String displayValue;
     protected String foreignKeyDisplayValueProperty;
+    protected String foreignKeyClass;
     protected String idOverride;
     protected Integer order;
     protected String onChangeTrigger;
@@ -76,6 +76,11 @@ public class Field {
     
     public Field withForeignKeyDisplayValueProperty(String foreignKeyDisplayValueProperty) {
         setForeignKeyDisplayValueProperty(foreignKeyDisplayValueProperty);
+        return this;
+    }
+
+    public Field withForeignKeyClass(String foreignKeyClass) {
+        setForeignKeyClass(foreignKeyClass);
         return this;
     }
     
@@ -141,14 +146,12 @@ public class Field {
 
     /**
      * Used to build a link for this particular field value to be displayed in a modal. This is used to build the link for
-     * a 'to-one-lookup' field inside of a list grid. This is only the second part of the link. This needs to be prepended
-     * with the url path for the listgrid itself.
+     * a 'to-one-lookup' field.
      * 
      * @return
-     * @see {@link AdminBasicEntityController#viewCollectionItemDetails()}
      */
     public String getEntityViewPath() {
-        return getName() + "/" + getValue() + "/view";
+        return getForeignKeyClass() + "/" + getValue();
     }
     
     /**
@@ -271,5 +274,12 @@ public class Field {
     public void setTranslatable(Boolean translatable) {
         this.isTranslatable = translatable;
     }
-    
+
+    public String getForeignKeyClass() {
+        return foreignKeyClass;
+    }
+
+    public void setForeignKeyClass(String foreignKeyClass) {
+        this.foreignKeyClass = foreignKeyClass;
+    }
 }

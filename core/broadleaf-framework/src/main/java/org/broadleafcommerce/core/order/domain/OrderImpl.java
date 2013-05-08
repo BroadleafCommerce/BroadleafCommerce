@@ -100,17 +100,20 @@ import java.util.Map;
         @AdminPresentationOverride(name="", mergeValue = @AdminPresentationMerge(
                 mergeEntries = {
                         //make all fields that appear in the order form readonly
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.readOnly, booleanOverrideValue = true)
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.readOnly,
+                                booleanOverrideValue = true)
                 })
         ),
         @AdminPresentationOverride(name="currency", mergeValue = @AdminPresentationMerge(
                 mergeEntries = {
                         //don't allow currency fields to be prominent
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.prominent, booleanOverrideValue = false)
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.prominent,
+                                booleanOverrideValue = false)
                 })
         )
     },
-    collections = @AdminPresentationCollectionOverride(name="customer.customerAttributes", value=@AdminPresentationCollection(excluded = true, addType = AddMethodType.PERSIST))
+    collections = @AdminPresentationCollectionOverride(name="customer.customerAttributes",
+            value=@AdminPresentationCollection(excluded = true, addType = AddMethodType.PERSIST))
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderImpl_baseOrder")
 public class OrderImpl implements Order, AdminMainEntity {
@@ -119,7 +122,8 @@ public class OrderImpl implements Order, AdminMainEntity {
 
     @Id
     @GeneratedValue(generator = "OrderId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OrderId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderImpl", allocationSize = 50)
+    @TableGenerator(name = "OrderId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL",
+            pkColumnValue = "OrderImpl", allocationSize = 50)
     @Column(name = "ORDER_ID")
     protected Long id;
 
@@ -128,53 +132,68 @@ public class OrderImpl implements Order, AdminMainEntity {
 
     @Column(name = "NAME")
     @Index(name="ORDER_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Name", group = "OrderImpl_Order", order=1000, prominent=true, groupOrder = 1000)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Name", group = Presentation.Group.Name.General, order=1000,
+            prominent=true, groupOrder = Presentation.Group.Order.General)
     protected String name;
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     @Index(name="ORDER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
-    @AdminPresentation(friendlyName = "Customer", group = "OrderImpl_Order", order=2000, groupOrder = 1000)
+    @AdminPresentation(friendlyName = "OrderImpl_Customer", group = Presentation.Group.Name.General, order=2000,
+            groupOrder = Presentation.Group.Order.General)
     @AdminPresentationToOneLookup()
     protected Customer customer;
 
     @Column(name = "ORDER_STATUS")
     @Index(name="ORDER_STATUS_INDEX", columnNames={"ORDER_STATUS"})
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Status", group = "OrderImpl_Order", order=4000, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus", groupOrder = 1000)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Status", group = Presentation.Group.Name.General, order=4000,
+            prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus",
+            groupOrder = Presentation.Group.Order.General)
     protected String status;
 
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Tax", group = "OrderImpl_Order", order=7000, fieldType=SupportedFieldType.MONEY, groupOrder = 1000)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Tax", group = Presentation.Group.Name.General, order=7000,
+            fieldType=SupportedFieldType.MONEY, groupOrder = Presentation.Group.Order.General)
     protected BigDecimal totalTax;
 
     @Column(name = "TOTAL_SHIPPING", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Shipping", group = "OrderImpl_Order", order=8000, fieldType=SupportedFieldType.MONEY, groupOrder = 1000)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Shipping", group = Presentation.Group.Name.General, order=8000,
+            fieldType=SupportedFieldType.MONEY, groupOrder = Presentation.Group.Order.General)
     protected BigDecimal totalFulfillmentCharges;
 
     @Column(name = "ORDER_SUBTOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = "OrderImpl_Order", order=5000, fieldType=SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode", groupOrder = 1000)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = Presentation.Group.Name.General, order=5000,
+            fieldType=SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode",
+            groupOrder = Presentation.Group.Order.General)
     protected BigDecimal subTotal;
 
     @Column(name = "ORDER_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = "OrderImpl_Order", order=3000, fieldType= SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode", groupOrder = 1000)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = Presentation.Group.Name.General, order=3000,
+            fieldType= SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode",
+            groupOrder = Presentation.Group.Order.General)
     protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Submit_Date", group = "OrderImpl_Order", order=9000, groupOrder = 1000)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Submit_Date", group = Presentation.Group.Name.General, order=9000,
+            groupOrder = Presentation.Group.Order.General)
     protected Date submitDate;
 
     @Column(name = "ORDER_NUMBER")
     @Index(name="ORDER_NUMBER_INDEX", columnNames={"ORDER_NUMBER"})
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Number", group = "OrderImpl_Order", order=6000, prominent=true, groupOrder = 1000)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Number", group = Presentation.Group.Name.General, order=6000,
+            prominent=true, groupOrder = Presentation.Group.Order.General)
     private String orderNumber;
 
     @Column(name = "EMAIL_ADDRESS")
     @Index(name="ORDER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Email_Address", group = "OrderImpl_Order", order=10000, groupOrder = 1000)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Email_Address", group = Presentation.Group.Name.General,
+            order=10000, groupOrder = Presentation.Group.Order.General)
     protected String emailAddress;
 
     @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @AdminPresentationCollection(friendlyName="OrderImpl_Order_Items", order = 1000, tab = Presentation.Tab.Name.OrderItems, tabOrder = Presentation.Tab.Order.OrderItems)
     protected List<OrderItem> orderItems = new ArrayList<OrderItem>();
 
     @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = {CascadeType.ALL})
@@ -691,4 +710,29 @@ public class OrderImpl implements Order, AdminMainEntity {
         return result;
     }
 
+    public static class Presentation {
+        public static class Tab {
+            public static class Name {
+                public static final String OrderItems = "OrderImpl_Order_Items_Tab";
+            }
+
+            public static class Order {
+                public static final int OrderItems = 2000;
+            }
+        }
+
+        public static class Group {
+            public static class Name {
+                public static final String General = "OrderImpl_Order";
+            }
+
+            public static class Order {
+                public static final int General = 1000;
+            }
+        }
+
+        public static class FieldOrder {
+            public static final int NAME = 1000;
+        }
+    }
 }

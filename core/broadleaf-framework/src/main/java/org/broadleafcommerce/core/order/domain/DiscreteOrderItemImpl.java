@@ -20,9 +20,8 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -59,7 +58,6 @@ import java.util.Map;
 @Table(name = "BLC_DISCRETE_ORDER_ITEM")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationClass(friendlyName = "DiscreteOrderItemImpl_discreteOrderItem")
-@AdminPresentationOverrides({@AdminPresentationOverride(name="product.defaultSku", value=@AdminPresentation(excluded = true))})
 public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrderItem {
 
     private static final long serialVersionUID = 1L;
@@ -75,12 +73,16 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @ManyToOne(targetEntity = SkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID", nullable = false)
     @Index(name="DISCRETE_SKU_INDEX", columnNames={"SKU_ID"})
+    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Sku", order=2000)
+    @AdminPresentationToOneLookup()
     protected Sku sku;
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="DISCRETE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     @NotFound(action = NotFoundAction.IGNORE)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Product", order=2000)
+    @AdminPresentationToOneLookup()
     protected Product product;
 
     @ManyToOne(targetEntity = BundleOrderItemImpl.class)

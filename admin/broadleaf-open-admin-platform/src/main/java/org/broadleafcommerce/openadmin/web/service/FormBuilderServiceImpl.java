@@ -65,6 +65,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,8 +73,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -134,7 +133,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
           .withFriendlyName(fmd.getFriendlyName())
           .withOrder(fmd.getGridOrder())
           .withColumnWidth(fmd.getColumnWidth())
-          .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty());
+          .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
+          .withForeignKeyClass(fmd.getForeignKeyClass());
         String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
         hf.setFieldType(fieldType);
         
@@ -381,6 +381,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withOrder(fmd.getOrder())
                          .withFriendlyName(fmd.getFriendlyName())
                          .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
+                         .withForeignKeyClass(fmd.getForeignKeyClass())
                          .withRequired(required)
                          .withReadOnly(fmd.getReadOnly())
                          .withTranslatable(fmd.getTranslatable())

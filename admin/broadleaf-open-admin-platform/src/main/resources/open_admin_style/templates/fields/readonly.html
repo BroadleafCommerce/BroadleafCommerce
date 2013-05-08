@@ -2,7 +2,7 @@
 <div class="twelve" style="margin-left: 20px; margin-bottom: 10px;">
     <span th:text="*{fields['__${field.name}__'].displayValue}"/>
     <span th:if="${field.canLinkToExternalEntity}" th:remove="tag">
-       <a th:href="@{${field.entityViewPath}}" class="modal-view">
+       <a th:href="@{${'/' + field.entityViewPath}}" class="modal-view">
             <i class="icon-external-link"></i>
        </a>
     </span>
