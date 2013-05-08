@@ -16,14 +16,12 @@
 
 package org.broadleafcommerce.openadmin.server.security.handler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.openadmin.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -32,11 +30,8 @@ import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationTyp
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -76,28 +71,6 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
     }
 
     @Override
-    public Boolean canHandleInspect(PersistencePackage persistencePackage) {
-        return canHandleAdd(persistencePackage);
-    }
-
-    @Override
-    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
-        try {
-            Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
-            Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
-            PersistenceModule persistenceModule = helper.getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getInspectType());
-            persistenceModule.updateMergedProperties(persistencePackage, allMergedProperties);
-            ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entities, allMergedProperties);
-
-            DynamicResultSet results = new DynamicResultSet(mergedMetadata);
-            return results;
-        } catch (ClassNotFoundException e) {
-            LOG.error("Unable to inspect", e);
-            throw new ServiceException("Unable to inspect", e);
-        }
-    }
-
-    @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
         Entity entity  = persistencePackage.getEntity();
@@ -130,8 +103,10 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
             AdminUser adminInstance = (AdminUser) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             dynamicEntityDao.detach(adminInstance);
             adminInstance = (AdminUser) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            adminInstance.setUnencodedPassword(adminInstance.getPassword());
-            adminInstance.setPassword(null);
+            if (StringUtils.isNotEmpty(adminInstance.getPassword())) {
+                adminInstance.setUnencodedPassword(adminInstance.getPassword());
+                adminInstance.setPassword(null);
+            }
             
             // The current user can update their data, but they cannot update other user's data.
             if (! adminRemoteSecurityService.getPersistentAdminUser().getId().equals(adminInstance.getId())) {

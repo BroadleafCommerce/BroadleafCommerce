@@ -89,6 +89,7 @@
                 <ref bean="blAdornedTargetCollectionFieldMetadataProvider"/>
                 <ref bean="blMapFieldMetadataProvider"/>
                 <ref bean="blMapFieldsFieldMetadataProvider"/>
+                <ref bean="blPasswordFieldMetadataProvider"/>
             </list>
         </property>
     </bean>

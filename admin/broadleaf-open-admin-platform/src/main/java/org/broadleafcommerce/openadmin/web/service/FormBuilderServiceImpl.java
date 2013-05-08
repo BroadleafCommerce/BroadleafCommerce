@@ -469,7 +469,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                 Property entityProp = entity.findProperty(p.getName());
 
-                if (entityProp == null) {
+                if (entityProp == null && !SupportedFieldType.PASSWORD_CONFIRM.equals(basicFM.getExplicitFieldType())) {
                     ef.removeField(p.getName());
                 } else {
                     Field field = ef.findField(p.getName());
@@ -483,13 +483,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             if (dw != null) {
                                 rbf.setDataWrapper(dw);
                             }
-                        }
-                        if (basicFM.getFieldType() == SupportedFieldType.MEDIA) {
+                        } 
+			if (basicFM.getFieldType() == SupportedFieldType.MEDIA) {
                             field.setValue(entityProp.getValue());
                             field.setDisplayValue(entityProp.getDisplayValue());
                             MediaField mf = (MediaField) field;
                             mf.setMedia(convertJsonToMedia(entityProp.getValue()));
-                        } else {
+			} else if (!SupportedFieldType.PASSWORD_CONFIRM.equals(basicFM.getExplicitFieldType())){
                             field.setValue(entityProp.getValue());
                             field.setDisplayValue(entityProp.getDisplayValue());
                         }

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.openadmin.dto.Entity;
 
 import java.io.Serializable;
@@ -32,7 +33,7 @@ public class MatchesFieldValidator implements PropertyValidator {
     @Override
     public boolean validate(Entity entity, Map<String, String> validationConfiguration, Serializable instance, String value) {
         String otherField = validationConfiguration.get("otherField");
-        return entity.getPMap().get(otherField).getValue().equals(value);
+        return StringUtils.equals(entity.getPMap().get(otherField).getValue(), value);
     }
 
 }

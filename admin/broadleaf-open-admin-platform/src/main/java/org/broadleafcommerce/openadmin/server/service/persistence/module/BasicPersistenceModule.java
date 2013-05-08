@@ -40,6 +40,7 @@ import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaTranslator;
@@ -196,7 +197,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     }
 
     @Override
-    public Serializable createPopulatedInstance(Serializable instance, Entity entity, Map<String, FieldMetadata> unfilteredProperties, Boolean setId) {
+    public Serializable createPopulatedInstance(Serializable instance, Entity entity, Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws ValidationException {
         Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(unfilteredProperties);
         FieldManager fieldManager = getFieldManager();
         boolean handled = false;
@@ -266,7 +267,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             }
                         } else {
                             try {
-                                if (fieldManager.getFieldValue(instance, property.getName()) != null && (metadata.getFieldType() != SupportedFieldType.ID || setId)) {
+                                if (fieldManager.getFieldValue(instance, property.getName()) != null && (metadata.getFieldType() != SupportedFieldType.ID || setId) && metadata.getFieldType() != SupportedFieldType.PASSWORD) {
                                     fieldManager.setFieldValue(instance, property.getName(), null);
                                 }
                             } catch (FieldNotAvailableException e) {
@@ -283,6 +284,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 if (persistenceManager.getDynamicEntityDao().getStandardEntityManager().contains(instance)) {
                     persistenceManager.getDynamicEntityDao().refresh(instance);
                 }
+                throw new ValidationException(entity, "The entity has failed validation");
             }
             else {
                 Map<String, Serializable> persistedEntities = fieldManager.persistMiddleEntities();

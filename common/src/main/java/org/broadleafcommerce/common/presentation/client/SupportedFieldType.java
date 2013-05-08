@@ -30,6 +30,7 @@ public enum SupportedFieldType {
     DECIMAL,
     STRING,
     PASSWORD,
+    PASSWORD_CONFIRM,
     EMAIL,
     FOREIGN_KEY,
     ADDITIONAL_FOREIGN_KEY,

@@ -36,6 +36,10 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,9 +56,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * 
@@ -94,22 +95,19 @@ public class AdminUserImpl implements AdminUser {
 
     @Column(name = "PASSWORD", nullable=false)
     @AdminPresentation(
-            friendlyName = "AdminUserImpl_Admin_Password",
-        order=3, 
+        friendlyName = "AdminUserImpl_Admin_Password",
+        order = 3, 
         group = "AdminUserImpl_User", 
-            fieldType = SupportedFieldType.PASSWORD
-    // TODO: fix admin password support (add a password confirmation field) and re-enable validation
-    /*
-    validationConfigurations={
-        @ValidationConfiguration(
-                        validationImplementation = "org.broadleafcommerce.openadmin.server.service.persistence.validation.MatchesFieldValidator",
-            configurationItems={
-                                @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "passwordNotMatchError"),
-                    @ConfigurationItem(itemName="otherField", itemValue="passwordConfirm")
-            }
-        )
-    }
-    */
+        fieldType = SupportedFieldType.PASSWORD,
+        validationConfigurations={
+            @ValidationConfiguration(
+                            validationImplementation = "org.broadleafcommerce.openadmin.server.service.persistence.validation.MatchesFieldValidator",
+                configurationItems = {
+                        @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "passwordNotMatchError"),
+                        @ConfigurationItem(itemName="otherField", itemValue="passwordConfirm")
+                }
+            )
+        }
     )
     protected String password;
 

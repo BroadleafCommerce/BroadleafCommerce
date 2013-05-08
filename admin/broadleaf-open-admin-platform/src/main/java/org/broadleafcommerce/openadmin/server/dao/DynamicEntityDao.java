@@ -22,6 +22,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.FieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -102,6 +103,8 @@ public interface DynamicEntityDao {
     public Metadata getMetadata();
 
     public void setMetadata(Metadata metadata);
+    
+    public FieldMetadataProvider getDefaultFieldMetadataProvider();
 
     public SessionFactory getSessionFactory();
 
