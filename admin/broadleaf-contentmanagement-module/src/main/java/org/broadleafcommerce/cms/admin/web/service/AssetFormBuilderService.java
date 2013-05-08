@@ -14,39 +14,12 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.presentation.client;
+package org.broadleafcommerce.cms.admin.web.service;
 
-/**
- * 
- * @author jfischer
- *
- */
-public enum SupportedFieldType {
-    UNKNOWN,
-    ID,
-    BOOLEAN,
-    DATE,
-    INTEGER,
-    DECIMAL,
-    STRING,
-    PASSWORD,
-    EMAIL,
-    FOREIGN_KEY,
-    ADDITIONAL_FOREIGN_KEY,
-    MONEY,
-    BROADLEAF_ENUMERATION,
-    EXPLICIT_ENUMERATION,
-    EMPTY_ENUMERATION,
-    DATA_DRIVEN_ENUMERATION,
-    HTML,
-    HTML_BASIC,
-    UPLOAD,
-    HIDDEN,
-    ASSET,
-    ASSET_URL,
-    MEDIA,
-    RULE_SIMPLE,
-    RULE_WITH_QUANTITY,
-    STRING_LIST,
-    IMAGE
+import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+
+public interface AssetFormBuilderService {
+
+    public void addImageThumbnailField(ListGrid listGrid, String urlField);
+
 }

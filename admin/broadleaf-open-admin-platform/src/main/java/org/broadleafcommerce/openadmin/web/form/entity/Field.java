@@ -44,6 +44,8 @@ public class Field {
     protected Boolean isAlternateOrdering;
     protected Boolean isReadOnly;
     protected Boolean isTranslatable;
+    protected Boolean isMainEntityLink;
+    protected Boolean isFilterSortDisabled;
     
     /* ************ */
     /* WITH METHODS */
@@ -118,6 +120,16 @@ public class Field {
         setTranslatable(isTranslatable);
         return this;
     }
+    
+    public Field withMainEntityLink(Boolean isMainEntityLink) {
+        setMainEntityLink(isMainEntityLink);
+        return this;
+    }
+    
+    public Field withFilterSortDisabled(Boolean isFilterSortDisabled) {
+        setFilterSortDisabled(isFilterSortDisabled);
+        return this;
+    }
 
     /* ************************ */
     /* CUSTOM GETTERS / SETTERS */
@@ -174,6 +186,13 @@ public class Field {
         return isTranslatable == null ? false : isTranslatable;
     }
     
+    public Boolean getMainEntityLink() {
+        return isMainEntityLink == null ? false : isMainEntityLink;
+    }
+    
+    public Boolean getFilterSortDisabled() {
+        return isFilterSortDisabled == null ? false : isFilterSortDisabled;
+    }
     
     /* ************************** */
     /* STANDARD GETTERS / SETTERS */
@@ -282,4 +301,13 @@ public class Field {
     public void setForeignKeyClass(String foreignKeyClass) {
         this.foreignKeyClass = foreignKeyClass;
     }
+
+    public void setMainEntityLink(Boolean isMainEntityLink) {
+        this.isMainEntityLink = isMainEntityLink;
+    }
+
+    public void setFilterSortDisabled(Boolean isFilterSortDisabled) {
+        this.isFilterSortDisabled = isFilterSortDisabled;
+    }
+    
 }

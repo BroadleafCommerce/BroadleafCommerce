@@ -1252,6 +1252,38 @@ form.custom div.conditional div.custom.dropdown {
 }
 
 /* -----------------------------------------
+   Static Assets
+----------------------------------------- */
+
+button.show-asset-selector {
+	vertical-align: text-bottom;
+	bottom: 4px;
+}
+
+div.uploadMessage {
+	display: none;
+}
+
+form.uploadFileForm {
+	float: left;
+}
+
+form.uploadFileForm input[type="file"] {
+	display: none;
+}
+
+div.imagePreviewContainer {
+	width: 200px;
+	height: 200px;
+	float: left;
+}
+
+div.uploadFileFormContainer {
+	width: 500px;
+}
+
+
+/* -----------------------------------------
    Login/Forgot Password Forms
 ----------------------------------------- */
 

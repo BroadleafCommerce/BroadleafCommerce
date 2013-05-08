@@ -78,7 +78,8 @@ public class ListGrid {
         ADORNED,
         ADORNED_WITH_FORM,
         MAP,
-        TRANSLATION
+        TRANSLATION,
+        ASSET
     }
     
     /* ************** */

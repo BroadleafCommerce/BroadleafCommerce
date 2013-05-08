@@ -19,13 +19,13 @@
                     th:style="${#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';'}"
                     scope="col">
                     
-                    <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort}">
+                    <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
                         <div class="listgrid-title">
                             [[#{${headerField.friendlyName}}]]
                         </div>
                     </div>
     
-                    <div href="#" class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort}">
+                    <div href="#" class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
                         <div class="listgrid-title">
                             <i class="filter-icon"></i>
                             <i class="sort-icon"></i>
@@ -35,7 +35,7 @@
                         <span class="hide-for-small"></span>
                         <ul th:include="${'components/partials/listGridHeaderFilter'}"
                             class="no-hover"
-                            th:classappend="${headerFieldStat.first ? 'first' : ''}"
+                            th:classappend="${headerField.mainEntityLink ? 'first' : ''}"
                             th:with="fieldType=${headerField.fieldType},
                                      fieldName=${headerField.name},
                                      index=${headerFieldStat.index}">
@@ -90,7 +90,7 @@
                     th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}">
                     
                     <span th:case="'main'" th:remove="tag">
-                        <a th:if="${headerFieldStat.first}" 
+                        <a th:if="${headerField.mainEntityLink}" 
                             th:href="@{${record.path}}"
                             th:text="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}" />
                             
@@ -100,8 +100,12 @@
                                 <i class="icon-external-link"></i>
                            </a>
                         </span>
+                        
+                        <span th:if="${field.fieldType == 'IMAGE'}">
+                            <img th:src="${'/cmsstatic' + field.value + '?smallAdminThumbnail'}" />
+                        </span>
                             
-                        <span th:unless="${headerFieldStat.first or headerField.canLinkToExternalEntity}"
+                        <span th:unless="${headerField.mainEntityLink or headerField.canLinkToExternalEntity or field.fieldType == 'IMAGE'}"
                               th:text="${field.displayValue}" th:remove="tag"/>
                     </span>
                     
@@ -113,14 +117,14 @@
                            </a>
                         </span>
                         
-                        <span th:if="${headerFieldStat.first and record.canLinkToExternalEntity}" th:remove="tag">
+                        <span th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity}" th:remove="tag">
                            <span th:remove="tag" th:text="${field.displayValue}" />
                            <a th:href="@{${record.externalEntityPath}}" class="modal-view">
                                  <i class="icon-external-link"></i>
                            </a>
                         </span>
                         
-                        <span th:unless="${(headerFieldStat.first and record.canLinkToExternalEntity)
+                        <span th:unless="${(headerField.mainEntityLink and record.canLinkToExternalEntity)
                                                  or headerField.canLinkToExternalEntity}"
                               th:remove="tag" th:text="${field.displayValue}" />
                     </span>

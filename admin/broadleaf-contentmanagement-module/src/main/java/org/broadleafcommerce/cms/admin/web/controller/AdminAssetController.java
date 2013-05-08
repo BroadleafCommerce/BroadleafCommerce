@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,89 +16,70 @@
 
 package org.broadleafcommerce.cms.admin.web.controller;
 
-import org.broadleafcommerce.cms.file.domain.ImageStaticAssetImpl;
-import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.cms.file.service.StaticAssetService;
-import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
-import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
+import org.broadleafcommerce.cms.admin.web.service.AssetFormBuilderService;
+import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
+import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * BroadleafAdminAssetController handles uploading or selecting assets.
- *     
- * Used with entities like {@link SkuImpl} and {@link CategoryImpl} that have {@link CustomPersistenceHandler} 
- * configurations that provide support for adding maps of Media objects.
+ * Handles admin operations for the {@link Asset} entity. This is mostly to support displaying image assets inline 
+ * in listgrids.
  * 
+ * @author Andre Azzolini (apazzolini)
  */
 @Controller("blAdminAssetController")
-@RequestMapping("/{sectionKey}")
-public class AdminAssetController extends AdminAbstractController {
-
-    @Resource(name = "blEntityConfiguration")
-    protected EntityConfiguration entityConfiguration;
+@RequestMapping("/" + AdminAssetController.SECTION_KEY)
+public class AdminAssetController extends AdminBasicEntityController {
     
-    @Resource(name = "blStaticAssetStorageService")
-    protected StaticAssetStorageService staticAssetStorageService;
+    protected static final String SECTION_KEY = "assets";
     
-    @Resource(name = "blStaticAssetService")
-    protected StaticAssetService staticAssetService;
-
-    @RequestMapping(value = "/{id}/chooseAsset", method = RequestMethod.GET)
-    public String chooseMediaForMapKey(Model model, @PathVariable String sectionKey, @PathVariable String id) {
-        model.addAttribute("viewType", "modal/assetSelection");
-        model.addAttribute("modalHeaderType", "assetSelection");
-        model.addAttribute("entityId", id);
-        model.addAttribute("sectionKey", sectionKey);
-        model.addAttribute("notFoundImage", "");
-        return "modules/modalContainer";
+    @Resource(name = "blAssetFormBuilderService")
+    protected AssetFormBuilderService formService;
+    
+    
+    @Override
+    protected String getSectionKey(Map<String, String> pathVars) {
+        //allow external links to work for ToOne items
+        if (super.getSectionKey(pathVars) != null) {
+            return super.getSectionKey(pathVars);
+        }
+        return SECTION_KEY;
     }
     
-    @RequestMapping(value = "/{id}/uploadAsset", method = RequestMethod.POST,
-            produces = "application/json; charset=utf-8")
-    public @ResponseBody
-    Map<String, Object> upload(@RequestParam("file") MultipartFile file, HttpServletRequest request,
-            @PathVariable String sectionKey, @PathVariable String id) throws IOException {
-        Map<String, Object> responseMap = new HashMap<String, Object>();
-        Map<String, String> properties = new HashMap<String, String>();
-        properties.put("entityType", sectionKey);
-        properties.put("entityId", id);
-        StaticAsset staticAsset = staticAssetService.createStaticAssetFromFile(file, properties);
-        staticAssetStorageService.createStaticAssetStorageFromFile(file, staticAsset);
-
-        String staticAssetUrlPrefix = staticAssetService.getStaticAssetUrlPrefix();
-        if (staticAssetUrlPrefix != null && !staticAssetUrlPrefix.startsWith("/")) {
-            staticAssetUrlPrefix = "/" + staticAssetUrlPrefix;
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+        String returnPath = super.viewEntityList(request, response, model, pathVars, requestParams);
+        
+        ListGrid listGrid = (ListGrid) model.asMap().get("listGrid");
+        /*
+        //lg.setListGridType(Type.INLINE);
+        
+        for (Field hf : lg.getHeaderFields()) {
+            if (hf.getName().equals("fullUrl")) {
+                hf.setFieldType("CMS_IMAGE_URL");
+            }
         }
-
-        String assetUrl = request.getSession().getServletContext().getContextPath() + staticAssetUrlPrefix +
-                staticAsset.getFullUrl();
-
-        responseMap.put("assetUrl", assetUrl);
-        if (staticAsset instanceof ImageStaticAssetImpl) {
-            responseMap.put("image", Boolean.TRUE);
-            responseMap.put("assetThumbnail", assetUrl + "?smallAdminThumbnail");
-            responseMap.put("assetLarge", assetUrl + "?largeAdminThumbnail");
-        } else {
-            responseMap.put("image", Boolean.FALSE);
-        }
-
-        return responseMap;
+        */
+        
+        formService.addImageThumbnailField(listGrid, "fullUrl");
+        
+        
+        return returnPath;
     }
 
+    
 }

@@ -60,11 +60,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 
-import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -78,6 +73,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 
 /**
  * @author Phillip Verheyden
@@ -458,7 +459,12 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             propertyName = tokens.nextToken();
         }
 
-        Object value = PropertyUtils.getProperty(sku, propertyName);
+        Object value;
+        try {
+            value = PropertyUtils.getProperty(sku, propertyName);
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
 
         String strVal;
         if (value == null) {

@@ -107,5 +107,9 @@ public class ListGridRecord {
         
         return field;
     }
+    
+    public void clearFieldMap() {
+        fieldMap = null;
+    }
 
 }
