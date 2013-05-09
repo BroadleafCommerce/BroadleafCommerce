@@ -40,6 +40,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -83,10 +84,13 @@ public abstract class CartEndpoint extends BaseEndpoint {
                 return wrapper;
             }
 
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
 
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 
    /**
@@ -165,7 +169,8 @@ public abstract class CartEndpoint extends BaseEndpoint {
                     
                     //If a Sku ID was not supplied and no product options were supplied, then we can't process this request
                     if (skuId == null && productOptions.size() == 0) {
-                        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+                        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                                .type(MediaType.TEXT_PLAIN).entity("You must submit a Sku Id, or a map of product option / values.").build());
                     }
                     
                     OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
@@ -188,15 +193,20 @@ public abstract class CartEndpoint extends BaseEndpoint {
 
                     return wrapper;
                 } catch (PricingException e) {
-                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the order.").build());
                 } catch (AddToCartException e) {
-                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .type(MediaType.TEXT_PLAIN).entity("An error occured adding the item to the cart.").build());
                 }
             }
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
 
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 
     public OrderWrapper removeItemFromOrder(HttpServletRequest request,
@@ -216,19 +226,25 @@ public abstract class CartEndpoint extends BaseEndpoint {
 
                     return wrapper;
                 } catch (PricingException e) {
-                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
                 } catch (RemoveFromCartException e) {
                     if (e.getCause() instanceof ItemNotFoundException) {
-                        throw new WebApplicationException(Response.Status.NOT_FOUND);
+                        throw new WebApplicationException(e, Response.status(Response.Status.NOT_FOUND)
+                                .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
                     } else { 
-                        throw new WebApplicationException(Response.Status.NOT_FOUND);
+                        throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                                .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
                     }
                 }
             }
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
 
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 
     public OrderWrapper updateItemQuantity(HttpServletRequest request,
@@ -253,24 +269,32 @@ public abstract class CartEndpoint extends BaseEndpoint {
                     return wrapper;
                 } catch (UpdateCartException e) {
                     if (e.getCause() instanceof ItemNotFoundException) {
-                        throw new WebApplicationException(Response.Status.NOT_FOUND);
+                        throw new WebApplicationException(e, Response.status(Response.Status.NOT_FOUND)
+                                .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
                     } else { 
-                        throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                        throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                                .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
                     }
                 } catch (RemoveFromCartException e) {
                     if (e.getCause() instanceof ItemNotFoundException) {
-                        throw new WebApplicationException(Response.Status.NOT_FOUND);
+                        throw new WebApplicationException(e, Response.status(Response.Status.NOT_FOUND)
+                                .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
                     } else { 
-                        throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                        throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                                .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
                     }
                 } catch (PricingException pe) {
-                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                    throw new WebApplicationException(pe, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
                 }
             }
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
 
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 
     public OrderWrapper addOfferCode(HttpServletRequest request,
@@ -289,15 +313,20 @@ public abstract class CartEndpoint extends BaseEndpoint {
 
                     return wrapper;
                 } catch (PricingException e) {
-                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
                 } catch (OfferMaxUseExceededException e) {
-                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                    throw new WebApplicationException(e, Response.status(Response.Status.BAD_REQUEST)
+                            .type(MediaType.TEXT_PLAIN).entity("The offer (promo) code provided has exceeded its max usages: " + promoCode).build());
                 }
             }
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
 
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 
     public OrderWrapper removeOfferCode(HttpServletRequest request,
@@ -308,7 +337,12 @@ public abstract class CartEndpoint extends BaseEndpoint {
         if (customer != null) {
             Order cart = orderService.findCartForCustomer(customer);
             OfferCode offerCode = offerService.lookupOfferCodeByCode(promoCode);
-            if (cart != null && offerCode != null) {
+            if (offerCode == null) {
+                throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                        .type(MediaType.TEXT_PLAIN).entity("Offer code was invalid or could not be found.").build());
+            }
+
+            if (cart != null) {
                 try {
                     cart = orderService.removeOfferCode(cart, offerCode, priceOrder);
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
@@ -316,13 +350,17 @@ public abstract class CartEndpoint extends BaseEndpoint {
 
                     return wrapper;
                 } catch (PricingException e) {
-                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
                 }
             }
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
 
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 
     public OrderWrapper removeAllOfferCodes(HttpServletRequest request,
@@ -339,13 +377,17 @@ public abstract class CartEndpoint extends BaseEndpoint {
 
                     return wrapper;
                 } catch (PricingException e) {
-                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
                 }
             }
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
 
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 
 }

@@ -30,6 +30,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -65,9 +66,12 @@ public abstract class OrderHistoryEndpoint extends BaseEndpoint {
                 return wrappers;
             }
 
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
 
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 }

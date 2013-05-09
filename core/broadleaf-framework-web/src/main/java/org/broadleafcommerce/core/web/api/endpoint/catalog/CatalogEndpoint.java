@@ -47,6 +47,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -99,7 +100,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrap(product, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
     }
 
     /**
@@ -159,7 +160,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                 return out;
             }
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
     }
     
     public SkuWrapper findDefaultSkuByProductId(HttpServletRequest request, Long id) {
@@ -169,7 +170,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrap(product.getDefaultSku(), request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
     }
 
     public CategoriesWrapper findAllCategories(HttpServletRequest request,
@@ -204,7 +205,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrap(categories, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
 
     }
 
@@ -220,7 +221,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             return wrapper;
         }
 
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
     }
 
     public CategoryWrapper findCategoryById(HttpServletRequest request,
@@ -244,7 +245,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrap(cat, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
     }
 
     public List<CategoryAttributeWrapper> findCategoryAttributesForCategory(HttpServletRequest request,
@@ -261,7 +262,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
     }
     
     public List<ProductWrapper> findProductsForCategory(HttpServletRequest request,
@@ -293,7 +294,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
     }
 
     public List<RelatedProductWrapper> findUpSaleProductsByProduct(HttpServletRequest request,
@@ -315,7 +316,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
     }
 
     public List<RelatedProductWrapper> findCrossSaleProductsByProduct(HttpServletRequest request,
@@ -337,7 +338,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
     }
     
     public List<ProductAttributeWrapper> findProductAttributesForProduct(HttpServletRequest request,
@@ -354,7 +355,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
     }
 
     public List<SkuAttributeWrapper> findSkuAttributesForSku(HttpServletRequest request,
@@ -371,7 +372,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Sku with Id " + id + " could not be found").build());
     }
 
     public List<MediaWrapper> findMediaForSku(HttpServletRequest request,
@@ -391,7 +392,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return medias;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Sku with Id " + id + " could not be found").build());
     }
 
     public SkuWrapper findSkuById(HttpServletRequest request,
@@ -402,7 +403,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrap(sku, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Sku with Id " + id + " could not be found").build());
     }
 
     public List<MediaWrapper> findMediaForProduct(HttpServletRequest request,
@@ -423,7 +424,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
     }
 
     public List<MediaWrapper> findMediaForCategory(HttpServletRequest request,
@@ -439,7 +440,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
     }
 
     public CategoriesWrapper findParentCategoriesForProduct(HttpServletRequest request,
@@ -454,7 +455,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrap(categories, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
     }
 
     protected StaticAssetService getStaticAssetService() {

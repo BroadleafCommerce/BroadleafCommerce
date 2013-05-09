@@ -38,6 +38,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -75,9 +76,12 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
                 }
                 return fulfillmentGroupWrappers;
             }
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 
     public OrderWrapper removeAllFulfillmentGroupsFromOrder(HttpServletRequest request,
@@ -93,12 +97,16 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
                     wrapper.wrap(cart, request);
                     return wrapper;
                 } catch (PricingException e) {
-                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
                 }
             }
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 
     public FulfillmentGroupWrapper addFulfillmentGroupToOrder(HttpServletRequest request,
@@ -119,13 +127,17 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
                         fulfillmentGroupWrapper.wrap(fulfillmentGroup, request);
                         return fulfillmentGroupWrapper;
                     } catch (PricingException e) {
-                        throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                        throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                                .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
                     }
                 }
             }
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 
     public FulfillmentGroupWrapper addItemToFulfillmentGroup(HttpServletRequest request,
@@ -164,13 +176,17 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
                             return fulfillmentGroupWrapper;
 
                         } catch (PricingException e) {
-                            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                            throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                                    .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
                         }
                     }
                 }
             }
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 }

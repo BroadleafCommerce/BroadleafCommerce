@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.web.api.endpoint.checkout;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
@@ -45,6 +47,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -57,6 +60,8 @@ import javax.ws.rs.core.Response;
  * Date: 4/10/12
  */
 public abstract class CheckoutEndpoint extends BaseEndpoint {
+
+    private static final Log LOG = LogFactory.getLog(CheckoutEndpoint.class);
 
     @Resource(name="blCheckoutService")
     protected CheckoutService checkoutService;
@@ -92,12 +97,16 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
                         return paymentResponseItemWrapper;
 
                 } catch (PaymentException e) {
-                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .type(MediaType.TEXT_PLAIN).entity("An error occured with payment.").build());
                 }
             }
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 
     public OrderWrapper performCheckout(HttpServletRequest request, List<PaymentReferenceMapWrapper> mapWrappers) {
@@ -136,14 +145,18 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
                     try {
                         orderService.save(cart, false);
                     } catch (PricingException e1) {
-                        throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                        LOG.error("An unexpected error occured saving / pricing the cart.", e1);
                     }
 
-                    throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .type(MediaType.TEXT_PLAIN).entity("An error occured during checkout.").build());
                 }
             }
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
-        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
+                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
     }
 }
