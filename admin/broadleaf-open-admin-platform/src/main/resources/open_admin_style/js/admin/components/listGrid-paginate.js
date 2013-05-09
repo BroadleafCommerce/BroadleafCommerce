@@ -4,7 +4,6 @@
     var fetchDebounce = 200;
     var updateUrlDebounce = 700;
     var lockDebounce = 100;
-    var trHeight = null;
     var maxSubCollectionListGridHeight = 360;
     
     // Add utility functions for list grids to the BLCAdmin object
@@ -318,10 +317,7 @@
         // ************************* *
         
         getRowHeight : function($tbody) {
-            if (trHeight == null) {
-                trHeight = $tbody.find('tr:not(.blank-padding):first').height();
-            }
-            return trHeight;
+            return $tbody.find('tr:not(.blank-padding):first').height();
         },
         
         getTopVisibleIndex : function($tbody) {

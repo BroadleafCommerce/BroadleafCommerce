@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.context.annotation.Scope;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -36,6 +37,8 @@ import javax.ws.rs.ext.Provider;
  * @author Kelly Tisdell
  *
  */
+//This class MUST be a singleton Spring Bean
+@Scope("singleton")
 @Provider
 public class BroadleafRestExceptionMapper implements ExceptionMapper<Throwable>, MessageSourceAware {
 
@@ -54,11 +57,15 @@ public class BroadleafRestExceptionMapper implements ExceptionMapper<Throwable>,
                 LOG.error("An exception was caught by the JAX-RS framework: Status: " + response.getStatus() + " Message: " + response.getEntity(), t);
             } else if (response.getStatus() == Response.Status.FORBIDDEN.getStatusCode()) {
                 LOG.warn("Someone tried to access a resource that was forbidden: Status: " + response.getStatus() + " Message: " + response.getEntity(), t);
-            } else if (LOG.isDebugEnabled()) {
-                LOG.debug("REST Services Caught Exception: Status: " + response.getStatus() + " Message: " + response.getEntity(), t);
+            } else if (response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode() && LOG.isDebugEnabled()) {
+                LOG.debug("Bad Request: Status: " + response.getStatus() + " Message: " + response.getEntity(), t);
+            } else if (response.getStatus() == Response.Status.NOT_ACCEPTABLE.getStatusCode() && LOG.isDebugEnabled()) {
+                LOG.debug("Not acceptable: Status: " + response.getStatus() + " Message: " + response.getEntity(), t);
+            } else {
+                LOG.error("An exception was caught by the JAX-RS framework: Status: " + response.getStatus() + " Message: " + response.getEntity(), t);
             }
         } else {
-            LOG.error("An exception was caught by the JAX-RS framework.", t);
+            LOG.error("An exception was caught by the JAX-RS framework: ", t);
         }
 
         if (response != null) {

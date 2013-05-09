@@ -69,7 +69,8 @@ import javax.xml.stream.XMLInputFactory;
  * @see com.sun.jersey.core.impl.provider.entity.XMLListElementProvider
  * 
  */
-@Scope("prototype")
+//This class MUST be a singleton Spring Bean
+@Scope("singleton")
 @Provider
 @Produces(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
         MediaType.TEXT_XML })
