@@ -240,7 +240,7 @@ $(document).ready(function() {
         nonBlankInputs = nonBlankInputs.concat($.makeArray(sorts));
         
         var $tbody = $(this).closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
-        //BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);
+        BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);
         BLC.ajax({
             url: $(this).closest('.filter-fields').data('action'),
             type: "GET",

@@ -21,7 +21,7 @@
             this.initialize($listGridContainer);
             
             BLCAdmin.listGrid.paginate.scrollToIndex($listGridContainer.find('tbody'), currentIndex);
-            //$listGridContainer.find('.listgrid-body-wrapper').mCustomScrollbar('update');
+            $listGridContainer.find('.listgrid-body-wrapper').mCustomScrollbar('update');
             
             if (alert) {
                 this.showAlert($listGridContainer, alert.message, alert);

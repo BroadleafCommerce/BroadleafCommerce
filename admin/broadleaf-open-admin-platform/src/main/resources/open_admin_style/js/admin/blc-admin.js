@@ -93,13 +93,11 @@ var BLCAdmin = (function($) {
     		    
     		    var $lastTab = $tabs.find('dd:last');
     		    if ($lastTab.width() + $lastTab.position().left + 15 > $tabs.width()) {
-    		        /*
                     $tabs.mCustomScrollbar({
                         theme: 'dark',
                         autoHideScrollbar: true,
                         horizontalScroll: true
                     });
-                    */
     		    }
     		}
     	},
