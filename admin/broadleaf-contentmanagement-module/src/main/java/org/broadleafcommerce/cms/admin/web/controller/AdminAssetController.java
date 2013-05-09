@@ -65,21 +65,9 @@ public class AdminAssetController extends AdminBasicEntityController {
         String returnPath = super.viewEntityList(request, response, model, pathVars, requestParams);
         
         ListGrid listGrid = (ListGrid) model.asMap().get("listGrid");
-        /*
-        //lg.setListGridType(Type.INLINE);
-        
-        for (Field hf : lg.getHeaderFields()) {
-            if (hf.getName().equals("fullUrl")) {
-                hf.setFieldType("CMS_IMAGE_URL");
-            }
-        }
-        */
-        
         formService.addImageThumbnailField(listGrid, "fullUrl");
-        
         
         return returnPath;
     }
-
     
 }

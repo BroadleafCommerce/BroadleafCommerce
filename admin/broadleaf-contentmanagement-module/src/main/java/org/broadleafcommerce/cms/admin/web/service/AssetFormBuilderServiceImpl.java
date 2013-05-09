@@ -60,19 +60,23 @@ public class AssetFormBuilderServiceImpl implements AssetFormBuilderService {
             if (staticAssetUrlPrefix != null && !staticAssetUrlPrefix.startsWith("/")) {
                 staticAssetUrlPrefix = "/" + staticAssetUrlPrefix;
             }
-            if (staticAssetUrlPrefix != null) {
+            if (staticAssetUrlPrefix == null) {
+                staticAssetUrlPrefix = "";
+            } else {
                 imageUrl = staticAssetUrlPrefix + imageUrl;
             }
-            
-            // Append the small admin thumbnail key
-            imageUrl = imageUrl + "?smallAdminThumbnail";
             
             MediaField mf = (MediaField) new MediaField()
                 .withName("thumbnail")
                 .withFriendlyName("Asset_thumbnail")
                 .withFieldType(SupportedFieldType.IMAGE.toString())
                 .withOrder(Integer.MIN_VALUE)
-                .withValue(imageUrl);
+                .withValue(imageUrl + "?smallAdminThumbnail");
+            
+            // Add a hidden field for the large thumbnail path
+            record.getHiddenFields().add(new Field()
+                .withName("cmsUrlPrefix")
+                .withValue(staticAssetUrlPrefix));
             
             // Set the height value on this field
             mf.setHeight(operationMap.getNamedOperations().get("smallAdminThumbnail").get("resize-height-amount"));

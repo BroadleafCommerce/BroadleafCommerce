@@ -103,12 +103,13 @@
                         </span>
                         
                         <span th:if="${field.fieldType == 'IMAGE'}">
-                            <img 
-                                th:style="${'height: ' + field.height + 'px;'}"
+                            <img th:style="${'height: ' + field.height + 'px;'}"
                                 th:src="${field.value}" />
                         </span>
                             
-                        <span th:unless="${headerField.mainEntityLink or headerField.canLinkToExternalEntity or field.fieldType == 'IMAGE'}"
+                        <span th:unless="${headerField.mainEntityLink 
+                                or headerField.canLinkToExternalEntity 
+                                or field.fieldType == 'IMAGE'}"
                               th:text="${field.displayValue}" th:remove="tag"/>
                     </span>
                     
@@ -120,15 +121,21 @@
                            </a>
                         </span>
                         
-                        <span th:if="${headerFieldStat.first and record.canLinkToExternalEntity}" th:remove="tag">
+                        <span th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity}" th:remove="tag">
                            <span th:remove="tag" th:text="${field.displayValue}" />
                            <a th:href="@{${record.externalEntityPath}}" class="modal-view">
                                  <i class="icon-external-link"></i>
                            </a>
                         </span>
                         
-                        <span th:unless="${(headerFieldStat.first and record.canLinkToExternalEntity)
-                                            or headerField.canLinkToExternalEntity}"
+                        <span th:if="${field.fieldType == 'IMAGE'}">
+                            <img th:style="${'height: ' + field.height + 'px;'}"
+                                th:src="${field.value}" />
+                        </span>
+                        
+                        <span th:unless="${(headerField.mainEntityLink and record.canLinkToExternalEntity)
+                                or headerField.canLinkToExternalEntity
+                                or field.fieldType == 'IMAGE'}"
                               th:remove="tag" th:text="${field.displayValue}" />
                     </span>
                         

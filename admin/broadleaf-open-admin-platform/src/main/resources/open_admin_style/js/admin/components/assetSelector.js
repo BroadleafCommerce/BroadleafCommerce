@@ -42,6 +42,14 @@
 })(jQuery, BLCAdmin);
 
 $(document).ready(function() {
+    
+    $('body').on('listGrid-asset-rowSelected', function(event, link, fields, currentUrl) {
+        var json = {
+            'assetUrl' : fields['cmsUrlPrefix'] + fields['fullUrl']
+        }
+        
+        $('div.asset-selector-container').trigger('assetInfoSelected', json);
+    });
 			
 	/**
 	 * This handler will fire when the choose image button is clicked on the RTE control or as

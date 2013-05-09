@@ -137,6 +137,7 @@
     opacity:0.75;
     filter:"alpha(opacity=75)"; -ms-filter:"alpha(opacity=75)"; /* old ie */
     display:inherit !important; /* APA added */
+    border-right: 1px solid #DDD /* APA added */
 }
 .mCustomScrollBox:hover>.mCSB_scrollTools{
     opacity:1;

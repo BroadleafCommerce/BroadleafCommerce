@@ -1,0 +1,21 @@
+<div class="listgrid-container single-listgrid">
+    <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
+</div>
+<div class="entity-form-actions">
+    <div class="uploadFileFormContainer">
+        
+        <form method="post" class="uploadFileForm"
+            enctype="multipart/form-data"  
+            th:attr="action=@{${'/' + sectionKey + '/' + entityId + '/uploadAsset'}}">
+            
+            <input type="file" name="file" />
+            <button class="right small dark radius button uploadButton" type="button">
+                Upload new asset
+            </button>
+            <div class="uploadMessage">
+                <i class="icon-spin icon-spinner"></i>
+            </div>          
+        </form>     
+        
+    </div>
+</div>

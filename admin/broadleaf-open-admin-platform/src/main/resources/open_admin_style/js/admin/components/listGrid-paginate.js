@@ -359,6 +359,7 @@
             var $table = $tbody.closest('table.list-grid-table');
             var $headerTable = $table.closest('div.listgrid-container').find('.listgrid-header-wrapper table');
             var thWidths = [];
+            var $modalBody = $tbody.closest('.modal-body');
             
             // Clear out widths
             $headerTable.css('width', '');
@@ -417,6 +418,10 @@
                     BLCAdmin.listGrid.paginate.updateUrlFromScroll($wrapper.find('tbody'));
                     BLCAdmin.listGrid.paginate.updateTableFooter($wrapper.find('tbody'));
                 }
+            } else if ($modalBody.length > 0) {
+                var maxHeight = $modalBody.height() - $wrapper.prev().height() - $wrapper.next().height() - 10;
+                $wrapper.css('max-height', maxHeight);
+                $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
             } else {
                 $wrapper.css('max-height', maxSubCollectionListGridHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxSubCollectionListGridHeight);
@@ -451,6 +456,10 @@
             var $table = $container.find('table.list-grid-table');
             var $tbody = $table.find('tbody');
             var thWidths = [];
+            var $modalBody = $container.closest('.modal-body');
+            
+            // If we're in a modal, we need to hide overflow in the modal to calculate sizes correclty. We'll restore this.
+            $modalBody.css('overflow-y', 'hidden');
             
             // First, we'll adjust the size of the table to be 15px less, since this is the margin we need
             // for our scrollbar. This will ensure the widths are correct once we draw the scrollbar
@@ -533,6 +542,7 @@
             // Render the table
             $wrapper.mCustomScrollbar('update');
             $clonedTable.find('tbody').css('visibility', 'visible');
+            $modalBody.css('overflow-y', 'auto');
         }
     };
     
@@ -548,7 +558,7 @@
 $(document).ready(function() {
     
     $(window).resize(function() {
-        $.doTimeout('resize', 150, function() {
+        $.doTimeout('resizeListGrid', 150, function() {
             $('tbody').each(function(index, element) {
                 if ($(element).is(':visible')) {
                     BLCAdmin.listGrid.paginate.updateGridSize($(element));

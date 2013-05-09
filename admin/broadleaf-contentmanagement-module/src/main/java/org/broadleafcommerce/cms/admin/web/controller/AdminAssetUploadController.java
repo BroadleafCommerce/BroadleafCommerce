@@ -23,6 +23,8 @@ import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
+import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.component.ListGrid.Type;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +40,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * AdminAssetUploadController handles uploading or selecting assets.
@@ -59,14 +62,27 @@ public class AdminAssetUploadController extends AdminAbstractController {
     
     @Resource(name = "blStaticAssetService")
     protected StaticAssetService staticAssetService;
+    
+    @Resource(name = "blAdminAssetController")
+    protected AdminAssetController assetController;
 
     @RequestMapping(value = "/{id}/chooseAsset", method = RequestMethod.GET)
-    public String chooseMediaForMapKey(Model model, @PathVariable String sectionKey, @PathVariable String id) {
-        model.addAttribute("viewType", "modal/assetSelection");
-        model.addAttribute("modalHeaderType", "assetSelection");
+    public String chooseMediaForMapKey(HttpServletRequest request, HttpServletResponse response, Model model, 
+            @PathVariable String sectionKey, @PathVariable String id) throws Exception {
+        Map<String, String> pathVars = new HashMap<String, String>();
+        pathVars.put("sectionKey", AdminAssetController.SECTION_KEY);
+        assetController.viewEntityList(request, response, model, pathVars, null);
+        
+        ListGrid listGrid = (ListGrid) model.asMap().get("listGrid");
+        listGrid.setListGridType(Type.ASSET);
+        
+        model.addAttribute("viewType", "modal/selectAsset");
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
+        model.addAttribute("modalHeaderType", "selectAsset");
+        
+        // We need these attributes to be set appropriately here
         model.addAttribute("entityId", id);
         model.addAttribute("sectionKey", sectionKey);
-        model.addAttribute("notFoundImage", "");
         return "modules/modalContainer";
     }
     

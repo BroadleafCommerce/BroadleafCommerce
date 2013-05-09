@@ -691,7 +691,7 @@ table.table-hover tbody tr.draggable:hover {
 }
 
 .listgrid-headerBtn.dropdown.split > span {
-    height: 14px;
+    height: 16px;
     width: 20px;
     cursor: pointer;
     position: absolute;
@@ -931,6 +931,8 @@ table tbody tr:nth-child(odd) {
 
 .listgrid-header-wrapper {
 	background: #F5F5F5;
+	border-right: 1px solid #DDD;
+	border-top: 1px solid #DDD;
 }
 
 .listgrid-header-wrapper table.list-grid-table {
@@ -939,7 +941,6 @@ table tbody tr:nth-child(odd) {
 }
 
 .listgrid-header-wrapper table.list-grid-table thead tr th {
-	overflow: visible;
 }
 
 table.list-grid-table thead tr.width-control-header {
@@ -958,6 +959,10 @@ span.listgrid-table-spinner-container {
 i.listgrid-table-spinner {
     position: absolute; 
     font-size: 20px;
+}
+
+.listgrid-container.single-listgrid span.listgrid-table-footer {
+	margin-bottom: 0;
 }
 
 span.listgrid-table-footer {
@@ -1265,7 +1270,6 @@ div.uploadMessage {
 }
 
 form.uploadFileForm {
-	float: left;
 }
 
 form.uploadFileForm input[type="file"] {
@@ -1277,11 +1281,6 @@ div.imagePreviewContainer {
 	height: 200px;
 	float: left;
 }
-
-div.uploadFileFormContainer {
-	width: 500px;
-}
-
 
 /* -----------------------------------------
    Login/Forgot Password Forms
