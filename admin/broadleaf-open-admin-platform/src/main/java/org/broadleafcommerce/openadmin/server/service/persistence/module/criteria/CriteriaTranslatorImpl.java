@@ -6,6 +6,10 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -14,9 +18,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -58,7 +59,9 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         addRestrictions(ceilingEntity, filterMappings, criteriaBuilder, original, restrictions, sorts);
 
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        criteria.orderBy(sorts.toArray(new Order[sorts.size()]));
+        if (!isCount) {
+            criteria.orderBy(sorts.toArray(new Order[sorts.size()]));
+        }
         TypedQuery<Serializable> response = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
 
         if (!isCount) {
