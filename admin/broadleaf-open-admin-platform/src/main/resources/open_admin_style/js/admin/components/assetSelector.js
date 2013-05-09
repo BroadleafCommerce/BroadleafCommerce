@@ -67,9 +67,13 @@ $(document).ready(function() {
     		$this.find('img.thumbnail').attr("src", fields['assetUrl'] + '?largeAdminThumbnail');
     		
     		var mediaItem = $this.find('input.mediaItem');
-    		var mediaJson = jQuery.parseJSON(mediaItem.val());
-    		mediaJson.url = fields['assetUrl'];
-    		mediaItem.val(JSON.stringify(mediaJson));
+    		if (mediaItem.length > 0) {
+        		var mediaJson = jQuery.parseJSON(mediaItem.val());
+        		mediaJson.url = fields['assetUrl'];
+        		mediaItem.val(JSON.stringify(mediaJson));
+    		} else {
+    		    $this.find('input.mediaUrl').val(fields['assetUrl']);
+    		}
     		
 			BLCAdmin.hideCurrentModal();
     	});
