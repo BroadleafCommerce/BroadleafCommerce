@@ -19,7 +19,6 @@ package org.broadleafcommerce.common.web;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
@@ -67,7 +66,7 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
     private BroadleafTimeZoneResolver broadleafTimeZoneResolver;
 
     @Override
-    public void process(WebRequest request) throws SiteNotFoundException {
+    public void process(WebRequest request) {
         Site site = siteResolver.resolveSite(request);
 
         BroadleafRequestContext brc = new BroadleafRequestContext();

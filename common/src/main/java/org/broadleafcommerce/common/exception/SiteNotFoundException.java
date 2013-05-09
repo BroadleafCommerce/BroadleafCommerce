@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.exception;
 /**
  * @author Jeff Fischer
  */
-public class SiteNotFoundException extends Exception {
+public class SiteNotFoundException extends RuntimeException {
 
     public SiteNotFoundException() {
         //do nothing
