@@ -103,7 +103,9 @@
                         </span>
                         
                         <span th:if="${field.fieldType == 'IMAGE'}">
-                            <img th:src="${'/cmsstatic' + field.value + '?smallAdminThumbnail'}" />
+                            <img 
+                                th:style="${'height: ' + field.height + 'px;'}"
+                                th:src="${field.value}" />
                         </span>
                             
                         <span th:unless="${headerField.mainEntityLink or headerField.canLinkToExternalEntity or field.fieldType == 'IMAGE'}"
