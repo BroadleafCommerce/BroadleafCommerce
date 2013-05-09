@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.context.annotation.Scope;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -36,6 +37,8 @@ import javax.ws.rs.ext.Provider;
  * @author Kelly Tisdell
  *
  */
+//This class MUST be a singleton Spring Bean
+@Scope("singleton")
 @Provider
 public class BroadleafRestExceptionMapper implements ExceptionMapper<Throwable>, MessageSourceAware {
 
