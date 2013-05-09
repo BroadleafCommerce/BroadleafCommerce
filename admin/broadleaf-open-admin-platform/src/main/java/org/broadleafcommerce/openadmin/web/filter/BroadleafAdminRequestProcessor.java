@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.web;
+package org.broadleafcommerce.openadmin.web.filter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.web.BroadleafLocaleResolver;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.BroadleafSiteResolver;
+import org.broadleafcommerce.common.web.BroadleafTimeZoneResolver;
+import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
+
+import java.util.TimeZone;
 
 import javax.annotation.Resource;
 
@@ -36,16 +43,19 @@ import javax.annotation.Resource;
 @Component("blAdminRequestProcessor")
 public class BroadleafAdminRequestProcessor implements BroadleafWebRequestProcessor {
 
-    private final Log LOG = LogFactory.getLog(getClass());
+    protected final Log LOG = LogFactory.getLog(getClass());
 
     @Resource(name = "blSiteResolver")
-    private BroadleafSiteResolver siteResolver;
+    protected BroadleafSiteResolver siteResolver;
 
     @Resource(name = "messageSource")
-    private MessageSource messageSource;
+    protected MessageSource messageSource;
     
     @Resource(name = "blLocaleResolver")
-    private BroadleafLocaleResolver localeResolver;
+    protected BroadleafLocaleResolver localeResolver;
+    
+    @Resource(name = "blAdminTimeZoneResolver")
+    protected BroadleafTimeZoneResolver broadleafTimeZoneResolver;
 
     @Override
     public void process(WebRequest request) throws SiteNotFoundException {
@@ -63,6 +73,9 @@ public class BroadleafAdminRequestProcessor implements BroadleafWebRequestProces
         }
         
         brc.setMessageSource(messageSource);
+        
+        TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
+        brc.setTimeZone(timeZone);
 
         BroadleafRequestContext.setBroadleafRequestContext(brc);
     }

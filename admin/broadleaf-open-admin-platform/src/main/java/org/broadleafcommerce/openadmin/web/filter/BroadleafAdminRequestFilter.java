@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.web;
+package org.broadleafcommerce.openadmin.web.filter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,15 +23,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Responsible for setting the necessary attributes on the BroadleafRequestContext
@@ -45,8 +46,9 @@ public class BroadleafAdminRequestFilter extends OncePerRequestFilter {
     private Set<String> ignoreSuffixes;
 
     @Resource(name = "blAdminRequestProcessor")
-    protected BroadleafWebRequestProcessor requestProcessor;
+    protected BroadleafAdminRequestProcessor requestProcessor;
 
+    @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
         if (!shouldProcessURL(request, request.getRequestURI())) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.security;
+package org.broadleafcommerce.openadmin.security;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.Authentication;

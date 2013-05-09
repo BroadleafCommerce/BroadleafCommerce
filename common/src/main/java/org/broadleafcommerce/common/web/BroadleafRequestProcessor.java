@@ -42,28 +42,28 @@ import javax.annotation.Resource;
 @Component("blRequestProcessor")
 public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
 
-    private final Log LOG = LogFactory.getLog(getClass());
+    protected final Log LOG = LogFactory.getLog(getClass());
 
     @Resource(name = "blSiteResolver")
-    private BroadleafSiteResolver siteResolver;
+    protected BroadleafSiteResolver siteResolver;
 
     @Resource(name = "blLocaleResolver")
-    private BroadleafLocaleResolver localeResolver;
+    protected BroadleafLocaleResolver localeResolver;
 
     @Resource(name = "blCurrencyResolver")
-    private BroadleafCurrencyResolver currencyResolver;
+    protected BroadleafCurrencyResolver currencyResolver;
 
     @Resource(name = "blSandBoxResolver")
-    private BroadleafSandBoxResolver sandboxResolver;
+    protected BroadleafSandBoxResolver sandboxResolver;
 
     @Resource(name = "blThemeResolver")
-    private BroadleafThemeResolver themeResolver;
+    protected BroadleafThemeResolver themeResolver;
 
     @Resource(name = "messageSource")
-    private MessageSource messageSource;
+    protected MessageSource messageSource;
 
     @Resource(name = "blTimeZoneResolver")
-    private BroadleafTimeZoneResolver broadleafTimeZoneResolver;
+    protected BroadleafTimeZoneResolver broadleafTimeZoneResolver;
 
     @Override
     public void process(WebRequest request) {

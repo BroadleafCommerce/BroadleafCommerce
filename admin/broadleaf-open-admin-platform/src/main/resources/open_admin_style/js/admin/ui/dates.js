@@ -3,7 +3,7 @@
     // Add utility functions for dates to the BLCAdmin object
     BLCAdmin.dates = {
         blcDateFormat : "yy.mm.dd",
-        blcTimeFormat : "HH:mm:ss z",
+        blcTimeFormat : "HH:mm:ss",
         displayDateFormat : 'mm/dd/yy',
         displayTimeFormat : 'HH:mm',
         
@@ -19,7 +19,7 @@
         },
         
         /**
-         * serverDate should be in the Broadleaf datetime format, "yyyy.MM.dd HH:mm:ss Z" (Java spec)
+         * serverDate should be in the Broadleaf datetime format, "yyyy.MM.dd HH:mm:ss" (Java spec)
          * returns the display format, "mm/dd/yy HH:mm" (JavaScript spec)
          */
         getDisplayDate : function(serverDate) {
@@ -55,19 +55,12 @@
                     timeFormat : this.displayTimeFormat
                 });
                 
-                // Next, we'll parse the timezone ourselves
-                var timezone = result.toString();
-                timezone = timezone.substring(timezone.indexOf('GMT') + 3);
-                timezone = timezone.substring(0, timezone.indexOf(' '));
-                
                 // Now, let's convert it to the server format
                 var serverDate = $.datepicker.formatDate(this.blcDateFormat, result);
-                
                 
                 var serverTime = $.datepicker.formatTime(this.blcTimeFormat, {
                     hour : result.getHours(),
                     minute : result.getMinutes(),
-                    timezone : timezone
                 });
                 
                 return serverDate + " " + serverTime;
