@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,6 +50,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
@@ -393,9 +393,8 @@ public class SkuImpl implements Sku {
             // We have dynamic pricing, so we will pull the sale price from there
             if (dynamicPrices == null) {
                 DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
-                List<Class<?>> list = ClassUtils.getAllInterfaces(getClass());
-                Class<?>[] intfArray = list.toArray(new Class<?>[list.size()]);
-                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), intfArray, handler);
+                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(getClass()), handler);
+
                 dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
             }
             
@@ -436,9 +435,8 @@ public class SkuImpl implements Sku {
             // We have dynamic pricing, so we will pull the retail price from there
             if (dynamicPrices == null) {
                 DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
-                List<Class<?>> list = ClassUtils.getAllInterfaces(getClass());
-                Class<?>[] intfArray = list.toArray(new Class<?>[list.size()]);
-                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), intfArray, handler);
+                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(getClass()), handler);
+
                 dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
             }
             

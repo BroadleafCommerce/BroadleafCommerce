@@ -38,7 +38,8 @@ public class TestRollbackHandler implements RollbackHandler {
 
     @Override
     @Transactional("blTransactionManager")
-    public void rollbackState(Activity activity, ProcessContext processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
+    public void rollbackState(Activity<? extends ProcessContext> activity,
+            ProcessContext processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
         LOG.warn("******************* TestRollbackHandler Engaged *********************");
         LOG.warn("******************* Activity: " + activity.getBeanName() + " *********************");
         RollbackStateLocal rollbackStateLocal = RollbackStateLocal.getRollbackStateLocal();

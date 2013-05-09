@@ -182,4 +182,11 @@ public interface PromotableOrder extends Serializable {
      * @return
      */
     Money calculateSubtotalWithAdjustments();
+
+    /**
+     * Returns true if this order was created in a way that existing order and item adjustments
+     * were copied over to this item.
+     * @return
+     */
+    boolean isIncludeOrderAndItemAdjustments();
 }

@@ -96,6 +96,8 @@ public class CheckoutTest extends BaseTest {
         order.setTotalShipping(new Money(0D));
         Map<PaymentInfo, Referenced> map = addPaymentToOrder(order, address);
 
+        //execute pricing for this order
+        orderService.save(order, true);
         CheckoutResponse response = checkoutService.performCheckout(order, map);
         //The DummyCreditCardModule changed the reference Number - make sure it's represented
         for(PaymentInfo paymentInfo : response.getInfos().keySet()) {

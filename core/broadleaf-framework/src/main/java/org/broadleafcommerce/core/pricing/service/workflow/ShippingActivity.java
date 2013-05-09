@@ -24,7 +24,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 import org.broadleafcommerce.core.pricing.service.ShippingService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
-import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.math.BigDecimal;
 
@@ -35,7 +34,7 @@ import java.math.BigDecimal;
  * @see {@link FulfillmentPricingActivity}, {@link FulfillmentPricingService}, {@link FulfillmentOption}
  */
 @Deprecated
-public class ShippingActivity extends BaseActivity {
+public class ShippingActivity extends BaseActivity<PricingContext> {
 
     private ShippingService shippingService;
 
@@ -44,8 +43,8 @@ public class ShippingActivity extends BaseActivity {
     }
 
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        Order order = ((PricingContext)context).getSeedData();
+    public PricingContext execute(PricingContext context) throws Exception {
+        Order order = context.getSeedData();
 
         /*
          * 1. Get FGs from Order

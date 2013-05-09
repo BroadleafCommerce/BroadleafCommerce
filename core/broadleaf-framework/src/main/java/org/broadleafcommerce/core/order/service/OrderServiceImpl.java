@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
@@ -676,7 +677,7 @@ public class OrderServiceImpl implements OrderService {
      * @param item2
      * @return
      */
-    protected boolean compareAttributes(Map<String, String> item1Attributes, OrderItemRequestDTO item2) {
+    protected boolean compareAttributes(Map<String, OrderItemAttribute> item1Attributes, OrderItemRequestDTO item2) {
         int item1AttributeSize = item1Attributes == null ? 0 : item1Attributes.size();
         int item2AttributeSize = item2.getItemAttributes() == null ? 0 : item2.getItemAttributes().size();
 
@@ -685,7 +686,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         for (String key : item2.getItemAttributes().keySet()) {
-            String itemOneValue = item1Attributes.get(key);
+            String itemOneValue = (item1Attributes.get(key) == null) ? null : item1Attributes.get(key).getValue();
             String itemTwoValue = item2.getItemAttributes().get(key);
             if (!itemTwoValue.equals(itemOneValue)) {
                 return false;
@@ -694,7 +695,7 @@ public class OrderServiceImpl implements OrderService {
         return true;
     }
 
-    protected boolean itemMatches(Sku item1Sku, Product item1Product, Map<String, String> item1Attributes,
+    protected boolean itemMatches(Sku item1Sku, Product item1Product, Map<String, OrderItemAttribute> item1Attributes,
             OrderItemRequestDTO item2) {
         // Must match on SKU and options
         if (item1Sku != null && item2.getSkuId() != null) {
@@ -718,7 +719,7 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItem currentItem : order.getOrderItems()) {
             if (currentItem instanceof DiscreteOrderItem) {
                 DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
-                if (itemMatches(discreteItem.getSku(), discreteItem.getProduct(), discreteItem.getAdditionalAttributes(),
+                if (itemMatches(discreteItem.getSku(), discreteItem.getProduct(), discreteItem.getOrderItemAttributes(),
                         itemToFind)) {
                     return discreteItem;
                 }

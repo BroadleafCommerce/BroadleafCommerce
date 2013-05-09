@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+    <bean p:order="1000" id="blPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.CompositeActivity">
+        <property name="workflow" ref="blAuthorizeAndDebitWorkflow"/>
+    </bean>
+    <bean id="blPaymentWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.payment.service.workflow.SimplePaymentProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blPaymentActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+
+    <bean id="blGiftCardModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    <bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.NullCreditCardPaymentModule"/>
+    <bean id="blBankAccountModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    <bean id="blCheckPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    <bean id="blElectronicCheckPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    <bean id="blWirePaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    <bean id="blMoneyOrderPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    <bean id="blAccountCreditPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    <bean id="blCustomerCreditPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    <bean id="blAccountPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    
+    <bean id="blGiftCardService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blGiftCardModule"/>
+    </bean>
+    <bean id="blCreditCardService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blCreditCardModule"/>
+    </bean>
+    <bean id="blBankAccountService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blBankAccountModule"/>
+    </bean>
+    <bean id="blCheckPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blCheckPaymentModule"/>
+    </bean>
+    <bean id="blElectronicCheckPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blElectronicCheckPaymentModule"/>
+    </bean>
+    <bean id="blWirePaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blWirePaymentModule"/>
+    </bean>
+    <bean id="blMoneyOrderPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blMoneyOrderPaymentModule"/>
+    </bean>
+    <bean id="blAccountCreditPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blAccountCreditPaymentModule"/>
+    </bean>
+    <bean id="blCustomerCreditPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blCustomerCreditPaymentModule"/>
+    </bean>
+    <bean id="blAccountPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blAccountPaymentModule"/>
+    </bean>
+
+    <bean p:order="1000" id="blAuthorizeGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blGiftCardService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="2000" id="blAuthorizeAccountPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blAccountPaymentService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="3000" id="blAuthorizeCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCreditCardService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean id="blAuthorizeWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentProcessContextFactory">
+                <property name="paymentActionType" value="AUTHORIZE"/>
+            </bean>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blAuthorizeGiftCardActivity" />
+                <ref bean="blAuthorizeAccountPaymentActivity" />
+                <ref bean="blAuthorizeCreditCardActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+
+    <bean p:order="1000" id="blDebitGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blGiftCardService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="2000" id="blDebitAccountPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blAccountPaymentService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="3000" id="blDebitCreditCardActivity"  class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCreditCardService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean id="blDebitWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentProcessContextFactory">
+                <property name="paymentActionType" value="DEBIT"/>
+            </bean>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blDebitGiftCardActivity" />
+                <ref bean="blDebitAccountPaymentActivity" />
+                <ref bean="blDebitCreditCardActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+
+
+    <bean p:order="1000" id="blAuthorizeAndDebitAccountCreditActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blAccountCreditPaymentService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="2000" id="blAuthorizeAndDebitCustomerCreditActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCustomerCreditPaymentService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="3000" id="blAuthorizeAndDebitAccountPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blAccountPaymentService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="4000" id="blAuthorizeAndDebitGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blGiftCardService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="5000" id="blAuthorizeAndDebitCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCreditCardService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="6000" id="blAuthorizeAndDebitBankAccountActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blBankAccountService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="7000" id="blAuthorizeAndDebitCheckActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCheckPaymentService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="8000" id="blAuthorizeAndDebitElectronicCheckActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blElectronicCheckPaymentService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="9000" id="blAuthorizeAndDebitWireActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blWirePaymentService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="10000" id="blAuthorizeAndDebitMoneyOrderActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blMoneyOrderPaymentService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean id="blAuthorizeAndDebitWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentProcessContextFactory">
+                <property name="paymentActionType" value="AUTHORIZEANDDEBIT"/>
+            </bean>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blAuthorizeAndDebitAccountCreditActivity" />
+                <ref bean="blAuthorizeAndDebitCustomerCreditActivity" />
+                <ref bean="blAuthorizeAndDebitAccountPaymentActivity" />
+                <ref bean="blAuthorizeAndDebitGiftCardActivity" />
+                <ref bean="blAuthorizeAndDebitCreditCardActivity" />
+                <ref bean="blAuthorizeAndDebitBankAccountActivity" />
+                <ref bean="blAuthorizeAndDebitCheckActivity" />
+                <ref bean="blAuthorizeAndDebitElectronicCheckActivity" />
+                <ref bean="blAuthorizeAndDebitWireActivity" />
+                <ref bean="blAuthorizeAndDebitMoneyOrderActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+
+    <bean p:order="1000" id="blCreditCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCreditCardService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="2000" id="blCreditGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blGiftCardService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="3000" id="blCreditAccountPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blAccountPaymentService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean id="blCreditWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentProcessContextFactory">
+                <property name="paymentActionType" value="CREDIT"/>
+            </bean>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blCreditCreditCardActivity" />
+                <ref bean="blCreditGiftCardActivity" />
+                <ref bean="blCreditAccountPaymentActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+
+    <bean p:order="1000" id="blVoidCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCreditCardService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="2000" id="blVoidGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blGiftCardService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="3000" id="blVoidAccountPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blAccountPaymentService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean id="blVoidWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentProcessContextFactory">
+                <property name="paymentActionType" value="VOID"/>
+            </bean>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blVoidCreditCardActivity" />
+                <ref bean="blVoidGiftCardActivity" />
+                <ref bean="blVoidAccountPaymentActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+
+    <bean p:order="1000" id="blReverseAuthCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCreditCardService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="2000" id="blReverseAuthGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blGiftCardService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean p:order="3000" id="blReverseAuthAccountPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blAccountPaymentService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean id="blReverseAuthWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentProcessContextFactory">
+                <property name="paymentActionType" value="REVERSEAUTHORIZE"/>
+            </bean>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blReverseAuthCreditCardActivity" />
+                <ref bean="blReverseAuthGiftCardActivity" />
+                <ref bean="blReverseAuthAccountPaymentActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+
+    <bean p:order="1000" id="blPartialPaymentCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCreditCardService"/>
+        <property name="userName" value="web"/>
+    </bean>
+    <bean id="blPartialPaymentWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentProcessContextFactory">
+                <property name="paymentActionType" value="PARTIALPAYMENT"/>
+            </bean>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blPartialPaymentCreditCardActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+    
+</beans>

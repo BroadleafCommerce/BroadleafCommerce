@@ -25,7 +25,7 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
  *
  * @author Jeff Fischer
  */
-public class ThirdPartyInteractionLatencySimulationActivity extends BaseActivity {
+public class ThirdPartyInteractionLatencySimulationActivity extends BaseActivity<ProcessContext> {
 
     private long waitTime = 1000L;
 

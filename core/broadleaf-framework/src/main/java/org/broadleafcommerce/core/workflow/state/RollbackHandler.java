@@ -38,6 +38,7 @@ public interface RollbackHandler {
      * @param stateConfiguration Any user-defined state configuration associated with the RollbackHandler
      * @throws RollbackFailureException if there is a failure during the execution of the rollback
      */
-    public void rollbackState(Activity activity, ProcessContext processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException;
+    public void rollbackState(Activity<? extends ProcessContext> activity,
+            ProcessContext processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException;
 
 }

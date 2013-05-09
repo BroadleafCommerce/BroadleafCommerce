@@ -32,7 +32,7 @@ import java.util.HashMap;
  */
 public class RollbackFailureException extends WorkflowException {
 
-    private Activity activity;
+    private Activity<? extends ProcessContext> activity;
     private ProcessContext processContext;
     private HashMap<String, ?> stateItems;
 
@@ -51,11 +51,11 @@ public class RollbackFailureException extends WorkflowException {
         super(message, cause);
     }
 
-    public Activity getActivity() {
+    public Activity<? extends ProcessContext> getActivity() {
         return activity;
     }
 
-    public void setActivity(Activity activity) {
+    public void setActivity(Activity<? extends ProcessContext> activity) {
         this.activity = activity;
     }
 

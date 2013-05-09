@@ -26,6 +26,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -43,8 +46,6 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
-import java.util.HashMap;
-import java.util.Map;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -66,7 +67,7 @@ public class CustomerPaymentImpl implements CustomerPayment {
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = AddressImpl.class, optional=false)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = AddressImpl.class, optional = false)
     @JoinColumn(name = "ADDRESS_ID")
     @Index(name="CUSTOMERPAYMENT_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address billingAddress;

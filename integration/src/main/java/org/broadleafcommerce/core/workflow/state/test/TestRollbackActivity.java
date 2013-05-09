@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
  *
  * @author Jeff Fischer
  */
-public class TestRollbackActivity extends BaseActivity {
+public class TestRollbackActivity extends BaseActivity<ProcessContext> {
 
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {

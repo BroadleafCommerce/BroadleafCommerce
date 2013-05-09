@@ -20,13 +20,14 @@ import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.PostConstruct;
 
 /**
  * @author Jeff Fischer
@@ -75,12 +76,12 @@ public class ActivityStateManagerImpl implements ActivityStateManager {
     }
 
     @Override
-    public void registerState(Activity activity, ProcessContext processContext, RollbackHandler rollbackHandler, Map<String, Object> stateItems) {
+    public void registerState(Activity<? extends ProcessContext> activity, ProcessContext processContext, RollbackHandler rollbackHandler, Map<String, Object> stateItems) {
         registerState(activity, processContext, null, rollbackHandler, stateItems);
     }
 
     @Override
-    public void registerState(Activity activity, ProcessContext processContext, String region, RollbackHandler rollbackHandler, Map<String, Object> stateItems) {
+    public void registerState(Activity<? extends ProcessContext> activity, ProcessContext processContext, String region, RollbackHandler rollbackHandler, Map<String, Object> stateItems) {
         RollbackStateLocal rollbackStateLocal = getRollbackStateLocal();
         List<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
         if (containers == null) {
@@ -141,7 +142,7 @@ public class ActivityStateManagerImpl implements ActivityStateManager {
         private String region;
         private RollbackHandler rollbackHandler;
         private Map<String, Object> stateItems;
-        private Activity activity;
+        private Activity<? extends ProcessContext> activity;
         private ProcessContext processContext;
 
         public String getRegion() {
@@ -168,11 +169,11 @@ public class ActivityStateManagerImpl implements ActivityStateManager {
             this.stateItems = stateItems;
         }
 
-        public Activity getActivity() {
+        public Activity<? extends ProcessContext> getActivity() {
             return activity;
         }
 
-        public void setActivity(Activity activity) {
+        public void setActivity(Activity<? extends ProcessContext> activity) {
             this.activity = activity;
         }
 

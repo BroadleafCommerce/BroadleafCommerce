@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import javax.annotation.Resource;
 import java.util.Map.Entry;
 
-public class PaymentServiceActivity extends BaseActivity {
+public class PaymentServiceActivity extends BaseActivity<CheckoutContext> {
     
     private static final Log LOG = LogFactory.getLog(PaymentServiceActivity.class);
 
@@ -42,8 +42,8 @@ public class PaymentServiceActivity extends BaseActivity {
     protected Boolean stopCheckoutOnSinglePaymentFailure;
 
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
+    public CheckoutContext execute(CheckoutContext context) throws Exception {
+        CheckoutSeed seed = context.getSeedData();
         CompositePaymentResponse response = compositePaymentService.executePayment(seed.getOrder(), seed.getInfos(), seed.getPaymentResponse());
         
         for (Entry<PaymentInfo, PaymentResponseItem> entry : response.getPaymentResponse().getResponseItems().entrySet()) {

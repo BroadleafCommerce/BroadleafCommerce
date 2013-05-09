@@ -36,7 +36,7 @@ import javax.annotation.Resource;
 public class BroadleafRequestInterceptor implements WebRequestInterceptor {
 
     @Resource(name = "blRequestProcessor")
-    private BroadleafRequestProcessor requestProcessor;
+    protected BroadleafRequestProcessor requestProcessor;
 
     @Override
     public void preHandle(WebRequest request) throws Exception {

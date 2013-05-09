@@ -32,9 +32,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -63,7 +64,7 @@ public class CustomerStateRequestProcessor implements ApplicationEventPublisherA
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Customer customer = null;
         if ((authentication != null) && !(authentication instanceof AnonymousAuthenticationToken)) {
-            String userName = request.getUserPrincipal().getName();
+            String userName = authentication.getName();
             customer = (Customer) request.getAttribute(customerRequestAttributeName, WebRequest.SCOPE_REQUEST);
             if (userName != null && (customer == null || !userName.equals(customer.getUsername()))) {
                 // can only get here if the authenticated user does not match the user in session

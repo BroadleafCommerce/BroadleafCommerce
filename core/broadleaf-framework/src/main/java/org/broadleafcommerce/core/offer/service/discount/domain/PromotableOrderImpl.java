@@ -44,14 +44,14 @@ public class PromotableOrderImpl implements PromotableOrder {
     protected List<PromotableFulfillmentGroup> fulfillmentGroups;
     protected List<PromotableOrderAdjustment> candidateOrderOfferAdjustments = new ArrayList<PromotableOrderAdjustment>();
     protected boolean includeOrderAndItemAdjustments = false;
-    
+
     public PromotableOrderImpl(Order order, PromotableItemFactory itemFactory, boolean includeOrderAndItemAdjustments) {
         this.order = order;
         this.itemFactory = itemFactory;
         this.includeOrderAndItemAdjustments = includeOrderAndItemAdjustments;
 
         if (includeOrderAndItemAdjustments) {
-            createOrderAdjustments();
+            createExistingOrderAdjustments();
         }
     }
 
@@ -59,12 +59,12 @@ public class PromotableOrderImpl implements PromotableOrder {
      * Bring over the order adjustments.   Intended to be used when processing
      * fulfillment orders.
      */
-    protected void createOrderAdjustments() {
+    protected void createExistingOrderAdjustments() {
         if (order.getOrderAdjustments() != null) {
             for (OrderAdjustment adjustment : order.getOrderAdjustments()) {
                 if (adjustment.getOffer() != null) {
-                    PromotableCandidateOrderOffer pcoo = itemFactory.createPromotableCandidateOrderOffer(this, adjustment.getOffer());
-                    PromotableOrderAdjustment adj = itemFactory.createPromotableOrderAdjustment(pcoo, this);
+                    PromotableCandidateOrderOffer pcoo = itemFactory.createPromotableCandidateOrderOffer(this, adjustment.getOffer(), adjustment.getValue());
+                    PromotableOrderAdjustment adj = itemFactory.createPromotableOrderAdjustment(pcoo, this, adjustment.getValue());
                     candidateOrderOfferAdjustments.add(adj);
                 }
             }
@@ -324,5 +324,10 @@ public class PromotableOrderImpl implements PromotableOrder {
             calculatedSubTotal = calculatedSubTotal.add(orderItem.calculateTotalWithAdjustments());
         }
         return calculatedSubTotal;
+    }
+
+    @Override
+    public boolean isIncludeOrderAndItemAdjustments() {
+        return includeOrderAndItemAdjustments;
     }
 }

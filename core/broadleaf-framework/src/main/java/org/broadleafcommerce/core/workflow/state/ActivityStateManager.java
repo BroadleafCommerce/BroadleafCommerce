@@ -62,7 +62,7 @@ public interface ActivityStateManager {
      * @param rollbackHandler A RollbackHandler instance that should be executed by the StateManager
      * @param stateItems Configuration items for the RollbackHandler (can be null)
      */
-    public void registerState(Activity activity, ProcessContext processContext, RollbackHandler rollbackHandler, Map<String, Object> stateItems);
+    public void registerState(Activity<? extends ProcessContext> activity, ProcessContext processContext, RollbackHandler rollbackHandler, Map<String, Object> stateItems);
 
     /**
      * Register a RollbackHandler instance and some arbitrary state items with the
@@ -80,7 +80,7 @@ public interface ActivityStateManager {
      * @param rollbackHandler A RollbackHandler instance that should be executed by the StateManager
      * @param stateItems Configuration items for the RollbackHandler (can be null)
      */
-    public void registerState(Activity activity, ProcessContext processContext, String region, RollbackHandler rollbackHandler, Map<String, Object> stateItems);
+    public void registerState(Activity<? extends ProcessContext> activity, ProcessContext processContext, String region, RollbackHandler rollbackHandler, Map<String, Object> stateItems);
 
     /**
      * Cause the StateManager to call all registered RollbackHandlers

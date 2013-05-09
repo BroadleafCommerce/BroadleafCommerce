@@ -39,8 +39,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 import java.beans.PropertyEditorSupport;
 import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 public class BroadleafManageCustomerAddressesController extends BroadleafAbstractController {
 
@@ -188,20 +192,12 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
         return getCustomerAddressesRedirect();
     }
 
-    public static String getCustomerAddressesView() {
+    public String getCustomerAddressesView() {
         return customerAddressesView;
     }
 
-    public static void setCustomerAddressesView(String customerAddressesView) {
-        BroadleafManageCustomerAddressesController.customerAddressesView = customerAddressesView;
-    }
-
-    public static String getCustomerAddressesRedirect() {
+    public String getCustomerAddressesRedirect() {
         return customerAddressesRedirect;
-    }
-
-    public static void setCustomerAddressesRedirect(String customerAddressesRedirect) {
-        BroadleafManageCustomerAddressesController.customerAddressesRedirect = customerAddressesRedirect;
     }
 
     public String getAddressUpdatedMessage() {

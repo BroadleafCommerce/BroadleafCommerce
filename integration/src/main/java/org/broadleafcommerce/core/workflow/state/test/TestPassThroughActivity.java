@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.workflow;
+package org.broadleafcommerce.core.workflow.state.test;
 
-public abstract class BaseExtensionActivity<T extends ProcessContext> extends BaseActivity<T> {
-    
+import org.broadleafcommerce.core.checkout.service.workflow.CheckoutContext;
+import org.broadleafcommerce.core.workflow.BaseActivity;
+
+
+/**
+ * A Do-nothing activity used to test proper merge ordering in workflows
+ *
+ * @author Phillip Verheyden (phillipuniverse)
+ */
+public class TestPassThroughActivity extends BaseActivity<CheckoutContext> {
+
     @Override
-    public T execute(T context) throws Exception {
+    public CheckoutContext execute(CheckoutContext context) throws Exception {
+        // TODO Auto-generated method stub
         return context;
     }
 

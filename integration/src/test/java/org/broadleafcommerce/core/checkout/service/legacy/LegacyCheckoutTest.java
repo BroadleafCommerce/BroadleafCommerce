@@ -95,6 +95,8 @@ public class LegacyCheckoutTest extends BaseTest {
         order.setTotalShipping(new Money(0D));
         Map<PaymentInfo, Referenced> map = addPaymentToOrder(order, address);
 
+        //execute pricing for this order
+        orderService.save(order, true);
         CheckoutResponse response = checkoutService.performCheckout(order, map);
         //The DummyCreditCardModule changed the reference Number - make sure it's represented
         for(PaymentInfo paymentInfo : response.getInfos().keySet()) {
@@ -220,66 +222,82 @@ public class LegacyCheckoutTest extends BaseTest {
             private static final long serialVersionUID = 1L;
             private String referenceNumber = "1234";
 
+            @Override
             public String getCvvCode() {
                 return "123";
             }
 
+            @Override
             public Integer getExpirationMonth() {
                 return 11;
             }
 
+            @Override
             public Integer getExpirationYear() {
                 return 2011;
             }
 
+            @Override
             public Long getId() {
                 return null;
             }
 
+            @Override
             public String getPan() {
                 return "1111111111111111";
             }
 
+            @Override
             public String getNameOnCard() {
                 return "Cardholder Name";
             }
 
+            @Override
             public void setCvvCode(String cvvCode) {
                 //do nothing
             }
 
+            @Override
             public void setExpirationMonth(Integer expirationMonth) {
                 //do nothing
             }
 
+            @Override
             public void setExpirationYear(Integer expirationYear) {
                 //do nothing
             }
 
+            @Override
             public void setId(Long id) {
                 //do nothing
             }
 
+            @Override
             public void setNameOnCard(String nameOnCard) {
                 //do nothing
             }
 
+            @Override
             public void setPan(String pan) {
                 //do nothing
             }
 
+            @Override
             public EncryptionModule getEncryptionModule() {
                 return encryptionModule;
             }
 
+            @Override
             public String getReferenceNumber() {
                 return referenceNumber;
             }
 
+            @Override
             public void setEncryptionModule(EncryptionModule encryptionModule) {
                 //do nothing
             }
 
+            @Override
             public void setReferenceNumber(String referenceNumber) {
                 this.referenceNumber = referenceNumber;
             }

@@ -29,7 +29,6 @@ import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotPr
 import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
-import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +36,7 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
-public class ValidateAddRequestActivity extends BaseActivity {
+public class ValidateAddRequestActivity extends BaseActivity<CartOperationContext> {
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -47,9 +46,10 @@ public class ValidateAddRequestActivity extends BaseActivity {
 
     @Resource(name = "blProductOptionValidationService")
     protected ProductOptionValidationService productOptionValidationService;
+
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        CartOperationRequest request = ((CartOperationContext) context).getSeedData();
+    public CartOperationContext execute(CartOperationContext context) throws Exception {
+        CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         
         // Quantity was not specified or was equal to zero. We will not throw an exception,

@@ -31,11 +31,10 @@ import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemReque
 import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
-import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
-public class AddOrderItemActivity extends BaseActivity {
+public class AddOrderItemActivity extends BaseActivity<CartOperationContext> {
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -47,8 +46,8 @@ public class AddOrderItemActivity extends BaseActivity {
     protected CatalogService catalogService;
 
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        CartOperationRequest request = ((CartOperationContext) context).getSeedData();
+    public CartOperationContext execute(CartOperationContext context) throws Exception {
+        CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
 
         // Order and sku have been verified in a previous activity -- the values 

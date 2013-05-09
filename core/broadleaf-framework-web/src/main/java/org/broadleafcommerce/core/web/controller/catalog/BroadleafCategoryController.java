@@ -29,15 +29,16 @@ import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This class works in combination with the CategoryHandlerMapping which finds a category based upon
@@ -123,12 +124,8 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
         return model;
     }
 
-    public static String getDefaultCategoryView() {
+    public String getDefaultCategoryView() {
         return defaultCategoryView;
-    }
-
-    public static void setDefaultCategoryView(String defaultCategoryView) {
-        BroadleafCategoryController.defaultCategoryView = defaultCategoryView;
     }
 
 }

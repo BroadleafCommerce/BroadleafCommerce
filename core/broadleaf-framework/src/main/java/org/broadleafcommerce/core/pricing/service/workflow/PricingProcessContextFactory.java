@@ -21,14 +21,10 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.ProcessContextFactory;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 
-public class PricingProcessContextFactory implements ProcessContextFactory {
+public class PricingProcessContextFactory implements ProcessContextFactory<Order> {
 
-    public ProcessContext createContext(Object seedData) throws WorkflowException {
-        if(!(seedData instanceof Order)){
-            throw new WorkflowException("Seed data instance is incorrect. " +
-                    "Required class is "+Order.class.getName()+" " +
-                    "but found class: "+seedData.getClass().getName());
-        }
+    @Override
+    public ProcessContext createContext(Order seedData) throws WorkflowException {
         PricingContext context = new PricingContext();
         context.setSeedData(seedData);
 

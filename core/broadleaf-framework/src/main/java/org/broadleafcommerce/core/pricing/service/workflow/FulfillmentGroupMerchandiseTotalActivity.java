@@ -23,7 +23,6 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
-import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.math.BigDecimal;
 
@@ -34,11 +33,11 @@ import java.math.BigDecimal;
  * @author Phillip Verheyden
  * @see {@link FulfillmentGroup#setMerchandiseTotal(Money)}, {@link FulfillmentGroup#getMerchandiseTotal()}
  */
-public class FulfillmentGroupMerchandiseTotalActivity extends BaseActivity {
+public class FulfillmentGroupMerchandiseTotalActivity extends BaseActivity<PricingContext> {
 
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        Order order = ((PricingContext) context).getSeedData();
+    public PricingContext execute(PricingContext context) throws Exception {
+        Order order = context.getSeedData();
 
         for(FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             Money merchandiseTotal = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, fulfillmentGroup.getOrder().getCurrency());
