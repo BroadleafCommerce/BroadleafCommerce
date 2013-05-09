@@ -433,7 +433,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "{owningClass:.*}/{collectionField:.*}/select", method = RequestMethod.GET)
+    @RequestMapping(value = "/{owningClass:.*}/{collectionField:.*}/select", method = RequestMethod.GET)
     public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable String owningClass,
@@ -667,7 +667,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{id:[0-9]*}/{collectionField:.*}/{collectionItemId:[0-9]*}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}", method = RequestMethod.GET)
     public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable String id,

@@ -144,7 +144,7 @@ public class AdminProductController extends AdminBasicEntityController {
     }
 
     @Override
-    @RequestMapping(value = "/{id:[0-9]*}/{collectionField:.*}/{collectionItemId:[0-9]*}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}", method = RequestMethod.GET)
     public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable String id,
