@@ -173,10 +173,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<PricingContext>
      */
     protected Money distributeOrderSavingsToItems(Order order, BigDecimal totalAllItems) {
         Money returnAmount = new Money(order.getCurrency());
-        if (!order.getHasOrderAdjustments()) {
-            return returnAmount;
-        }
-        
+
         BigDecimal orderAdjAmt = order.getOrderAdjustmentsValue().getAmount();
 
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
