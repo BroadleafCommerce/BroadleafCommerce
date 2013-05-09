@@ -208,10 +208,6 @@ public class CartTest extends OrderBaseTest {
         assert response.getOrder().getOrderItems().size() == 1;
         assert response.getOrder().getId().equals(anonymousCart.getId());
         assert response.isMerged() == false;
-        
-        List<Order> savedCarts = orderService.findOrdersForCustomer(customerCart.getCustomer(), OrderStatus.NAMED);
-        assert savedCarts.size() == 1;
-        assert savedCarts.get(0).getId().equals(customerCart.getId());
     }
     
     @Transactional

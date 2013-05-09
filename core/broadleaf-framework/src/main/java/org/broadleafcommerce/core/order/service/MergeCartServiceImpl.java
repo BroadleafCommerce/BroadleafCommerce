@@ -25,16 +25,14 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * The 2.0 implementation of merge cart service. Instead of merging items directly from one cart to another, we will
@@ -89,10 +87,6 @@ public class MergeCartServiceImpl implements MergeCartService {
             mergeCartResponse.setOrder(anonymousCart);
         } else {
             // Both carts have some items. The anonymous cart will always be the more recent one by definition
-            // Save off the old customer cart and use the anonymous cart
-            setSavedCartAttributes(customerCart);
-            orderService.save(customerCart, false);
-
             setNewCartOwnership(anonymousCart, customer);
             mergeCartResponse.setOrder(anonymousCart);
         }
@@ -152,14 +146,6 @@ public class MergeCartServiceImpl implements MergeCartService {
 
         reconstructCartResponse.setOrder(customerCart);
         return reconstructCartResponse;
-    }
-    
-    protected void setSavedCartAttributes(Order cart) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, ''yy");
-        Date cartLastUpdated = cart.getAuditable().getDateUpdated();
-        
-        cart.setName("Previously saved cart - " + sdf.format(cartLastUpdated));
-        cart.setStatus(OrderStatus.NAMED);
     }
 
     protected void setNewCartOwnership(Order cart, Customer customer) {
