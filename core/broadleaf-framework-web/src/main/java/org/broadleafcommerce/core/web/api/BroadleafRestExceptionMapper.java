@@ -57,11 +57,15 @@ public class BroadleafRestExceptionMapper implements ExceptionMapper<Throwable>,
                 LOG.error("An exception was caught by the JAX-RS framework: Status: " + response.getStatus() + " Message: " + response.getEntity(), t);
             } else if (response.getStatus() == Response.Status.FORBIDDEN.getStatusCode()) {
                 LOG.warn("Someone tried to access a resource that was forbidden: Status: " + response.getStatus() + " Message: " + response.getEntity(), t);
-            } else if (LOG.isDebugEnabled()) {
-                LOG.debug("REST Services Caught Exception: Status: " + response.getStatus() + " Message: " + response.getEntity(), t);
+            } else if (response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode() && LOG.isDebugEnabled()) {
+                LOG.debug("Bad Request: Status: " + response.getStatus() + " Message: " + response.getEntity(), t);
+            } else if (response.getStatus() == Response.Status.NOT_ACCEPTABLE.getStatusCode() && LOG.isDebugEnabled()) {
+                LOG.debug("Not acceptable: Status: " + response.getStatus() + " Message: " + response.getEntity(), t);
+            } else {
+                LOG.error("An exception was caught by the JAX-RS framework: Status: " + response.getStatus() + " Message: " + response.getEntity(), t);
             }
         } else {
-            LOG.error("An exception was caught by the JAX-RS framework.", t);
+            LOG.error("An exception was caught by the JAX-RS framework: ", t);
         }
 
         if (response != null) {
