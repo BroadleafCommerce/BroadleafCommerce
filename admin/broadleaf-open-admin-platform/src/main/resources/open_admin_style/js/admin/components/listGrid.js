@@ -132,6 +132,10 @@
                 BLCAdmin.listGrid.paginate.initialize($container);
             }
             
+            if (BLCAdmin.listGrid.filter) {
+                BLCAdmin.listGrid.filter.initialize($container);
+            }
+            
             this.updateNecessaryOverflowTooltips($container);
         }
     };

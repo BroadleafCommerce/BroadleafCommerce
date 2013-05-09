@@ -46,9 +46,12 @@
             $context.closest('thead').find('i.sort-icon').removeClass('listgrid-icon-down').removeClass('listgrid-icon-up');
             $context.closest('thead').find('input.sort-direction').removeClass('active').val('');
             $context.closest('thead').find('input.sort-property').removeClass('active');
+            //remove the URL parameters that deal with sorts
+            BLCAdmin.history.replaceUrlParameter('sortProperty', null);
+            BLCAdmin.history.replaceUrlParameter('sortDirection', null);
         },
         
-        initializeFlyouts : function(context) {
+        initialize : function(context) {
             // Positioning the Flyout List
             var normalButtonHeight  = $('.listgrid-headerBtn.dropdown:not(.large):not(.small):not(.tiny)', context).outerHeight() - 1,
                 largeButtonHeight   = $('.listgrid-headerBtn.large.dropdown', context).outerHeight() - 1,
@@ -64,6 +67,37 @@
             $('.listgrid-headerBtn.dropdown.up.large > ul', context).css('top', 'auto').css('bottom', largeButtonHeight - 2);
             $('.listgrid-headerBtn.dropdown.up.small > ul', context).css('top', 'auto').css('bottom', smallButtonHeight - 2);
             $('.listgrid-headerBtn.dropdown.up.tiny > ul', context).css('top', 'auto').css('bottom', tinyButtonHeight - 2);
+            
+            //fill out the criteria and sorts based on the current URL parameters
+            var $header = $('#listGrid-main-header');
+            var params = BLCAdmin.history.getUrlParameters();
+            if (params) {
+                var sortProperty = params['sortProperty'];
+                if (sortProperty) {
+                    //first enable the clear sorts button
+                    var $sortInput = $header.find("input[value='" + sortProperty + "']");
+                    var $closestSortHeader = $sortInput.closest('.listgrid-headerBtn');
+                    $closestSortHeader.find('button.listgrid-clear-sort').removeAttr('disabled');
+                    
+                    //now ensure that the correct arrow direction is shown (up or down)
+                    var ascending = (params['sortDirection'] == 'ASCENDING') ? true : false;
+                    var icon = $closestSortHeader.find('div i.sort-icon');
+                    icon.toggleClass('listgrid-icon-up', ascending);
+                    icon.toggleClass('listgrid-icon-down', !ascending);
+                }
+                
+                //iterate through the rest of the parameters and fill out the criteria inputs as necessary
+                $.each(params, function(key, value) {
+                    var $criteriaInput = $header.find("input[data-name='" + key + "']");
+                    if ($criteriaInput) {
+                        $criteriaInput.val(value);
+                        $criteriaInput.closest('.filter-fields').find('button.listgrid-clear-filter').removeAttr('disabled');
+                        //show the active filter icon
+                        var filterIcon = $($criteriaInput).parents('.listgrid-headerBtn').find('div i.filter-icon');
+                        filterIcon.toggleClass('icon-filter', true);
+                    }
+                });
+            }
         }
     };
     
@@ -121,10 +155,6 @@
         }
     });
     
-    BLCAdmin.addInitializationHandler(function($container) {
-        BLCAdmin.listGrid.filter.initializeFlyouts($container);
-    });
-    
 })(jQuery, BLCAdmin);
 
 $(document).ready(function() {
@@ -132,7 +162,7 @@ $(document).ready(function() {
      * Handler that fires whenever a sorting link is clicked, sort ascending or descending. This will also modify the
      * sort value input for the closet sort input for this list grid header
      */
-    $('body').on('click', '.sort-fields button', function() {
+    $('body').on('click', '.sort-fields button.listgrid-sort', function() {
         //reset any of the currently active sorts on all the fields in the grid
         BLCAdmin.listGrid.filter.clearActiveSorts($(this));
         
@@ -150,12 +180,13 @@ $(document).ready(function() {
         //also mark these particular sorts as active so they will be serialized
         $sortType.toggleClass('active', true);
         $(this).closest('ul').find('input.sort-property').toggleClass('active', true);
-
+        
         //submit the form just for this particular field since this is the only sort that changed
         $(this).closest('ul').find('div.filter-fields .listgrid-filter').click();
         
         //enable the clear sort button
-        $(this).closest('.sort-fields').find('.listgrid-clear-sort').removeAttr('disabled');
+        $(this).closest('.sort-fields').find('button.listgrid-clear-sort').removeAttr('disabled');
+
         return false;
     });
     
@@ -224,13 +255,13 @@ $(document).ready(function() {
                     value: BLCAdmin.dates.getServerDate($(input).val())
                 })[0];
             }
-            
-            //toggle the filter icon for this field as active or not
-            var filterIcon = $(input).parents('.listgrid-headerBtn').find('div i.filter-icon');
-            filterIcon.toggleClass('icon-filter', !!$(input).val());
-            
+                        
             //only submit fields that have a value set and are not a sort field. Sort fields will be added separately
             if ($(input).val() && !$(input).hasClass('sort-direction') && !$(input).hasClass('sort-property')) {
+                //toggle the filter icon for this field as active or not
+                var filterIcon = $(input).parents('.listgrid-headerBtn').find('div i.filter-icon');
+                filterIcon.toggleClass('icon-filter', !!$(input).val());
+
                 nonBlankInputs.push(input);
             }
         });

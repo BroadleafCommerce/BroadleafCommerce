@@ -62,6 +62,17 @@
             return newUrl;
         },
         
+        getUrlParameters : function() {
+            var baseUrl = window.location.href;
+            var indexOfQ = baseUrl.indexOf('?'); 
+            var urlParams = null;
+            if (indexOfQ >= 0) {
+                urlParams = baseUrl.substring(indexOfQ + 1);
+                return JSON.parse('{"' + decodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+            }
+            return null;
+        },
+        
         replaceUrlParameter : function(param, value, state) {
             var newUrl = this.getUrlWithParameter(param, value, state);
             this.replaceUrl(newUrl, state);
