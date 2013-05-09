@@ -111,6 +111,26 @@ var BLCAdmin = (function($) {
     		}
     	},
     	
+    	showMessageAsModal : function(header, message) {
+            var $data = $('<div>', { 'class' : 'modal' });
+            var $modalHeader = $('<div>', {
+                'class' : 'modal-header'
+            });
+            $modalHeader.append($('<h3>', { 'text' : header }));
+            $modalHeader.append($('<button>', {
+                'class' : 'close',
+                'data-dismiss' : 'modal',
+                'html' : '&times;'
+            }));
+            $data.append($modalHeader);
+            $data.append($('<div>', { 
+                'class' : 'modal-body',
+                'text' : message
+            }));
+    	    
+            this.showElementAsModal($data);
+    	},
+    	
     	showElementAsModal : function($element, onModalHide, onModalHideArgs) {
 			$('body').append($element);
 			showModal($element, onModalHide, onModalHideArgs);
@@ -241,14 +261,24 @@ var BLCAdmin = (function($) {
 // Replace the default AJAX error handler with this custom admin one that relies on the exception
 // being set on the model instead of a stack trace page when an error occurs on an AJAX request.
 BLC.defaultErrorHandler = function(data) {
-    var $data;
-    if (data.responseText.trim) {
-        $data = $(data.responseText.trim());
+    if (data.status == "403") {
+        BLCAdmin.showMessageAsModal('Error', '403 Forbidden');
     } else {
-        $data = $(data.responseText);
-    }
+        var $data;
+        
+        if (data.responseText.trim) {
+            $data = $(data.responseText.trim());
+        } else {
+            $data = $(data.responseText);
+        }
     
-    BLCAdmin.showElementAsModal($data);
+        if ($data.length == 1) {
+            BLCAdmin.showElementAsModal($data);
+        } else {
+            // This shouldn't happen, but it's here as a fallback just in case
+            BLCAdmin.showMessageAsModal('Error', 'An error occurred');
+        }
+    }
 }
 
 BLC.addPreAjaxCallbackHandler(function($data) {
