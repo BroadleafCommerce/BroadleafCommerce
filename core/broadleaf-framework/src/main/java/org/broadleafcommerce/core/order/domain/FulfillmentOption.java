@@ -149,7 +149,7 @@ public interface FulfillmentOption extends Serializable {
      * 
      * @return
      */
-    public boolean getTaxable();
+    public Boolean getTaxable();
 
     /**
      * Sets taxability of option
