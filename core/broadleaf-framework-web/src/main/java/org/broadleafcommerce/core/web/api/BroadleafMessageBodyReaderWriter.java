@@ -299,7 +299,7 @@ public class BroadleafMessageBodyReaderWriter implements
                         .newInstance(clz, 0)
                         .getClass();
             } else {
-                return clz.getClass();
+                return clz;
             }
         }
         
