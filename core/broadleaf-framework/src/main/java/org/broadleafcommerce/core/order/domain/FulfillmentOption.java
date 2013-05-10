@@ -130,4 +130,32 @@ public interface FulfillmentOption extends Serializable {
      */
     public void setFulfillmentType(FulfillmentType fulfillmentType);
     
+    /**
+     * Sets the taxCode of the particular option
+     * 
+     * @param taxCode
+     */
+    public void setTaxCode(String taxCode);
+
+    /**
+     * Returns taxCode of option
+     * 
+     * @return
+     */
+    public String getTaxCode();
+
+    /**
+     * Returns if option is taxable
+     * 
+     * @return
+     */
+    public boolean getTaxable();
+
+    /**
+     * Sets taxability of option
+     * 
+     * @param taxable
+     */
+    public void setTaxable(Boolean taxable);
+
 }
