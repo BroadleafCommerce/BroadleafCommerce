@@ -61,7 +61,6 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
         }
     )
     @Column(name = "FULFILLMENT_OPTION_ID")
-    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "NAME")
@@ -82,14 +81,7 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     protected Boolean useFlatRates = true;
 
     @Column(name = "FULFILLMENT_TYPE", nullable = false)
-    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_fulfillmentType", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
-    
-    @Column(name = "TAX_CODE", nullable = true)
-    protected String taxCode;
-
-    @Column(name = "TAXABLE")
-    protected Boolean taxable = false;
 
     @Override
     public Long getId() {
@@ -141,26 +133,6 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
         this.fulfillmentType = (fulfillmentType == null) ? null : fulfillmentType.getType();
     }
 
- @Override
-    public boolean getTaxable() {
-        return this.taxable;
-    }
-
-    @Override
-    public void setTaxable(Boolean taxable) {
-        this.taxable = taxable;
-    }
-
-    @Override
-    public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
-    }
-
-    @Override
-    public String getTaxCode() {
-        return this.taxCode;
-    }
-
     @Override
     public boolean equals(Object o) {
         return EqualsBuilder.reflectionEquals(this, o);
@@ -170,7 +142,6 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
-
 
     public static class Presentation {
         public static class Group {
@@ -188,4 +159,3 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
         }
     }
 }
-
