@@ -150,7 +150,7 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     }
 
     @Override
-    public boolean getTaxable() {
+    public Boolean getTaxable() {
         return this.taxable;
     }
 
