@@ -373,8 +373,8 @@
             
             // Determine if we need to ignore any explicitly set column widths
             var $explicitSizeThs = $headerTable.closest('.listgrid-container').find('th.explicit-size');
-            if (($table.data('listgridtype') == 'main' && $table.outerWidth() < 974) || 
-                ($table.data('listgridtype') != 'main' && $table.outerWidth() < 694)) {
+            if (($table.data('listgridtype') == 'main' && $table.outerWidth() < 973) || 
+                ($table.data('listgridtype') != 'main' && $table.outerWidth() < 693)) {
                 $explicitSizeThs.each(function(index, element) {
                     $(element).addClass('width-ignored');
                 });

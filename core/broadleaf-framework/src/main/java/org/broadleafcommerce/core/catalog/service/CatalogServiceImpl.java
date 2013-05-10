@@ -33,11 +33,12 @@ import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 @Service("blCatalogService")
 public class CatalogServiceImpl implements CatalogService {
@@ -143,6 +144,11 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public List<Category> findAllCategories(int limit, int offset) {
         return categoryDao.readAllCategories(limit, offset);
+    }
+    
+    @Override
+    public List<Category> findAllParentCategories() {
+        return categoryDao.readAllParentCategories();
     }
 
     @Override

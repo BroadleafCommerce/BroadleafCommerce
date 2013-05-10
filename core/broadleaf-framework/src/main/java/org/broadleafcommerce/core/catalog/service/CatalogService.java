@@ -153,6 +153,8 @@ public interface CatalogService {
     
     public Product createProduct(ProductType productType);
 
+    public List<Category> findAllParentCategories();
+    
     public List<Category> findAllSubCategories(Category category);
 
     public List<Category> findAllSubCategories(Category category, int limit, int offset);
@@ -185,7 +187,4 @@ public interface CatalogService {
      */    
     public Product findProductByURI(String uri);
 
-
-
-    
 }

@@ -25,13 +25,18 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.Date;
-import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * 
@@ -67,6 +72,22 @@ public class CategoryDaoImpl implements CategoryDao {
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         return (Category) query.getSingleResult();
+    }
+    
+    @Override
+    public List<Category> readAllParentCategories() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Category> criteria = builder.createQuery(Category.class);
+        Root<CategoryImpl> category = criteria.from(CategoryImpl.class);
+
+        criteria.select(category);
+        criteria.where(builder.isNull(category.get("defaultParentCategory")));
+
+        try {
+            return em.createQuery(criteria).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override

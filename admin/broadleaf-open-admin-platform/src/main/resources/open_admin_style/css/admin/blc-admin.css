@@ -1040,6 +1040,10 @@ span.read-only {
 	*/
 }
 
+ul.category-root {
+	margin-left: 10px;
+	margin-bottom: 20px;
+}
 
 /* -----------------------------------------
    Magellan toolbar

@@ -90,7 +90,6 @@ public class TranslationDaoImpl implements TranslationDao {
         } catch (NoResultException e) {
             return null;
         }
-        
     }
 
     @Override

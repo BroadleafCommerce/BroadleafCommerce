@@ -35,6 +35,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -221,9 +222,9 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Default_Parent",
-            excluded = true,
-            visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "CategoryImpl_defaultParentCategory", order = 4000,
+            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General)
+    @AdminPresentationToOneLookup()
     protected Category defaultParentCategory;
 
     @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "categoryXrefPK.category")
@@ -231,6 +232,13 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationAdornedTargetCollection(
+            targetObjectProperty = "categoryXrefPK.subCategory",
+            parentObjectProperty = "categoryXrefPK.category",
+            friendlyName = "allChildCategoriesTitle",
+            sortProperty = "displayOrder",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            gridVisibleFields = { "name" })
     protected List<CategoryXref> allChildCategoryXrefs = new ArrayList<CategoryXref>(10);
 
     @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "categoryXrefPK.subCategory")
@@ -239,8 +247,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(
-            targetObjectProperty = "categoryXrefPK.subCategory",
-            parentObjectProperty = "categoryXrefPK.category",
+            targetObjectProperty = "categoryXrefPK.category",
+            parentObjectProperty = "categoryXrefPK.subCategory",
             friendlyName = "allParentCategoriesTitle",
             sortProperty = "displayOrder",
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,

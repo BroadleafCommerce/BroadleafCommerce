@@ -20,8 +20,9 @@ package org.broadleafcommerce.core.catalog.dao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 
-import javax.annotation.Nonnull;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 /**
  * {@code CategoryDao} provides persistence access to {@code Category} instances.
@@ -54,6 +55,11 @@ public interface CategoryDao {
     @Nonnull
     @Deprecated
     public Category readCategoryByName(@Nonnull String categoryName);
+    
+    /**
+     * @return a list of all categories that do not have a defaultParentCategory set
+     */
+    public List<Category> readAllParentCategories();
 
     /**
      * Retrieve a list of {@code Category} instances by name.
@@ -201,4 +207,5 @@ public interface CategoryDao {
     public void setCurrentDateResolution(@Nonnull  Long currentDateResolution);
     @Nonnull
     Category findCategoryByURI(String uri);
+
 }
