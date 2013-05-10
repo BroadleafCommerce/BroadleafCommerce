@@ -83,6 +83,12 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     @Column(name = "FULFILLMENT_TYPE", nullable = false)
     protected String fulfillmentType;
 
+    @Column(name = "TAX_CODE", nullable = true)
+    protected String taxCode;
+
+    @Column(name = "TAXABLE")
+    protected Boolean taxable = false;
+
     @Override
     public Long getId() {
         return id;
@@ -141,6 +147,26 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public boolean getTaxable() {
+        return this.taxable;
+    }
+
+    @Override
+    public void setTaxable(Boolean taxable) {
+        this.taxable = taxable;
+    }
+
+    @Override
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+
+    @Override
+    public String getTaxCode() {
+        return this.taxCode;
     }
 
     public static class Presentation {
