@@ -68,5 +68,11 @@
             return (elementWidth > $(this).width());
         };
     }
+    
+    if (!jQuery.fn.outerHTML) {
+        jQuery.fn.outerHTML = function() {
+            return jQuery('<div />').append(this.eq(0).clone()).html();
+        };
+    }
   
 })(jQuery, this);

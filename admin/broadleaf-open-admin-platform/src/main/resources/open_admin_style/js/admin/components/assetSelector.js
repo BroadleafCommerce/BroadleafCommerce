@@ -1,5 +1,7 @@
 (function($, BLCAdmin) {
     
+    var currentRedactor = null;
+    
     // Add utility functions for assets
     BLCAdmin.asset = {
         /**
@@ -18,10 +20,32 @@
             });
             $form.before($iframe);
             
-            $iframe.load(this.iframeOnLoad);
+            if (currentRedactor == null) {
+                $iframe.load(this.iframeOnLoad);
+            } else {
+                $iframe.load(this.iframeOnLoadRedactor);
+            }
             
             $form.attr('target', 'upload_target');
             $form.submit();
+        },
+        
+        selectButtonClickedRedactor : function(obj, event, key) {
+            currentRedactor = obj;
+            currentRedactor.saveSelection();
+            var $redactor = obj.$el;
+            
+            $redactor.on('assetInfoSelected', function(event, fields) {
+                currentRedactor.restoreSelection();
+                var $img = $('<img>', { 'src' : fields['assetUrl'] });
+                $(this).insertHtml($img.outerHTML());
+                BLCAdmin.hideCurrentModal();
+            });
+        	
+            BLCAdmin.showLinkAsModal('/product/1/chooseAsset', function() {
+    			$('textarea.redactor').unbind('assetInfoSelected');
+    			currentRedactor = null;
+        	});
         },
         
         /**
@@ -36,6 +60,11 @@
             // Note that although we trigger this event on every asset selector container div, only one
             // will have an active event listener for this trigger.
             $('div.asset-selector-container').trigger('assetInfoSelected', json);
+        },
+        
+        iframeOnLoadRedactor : function() {
+            var json = $.parseJSON($(this).contents().text());
+            $('textarea.redactor').trigger('assetInfoSelected', json);
         }
     };
     
@@ -49,11 +78,11 @@ $(document).ready(function() {
         }
         
         $('div.asset-selector-container').trigger('assetInfoSelected', json);
+        $('textarea.redactor').trigger('assetInfoSelected', json);
     });
 			
 	/**
-	 * This handler will fire when the choose image button is clicked on the RTE control or as
-	 * part of a form dialogue.
+	 * This handler will fire when the choose image button is clicked
 	 * 
 	 * It is responsible for binding a assetInfoSelected handler for this field as well as launching
 	 * a image selection modal that will be used to select the image / media item.

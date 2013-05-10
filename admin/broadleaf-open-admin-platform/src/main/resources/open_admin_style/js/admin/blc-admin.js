@@ -10,6 +10,36 @@ var BLCAdmin = (function($) {
 	    left: 20,
 	    top: 20
 	}
+	
+	/**
+	 * Initialize necessary font mappings for Redactor
+	 */
+	var oFontMap = {
+	    arial: ["Arial", "Arial, Helvetica, sans-serif"],
+	    arialblack: ["Arial Black", '"Arial Black", Gadget, sans-serif'],
+	    comicsans: ["Courier New", '"Courier New", Courier, monospace'],
+	    courier: ["Comic Sans", '"Comic Sans MS", cursive, sans-serif'],
+	    impact: ["Impact", 'Impact, Charcoal, sans-serif'],
+	    lucida: ["Lucida", '"Lucida Sans Unicode", "Lucida Grande", sans-serif'],
+	    lucidaconsole: ["Lucida Console", '"Lucida Console", Monaco, monospace'],
+	    georgia: ["Georgia", "Georgia, serif"],
+	    palatino: ["Palatino Linotype", '"Palatino Linotype", "Book Antiqua", Palatino, serif'],
+	    tahoma: ["Tahoma", "Tahoma, Geneva, sans-serif"],
+	    times: ["Times New Roman", "Times, serif"],
+	    trebuchet: ["Trebuchet", '"Trebuchet MS", Helvetica, sans-serif'],
+	    verdana: ["Verdana", "Verdana, Geneva, sans-serif"] 
+	};
+    var oFontDropdown = {}
+    $.each(oFontMap, function(iIndex, oFont){
+        var sFontName = oFont[0];
+        var sFontFace = oFont[1];
+        oFontDropdown[iIndex] = {
+            title: "<font face='"+sFontFace+"'>"+sFontName+"</font>",
+            callback: function(obj, e, sFont){
+                obj.execCommand("fontname", sFontFace);
+            }
+        }
+    });
     
 	function showModal($data, onModalHide, onModalHideArgs) {
 		// If we already have an active modal, we don't need another backdrop on subsequent modals
@@ -230,7 +260,22 @@ var BLCAdmin = (function($) {
     	    }
     	    
     	    // Set up rich-text HTML editors
-            $container.find('.redactor').redactor();
+            $container.find('.redactor').redactor({
+                buttons : ['html', '|', 'formatting', '|', 'bold', 'italic', 'deleted', '|', 
+                           'unorderedlist', 'orderedlist', 'outdent', 'indent', '|',
+                           'selectAssetButton', 'video', 'file', 'table', 'link', '|',
+                           'font', 'fontcolor', 'backcolor', '|', 'alignment', '|', 'horizontalrule'],
+                buttonsCustom : {
+                    selectAssetButton : {
+                        title : 'Select / Upload Asset',
+                        callback : BLCAdmin.asset.selectButtonClickedRedactor
+                    },
+                    font : {
+                        title: "Advanced Font List",
+                        dropdown: oFontDropdown
+                    }
+                }
+            });
             
             // Set the blank value for foreign key lookups
             $container.find('.foreign-key-value-container').each(function(index, element) {
@@ -255,7 +300,7 @@ var BLCAdmin = (function($) {
             }
     	}
 	};
-    
+	
 })(jQuery);
 
 // Replace the default AJAX error handler with this custom admin one that relies on the exception
