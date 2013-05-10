@@ -250,7 +250,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price_Taxable", order=Presentation.FieldOrder.TAXABLE,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing)
-
     protected Boolean isShippingPriceTaxable = Boolean.FALSE;
     
     @ManyToOne(targetEntity = FulfillmentOptionImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})

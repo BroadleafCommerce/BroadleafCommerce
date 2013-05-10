@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -124,7 +125,8 @@ public class OrderImpl implements Order, AdminMainEntity {
     @Column(name = "NAME")
     @Index(name="ORDER_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Name", group = Presentation.Group.Name.General,
-            order=Presentation.FieldOrder.NAME, prominent=true, groupOrder = Presentation.Group.Order.General)
+            order=Presentation.FieldOrder.NAME, prominent=true, groupOrder = Presentation.Group.Order.General,
+            gridOrder = 2000)
     protected String name;
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
@@ -140,7 +142,7 @@ public class OrderImpl implements Order, AdminMainEntity {
     @AdminPresentation(friendlyName = "OrderImpl_Order_Status", group = Presentation.Group.Name.General,
             order=Presentation.FieldOrder.STATUS, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus",
-            groupOrder = Presentation.Group.Order.General)
+            groupOrder = Presentation.Group.Order.General, gridOrder = 3000)
     protected String status;
 
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
@@ -158,13 +160,15 @@ public class OrderImpl implements Order, AdminMainEntity {
     @Column(name = "ORDER_SUBTOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = Presentation.Group.Name.General,
             order=Presentation.FieldOrder.SUBTOTAL, fieldType=SupportedFieldType.MONEY,prominent=true,
-            currencyCodeField="currency.currencyCode", groupOrder = Presentation.Group.Order.General)
+            currencyCodeField="currency.currencyCode", groupOrder = Presentation.Group.Order.General,
+            gridOrder = 4000)
     protected BigDecimal subTotal;
 
     @Column(name = "ORDER_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = Presentation.Group.Name.General,
             order=Presentation.FieldOrder.TOTAL, fieldType= SupportedFieldType.MONEY,prominent=true,
-            currencyCodeField="currency.currencyCode", groupOrder = Presentation.Group.Order.General)
+            currencyCodeField="currency.currencyCode", groupOrder = Presentation.Group.Order.General,
+            gridOrder = 5000)
     protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")
@@ -175,7 +179,8 @@ public class OrderImpl implements Order, AdminMainEntity {
     @Column(name = "ORDER_NUMBER")
     @Index(name="ORDER_NUMBER_INDEX", columnNames={"ORDER_NUMBER"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Number", group = Presentation.Group.Name.General,
-            order=Presentation.FieldOrder.ORDERNUMBER, prominent=true, groupOrder = Presentation.Group.Order.General)
+            order=Presentation.FieldOrder.ORDERNUMBER, prominent=true, groupOrder = Presentation.Group.Order.General,
+            gridOrder = 1000)
     private String orderNumber;
 
     @Column(name = "EMAIL_ADDRESS")
@@ -201,7 +206,7 @@ public class OrderImpl implements Order, AdminMainEntity {
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Adjustments",
-                tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+                tab = Presentation.Tab.Name.Adjustments, tabOrder = Presentation.Tab.Order.Adjustments,
                 order = Presentation.FieldOrder.ADJUSTMENTS)
     protected List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
 
@@ -211,15 +216,17 @@ public class OrderImpl implements Order, AdminMainEntity {
             referencedColumnName = "OFFER_CODE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Offer_Codes",
-                tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+                tab = Presentation.Tab.Name.Adjustments, tabOrder = Presentation.Tab.Order.Adjustments,
                 manyToField = "orders", order = Presentation.FieldOrder.OFFERCODES)
     protected List<OfferCode> addedOfferCodes = new ArrayList<OfferCode>();
 
-    @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = { CascadeType.ALL },
+            orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<CandidateOrderOffer> candidateOrderOffers = new ArrayList<CandidateOrderOffer>();
 
-    @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = { CascadeType.ALL },
+            orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Payment_Infos",
                 tab = Presentation.Tab.Name.Payment, tabOrder = Presentation.Tab.Order.Payment)
@@ -236,9 +243,13 @@ public class OrderImpl implements Order, AdminMainEntity {
     @BatchSize(size = 50)
     protected Map<Offer, OfferInfo> additionalOfferInformation = new HashMap<Offer, OfferInfo>();
 
-    @OneToMany(mappedBy = "order", targetEntity = OrderAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", targetEntity = OrderAttributeImpl.class, cascade = { CascadeType.ALL },
+            orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="name")
+    @AdminPresentationMap(friendlyName = "OrderImpl_Attributes",
+        forceFreeFormKeys = true, keyPropertyFriendlyName = "PaymentInfoImpl_Additional_Fields_Name"
+    )
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<String,OrderAttribute>();
     
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
@@ -428,7 +439,8 @@ public class OrderImpl implements Order, AdminMainEntity {
 
     @Override
     public Money getTotalFulfillmentCharges() {
-        return totalFulfillmentCharges == null ? null : BroadleafCurrencyUtils.getMoney(totalFulfillmentCharges, getCurrency());
+        return totalFulfillmentCharges == null ? null : BroadleafCurrencyUtils.getMoney(totalFulfillmentCharges,
+                getCurrency());
     }
 
     @Override
@@ -725,14 +737,14 @@ public class OrderImpl implements Order, AdminMainEntity {
                 public static final String OrderItems = "OrderImpl_Order_Items_Tab";
                 public static final String FulfillmentGroups = "OrderImpl_Fulfillment_Groups_Tab";
                 public static final String Payment = "OrderImpl_Payment_Tab";
-                public static final String Advanced = "OrderImpl_Advanced_Tab";
+                public static final String Adjustments = "OrderImpl_Adjustments_Tab";
             }
 
             public static class Order {
                 public static final int OrderItems = 2000;
                 public static final int FulfillmentGroups = 3000;
                 public static final int Payment = 4000;
-                public static final int Advanced = 5000;
+                public static final int Adjustments = 5000;
             }
         }
 

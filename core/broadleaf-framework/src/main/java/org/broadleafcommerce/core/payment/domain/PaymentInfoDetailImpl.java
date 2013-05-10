@@ -55,7 +55,7 @@ public class PaymentInfoDetailImpl implements PaymentInfoDetail {
 
     @ManyToOne(targetEntity = PaymentInfoImpl.class, optional = false)
     @JoinColumn(name = "PAYMENT_INFO")
-    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(excluded = true)
     protected PaymentInfo paymentInfo;
 
     @Column(name = "PAYMENT_INFO_DETAIL_TYPE")

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
@@ -50,23 +52,30 @@ public class AmountItemImpl implements AmountItem {
     
     @Column(name = "SHORT_DESCRIPTION", nullable=true)
     @Index(name="SHORT_DESCRIPTION_INDEX", columnNames={"SHORT_DESCRIPTION"})
+    @AdminPresentation(friendlyName = "AmountItemImpl_Short_Description", order=1000, prominent=true, gridOrder = 1000)
     protected String shortDescription;
     
     @Column(name = "DESCRIPTION")
+    @AdminPresentation(friendlyName = "AmountItemImpl_Description", order=2000)
     protected String description;
     
     @Column(name = "UNIT_PRICE", nullable=false, precision=19, scale=5)
+    @AdminPresentation(friendlyName = "AmountItemImpl_Unit_Price", order=3000, gridOrder = 2000, prominent=true, fieldType=
+                SupportedFieldType.MONEY)
     protected BigDecimal unitPrice;
     
     @Column(name = "QUANTITY", nullable=false)
+    @AdminPresentation(friendlyName = "AmountItemImpl_Quantity", order=4000, prominent=true, gridOrder = 3000)
     protected Long quantity;
     
     @Column(name = "SYSTEM_ID")
+    @AdminPresentation(friendlyName = "AmountItemImpl_SystemId", order=5000)
     protected String systemId;
     
     @ManyToOne(targetEntity = PaymentInfoImpl.class, optional = true)
     @JoinColumn(name = "PAYMENT_ID")
     @Index(name="AMOUNTITEM_PAYMENTINFO_INDEX", columnNames={"PAYMENT_ID"})
+    @AdminPresentation(excluded = true)
     protected PaymentInfo paymentInfo;
 
     /* (non-Javadoc)

@@ -21,9 +21,16 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationPropertyType;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
@@ -62,6 +69,54 @@ import java.util.Map;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_PAYMENT")
+@AdminPresentationOverrides(
+    value = {
+        @AdminPresentationOverride(name="address", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.tab,
+                                overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Address),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.tabOrder,
+                                intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Address)
+                })
+        ),
+        @AdminPresentationOverride(name="address.isDefault", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = true)
+                })
+        ),
+        @AdminPresentationOverride(name="address.isActive", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = true)
+                })
+        ),
+        @AdminPresentationOverride(name="address.isBusiness", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = true)
+                })
+        ),
+        @AdminPresentationOverride(name="phone", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = true)
+                })
+        ),
+        @AdminPresentationOverride(name="phone.phoneNumber", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = false),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.order,
+                                intOverrideValue = FulfillmentGroupImpl.Presentation.FieldOrder.PHONE),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.group,
+                                overrideValue = "General"),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.requiredOverride,
+                                overrideValue = "NOT_REQUIRED")
+                })
+        )
+    }
+)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PaymentInfoImpl_basePaymentInfo")
 public class PaymentInfoImpl implements PaymentInfo {
 
@@ -82,34 +137,34 @@ public class PaymentInfoImpl implements PaymentInfo {
     @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "ADDRESS_ID")
     @Index(name="ORDERPAYMENT_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
-    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Address", order=1, group = "PaymentInfoImpl_Address")
     protected Address address;
 
     @ManyToOne(targetEntity = PhoneImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "PHONE_ID")
     @Index(name="ORDERPAYMENT_PHONE_INDEX", columnNames={"PHONE_ID"})
-    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Phone", order=1, group = "PaymentInfoImpl_Phone")
     protected Phone phone;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Amount", order=3, group = "PaymentInfoImpl_Description", prominent=true, fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Amount", order=2000, gridOrder = 2000, prominent=true, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal amount;
 
     @Column(name = "REFERENCE_NUMBER")
     @Index(name="ORDERPAYMENT_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
-    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Reference_Number", order=1, group = "PaymentInfoImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Reference_Number", order=1000, prominent=true, gridOrder = 1000)
     protected String referenceNumber;
 
     @Column(name = "PAYMENT_TYPE", nullable = false)
     @Index(name="ORDERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
-    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Type", order=2, group = "PaymentInfoImpl_Description", prominent=true, fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.payment.service.type.PaymentInfoType")
+    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Type", order=3000, gridOrder = 3000, prominent=true, fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.payment.service.type.PaymentInfoType")
     protected String type;
     
     @OneToMany(mappedBy = "paymentInfo", targetEntity = AmountItemImpl.class, cascade = {CascadeType.ALL})
+    @AdminPresentationCollection(friendlyName="PaymentInfoImpl_Amount_Items",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected List<AmountItem> amountItems = new ArrayList<AmountItem>();
     
     @Column(name = "CUSTOMER_IP_ADDRESS", nullable = true)
-    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_IP_Address", order=4, group = "PaymentInfoImpl_Description")
+    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_IP_Address", order=4000)
     protected String customerIpAddress;
 
     @ElementCollection
@@ -117,18 +172,24 @@ public class PaymentInfoImpl implements PaymentInfo {
     @Column(name="FIELD_VALUE")
     @CollectionTable(name="BLC_PAYINFO_ADDITIONAL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_ID"))
     @BatchSize(size = 50)
+    @AdminPresentationMap(friendlyName = "PaymentInfoImpl_Additional_Fields",
+        forceFreeFormKeys = true, keyPropertyFriendlyName = "PaymentInfoImpl_Additional_Fields_Name"
+    )
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
     @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentInfoDetailImpl.class, cascade = {CascadeType.ALL})
+    @AdminPresentationCollection(friendlyName="PaymentInfoImpl_Details",
+            tab = Presentation.Tab.Name.Log, tabOrder = Presentation.Tab.Order.Log)
     protected List<PaymentInfoDetail> details = new ArrayList<PaymentInfoDetail>();
-
-    @Transient
-    protected Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
 
     @ManyToOne(targetEntity = CustomerPaymentImpl.class)
     @JoinColumn(name = "CUSTOMER_PAYMENT_ID")
     @Index(name="CUSTOMER_PAYMENT", columnNames={"CUSTOMER_PAYMENT_ID"})
+    @AdminPresentation(excluded = true) //don't display the payment token info in the admin by default
     protected CustomerPayment customerPayment;
+
+    @Transient
+    protected Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
 
     @Override
     public Money getAmount() {
@@ -345,5 +406,35 @@ public class PaymentInfoImpl implements PaymentInfo {
         emptyReferenced.setReferenceNumber(getReferenceNumber());
 
         return emptyReferenced;
+    }
+
+    public static class Presentation {
+        public static class Tab {
+            public static class Name {
+                public static final String Address = "PaymentInfoImpl_Address_Tab";
+                public static final String Log = "PaymentInfoImpl_Log_Tab";
+                public static final String Advanced = "PaymentInfoImpl_Advanced_Tab";
+            }
+
+            public static class Order {
+                public static final int Address = 2000;
+                public static final int Log = 4000;
+                public static final int Advanced = 5000;
+            }
+        }
+
+        public static class Group {
+            public static class Name {
+                public static final String Items = "PaymentInfoImpl_Items";
+            }
+
+            public static class Order {
+                public static final int Items = 1000;
+            }
+        }
+
+        public static class FieldOrder {
+            public static final int REFNUMBER = 3000;
+        }
     }
 }

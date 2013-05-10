@@ -20,6 +20,8 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -56,10 +58,12 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @OneToMany(mappedBy = "bundleOrderItem", targetEntity = DiscreteOrderItemImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @AdminPresentationCollection(friendlyName="BundleOrderItemImpl_Discrete_Order_Items")
     protected List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
     
     @OneToMany(mappedBy = "bundleOrderItem", targetEntity = BundleOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+    @AdminPresentationCollection(friendlyName="BundleOrderItemImpl_Item_Fee_Prices")
     protected List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<BundleOrderItemFeePrice>();
 
     @Column(name="BASE_RETAIL_PRICE", precision=19, scale=5)
@@ -73,12 +77,18 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @ManyToOne(targetEntity = SkuImpl.class)
     @JoinColumn(name = "SKU_ID")
     @NotFound(action = NotFoundAction.IGNORE)
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(friendlyName = "BundleOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
+            group = OrderItemImpl.Presentation.Group.Name.Catalog,
+            groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
+    @AdminPresentationToOneLookup()
     protected Sku sku;
 
     @ManyToOne(targetEntity = ProductBundleImpl.class)
     @JoinColumn(name = "PRODUCT_BUNDLE_ID")
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(friendlyName = "BundleOrderItemImpl_Product", order=Presentation.FieldOrder.PRODUCT,
+            group = OrderItemImpl.Presentation.Group.Name.Catalog,
+            groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
+    @AdminPresentationToOneLookup()
     protected ProductBundle productBundle;
 
     @Override
@@ -399,5 +409,30 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
+    }
+
+    public static class Presentation {
+        public static class Tab {
+            public static class Name {
+                public static final String OrderItems = "OrderImpl_Order_Items_Tab";
+            }
+
+            public static class Order {
+                public static final int OrderItems = 2000;
+            }
+        }
+
+        public static class Group {
+            public static class Name {
+            }
+
+            public static class Order {
+            }
+        }
+
+        public static class FieldOrder {
+            public static final int PRODUCT = 2000;
+            public static final int SKU = 3000;
+        }
     }
 }
