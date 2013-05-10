@@ -20,9 +20,14 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationPropertyType;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImpl;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
@@ -61,6 +66,69 @@ import java.util.Vector;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@AdminPresentationOverrides(
+    value = {
+        @AdminPresentationOverride(name="currency", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        //don't allow currency fields to be prominent
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.prominent,
+                                booleanOverrideValue = false)
+                })
+        ),
+        @AdminPresentationOverride(name="personalMessage", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.tab,
+                                overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Advanced),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.tabOrder,
+                                intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Advanced)
+                })
+        ),
+        @AdminPresentationOverride(name="address", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.tab,
+                                overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Address),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.tabOrder,
+                                intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Address)
+                })
+        ),
+        @AdminPresentationOverride(name="address.isDefault", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = true)
+                })
+        ),
+        @AdminPresentationOverride(name="address.isActive", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = true)
+                })
+        ),
+        @AdminPresentationOverride(name="address.isBusiness", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = true)
+                })
+        ),
+        @AdminPresentationOverride(name="phone", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = true)
+                })
+        ),
+        @AdminPresentationOverride(name="phone.phoneNumber", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = false),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.order,
+                                intOverrideValue = FulfillmentGroupImpl.Presentation.FieldOrder.PHONE),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.group,
+                                overrideValue = "General"),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.requiredOverride,
+                                overrideValue = "NOT_REQUIRED")
+                })
+        )
+    }
+)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "FulfillmentGroupImpl_baseFulfillmentGroup")
 public class FulfillmentGroupImpl implements FulfillmentGroup {
 
@@ -68,84 +136,121 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Id
     @GeneratedValue(generator = "FulfillmentGroupId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FulfillmentGroupId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupImpl", allocationSize = 50)
+    @TableGenerator(name = "FulfillmentGroupId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME",
+            valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupImpl", allocationSize = 50)
     @Column(name = "FULFILLMENT_GROUP_ID")
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_ID", order = 1, group = "FulfillmentGroupImpl_Description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "REFERENCE_NUMBER")
     @Index(name="FG_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Reference_Number", order=1, group = "FulfillmentGroupImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Reference_Number", order=Presentation.FieldOrder.REFNUMBER,
+            groupOrder = Presentation.Group.Order.General)
     protected String referenceNumber;
 
     @Column(name = "METHOD")
     @Index(name="FG_METHOD_INDEX", columnNames={"METHOD"})
-    @AdminPresentation(excluded = true, friendlyName = "FulfillmentGroupImpl_Shipping_Method", order=2, group = "FulfillmentGroupImpl_Description", prominent=true)
+    @AdminPresentation(excluded = true)
     @Deprecated
     protected String method;
     
     @Column(name = "SERVICE")
     @Index(name="FG_SERVICE_INDEX", columnNames={"SERVICE"})
-    @AdminPresentation(excluded = true, friendlyName = "FulfillmentGroupImpl_Shipping_Service", order=3, group = "FulfillmentGroupImpl_Description", prominent=true)
+    @AdminPresentation(excluded = true)
     @Deprecated
     protected String service;
 
     @Column(name = "RETAIL_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Retail_Shipping_Price", order=1, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Retail_Shipping_Price", order=Presentation.FieldOrder.RETAIL,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
+            fieldType=SupportedFieldType.MONEY)
     protected BigDecimal retailFulfillmentPrice;
 
     @Column(name = "SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Sale_Shipping_Price", order=2, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Sale_Shipping_Price", order=Presentation.FieldOrder.SALE,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
+            fieldType=SupportedFieldType.MONEY)
     protected BigDecimal saleFulfillmentPrice;
 
     @Column(name = "PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price", order=3, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price", order=Presentation.FieldOrder.PRICE,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
+            fieldType=SupportedFieldType.MONEY)
     protected BigDecimal fulfillmentPrice;
 
     @Column(name = "TYPE")
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Type", order=4, group = "FulfillmentGroupImpl_Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Type", order=Presentation.FieldOrder.TYPE,
+            fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType",
+            prominent = true, gridOrder = 3000)
     protected String type;
 
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Tax", order=9, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Tax", order=Presentation.FieldOrder.TOTALTAX,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
+            fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
     
     @Column(name = "TOTAL_ITEM_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Item_Tax", order=9, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Item_Tax", order=Presentation.FieldOrder.ITEMTAX,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
+            fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalItemTax;
     
     @Column(name = "TOTAL_FEE_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Fee_Tax", order=9, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_Fee_Tax", order=Presentation.FieldOrder.FEETAX,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
+            fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalFeeTax;
     
     @Column(name = "TOTAL_FG_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_FG_Tax", order=9, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total_FG_Tax", order=Presentation.FieldOrder.FGTAX,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
+            fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalFulfillmentGroupTax;
 
     @Column(name = "DELIVERY_INSTRUCTION")
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Delivery_Instruction", order=4, group = "FulfillmentGroupImpl_Description")
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Delivery_Instruction", order=Presentation.FieldOrder.DELIVERINSTRUCTION)
     protected String deliveryInstruction;
 
     @Column(name = "IS_PRIMARY")
     @Index(name="FG_PRIMARY_INDEX", columnNames={"IS_PRIMARY"})
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Primary_FG", order=5, group = "FulfillmentGroupImpl_Description")
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Primary_FG", order=Presentation.FieldOrder.PRIMARY)
     protected boolean primary = false;
 
     @Column(name = "MERCHANDISE_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Merchandise_Total", order=10, group = "FulfillmentGroupImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Merchandise_Total", order=Presentation.FieldOrder.MERCHANDISETOTAL,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
+            fieldType=SupportedFieldType.MONEY)
     protected BigDecimal merchandiseTotal;
 
     @Column(name = "TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total", order=11, group = "FulfillmentGroupImpl_Pricing", fieldType= SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Total", order=Presentation.FieldOrder.TOTAL,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing,
+            fieldType= SupportedFieldType.MONEY, prominent = true, gridOrder = 2000)
     protected BigDecimal total;
 
     @Column(name = "STATUS")
     @Index(name="FG_STATUS_INDEX", columnNames={"STATUS"})
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Status", order=6, group = "FulfillmentGroupImpl_Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType")
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_FG_Status", order=Presentation.FieldOrder.STATUS,
+            fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType",
+            prominent = true, gridOrder = 4000)
     protected String status;
     
     @Column(name = "SHIPPING_PRICE_TAXABLE")
-    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price_Taxable", order=7, group = "FulfillmentGroupImpl_Pricing")
+    @AdminPresentation(friendlyName = "FulfillmentGroupImpl_Shipping_Price_Taxable", order=Presentation.FieldOrder.TAXABLE,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing)
+
     protected Boolean isShippingPriceTaxable = Boolean.FALSE;
     
     @ManyToOne(targetEntity = FulfillmentOptionImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -155,7 +260,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @ManyToOne(targetEntity = OrderImpl.class, optional=false)
     @JoinColumn(name = "ORDER_ID")
     @Index(name="FG_ORDER_INDEX", columnNames={"ORDER_ID"})
-    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(excluded = true)
     protected Order order;
     
     @Column(name = "FULFILLMENT_GROUP_SEQUNCE")
@@ -178,10 +283,14 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @AdminPresentationCollection(friendlyName="FulfillmentGroupImpl_Items",
+            tab = Presentation.Tab.Name.Items, tabOrder = Presentation.Tab.Order.Items)
     protected List<FulfillmentGroupItem> fulfillmentGroupItems = new ArrayList<FulfillmentGroupItem>();
     
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupFeeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+    @AdminPresentationCollection(friendlyName="FulfillmentGroupImpl_Fees",
+            tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing)
     protected List<FulfillmentGroupFee> fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
         
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
@@ -190,6 +299,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupAdjustmentImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @AdminPresentationCollection(friendlyName="FulfillmentGroupImpl_Adjustments",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
     
     @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
@@ -641,4 +752,52 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         return true;
     }
 
+    public static class Presentation {
+        public static class Tab {
+            public static class Name {
+                public static final String Items = "FulfillmentGroupImpl_Items_Tab";
+                public static final String Pricing = "FulfillmentGroupImpl_Pricing_Tab";
+                public static final String Address = "FulfillmentGroupImpl_Address_Tab";
+                public static final String Advanced = "FulfillmentGroupImpl_Advanced_Tab";
+            }
+
+            public static class Order {
+                public static final int Items = 2000;
+                public static final int Pricing = 3000;
+                public static final int Address = 4000;
+                public static final int Advanced = 5000;
+            }
+        }
+
+        public static class Group {
+            public static class Name {
+                public static final String Pricing = "FulfillmentGroupImpl_Pricing";
+            }
+
+            public static class Order {
+                public static final int General = 1000;
+                public static final int Pricing = 2000;
+            }
+        }
+
+        public static class FieldOrder {
+            public static final int REFNUMBER = 3000;
+            public static final int STATUS = 4000;
+            public static final int TYPE = 5000;
+            public static final int DELIVERINSTRUCTION = 6000;
+            public static final int PRIMARY = 7000;
+            public static final int PHONE = 8000;
+
+            public static final int RETAIL = 1000;
+            public static final int SALE = 2000;
+            public static final int PRICE = 3000;
+            public static final int ITEMTAX = 4000;
+            public static final int FEETAX = 5000;
+            public static final int FGTAX = 6000;
+            public static final int TOTALTAX = 7000;
+            public static final int MERCHANDISETOTAL = 8000;
+            public static final int TOTAL = 9000;
+            public static final int TAXABLE = 10000;
+        }
+    }
 }

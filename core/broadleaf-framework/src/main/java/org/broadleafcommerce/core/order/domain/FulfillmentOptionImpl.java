@@ -61,25 +61,26 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
         }
     )
     @Column(name = "FULFILLMENT_OPTION_ID")
-    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_name")
+    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_name",
+        order = Presentation.FieldOrder.NAME, prominent = true, gridOrder = 1000)
     protected String name;
 
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION")
-    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_longDescription")
+    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_longDescription",
+        order = Presentation.FieldOrder.DESCRIPTION)
     protected String longDescription;
 
     @Column(name = "USE_FLAT_RATES")
-    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_useFlatRates")
+    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_useFlatRates",
+        order = Presentation.FieldOrder.FLATRATES)
     protected Boolean useFlatRates = true;
 
     @Column(name = "FULFILLMENT_TYPE", nullable = false)
-    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_fulfillmentType", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
 
     @Override
@@ -140,5 +141,21 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    public static class Presentation {
+        public static class Group {
+            public static class Name {
+            }
+
+            public static class Order {
+            }
+        }
+
+        public static class FieldOrder {
+            public static final int NAME = 1000;
+            public static final int DESCRIPTION = 2000;
+            public static final int FLATRATES = 9000;
+        }
     }
 }

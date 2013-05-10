@@ -76,7 +76,7 @@ public class PaymentInfoImpl implements PaymentInfo {
     @ManyToOne(targetEntity = OrderImpl.class, optional = false)
     @JoinColumn(name = "ORDER_ID")
     @Index(name="ORDERPAYMENT_ORDER_INDEX", columnNames={"ORDER_ID"})
-    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(excluded = true)
     protected Order order;
 
     @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })

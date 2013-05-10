@@ -103,17 +103,8 @@ import java.util.Map;
                         @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.readOnly,
                                 booleanOverrideValue = true)
                 })
-        ),
-        @AdminPresentationOverride(name="currency", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        //don't allow currency fields to be prominent
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.prominent,
-                                booleanOverrideValue = false)
-                })
         )
-    },
-    collections = @AdminPresentationCollectionOverride(name="customer.customerAttributes",
-            value=@AdminPresentationCollection(excluded = true, addType = AddMethodType.PERSIST))
+    }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderImpl_baseOrder")
 public class OrderImpl implements Order, AdminMainEntity {
@@ -132,82 +123,96 @@ public class OrderImpl implements Order, AdminMainEntity {
 
     @Column(name = "NAME")
     @Index(name="ORDER_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Name", group = Presentation.Group.Name.General, order=1000,
-            prominent=true, groupOrder = Presentation.Group.Order.General)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Name", group = Presentation.Group.Name.General,
+            order=Presentation.FieldOrder.NAME, prominent=true, groupOrder = Presentation.Group.Order.General)
     protected String name;
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     @Index(name="ORDER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
-    @AdminPresentation(friendlyName = "OrderImpl_Customer", group = Presentation.Group.Name.General, order=2000,
-            groupOrder = Presentation.Group.Order.General)
+    @AdminPresentation(friendlyName = "OrderImpl_Customer", group = Presentation.Group.Name.General,
+            order=Presentation.FieldOrder.CUSTOMER, groupOrder = Presentation.Group.Order.General)
     @AdminPresentationToOneLookup()
     protected Customer customer;
 
     @Column(name = "ORDER_STATUS")
     @Index(name="ORDER_STATUS_INDEX", columnNames={"ORDER_STATUS"})
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Status", group = Presentation.Group.Name.General, order=4000,
-            prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Status", group = Presentation.Group.Name.General,
+            order=Presentation.FieldOrder.STATUS, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus",
             groupOrder = Presentation.Group.Order.General)
     protected String status;
 
     @Column(name = "TOTAL_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Tax", group = Presentation.Group.Name.General, order=7000,
-            fieldType=SupportedFieldType.MONEY, groupOrder = Presentation.Group.Order.General)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Tax", group = Presentation.Group.Name.General,
+            order=Presentation.FieldOrder.TOTALTAX, fieldType=SupportedFieldType.MONEY,
+            groupOrder = Presentation.Group.Order.General)
     protected BigDecimal totalTax;
 
     @Column(name = "TOTAL_SHIPPING", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Shipping", group = Presentation.Group.Name.General, order=8000,
-            fieldType=SupportedFieldType.MONEY, groupOrder = Presentation.Group.Order.General)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Shipping", group = Presentation.Group.Name.General,
+            order=Presentation.FieldOrder.TOTALFGCHARGES, fieldType=SupportedFieldType.MONEY,
+            groupOrder = Presentation.Group.Order.General)
     protected BigDecimal totalFulfillmentCharges;
 
     @Column(name = "ORDER_SUBTOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = Presentation.Group.Name.General, order=5000,
-            fieldType=SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode",
-            groupOrder = Presentation.Group.Order.General)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = Presentation.Group.Name.General,
+            order=Presentation.FieldOrder.SUBTOTAL, fieldType=SupportedFieldType.MONEY,prominent=true,
+            currencyCodeField="currency.currencyCode", groupOrder = Presentation.Group.Order.General)
     protected BigDecimal subTotal;
 
     @Column(name = "ORDER_TOTAL", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = Presentation.Group.Name.General, order=3000,
-            fieldType= SupportedFieldType.MONEY,prominent=true,currencyCodeField="currency.currencyCode",
-            groupOrder = Presentation.Group.Order.General)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = Presentation.Group.Name.General,
+            order=Presentation.FieldOrder.TOTAL, fieldType= SupportedFieldType.MONEY,prominent=true,
+            currencyCodeField="currency.currencyCode", groupOrder = Presentation.Group.Order.General)
     protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Submit_Date", group = Presentation.Group.Name.General, order=9000,
-            groupOrder = Presentation.Group.Order.General)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Submit_Date", group = Presentation.Group.Name.General,
+            order=Presentation.FieldOrder.SUBMITDATE, groupOrder = Presentation.Group.Order.General)
     protected Date submitDate;
 
     @Column(name = "ORDER_NUMBER")
     @Index(name="ORDER_NUMBER_INDEX", columnNames={"ORDER_NUMBER"})
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Number", group = Presentation.Group.Name.General, order=6000,
-            prominent=true, groupOrder = Presentation.Group.Order.General)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Number", group = Presentation.Group.Name.General,
+            order=Presentation.FieldOrder.ORDERNUMBER, prominent=true, groupOrder = Presentation.Group.Order.General)
     private String orderNumber;
 
     @Column(name = "EMAIL_ADDRESS")
     @Index(name="ORDER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
     @AdminPresentation(friendlyName = "OrderImpl_Order_Email_Address", group = Presentation.Group.Name.General,
-            order=10000, groupOrder = Presentation.Group.Order.General)
+            order=Presentation.FieldOrder.EMAILADDRESS, groupOrder = Presentation.Group.Order.General)
     protected String emailAddress;
 
     @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    @AdminPresentationCollection(friendlyName="OrderImpl_Order_Items", order = 1000, tab = Presentation.Tab.Name.OrderItems, tabOrder = Presentation.Tab.Order.OrderItems)
+    @AdminPresentationCollection(friendlyName="OrderImpl_Order_Items",
+            tab = Presentation.Tab.Name.OrderItems, tabOrder = Presentation.Tab.Order.OrderItems)
     protected List<OrderItem> orderItems = new ArrayList<OrderItem>();
 
     @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @OrderBy("id")
+    @AdminPresentationCollection(friendlyName="OrderImpl_Fulfillment_Groups",
+                tab = Presentation.Tab.Name.FulfillmentGroups, tabOrder = Presentation.Tab.Order.FulfillmentGroups)
     protected List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
 
-    @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = { CascadeType.ALL },
+            orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @AdminPresentationCollection(friendlyName="OrderImpl_Adjustments",
+                tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+                order = Presentation.FieldOrder.ADJUSTMENTS)
     protected List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = OfferCodeImpl.class)
-    @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", joinColumns = @JoinColumn(name = "ORDER_ID", referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_CODE_ID", referencedColumnName = "OFFER_CODE_ID"))
+    @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", joinColumns = @JoinColumn(name = "ORDER_ID",
+            referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_CODE_ID",
+            referencedColumnName = "OFFER_CODE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @AdminPresentationCollection(friendlyName="OrderImpl_Offer_Codes",
+                tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+                manyToField = "orders", order = Presentation.FieldOrder.OFFERCODES)
     protected List<OfferCode> addedOfferCodes = new ArrayList<OfferCode>();
 
     @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
@@ -216,10 +221,14 @@ public class OrderImpl implements Order, AdminMainEntity {
 
     @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @AdminPresentationCollection(friendlyName="OrderImpl_Payment_Infos",
+                tab = Presentation.Tab.Name.Payment, tabOrder = Presentation.Tab.Order.Payment)
     protected List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
 
     @ManyToMany(targetEntity=OfferInfoImpl.class)
-    @JoinTable(name = "BLC_ADDITIONAL_OFFER_INFO", joinColumns = @JoinColumn(name = "BLC_ORDER_ORDER_ID", referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_INFO_ID", referencedColumnName = "OFFER_INFO_ID"))
+    @JoinTable(name = "BLC_ADDITIONAL_OFFER_INFO", joinColumns = @JoinColumn(name = "BLC_ORDER_ORDER_ID",
+            referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_INFO_ID",
+            referencedColumnName = "OFFER_INFO_ID"))
     @MapKeyJoinColumn(name = "OFFER_ID")
     @MapKeyClass(OfferImpl.class)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
@@ -234,7 +243,7 @@ public class OrderImpl implements Order, AdminMainEntity {
     
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "BroadleafCurrency_Currency_Code", order=1000, group = "BroadleafCurrency_Details", groupOrder = 2000)
+    @AdminPresentation(excluded = true)
     protected BroadleafCurrency currency;
 
     @ManyToOne(targetEntity = LocaleImpl.class)
@@ -714,10 +723,16 @@ public class OrderImpl implements Order, AdminMainEntity {
         public static class Tab {
             public static class Name {
                 public static final String OrderItems = "OrderImpl_Order_Items_Tab";
+                public static final String FulfillmentGroups = "OrderImpl_Fulfillment_Groups_Tab";
+                public static final String Payment = "OrderImpl_Payment_Tab";
+                public static final String Advanced = "OrderImpl_Advanced_Tab";
             }
 
             public static class Order {
                 public static final int OrderItems = 2000;
+                public static final int FulfillmentGroups = 3000;
+                public static final int Payment = 4000;
+                public static final int Advanced = 5000;
             }
         }
 
@@ -733,6 +748,18 @@ public class OrderImpl implements Order, AdminMainEntity {
 
         public static class FieldOrder {
             public static final int NAME = 1000;
+            public static final int CUSTOMER = 2000;
+            public static final int TOTAL = 3000;
+            public static final int STATUS = 4000;
+            public static final int SUBTOTAL = 5000;
+            public static final int ORDERNUMBER = 6000;
+            public static final int TOTALTAX = 7000;
+            public static final int TOTALFGCHARGES = 8000;
+            public static final int SUBMITDATE = 9000;
+            public static final int EMAILADDRESS = 10000;
+
+            public static final int ADJUSTMENTS = 1000;
+            public static final int OFFERCODES = 2000;
         }
     }
 }

@@ -53,10 +53,8 @@ public class FixedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl imple
     
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "FixedPriceFulfillmentOptionImpl_Currency_Code", order=1, group = "FixedPriceFulfillmentOptionImpl_Details", prominent=true)
+    @AdminPresentation(excluded = true)
     protected BroadleafCurrency currency;
-
-
 
     @Override
     public Money getPrice() {

@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.hibernate.annotations.Cache;
@@ -80,6 +81,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @Column(name = "STATUS")
     @Index(name="FGITEM_STATUS_INDEX", columnNames={"STATUS"})
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Status")
     private String status;
     
     @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
@@ -88,21 +90,19 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
     
     @Column(name = "TOTAL_ITEM_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Tax", order=9, group = "FulfillmentGroupItemImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Tax", order=9, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
     @Column(name = "TOTAL_ITEM_AMOUNT", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Amount", order = 9, group = "FulfillmentGroupItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Amount", order = 9, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalItemAmount;
 
     @Column(name = "TOTAL_ITEM_TAXABLE_AMOUNT", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Amount", order = 9, group = "FulfillmentGroupItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Amount", order = 9, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalItemTaxableAmount;
 
-    @Column(name = "TAXABLE_PRORATED_ORDER_ADJ")
-    protected BigDecimal taxableProratedOrderAdjustment;
-
     @Column(name = "PRORATED_ORDER_ADJ")
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Prorated_Adjustment", order = 9, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal proratedOrderAdjustment;
 
     @Override

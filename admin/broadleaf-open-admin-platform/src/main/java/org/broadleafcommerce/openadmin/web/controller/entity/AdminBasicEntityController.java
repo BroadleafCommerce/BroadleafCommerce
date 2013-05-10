@@ -691,7 +691,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
             Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata);
 
-            EntityForm entityForm = formService.createEntityForm(collectionMetadata, entity);
+            Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
+
+            EntityForm entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap);
 
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/simpleEditEntity");

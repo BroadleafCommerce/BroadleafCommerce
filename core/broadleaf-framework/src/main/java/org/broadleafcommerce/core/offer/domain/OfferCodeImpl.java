@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -75,33 +76,29 @@ public class OfferCodeImpl implements OfferCode {
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     @Index(name="OFFERCODE_OFFER_INDEX", columnNames={"OFFER_ID"})
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer")
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer", order=2000,
+            prominent = true, gridOrder = 2000)
+    @AdminPresentationToOneLookup()
     protected Offer offer;
 
     @Column(name = "OFFER_CODE", nullable=false)
     @Index(name="OFFERCODE_CODE_INDEX", columnNames={"OFFER_CODE"})
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code", order = 6000, 
-        group = OfferImpl.Presentation.Group.Name.Description, groupOrder = OfferImpl.Presentation.Group.Order.Description,
-        prominent = true)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code", order = 1000, prominent = true, gridOrder = 1000)
     protected String offerCode;
 
     @Column(name = "START_DATE")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Start_Date", order = 6100,
-            group = OfferImpl.Presentation.Group.Name.Description, groupOrder = OfferImpl.Presentation.Group.Order.Description)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Start_Date", order = 3000)
     protected Date offerCodeStartDate;
 
     @Column(name = "END_DATE")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_End_Date", order = 6200,
-            group = OfferImpl.Presentation.Group.Name.Description, groupOrder = OfferImpl.Presentation.Group.Order.Description)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_End_Date", order = 4000)
     protected Date offerCodeEndDate;
 
     @Column(name = "MAX_USES")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Max_Uses", order = 6300,
-            group = OfferImpl.Presentation.Group.Name.Description, groupOrder = OfferImpl.Presentation.Group.Order.Description)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Max_Uses", order = 5000)
     protected Integer maxUses;
 
     @Column(name = "USES")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Uses", visibility = VisibilityEnum.HIDDEN_ALL)
     @Deprecated
     protected int uses;
     

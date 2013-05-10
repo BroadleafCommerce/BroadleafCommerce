@@ -69,7 +69,7 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
     protected Long id;
     
     @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName = "OrderItemAttributeImpl_Attribute_Name", order=1, group = "OrderItemAttributeImpl_Description", prominent=true)
+    @AdminPresentation(excluded = true)
     protected String name;
 
     @Column(name = "VALUE", nullable=false)

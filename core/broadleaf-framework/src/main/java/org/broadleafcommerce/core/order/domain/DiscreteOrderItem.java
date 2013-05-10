@@ -70,8 +70,20 @@ public interface DiscreteOrderItem extends OrderItem, SkuAccessor, Cloneable {
 
     Money getTaxablePrice();
 
+    /**
+     * Arbitrary attributes associated with the order item
+     *
+     * @deprecated use getOrderItemAttributes instead
+     * @return the attributes
+     */
     public Map<String, String> getAdditionalAttributes();
 
+    /**
+     * Arbitrary attributes associated with the order item
+     *
+     * @deprecated use setOrderItemAttributes instead
+     * @param additionalAttributes the map of attributes
+     */
     public void setAdditionalAttributes(Map<String, String> additionalAttributes);
 
     public Money getBaseRetailPrice();

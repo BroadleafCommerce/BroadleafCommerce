@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl;
@@ -57,9 +58,9 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
             @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
             @Parameter(name="segment_column_name", value="ID_NAME"),
             @Parameter(name="value_column_name", value="ID_VAL"),
-                    @Parameter(name = "segment_value", value = "OrderItemPriceDetailAdjustmentImpl"),
+            @Parameter(name = "segment_value", value = "OrderItemPriceDetailAdjustmentImpl"),
             @Parameter(name="increment_size", value="50"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImpl")
+            @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImpl")
         }
     )
     @Column(name = "ORDER_ITEM_DTL_ADJ_ID")
@@ -72,22 +73,27 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
+    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_Offer", order=1000,
+            group = "OrderItemPriceDetailAdjustmentImpl_Description", prominent = true, gridOrder = 1000)
+    @AdminPresentationToOneLookup()
     protected Offer offer;
 
     @Column(name = "OFFER_NAME")
-    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_offerName", order = 2, group = "OrderItemPriceDetailAdjustmentImpl_Description")
     protected String offerName;
 
     @Column(name = "ADJUSTMENT_REASON", nullable=false)
-    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_reason", order = 1, group = "OrderItemPriceDetailAdjustmentImpl_Description")
+    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_reason", order = 1,
+            group = "OrderItemPriceDetailAdjustmentImpl_Description")
     protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_value", order = 2, group = "OrderItemPriceDetailAdjustmentImpl_Description", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_value", order = 2,
+            group = "OrderItemPriceDetailAdjustmentImpl_Description", fieldType = SupportedFieldType.MONEY, prominent = true)
     protected BigDecimal value = Money.ZERO.getAmount();
 
     @Column(name = "APPLIED_TO_SALE_PRICE")
-    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_appliedToSalePrice", order = 3, group = "OrderItemPriceDetailAdjustmentImpl_Description")
+    @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_appliedToSalePrice", order = 3,
+            group = "OrderItemPriceDetailAdjustmentImpl_Description")
     protected boolean appliedToSalePrice;
     
     @Transient

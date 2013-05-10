@@ -22,11 +22,12 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
@@ -66,12 +67,6 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-@AdminPresentationOverrides(
-    {
-        @AdminPresentationOverride(name="skuBundleItem", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="bundleOrderItem", value=@AdminPresentation(excluded = true))
-    }
-)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemImpl_baseOrderItem")
 public class OrderItemImpl implements OrderItem, Cloneable {
 
@@ -80,42 +75,53 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Id
     @GeneratedValue(generator = "OrderItemId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OrderItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderItemImpl", allocationSize = 150)
+    @TableGenerator(name = "OrderItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL",
+            pkColumnValue = "OrderItemImpl", allocationSize = 150)
     @Column(name = "ORDER_ITEM_ID")
-    @AdminPresentation(friendlyName = "OrderItemImpl_Order_Item_ID", group = "OrderItemImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="ORDERITEM_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     @NotFound(action = NotFoundAction.IGNORE)
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Category", order=Presentation.FieldOrder.CATEGORY,
+            group = Presentation.Group.Name.Catalog, groupOrder = Presentation.Group.Order.Catalog)
+    @AdminPresentationToOneLookup()
     protected Category category;
 
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
     @Index(name="ORDERITEM_ORDER_INDEX", columnNames={"ORDER_ID"})
-    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(excluded = true)
     protected Order order;
 
     @Column(name = "PRICE", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Price", order = 1, group = "OrderItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Price", order = Presentation.FieldOrder.PRICE,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal price;
 
     @Column(name = "QUANTITY", nullable = false)
-    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Quantity", order = 2, group = "OrderItemImpl_Pricing")
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Quantity", order = Presentation.FieldOrder.QUANTITY,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing)
     protected int quantity;
 
     @Column(name = "RETAIL_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Retail_Price", order = 3, group = "OrderItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Retail_Price", order = Presentation.FieldOrder.RETAILPRICE,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
     @Column(name = "SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Sale_Price", order = 4, group = "OrderItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Sale_Price", order = Presentation.FieldOrder.SALEPRICE,
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            fieldType = SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Name", order=1, group = "OrderItemImpl_Description", prominent=true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Name", order=Presentation.FieldOrder.NAME,
+            group = Presentation.Group.Name.Description, prominent=true, groupOrder = Presentation.Group.Order.Description)
     protected String name;
 
     @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = { CascadeType.ALL })
@@ -131,20 +137,26 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     @AdminPresentation(excluded = true)
     protected GiftWrapOrderItem giftWrapOrderItem;
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = { CascadeType.ALL },
+            orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<OrderItemAdjustment>();
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemQualifierImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemQualifierImpl.class, cascade = { CascadeType.ALL },
+            orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<OrderItemQualifier> orderItemQualifiers = new ArrayList<OrderItemQualifier>();
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = CandidateItemOfferImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "orderItem", targetEntity = CandidateItemOfferImpl.class, cascade = { CascadeType.ALL },
+            orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<CandidateItemOffer>();
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemPriceDetailImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemPriceDetailImpl.class, cascade = { CascadeType.ALL },
+            orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @AdminPresentationCollection(friendlyName="OrderItemImpl_Price_Details", order = Presentation.FieldOrder.PRICEDETAILS,
+                    tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected List<OrderItemPriceDetail> orderItemPriceDetails = new ArrayList<OrderItemPriceDetail>();
     
     @Column(name = "ORDER_ITEM_TYPE")
@@ -161,14 +173,23 @@ public class OrderItemImpl implements OrderItem, Cloneable {
     protected Boolean salePriceOverride;
 
     @Column(name = "DISCOUNTS_ALLOWED")
+    @AdminPresentation(friendlyName = "OrderItemImpl_Discounts_Allowed", order=Presentation.FieldOrder.DISCOUNTALLOWED,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected Boolean discountsAllowed;
 
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="name")
+    @AdminPresentationMap(friendlyName = "OrderItemImpl_Attributes",
+        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "OrderItemAttributeImpl_Attribute_Name"
+    )
     protected Map<String, OrderItemAttribute> orderItemAttributeMap = new HashMap<String, OrderItemAttribute>();
 
     @Column(name = "TOTAL_TAX")
+    @AdminPresentation(friendlyName = "OrderItemImpl_Total_Tax", order = Presentation.FieldOrder.TOTALTAX,
+                group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+                fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
     
     @Override
@@ -454,12 +475,124 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         this.orderItemAttributeMap = orderItemAttributes;
     }
 
+    @Override
+    public Boolean isTaxable() {
+        return itemTaxable == null ? true : itemTaxable;
+    }
+
+    @Override
+    public void setTaxable(Boolean taxable) {
+        this.itemTaxable = taxable;
+    }
+
+
+
+    @Override
+    public void setOrderItemPriceDetails(List<OrderItemPriceDetail> orderItemPriceDetails) {
+        this.orderItemPriceDetails = orderItemPriceDetails;
+    }
+
+    @Override
+    public boolean isDiscountingAllowed() {
+        if (discountsAllowed == null) {
+            return true;
+        } else {
+            return discountsAllowed.booleanValue();
+        }
+    }
+
+    @Override
+    public void setDiscountingAllowed(boolean discountsAllowed) {
+        this.discountsAllowed = discountsAllowed;
+    }
+
+    @Override
+    public Money getAveragePrice() {
+        if (quantity == 0) {
+            return price == null ? null : BroadleafCurrencyUtils.getMoney(price, getOrder().getCurrency());
+        }
+        return getTotalPrice().divide(quantity);
+    }
+
+    @Override
+    public Money getAverageAdjustmentValue() {
+        if (quantity == 0) {
+            return null;
+        }
+        return getTotalAdjustmentValue().divide(quantity);
+    }
+
+    @Override
+    public Money getTotalAdjustmentValue() {
+        Money totalAdjustmentValue = BroadleafCurrencyUtils.getMoney(order.getCurrency());
+        List<OrderItemPriceDetail> priceDetails = getOrderItemPriceDetails();
+        if (priceDetails != null) {
+            for (OrderItemPriceDetail priceDetail : getOrderItemPriceDetails()) {
+                totalAdjustmentValue = totalAdjustmentValue.add(priceDetail.getTotalAdjustmentValue());
+            }
+        }
+
+        return totalAdjustmentValue;
+    }
+
+    @Override
+    public Money getTotalPrice() {
+        Money returnValue = convertToMoney(BigDecimal.ZERO);
+        if (orderItemPriceDetails != null && orderItemPriceDetails.size() > 0) {
+            for (OrderItemPriceDetail oipd : orderItemPriceDetails) {
+                returnValue = returnValue.add(oipd.getTotalAdjustedPrice());
+            }
+        } else {
+            if (price != null) {
+                returnValue = convertToMoney(price).multiply(quantity);
+            } else {
+                return getSalePrice().multiply(quantity);
+            }
+        }
+
+        return returnValue;
+    }
+
+    @Override
+    public void setRetailPriceOverride(boolean override) {
+        this.retailPriceOverride = Boolean.valueOf(override);
+    }
+
+    @Override
+    public boolean isRetailPriceOverride() {
+        if (retailPriceOverride == null) {
+            return false;
+        } else {
+            return retailPriceOverride.booleanValue();
+        }
+    }
+
+    @Override
+    public void setSalePriceOverride(boolean override) {
+        this.salePriceOverride = Boolean.valueOf(override);
+    }
+
+    @Override
+    public boolean isSalePriceOverride() {
+        if (salePriceOverride == null) {
+            return false;
+        } else {
+            return salePriceOverride.booleanValue();
+        }
+    }
+
+    @Override
+    public List<OrderItemPriceDetail> getOrderItemPriceDetails() {
+        return orderItemPriceDetails;
+    }
     
     public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = orderItem.getClass().getMethod("clone", new Class[]{});
-        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") &&
+                !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
-            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in " +
+                    "order to guarantee split and merge operations are performed accurately");
         }
     }
 
@@ -480,7 +613,8 @@ public class OrderItemImpl implements OrderItem, Cloneable {
             try {
                 checkCloneable(clonedOrderItem);
             } catch (CloneNotSupportedException e) {
-                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clonedOrderItem.getClass().getName(), e);
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " +
+                        clonedOrderItem.getClass().getName(), e);
             }
             if (candidateItemOffers != null) {
                 for (CandidateItemOffer candidate : candidateItemOffers) {
@@ -612,115 +746,41 @@ public class OrderItemImpl implements OrderItem, Cloneable {
         return true;
     }
 
-    @Override
-    public Boolean isTaxable() {
-        return itemTaxable == null ? true : itemTaxable;
-    }
+    public static class Presentation {
+        public static class Tab {
+            public static class Name {
+                public static final String Advanced = "OrderImpl_Advanced";
+            }
 
-    @Override
-    public void setTaxable(Boolean taxable) {
-        this.itemTaxable = taxable;
-    }
-    
-
-
-    @Override
-    public void setOrderItemPriceDetails(List<OrderItemPriceDetail> orderItemPriceDetails) {
-        this.orderItemPriceDetails = orderItemPriceDetails;
-    }
-
-    @Override
-    public boolean isDiscountingAllowed() {
-        if (discountsAllowed == null) {
-            return true;
-        } else {
-            return discountsAllowed.booleanValue();
-        }
-    }
-
-    @Override
-    public void setDiscountingAllowed(boolean discountsAllowed) {
-        this.discountsAllowed = discountsAllowed;
-    }
-
-    @Override
-    public Money getAveragePrice() {
-        if (quantity == 0) {
-            return price == null ? null : BroadleafCurrencyUtils.getMoney(price, getOrder().getCurrency());
-        }
-        return getTotalPrice().divide(quantity);
-    }
-
-    @Override
-    public Money getAverageAdjustmentValue() {
-        if (quantity == 0) {
-            return null;
-        }
-        return getTotalAdjustmentValue().divide(quantity);
-    }
-
-    @Override
-    public Money getTotalAdjustmentValue() {
-        Money totalAdjustmentValue = BroadleafCurrencyUtils.getMoney(order.getCurrency());
-        List<OrderItemPriceDetail> priceDetails = getOrderItemPriceDetails();
-        if (priceDetails != null) {
-            for (OrderItemPriceDetail priceDetail : getOrderItemPriceDetails()) {
-                totalAdjustmentValue = totalAdjustmentValue.add(priceDetail.getTotalAdjustmentValue());
+            public static class Order {
+                public static final int Advanced = 2000;
             }
         }
 
-        return totalAdjustmentValue;
-    }
-    
-    @Override
-    public Money getTotalPrice() {
-        Money returnValue = convertToMoney(BigDecimal.ZERO);
-        if (orderItemPriceDetails != null && orderItemPriceDetails.size() > 0) {
-            for (OrderItemPriceDetail oipd : orderItemPriceDetails) {
-                returnValue = returnValue.add(oipd.getTotalAdjustedPrice());
+        public static class Group {
+            public static class Name {
+                public static final String Description = "OrderItemImpl_Description";
+                public static final String Pricing = "OrderItemImpl_Pricing";
+                public static final String Catalog = "OrderItemImpl_Catalog";
             }
-        } else {
-            if (price != null) {
-                returnValue = convertToMoney(price).multiply(quantity);
-            } else {
-                return getSalePrice().multiply(quantity);
+
+            public static class Order {
+                public static final int Description = 1000;
+                public static final int Pricing = 2000;
+                public static final int Catalog = 3000;
             }
         }
-        
-        return returnValue;
-    }
 
-    @Override
-    public void setRetailPriceOverride(boolean override) {
-        this.retailPriceOverride = Boolean.valueOf(override);
-    }
-
-    @Override
-    public boolean isRetailPriceOverride() {
-        if (retailPriceOverride == null) {
-            return false;
-        } else {
-            return retailPriceOverride.booleanValue();
+        public static class FieldOrder {
+            public static final int NAME = 1000;
+            public static final int PRICE = 2000;
+            public static final int QUANTITY = 3000;
+            public static final int RETAILPRICE = 4000;
+            public static final int SALEPRICE = 5000;
+            public static final int TOTALTAX = 6000;
+            public static final int CATEGORY = 1000;
+            public static final int PRICEDETAILS = 1000;
+            public static final int DISCOUNTALLOWED = 2000;
         }
     }
-
-    @Override
-    public void setSalePriceOverride(boolean override) {
-        this.salePriceOverride = Boolean.valueOf(override);
-    }
-
-    @Override
-    public boolean isSalePriceOverride() {
-        if (salePriceOverride == null) {
-            return false;
-        } else {
-            return salePriceOverride.booleanValue();
-        }
-    }
-
-    @Override
-    public List<OrderItemPriceDetail> getOrderItemPriceDetails() {
-        return orderItemPriceDetails;
-    }
-
 }

@@ -20,8 +20,10 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -48,32 +50,6 @@ import java.math.BigDecimal;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM_ADJUSTMENT")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-@AdminPresentationOverrides(
-    {
-        @AdminPresentationOverride(name="offer.id", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.description", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.discountType", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.value", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.priority", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.startDate", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.endDate", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.stackable", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.targetSystem", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.applyToSalePrice", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.appliesToOrderRules", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.appliesToCustomerRules", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.applyDiscountToMarkedItems", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.combinableWithOtherOffers", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.deliveryType", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.maxUses", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.uses", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.offerItemQualifierRuleType", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.offerItemTargetRuleType", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.targetItemCriteria", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.totalitarianOffer", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.treatAsNewFormat", value=@AdminPresentation(excluded = true))
-    }
-)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemAdjustmentImpl_baseOrderItemAdjustment")
 public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
 
@@ -105,18 +81,23 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     @Index(name="OIADJUST_OFFER_INDEX", columnNames={"OFFER_ID"})
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Offer", order=1000,
+            group = "OrderItemAdjustmentImpl_Description", prominent = true, gridOrder = 1000)
+    @AdminPresentationToOneLookup()
     protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON", nullable=false)
-    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Reason", order=1, group = "OrderItemAdjustmentImpl_Description")
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Reason", order=2000)
     protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Value", order=2, group = "OrderItemAdjustmentImpl_Description", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Value", order=3000,
+            fieldType = SupportedFieldType.MONEY, prominent = true,
+            gridOrder = 2000)
     protected BigDecimal value = Money.ZERO.getAmount();
 
     @Column(name = "APPLIED_TO_SALE_PRICE")
-    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Apply_To_Sale_Price", order=3, group = "OrderItemAdjustmentImpl_Description")
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Apply_To_Sale_Price", order=4000)
     protected boolean appliedToSalePrice;
     
     @Transient

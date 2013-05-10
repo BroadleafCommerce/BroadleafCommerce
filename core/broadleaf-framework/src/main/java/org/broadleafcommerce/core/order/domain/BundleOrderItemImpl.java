@@ -73,6 +73,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @ManyToOne(targetEntity = SkuImpl.class)
     @JoinColumn(name = "SKU_ID")
     @NotFound(action = NotFoundAction.IGNORE)
+    @AdminPresentation(excluded = true)
     protected Sku sku;
 
     @ManyToOne(targetEntity = ProductBundleImpl.class)

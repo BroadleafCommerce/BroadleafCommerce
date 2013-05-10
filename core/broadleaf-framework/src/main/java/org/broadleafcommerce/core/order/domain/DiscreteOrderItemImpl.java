@@ -63,17 +63,20 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     private static final long serialVersionUID = 1L;
     
     @Column(name="BASE_RETAIL_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Base_Retail_Price", order=2, group = "DiscreteOrderItemImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(excluded = true, friendlyName = "DiscreteOrderItemImpl_Base_Retail_Price", order=2,
+            group = "DiscreteOrderItemImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal baseRetailPrice;
     
     @Column(name="BASE_SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Base_Sale_Price", order=2, group = "DiscreteOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
+    @AdminPresentation(excluded = true, friendlyName = "DiscreteOrderItemImpl_Base_Sale_Price", order=2,
+            group = "DiscreteOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
     
     @ManyToOne(targetEntity = SkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID", nullable = false)
     @Index(name="DISCRETE_SKU_INDEX", columnNames={"SKU_ID"})
-    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Sku", order=2000)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
+            group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
     protected Sku sku;
 
@@ -81,7 +84,8 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="DISCRETE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     @NotFound(action = NotFoundAction.IGNORE)
-    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Product", order=2000)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Product", order=Presentation.FieldOrder.PRODUCT,
+            group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
     protected Product product;
 
@@ -100,6 +104,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Column(name="VALUE")
     @CollectionTable(name="BLC_ORDER_ITEM_ADD_ATTR", joinColumns=@JoinColumn(name="ORDER_ITEM_ID"))
     @BatchSize(size = 50)
+    @Deprecated
     protected Map<String, String> additionalAttributes = new HashMap<String, String>();
     
     @OneToMany(mappedBy = "discreteOrderItem", targetEntity = DiscreteOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
@@ -422,4 +427,28 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         return null;
     }
 
+    public static class Presentation {
+        public static class Tab {
+            public static class Name {
+                public static final String OrderItems = "OrderImpl_Order_Items_Tab";
+            }
+
+            public static class Order {
+                public static final int OrderItems = 2000;
+            }
+        }
+
+        public static class Group {
+            public static class Name {
+            }
+
+            public static class Order {
+            }
+        }
+
+        public static class FieldOrder {
+            public static final int PRODUCT = 2000;
+            public static final int SKU = 3000;
+        }
+    }
 }

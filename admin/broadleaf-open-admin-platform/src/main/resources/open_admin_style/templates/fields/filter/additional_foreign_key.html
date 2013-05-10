@@ -1,24 +1,24 @@
 <div class="additional-foreign-key-container">
     <input type="hidden" class="display-value-property" th:value="${headerField.foreignKeyDisplayValueProperty}"  />
-    <input type="hidden" class="listgrid-criteria-input value" th:attr="data-name=${headerField.name}"
-            th:attr="data-onchangetrigger=${headerField.onChangeTrigger}" />
+    <input type="hidden" class="listgrid-criteria-input value"
+           th:attr="data-name=${headerField.name}, data-onchangetrigger=${headerField.onChangeTrigger}" />
         
     <div class="foreign-key-value-container">
         <span
             class="display-value read-only"
-            th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}"
-            th:text="*{fields['__${field.name}__'].displayValue}" />
+            th:attr="data-select-url=@{${headerField.owningEntityClass + '/' + headerField.name + '/select'}}"
+            th:text="${headerField.displayValue}" />
             
         <button class="clear-foreign-key tiny radius dark button hover-cursor"
             type="button"
-            th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}"
-            th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}">
+            th:style="${#strings.isEmpty(headerField.value) ? 'display:none' : ''}"
+            th:attr="data-select-url=@{${headerField.owningEntityClass + '/' + headerField.name + '/select'}}">
             <i class="icon-remove"></i>
         </button>
         
         <button class="to-one-lookup tiny radius dark button hover-cursor"
             type="button"
-            th:attr="data-select-url=@{${'/' + sectionKey + '/' + field.name + '/select'}}">
+            th:attr="data-select-url=@{${headerField.owningEntityClass + '/' + headerField.name + '/select'}}">
             <i class="icon-search"></i>&nbsp;Lookup
         </button>
     </div>

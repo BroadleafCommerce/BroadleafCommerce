@@ -64,16 +64,19 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     protected FulfillmentGroup fulfillmentGroup;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Amount", prominent = true, gridOrder = 2000, order = 2000)
     protected BigDecimal amount;
 
     @Column(name = "NAME")
+    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Name", prominent = true, gridOrder = 1000, order = 1000)
     protected String name;
 
     @Column(name = "REPORTING_CODE")
+    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Reporting_Code", order = 3000)
     protected String reportingCode;
     
     @Column(name = "FEE_TAXABLE_FLAG")
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Taxable", order = 5000)
     protected Boolean feeTaxable; 
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL})
@@ -83,7 +86,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
     
     @Column(name = "TOTAL_FEE_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Total_Fee_Tax", order=9, group = "FulfillmentGroupFeeImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Total_Fee_Tax", order=4000, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
     @Override
@@ -228,4 +231,5 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
         }
         return true;
     }
+
 }

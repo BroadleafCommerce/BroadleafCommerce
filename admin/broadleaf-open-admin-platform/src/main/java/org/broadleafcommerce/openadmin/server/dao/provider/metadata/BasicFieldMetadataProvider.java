@@ -550,7 +550,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             //this is a lookup - exclude the fields on this OneToOne or ManyToOne field
             //metadata.setExcluded(true);
             metadata.setChildrenExcluded(true);
-            metadata.setVisibility(VisibilityEnum.GRID_HIDDEN);
+            //metadata.setVisibility(VisibilityEnum.GRID_HIDDEN);
         } else {
             if (basicFieldMetadata.getExcluded()!=null) {
                 if (LOG.isDebugEnabled()) {

@@ -22,8 +22,11 @@ import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationPropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -48,17 +51,62 @@ import javax.persistence.TableGenerator;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADDRESS")
 @AdminPresentationOverrides(
-        value = {
-                @AdminPresentationOverride(name="phonePrimary.phoneNumber", value=@AdminPresentation(friendlyName = "AddressImpl_Primary_Phone", order=130, group="AddressImpl_Address", requiredOverride = RequiredOverride.NOT_REQUIRED)),
-                @AdminPresentationOverride(name="phonePrimary.isDefault", value=@AdminPresentation(excluded = true)),
-                @AdminPresentationOverride(name="phonePrimary.isActive", value=@AdminPresentation(excluded = true)),
-                @AdminPresentationOverride(name="phoneSecondary.phoneNumber", value=@AdminPresentation(friendlyName = "AddressImpl_Secondary_Phone", order=140, group="AddressImpl_Address", requiredOverride = RequiredOverride.NOT_REQUIRED)),
-                @AdminPresentationOverride(name="phoneSecondary.isDefault", value=@AdminPresentation(excluded = true)),
-                @AdminPresentationOverride(name="phoneSecondary.isActive", value=@AdminPresentation(excluded = true)),
-                @AdminPresentationOverride(name="phoneFax.phoneNumber", value=@AdminPresentation(friendlyName = "AddressImpl_Fax", order=150, group="AddressImpl_Address", requiredOverride = RequiredOverride.NOT_REQUIRED)),
-                @AdminPresentationOverride(name="phoneFax.isDefault", value=@AdminPresentation(excluded = true)),
-                @AdminPresentationOverride(name="phoneFax.isActive", value=@AdminPresentation(excluded = true))
-        }
+    value = {
+        @AdminPresentationOverride(name="phonePrimary", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = true)
+                })
+        ),
+        @AdminPresentationOverride(name="phoneSecondary", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = true)
+                })
+        ),
+        @AdminPresentationOverride(name="phoneFax", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = true)
+                })
+        ),
+        @AdminPresentationOverride(name="phonePrimary.phoneNumber", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = false),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.order,
+                                intOverrideValue = 1300),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.group,
+                                overrideValue = "AddressImpl_Address"),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.requiredOverride,
+                                overrideValue = "NOT_REQUIRED")
+                })
+        ),
+        @AdminPresentationOverride(name="phoneSecondary.phoneNumber", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = false),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.order,
+                                intOverrideValue = 1400),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.group,
+                                overrideValue = "AddressImpl_Address"),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.requiredOverride,
+                                overrideValue = "NOT_REQUIRED")
+                })
+        ),
+        @AdminPresentationOverride(name="phoneFax.phoneNumber", mergeValue = @AdminPresentationMerge(
+                mergeEntries = {
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
+                                booleanOverrideValue = false),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.order,
+                                intOverrideValue = 1500),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.group,
+                                overrideValue = "AddressImpl_Address"),
+                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.requiredOverride,
+                                overrideValue = "NOT_REQUIRED")
+                })
+        )
+    }
 )
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "AddressImpl_baseAddress")
