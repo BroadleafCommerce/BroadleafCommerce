@@ -16,10 +16,13 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.EntityResult;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
@@ -106,4 +109,9 @@ public interface RecordHelper {
     public Integer getTotalRecords(String ceilingEntity, List<FilterMapping> filterMappings);
 
     public List<Serializable> getPersistentRecords(String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults);
+
+    public EntityResult update(PersistencePackage persistencePackage, boolean includeRealEntityObject) throws ServiceException;
+
+    public EntityResult add(PersistencePackage persistencePackage, boolean includeRealEntityObject) throws ServiceException;
+
 }
