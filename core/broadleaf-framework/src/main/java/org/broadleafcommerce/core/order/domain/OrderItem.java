@@ -447,4 +447,11 @@ public interface OrderItem extends Serializable, Cloneable {
      */
     void setTaxable(Boolean taxable);
 
+    /**
+     * Returns the total price to be paid before adjustments.
+     * 
+     * @return
+     */
+    Money getTotalPriceBeforeAdjustments(boolean allowSalesPrice);
+
 }
