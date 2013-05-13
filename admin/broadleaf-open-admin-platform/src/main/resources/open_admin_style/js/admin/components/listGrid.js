@@ -69,17 +69,6 @@
             }
         },
         
-        updateNecessaryOverflowTooltips : function($container) {
-            var $tds = $container.find('td');
-            $tds.each(function(index, element) {
-                var $element = $(element);
-                if ($element.isOverflowed()) {
-                    $element.addClass('has-tip tip-top');
-                    $element.attr('title', $element.data('fieldvalue'));
-                }
-            });
-        },
-        
         showAlert : function($container, message, options) {
             options = options || {};
     	    var alertType = options.alertType || '';
@@ -135,8 +124,6 @@
             if (BLCAdmin.listGrid.filter) {
                 BLCAdmin.listGrid.filter.initialize($container);
             }
-            
-            this.updateNecessaryOverflowTooltips($container);
         }
     };
     

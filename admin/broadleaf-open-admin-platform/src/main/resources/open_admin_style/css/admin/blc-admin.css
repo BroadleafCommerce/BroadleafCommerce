@@ -695,7 +695,7 @@ table.table-hover tbody tr.draggable:hover {
     width: 20px;
     cursor: pointer;
     position: absolute;
-    right: -10px;
+    right: 0px;
     background: #F5F5F5;
     -webkit-transition: background-color 0.15s ease-in-out;
     -moz-transition: background-color 0.15s ease-in-out;
@@ -940,7 +940,14 @@ table tbody tr:nth-child(odd) {
 	border-top: none;
 }
 
-.listgrid-header-wrapper table.list-grid-table thead tr th {
+.listgrid-header-wrapper table.list-grid-table thead tr th div.resizer {
+	color: #DDD;
+	right: -8px;
+	position: absolute;
+	display: inline-block;
+	cursor: col-resize;
+	background-color: #F5F5F5;
+    padding: 0 1px;
 }
 
 table.list-grid-table thead tr.width-control-header {

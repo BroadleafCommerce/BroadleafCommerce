@@ -6,6 +6,16 @@
     var lockDebounce = 100;
     var maxSubCollectionListGridHeight = 360;
     
+    var tableResizing = {
+        active : false,
+        headerTable : undefined,
+        bodyTable : undefined,
+        startX : undefined,
+        startWidths : undefined,
+        totalWidth : 0,
+        index : undefined
+    };
+    
     // Add utility functions for list grids to the BLCAdmin object
     BLCAdmin.listGrid.paginate = {
             
@@ -171,6 +181,71 @@
             
             // Update the loaded record ranges to reflect this new chunk
             this.addLoadedRange($tbody, newRange.lo, newRange.hi);
+        },
+        
+        initializeTableResizing : function($headerTable, $bodyTable) {
+            
+            $headerTable.find('th div.resizer').mousedown(function(e) {
+                var $this = $(this).closest('th');
+                
+                tableResizing.active = true;
+                tableResizing.headerTable = $this.closest('table');
+                tableResizing.bodyTable = $this.closest('.listgrid-header-wrapper').next().find('table'); 
+                tableResizing.startX = e.pageX;
+                tableResizing.startWidths = [];
+                tableResizing.index = $this.index();
+                tableResizing.totalWidth = 0;
+                
+                tableResizing.headerTable.find('th').each(function(index, element) {
+                    tableResizing.startWidths.push($(this).outerWidth());
+                    tableResizing.totalWidth += $(this).outerWidth();
+                });
+                
+                $(document).disableSelection();
+            });
+            
+            $(document).mousemove(function(e) {
+                if (tableResizing.active) {
+                    var index = tableResizing.index;
+                    var widthDifference = (e.pageX - tableResizing.startX);
+                    
+                    // Resize the selected column to its new width
+                    var newWidth = tableResizing.startWidths[index] + widthDifference;
+                    
+                    if ((newWidth > tableResizing.totalWidth - 30) || (newWidth < 30)) {
+                        return false;
+                    }
+                    
+                    $(tableResizing.headerTable.find('thead tr th')[index]).outerWidth(newWidth);
+                    $(tableResizing.bodyTable.find('thead tr th')[index]).outerWidth(newWidth);
+                    
+                    // This represents the width of the table cells other than the one we're resizing
+                    var originalRemainingWidth = tableResizing.totalWidth - tableResizing.startWidths[index];
+                    
+                    // This represents the new remaining width to distribute between the other columns
+                    var remainingWidth = tableResizing.totalWidth - tableResizing.startWidths[index] - widthDifference;
+                    
+                    for (var i = 0; i < tableResizing.startWidths.length; i++) {
+                        if (i != index) {
+                            var percentage = tableResizing.startWidths[i] / originalRemainingWidth;
+                            var delta = widthDifference * percentage;
+                            
+                            newWidth = tableResizing.startWidths[i] - delta;
+                            
+                            $(tableResizing.headerTable.find('thead tr th')[i]).outerWidth(newWidth);
+                            $(tableResizing.bodyTable.find('thead tr th')[i]).outerWidth(newWidth);
+                        }
+                    }
+                }
+            });
+            
+            $(document).mouseup(function() {
+                if (tableResizing.active) {
+                    tableResizing.active = false;
+                    $(document).enableSelection();
+                }
+            });
+            
         },
         
         // ********************** *
@@ -543,6 +618,8 @@
             $wrapper.mCustomScrollbar('update');
             $clonedTable.find('tbody').css('visibility', 'visible');
             $modalBody.css('overflow-y', 'auto');
+            
+            this.initializeTableResizing($table, $clonedTable);
         }
     };
     
