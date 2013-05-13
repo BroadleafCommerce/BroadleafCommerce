@@ -727,6 +727,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", "updateCollectionItem");
+        model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, sectionKey);
         return "modules/modalContainer";
     }

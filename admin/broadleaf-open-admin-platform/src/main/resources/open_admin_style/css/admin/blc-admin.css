@@ -162,13 +162,23 @@ div.field-label.inline {
 	margin-top: 20px;
 }
 
-.entity-form-tabs {
-	float: left;
-	width: 220px;
+.tabs-container {
+	border-bottom: 1px solid #B8B8B8;
+	margin: 0 -30px 20px;
+    padding: 0 30px;
 }
 
 .tabs.vertical dd.active, .tabs.vertical li.active {
 	border: 1px solid #E6E6E6;
+}
+
+.tabs dd, .tabs li {
+	border-bottom: 1px solid #B8B8B8;
+}
+
+.tabs dd.active, .tabs li.active {
+	border-top: 3px solid #424242;
+	border-bottom: 1px solid #FFF;
 }
 
 .tabs.vertical dd, .tabs.vertical li {
@@ -1258,8 +1268,12 @@ form.custom div.conditional div.custom.dropdown {
 	margin: 0;
 }
 
+.modal .tabs-container {
+	margin: 0 -15px;
+	padding: 0 15px;
+}
+
 .modal dl.tabs {
-	margin-bottom: 0;
 	margin-top: 10px;
 }
 

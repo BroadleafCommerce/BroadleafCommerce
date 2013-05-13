@@ -31,7 +31,13 @@
               target = $tab.children('a').attr("href"),
               hasHash = /^#/.test(target),
               targetClass = '.' + target.substring(1),
-              $content = $tab.closest('dl').parent().parent().find('.tabs-content').find(targetClass + 'Tab');
+              $content;
+          
+              if ($tab.closest('.modal').length > 0) {
+                  $content = $tab.closest('.modal').find('.tabs-content').find(targetClass + 'Tab');
+              } else {
+                  $content = $tab.closest('.tabs-container').next().find(targetClass + 'Tab');
+              }
 
           if (hasHash && $content.length > 0) {
             // Show tab content

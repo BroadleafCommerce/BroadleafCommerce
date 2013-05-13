@@ -1,4 +1,16 @@
 $(document).ready(function() {
+    
+    		var $tabs = $('dl.tabs.entity-form');
+    		if ($tabs.length > 0) {
+    		    var $lastTab = $tabs.find('dd:last');
+    		    if ($lastTab.width() + $lastTab.position().left + 15 > $tabs.width()) {
+                    $tabs.mCustomScrollbar({
+                        theme: 'dark',
+                        autoHideScrollbar: true,
+                        horizontalScroll: true
+                    });
+    		    }
+    		}
 	
 	// When the delete button is clicked, we can change the desired action for the
 	// form and submit it normally (not via AJAX).

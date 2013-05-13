@@ -8,6 +8,12 @@
     </dd>
 </dl> 
 
+        <div class="row">
+            <div class="twelve columns">
+                <div th:include="components/searchFields" th:object="${listGrid}" th:remove="tag" />
+            </div>
+        </div>
+
 <ul class="tabs-content" style="margin-left: 250px;">
     <li class="active tabCategoryTreeTab">
     

@@ -21,6 +21,10 @@
                 [[#{modal.title.select}]] [[#{${collectionProperty.metadata.friendlyName}}]]
             </span>
             
+            <span th:case="'updateCollectionItem'" th:remove="tag">
+                [[#{modal.title.update}]] [[#{${collectionProperty.metadata.friendlyName}}]]
+            </span>
+            
             <span th:case="'translation'" th:remove="tag">
                 [[#{modal.title.fieldTranslations}]]
             </span>

@@ -119,7 +119,7 @@ var BLCAdmin = (function($) {
     	initializeModalTabs : function($data) {
     		var $tabs = $data.find('dl.tabs');
     		if ($tabs.length > 0) {
-    		    $tabs.remove().appendTo($data.find('.modal-header'));
+    		    $tabs.parent().remove().appendTo($data.find('.modal-header'));
     		    
     		    var $lastTab = $tabs.find('dd:last');
     		    if ($lastTab.width() + $lastTab.position().left + 15 > $tabs.width()) {
@@ -129,6 +129,9 @@ var BLCAdmin = (function($) {
                         horizontalScroll: true
                     });
     		    }
+                $data.find('.modal-header').css('border-bottom', 'none');
+    		} else {
+    		    $data.find('.tabs-container').remove();
     		}
     	},
     	

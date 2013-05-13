@@ -276,9 +276,9 @@ $(document).ready(function() {
                         url : url,
                         type : "GET"
                     }, function(data) {
-                        var dynamicPropertyName = $(data.trim()).find('fieldset').data('dynamicpropertyname');
+                        var dynamicPropertyName = data.find('fieldset').data('dynamicpropertyname');
                         var $oldFieldset = $('fieldset[data-dynamicpropertyname="' + dynamicPropertyName + '"]');
-                        var $newFieldset = $(data.trim()).find('fieldset');
+                        var $newFieldset = data.find('fieldset');
                         
                         BLCAdmin.initializeFields($newFieldset);
                         
