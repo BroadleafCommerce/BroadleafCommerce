@@ -267,7 +267,7 @@ var BLCAdmin = (function($) {
                            'font', 'fontcolor', 'backcolor', '|', 'alignment', '|', 'horizontalrule'],
                 buttonsCustom : {
                     selectAssetButton : {
-                        title : 'Select / Upload Asset',
+                        title : BLCAdmin.messages.selectUploadAsset,
                         callback : BLCAdmin.asset.selectButtonClickedRedactor
                     },
                     font : {
@@ -307,7 +307,7 @@ var BLCAdmin = (function($) {
 // being set on the model instead of a stack trace page when an error occurs on an AJAX request.
 BLC.defaultErrorHandler = function(data) {
     if (data.status == "403") {
-        BLCAdmin.showMessageAsModal('Error', '403 Forbidden');
+        BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.forbidden403);
     } else {
         var $data;
         
@@ -321,7 +321,7 @@ BLC.defaultErrorHandler = function(data) {
             BLCAdmin.showElementAsModal($data);
         } else {
             // This shouldn't happen, but it's here as a fallback just in case
-            BLCAdmin.showMessageAsModal('Error', 'An error occurred');
+            BLCAdmin.showMessageAsModal(BLCAdmin.messages.error, BLCAdmin.messages.errorOccurred);
         }
     }
 }

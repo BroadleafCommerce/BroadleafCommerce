@@ -2,7 +2,7 @@
     <input th:attr="data-name=${headerField.name}"
            class="listgrid-criteria-input datepicker"
            type="text"
-           placeholder="Start Date"/>
+           th:attr="placeholder=#{Start_Date}"/>
     <i class="icon-calendar"></i>
 </div>
 <br />
@@ -10,6 +10,6 @@
     <input th:attr="data-name=${headerField.name}"
            class="listgrid-criteria-input datepicker"
            type="text"
-           placeholder="End Date"/>
+           th:attr="placeholder=#{End_Date}"/>
     <i class="icon-calendar"></i>
 </div>

@@ -2,14 +2,14 @@
     <div class="field-label" th:text="#{${field.friendlyName}}" />
 
     <select class="six" th:field="*{fields['__${field.name}__'].value}" th:if="${! #maps.isEmpty(field.options)}">
-        <option value="">Select an option...</option>
+        <option value="" th:text="#{Default_Select}" />
         <option th:each="entry : *{fields['__${field.name}__'].options}"
                 th:value="${entry.key}"
                 th:text="${entry.value}" />
     </select>
                 
-    <span th:if="${#maps.isEmpty(field.options)}" class="indented-form-value">
-        &lt;No values found for this enumeration&gt;
+    <span th:if="${#maps.isEmpty(field.options)}" class="indented-form-value" th:inline="text">
+        &lt;[[#{No_Records_Found_Enum}]]&gt;
     </span>
 
 </div>
@@ -22,23 +22,23 @@
     <label th:for="${field.name}" th:text="#{${field.friendlyName}}" />
     
     <div class="foreign-key-value-container">
-        <span class="display-value-none-selected" style="display: none;">&lt;No value selected&gt;</span>
+        <span class="display-value-none-selected" style="display: none;" th:inline="text">&lt;[[#{No_Value_Selected}]]&gt;</span>
         <span
             class="display-value read-only"
             th:attr="data-select-url=@{${field.owningEntityClass + '/' + field.name + '/select'}}"
             th:text="*{fields['__${field.name}__'].displayValue}" />
             
         <button class="clear-foreign-key tiny radius secondary button hover-cursor"
-            type="button"
+            type="button" th:inline="text"
             th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}"
             th:attr="data-select-url=@{${field.owningEntityClass + '/' + field.name + '/select'}}">
-            <i class="icon-remove"></i>&nbsp;Clear
+            <i class="icon-remove"></i>&nbsp;[[#{Clear}]]
         </button>
         
         <button class="to-one-lookup tiny radius secondary button hover-cursor"
-            type="button"
+            type="button" th:inline="text"
             th:attr="data-select-url=@{${field.owningEntityClass + '/' + field.name + '/select'}}">
-            <i class="icon-search"></i>&nbsp;Lookup
+            <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
         </button>
 
         <span th:if="${field.canLinkToExternalEntity}" th:remove="tag">

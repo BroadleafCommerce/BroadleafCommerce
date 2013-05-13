@@ -213,7 +213,7 @@
             selectWrapper.append($("<span>", {text: "of the following rules:"}));
             div.append(selectWrapper);
 
-            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule tiny secondary radius button", "text": "Rule"});
+            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule tiny secondary radius button", "text": BLCAdmin.messages.rule});
             addRuleLink.prepend($('<i>', {'class' : 'icon-plus' }));
             var _this = this;
             addRuleLink.click(function(e) {
@@ -224,7 +224,7 @@
             });
             div.append(addRuleLink);
 
-            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition tiny secondary radius button", "text": "Sub-condition"});
+            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition tiny secondary radius button", "text": BLCAdmin.messages.subCondition});
             addConditionLink.prepend($('<i>', {'class' : 'icon-plus' }));
             addConditionLink.click(function(e) {
                 e.preventDefault();
@@ -235,7 +235,7 @@
             div.append(addConditionLink);
             
             if (isAdditional) {
-                var removeMainConditionLink = $("<a>", {"href": "#", "class": "remove-main-condition tiny secondary radius button", "text": "Entire condition"});
+                var removeMainConditionLink = $("<a>", {"href": "#", "class": "remove-main-condition tiny secondary radius button", "text": BLCAdmin.messages.entireCondition});
                 removeMainConditionLink.prepend($('<i>', {'class' : 'icon-minus' }));
                 removeMainConditionLink.click(function(e) {
                     e.preventDefault();
@@ -417,9 +417,9 @@
                 $this.after($("<span>", {"class": "radioContainer"}));
                 radioContainer = container.find(".radioContainer");
                 radioContainer.append($("<input>", {"type": "radio", "name": "ruleBuilderBooleanRadio", "value":"true", "class": "true"}));
-                radioContainer.append($("<span>", {"style": "margin-right: 10px; margin-left: 3px", "text" : "True"}));
+                radioContainer.append($("<span>", {"style": "margin-right: 10px; margin-left: 3px", "text" : BLCAdmin.messages.booleanTrue}));
                 radioContainer.append($("<input>", {"type": "radio", "name": "ruleBuilderBooleanRadio", "value":"false", "class": "false", "checked": "true"}));
-                radioContainer.append($("<span>", {"style": "margin-right: 10px; margin-left: 3px", "text" : "False"}));
+                radioContainer.append($("<span>", {"style": "margin-right: 10px; margin-left: 3px", "text" : BLCAdmin.messages.booleanFalse}));
                 break;
             case "SELECT":
                 var select = $("<select>", {"class": "value"});

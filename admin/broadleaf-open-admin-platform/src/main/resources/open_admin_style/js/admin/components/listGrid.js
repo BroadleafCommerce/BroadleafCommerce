@@ -211,7 +211,11 @@ $(document).ready(function() {
             type : "POST",
             data : postData
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]), { message: 'Saved!', alertType: 'save-alert', autoClose: 1000 });
+            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]), { 
+                message: BLCAdmin.messages.saved + '!', 
+                alertType: 'save-alert', 
+                autoClose: 1000 
+            });
             BLCAdmin.hideCurrentModal();
         })
     });
@@ -308,7 +312,8 @@ $(document).ready(function() {
         
         if (doneReordering) {
             $container.find('.listgrid-toolbar button').removeAttr('disabled');
-            $(this).html('Reorder');
+            $(this).html($('<i>', { 'class' : 'icon-move' }));
+            $(this).append(' ' + BLCAdmin.messages.reorder);
             
             BLCAdmin.listGrid.updateToolbarRowActionButtons($container);
             
@@ -316,7 +321,7 @@ $(document).ready(function() {
             $tbody.sortable("destroy");
         } else {
             $container.find('.listgrid-toolbar button').attr('disabled', 'disabled');
-            $(this).removeAttr('disabled').html('Done');
+            $(this).removeAttr('disabled').html(BLCAdmin.messages.done);
             
             $trs.removeClass('clickable').addClass('draggable');
             
@@ -331,7 +336,10 @@ $(document).ready(function() {
                         }
                     }, function(data) {
                         var $container = $('div.listgrid-container#' + data.field);
-                        BLCAdmin.listGrid.showAlert($container, 'Saved!', { alertType: 'save-alert', autoClose: 400 });
+                        BLCAdmin.listGrid.showAlert($container, BLCAdmin.messages.saved + '!', { 
+                            alertType: 'save-alert', 
+                            autoClose: 400 
+                        });
                         console.log(data);
                     });
                 }
@@ -353,7 +361,11 @@ $(document).ready(function() {
             data: rowFields,
             type: "POST"
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]), { message: 'Saved!', alertType: 'save-alert', autoClose: 1000 });
+            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]), { 
+                message: BLCAdmin.messages.saved + '!', 
+                alertType: 'save-alert', 
+                autoClose: 1000 
+            });
         });
         
         return false;
@@ -375,7 +387,11 @@ $(document).ready(function() {
             type: "POST",
             data: $(this).serialize()
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]), { message: 'Saved!', alertType: 'save-alert', autoClose: 1000 });
+            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]), { 
+                message: BLCAdmin.messages.saved + '!', 
+                alertType: 'save-alert', 
+                autoClose: 1000 
+            });
             BLCAdmin.hideCurrentModal();
         });
         return false;

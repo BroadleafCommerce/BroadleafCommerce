@@ -12,11 +12,11 @@
                 <blc_admin:admin_user resultVar="adminUser" />
                 <a href="#">[[${adminUser.name}]]</a>
                 <ul class="dropdown">
-                    <li><a href="#" th:href="@{/changePassword}" th:text="#{header.password.change} + '...'">Change Password...</a></li>                   
+                    <li><a href="#" th:href="@{/changePassword}" th:text="#{header.password.change} + '...'" /></li>                   
                 </ul>
             </li>
             <li class="logout">
-                <a class="small button radius alert" th:href="@{/adminLogout.htm}" title="Logout" th:title="#{header.logout}">Logout</a>
+                <a class="small button radius alert" th:href="@{/adminLogout.htm}" th:text="#{header.logout}" />
             </li>
         </ul>
     </div>

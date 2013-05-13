@@ -5,9 +5,9 @@
     <img class="thumbnail" th:src="*{fields['__${field.name}__'].media.url + '?largeAdminThumbnail'}"/>
     
     <button class="show-asset-selector tiny radius secondary button hover-cursor"
-        type="button"
+        type="button" th:inline="text"
         th:attr="data-select-url=@{${'/'+sectionKey+ '/' + entityForm.id + '/chooseAsset'}}">
-        <i class="icon-camera"></i>&nbsp;Select / Upload Image
+        <i class="icon-camera"></i>&nbsp;[[#{Select_Upload_Image}]]
     </button>
 </div>
 

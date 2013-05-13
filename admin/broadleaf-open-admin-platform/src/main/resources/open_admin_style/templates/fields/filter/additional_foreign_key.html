@@ -17,9 +17,9 @@
         </button>
         
         <button class="to-one-lookup tiny radius dark button hover-cursor"
-            type="button"
+            type="button" th:inline="text"
             th:attr="data-select-url=@{${headerField.owningEntityClass + '/' + headerField.name + '/select'}}">
-            <i class="icon-search"></i>&nbsp;Lookup
+            <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
         </button>
     </div>
 </div>

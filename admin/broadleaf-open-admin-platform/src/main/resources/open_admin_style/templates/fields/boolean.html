@@ -3,15 +3,11 @@
 <div class="custom-checkbox">
     <label th:for="${field.name + '-true'}" th:inline="text" style="font-weight: 400; display: inline-block;">
         <input type="radio" th:id="${field.name + '-true'}" th:value="${true}" th:field="*{fields['__${field.name}__'].value}" /> 
-        <span style="margin-right: 10px;">
-            Yes
-        </span>
+        <span style="margin-right: 10px;" th:text="#{Yes}" />
     </label>
         
     <label th:for="${field.name + '-false'}" th:inline="text" style="font-weight: 400; display: inline-block;">
         <input type="radio" th:id="${field.name + '-false'}" th:value="${false}" th:field="*{fields['__${field.name}__'].value}" />
-        <span style="margin-right: 10px;">
-            No
-        </span>
+        <span style="margin-right: 10px;" th:text="#{No}" />
     </label>
 </div>

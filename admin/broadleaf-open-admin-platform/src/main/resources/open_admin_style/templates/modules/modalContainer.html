@@ -10,35 +10,35 @@
             </span>
             
             <span th:case="'addEntity'" th:remove="tag">
-                Add New [[#{${entityFriendlyName}}]]
+                [[#{modal.title.addNew}]] [[#{${entityFriendlyName}}]]
             </span>
             
             <span th:case="'addCollectionItem'" th:remove="tag">
-                Add [[#{${collectionProperty.metadata.friendlyName}}]]
+                [[#{modal.title.add}]] [[#{${collectionProperty.metadata.friendlyName}}]]
             </span>
             
             <span th:case="'selectCollectionItem'" th:remove="tag">
-                Select [[#{${collectionProperty.metadata.friendlyName}}]]
+                [[#{modal.title.select}]] [[#{${collectionProperty.metadata.friendlyName}}]]
             </span>
             
             <span th:case="'translation'" th:remove="tag">
-                Field Translations
+                [[#{modal.title.fieldTranslations}]]
             </span>
             
             <span th:case="'addTranslation'" th:remove="tag">
-                Add Translation
+                [[#{modal.title.addTranslation}]]
             </span>
             
             <span th:case="'updateTranslation'" th:remove="tag">
-                Edit Translation
+                [[#{modal.title.editTranslation}]]
             </span>
             
             <span th:case="'selectAsset'" th:remove="tag">
-                Select Asset
+                [[#{modal.title.selectAsset}]]
             </span>
             
             <span th:case="*" th:remove="tag">
-                Modal Header
+                [[#{modal.title.default}]]
             </span>
         </h3>
         

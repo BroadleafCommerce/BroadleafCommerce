@@ -20,7 +20,7 @@
     <input type="hidden" th:field="*{id}" />
     
     <dl class="tabs" th:classappend="${additionalTabClasses}" th:if="${renderTabs}">
-        <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'" th:inline="text">
+        <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'">
             <a th:href="'#tab' + ${tabStat.count}" th:text="#{${tab.title}}" />
         </dd>
     </dl> 
@@ -68,7 +68,7 @@
             class="button radius dark right" 
             th:type="${action.buttonType}"
             th:classappend="${action.buttonClass}">
-            <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="${action.displayText}" th:remove="tag" />
+            <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
         </button>
     </div>
     

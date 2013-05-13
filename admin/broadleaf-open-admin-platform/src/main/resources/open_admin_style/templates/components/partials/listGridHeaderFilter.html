@@ -1,14 +1,10 @@
 <div th:if="${!listGrid.sortable}" th:remove="tag" >
     <li>
         <div class="sort-fields">
-            <button class="listgrid-sort tiny radius dark button down">
-                Sort A-Z
-            </button>
-            <button class="listgrid-sort tiny radius dark button up">
-                Sort Z-A
-            </button>
-            <button class="listgrid-clear-sort tiny radius dark button" disabled="disabled">
-                <i class="icon-remove"></i>Clear Sort
+            <button class="listgrid-sort tiny radius dark button down" th:text="#{Sort_AZ}" />
+            <button class="listgrid-sort tiny radius dark button up" th:text="#{Sort_ZA}" />
+            <button class="listgrid-clear-sort tiny radius dark button" disabled="disabled" th:inline="text">
+                <i class="icon-remove"></i>[[#{Sort_Clear}]]
             </button>
         </div>
     </li>
@@ -24,7 +20,11 @@
                 th:substituteby="${'fields/filter/' + #strings.toLowerCase(fieldType)}" />
             </div>
         </div>
-        <button class="listgrid-filter tiny radius dark button"><i class="icon-search"></i>Filter</button>
-        <button class="listgrid-clear-filter tiny radius dark button" disabled="disabled"><i class="icon-remove"></i>Clear Filter</button>
+        <button class="listgrid-filter tiny radius dark button" th:inline="text">
+            <i class="icon-search"></i>[[#{Filter}]]
+        </button>
+        <button class="listgrid-clear-filter tiny radius dark button" disabled="disabled" th:inline="text">
+            <i class="icon-remove"></i>[[#{Filter_Clear}]]
+        </button>
     </div>
 </li>

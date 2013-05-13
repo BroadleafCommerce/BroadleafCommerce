@@ -9,9 +9,7 @@
             th:attr="action=@{${'/' + sectionKey + '/' + entityId + '/uploadAsset'}}">
             
             <input type="file" name="file" />
-            <button class="right small dark radius button uploadButton" type="button">
-                Upload new asset
-            </button>
+            <button class="right small dark radius button uploadButton" type="button" th:text="#{modal.asset.uploadNew}" />
             <div class="uploadMessage">
                 <i class="icon-spin icon-spinner"></i>
             </div>          
