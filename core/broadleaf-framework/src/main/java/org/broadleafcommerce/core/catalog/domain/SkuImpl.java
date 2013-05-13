@@ -243,19 +243,19 @@ public class SkuImpl implements Sku {
         keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
         deleteEntityUponRemove = true,
         mediaField = "url",
-            forceFreeFormKeys = true
+        forceFreeFormKeys = true
     )
     @AdminPresentationMapFields(
-            mapDisplayFields = {
-                    @AdminPresentationMapField(
-                            fieldName = "primary",
-                            fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.MEDIA,
-                                    group = ProductImpl.Presentation.Group.Name.General,
-                                    groupOrder = ProductImpl.Presentation.Group.Order.General,
-                                    order = ProductImpl.Presentation.FieldOrder.PRIMARY_MEDIA,
-                                    friendlyName = "SkuImpl_Primary_Media")
-                    )
-            })
+        mapDisplayFields = {
+            @AdminPresentationMapField(
+                    fieldName = "primary",
+                    fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.MEDIA,
+                            group = ProductImpl.Presentation.Group.Name.General,
+                            groupOrder = ProductImpl.Presentation.Group.Order.General,
+                            order = ProductImpl.Presentation.FieldOrder.PRIMARY_MEDIA,
+                            friendlyName = "SkuImpl_Primary_Media")
+            )
+    })
     protected Map<String, Media> skuMedia = new HashMap<String, Media>();
 
     /**

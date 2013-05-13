@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -231,11 +232,13 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
         if (customCriteria != null && customCriteria.length > 0) {
             LOG.warn("custom persistence handlers and custom criteria not supported for add types other than BASIC");
         }
+        PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+        Entity entity = persistencePackage.getEntity();
+        MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
+        if (!mapStructure.getMutable()) {
+            throw new SecurityServiceException("Field not mutable");
+        }
         try {
-            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Entity entity = persistencePackage.getEntity();
-            MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
-
             Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(entity.getType()[0],
                 persistencePerspective);
             String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();
@@ -341,11 +344,13 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
         if (customCriteria != null && customCriteria.length > 0) {
             LOG.warn("custom persistence handlers and custom criteria not supported for update types other than BASIC");
         }
+        PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+        Entity entity = persistencePackage.getEntity();
+        MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
+        if (!mapStructure.getMutable()) {
+            throw new SecurityServiceException("Field not mutable");
+        }
         try {
-            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Entity entity = persistencePackage.getEntity();
-            MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
-
             Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(entity.getType()[0],
                 persistencePerspective);
             String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();
@@ -419,11 +424,13 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
         if (customCriteria != null && customCriteria.length > 0) {
             LOG.warn("custom persistence handlers and custom criteria not supported for remove types other than BASIC");
         }
+        PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+        Entity entity = persistencePackage.getEntity();
+        MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
+        if (!mapStructure.getMutable()) {
+            throw new SecurityServiceException("Field not mutable");
+        }
         try {
-            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Entity entity = persistencePackage.getEntity();
-            MapStructure mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
-
             Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(entity.getType()[0],
                 persistencePerspective);
             String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();

@@ -166,13 +166,23 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                                     Field field = overrideViaAnnotationRequest.getDynamicEntityDao().getFieldManager()
                                                 .getField(targetClass, fieldName);
                                     Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                                    temp.put(field.getName(), serverMetadata);
-                                    FieldInfo info = buildFieldInfo(field);
+                                    temp.put(fieldName, serverMetadata);
+                                    FieldInfo info;
+                                    if (field != null) {
+                                        info = buildFieldInfo(field);
+                                    } else {
+                                        info = new FieldInfo();
+                                        info.setName(fieldName);
+                                    }
                                     FieldMetadataOverride fieldMetadataOverride = overrideMergeMetadata(override);
+                                    if (serverMetadata.getExcluded() != null && serverMetadata.getExcluded() &&
+                                            (fieldMetadataOverride.getExcluded() == null || fieldMetadataOverride.getExcluded())) {
+                                        continue;
+                                    }
                                     buildBasicMetadata(parentClass, targetClass, temp, info, fieldMetadataOverride,
                                             overrideViaAnnotationRequest.getDynamicEntityDao());
-                                    serverMetadata = (BasicFieldMetadata) temp.get(field.getName());
-                                    metadata.put(propertyName, serverMetadata);
+                                    serverMetadata = (BasicFieldMetadata) temp.get(fieldName);
+                                    metadata.put(entry.getKey(), serverMetadata);
                                 } catch (Exception e) {
                                     throw new RuntimeException(e);
                                 }

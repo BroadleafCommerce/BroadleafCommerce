@@ -20,6 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -173,6 +174,9 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         Entity entity = persistencePackage.getEntity();
         AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+        if (!adornedTargetList.getMutable()) {
+            throw new SecurityServiceException("Field is not mutable");
+        }
         Entity payload;
         try {
             Class<?>[] entities = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
@@ -265,6 +269,9 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
         PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
         Entity entity = persistencePackage.getEntity();
         AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+        if (!adornedTargetList.getMutable()) {
+            throw new SecurityServiceException("Field is not mutable");
+        }
         try {
             AdornedTargetRetrieval adornedTargetRetrieval = new AdornedTargetRetrieval(persistencePerspective, entity, adornedTargetList).invokeForUpdate();
             List<Serializable> records = adornedTargetRetrieval.getRecords();
@@ -338,6 +345,9 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
         Entity entity = persistencePackage.getEntity();
         try {
             AdornedTargetList adornedTargetList = (AdornedTargetList) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+            if (!adornedTargetList.getMutable()) {
+                throw new SecurityServiceException("Field is not mutable");
+            }
             Class<?>[] entities = persistenceManager.getPolymorphicEntities(adornedTargetList.getAdornedTargetEntityClassname());
             Map<String, FieldMetadata> mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
                     adornedTargetList.getAdornedTargetEntityClassname(),

@@ -38,6 +38,7 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
     private String targetIdProperty;
     private Boolean inverse = Boolean.FALSE;
     private String joinEntityClass;
+    private Boolean mutable = true;
     
     public AdornedTargetList() {
         //do nothing
@@ -159,6 +160,14 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
         this.joinEntityClass = joinEntityClass;
     }
 
+    public Boolean getMutable() {
+        return mutable;
+    }
+
+    public void setMutable(Boolean mutable) {
+        this.mutable = mutable;
+    }
+
     @Override
     public PersistencePerspectiveItem clonePersistencePerspectiveItem() {
         AdornedTargetList adornedTargetList = new AdornedTargetList();
@@ -173,6 +182,7 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
         adornedTargetList.targetIdProperty = targetIdProperty;
         adornedTargetList.inverse = inverse;
         adornedTargetList.joinEntityClass = joinEntityClass;
+        adornedTargetList.mutable = mutable;
 
         return adornedTargetList;
     }
@@ -204,6 +214,8 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
             return false;
         if (joinEntityClass != null ? !joinEntityClass.equals(that.joinEntityClass) : that.joinEntityClass != null)
             return false;
+        if (mutable != null ? !mutable.equals(that.mutable) : that.mutable != null)
+            return false;
 
         return true;
     }
@@ -221,6 +233,7 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
         result = 31 * result + (targetIdProperty != null ? targetIdProperty.hashCode() : 0);
         result = 31 * result + (inverse != null ? inverse.hashCode() : 0);
         result = 31 * result + (joinEntityClass != null ? joinEntityClass.hashCode() : 0);
+        result = 31 * result + (mutable != null ? mutable.hashCode() : 0);
         return result;
     }
 }

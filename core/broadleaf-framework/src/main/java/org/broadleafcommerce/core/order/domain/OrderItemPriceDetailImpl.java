@@ -23,6 +23,10 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImpl;
 import org.hibernate.annotations.Cache;
@@ -50,6 +54,13 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM_PRICE_DTL")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                                            booleanOverrideValue = true))
+    }
+)
 public class OrderItemPriceDetailImpl implements OrderItemPriceDetail {
 
     private static final long serialVersionUID = 1L;
@@ -63,7 +74,7 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail {
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
-    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(excluded = true)
     protected OrderItem orderItem;
 
     @OneToMany(mappedBy = "orderItemPriceDetail", targetEntity = OrderItemPriceDetailAdjustmentImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)

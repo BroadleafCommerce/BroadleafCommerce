@@ -139,11 +139,15 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
                                     temp.put(field.getName(), serverMetadata);
                                     FieldInfo info = buildFieldInfo(field);
                                     FieldMetadataOverride fieldMetadataOverride = overrideAdornedTargetMergeMetadata(override);
+                                    if (serverMetadata.getExcluded() != null && serverMetadata.getExcluded() &&
+                                            (fieldMetadataOverride.getExcluded() == null || fieldMetadataOverride.getExcluded())) {
+                                        continue;
+                                    }
                                     buildAdornedTargetCollectionMetadata(parentClass, targetClass, temp, info,
                                             fieldMetadataOverride,
                                             overrideViaAnnotationRequest.getDynamicEntityDao());
                                     serverMetadata = (AdornedTargetCollectionMetadata) temp.get(field.getName());
-                                    metadata.put(propertyName, serverMetadata);
+                                    metadata.put(entry.getKey(), serverMetadata);
                                 } catch (Exception e) {
                                     throw new RuntimeException(e);
                                 }
@@ -556,9 +560,11 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
             adornedTargetList.setAdornedTargetEntityClassname(collectionTarget.getName());
             adornedTargetList.setSortField(sortProperty);
             adornedTargetList.setSortAscending(isAscending);
+            adornedTargetList.setMutable(metadata.isMutable());
         } else {
             AdornedTargetList adornedTargetList = new AdornedTargetList(field.getName(), parentObjectProperty, parentObjectIdProperty, targetObjectProperty, targetObjectIdProperty, collectionTarget.getName(), sortProperty, isAscending);
             adornedTargetList.setJoinEntityClass(joinEntityClass);
+            adornedTargetList.setMutable(metadata.isMutable());
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST, adornedTargetList);
         }
 

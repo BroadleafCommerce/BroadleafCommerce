@@ -241,7 +241,7 @@ public class OrderImpl implements Order, AdminMainEntity {
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @MapKey(name="name")
     @AdminPresentationMap(friendlyName = "OrderImpl_Attributes",
-        forceFreeFormKeys = true, keyPropertyFriendlyName = "PaymentInfoImpl_Additional_Fields_Name"
+        forceFreeFormKeys = true, keyPropertyFriendlyName = "OrderImpl_Attributes_Key_Name"
     )
     protected Map<String,OrderAttribute> orderAttributes = new HashMap<String,OrderAttribute>();
     

@@ -71,6 +71,9 @@ import javax.persistence.Transient;
 @Table(name = "BLC_ORDER_PAYMENT")
 @AdminPresentationMergeOverrides(
     {
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                                            booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "address", mergeEntries = {
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB,
                         overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Address),

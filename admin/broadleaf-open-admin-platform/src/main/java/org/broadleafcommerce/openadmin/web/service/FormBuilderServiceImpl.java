@@ -161,10 +161,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         ListGrid.Type type = null;
         boolean editable = false;
         boolean sortable = false;
+        boolean readOnly = false;
         String idProperty = "id";
         // Get the header fields for this list grid. Note that the header fields are different depending on the
         // kind of field this is.
         if (fmd instanceof BasicFieldMetadata) {
+            readOnly = ((BasicFieldMetadata) fmd).getReadOnly();
             for (Property p : cmd.getProperties()) {
                 if (p.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
@@ -184,6 +186,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             type = ListGrid.Type.TO_ONE;
         } else if (fmd instanceof BasicCollectionMetadata) {
+            readOnly = !((BasicCollectionMetadata) fmd).isMutable();
             for (Property p : cmd.getProperties()) {
                 if (p.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
@@ -202,6 +205,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 editable = true;
             }
         } else if (fmd instanceof AdornedTargetCollectionMetadata) {
+            readOnly = !((AdornedTargetCollectionMetadata) fmd).isMutable();
             AdornedTargetCollectionMetadata atcmd = (AdornedTargetCollectionMetadata) fmd;
 
             for (String fieldName : atcmd.getGridVisibleFields()) {
@@ -222,6 +226,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
             sortable = StringUtils.isNotBlank(adornedList.getSortField());
         } else if (fmd instanceof MapMetadata) {
+            readOnly = !((MapMetadata) fmd).isMutable();
             MapMetadata mmd = (MapMetadata) fmd;
 
             Property p2 = cmd.getPMap().get("key");
@@ -260,9 +265,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             listGrid.setFriendlyName(field.getName());
         }
         listGrid.setContainingEntityId(containingEntityId);
+        listGrid.setReadOnly(readOnly);
         
         if (editable) {
             listGrid.getRowActions().add(DefaultListGridActions.UPDATE);
+        }
+        if (readOnly) {
+            listGrid.getRowActions().add(DefaultListGridActions.VIEW);
         }
         if (sortable) {
             listGrid.getToolbarActions().add(DefaultListGridActions.REORDER);

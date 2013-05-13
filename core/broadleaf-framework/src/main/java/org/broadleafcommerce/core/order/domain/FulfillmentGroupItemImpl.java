@@ -22,7 +22,12 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -54,6 +59,13 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP_ITEM")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                                            booleanOverrideValue = true))
+    }
+)
 public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable {
 
     private static final Log LOG = LogFactory.getLog(FulfillmentGroupItemImpl.class);
@@ -73,15 +85,17 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     //this needs to stay OrderItem in order to provide backwards compatibility for those implementations that place a BundleOrderItem
     @ManyToOne(targetEntity = OrderItemImpl.class, optional=false)
     @JoinColumn(name = "ORDER_ITEM_ID")
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Order_Item", prominent = true, order = 1000, gridOrder = 1000)
+    @AdminPresentationToOneLookup()
     protected OrderItem orderItem;
 
     @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Quantity")
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Quantity", prominent = true, order = 2000, gridOrder = 2000)
     protected int quantity;
 
     @Column(name = "STATUS")
     @Index(name="FGITEM_STATUS_INDEX", columnNames={"STATUS"})
-    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Status")
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Status", prominent = true, order = 3000, gridOrder = 3000)
     private String status;
     
     @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
@@ -90,19 +104,19 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
     
     @Column(name = "TOTAL_ITEM_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Tax", order=9, fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Tax", order=4000, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
     @Column(name = "TOTAL_ITEM_AMOUNT", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Amount", order = 9, fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Amount", order = 5000, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalItemAmount;
 
     @Column(name = "TOTAL_ITEM_TAXABLE_AMOUNT", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Amount", order = 9, fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Taxable_Amount", order = 6000, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalItemTaxableAmount;
 
     @Column(name = "PRORATED_ORDER_ADJ")
-    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Prorated_Adjustment", order = 9, fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Prorated_Adjustment", order = 7000, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal proratedOrderAdjustment;
 
     @Override

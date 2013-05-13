@@ -31,6 +31,7 @@ public class ListGridAction implements Cloneable {
     protected String urlPostfix = "";
     protected String iconClass = "";
     protected String displayText = "";
+    protected Boolean forListGridReadOnly = false;
     
     public ListGridAction() {
     }
@@ -67,10 +68,19 @@ public class ListGridAction implements Cloneable {
         return this;
     }
 
+    public ListGridAction withForListGridReadOnly(Boolean forListGridReadOnly) {
+        setForListGridReadOnly(forListGridReadOnly);
+        return this;
+    }
+
     public String getButtonClass() {
         return buttonClass;
     }
-    
+
+    public Boolean getForListGridReadOnly() {
+        return forListGridReadOnly;
+    }
+
     /**
      * Main intent is for the button class to be used in a JQuery selector for giving this button a click action. You could
      * technically also apply additional styling to this anchor but is not usually recommended.
@@ -126,6 +136,10 @@ public class ListGridAction implements Cloneable {
         this.displayText = displayText;
     }
 
+    public void setForListGridReadOnly(Boolean forListGridReadOnly) {
+        this.forListGridReadOnly = forListGridReadOnly;
+    }
+
     @Override
     public ListGridAction clone() {
         ListGridAction cloned = new ListGridAction();
@@ -133,6 +147,7 @@ public class ListGridAction implements Cloneable {
         cloned.displayText = displayText;
         cloned.iconClass = iconClass;
         cloned.urlPostfix = urlPostfix;
+        cloned.forListGridReadOnly = forListGridReadOnly;
         return cloned;
     }
 }

@@ -68,6 +68,9 @@ import javax.persistence.TableGenerator;
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationMergeOverrides(
     {
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+                    @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                                                    booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "currency", mergeEntries =
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT,
                         booleanOverrideValue = false)),

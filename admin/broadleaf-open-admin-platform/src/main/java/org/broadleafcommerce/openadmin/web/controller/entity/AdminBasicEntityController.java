@@ -30,6 +30,7 @@ import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -70,16 +71,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to 
@@ -302,7 +302,26 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("currentUrl", request.getRequestURL().toString());
 
         setModelAttributes(model, sectionKey);
-        
+
+        boolean readable = false;
+        for (Property property : cmd.getProperties()) {
+            FieldMetadata fieldMetadata = property.getMetadata();
+            if (fieldMetadata instanceof BasicFieldMetadata) {
+                if (!((BasicFieldMetadata) fieldMetadata).getReadOnly()) {
+                    readable = true;
+                    break;
+                }
+            } else {
+                if (((CollectionMetadata) fieldMetadata).isMutable()) {
+                    readable = true;
+                    break;
+                }
+            }
+        }
+        if (!readable) {
+            entityForm.setReadOnly();
+        }
+
         // If the user does not have edit permissions, we will go ahead and make the form read only to prevent confusion
         try {
             adminRemoteSecurityService.securityCheck(sectionClassName, EntityOperationType.UPDATE);
@@ -311,7 +330,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 entityForm.setReadOnly();
             }
         }
-        
+
         if (isAjaxRequest(request)) {
             entityForm.setReadOnly();
             model.addAttribute("viewType", "modal/entityView");

@@ -22,6 +22,10 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl;
 import org.hibernate.annotations.Cache;
@@ -45,6 +49,13 @@ import java.math.BigDecimal;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM_DTL_ADJ")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                                            booleanOverrideValue = true))
+    }
+)
 public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailAdjustment {
 
     public static final long serialVersionUID = 1L;
@@ -74,7 +85,7 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     @AdminPresentation(friendlyName = "OrderItemPriceDetailAdjustmentImpl_Offer", order=1000,
-            group = "OrderItemPriceDetailAdjustmentImpl_Description", prominent = true, gridOrder = 1000)
+            prominent = true, gridOrder = 1000)
     @AdminPresentationToOneLookup()
     protected Offer offer;
 

@@ -37,6 +37,7 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
     private String dataSourceName;
     private ForeignKeyRestrictionType restrictionType = ForeignKeyRestrictionType.ID_EQ;
     private String displayValueProperty = "name";
+    private Boolean mutable = true;
     
     public ForeignKey() {
         //do nothing
@@ -110,6 +111,14 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         this.displayValueProperty = displayValueProperty;
     }
 
+    public Boolean getMutable() {
+        return mutable;
+    }
+
+    public void setMutable(Boolean mutable) {
+        this.mutable = mutable;
+    }
+
     public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
     }
@@ -134,6 +143,7 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         foreignKey.dataSourceName = dataSourceName;
         foreignKey.restrictionType = restrictionType;
         foreignKey.displayValueProperty = displayValueProperty;
+        foreignKey.mutable = mutable;
 
         return foreignKey;
     }
@@ -159,6 +169,7 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
             return false;
         if (manyToField != null ? !manyToField.equals(that.manyToField) : that.manyToField != null) return false;
         if (restrictionType != that.restrictionType) return false;
+        if (mutable != null ? !mutable.equals(that.mutable) : that.mutable != null) return false;
 
         return true;
     }
@@ -171,6 +182,7 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         result = 31 * result + (dataSourceName != null ? dataSourceName.hashCode() : 0);
         result = 31 * result + (restrictionType != null ? restrictionType.hashCode() : 0);
         result = 31 * result + (displayValueProperty != null ? displayValueProperty.hashCode() : 0);
+        result = 31 * result + (mutable != null ? mutable.hashCode() : 0);
         return result;
     }
 }

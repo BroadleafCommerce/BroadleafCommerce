@@ -43,5 +43,11 @@ public class DefaultListGridActions {
         .withButtonClass("sub-list-grid-update")
         .withIconClass("icon-pencil")
         .withDisplayText("Edit");
+
+    public static final ListGridAction VIEW = new ListGridAction()
+        .withButtonClass("sub-list-grid-view")
+        .withIconClass("icon-book")
+        .withDisplayText("View")
+        .withForListGridReadOnly(true);
     
 }

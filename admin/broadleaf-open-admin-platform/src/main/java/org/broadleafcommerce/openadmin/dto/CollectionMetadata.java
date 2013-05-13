@@ -25,7 +25,7 @@ public abstract class CollectionMetadata extends FieldMetadata {
 
     private PersistencePerspective persistencePerspective;
     private String collectionCeilingEntity;
-    private boolean mutable;
+    private boolean mutable = true;
     private String[] customCriteria;
 
     public PersistencePerspective getPersistencePerspective() {

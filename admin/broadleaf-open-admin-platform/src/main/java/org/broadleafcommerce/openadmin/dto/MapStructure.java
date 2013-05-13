@@ -36,6 +36,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
     private String mapProperty;
     private Boolean deleteValueEntity = Boolean.FALSE;
     private String manyToField;
+    private Boolean mutable = true;
     
     public MapStructure() {
         //do nothing - support serialization requirements
@@ -112,6 +113,14 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         this.manyToField = manyToField;
     }
 
+    public Boolean getMutable() {
+        return mutable;
+    }
+
+    public void setMutable(Boolean mutable) {
+        this.mutable = mutable;
+    }
+
     public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
     }
@@ -126,6 +135,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         mapStructure.mapProperty = mapProperty;
         mapStructure.deleteValueEntity = deleteValueEntity;
         mapStructure.manyToField = manyToField;
+        mapStructure.mutable = mutable;
 
         return mapStructure;
     }
@@ -148,6 +158,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         if (valueClassName != null ? !valueClassName.equals(that.valueClassName) : that.valueClassName != null)
             return false;
         if (manyToField != null ? !manyToField.equals(that.manyToField) : that.manyToField != null) return false;
+        if (mutable != null ? !mutable.equals(that.mutable) : that.mutable != null) return false;
 
         return true;
     }
@@ -161,6 +172,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         result = 31 * result + (mapProperty != null ? mapProperty.hashCode() : 0);
         result = 31 * result + (deleteValueEntity != null ? deleteValueEntity.hashCode() : 0);
         result = 31 * result + (manyToField != null ? manyToField.hashCode() : 0);
+        result = 31 * result + (mutable != null ? mutable.hashCode() : 0);
         return result;
     }
 }

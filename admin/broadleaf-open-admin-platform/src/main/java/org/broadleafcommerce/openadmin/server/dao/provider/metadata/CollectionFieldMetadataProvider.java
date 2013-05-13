@@ -134,9 +134,13 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                                     temp.put(field.getName(), serverMetadata);
                                     FieldInfo info = buildFieldInfo(field);
                                     FieldMetadataOverride fieldMetadataOverride = overrideCollectionMergeMetadata(override);
+                                    if (serverMetadata.getExcluded() != null && serverMetadata.getExcluded() &&
+                                            (fieldMetadataOverride.getExcluded() == null || fieldMetadataOverride.getExcluded())) {
+                                        continue;
+                                    }
                                     buildCollectionMetadata(parentClass, targetClass, temp, info, fieldMetadataOverride);
                                     serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
-                                    metadata.put(propertyName, serverMetadata);
+                                    metadata.put(entry.getKey(), serverMetadata);
                                 } catch (Exception e) {
                                     throw new RuntimeException(e);
                                 }
@@ -410,9 +414,11 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             ForeignKey foreignKey = (ForeignKey) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
             foreignKey.setManyToField(foreignKeyName);
             foreignKey.setForeignKeyClass(resolvedClass.getName());
+            foreignKey.setMutable(metadata.isMutable());
         } else {
             ForeignKey foreignKey = new ForeignKey(foreignKeyName, resolvedClass.getName(), null, ForeignKeyRestrictionType.ID_EQ);
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
+            foreignKey.setMutable(metadata.isMutable());
         }
 
         String ceiling = null;

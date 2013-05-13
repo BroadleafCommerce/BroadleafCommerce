@@ -41,7 +41,7 @@ var BLCAdmin = (function($) {
         }
     });
     
-	function showModal($data, onModalHide, onModalHideArgs) {
+	function showModal($data, onModalHide, onModalHideArgs, readOnly) {
 		// If we already have an active modal, we don't need another backdrop on subsequent modals
 		$data.modal({
 			backdrop: (modals.length < 1)
@@ -82,7 +82,7 @@ var BLCAdmin = (function($) {
 		});
 		
 		BLCAdmin.initializeModalTabs($data);
-        BLCAdmin.initializeModalButtons($data);
+        BLCAdmin.initializeModalButtons($data, readOnly);
 		BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
 		BLCAdmin.initializeFields();
 	}
@@ -135,13 +135,18 @@ var BLCAdmin = (function($) {
     		}
     	},
     	
-    	initializeModalButtons : function($data) {
-    		var $buttonDiv = $data.find('div.entity-form-actions');
-    		if ($buttonDiv.length > 0) {
-    		    var $footer = $('<div>', { 'class' : 'modal-footer' });
-    		    $buttonDiv.remove().appendTo($footer);
-    		    $data.append($footer);
-    		}
+    	initializeModalButtons : function($data, readOnly) {
+            var $buttonDiv = $data.find('div.entity-form-actions');
+            if ($buttonDiv.length > 0) {
+                var $footer = $('<div>', { 'class' : 'modal-footer' });
+                $buttonDiv.remove().appendTo($footer);
+                $data.append($footer);
+            }
+            if (readOnly == null || !readOnly) {
+                $buttonDiv.find('button').show();
+            } else {
+                $buttonDiv.find('button').hide();
+            }
     	},
     	
     	showMessageAsModal : function(header, message) {
@@ -169,7 +174,7 @@ var BLCAdmin = (function($) {
 			showModal($element, onModalHide, onModalHideArgs);
     	},
     	
-    	showLinkAsModal : function(link, onModalHide, onModalHideArgs) {
+    	showLinkAsModal : function(link, onModalHide, onModalHideArgs, readOnly) {
     	    BLC.ajax({
     	        url : link,
     	        type : "GET"
@@ -184,7 +189,7 @@ var BLCAdmin = (function($) {
     			$data.attr('id', 'modal' + modals.length);
     			$('body').append($data);
     			
-    			showModal($data, onModalHide, onModalHideArgs);
+    			showModal($data, onModalHide, onModalHideArgs, readOnly);
     		});
     	},
     	

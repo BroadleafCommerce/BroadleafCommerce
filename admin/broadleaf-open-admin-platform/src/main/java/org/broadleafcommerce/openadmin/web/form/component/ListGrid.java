@@ -145,7 +145,7 @@ public class ListGrid {
     }
     
     public Boolean getCanFilterAndSort() {
-        return !getReadOnly() && (canFilterAndSort == null ? true : canFilterAndSort);
+        return (canFilterAndSort == null ? true : canFilterAndSort);
     }
 
     public Boolean getReadOnly() {
@@ -153,7 +153,7 @@ public class ListGrid {
     }
     
     public Boolean getClickable() {
-        return !getReadOnly() && !"main".equals(listGridType);
+        return !"main".equals(listGridType);
     }
 
     /* ************************** */

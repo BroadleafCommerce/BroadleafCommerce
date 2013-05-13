@@ -378,6 +378,14 @@ $(document).ready(function() {
         
         return false;
     });
+
+    $('body').on('click', 'button.sub-list-grid-view', function() {
+        var link = BLCAdmin.listGrid.getButtonLink($(this));
+
+        BLCAdmin.showLinkAsModal(link, null, null, true);
+
+        return false;
+    });
     
     $('body').on('submit', 'form.modal-form', function(event) {
         BLCAdmin.runSubmitHandlers($(this));

@@ -135,10 +135,14 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
                                     temp.put(field.getName(), serverMetadata);
                                     FieldInfo info = buildFieldInfo(field);
                                     FieldMetadataOverride fieldMetadataOverride = overrideMapMergeMetadata(override);
+                                    if (serverMetadata.getExcluded() != null && serverMetadata.getExcluded() &&
+                                            (fieldMetadataOverride.getExcluded() == null || fieldMetadataOverride.getExcluded())) {
+                                        continue;
+                                    }
                                     buildMapMetadata(parentClass, targetClass, temp, info, fieldMetadataOverride,
                                             overrideViaAnnotationRequest.getDynamicEntityDao(), serverMetadata.getPrefix());
                                     serverMetadata = (MapMetadata) temp.get(field.getName());
-                                    metadata.put(propertyName, serverMetadata);
+                                    metadata.put(entry.getKey(), serverMetadata);
                                 } catch (Exception e) {
                                     throw new RuntimeException(e);
                                 }
@@ -590,6 +594,7 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
                 ((SimpleValueMapStructure) mapStructure).setValuePropertyName(valuePropertyName);
                 ((SimpleValueMapStructure) mapStructure).setValuePropertyFriendlyName(valuePropertyFriendlyName);
                 mapStructure.setMapProperty(prefix + field.getName());
+                mapStructure.setMutable(metadata.isMutable());
             } else {
                 mapStructure = (MapStructure) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE);
                 mapStructure.setKeyClassName(keyClassName);
@@ -598,14 +603,17 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
                 mapStructure.setValueClassName(metadata.getValueClassName());
                 mapStructure.setMapProperty(prefix + field.getName());
                 mapStructure.setDeleteValueEntity(deleteEntityUponRemove);
+                mapStructure.setMutable(metadata.isMutable());
             }
         } else {
             ForeignKey foreignKey = new ForeignKey(parentObjectIdField, parentObjectClass);
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
             if (metadata.isSimpleValue()) {
                 mapStructure = new SimpleValueMapStructure(keyClassName, keyPropertyName, keyPropertyFriendlyName, metadata.getValueClassName(), valuePropertyName, valuePropertyFriendlyName, prefix + field.getName());
+                mapStructure.setMutable(metadata.isMutable());
             } else {
                 mapStructure = new MapStructure(keyClassName, keyPropertyName, keyPropertyFriendlyName, metadata.getValueClassName(), prefix + field.getName(), deleteEntityUponRemove);
+                mapStructure.setMutable(metadata.isMutable());
             }
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, mapStructure);
         }
