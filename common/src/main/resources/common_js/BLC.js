@@ -23,6 +23,10 @@ var BLC = (function($) {
     }
     
     function redirectIfNecessary($data) {
+        if (!($data instanceof jQuery)) {
+            return true;
+        }
+        
         if ($data.attr('id') == redirectUrlDiv) {
             var redirectUrl = $data.text();
             if (redirectUrl != null && redirectUrl !== "") {
@@ -34,6 +38,10 @@ var BLC = (function($) {
     }
     
     function getExtraData($data) {
+        if (!($data instanceof jQuery)) {
+            return null;
+        }
+        
     	var extraData;
     	var $extraDataDiv = $data.find('#' + extraDataDiv);
     	if ($extraDataDiv.length > 0) {
@@ -45,15 +53,12 @@ var BLC = (function($) {
     
     function ajax(options, callback) {
         options.success = function(data) {
-            var $data;
-            if (data.trim) {
-                $data = $(data.trim());
-            } else {
-                $data = $(data);
+            if (typeof data == "string") {
+                data = $($.trim(data));
             }
             
-            if (runPreAjaxCallbackHandlers($data)) {
-                var extraData = getExtraData($data);
+            if (runPreAjaxCallbackHandlers(data)) {
+                var extraData = getExtraData(data);
                 callback(data, extraData);
             }
         };

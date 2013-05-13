@@ -1,7 +1,7 @@
 <div class="field-label" th:text="#{${field.friendlyName}}" />
 
 <div class="custom-checkbox">
-    <label th:for="${field.name + '-true'}" th:inline="text" style="font-weight: 400; display: inline-block;">
+    <label th:for="${field.name + '-true'}" th:inline="text" style="font-weight: 400; display: inline-block; width: 60px;">
         <input type="radio" th:id="${field.name + '-true'}" th:value="${true}" th:field="*{fields['__${field.name}__'].value}" /> 
         <span style="margin-right: 10px;" th:text="#{Yes}" />
     </label>

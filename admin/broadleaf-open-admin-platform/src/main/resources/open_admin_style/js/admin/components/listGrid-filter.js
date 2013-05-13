@@ -285,7 +285,7 @@ $(document).ready(function() {
                 });
             }
             BLCAdmin.listGrid.hideLoadingSpinner($tbody);
-            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]).find('div.listgrid-header-wrapper'));
+            BLCAdmin.listGrid.replaceRelatedListGrid($(data).find('div.listgrid-header-wrapper'));
             $inputs.each(function(index, input) {
                 $(input).removeAttr('name');
             });
@@ -318,7 +318,7 @@ $(document).ready(function() {
             type: "GET",
             data: $firstHeader.find('div.filter-fields :input').serialize()
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]));
+            BLCAdmin.listGrid.replaceRelatedListGrid($(data));
         });
         return false;
     });

@@ -327,6 +327,10 @@ BLC.defaultErrorHandler = function(data) {
 }
 
 BLC.addPreAjaxCallbackHandler(function($data) {
+    if (!($data instanceof jQuery)) {
+        return true;
+    }
+    
     var $loginForm = $data.find('form').filter(function() {
         return $(this).attr('action').indexOf('login_admin_post') >= 0;
     });

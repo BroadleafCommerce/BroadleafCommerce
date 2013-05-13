@@ -27,9 +27,9 @@ body.off-canvas { padding: 0; margin: 0; }
 
 [role="navigation"]#topMenu ul { margin-top: 0; }
 
-[role="complementary"] { margin-left: -100%; width: 80%; float: left; z-index: 2; }
+[role="complementary"] { margin-left: 0; width: 20%; float: left; z-index: 2; padding: 0 8px; }
 
-[role="main"] { margin-left: 0; float: right; z-index: 1; position: relative; }
+[role="main"] { width: 80%; margin-left: 0; float: right; z-index: 1; position: relative; padding: 0 15px; }
 
 .paneled [role="main"] { background: #fff; width: 500%; overflow: hidden; float: none; position: relative; left: 0; -webkit-transition: 0.15s all ease-in; -moz-transition: 0.15s all ease-in; -o-transition: 0.15s all ease-in; transition: 0.15s all ease-in; }
 
@@ -41,11 +41,4 @@ body.off-canvas { padding: 0; margin: 0; }
 
 .active-menu [role="navigation"]#topMenu { margin-top: 0 !important; }
 
-@media all and (min-width: 768px) { menu-button, .sidebar-button { display: none; }
-  [role="complementary"] { width: 20%; margin-left: 0; float: left; padding: 0 8px; }
-  [role="main"] { width: 80%; padding: 0 15px; }
-  .paneled [role="main"] { width: 100%; padding: 0; background: #f4f4f4; left: 0 !important; }
-  .page-panel { display: block; min-height: 800px; float: none; margin: 0; width: 100%; background: #f4f4f4; }
-  .hide-extras [role="main"] { width: 100%; }
-  .hide-extras [role="complementary"] { display: none; }
-  [role="navigation"]#topMenu { display: none; } }
+[role="navigation"]#topMenu { display: none; }

@@ -27,7 +27,7 @@ $(document).ready(function() {
 			type: "POST",
 			data: $form.serialize()
 		}, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]));
+            BLCAdmin.listGrid.replaceRelatedListGrid($(data));
             BLCAdmin.hideCurrentModal();
 	    });
 		
@@ -72,7 +72,7 @@ $(document).ready(function() {
             data: properties,
             type: "POST"
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]));
+            BLCAdmin.listGrid.replaceRelatedListGrid($(data));
         });
         
         return false;

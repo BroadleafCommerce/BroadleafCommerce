@@ -16,12 +16,13 @@
             $oldBodyWrapper.remove();
             
             var $listGridContainer = $oldHeaderWrapper.closest('.listgrid-container');
-            $listGridContainer.find('.listgrid-table-footer').text('');
             
             this.initialize($listGridContainer);
             
             BLCAdmin.listGrid.paginate.scrollToIndex($listGridContainer.find('tbody'), currentIndex);
             $listGridContainer.find('.listgrid-body-wrapper').mCustomScrollbar('update');
+            
+            BLCAdmin.listGrid.paginate.updateTableFooter($listGridContainer.find('tbody'));
             
             if (alert) {
                 this.showAlert($listGridContainer, alert.message, alert);
@@ -211,7 +212,7 @@ $(document).ready(function() {
             type : "POST",
             data : postData
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]), { 
+            BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
                 message: BLCAdmin.messages.saved + '!', 
                 alertType: 'save-alert', 
                 autoClose: 1000 
@@ -340,7 +341,6 @@ $(document).ready(function() {
                             alertType: 'save-alert', 
                             autoClose: 400 
                         });
-                        console.log(data);
                     });
                 }
             }).disableSelection();
@@ -361,7 +361,7 @@ $(document).ready(function() {
             data: rowFields,
             type: "POST"
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]), { 
+            BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
                 message: BLCAdmin.messages.saved + '!', 
                 alertType: 'save-alert', 
                 autoClose: 1000 
@@ -387,7 +387,7 @@ $(document).ready(function() {
             type: "POST",
             data: $(this).serialize()
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($($(data.trim())[0]), { 
+            BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
                 message: BLCAdmin.messages.saved + '!', 
                 alertType: 'save-alert', 
                 autoClose: 1000 
