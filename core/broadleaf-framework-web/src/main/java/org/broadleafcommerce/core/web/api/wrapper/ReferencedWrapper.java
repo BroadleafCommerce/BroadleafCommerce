@@ -51,22 +51,31 @@ public class ReferencedWrapper extends BaseWrapper implements APIWrapper<Referen
     @XmlElement
     protected Long id;
 
+    @XmlElement
     protected String referenceNumber;
 
+    @XmlElement
     protected String type;
 
+    @XmlElement
     protected String pan;
 
+    @XmlElement
     protected String cvvCode;
 
+    @XmlElement
     protected Integer expirationMonth;
 
+    @XmlElement
     protected Integer expirationYear;
 
+    @XmlElement
     protected String accountNumber;
 
+    @XmlElement
     protected String routingNumber;
 
+    @XmlElement
     protected String pin;
 
     @Override
