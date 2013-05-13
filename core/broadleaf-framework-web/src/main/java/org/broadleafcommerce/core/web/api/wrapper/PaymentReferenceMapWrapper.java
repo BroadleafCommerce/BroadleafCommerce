@@ -36,24 +36,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class PaymentReferenceMapWrapper extends BaseWrapper {
 
     @XmlElement
-    protected PaymentInfoWrapper paymentInfoWrapper;
+    protected PaymentInfoWrapper paymentInfo;
 
     @XmlElement
-    protected ReferencedWrapper referencedWrapper;
+    protected ReferencedWrapper referenced;
 
     public PaymentInfoWrapper getPaymentInfoWrapper() {
-        return paymentInfoWrapper;
+        return paymentInfo;
     }
 
-    public void setPaymentInfoWrapper(PaymentInfoWrapper paymentInfoWrapper) {
-        this.paymentInfoWrapper = paymentInfoWrapper;
+    public void setPaymentInfoWrapper(PaymentInfoWrapper paymentInfo) {
+        this.paymentInfo = paymentInfo;
     }
 
     public ReferencedWrapper getReferencedWrapper() {
-        return referencedWrapper;
+        return referenced;
     }
 
-    public void setReferencedWrapper(ReferencedWrapper referencedWrapper) {
-        this.referencedWrapper = referencedWrapper;
+    public void setReferencedWrapper(ReferencedWrapper referenced) {
+        this.referenced = referenced;
     }
 }
