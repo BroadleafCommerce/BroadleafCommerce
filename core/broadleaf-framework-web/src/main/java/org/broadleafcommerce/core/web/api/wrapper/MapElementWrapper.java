@@ -36,7 +36,7 @@ public class MapElementWrapper {
     protected String key;
 
     @XmlElement
-    protected Object value;
+    protected String value;
 
     public String getKey() {
         return key;
@@ -46,11 +46,11 @@ public class MapElementWrapper {
         this.key = key;
     }
 
-    public Object getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue(String value) {
         this.value = value;
     }
 }
