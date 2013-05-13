@@ -41,7 +41,6 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     
     private static final long serialVersionUID = 1L;
 
-    @XmlJavaTypeAdapter(value = BigDecimalRoundingAdapter.class)
     private BigDecimal amount;
 
     private final Currency currency;
@@ -155,6 +154,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     }
 
     @XmlElement
+    @XmlJavaTypeAdapter(value = BigDecimalRoundingAdapter.class)
     public BigDecimal getAmount() {
         return amount;
     }
