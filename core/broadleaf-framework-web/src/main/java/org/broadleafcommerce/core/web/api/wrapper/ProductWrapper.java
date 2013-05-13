@@ -19,15 +19,16 @@ package org.broadleafcommerce.core.web.api.wrapper;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * This is a JAXB wrapper around Product.
@@ -66,6 +67,9 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
     @XmlElement
     protected SkuWrapper defaultSku;
     
+    @XmlElement
+    protected Long defaultCategoryId;
+
     @XmlElement(name = "productOption")
     @XmlElementWrapper(name = "productOptions")
     protected List<ProductOptionWrapper> productOptions;
@@ -86,6 +90,10 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
             this.defaultSku.wrap(model.getDefaultSku(), request);
         }
         
+        if (model.getDefaultCategory() != null) {
+            this.defaultCategoryId = model.getDefaultCategory().getId();
+        }
+
         if (model.getProductOptions() != null) {
             this.productOptions = new ArrayList<ProductOptionWrapper>();
             List<ProductOption> options = model.getProductOptions();
