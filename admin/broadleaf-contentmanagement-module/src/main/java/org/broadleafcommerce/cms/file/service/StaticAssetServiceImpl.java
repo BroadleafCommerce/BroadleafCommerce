@@ -43,6 +43,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import eu.medsea.mimeutil.MimeType;
 import eu.medsea.mimeutil.MimeUtil;
+import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
+import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -95,6 +97,11 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     @Override
     public StaticAsset findStaticAssetById(Long id) {
         return staticAssetDao.readStaticAssetById(id);
+    }
+
+    static {
+        MimeUtil.registerMimeDetector(ExtensionMimeDetector.class.getName());
+        MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getName());
     }
 
     protected String getFileExtension(String fileName) {
@@ -195,7 +202,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
         }
 
         newAsset.setName(file.getOriginalFilename());
-        newAsset.setMimeType(file.getContentType());
+        getMimeType(file, newAsset);
         newAsset.setFileExtension(getFileExtension(file.getOriginalFilename()));
         newAsset.setFileSize(file.getSize());
         newAsset.setFullUrl(fullUrl);
@@ -203,13 +210,17 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
         return staticAssetDao.addOrUpdateStaticAsset(newAsset, false);
     }
 
-    protected void getMimeType(MultipartFile file, StaticAsset newAsset) throws IOException {
+    protected void getMimeType(MultipartFile file, StaticAsset newAsset) {
         Collection mimeTypes = MimeUtil.getMimeTypes(file.getOriginalFilename());
         if (!mimeTypes.isEmpty()) {
             MimeType mimeType = (MimeType) mimeTypes.iterator().next();
             newAsset.setMimeType(mimeType.toString());
         } else {
-            mimeTypes = MimeUtil.getMimeTypes(file.getInputStream());
+            try {
+                mimeTypes = MimeUtil.getMimeTypes(file.getInputStream());
+            } catch (IOException ioe) {
+                throw new RuntimeException(ioe);
+            }
             if (!mimeTypes.isEmpty()) {
                 MimeType mimeType = (MimeType) mimeTypes.iterator().next();
                 newAsset.setMimeType(mimeType.toString());
