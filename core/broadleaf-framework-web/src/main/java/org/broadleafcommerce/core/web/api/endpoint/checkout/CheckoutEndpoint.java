@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.CompositePaymentService;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
+import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.payment.service.workflow.CompositePaymentResponse;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
@@ -39,7 +40,6 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,19 +118,20 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
                 try {
                     if (mapWrappers != null && !mapWrappers.isEmpty()) {
                         Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
-                        List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
+                        orderService.removePaymentsFromOrder(cart, PaymentInfoType.CREDIT_CARD);
 
                         for (PaymentReferenceMapWrapper mapWrapper : mapWrappers) {
                             PaymentInfo paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
+                            paymentInfo.setOrder(cart);
                             Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
 
-                            payments.put(paymentInfo, referenced);
-                            paymentInfos.add(paymentInfo);
-                        }
+                            if (cart.getPaymentInfos() == null) {
+                                cart.setPaymentInfos(new ArrayList<PaymentInfo>());
+                            }
 
-                        cart.setPaymentInfos(paymentInfos);
-                        cart.setStatus(OrderStatus.SUBMITTED);
-                        cart.setSubmitDate(Calendar.getInstance().getTime());
+                            cart.getPaymentInfos().add(paymentInfo);
+                            payments.put(paymentInfo, referenced);
+                        }
 
                         CheckoutResponse response = checkoutService.performCheckout(cart, payments);
                         Order order = response.getOrder();

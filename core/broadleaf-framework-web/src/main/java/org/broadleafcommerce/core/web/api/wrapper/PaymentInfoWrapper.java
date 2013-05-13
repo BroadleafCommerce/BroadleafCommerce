@@ -17,13 +17,20 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.common.money.util.CurrencyAdapter;
+import org.broadleafcommerce.common.util.xml.BigDecimalRoundingAdapter;
 import org.broadleafcommerce.core.payment.domain.AmountItem;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.service.PaymentInfoService;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.springframework.context.ApplicationContext;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,10 +38,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * This is a JAXB wrapper around PaymentInfo.
@@ -66,7 +70,12 @@ public class PaymentInfoWrapper extends BaseWrapper implements APIWrapper<Paymen
     protected List<MapElementWrapper> additionalFields;
 
     @XmlElement
-    protected Money amount;
+    @XmlJavaTypeAdapter(value = BigDecimalRoundingAdapter.class)
+    protected BigDecimal amount;
+
+    @XmlElement
+    @XmlJavaTypeAdapter(value = CurrencyAdapter.class)
+    protected Currency currency;
 
     @XmlElement(name = "amountItem")
     @XmlElementWrapper(name = "amountItems")
@@ -113,7 +122,10 @@ public class PaymentInfoWrapper extends BaseWrapper implements APIWrapper<Paymen
             this.additionalFields = mapElementWrappers;
         }
 
-        this.amount = model.getAmount();
+        if (model.getAmount() != null) {
+            this.amount = model.getAmount().getAmount();
+            this.currency = model.getAmount().getCurrency();
+        }
 
         if (model.getAmountItems() != null) {
             List<AmountItemWrapper> wrappers = new ArrayList<AmountItemWrapper>();
@@ -134,10 +146,6 @@ public class PaymentInfoWrapper extends BaseWrapper implements APIWrapper<Paymen
         PaymentInfoService paymentInfoService = (PaymentInfoService) context.getBean("blPaymentInfoService");
         PaymentInfo paymentInfo = paymentInfoService.create();
 
-        OrderService orderService = (OrderService) context.getBean("blOrderService");
-        Order order = orderService.findOrderById(this.orderId);
-        paymentInfo.setOrder(order);
-
         paymentInfo.setType(PaymentInfoType.getInstance(this.type));
 
         if (this.address != null) {
@@ -157,7 +165,14 @@ public class PaymentInfoWrapper extends BaseWrapper implements APIWrapper<Paymen
             paymentInfo.setAdditionalFields(fields);
         }
 
-        paymentInfo.setAmount(this.amount);
+        if (this.amount != null) {
+            if (this.currency != null) {
+                paymentInfo.setAmount(new Money(this.amount, this.currency));
+            } else {
+                paymentInfo.setAmount(new Money(this.amount));
+            }
+        }
+
         paymentInfo.setCustomerIpAddress(this.customerIpAddress);
         paymentInfo.setReferenceNumber(this.referenceNumber);
 
