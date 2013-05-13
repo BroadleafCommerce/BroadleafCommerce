@@ -23,11 +23,10 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationPropertyType;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImpl;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
@@ -66,67 +65,49 @@ import java.util.Vector;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-@AdminPresentationOverrides(
-    value = {
-        @AdminPresentationOverride(name="currency", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        //don't allow currency fields to be prominent
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.prominent,
-                                booleanOverrideValue = false)
-                })
-        ),
-        @AdminPresentationOverride(name="personalMessage", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.tab,
-                                overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Advanced),
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.tabOrder,
-                                intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Advanced)
-                })
-        ),
-        @AdminPresentationOverride(name="address", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.tab,
-                                overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Address),
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.tabOrder,
-                                intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Address)
-                })
-        ),
-        @AdminPresentationOverride(name="address.isDefault", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
-                                booleanOverrideValue = true)
-                })
-        ),
-        @AdminPresentationOverride(name="address.isActive", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
-                                booleanOverrideValue = true)
-                })
-        ),
-        @AdminPresentationOverride(name="address.isBusiness", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
-                                booleanOverrideValue = true)
-                })
-        ),
-        @AdminPresentationOverride(name="phone", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
-                                booleanOverrideValue = true)
-                })
-        ),
-        @AdminPresentationOverride(name="phone.phoneNumber", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
-                                booleanOverrideValue = false),
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.order,
-                                intOverrideValue = FulfillmentGroupImpl.Presentation.FieldOrder.PHONE),
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.group,
-                                overrideValue = "General"),
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.requiredOverride,
-                                overrideValue = "NOT_REQUIRED")
-                })
-        )
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "currency", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT,
+                        booleanOverrideValue = false)),
+        @AdminPresentationMergeOverride(name = "personalMessage", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB,
+                        overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Advanced),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER,
+                        intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Advanced)
+        }),
+        @AdminPresentationMergeOverride(name = "address", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB,
+                        overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Address),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER,
+                        intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Address)
+        }),
+        @AdminPresentationMergeOverride(name = "address.isDefault", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)
+        }),
+        @AdminPresentationMergeOverride(name = "address.isActive", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)
+        }),
+        @AdminPresentationMergeOverride(name = "address.isBusiness", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)
+        }),
+        @AdminPresentationMergeOverride(name = "phone", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)
+        }),
+        @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = false),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
+                        intOverrideValue = FulfillmentGroupImpl.Presentation.FieldOrder.PHONE),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
+                        overrideValue = "General"),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
+                        overrideValue = "NOT_REQUIRED")
+        }),
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "FulfillmentGroupImpl_baseFulfillmentGroup")
@@ -280,30 +261,35 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Index(name="FG_MESSAGE_INDEX", columnNames={"PERSONAL_MESSAGE_ID"})
     protected PersonalMessage personalMessage;
     
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL,
+            orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="FulfillmentGroupImpl_Items",
             tab = Presentation.Tab.Name.Items, tabOrder = Presentation.Tab.Order.Items)
     protected List<FulfillmentGroupItem> fulfillmentGroupItems = new ArrayList<FulfillmentGroupItem>();
     
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupFeeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupFeeImpl.class, cascade = { CascadeType.ALL },
+            orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     @AdminPresentationCollection(friendlyName="FulfillmentGroupImpl_Fees",
             tab = Presentation.Tab.Name.Pricing, tabOrder = Presentation.Tab.Order.Pricing)
     protected List<FulfillmentGroupFee> fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
         
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = { CascadeType.ALL },
+            orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<CandidateFulfillmentGroupOffer> candidateOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
 
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupAdjustmentImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupAdjustmentImpl.class, cascade = { CascadeType.ALL },
+            orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="FulfillmentGroupImpl_Adjustments",
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
     
     @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @JoinTable(name = "BLC_FG_FG_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
+    @JoinTable(name = "BLC_FG_FG_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
 
@@ -418,7 +404,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public Money getRetailFulfillmentPrice() {
-        return retailFulfillmentPrice == null ? null : BroadleafCurrencyUtils.getMoney(retailFulfillmentPrice, getOrder().getCurrency());
+        return retailFulfillmentPrice == null ? null :
+                BroadleafCurrencyUtils.getMoney(retailFulfillmentPrice, getOrder().getCurrency());
     }
 
     @Override
@@ -503,7 +490,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public Money getSaleFulfillmentPrice() {
-        return saleFulfillmentPrice == null ? null : BroadleafCurrencyUtils.getMoney(saleFulfillmentPrice, getOrder().getCurrency());
+        return saleFulfillmentPrice == null ? null : BroadleafCurrencyUtils.getMoney(saleFulfillmentPrice,
+                getOrder().getCurrency());
     }
 
     @Override
@@ -523,7 +511,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public Money getFulfillmentPrice() {
-        return fulfillmentPrice == null ? null : BroadleafCurrencyUtils.getMoney(fulfillmentPrice, getOrder().getCurrency());
+        return fulfillmentPrice == null ? null : BroadleafCurrencyUtils.getMoney(fulfillmentPrice,
+                getOrder().getCurrency());
     }
 
     @Override
@@ -583,7 +572,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public Money getTotalFulfillmentGroupTax() {
-        return totalFulfillmentGroupTax == null ? null : BroadleafCurrencyUtils.getMoney(totalFulfillmentGroupTax, getOrder().getCurrency());
+        return totalFulfillmentGroupTax == null ? null : BroadleafCurrencyUtils.getMoney(totalFulfillmentGroupTax,
+                getOrder().getCurrency());
     }
 
     @Override
@@ -623,7 +613,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Override
     public Money getMerchandiseTotal() {
-        return merchandiseTotal == null ? null : BroadleafCurrencyUtils.getMoney(merchandiseTotal, getOrder().getCurrency());
+        return merchandiseTotal == null ? null : BroadleafCurrencyUtils.getMoney(merchandiseTotal,
+                getOrder().getCurrency());
     }
 
     @Override

@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
@@ -33,6 +34,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -221,5 +223,13 @@ public abstract class AbstractFieldMetadataProvider implements FieldMetadataProv
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected Map<String, AdminPresentationMergeEntry> getAdminPresentationEntries(AdminPresentationMergeEntry[] entries) {
+        Map<String, AdminPresentationMergeEntry> response = new HashMap<String, AdminPresentationMergeEntry>();
+        for (AdminPresentationMergeEntry entry : entries) {
+            response.put(entry.propertyType(), entry);
+        }
+        return response;
     }
 }

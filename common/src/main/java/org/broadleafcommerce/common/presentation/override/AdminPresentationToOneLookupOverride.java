@@ -20,7 +20,9 @@ import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 
 /**
  * @author Jeff Fischer
+ * @deprecated use {@link AdminPresentationMergeOverrides} instead
  */
+@Deprecated
 public @interface AdminPresentationToOneLookupOverride {
 
     /**
@@ -36,4 +38,5 @@ public @interface AdminPresentationToOneLookupOverride {
      * @return the AdminPresentation being mapped to the attribute
      */
     AdminPresentationToOneLookup value();
+
 }

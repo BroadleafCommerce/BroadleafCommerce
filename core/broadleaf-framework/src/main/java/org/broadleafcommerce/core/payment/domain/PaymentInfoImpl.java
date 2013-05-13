@@ -25,11 +25,10 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationPropertyType;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
@@ -69,52 +68,40 @@ import java.util.Map;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_PAYMENT")
-@AdminPresentationOverrides(
-    value = {
-        @AdminPresentationOverride(name="address", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.tab,
-                                overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Address),
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.tabOrder,
-                                intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Address)
-                })
-        ),
-        @AdminPresentationOverride(name="address.isDefault", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
-                                booleanOverrideValue = true)
-                })
-        ),
-        @AdminPresentationOverride(name="address.isActive", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
-                                booleanOverrideValue = true)
-                })
-        ),
-        @AdminPresentationOverride(name="address.isBusiness", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
-                                booleanOverrideValue = true)
-                })
-        ),
-        @AdminPresentationOverride(name="phone", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
-                                booleanOverrideValue = true)
-                })
-        ),
-        @AdminPresentationOverride(name="phone.phoneNumber", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.excluded,
-                                booleanOverrideValue = false),
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.order,
-                                intOverrideValue = FulfillmentGroupImpl.Presentation.FieldOrder.PHONE),
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.group,
-                                overrideValue = "General"),
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.requiredOverride,
-                                overrideValue = "NOT_REQUIRED")
-                })
-        )
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "address", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB,
+                        overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Address),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER,
+                        intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Address)
+        }),
+        @AdminPresentationMergeOverride(name = "address.isDefault", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)
+        }),
+        @AdminPresentationMergeOverride(name = "address.isActive", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)
+        }),
+        @AdminPresentationMergeOverride(name = "address.isBusiness", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)
+        }),
+        @AdminPresentationMergeOverride(name = "phone", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)
+        }),
+        @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = false),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
+                        intOverrideValue = FulfillmentGroupImpl.Presentation.FieldOrder.PHONE),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
+                        overrideValue = "General"),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
+                        overrideValue = "NOT_REQUIRED")
+        }),
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PaymentInfoImpl_basePaymentInfo")
@@ -124,7 +111,8 @@ public class PaymentInfoImpl implements PaymentInfo {
 
     @Id
     @GeneratedValue(generator = "PaymentInfoId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PaymentInfoId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentInfoImpl", allocationSize = 50)
+    @TableGenerator(name = "PaymentInfoId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME",
+            valueColumnName = "ID_VAL", pkColumnValue = "PaymentInfoImpl", allocationSize = 50)
     @Column(name = "PAYMENT_ID")
     protected Long id;
 
@@ -145,17 +133,21 @@ public class PaymentInfoImpl implements PaymentInfo {
     protected Phone phone;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Amount", order=2000, gridOrder = 2000, prominent=true, fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Amount", order=2000, gridOrder = 2000, prominent=true,
+            fieldType=SupportedFieldType.MONEY)
     protected BigDecimal amount;
 
     @Column(name = "REFERENCE_NUMBER")
     @Index(name="ORDERPAYMENT_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
-    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Reference_Number", order=1000, prominent=true, gridOrder = 1000)
+    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Reference_Number", order=1000, prominent=true,
+            gridOrder = 1000)
     protected String referenceNumber;
 
     @Column(name = "PAYMENT_TYPE", nullable = false)
     @Index(name="ORDERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
-    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Type", order=3000, gridOrder = 3000, prominent=true, fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.payment.service.type.PaymentInfoType")
+    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Type", order=3000, gridOrder = 3000, prominent=true,
+            fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.core.payment.service.type.PaymentInfoType")
     protected String type;
     
     @OneToMany(mappedBy = "paymentInfo", targetEntity = AmountItemImpl.class, cascade = {CascadeType.ALL})

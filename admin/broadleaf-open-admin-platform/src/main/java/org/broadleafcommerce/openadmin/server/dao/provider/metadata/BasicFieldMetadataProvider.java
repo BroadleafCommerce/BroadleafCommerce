@@ -25,18 +25,21 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
+import org.broadleafcommerce.common.presentation.OptionFilterParam;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationDataDrivenEnumerationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationPropertyType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationToOneLookupOverride;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
@@ -75,8 +78,10 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
 
     protected boolean canHandleAnnotationOverride(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
         AdminPresentationOverrides myOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationOverrides.class);
-        return myOverrides != null && (!ArrayUtils.isEmpty(myOverrides.value()) || !ArrayUtils.isEmpty(myOverrides
-                .toOneLookups()) || !ArrayUtils.isEmpty(myOverrides.dataDrivenEnums()));
+        AdminPresentationMergeOverrides myMergeOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationMergeOverrides.class);
+        return (myOverrides != null && (!ArrayUtils.isEmpty(myOverrides.value()) || !ArrayUtils.isEmpty(myOverrides
+                .toOneLookups()) || !ArrayUtils.isEmpty(myOverrides.dataDrivenEnums()))) ||
+                myMergeOverrides != null;
     }
 
     @Override
@@ -137,6 +142,47 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 }
             }
         }
+
+        AdminPresentationMergeOverrides myMergeOverrides = overrideViaAnnotationRequest.getRequestedEntity().
+                getAnnotation(AdminPresentationMergeOverrides.class);
+        if (myMergeOverrides != null) {
+            for (AdminPresentationMergeOverride override : myMergeOverrides.value()) {
+                String propertyName = override.name();
+                Map<String, FieldMetadata> loopMap = new HashMap<String, FieldMetadata>();
+                loopMap.putAll(metadata);
+                for (Map.Entry<String, FieldMetadata> entry : loopMap.entrySet()) {
+                    if (entry.getKey().startsWith(propertyName) || StringUtils.isEmpty(propertyName)) {
+                        FieldMetadata targetMetadata = entry.getValue();
+                        if (targetMetadata instanceof BasicFieldMetadata) {
+                            BasicFieldMetadata serverMetadata = (BasicFieldMetadata) targetMetadata;
+                            if (serverMetadata.getTargetClass() != null) {
+                                try {
+                                    Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
+                                    Class<?> parentClass = null;
+                                    if (serverMetadata.getOwningClass() != null) {
+                                        parentClass = Class.forName(serverMetadata.getOwningClass());
+                                    }
+                                    String fieldName = serverMetadata.getFieldName();
+                                    Field field = overrideViaAnnotationRequest.getDynamicEntityDao().getFieldManager()
+                                                .getField(targetClass, fieldName);
+                                    Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                                    temp.put(field.getName(), serverMetadata);
+                                    FieldInfo info = buildFieldInfo(field);
+                                    FieldMetadataOverride fieldMetadataOverride = overrideMergeMetadata(override);
+                                    buildBasicMetadata(parentClass, targetClass, temp, info, fieldMetadataOverride,
+                                            overrideViaAnnotationRequest.getDynamicEntityDao());
+                                    serverMetadata = (BasicFieldMetadata) temp.get(field.getName());
+                                    metadata.put(propertyName, serverMetadata);
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         return FieldProviderResponse.HANDLED;
     }
 
@@ -244,20 +290,11 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
     }
 
-    protected Map<AdminPresentationPropertyType, AdminPresentationMergeEntry> getAdminPresentationEntries(AdminPresentationMergeEntry[] entries) {
-        Map<AdminPresentationPropertyType, AdminPresentationMergeEntry> response = new HashMap<AdminPresentationPropertyType, AdminPresentationMergeEntry>();
-        for (AdminPresentationMergeEntry entry : entries) {
-            response.put(entry.propertyType(), entry);
-        }
-        return response;
-    }
-
     protected void buildAdminPresentationOverride(String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties, Map<String, AdminPresentationOverride> presentationOverrides, String propertyName, String key, DynamicEntityDao dynamicEntityDao) {
         AdminPresentationOverride override = presentationOverrides.get(propertyName);
         if (override != null) {
             AdminPresentation annot = override.value();
-            AdminPresentationMerge merge = override.mergeValue();
-            if (annot != null && ArrayUtils.isEmpty(merge.mergeEntries())) {
+            if (annot != null) {
                 String testKey = prefix + key;
                 if ((testKey.startsWith(propertyName + ".") || testKey.equals(propertyName)) && annot.excluded()) {
                     FieldMetadata metadata = mergedProperties.get(key);
@@ -276,15 +313,11 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                         metadata.setExcluded(false);
                     }
                 }
-            }
-            if (annot != null || !ArrayUtils.isEmpty(merge.mergeEntries()) || !ArrayUtils.isEmpty(merge.validationConfigurations())) {
                 if (!(mergedProperties.get(key) instanceof BasicFieldMetadata)) {
                     return;
                 }
                 BasicFieldMetadata serverMetadata = (BasicFieldMetadata) mergedProperties.get(key);
-                if (!ArrayUtils.isEmpty(merge.mergeEntries()) || !ArrayUtils.isEmpty(merge.validationConfigurations())) {
-                    overrideMergeMetadata(serverMetadata, merge);
-                } else if (serverMetadata.getTargetClass() != null) {
+                if (serverMetadata.getTargetClass() != null) {
                     try {
                         Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
                         Class<?> parentClass = null;
@@ -327,101 +360,104 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
     }
 
-    protected void overrideMergeMetadata(BasicFieldMetadata basicFieldMetadata, AdminPresentationMerge merge) {
-        Map<AdminPresentationPropertyType, AdminPresentationMergeEntry> overrideValues = getAdminPresentationEntries(merge.mergeEntries());
-        ValidationConfiguration[] configurations = merge.validationConfigurations();
-
-        for (Map.Entry<AdminPresentationPropertyType, AdminPresentationMergeEntry> entry : overrideValues.entrySet()) {
+    protected FieldMetadataOverride overrideMergeMetadata(AdminPresentationMergeOverride merge) {
+        FieldMetadataOverride fieldMetadataOverride = new FieldMetadataOverride();
+        Map<String, AdminPresentationMergeEntry> overrideValues = getAdminPresentationEntries(merge.mergeEntries());
+        for (Map.Entry<String, AdminPresentationMergeEntry> entry : overrideValues.entrySet()) {
             String stringValue = entry.getValue().overrideValue();
-            switch (entry.getKey()) {
-                case friendlyName:
-                    basicFieldMetadata.setFriendlyName(stringValue);
-                    break;
-                case securityLevel:
-                    basicFieldMetadata.setSecurityLevel(stringValue);
-                    break;
-                case group:
-                    basicFieldMetadata.setGroup(stringValue);
-                    break;
-                case tab:
-                    basicFieldMetadata.setTab(stringValue);
-                    break;
-                case columnWidth:
-                    basicFieldMetadata.setColumnWidth(stringValue);
-                    break;
-                case broadleafEnumeration:
-                    basicFieldMetadata.setBroadleafEnumeration(stringValue);
-                    break;
-                case tooltip:
-                    basicFieldMetadata.setTooltip(stringValue);
-                    break;
-                case helpText:
-                    basicFieldMetadata.setHelpText(stringValue);
-                    break;
-                case hint:
-                    basicFieldMetadata.setHint(stringValue);
-                    break;
-                case showIfProperty:
-                    basicFieldMetadata.setShowIfProperty(stringValue);
-                    break;
-                case currencyCodeField:
-                    basicFieldMetadata.setCurrencyCodeField(stringValue);
-                    break;
-                case ruleIdentifier:
-                    basicFieldMetadata.setRuleIdentifier(stringValue);
-                    break;
-                case order:
-                    basicFieldMetadata.setOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():Integer.parseInt(stringValue));
-                    break;
-                case gridOrder:
-                    basicFieldMetadata.setGridOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():Integer.parseInt(stringValue));
-                    break;
-                case visibility:
-                    basicFieldMetadata.setVisibility(VisibilityEnum.valueOf(stringValue));
-                    break;
-                case fieldType:
-                    basicFieldMetadata.setFieldType(SupportedFieldType.valueOf(stringValue));
-                    break;
-                case groupOrder:
-                    basicFieldMetadata.setGroupOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():Integer.parseInt(stringValue));
-                    break;
-                case groupCollapsed:
-                    basicFieldMetadata.setGroupCollapsed(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():Boolean.parseBoolean(stringValue));
-                    break;
-                case tabOrder:
-                    basicFieldMetadata.setTabOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():Integer.parseInt(stringValue));
-                    break;
-                case largeEntry:
-                    basicFieldMetadata.setLargeEntry(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():Boolean.parseBoolean(stringValue));
-                    break;
-                case prominent:
-                    basicFieldMetadata.setProminent(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():Boolean.parseBoolean(stringValue));
-                    break;
-                case readOnly:
-                    basicFieldMetadata.setReadOnly(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():Boolean.parseBoolean(stringValue));
-                    break;
-                case requiredOverride:
-                    basicFieldMetadata.setRequiredOverride(RequiredOverride.REQUIRED==RequiredOverride.valueOf(stringValue));
-                    break;
-                case excluded:
-                    basicFieldMetadata.setExcluded(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():Boolean.parseBoolean(stringValue));
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unrecognized type: " + entry.getKey().toString());
+            if (entry.getKey().equals(PropertyType.AdminPresentation.FRIENDLYNAME)) {
+                fieldMetadataOverride.setFriendlyName(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.SECURITYLEVEL)) {
+                fieldMetadataOverride.setSecurityLevel(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.GROUP)) {
+                fieldMetadataOverride.setGroup(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.TAB)) {
+                fieldMetadataOverride.setTab(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.COLUMNWIDTH)) {
+                fieldMetadataOverride.setColumnWidth(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.BROADLEAFENUMERATION)) {
+                fieldMetadataOverride.setBroadleafEnumeration(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.TOOLTIP)) {
+                fieldMetadataOverride.setTooltip(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.HELPTEXT)) {
+                fieldMetadataOverride.setHelpText(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.HINT)) {
+                fieldMetadataOverride.setHint(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.SHOWIFPROPERTY)) {
+                fieldMetadataOverride.setShowIfProperty(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.CURRENCYCODEFIELD)) {
+                fieldMetadataOverride.setCurrencyCodeField(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.RULEIDENTIFIER)) {
+                fieldMetadataOverride.setRuleIdentifier(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.ORDER)) {
+                fieldMetadataOverride.setOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():
+                                        Integer.parseInt(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.GRIDORDER)) {
+                fieldMetadataOverride.setGridOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():
+                                        Integer.parseInt(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.VISIBILITY)) {
+                fieldMetadataOverride.setVisibility(VisibilityEnum.valueOf(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.FIELDTYPE)) {
+                fieldMetadataOverride.setFieldType(SupportedFieldType.valueOf(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.GROUPORDER)) {
+                fieldMetadataOverride.setGroupOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():
+                                        Integer.parseInt(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.GROUPCOLLAPSED)) {
+                fieldMetadataOverride.setGroupCollapsed(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
+                                        Boolean.parseBoolean(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.TABORDER)) {
+                fieldMetadataOverride.setTabOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():
+                                        Integer.parseInt(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.LARGEENTRY)) {
+                fieldMetadataOverride.setLargeEntry(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
+                                        Boolean.parseBoolean(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.PROMINENT)) {
+                fieldMetadataOverride.setProminent(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
+                                        Boolean.parseBoolean(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.READONLY)) {
+                fieldMetadataOverride.setReadOnly(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
+                                        Boolean.parseBoolean(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.REQUIREDOVERRIDE)) {
+                fieldMetadataOverride.setRequiredOverride(RequiredOverride.REQUIRED==RequiredOverride.valueOf(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.EXCLUDED)) {
+                fieldMetadataOverride.setExcluded(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
+                                        Boolean.parseBoolean(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.VALIDATIONCONFIGURATIONS)) {
+                processValidationAnnotations(entry.getValue().validationConfigurations(), fieldMetadataOverride);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationToOneLookup.LOOKUPDISPLAYPROPERTY)) {
+                fieldMetadataOverride.setLookupDisplayProperty(stringValue);
+                fieldMetadataOverride.setForeignKeyDisplayValueProperty(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationToOneLookup.USESERVERSIDEINSPECTIONCACHE)) {
+                fieldMetadataOverride.setUseServerSideInspectionCache(StringUtils.isEmpty(stringValue)?
+                                        entry.getValue().booleanOverrideValue():Boolean.parseBoolean(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationToOneLookup.LOOKUPTYPE)) {
+                fieldMetadataOverride.setLookupType(LookupType.valueOf(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationToOneLookup.CUSTOMCRITERIA)) {
+                fieldMetadataOverride.setCustomCriteria(entry.getValue().stringArrayOverrideValue());
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONLISTENTITY)) {
+                fieldMetadataOverride.setOptionListEntity(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONVALUEFIELDNAME)) {
+                fieldMetadataOverride.setOptionValueFieldName(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONDISPLAYFIELDNAME)) {
+                fieldMetadataOverride.setOptionDisplayFieldName(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONCANEDITVALUES)) {
+                fieldMetadataOverride.setOptionCanEditValues(StringUtils.isEmpty(stringValue) ? entry.getValue()
+                                        .booleanOverrideValue() : Boolean.parseBoolean(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationDataDrivenEnumeration.OPTIONFILTERPARAMS)) {
+                OptionFilterParam[] optionFilterParams = entry.getValue().optionFilterParams();
+                String[][] params = new String[optionFilterParams.length][3];
+                for (int j=0;j<params.length;j++) {
+                    params[j][0] = optionFilterParams[j].param();
+                    params[j][1] = optionFilterParams[j].value();
+                    params[j][2] = String.valueOf(optionFilterParams[j].paramType());
+                }
+                fieldMetadataOverride.setOptionFilterValues(params);
+            } else {
+                throw new IllegalArgumentException("Unrecognized type: " + entry.getKey());
             }
         }
 
-        for (ValidationConfiguration configuration : configurations) {
-            ConfigurationItem[] items = configuration.configurationItems();
-            Map<String, String> itemMap = new HashMap<String, String>();
-            for (ConfigurationItem item : items) {
-                itemMap.put(item.itemName(), item.itemValue());
-            }
-            if (basicFieldMetadata.getValidationConfigurations() == null) {
-                basicFieldMetadata.setValidationConfigurations(new LinkedHashMap<String, Map<String, String>>(5));
-            }
-            basicFieldMetadata.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
-        }
+        return fieldMetadataOverride;
     }
 
     protected FieldMetadataOverride constructBasicMetadataOverride(AdminPresentation annot, AdminPresentationToOneLookup toOneLookup,

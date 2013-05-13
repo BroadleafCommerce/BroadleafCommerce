@@ -24,10 +24,11 @@ import java.lang.annotation.Target;
 /**
  * 
  * @author pverheyden
- *
+ * @deprecated use {@link AdminPresentationMergeOverrides} instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Deprecated
 public @interface AdminPresentationOverrides {
 
     AdminPresentationOverride[] value() default {};

@@ -20,7 +20,9 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 
 /**
  * @author Jeff Fischer
+ * @deprecated use {@link AdminPresentationMergeOverrides} instead
  */
+@Deprecated
 public @interface AdminPresentationMapOverride {
 
     /**

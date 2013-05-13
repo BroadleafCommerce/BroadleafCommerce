@@ -32,14 +32,11 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationCollectionOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationPropertyType;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
@@ -96,15 +93,11 @@ import java.util.Map;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-@AdminPresentationOverrides(
-    value = {
-        @AdminPresentationOverride(name="", mergeValue = @AdminPresentationMerge(
-                mergeEntries = {
-                        //make all fields that appear in the order form readonly
-                        @AdminPresentationMergeEntry(propertyType = AdminPresentationPropertyType.readOnly,
-                                booleanOverrideValue = true)
-                })
-        )
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                                            booleanOverrideValue = true))
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderImpl_baseOrder")
