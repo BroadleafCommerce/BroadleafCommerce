@@ -758,17 +758,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 Serializable instance = (Serializable) Class.forName(entity.getType()[0]).newInstance();
                 instance = createPopulatedInstance(instance, entity, mergedProperties, false);
 
-                boolean validated = validate(entity, instance, mergedProperties);
-                if (validated) {
-                    instance = persistenceManager.getDynamicEntityDao().merge(instance);
-                    List<Serializable> entityList = new ArrayList<Serializable>(1);
-                    entityList.add(instance);
+                instance = persistenceManager.getDynamicEntityDao().merge(instance);
+                List<Serializable> entityList = new ArrayList<Serializable>(1);
+                entityList.add(instance);
 
-                    return getRecords(mergedProperties, entityList, null, null)[0];
-                } else {
-                    //return immediately to notify up the stack
-                    return entity;
-                }
+                return getRecords(mergedProperties, entityList, null, null)[0];
             } else {
                 return update(persistencePackage, primaryKey);
             }
