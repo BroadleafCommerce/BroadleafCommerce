@@ -15,22 +15,19 @@
         </form>
     </div>
     <div class="five columns">
-        <ul class="button-group" style="float: right;">
-            <li th:unless="${cannotCreate}">
-                <a th:href="@{${sectionKey} + '/add'}" class="button small radius dark add-main-entity" th:inline="text">
-                    <i class="icon-plus"></i> &nbsp; Add [[#{${entityFriendlyName}}]]
-                </a>
-            </li>
-<!--             <li> -->
-<!--                 <a href="#" data-reveal-id="exampleModal" class="button small secondary"> -->
-<!--                     <i class="foundicon-add-doc"></i> &nbsp; Clone Product -->
-<!--                 </a> -->
-<!--             </li> -->
-<!--             <li> -->
-<!--                 <a href="#" data-reveal-id="exampleModal" class="button small secondary"> -->
-<!--                     <i class="foundicon-inbox"></i> &nbsp; Export Products -->
-<!--                 </a> -->
-<!--             </li> -->
-        </ul>
+        <div style="float: right;">
+            <button th:each="action : ${mainActions}" 
+                class="button small radius dark right" 
+                th:type="${action.buttonType}"
+                th:attr="data-url=@{${sectionKey + action.urlPostfix}}"
+                th:classappend="${action.buttonClass}"
+                th:inline="text">
+                <div th:unless="${#strings.isEmpty(action.iconClass)}" th:remove="tag">
+                    <i th:class="${action.iconClass}"></i>&nbsp;
+                </div>
+                [[#{${action.displayText}}]]
+                <span th:if="${action.displayText == 'Add'}" th:text="#{${entityFriendlyName}}" th:remove="tag" />
+            </button>
+        </div>
     </div>
 </div>

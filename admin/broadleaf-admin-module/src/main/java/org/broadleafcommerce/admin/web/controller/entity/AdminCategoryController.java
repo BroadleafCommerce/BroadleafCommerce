@@ -19,6 +19,7 @@ package org.broadleafcommerce.admin.web.controller.entity;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -57,6 +58,7 @@ public class AdminCategoryController extends AdminBasicEntityController {
         return SECTION_KEY;
     }
     
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
@@ -65,6 +67,16 @@ public class AdminCategoryController extends AdminBasicEntityController {
         
         List<Category> parentCategories = catalogService.findAllParentCategories();
         model.addAttribute("parentCategories", parentCategories);
+        
+        List<EntityFormAction> mainActions = (List<EntityFormAction>) model.asMap().get("mainActions");
+        
+        mainActions.add(new EntityFormAction()
+            .withButtonClass("show-category-tree-view")
+            .withDisplayText("Category_Tree_View"));
+        
+        mainActions.add(new EntityFormAction()
+            .withButtonClass("show-category-list-view active")
+            .withDisplayText("Category_List_View"));
         
         model.addAttribute("viewType", "categoryTree");
         return "modules/defaultContainer";

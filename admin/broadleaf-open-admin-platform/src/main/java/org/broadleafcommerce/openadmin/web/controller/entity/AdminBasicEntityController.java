@@ -45,8 +45,10 @@ import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
@@ -139,18 +141,25 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey);
         
-        // If the user does not have create permissions, we will remove the add new button
+        List<EntityFormAction> mainActions = new ArrayList<EntityFormAction>();
+        // If the user does not have create permissions, we will not add the "Add New" button
+        boolean canCreate = true;
         try {
             adminRemoteSecurityService.securityCheck(sectionClassName, EntityOperationType.ADD);
         } catch (ServiceException e) {
             if (e instanceof SecurityServiceException) {
-                model.addAttribute("cannotCreate", true);
+                canCreate = false;
             }
         }
 
+        if (canCreate) {
+            mainActions.add(DefaultMainActions.ADD);
+        }
+        
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("listGrid", listGrid);
+        model.addAttribute("mainActions", mainActions);
         model.addAttribute("viewType", "entityList");
 
         setModelAttributes(model, sectionKey);

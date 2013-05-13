@@ -1028,7 +1028,7 @@ ul.pagination-links li a.active {
 	color: #F0F0F0;
 }
 
-.button.dark:hover, .button.dark:focus { 
+.button.dark:hover, .button.dark:focus, .button.dark.active { 
 	background-color: #006969; 
 }
 
@@ -1058,8 +1058,16 @@ span.read-only {
 }
 
 ul.category-root {
-	margin-left: 10px;
-	margin-bottom: 20px;
+	padding: 5px 0px 5px 15px;
+	margin: 0;
+	border: 1px solid #DDD;
+}
+
+ul.category-root, ul.category-root ul {
+	list-style-type: none;
+}
+
+ul.category-root ul {
 }
 
 /* -----------------------------------------
@@ -1287,6 +1295,10 @@ body .redactor_toolbar li a.redactor_btn_selectAssetButton {
 
 body .redactor_toolbar li a.redactor_btn_font { 
 	background-image: url('../../img/admin/font-selection.png');
+}
+
+.category-tree {
+	display: none;
 }
 
 /* -----------------------------------------

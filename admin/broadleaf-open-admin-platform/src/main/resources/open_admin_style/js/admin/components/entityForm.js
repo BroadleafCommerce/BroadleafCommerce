@@ -39,8 +39,8 @@ $(document).ready(function() {
         BLCAdmin.runSubmitHandlers($(this));
 	});
 	
-    $('body').on('click', 'a.add-main-entity', function(event) {
-    	BLCAdmin.showLinkAsModal($(this).attr('href'));
+    $('body').on('click', 'button.add-main-entity', function(event) {
+    	BLCAdmin.showLinkAsModal($(this).data('url'));
     	return false;
     });
     
