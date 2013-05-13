@@ -220,14 +220,11 @@
                     $(tableResizing.bodyTable.find('thead tr th')[index]).outerWidth(newWidth);
                     
                     // This represents the width of the table cells other than the one we're resizing
-                    var originalRemainingWidth = tableResizing.totalWidth - tableResizing.startWidths[index];
-                    
-                    // This represents the new remaining width to distribute between the other columns
-                    var remainingWidth = tableResizing.totalWidth - tableResizing.startWidths[index] - widthDifference;
+                    var remainingWidth = tableResizing.totalWidth - tableResizing.startWidths[index];
                     
                     for (var i = 0; i < tableResizing.startWidths.length; i++) {
                         if (i != index) {
-                            var percentage = tableResizing.startWidths[i] / originalRemainingWidth;
+                            var percentage = tableResizing.startWidths[i] / remainingWidth;
                             var delta = widthDifference * percentage;
                             
                             newWidth = tableResizing.startWidths[i] - delta;
