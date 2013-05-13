@@ -27,13 +27,23 @@ package org.broadleafcommerce.openadmin.web.form.component;
  */
 public class ListGridAction implements Cloneable {
     
+    public static final String ADD = "ADD";
+    public static final String GEN_SKUS = "GEN_SKUS";
+    public static final String REORDER = "REORDER";
+    public static final String REMOVE = "REMOVE";
+    public static final String UPDATE = "UPDATE";
+    public static final String VIEW = "VIEW";
+
     protected String buttonClass = "";
     protected String urlPostfix = "";
     protected String iconClass = "";
     protected String displayText = "";
+    protected String actionId = "";
     protected Boolean forListGridReadOnly = false;
+
     
-    public ListGridAction() {
+    public ListGridAction(String actionId) {
+        this.actionId = actionId;
     }
     
     /**
@@ -140,9 +150,20 @@ public class ListGridAction implements Cloneable {
         this.forListGridReadOnly = forListGridReadOnly;
     }
 
+    /**
+     * Returns an Id that controllers can use to manipulate this action.   For example, if a
+     * Controller wanted to not show the "Add" button that the system shows by default, they
+     * could remove the action with an id of "ADD".   
+     * 
+     * @return
+     */
+    public String getActionId() {
+        return actionId;
+    }
+
     @Override
     public ListGridAction clone() {
-        ListGridAction cloned = new ListGridAction();
+        ListGridAction cloned = new ListGridAction(actionId);
         cloned.buttonClass = buttonClass;
         cloned.displayText = displayText;
         cloned.iconClass = iconClass;

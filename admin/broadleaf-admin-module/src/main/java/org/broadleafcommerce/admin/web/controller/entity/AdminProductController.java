@@ -180,7 +180,7 @@ public class AdminProductController extends AdminBasicEntityController {
         
         //Skus have a specific toolbar action to generate Skus based on permutations
         EntityForm form = (EntityForm) model.asMap().get("entityForm");
-        ListGridAction generateSkusAction = new ListGridAction().withDisplayText("Generate_Skus")
+        ListGridAction generateSkusAction = new ListGridAction(ListGridAction.GEN_SKUS).withDisplayText("Generate_Skus")
                                                                 .withIconClass("icon-fighter-jet")
                                                                 .withButtonClass("generate-skus")
                                                                 .withUrlPostfix("/generate-skus");

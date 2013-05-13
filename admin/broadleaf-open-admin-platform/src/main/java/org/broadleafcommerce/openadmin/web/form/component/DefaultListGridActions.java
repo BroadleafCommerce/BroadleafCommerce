@@ -20,31 +20,31 @@ package org.broadleafcommerce.openadmin.web.form.component;
 public class DefaultListGridActions {
     
     // Actions for the main list grid toolbar
-    public static final ListGridAction ADD = new ListGridAction()
+    public static final ListGridAction ADD = new ListGridAction(ListGridAction.ADD)
         .withButtonClass("sub-list-grid-add")
         .withUrlPostfix("/add")
         .withIconClass("icon-plus")
         .withDisplayText("Add");
     
-    public static final ListGridAction REORDER = new ListGridAction()
+    public static final ListGridAction REORDER = new ListGridAction(ListGridAction.REORDER)
         .withButtonClass("sub-list-grid-reorder")
         .withUrlPostfix("/update")
         .withIconClass("icon-move")
         .withDisplayText("Reorder");
 
     // Actions for row-level
-    public static final ListGridAction REMOVE = new ListGridAction()
+    public static final ListGridAction REMOVE = new ListGridAction(ListGridAction.REMOVE)
         .withButtonClass("sub-list-grid-remove")
         .withUrlPostfix("/delete")
         .withIconClass("icon-remove")
         .withDisplayText("Delete");
     
-    public static final ListGridAction UPDATE = new ListGridAction()
+    public static final ListGridAction UPDATE = new ListGridAction(ListGridAction.UPDATE)
         .withButtonClass("sub-list-grid-update")
         .withIconClass("icon-pencil")
         .withDisplayText("Edit");
 
-    public static final ListGridAction VIEW = new ListGridAction()
+    public static final ListGridAction VIEW = new ListGridAction(ListGridAction.VIEW)
         .withButtonClass("sub-list-grid-view")
         .withIconClass("icon-book")
         .withDisplayText("View")

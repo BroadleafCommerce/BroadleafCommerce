@@ -20,6 +20,7 @@ import org.broadleafcommerce.cms.admin.web.service.AssetFormBuilderService;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -65,7 +66,23 @@ public class AdminAssetController extends AdminBasicEntityController {
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String returnPath = super.viewEntityList(request, response, model, pathVars, requestParams);
         
+        // Add a new toolbar button to upload assets
         ListGrid listGrid = (ListGrid) model.asMap().get("listGrid");
+        ListGridAction uploadAssetAction = new ListGridAction(ListGridAction.UPLOAD)
+                .withDisplayText("Upload New Asset")
+                .withIconClass("icon-camera")
+                .withButtonClass("upload-asset")
+                .withUrlPostfix("/uploadAsset");
+        
+        listGrid.getToolbarActions().add(0, uploadAssetAction);
+
+        // Remove the normal "ADD" behavior
+        model.addAttribute("cannotCreate", true);
+
+        // Change the listGrid view to one that has a hidden form for uploading the 
+        // image.
+        model.addAttribute("viewType", "entityListWithUploadForm");
+        
         formService.addImageThumbnailField(listGrid, "fullUrl");
         
         return returnPath;

@@ -1,0 +1,10 @@
+<form method="post" class="uploadFileForm"
+    enctype="multipart/form-data"  
+    th:attr="action=@{${'/asset/uploadAsset'}}"
+    id="assetUploadForm">
+    
+    <input id="assetUploadFile" type="file" name="file" />
+    
+</form>
+    
+<div th:include="views/entityList" th:remove="tag" />

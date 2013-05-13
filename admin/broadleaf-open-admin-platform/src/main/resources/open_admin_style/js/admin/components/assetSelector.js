@@ -115,9 +115,9 @@ $(document).ready(function() {
     });    
     
     // When we detect that a user has selected a file from his file system, we will trigger an event
-    $('body').on('change', 'input[type="file"]', function() {
+    $('body').on('change', 'input.ajaxUploadFile[type="file"]', function() {
         BLCAdmin.asset.assetSelected($(this));
-    });
+    }); 
     
     // Invisibly proxy a click on our button to the hidden input with type="file" to trigger the 
     // file system browse dialog
@@ -125,4 +125,18 @@ $(document).ready(function() {
         $(this).closest('form.uploadFileForm').find('input[type="file"]').click();
         
     });
+    
+    // Disable the href for the upload-asset button.
+    $('a.upload-asset').prop('href','javascript:void(0)');
+    
+    // On the asset list view, the upload button triggers this form
+    $('body').on('click', 'a.upload-asset', function(event) {    
+        $('#assetUploadFile').click();
+    });  
+    
+    // When we detect that a user has selected a file from his file system, we will trigger an event
+    $('body').on('change', '#assetUploadFile', function() {
+    	// TODO: Show a div with "loading" message
+    	$('#assetUploadForm').submit();
+    });       
 });

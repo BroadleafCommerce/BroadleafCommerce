@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -174,6 +175,10 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     @Transactional("blTransactionManager")
     public StaticAsset createStaticAssetFromFile(MultipartFile file, Map<String, String> properties) {
         
+        if (properties == null) {
+            properties = new HashMap<String, String>();
+        }
+
         String fullUrl = buildAssetURL(properties, file.getOriginalFilename());
         StaticAsset newAsset = staticAssetDao.readStaticAssetByFullUrl(fullUrl, null);
         int count = 0;

@@ -40,6 +40,7 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
     public static final TranslatedEntity CATEGORY = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.Category", "Category");
     public static final TranslatedEntity PRODUCT_OPTION = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.ProductOption", "ProdOption");
     public static final TranslatedEntity PRODUCT_OPTION_VALUE = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.ProductOptionValue", "ProdOptionVal");
+    public static final TranslatedEntity STATIC_ASSET = new TranslatedEntity("org.broadleafcommerce.cms.file.domain.StaticAsset", "StaticAsset");
 
     public static TranslatedEntity getInstance(final String type) {
         return TYPES.get(type);

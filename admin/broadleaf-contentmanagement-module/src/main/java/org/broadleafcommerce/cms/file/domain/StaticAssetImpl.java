@@ -97,6 +97,7 @@ public class StaticAssetImpl implements StaticAsset {
     @AdminPresentation(friendlyName = "StaticAssetImpl_Item_Name",
             order = Presentation.FieldOrder.NAME,
             requiredOverride = RequiredOverride.NOT_REQUIRED,
+            gridOrder = Presentation.FieldOrder.NAME,
             prominent = true)
     protected String name;
 
@@ -109,6 +110,7 @@ public class StaticAssetImpl implements StaticAsset {
     @Column(name ="FULL_URL", nullable = false)
     @AdminPresentation(friendlyName = "StaticAssetImpl_Full_URL",
             order = Presentation.FieldOrder.URL,
+            gridOrder = Presentation.FieldOrder.URL,
             requiredOverride = RequiredOverride.REQUIRED,
             prominent = true)
     @Index(name="ASST_FULL_URL_INDX", columnNames={"FULL_URL"})
@@ -385,8 +387,8 @@ public class StaticAssetImpl implements StaticAsset {
 
             public static class Name {
 
-                public static final String File_Details = "AssetImpl_FileDetails_Tab";
-                public static final String Advanced = "AssetImpl_Advanced_Tab";
+                public static final String File_Details = "StaticAssetImpl_FileDetails_Tab";
+                public static final String Advanced = "StaticAssetImpl_Advanced_Tab";
             }
 
             public static class Order {

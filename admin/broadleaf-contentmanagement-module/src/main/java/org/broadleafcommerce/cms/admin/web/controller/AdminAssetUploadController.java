@@ -118,5 +118,31 @@ public class AdminAssetUploadController extends AdminAbstractController {
 
         return responseMap;
     }
+    
+    @RequestMapping(value = "/uploadAsset", method = RequestMethod.POST)
+    /**
+     * Used by the Asset list view to upload an asset and then immediately show the
+     * edit form for that record.
+     * 
+     * @param request
+     * @param file
+     * @param sectionKey
+     * @return
+     * @throws IOException
+     */
+    public String upload(HttpServletRequest request,
+            @RequestParam("file") MultipartFile file,
+            @PathVariable String sectionKey) throws IOException {
+        
+        StaticAsset staticAsset = staticAssetService.createStaticAssetFromFile(file, null);
+        staticAssetStorageService.createStaticAssetStorageFromFile(file, staticAsset);
+
+        String staticAssetUrlPrefix = staticAssetService.getStaticAssetUrlPrefix();
+        if (staticAssetUrlPrefix != null && !staticAssetUrlPrefix.startsWith("/")) {
+            staticAssetUrlPrefix = "/" + staticAssetUrlPrefix;
+        }
+        
+        return "redirect:/assets/" + staticAsset.getId();
+    }    
 
 }
