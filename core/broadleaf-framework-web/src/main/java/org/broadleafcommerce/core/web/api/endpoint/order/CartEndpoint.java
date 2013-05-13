@@ -105,7 +105,10 @@ public abstract class CartEndpoint extends BaseEndpoint {
             customer = customerService.createCustomerFromId(null);
         }
 
-        Order cart = orderService.createNewCartForCustomer(customer);
+        Order cart = orderService.findCartForCustomer(customer);
+        if (cart == null) {
+            cart = orderService.createNewCartForCustomer(customer);
+        }
 
         OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
         wrapper.wrap(cart, request);
