@@ -32,10 +32,10 @@ import org.springframework.stereotype.Service;
 @Service("blRequestFieldService")
 public class RequestFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
-    //TODO: extensibility mechanism, support i18N
+    @Override
     public void init() {
         fields.add(new FieldData.Builder()
-                .label("Full URL")
+                .label("rule_requestFullUrl")
                 .name("fullUrlWithQueryString")
                 .operators("blcOperators_Text")
                 .options("[]")
@@ -43,7 +43,7 @@ public class RequestFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .build());
         
         fields.add(new FieldData.Builder()
-                .label("Request URI")
+                .label("rule_requestUri")
                 .name("requestURI")
                 .operators("blcOperators_Text")
                 .options("[]")
@@ -51,7 +51,7 @@ public class RequestFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .build());
         
         fields.add(new FieldData.Builder()
-                .label("Is Secure")
+                .label("rule_requestIsSecure")
                 .name("secure")
                 .operators("blcOperators_Boolean")
                 .options("[]")

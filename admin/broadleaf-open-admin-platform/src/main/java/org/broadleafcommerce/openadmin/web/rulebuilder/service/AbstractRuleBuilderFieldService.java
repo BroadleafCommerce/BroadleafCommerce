@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.web.rulebuilder.service;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -29,8 +30,8 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -39,6 +40,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.annotation.PostConstruct;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -61,6 +64,14 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
         for (FieldData field : getFields()) {
             FieldDTO fieldDTO = new FieldDTO();
             fieldDTO.setLabel(field.getFieldLabel());
+            
+            //translate the label to display
+            String label = field.getFieldLabel();
+            BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+            MessageSource messages = context.getMessageSource();
+            label = messages.getMessage(label, null, label, context.getJavaLocale());
+            fieldDTO.setLabel(label);
+            
             fieldDTO.setName(field.getFieldName());
             fieldDTO.setOperators(field.getOperators());
             fieldDTO.setOptions(field.getOptions());
@@ -158,6 +169,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
         this.fields = proxyFields;
     }
 
+    @Override
     public RuleBuilderFieldService clone() throws CloneNotSupportedException {
         try {
             RuleBuilderFieldService clone = this.getClass().newInstance();

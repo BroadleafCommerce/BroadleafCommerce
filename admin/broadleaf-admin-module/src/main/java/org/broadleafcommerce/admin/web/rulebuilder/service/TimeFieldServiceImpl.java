@@ -32,10 +32,10 @@ import org.springframework.stereotype.Service;
 @Service("blTimeFieldService")
 public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
-    //TODO: extensibility mechanism, support i18N
+    @Override
     public void init() {
         fields.add(new FieldData.Builder()
-                .label("Time - Hour of Day")
+                .label("rule_timeHourOfDay")
                 .name("hour")
                 .operators("blcOperators_Enumeration")
                 .options("blcOptions_HourOfDay")
@@ -43,7 +43,7 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .build());
         
         fields.add(new FieldData.Builder()
-                .label("Time - Day of Week")
+                .label("rule_timeDayOfWeek")
                 .name("dayOfWeek")
                 .operators("blcOperators_Enumeration")
                 .options("blcOptions_DayOfWeek")
@@ -51,7 +51,7 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .build());
         
         fields.add(new FieldData.Builder()
-                .label("Time - Month")
+                .label("rule_timeMonth")
                 .name("month")
                 .operators("blcOperators_Enumeration")
                 .options("blcOptions_Month")
@@ -59,7 +59,7 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .build());
         
         fields.add(new FieldData.Builder()
-                .label("Time - Day of Month")
+                .label("rule_timeDayOfMonth")
                 .name("dayOfMonth")
                 .operators("blcOperators_Enumeration")
                 .options("blcOptions_DayOfMonth")
@@ -67,7 +67,7 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .build());
         
         fields.add(new FieldData.Builder()
-                .label("Time - Minute")
+                .label("rule_timeMinute")
                 .name("minute")
                 .operators("blcOperators_Enumeration")
                 .options("blcOptions_Minute")
@@ -75,7 +75,7 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .build());
         
         fields.add(new FieldData.Builder()
-                .label("Time - Date")
+                .label("rule_timeDate")
                 .name("date")
                 .operators("blcOperators_Date")
                 .options("[]")

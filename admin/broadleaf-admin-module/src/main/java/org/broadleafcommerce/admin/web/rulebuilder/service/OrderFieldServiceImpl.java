@@ -32,52 +32,52 @@ import org.springframework.stereotype.Service;
 @Service("blOrderFieldService")
 public class OrderFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
-    //TODO: extensibility mechanism, support i18N
+    @Override
     public void init() {
         fields.add(new FieldData.Builder()
-                .label("Currency - Is Default Currency")
+                .label("rule_orderCurrenceIsDefault")
                 .name("currency.defaultFlag")
                 .operators("blcOperators_Boolean")
                 .options("[]")
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Currency Code")
+                .label("rule_orderCurrencyCode")
                 .name("currency.currencyCode")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Currency Name")
+                .label("rule_orderCurrencyName")
                 .name("currency.friendlyName")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Locale - Is Default Locale")
+                .label("rule_orderLocaleIsDefault")
                 .name("locale.defaultFlag")
                 .operators("blcOperators_Boolean")
                 .options("[]")
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Locale Code")
+                .label("rule_orderLocaleCode")
                 .name("locale.localeCode")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Locale Name")
+                .label("rule_orderLocaleName")
                 .name("locale.friendlyName")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Order Subtotal")
+                .label("rule_orderSubtotal")
                 .name("subTotal")
                 .operators("blcOperators_Numeric")
                 .options("[]")

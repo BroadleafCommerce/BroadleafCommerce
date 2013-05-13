@@ -32,24 +32,24 @@ import org.springframework.stereotype.Service;
 @Service("blLocaleFieldService")
 public class LocaleFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
-    //TODO: extensibility mechanism, support i18N
+    @Override
     public void init() {
         fields.add(new FieldData.Builder()
-                .label("Locale - Name")
+                .label("rule_localeName")
                 .name("friendlyName")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Locale - Code")
+                .label("rule_localeCode")
                 .name("localeCode")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Locale - Is Default")
+                .label("rule_localeIsDefault")
                 .name("defaultFlag")
                 .operators("blcOperators_Boolean")
                 .options("[]")

@@ -32,59 +32,59 @@ import org.springframework.stereotype.Service;
 @Service("blCustomerFieldService")
 public class CustomerFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
-    //TODO: extensibility mechanism, support i18N
+    @Override
     public void init() {
         fields.add(new FieldData.Builder()
-                .label("Customer - Deactivated")
+                .label("rule_customerDeactivated")
                 .name("deactivated")
                 .operators("blcOperators_Boolean")
                 .options("[]")
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Customer - ID")
+                .label("rule_customerId")
                 .name("id")
                 .operators("blcOperators_Numeric")
                 .options("[]")
                 .type(SupportedFieldType.ID)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Customer - Receive Email")
+                .label("rule_customerReceiveEmail")
                 .name("receiveEmail")
                 .operators("blcOperators_Boolean")
                 .options("[]")
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Customer - Registered")
+                .label("rule_customerRegistered")
                 .name("registered")
                 .operators("blcOperators_Boolean")
                 .options("[]")
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Customer - UserName")
+                .label("rule_customerUserName")
                 .name("username")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Customer - Email Address")
+                .label("rule_customerEmailAddress")
                 .name("emailAddress")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Customer - First Name")
+                .label("rule_customerFirstName")
                 .name("firstName")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("Customer - Last Name")
+                .label("rule_customerLastName")
                 .name("lastName")
                 .operators("blcOperators_Text")
                 .options("[]")
