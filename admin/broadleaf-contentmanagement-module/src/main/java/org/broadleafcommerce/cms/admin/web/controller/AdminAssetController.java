@@ -17,6 +17,7 @@
 package org.broadleafcommerce.cms.admin.web.controller;
 
 import org.broadleafcommerce.cms.admin.web.service.AssetFormBuilderService;
+import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.springframework.stereotype.Controller;
@@ -69,5 +70,10 @@ public class AdminAssetController extends AdminBasicEntityController {
         
         return returnPath;
     }
-    
+
+    @Override
+    protected String getDefaultEntityType() {
+        return StaticAssetImpl.class.getName();
+    }
+
 }

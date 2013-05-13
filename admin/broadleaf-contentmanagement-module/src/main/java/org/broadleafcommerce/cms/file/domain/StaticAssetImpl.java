@@ -93,8 +93,9 @@ public class StaticAssetImpl implements StaticAsset {
     @AdminPresentation(excluded = true)
     protected AdminAuditable auditable = new AdminAuditable();
 
-    @Column (name = "NAME", nullable = false)
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Item_Name", order = 1, group = "StaticAssetImpl_Details",
+    @Column(name = "NAME", nullable = false)
+    @AdminPresentation(friendlyName = "StaticAssetImpl_Item_Name",
+            order = Presentation.FieldOrder.NAME,
             requiredOverride = RequiredOverride.NOT_REQUIRED,
             prominent = true)
     protected String name;
@@ -106,38 +107,63 @@ public class StaticAssetImpl implements StaticAsset {
     protected Site site;
 
     @Column(name ="FULL_URL", nullable = false)
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Full_URL", order = 2,
-            group = "StaticAssetImpl_Details", requiredOverride = RequiredOverride.NOT_REQUIRED,
+    @AdminPresentation(friendlyName = "StaticAssetImpl_Full_URL",
+            order = Presentation.FieldOrder.URL,
+            requiredOverride = RequiredOverride.REQUIRED,
             prominent = true)
     @Index(name="ASST_FULL_URL_INDX", columnNames={"FULL_URL"})
     protected String fullUrl;
 
-    @Column(name = "FILE_SIZE")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_File_Size_Bytes", order=3, group = "StaticAssetImpl_Details", readOnly = true)
-    protected Long fileSize;
+    @Column(name = "TITLE", nullable = true)
+    @AdminPresentation(friendlyName = "StaticAssetImpl_Title",
+            order = Presentation.FieldOrder.TITLE,
+            translatable = true)
+    protected String title;
+
+    @Column(name = "ALT_TEXT", nullable = true)
+    @AdminPresentation(friendlyName = "StaticAssetImpl_Alt_Text",
+            order = Presentation.FieldOrder.ALT_TEXT,
+            translatable = true)
+    protected String altText;
 
     @Column(name = "MIME_TYPE")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Mime_Type", order=4, group = "StaticAssetImpl_Details", readOnly = true)
+    @AdminPresentation(friendlyName = "StaticAssetImpl_Mime_Type",
+            order = Presentation.FieldOrder.MIME_TYPE,
+            tab = Presentation.Tab.Name.File_Details, tabOrder = Presentation.Tab.Order.File_Details,
+            readOnly = true)
     protected String mimeType;
 
+    @Column(name = "FILE_SIZE")
+    @AdminPresentation(friendlyName = "StaticAssetImpl_File_Size_Bytes",
+            order = Presentation.FieldOrder.FILE_SIZE,
+            tab = Presentation.Tab.Name.File_Details, tabOrder = Presentation.Tab.Order.File_Details,
+            readOnly = true)
+    protected Long fileSize;
+
     @Column(name = "FILE_EXTENSION")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_File_Extension", order=5, group = "StaticAssetImpl_Details", readOnly = true)
+    @AdminPresentation(friendlyName = "StaticAssetImpl_File_Extension",
+            order = Presentation.FieldOrder.FILE_EXTENSION,
+            tab = Presentation.Tab.Name.File_Details, tabOrder = Presentation.Tab.Order.File_Details,
+            readOnly = true)
     protected String fileExtension;
 
     @ManyToMany(targetEntity = StaticAssetDescriptionImpl.class, cascade = CascadeType.ALL)
-    @JoinTable(name = "BLC_ASSET_DESC_MAP", joinColumns = @JoinColumn(name = "STATIC_ASSET_ID"), inverseJoinColumns = @JoinColumn(name = "STATIC_ASSET_DESC_ID"))
+    @JoinTable(name = "BLC_ASSET_DESC_MAP", joinColumns = @JoinColumn(name = "STATIC_ASSET_ID"),
+            inverseJoinColumns = @JoinColumn(name = "STATIC_ASSET_DESC_ID"))
     @MapKeyColumn(name = "MAP_KEY")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @BatchSize(size = 20)
     @AdminPresentationMap(
+        excluded = true,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         friendlyName = "assetDescriptionTitle",
         keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
         deleteEntityUponRemove = true,
         mapKeyOptionEntityClass = LocaleImpl.class,
         mapKeyOptionEntityDisplayField = "friendlyName",
         mapKeyOptionEntityValueField = "localeCode"
-    )
+)
     protected Map<String,StaticAssetDescription> contentMessageValues = new HashMap<String,StaticAssetDescription>();
 
     @ManyToOne (targetEntity = SandBoxImpl.class)
@@ -180,6 +206,22 @@ public class StaticAssetImpl implements StaticAsset {
 
     public void setFullUrl(String fullUrl) {
         this.fullUrl = fullUrl;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAltText() {
+        return altText;
+    }
+
+    public void setAltText(String altText) {
+        this.altText = altText;
     }
 
     public Long getFileSize() {
@@ -335,5 +377,40 @@ public class StaticAssetImpl implements StaticAsset {
     @Override
     public void setStorageType(StorageType storageType) {
         this.storageType = storageType.getType();
+    }
+
+    public static class Presentation {
+
+        public static class Tab {
+
+            public static class Name {
+
+                public static final String File_Details = "AssetImpl_FileDetails_Tab";
+                public static final String Advanced = "AssetImpl_Advanced_Tab";
+            }
+
+            public static class Order {
+
+                public static final int File_Details = 2000;
+                public static final int Advanced = 3000;
+            }
+        }
+
+        public static class FieldOrder {
+
+            // General Fields
+            public static final int NAME = 1000;
+            public static final int URL = 2000;
+            public static final int TITLE = 3000;
+            public static final int ALT_TEXT = 4000;
+
+            public static final int MIME_TYPE = 5000;
+            public static final int FILE_EXTENSION = 6000;
+            public static final int FILE_SIZE = 7000;
+            
+            // Used by subclasses to know where the last field is.
+            public static final int LAST = 7000;
+
+        }
     }
 }
