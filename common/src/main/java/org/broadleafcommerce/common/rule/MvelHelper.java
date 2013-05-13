@@ -22,7 +22,7 @@ public class MvelHelper {
             if (type.equals(SupportedFieldType.BOOLEAN.toString())) {
                 return Boolean.parseBoolean(fieldValue);
             } else if (type.equals(SupportedFieldType.DATE.toString())) {
-                return FormatUtil.getDateFormat().parse(fieldValue);
+                return FormatUtil.getTimeZoneFormat().parse(fieldValue);
             } else if (type.equals(SupportedFieldType.INTEGER.toString())) {
                 return Integer.parseInt(fieldValue);
             } else if (type.equals(SupportedFieldType.MONEY.toString()) || type.equals(SupportedFieldType.DECIMAL.toString())) {

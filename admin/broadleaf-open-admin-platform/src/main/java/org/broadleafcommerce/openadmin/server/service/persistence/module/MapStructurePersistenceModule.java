@@ -112,11 +112,11 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             props.add(propertyItem);
             String strVal;
             if (Date.class.isAssignableFrom(key.getClass())) {
-                strVal = dateFormat.format((Date) key);
+                strVal = getSimpleDateFormatter().format((Date) key);
             } else if (Timestamp.class.isAssignableFrom(key.getClass())) {
-                strVal = dateFormat.format(new Date(((Timestamp) key).getTime()));
+                strVal = getSimpleDateFormatter().format(new Date(((Timestamp) key).getTime()));
             } else if (Calendar.class.isAssignableFrom(key.getClass())) {
-                strVal = dateFormat.format(((Calendar) key).getTime());
+                strVal = getSimpleDateFormatter().format(((Calendar) key).getTime());
             } else if (Double.class.isAssignableFrom(key.getClass())) {
                 strVal = decimalFormat.format(key);
             } else if (BigDecimal.class.isAssignableFrom(key.getClass())) {
@@ -323,7 +323,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             case BOOLEAN :
                 return Boolean.parseBoolean(value);
             case DATE :
-                return dateFormat.parse(value);
+                return getSimpleDateFormatter().parse(value);
             case DECIMAL :
                 return new BigDecimal(value);
             case MONEY :

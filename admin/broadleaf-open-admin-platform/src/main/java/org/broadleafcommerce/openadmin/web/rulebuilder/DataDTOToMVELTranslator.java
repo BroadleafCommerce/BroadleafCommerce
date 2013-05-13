@@ -606,7 +606,7 @@ public class DataDTOToMVELTranslator {
                                     fieldName + ") based on field type. The type of field is Date, " +
                                     "and you entered: (" + value[j] +"). Dates must be in the format MM/dd/yyyy HH:mm.");
                         }
-                        String convertedDate = FormatUtil.getDateFormat().format(temp);
+                        String convertedDate = FormatUtil.getTimeZoneFormat().format(temp);
                         response.append("MvelHelper.convertField(\"DATE\",\"");
                         response.append(convertedDate);
                         response.append("\")");

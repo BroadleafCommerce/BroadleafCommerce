@@ -1,6 +1,7 @@
 package org.broadleafcommerce.openadmin.web.rulebuilder;
 
 import org.broadleafcommerce.common.util.FormatUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,7 +24,9 @@ public class RuleBuilderFormatUtil {
      * @return the string value to show in the admin
      */
     public static String formatDate(Date date) {
-        return new SimpleDateFormat(DATE_FORMAT).format(date);
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+        formatter.setTimeZone(BroadleafRequestContext.getBroadleafRequestContext().getTimeZone());
+        return formatter.format(date);
     }
 
     /**
@@ -35,13 +38,17 @@ public class RuleBuilderFormatUtil {
     public static Date parseDate(String date) throws ParseException {
         Date parsedDate;
         try {
-            parsedDate = FormatUtil.getDateFormat().parse(date);
+            parsedDate = FormatUtil.getTimeZoneFormat().parse(date);
         } catch (ParseException e) {
             try {
-                parsedDate = new SimpleDateFormat(COMPATIBILITY_FORMAT).parse(date);
+                SimpleDateFormat formatter = new SimpleDateFormat(COMPATIBILITY_FORMAT);
+                formatter.setTimeZone(BroadleafRequestContext.getBroadleafRequestContext().getTimeZone());
+                parsedDate = formatter.parse(date);
             } catch (ParseException e1) {
                 try {
-                    parsedDate = new SimpleDateFormat(DATE_FORMAT).parse(date);
+                    SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+                    formatter.setTimeZone(BroadleafRequestContext.getBroadleafRequestContext().getTimeZone());
+                    parsedDate = formatter.parse(date);
                 } catch (ParseException e2) {
                     throw e;
                 }

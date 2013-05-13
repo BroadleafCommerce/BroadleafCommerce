@@ -30,7 +30,6 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.FormatUtil;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -104,8 +103,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     public static final String MAIN_ENTITY_NAME_PROPERTY = "MAIN_ENTITY_NAME";
 
-    protected SimpleDateFormat dateFormat = FormatUtil.getDateFormat();
-
     protected DecimalFormat decimalFormat;
     protected ApplicationContext applicationContext;
     protected PersistenceManager persistenceManager;
@@ -152,8 +149,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Override
     public SimpleDateFormat getSimpleDateFormatter() {
-        dateFormat.setTimeZone(BroadleafRequestContext.getBroadleafRequestContext().getTimeZone());
-        return dateFormat;
+        return FormatUtil.getDateFormat();
     }
 
     protected Map<String, FieldMetadata> filterOutCollectionMetadata(Map<String, FieldMetadata> metadata) {
@@ -503,11 +499,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                 strVal = null;
                             } else {
                                 if (Date.class.isAssignableFrom(value.getClass())) {
-                                    strVal = dateFormat.format((Date) value);
+                                    strVal = getSimpleDateFormatter().format((Date) value);
                                 } else if (Timestamp.class.isAssignableFrom(value.getClass())) {
-                                    strVal = dateFormat.format(new Date(((Timestamp) value).getTime()));
+                                    strVal = getSimpleDateFormatter().format(new Date(((Timestamp) value).getTime()));
                                 } else if (Calendar.class.isAssignableFrom(value.getClass())) {
-                                    strVal = dateFormat.format(((Calendar) value).getTime());
+                                    strVal = getSimpleDateFormatter().format(((Calendar) value).getTime());
                                 } else if (Double.class.isAssignableFrom(value.getClass())) {
                                     strVal = decimalFormat.format(value);
                                 } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {

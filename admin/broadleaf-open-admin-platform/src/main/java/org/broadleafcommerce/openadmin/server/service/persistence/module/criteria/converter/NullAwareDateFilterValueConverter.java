@@ -14,11 +14,9 @@ import java.util.Date;
 @Component("blNullAwareDateFilterValueConverter")
 public class NullAwareDateFilterValueConverter implements FilterValueConverter<Date> {
 
-    private final SimpleDateFormat dateFormat = FormatUtil.getDateFormat();
-
     @Override
     public Date convert(String stringValue) {
-        return parseDate(stringValue, dateFormat);
+        return parseDate(stringValue, FormatUtil.getDateFormat());
     }
 
     public Date parseDate(String value, SimpleDateFormat dateFormat) {
