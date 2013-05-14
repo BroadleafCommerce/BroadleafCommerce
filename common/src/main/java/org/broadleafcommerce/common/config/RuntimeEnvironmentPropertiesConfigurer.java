@@ -17,6 +17,7 @@
 package org.broadleafcommerce.common.config;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.StringValueResolver;
@@ -74,10 +76,12 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
 
     private static final Log LOG = LogFactory.getLog(RuntimeEnvironmentPropertiesConfigurer.class);
     
+    protected static final String SHARED_PROPERTY_OVERRIDE = "property-shared-override";
+    protected static final String PROPERTY_OVERRIDE = "property-override";
+    
     protected static Set<String> defaultEnvironments = new LinkedHashSet<String>();
     protected static Set<Resource> blcPropertyLocations = new LinkedHashSet<Resource>();
     protected static Set<Resource> defaultPropertyLocations = new LinkedHashSet<Resource>();
-
     
     static {
         defaultEnvironments.add("production");
@@ -85,7 +89,6 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         defaultEnvironments.add("integrationqa");
         defaultEnvironments.add("integrationdev");
         defaultEnvironments.add("development");
-        defaultEnvironments.add("local");
         
         blcPropertyLocations.add(new ClassPathResource("config/bc/admin/"));
         blcPropertyLocations.add(new ClassPathResource("config/bc/"));
@@ -134,61 +137,72 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         }
 
         String environment = determineEnvironment();
-        
-        Resource[] blcPropertiesLocation = createBroadleafResource();
-        
-        Resource[] sharedPropertiesLocation = createSharedPropertiesResource(environment);
-        Resource[] sharedCommonLocation = createSharedCommonResource();
-
-        Resource[] propertiesLocation = createPropertiesResource(environment);
-        Resource[] commonLocation = createCommonResource();
-        
         ArrayList<Resource> allLocations = new ArrayList<Resource>();
         
         /* Process configuration in the following order (later files override earlier files
          * common-shared.properties
          * [environment]-shared.properties
          * common.properties
-         * [environment].properties */
+         * [environment].properties
+         * -Dproperty-override-shared specified value, if any
+         * -Dproperty-override specified value, if any  */
         
-        for (Resource resource : blcPropertiesLocation) {
+        for (Resource resource : createBroadleafResource()) {
             if (resource.exists()) {
                 allLocations.add(resource);
             }
         }
         
-        for (Resource resource : sharedCommonLocation) {
+        for (Resource resource : createSharedCommonResource()) {
             if (resource.exists()) {
                 allLocations.add(resource);
             }
         }
 
-        for (Resource resource : sharedPropertiesLocation) {
+        for (Resource resource : createSharedPropertiesResource(environment)) {
             if (resource.exists()) {
                 allLocations.add(resource);
             }
         }
 
-        for (Resource resource : commonLocation) {
+        for (Resource resource : createCommonResource()) {
             if (resource.exists()) {
                 allLocations.add(resource);
             }
         }
 
-        for (Resource resource : propertiesLocation) {
+        for (Resource resource : createPropertiesResource(environment)) {
             if (resource.exists()) {
                 allLocations.add(resource);
             }
+        }
+        
+        Resource sharedPropertyOverride = createSharedOverrideResource();
+        if (sharedPropertyOverride != null) {
+            allLocations.add(sharedPropertyOverride);
+        }
+        
+        Resource propertyOverride = createOverrideResource();
+        if (propertyOverride != null) {
+            allLocations.add(propertyOverride);
         }
         
         if (LOG.isDebugEnabled()) {
             Properties props = new Properties();
             for (Resource resource : allLocations) {
                 if (resource.exists()) {
-                    props = new Properties(props);
-                    props.load(resource.getInputStream());
-                    for (Entry<Object, Object> entry : props.entrySet()) {
-                        LOG.debug("Read " + entry.getKey() + " as " + entry.getValue());
+                    // We will log source-control managed properties with trace and overrides with info
+                    if (((resource.equals(sharedPropertyOverride) || resource.equals(propertyOverride)) && LOG.isDebugEnabled())
+                            || LOG.isTraceEnabled()) {
+                        props = new Properties(props);
+                        props.load(resource.getInputStream());
+                        for (Entry<Object, Object> entry : props.entrySet()) {
+                            if (resource.equals(sharedPropertyOverride) || resource.equals(propertyOverride)) {
+                                LOG.debug("Read " + entry.getKey() + " from " + resource.getFilename());
+                            } else {
+                                LOG.trace("Read " + entry.getKey() + " from " + resource.getFilename());
+                            }
+                        }
                     }
                 } else {
                     LOG.debug("Unable to locate resource: " + resource.getFilename());
@@ -196,9 +210,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
             }
         }
 
-
         setLocations(allLocations.toArray(new Resource[] {}));
-
     }
     
     protected Resource[] createSharedPropertiesResource(String environment) throws IOException {
@@ -251,6 +263,16 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
             index++;
         }
         return resources;
+    }
+    
+    protected Resource createSharedOverrideResource() throws IOException {
+        String path = System.getProperty(SHARED_PROPERTY_OVERRIDE);
+        return StringUtils.isBlank(path) ? null : new FileSystemResource(path);
+    }
+    
+    protected Resource createOverrideResource() throws IOException {
+        String path = System.getProperty(PROPERTY_OVERRIDE);
+        return StringUtils.isBlank(path) ? null : new FileSystemResource(path);
     }
 
     public String determineEnvironment() {
