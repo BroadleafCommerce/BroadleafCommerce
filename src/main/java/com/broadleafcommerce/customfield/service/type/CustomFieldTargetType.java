@@ -42,6 +42,7 @@ public class CustomFieldTargetType implements Serializable, BroadleafEnumeration
     public static final CustomFieldTargetType SKU = new CustomFieldTargetType("org.broadleafcommerce.core.catalog.domain.SkuImpl", "Sku");
     public static final CustomFieldTargetType PRODUCT = new CustomFieldTargetType("org.broadleafcommerce.core.catalog.domain.ProductImpl", "Product");
     public static final CustomFieldTargetType ORDERITEM = new CustomFieldTargetType("org.broadleafcommerce.core.order.domain.OrderItemImpl", "Order Item");
+    public static final CustomFieldTargetType REQUEST = new CustomFieldTargetType("org.broadleafcommerce.common.RequestDTOImpl", "Request");
 
     public static CustomFieldTargetType getInstance(final String type) {
         return TYPES.get(type);

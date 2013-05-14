@@ -18,9 +18,10 @@
 
 package com.broadleafcommerce.customfield.service;
 
+import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
+
 import com.broadleafcommerce.customfield.service.type.CustomFieldTargetType;
 import com.broadleafcommerce.customfield.service.type.CustomFieldType;
-import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,7 @@ public class CustomFieldInfo {
     private static final String SKU_ATTRIBUTE_FIELD = "skuAttributes";
     private static final String ORDER_ITEM_ATTRIBUTE_FIELD = "orderItemAttributeMap";
     private static final String CUSTOMER_ATTRIBUTE_FIELD = "customerAttributes";
+    private static final String REQUESTDTO_ATTRIBUTE_FIELD = "requestDTOAttributes";
 
     public static final Map<String, String> CUSTOM_FIELD_FIELD_NAMES = new HashMap<String, String>();
     static {
@@ -43,6 +45,7 @@ public class CustomFieldInfo {
         CUSTOM_FIELD_FIELD_NAMES.put(CustomFieldTargetType.ORDERITEM.getType(), ORDER_ITEM_ATTRIBUTE_FIELD);
         CUSTOM_FIELD_FIELD_NAMES.put(CustomFieldTargetType.PRODUCT.getType(), PRODUCT_ATTRIBUTE_FIELD);
         CUSTOM_FIELD_FIELD_NAMES.put(CustomFieldTargetType.SKU.getType(), SKU_ATTRIBUTE_FIELD);
+        CUSTOM_FIELD_FIELD_NAMES.put(CustomFieldTargetType.REQUEST.getType(), REQUESTDTO_ATTRIBUTE_FIELD);
     }
 
     private static final String BLCOPERATORS_BOOLEAN = "blcOperators_Boolean";
@@ -69,6 +72,7 @@ public class CustomFieldInfo {
         RULE_BUILDER_FIELD_SERVICES.put(RuleIdentifier.ORDERITEM, new CustomFieldTargetType[]{CustomFieldTargetType.ORDERITEM, CustomFieldTargetType.PRODUCT, CustomFieldTargetType.SKU});
         RULE_BUILDER_FIELD_SERVICES.put(RuleIdentifier.PRODUCT, new CustomFieldTargetType[]{CustomFieldTargetType.PRODUCT});
         RULE_BUILDER_FIELD_SERVICES.put(RuleIdentifier.SKU, new CustomFieldTargetType[]{CustomFieldTargetType.SKU});
+        RULE_BUILDER_FIELD_SERVICES.put(RuleIdentifier.REQUEST, new CustomFieldTargetType[] { CustomFieldTargetType.REQUEST });
     }
 
     public static final Map<String, Map<CustomFieldTargetType, String>> RULE_BUILDER_TYPE_PREFIXES = new HashMap<String, Map<CustomFieldTargetType, String>>();
@@ -76,6 +80,10 @@ public class CustomFieldInfo {
         Map<CustomFieldTargetType, String> customerMap = new HashMap<CustomFieldTargetType, String>();
         customerMap.put(CustomFieldTargetType.CUSTOMER, "");
         RULE_BUILDER_TYPE_PREFIXES.put(RuleIdentifier.CUSTOMER, customerMap);
+
+        Map<CustomFieldTargetType, String> requestMap = new HashMap<CustomFieldTargetType, String>();
+        requestMap.put(CustomFieldTargetType.REQUEST, "");
+        RULE_BUILDER_TYPE_PREFIXES.put(RuleIdentifier.REQUEST, requestMap);
 
         Map<CustomFieldTargetType, String> orderItemMap = new HashMap<CustomFieldTargetType, String>();
         orderItemMap.put(CustomFieldTargetType.ORDERITEM, "");
