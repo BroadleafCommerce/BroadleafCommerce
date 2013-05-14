@@ -21,7 +21,7 @@ import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -69,25 +71,31 @@ public class AdminAssetController extends AdminBasicEntityController {
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String returnPath = super.viewEntityList(request, response, model, pathVars, requestParams);
         
-        // Add a new toolbar button to upload assets
-        ListGrid listGrid = (ListGrid) model.asMap().get("listGrid");
-        ListGridAction uploadAssetAction = new ListGridAction(ListGridAction.UPLOAD)
-                .withDisplayText("Upload New Asset")
-                .withIconClass("icon-camera")
-                .withButtonClass("upload-asset")
-                .withUrlPostfix("/uploadAsset");
         
-        listGrid.getToolbarActions().add(0, uploadAssetAction);
+        List<EntityFormAction> mainActions = (List<EntityFormAction>) model.asMap().get("mainActions");
+        Iterator<EntityFormAction> actions = mainActions.iterator();
+        while (actions.hasNext()) {
+            EntityFormAction action = actions.next();
+            if (EntityFormAction.ADD.equals(action.getId())) {
+                actions.remove();
+                break;
+            }
+        }
+
+        mainActions.add(0, new EntityFormAction("UPLOAD_ASSET")
+                .withButtonClass("upload-asset")
+                .withIconClass("icon-camera")
+                .withDisplayText("Upload_Asset"));
 
         // Remove the normal "ADD" behavior
-        model.addAttribute("cannotCreate", true);
+
 
         // Change the listGrid view to one that has a hidden form for uploading the 
         // image.
         model.addAttribute("viewType", "entityListWithUploadForm");
         
+        ListGrid listGrid = (ListGrid) model.asMap().get("listGrid");
         formService.addImageThumbnailField(listGrid, "fullUrl");
-        
 
         return returnPath;
     }

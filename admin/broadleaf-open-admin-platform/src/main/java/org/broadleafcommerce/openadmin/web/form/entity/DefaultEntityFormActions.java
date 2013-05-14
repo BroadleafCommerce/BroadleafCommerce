@@ -20,12 +20,12 @@ package org.broadleafcommerce.openadmin.web.form.entity;
 
 public class DefaultEntityFormActions {
     
-    public static final EntityFormAction SAVE = new EntityFormAction()
+    public static final EntityFormAction SAVE = new EntityFormAction(EntityFormAction.SAVE)
         .withButtonType("submit")
         .withButtonClass("submit-button")
         .withDisplayText("Save");
 
-    public static final EntityFormAction DELETE = new EntityFormAction()
+    public static final EntityFormAction DELETE = new EntityFormAction(EntityFormAction.DELETE)
         .withButtonClass("delete-button alert")
         .withDisplayText("Delete");
     

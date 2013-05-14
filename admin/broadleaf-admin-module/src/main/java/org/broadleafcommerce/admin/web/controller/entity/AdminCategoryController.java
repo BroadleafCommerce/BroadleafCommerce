@@ -70,11 +70,11 @@ public class AdminCategoryController extends AdminBasicEntityController {
         
         List<EntityFormAction> mainActions = (List<EntityFormAction>) model.asMap().get("mainActions");
         
-        mainActions.add(new EntityFormAction()
+        mainActions.add(new EntityFormAction("CategoryTreeView")
             .withButtonClass("show-category-tree-view")
             .withDisplayText("Category_Tree_View"));
         
-        mainActions.add(new EntityFormAction()
+        mainActions.add(new EntityFormAction("CategoryListView")
             .withButtonClass("show-category-list-view active")
             .withDisplayText("Category_List_View"));
         

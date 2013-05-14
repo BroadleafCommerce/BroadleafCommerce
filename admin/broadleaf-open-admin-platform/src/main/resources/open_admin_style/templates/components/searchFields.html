@@ -6,36 +6,28 @@
                     <input style="height: 28px; width: 100%" type="search" placeholder="Name" />
                 </div>
                 <div class="four columns">
-                    <a href="#" class="button small dark radius"><i class="icon-search"></i>&nbsp;Search</a>
+                    <a href="#" class="button small dark radius" th:inline="text">
+                        <i class="icon-search"></i>&nbsp;[[#{Search}]]
+                    </a>
                 </div>
                 <div class="two columns">&nbsp;</div>
             </div>
         </form>
     </div>
     <div class="five columns">
-        <ul class="button-group" style="float: right;">
-            <li th:unless="${cannotCreate}">
-                <a th:href="@{${sectionKey} + '/add'}" class="button small radius dark add-main-entity" th:inline="text">
-                    <i class="icon-plus"></i> &nbsp; Add [[#{${entityFriendlyName}}]]
-                </a>
-            </li>
-            <li th:each="action : ${listGrid.toolbarActions}">
-                <a th:href="@{${sectionKey} + ${action.urlPostfix}}" 
-                    class="button small radius dark" th:inline="text"                
-                    th:classappend="${action.buttonClass}">
-                    <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="${action.displayText}" th:remove="tag" />
-                </a>
-            </li>            
-<!--             <li> -->
-<!--                 <a href="#" data-reveal-id="exampleModal" class="button small secondary"> -->
-<!--                     <i class="foundicon-add-doc"></i> &nbsp; Clone Product -->
-<!--                 </a> -->
-<!--             </li> -->
-<!--             <li> -->
-<!--                 <a href="#" data-reveal-id="exampleModal" class="button small secondary"> -->
-<!--                     <i class="foundicon-inbox"></i> &nbsp; Export Products -->
-<!--                 </a> -->
-<!--             </li> -->
-        </ul>
+        <div style="float: right;">
+            <button th:each="action : ${mainActions}" 
+                class="button small radius dark right" 
+                th:type="${action.buttonType}"
+                th:attr="data-url=@{${sectionKey + action.urlPostfix}}"
+                th:classappend="${action.buttonClass}"
+                th:inline="text">
+                <div th:unless="${#strings.isEmpty(action.iconClass)}" th:remove="tag">
+                    <i th:class="${action.iconClass}"></i>&nbsp;
+                </div>
+                [[#{${action.displayText}}]]
+                <span th:if="${action.displayText == 'Add'}" th:text="#{${entityFriendlyName}}" th:remove="tag" />
+            </button>
+        </div>
     </div>
 </div>

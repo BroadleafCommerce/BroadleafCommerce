@@ -2,7 +2,7 @@
     <div class="field-label" th:text="#{${field.friendlyName}}" />
     <input type="hidden" class="mediaItem" th:field="*{fields['__${field.name}__'].value}" />
     
-    <img class="thumbnail" 
+    <img class="thumbnails" 
         th:if="*{fields['__${field.name}__'].media != null}"
         th:src="@{*{fields['__${field.name}__'].media.url + '?largeAdminThumbnail'}}"/>
     

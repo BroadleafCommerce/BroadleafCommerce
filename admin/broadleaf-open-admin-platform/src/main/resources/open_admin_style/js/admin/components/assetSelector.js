@@ -126,11 +126,8 @@ $(document).ready(function() {
         
     });
     
-    // Disable the href for the upload-asset button.
-    $('a.upload-asset').prop('href','javascript:void(0)');
-    
     // On the asset list view, the upload button triggers this form
-    $('body').on('click', 'a.upload-asset', function(event) {    
+    $('body').on('click', 'button.upload-asset', function(event) {    
         $('#assetUploadFile').click();
     });  
     

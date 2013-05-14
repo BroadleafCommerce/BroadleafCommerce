@@ -2,7 +2,7 @@
     <div class="field-label" th:text="#{${field.friendlyName}}" />
     <input type="hidden" class="mediaUrl" th:field="*{fields['__${field.name}__'].value}" />
     
-    <img class="thumbnail" th:src="*{fields['__${field.name}__'].value + '?largeAdminThumbnail'}"/>
+    <img class="thumbnail" th:src="@{*{fields['__${field.name}__'].value + '?largeAdminThumbnail'}}"/>
     
     <button class="show-asset-selector tiny radius secondary button hover-cursor"
         type="button" th:inline="text"

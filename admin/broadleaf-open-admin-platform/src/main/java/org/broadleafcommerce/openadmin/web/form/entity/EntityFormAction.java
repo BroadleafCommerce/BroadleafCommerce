@@ -22,12 +22,21 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 
 public class EntityFormAction implements Cloneable {
     
+    public static final String ADD = "ADD";
+    public static final String SAVE = "SAVE";
+    public static final String DELETE = "DELETE";
+
     protected String buttonType = "button";
     protected String buttonClass = "";
     protected String urlPostfix = "";
     protected String iconClass = "";
     protected String displayText = "";
+    protected String id = "";
     
+    public EntityFormAction(String id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof EntityFormAction) {
@@ -44,7 +53,7 @@ public class EntityFormAction implements Cloneable {
     
     @Override
     public EntityFormAction clone() {
-        EntityFormAction cloned = new EntityFormAction();
+        EntityFormAction cloned = new EntityFormAction(id);
         cloned.buttonType = buttonType;
         cloned.buttonClass = buttonClass;
         cloned.urlPostfix = urlPostfix;
@@ -78,6 +87,10 @@ public class EntityFormAction implements Cloneable {
         return this;
     }
     
+    public String getId() {
+        return id;
+    }
+
     public String getButtonType() {
         return buttonType;
     }

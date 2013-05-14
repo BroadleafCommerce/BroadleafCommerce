@@ -132,7 +132,7 @@
                         
                         <span th:if="${field.fieldType == 'IMAGE'}">
                             <img th:style="${'height: ' + field.height + 'px;'}"
-                                th:src="${field.value}" />
+                                th:src="@{${field.value}}" />
                         </span>
                         
                         <span th:unless="${(headerField.mainEntityLink and record.canLinkToExternalEntity)
