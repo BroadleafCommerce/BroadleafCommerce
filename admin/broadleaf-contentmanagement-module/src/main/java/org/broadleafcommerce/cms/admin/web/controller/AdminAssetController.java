@@ -65,13 +65,14 @@ public class AdminAssetController extends AdminBasicEntityController {
         return SECTION_KEY;
     }
     
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
         String returnPath = super.viewEntityList(request, response, model, pathVars, requestParams);
         
-        
+        // Remove the default add button and replace it with an upload asset button
         List<EntityFormAction> mainActions = (List<EntityFormAction>) model.asMap().get("mainActions");
         Iterator<EntityFormAction> actions = mainActions.iterator();
         while (actions.hasNext()) {
@@ -81,17 +82,12 @@ public class AdminAssetController extends AdminBasicEntityController {
                 break;
             }
         }
-
         mainActions.add(0, new EntityFormAction("UPLOAD_ASSET")
                 .withButtonClass("upload-asset")
                 .withIconClass("icon-camera")
                 .withDisplayText("Upload_Asset"));
 
-        // Remove the normal "ADD" behavior
-
-
-        // Change the listGrid view to one that has a hidden form for uploading the 
-        // image.
+        // Change the listGrid view to one that has a hidden form for uploading the image.
         model.addAttribute("viewType", "entityListWithUploadForm");
         
         ListGrid listGrid = (ListGrid) model.asMap().get("listGrid");

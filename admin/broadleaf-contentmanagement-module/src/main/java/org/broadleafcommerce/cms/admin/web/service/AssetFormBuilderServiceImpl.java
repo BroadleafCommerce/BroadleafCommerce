@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.admin.web.service;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.file.service.operation.StaticMapNamedOperationComponent;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 import org.broadleafcommerce.openadmin.web.form.component.MediaField;
@@ -77,6 +78,10 @@ public class AssetFormBuilderServiceImpl implements AssetFormBuilderService {
             record.getHiddenFields().add(new Field()
                 .withName("cmsUrlPrefix")
                 .withValue(staticAssetUrlPrefix));
+            
+            record.getHiddenFields().add(new Field()
+                .withName("servletContext")
+                .withValue(BroadleafRequestContext.getBroadleafRequestContext().getRequest().getContextPath()));
             
             // Set the height value on this field
             mf.setHeight(operationMap.getNamedOperations().get("smallAdminThumbnail").get("resize-height-amount"));

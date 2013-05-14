@@ -74,7 +74,7 @@ $(document).ready(function() {
     
     $('body').on('listGrid-asset-rowSelected', function(event, link, fields, currentUrl) {
         var json = {
-            'assetUrl' : fields['cmsUrlPrefix'] + fields['fullUrl']
+            'assetUrl' : fields['servletContext'] + fields['cmsUrlPrefix'] + fields['fullUrl']
         }
         
         $('div.asset-selector-container').trigger('assetInfoSelected', json);

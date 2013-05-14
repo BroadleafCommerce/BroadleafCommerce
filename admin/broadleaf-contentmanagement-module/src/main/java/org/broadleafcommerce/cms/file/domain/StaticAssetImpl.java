@@ -17,6 +17,7 @@
 package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.cms.field.type.StorageType;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -80,7 +81,7 @@ import javax.persistence.Transient;
         }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
-public class StaticAssetImpl implements StaticAsset {
+public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
 
     private static final long serialVersionUID = 6990685254640110350L;
 
@@ -416,5 +417,10 @@ public class StaticAssetImpl implements StaticAsset {
             public static final int LAST = 7000;
 
         }
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getName();
     }
 }
