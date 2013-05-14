@@ -1,15 +1,13 @@
 <div class="datepicker-container">
-    <input th:attr="data-name=${headerField.name}"
+    <input th:attr="data-name=${headerField.name}, placeholder=#{Start_Date}"
            class="listgrid-criteria-input datepicker"
-           type="text"
-           th:attr="placeholder=#{Start_Date}"/>
+           type="text"/>
     <i class="icon-calendar"></i>
 </div>
 <br />
 <div class="datepicker-container">
-    <input th:attr="data-name=${headerField.name}"
+    <input th:attr="data-name=${headerField.name}, placeholder=#{End_Date}"
            class="listgrid-criteria-input datepicker"
-           type="text"
-           th:attr="placeholder=#{End_Date}"/>
+           type="text"/>
     <i class="icon-calendar"></i>
 </div>

@@ -160,14 +160,14 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @Column(name = "ORDER_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = Presentation.Group.Name.General,
-            order=Presentation.FieldOrder.TOTAL, fieldType= SupportedFieldType.MONEY,prominent=true,
-            groupOrder = Presentation.Group.Order.General,
-            gridOrder = 5000)
+            order=Presentation.FieldOrder.TOTAL, fieldType= SupportedFieldType.MONEY,
+            groupOrder = Presentation.Group.Order.General)
     protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")
     @AdminPresentation(friendlyName = "OrderImpl_Order_Submit_Date", group = Presentation.Group.Name.General,
-            order=Presentation.FieldOrder.SUBMITDATE, groupOrder = Presentation.Group.Order.General)
+            order=Presentation.FieldOrder.SUBMITDATE, groupOrder = Presentation.Group.Order.General, prominent = true,
+            gridOrder = 5000)
     protected Date submitDate;
 
     @Column(name = "ORDER_NUMBER")
