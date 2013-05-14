@@ -1,6 +1,10 @@
-  
 <div class="field-label" th:text="#{asset_url_image_label}" />
-<img class="thumbnail" blc:src="@{${cmsUrlPrefix} + *{fields['__${field.name}__'].value} + '?largeAdminThumbnail'}"/>
+<img class="thumbnail" 
+    th:if="*{fields['__${field.name}__'].value != null}"
+    blc:src="@{${cmsUrlPrefix} + *{fields['__${field.name}__'].value} + '?largeAdminThumbnail'}"/>
+    
+<img class="thumbnail" 
+    th:unless="*{fields['__${field.name}__'].value != null}" />
     
 <div class="field-label" th:text="#{${field.friendlyName}}" />
 <div class="twelve" style="margin-left: 20px; margin-bottom: 10px;">

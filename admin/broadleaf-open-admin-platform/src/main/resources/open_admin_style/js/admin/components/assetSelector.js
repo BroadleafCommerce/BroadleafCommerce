@@ -97,7 +97,7 @@ $(document).ready(function() {
     		
     		var mediaItem = $this.find('input.mediaItem');
     		if (mediaItem.length > 0) {
-        		var mediaJson = jQuery.parseJSON(mediaItem.val());
+    		    var mediaJson = mediaItem.val() == "" ? {} : jQuery.parseJSON(mediaItem.val());
         		mediaJson.url = fields['assetUrl'];
         		mediaItem.val(JSON.stringify(mediaJson));
     		} else {

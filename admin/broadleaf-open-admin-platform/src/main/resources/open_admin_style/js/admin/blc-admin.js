@@ -41,6 +41,33 @@ var BLCAdmin = (function($) {
         }
     });
     
+    function getModalSkeleton() {
+        var $modal = $('<div>', { 'class' : 'modal' });
+        
+        var $modalHeader = $('<div>', {
+            'class' : 'modal-header'
+        });
+        $modalHeader.append($('<h3>'));
+        $modalHeader.append($('<button>', {
+            'class' : 'close',
+            'data-dismiss' : 'modal',
+            'html' : '&times;'
+        }));
+        $modal.append($modalHeader);
+        
+        var $modalBody = $('<div>', { 
+            'class' : 'modal-body'
+        });
+        $modal.append($modalBody);
+        
+        var $modalFooter = $('<div>', {
+            'class' : 'modal-footer'
+        });
+        $modal.append($modalFooter);
+        
+        return $modal;
+    }
+    
 	function showModal($data, onModalHide, onModalHideArgs, readOnly) {
 		// If we already have an active modal, we don't need another backdrop on subsequent modals
 		$data.modal({
@@ -150,23 +177,12 @@ var BLCAdmin = (function($) {
     	},
     	
     	showMessageAsModal : function(header, message) {
-            var $data = $('<div>', { 'class' : 'modal' });
-            var $modalHeader = $('<div>', {
-                'class' : 'modal-header'
-            });
-            $modalHeader.append($('<h3>', { 'text' : header }));
-            $modalHeader.append($('<button>', {
-                'class' : 'close',
-                'data-dismiss' : 'modal',
-                'html' : '&times;'
-            }));
-            $data.append($modalHeader);
-            $data.append($('<div>', { 
-                'class' : 'modal-body',
-                'text' : message
-            }));
+    	    var $modal = getModalSkeleton();
     	    
-            this.showElementAsModal($data);
+    	    $modal.find('.modal-header h3').text(header);
+    	    $modal.find('.modal-body').text(message);
+    	    
+            this.showElementAsModal($modal);
     	},
     	
     	showElementAsModal : function($element, onModalHide, onModalHideArgs) {
@@ -175,6 +191,17 @@ var BLCAdmin = (function($) {
     	},
     	
     	showLinkAsModal : function(link, onModalHide, onModalHideArgs, readOnly) {
+    	    var $modal = getModalSkeleton();
+    	    $modal.find('.modal-header h3').text(BLCAdmin.messages.loading);
+    	    $modal.find('.modal-body').append($('<i>', { 'class' : 'icon-spin icon-spinner' }));
+            
+    	    $modal.find('.modal-body').css('text-align', 'center').css('font-size', '24px');
+            
+    	    BLCAdmin.showElementAsModal($modal, onModalHide, onModalHideArgs);
+    	    
+    	    BLCAdmin.modalNavigateTo(link);
+    	    
+    	    /*
     	    BLC.ajax({
     	        url : link,
     	        type : "GET"
@@ -191,6 +218,7 @@ var BLCAdmin = (function($) {
     			
     			showModal($data, onModalHide, onModalHideArgs, readOnly);
     		});
+    		*/
     	},
     	
     	// Convenience function for hiding the replacing the current modal with the given link

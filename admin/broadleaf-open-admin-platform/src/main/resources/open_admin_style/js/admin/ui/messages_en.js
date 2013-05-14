@@ -16,10 +16,12 @@
         // Asset messages
         selectUploadAsset : 'Select / Upload Asset',
         
-        // Modal error messages
+        // Modal messages
         error : 'Error',
         forbidden403 : '403 Forbidden',
-        errorOccurred : 'An error occurred'
+        errorOccurred : 'An error occurred',
+        loading : 'Loading'
+            
     };
             
 })(jQuery, BLCAdmin);
