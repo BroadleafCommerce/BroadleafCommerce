@@ -824,6 +824,8 @@ table.table-hover tbody tr.draggable:hover {
     display: block;
     padding: 8px 10px;
     cursor: default;
+    overflow: hidden;
+    max-width: 100%;
 }
 
 .listgrid-headerBtn.dropdown.split > .listgrid-title {
@@ -831,6 +833,8 @@ table.table-hover tbody tr.draggable:hover {
     display: inline-block;
     cursor: default;
     padding: 0;
+    overflow: hidden;
+    max-width: 100%;
 }
 
 .listgrid-headerBtn.dropdown button.listgrid-clear-sort {
@@ -948,6 +952,10 @@ table tbody tr:nth-child(odd) {
 .listgrid-header-wrapper table.list-grid-table {
 	border-right: none;
 	border-top: none;
+}
+
+.listgrid-header-wrapper table.list-grid-table thead tr th {
+    overflow: visible;
 }
 
 .listgrid-header-wrapper table.list-grid-table thead tr th div.resizer {
