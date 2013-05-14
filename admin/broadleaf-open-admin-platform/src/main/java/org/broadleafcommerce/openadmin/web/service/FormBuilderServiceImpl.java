@@ -89,6 +89,14 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     
     @Resource (name = "blAdminNavigationService")
     protected AdminNavigationService navigationService;
+    
+    protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
+            VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN 
+    };
+    
+    protected static final VisibilityEnum[] GRID_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
+            VisibilityEnum.HIDDEN_ALL, VisibilityEnum.GRID_HIDDEN 
+    };
 
     @Override
     public ListGrid buildMainListGrid(DynamicResultSet drs, ClassMetadata cmd, String sectionKey)
@@ -107,8 +115,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 }
                 
                 if (fmd.isProminent() != null && fmd.isProminent() 
-                        && !VisibilityEnum.HIDDEN_ALL.equals(fmd.getVisibility())
-                        && !VisibilityEnum.GRID_HIDDEN.equals(fmd.getVisibility())) {
+                        && !ArrayUtils.contains(getGridHiddenVisibilities(), fmd.getVisibility())) {
                     Field hf = createHeaderField(p, fmd);
                     headerFields.add(hf);
                 }
@@ -176,8 +183,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     }
                     
                     if (md.isProminent() != null && md.isProminent() 
-                            && !VisibilityEnum.HIDDEN_ALL.equals(md.getVisibility())
-                            && !VisibilityEnum.GRID_HIDDEN.equals(md.getVisibility())) {
+                            && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                         Field hf = createHeaderField(p, md);
                         headerFields.add(hf);
                     }
@@ -191,8 +197,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 if (p.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
                     if (md.isProminent() != null && md.isProminent() 
-                            && !VisibilityEnum.HIDDEN_ALL.equals(md.getVisibility())
-                            && !VisibilityEnum.GRID_HIDDEN.equals(md.getVisibility())) {
+                            && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                         Field hf = createHeaderField(p, md);
                         headerFields.add(hf);
                     }
@@ -239,8 +244,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
                     if (md.getTargetClass().equals(mmd.getValueClassName())) {
                         if (md.isProminent() != null && md.isProminent() 
-                                && !VisibilityEnum.HIDDEN_ALL.equals(md.getVisibility())
-                                && !VisibilityEnum.GRID_HIDDEN.equals(md.getVisibility())) {
+                                && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                             hf = createHeaderField(p, md);
                             headerFields.add(hf);
                         }
@@ -346,8 +350,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (property.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) property.getMetadata();
                 
-                if (!(VisibilityEnum.HIDDEN_ALL.equals(fmd.getVisibility())
-                                      || VisibilityEnum.FORM_HIDDEN.equals(fmd.getVisibility()))) {
+                
+                if (!ArrayUtils.contains(getFormHiddenVisibilities(), fmd.getVisibility())) {
                     // Depending on visibility, field for the particular property is not created on the form
                     String fieldType = fmd.getFieldType() == null ? null : fmd.getFieldType().toString();
                     
@@ -555,7 +559,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
-                if (LookupType.DROPDOWN.equals(fmd.getLookupType())) {
+                if (LookupType.DROPDOWN.equals(fmd.getLookupType())
+                        && !ArrayUtils.contains(getFormHiddenVisibilities(), fmd.getVisibility())) {
                     // Get the records
                     PersistencePackageRequest toOnePpr = PersistencePackageRequest.standard()
                             .withCeilingEntityClassname(fmd.getForeignKeyClass());
@@ -796,5 +801,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return ef;
     }
     
+    protected VisibilityEnum[] getGridHiddenVisibilities() {
+        return FormBuilderServiceImpl.GRID_HIDDEN_VISIBILITIES;
+    }
+    
+    protected VisibilityEnum[] getFormHiddenVisibilities() {
+        return FormBuilderServiceImpl.FORM_HIDDEN_VISIBILITIES;
+    }
 
 }
