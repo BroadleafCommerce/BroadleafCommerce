@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
@@ -112,6 +113,7 @@ public class StaticAssetImpl implements StaticAsset {
             order = Presentation.FieldOrder.URL,
             gridOrder = Presentation.FieldOrder.URL,
             requiredOverride = RequiredOverride.REQUIRED,
+            fieldType = SupportedFieldType.ASSET_URL,
             prominent = true)
     @Index(name="ASST_FULL_URL_INDX", columnNames={"FULL_URL"})
     protected String fullUrl;

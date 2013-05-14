@@ -284,7 +284,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
-            @PathVariable String id) throws Exception {
+            @PathVariable("id") String id) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
 

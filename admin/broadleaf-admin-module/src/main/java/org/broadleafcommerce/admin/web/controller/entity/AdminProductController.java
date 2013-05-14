@@ -175,7 +175,7 @@ public class AdminProductController extends AdminBasicEntityController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
-            @PathVariable String id) throws Exception {
+            @PathVariable(value = "id") String id) throws Exception {
         String view = super.viewEntityForm(request, response, model, pathVars, id);
         
         //Skus have a specific toolbar action to generate Skus based on permutations

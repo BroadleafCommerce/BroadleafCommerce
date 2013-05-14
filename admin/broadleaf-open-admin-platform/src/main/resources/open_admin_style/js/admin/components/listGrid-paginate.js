@@ -443,8 +443,23 @@
             $headerTable.css('width', newWidth);
             $table.css('width', newWidth);
             
+            // Determine if we need to ignore any explicitly set column widths
+            var $explicitSizeThs = $headerTable.closest('.listgrid-container').find('th.explicit-size');
+            if (($table.data('listgridtype') == 'main' && $table.outerWidth() < 960) || 
+                ($table.data('listgridtype') != 'main' && $table.outerWidth() < 680)) {
+                $explicitSizeThs.each(function(index, element) {
+                    $(element).addClass('width-ignored');
+                });
+            } else {
+                $explicitSizeThs.each(function(index, element) {
+                    $(element).removeClass('width-ignored');
+                });
+            }
+            
             // Set back any specified widths if appropriate
-            $headerTable.closest('.listgrid-container').find('th').each(function(index, thElement) {
+            $headerTable.closest('.listgrid-container').find('th').filter(function() {
+                return $(this).hasClass('explicit-size') && !$(this).hasClass('width-ignored');
+            }).each(function(index, thElement) {
                 $(thElement).css('width', $(thElement).data('columnwidth'));
             });
             

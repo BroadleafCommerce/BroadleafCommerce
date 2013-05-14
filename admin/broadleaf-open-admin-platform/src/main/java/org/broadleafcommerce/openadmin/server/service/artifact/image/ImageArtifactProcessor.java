@@ -88,7 +88,8 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
     @Override
     public InputStream convert(InputStream artifactStream, Operation[] operations, String mimeType) throws Exception {
         if (operations != null && operations.length > 0) {
-            Iterator<ImageReader> iter = ImageIO.getImageReaders(ImageIO.createImageInputStream(artifactStream));
+            ImageInputStream iis = ImageIO.createImageInputStream(artifactStream);
+            Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
             ImageReader reader = iter.next();
             String formatName = reader.getFormatName();
             artifactStream.reset();

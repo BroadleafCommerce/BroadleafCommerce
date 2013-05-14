@@ -18,6 +18,7 @@ package org.broadleafcommerce.cms.admin.web.controller;
 
 import org.broadleafcommerce.cms.admin.web.service.AssetFormBuilderService;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
+import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
@@ -50,6 +51,8 @@ public class AdminAssetController extends AdminBasicEntityController {
     @Resource(name = "blAssetFormBuilderService")
     protected AssetFormBuilderService formService;
     
+    @Resource(name = "blStaticAssetService")
+    protected StaticAssetService staticAssetService;
     
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
@@ -85,7 +88,17 @@ public class AdminAssetController extends AdminBasicEntityController {
         
         formService.addImageThumbnailField(listGrid, "fullUrl");
         
+
         return returnPath;
+    }
+
+    @Override
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable String id) throws Exception {
+        model.addAttribute("cmsUrlPrefix", staticAssetService.getStaticAssetUrlPrefix());
+        return super.viewEntityForm(request, response, model, pathVars, id);
     }
 
     @Override

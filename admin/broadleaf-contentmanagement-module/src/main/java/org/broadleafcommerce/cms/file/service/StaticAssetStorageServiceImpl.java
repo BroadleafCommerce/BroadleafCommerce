@@ -30,11 +30,11 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.service.artifact.ArtifactService;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -55,6 +55,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.Resource;
+
 /**
  * @author Jeff Fischer, Brian Polster
  */
@@ -63,6 +65,9 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
     @Value("${asset.server.file.system.path}")
     protected String assetFileSystemPath;
+
+    @Value("${asset.server.file.classpath.directory}")
+    protected String assetFileClasspathDirectory;
 
     @Value("${asset.server.max.generated.file.system.directories}")
     protected int assetServerMaxGeneratedDirectories;
@@ -185,9 +190,20 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         //extract the values for any named parameters
         Map<String, String> convertedParameters = namedOperationManager.manageNamedParameters(parameterMap);   
         String returnFilePath = null;
-        
+
         if (StorageType.FILESYSTEM.equals(staticAsset.getStorageType()) && convertedParameters.isEmpty()) {
-            returnFilePath = generateStorageFileName(staticAsset.getFullUrl());
+            InputStream classPathInputStream = getResourceFromClasspath(staticAsset);
+            if (classPathInputStream != null) {
+                // Create a file system cache file representing this file.
+                String cacheName = constructCacheFileName(staticAsset, convertedParameters);
+                File cacheFile = new File(cacheName);
+                if (!cacheFile.exists()) {
+                    createCacheFile(classPathInputStream, cacheFile);
+                }
+                returnFilePath = cacheFile.getAbsolutePath();
+            } else {
+                returnFilePath = generateStorageFileName(staticAsset.getFullUrl());
+            }
         } else {
             String cacheName = constructCacheFileName(staticAsset, convertedParameters);
             File cacheFile = new File(cacheName);
@@ -215,6 +231,11 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     }
 
     protected InputStream findInputStreamForStaticAsset(StaticAsset staticAsset) throws SQLException, IOException {
+        InputStream classPathInputStream = getResourceFromClasspath(staticAsset);
+        if (classPathInputStream != null) {
+            return classPathInputStream;
+        }
+
         if (StorageType.DATABASE.equals(staticAsset.getStorageType())) {
             StaticAssetStorage storage = readStaticAssetStorageByStaticAssetId(staticAsset.getId());
             //there are filter operations to perform on the asset
@@ -247,6 +268,26 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         } else {
             throw new IllegalArgumentException("Unknown storage type while trying to read static asset.");
         }
+    }
+
+    protected InputStream getResourceFromClasspath(StaticAsset staticAsset) {
+        if (assetFileClasspathDirectory != null && !"".equals(assetFileClasspathDirectory)) {
+            try {
+                ClassPathResource resource = new ClassPathResource(assetFileClasspathDirectory + staticAsset.getFullUrl());
+
+                if (resource.exists()) {
+                    InputStream assetFile = resource.getInputStream();
+                    BufferedInputStream bufferedStream = new BufferedInputStream(assetFile);
+                    bufferedStream.mark(0);
+                    return bufferedStream;
+                } else {
+                    return null;
+                }
+            } catch (Exception e) {
+                LOG.error("Error getting resource from classpath", e);
+            }
+        }
+        return null;
     }
 
     @Transactional("blTransactionManagerAssetStorageInfo")
@@ -322,7 +363,9 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
         StringBuilder sb2 = new StringBuilder(200);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        sb2.append(format.format(staticAsset.getAuditable().getDateUpdated()==null?staticAsset.getAuditable().getDateCreated():staticAsset.getAuditable().getDateUpdated()));
+        if (staticAsset.getAuditable() != null) {
+            sb2.append(format.format(staticAsset.getAuditable().getDateUpdated() == null ? staticAsset.getAuditable().getDateCreated() : staticAsset.getAuditable().getDateUpdated()));
+        }
         
         for (Map.Entry<String, String> entry : parameterMap.entrySet()) {
             sb2.append('-');

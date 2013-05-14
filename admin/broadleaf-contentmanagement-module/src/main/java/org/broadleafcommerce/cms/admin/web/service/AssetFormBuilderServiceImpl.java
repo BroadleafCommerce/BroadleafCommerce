@@ -86,5 +86,4 @@ public class AssetFormBuilderServiceImpl implements AssetFormBuilderService {
             record.clearFieldMap();
         }
     }
-    
 }

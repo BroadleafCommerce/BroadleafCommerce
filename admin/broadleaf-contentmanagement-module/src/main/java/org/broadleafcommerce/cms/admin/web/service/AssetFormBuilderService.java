@@ -21,5 +21,4 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 public interface AssetFormBuilderService {
 
     public void addImageThumbnailField(ListGrid listGrid, String urlField);
-
 }

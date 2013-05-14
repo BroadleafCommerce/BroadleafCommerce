@@ -46,14 +46,16 @@
                 
                 <th width="65">
                     <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort}">
-                        <div class="listgrid-title" th:text="#{Id}" />
+                        <div class="listgrid-title">
+                        Id
+                        </div>
                     </div>
                     
                     <div class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort}">
-                        <div class="listgrid-title" th:inline="text">
+                        <div class="listgrid-title">
                             <i class="filter-icon"></i>
                             <i class="sort-icon"></i>
-                            [[#{Id}]]
+                            Id
                         </div>
                         
                         <div class="resizer">||</div>
@@ -73,8 +75,8 @@
                         data-pagesize=${listGrid.pageSize}">
                         
             <tr th:if="${#lists.isEmpty(listGrid.records)}">
-                <td th:colspan="${#lists.size(listGrid.headerFields) + 1}" class="list-grid-no-results" th:inline="text">
-                    ([[#{No_Records_Found}]])
+                <td th:colspan="${#lists.size(listGrid.headerFields) + 1}" class="list-grid-no-results">
+                    (No records found)
                 </td>
             </tr>
             
@@ -93,7 +95,7 @@
                     <span th:case="'main'" th:remove="tag">
                         <a th:if="${headerField.mainEntityLink}" 
                             th:href="@{${record.path}}"
-                            th:text="${#strings.isEmpty(field.displayValue) ? '(#{No_Value_Set})' : field.displayValue}" />
+                            th:text="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}" />
                             
                         <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
                            <span th:remove="tag" th:text="${field.displayValue}" />
@@ -103,7 +105,8 @@
                         </span>
                         
                         <span th:if="${field.fieldType == 'IMAGE'}">
-                            <img th:style="${'height: ' + field.height + 'px;'}" th:src="${field.value}" />
+                            <img th:style="${'height: ' + field.height + 'px;'}"
+                                th:src="@{${field.value}}" />
                         </span>
                             
                         <span th:unless="${headerField.mainEntityLink 
@@ -128,7 +131,8 @@
                         </span>
                         
                         <span th:if="${field.fieldType == 'IMAGE'}">
-                            <img th:style="${'height: ' + field.height + 'px;'}" th:src="${field.value}" />
+                            <img th:style="${'height: ' + field.height + 'px;'}"
+                                th:src="${field.value}" />
                         </span>
                         
                         <span th:unless="${(headerField.mainEntityLink and record.canLinkToExternalEntity)
@@ -141,6 +145,7 @@
                 
                 <td data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
 
+
             </tr>
             
         </tbody>
@@ -152,9 +157,9 @@
         <span class="low-index" th:text="${listGrid.startIndex + 1}" />
         -
         <span class="high-index" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}" />
-        <span th:text="#{Of}" />
+        <span th:text="${'of'}" />
         <span class="total-records" th:text="${#lists.size(listGrid.records)}" />
-        <span th:text="#{Total_Records}" />
+        <span th:text="${'records'}" />
     </span>
 </span>
 
