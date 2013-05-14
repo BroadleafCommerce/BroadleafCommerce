@@ -58,12 +58,16 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @OneToMany(mappedBy = "bundleOrderItem", targetEntity = DiscreteOrderItemImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    @AdminPresentationCollection(friendlyName="BundleOrderItemImpl_Discrete_Order_Items")
+    @AdminPresentationCollection(friendlyName="BundleOrderItemImpl_Discrete_Order_Items",
+            tab=OrderItemImpl.Presentation.Tab.Name.Advanced,
+            tabOrder = OrderItemImpl.Presentation.Tab.Order.Advanced)
     protected List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
     
     @OneToMany(mappedBy = "bundleOrderItem", targetEntity = BundleOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="BundleOrderItemImpl_Item_Fee_Prices")
+    @AdminPresentationCollection(friendlyName="BundleOrderItemImpl_Item_Fee_Prices",
+            tab=OrderItemImpl.Presentation.Tab.Name.Advanced,
+            tabOrder = OrderItemImpl.Presentation.Tab.Order.Advanced)
     protected List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<BundleOrderItemFeePrice>();
 
     @Column(name="BASE_RETAIL_PRICE", precision=19, scale=5)

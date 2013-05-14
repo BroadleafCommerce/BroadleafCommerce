@@ -20,6 +20,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -43,6 +48,13 @@ import java.math.BigDecimal;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BUND_ITEM_FEE_PRICE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                                            booleanOverrideValue = true))
+    }
+)
 public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
 
     public static final Log LOG = LogFactory.getLog(BundleOrderItemFeePriceImpl.class);
@@ -59,15 +71,19 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
     protected BundleOrderItem bundleOrderItem;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Amount", order=2, prominent=true)
     protected BigDecimal amount;
 
     @Column(name = "NAME")
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Name", order=1, prominent=true)
     private String name;
 
     @Column(name = "REPORTING_CODE")
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Reporting_Code", order=3, prominent=true)
     private String reportingCode;
 
     @Column(name = "IS_TAXABLE")
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Taxable", order=4)
     private Boolean isTaxable = Boolean.FALSE;
 
     @Override

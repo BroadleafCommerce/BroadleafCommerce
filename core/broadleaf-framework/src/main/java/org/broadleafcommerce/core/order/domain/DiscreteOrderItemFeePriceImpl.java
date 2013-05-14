@@ -21,6 +21,10 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -45,6 +49,13 @@ import java.math.BigDecimal;
 @Table(name = "BLC_DISC_ITEM_FEE_PRICE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(friendlyName = "DiscreteOrderItemFeePriceImpl_baseDiscreteOrderItemFreePrice")
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                                            booleanOverrideValue = true))
+    }
+)
 public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice  {
 
     public static final Log LOG = LogFactory.getLog(DiscreteOrderItemFeePriceImpl.class);
@@ -61,15 +72,15 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
     protected DiscreteOrderItem discreteOrderItem;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Amount", order=2, group = "DiscreteOrderItemFeePriceImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Amount", order=2, prominent=true)
     protected BigDecimal amount;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Name", order=1, group = "DiscreteOrderItemFeePriceImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Name", order=1, prominent=true)
     private String name;
 
     @Column(name = "REPORTING_CODE")
-    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Reporting_Code", order=3, group = "DiscreteOrderItemFeePriceImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Reporting_Code", order=3, prominent=true)
     private String reportingCode;
 
     @Override
