@@ -51,6 +51,13 @@ public class AdminOrderController extends AdminBasicEntityController {
         return SECTION_KEY;
     }
 
+    /**
+     * This method provides standard operations for all collection fields other than orderItems. As part of 2.3, 
+     * Broadleaf deprecated the old orderItemAdjustments collection in favor of the more robust orderItemPriceDetails.
+     * 
+     * However, to maintain legacy compability and not force a database migration for Orders, the legacy style is still 
+     * supported. This method will hide the appropriate collection based on the type of the order (legacy vs non-legacy).
+     */
     @Override
     @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}", method = RequestMethod.GET)
     public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
