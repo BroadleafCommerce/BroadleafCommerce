@@ -71,11 +71,11 @@ public class PaymentInfoDetailImpl implements PaymentInfoDetail, CurrencyCodeIde
     protected PaymentInfo paymentInfo;
 
     @Column(name = "PAYMENT_INFO_DETAIL_TYPE")
-    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Type")
     protected PaymentInfoDetailType type;
 
     @Column(name = "PAYMENT_AMOUNT")
-    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Amount", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Amount", fieldType = SupportedFieldType.MONEY,
+        prominent = true, gridOrder = 2000)
     protected BigDecimal amount;
 
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
@@ -84,7 +84,7 @@ public class PaymentInfoDetailImpl implements PaymentInfoDetail, CurrencyCodeIde
     protected BroadleafCurrency currency;
 
     @Column(name = "DATE_RECORDED")
-    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Date")
+    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Date", prominent = true, gridOrder = 3000)
     protected Date date;
 
     @Override

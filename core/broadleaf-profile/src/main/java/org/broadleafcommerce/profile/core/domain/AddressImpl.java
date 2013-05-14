@@ -64,28 +64,28 @@ import javax.persistence.TableGenerator;
                                     booleanOverrideValue = false),
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
                                     intOverrideValue = 1300),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
-                                    overrideValue = "AddressImpl_Address"),
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
-                                    overrideValue = "NOT_REQUIRED")}),
-        @AdminPresentationMergeOverride(name = "phonePrimary.phoneNumber", mergeEntries = {
+                                    overrideValue = "NOT_REQUIRED"),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
+                                                overrideValue = "PhoneImpl_Primary_Phone")}),
+        @AdminPresentationMergeOverride(name = "phoneSecondary.phoneNumber", mergeEntries = {
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
                                     booleanOverrideValue = false),
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
                                     intOverrideValue = 1400),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
-                                    overrideValue = "AddressImpl_Address"),
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
-                                    overrideValue = "NOT_REQUIRED")}),
+                                    overrideValue = "NOT_REQUIRED"),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
+                                                overrideValue = "PhoneImpl_Secondary_Phone")}),
         @AdminPresentationMergeOverride(name = "phoneFax.phoneNumber", mergeEntries = {
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
                                     booleanOverrideValue = false),
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
                                     intOverrideValue = 1500),
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
-                                    overrideValue = "AddressImpl_Address"),
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
-                                    overrideValue = "NOT_REQUIRED")})
+                                    overrideValue = "NOT_REQUIRED"),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
+                                                overrideValue = "PhoneImpl_Fax_Phone")})
     }
 )
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
