@@ -35,6 +35,7 @@ import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.EntityResult;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
@@ -64,11 +65,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -91,6 +87,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 
 /**
  * @author jfischer
@@ -529,7 +531,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
     }
 
-    protected Entity update(PersistencePackage persistencePackage, Object primaryKey) throws ServiceException {
+    protected EntityResult update(PersistencePackage persistencePackage, Object primaryKey, boolean includeRealEntity) throws ServiceException {
+        EntityResult entityResult = new EntityResult();
         Entity entity = persistencePackage.getEntity();
         PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
         ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
@@ -558,13 +561,19 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             instance = createPopulatedInstance(instance, entity, mergedProperties, false);
             if (!entity.isValidationFailure()) {
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
+                if (includeRealEntity) {
+                    entityResult.setEntityBackingObject(instance);
+                }
 
                 List<Serializable> entityList = new ArrayList<Serializable>(1);
                 entityList.add(instance);
 
-                return getRecords(mergedProperties, entityList, null, null)[0];
+                entity = getRecords(mergedProperties, entityList, null, null)[0];
+                entityResult.setEntity(entity);
+                return entityResult;
             } else {
-                return entity;
+                entityResult.setEntity(entity);
+                return entityResult;
             }
         } catch (Exception e) {
             LOG.error("Problem editing entity", e);
@@ -717,12 +726,26 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     }
 
     @Override
-    public Entity update(PersistencePackage persistencePackage) throws ServiceException {
-        return update(persistencePackage, null);
+    public EntityResult update(PersistencePackage persistencePackage, boolean includeRealEntityObject) throws ServiceException {
+        return update(persistencePackage, null, true);
     }
 
     @Override
+    public Entity update(PersistencePackage persistencePackage) throws ServiceException {
+        EntityResult er = update(persistencePackage, null, false);
+        return er.getEntity();
+    }
+
+
+    @Override
     public Entity add(PersistencePackage persistencePackage) throws ServiceException {
+        EntityResult entityResult = add(persistencePackage, false);
+        return entityResult.getEntity();
+    }
+
+    @Override
+    public EntityResult add(PersistencePackage persistencePackage, boolean includeRealEntityObject) throws ServiceException {
+        EntityResult entityResult = new EntityResult();
         Entity entity = persistencePackage.getEntity();
         PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
         ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
@@ -760,19 +783,24 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             try {
                 primaryKey = getPrimaryKey(entity, mergedProperties);
             } catch (Exception e) {
-                //do nothing
+                LOG.error("Error getting primary key", e);
             }
             if (primaryKey == null) {
                 Serializable instance = (Serializable) Class.forName(entity.getType()[0]).newInstance();
                 instance = createPopulatedInstance(instance, entity, mergedProperties, false);
 
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
+                if (includeRealEntityObject) {
+                    entityResult.setEntityBackingObject(instance);
+                }
                 List<Serializable> entityList = new ArrayList<Serializable>(1);
                 entityList.add(instance);
 
-                return getRecords(mergedProperties, entityList, null, null)[0];
+                entity = getRecords(mergedProperties, entityList, null, null)[0];
+                entityResult.setEntity(entity);
+                return entityResult;
             } else {
-                return update(persistencePackage, primaryKey);
+                return update(persistencePackage, primaryKey, includeRealEntityObject);
             }
         } catch (ServiceException e) {
             LOG.error("Problem adding new entity", e);
