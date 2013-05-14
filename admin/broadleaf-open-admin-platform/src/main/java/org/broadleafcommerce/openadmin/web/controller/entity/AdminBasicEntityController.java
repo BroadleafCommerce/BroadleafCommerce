@@ -702,11 +702,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
-        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId,"updateCollectionItem");
+        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, 
+                "updateCollectionItem");
     }
 
     /**
-     * Shows the appropriate modal dialog to edit the selected collection item
+     * Shows the appropriate modal dialog to view the selected collection item
      *
      * @param request
      * @param response
@@ -724,12 +725,18 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
-        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId,"viewCollectionItem");
+        String returnPath = showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, 
+                "viewCollectionItem");
+        
+        // Since this is a read-only view, actions don't make sense in this context
+        EntityForm ef = (EntityForm) model.asMap().get("entityForm");
+        ef.getActions().clear();
+        
+        return returnPath;
     }
 
     protected String showViewUpdateCollection(HttpServletRequest request, Model model, Map<String, String> pathVars,
-                                              String id, String collectionField, String collectionItemId,
-                                              String modalHeaderType) throws ServiceException {
+            String id, String collectionField, String collectionItemId, String modalHeaderType) throws ServiceException {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));

@@ -68,7 +68,7 @@ var BLCAdmin = (function($) {
         return $modal;
     }
     
-	function showModal($data, onModalHide, onModalHideArgs, readOnly) {
+	function showModal($data, onModalHide, onModalHideArgs) {
 		// If we already have an active modal, we don't need another backdrop on subsequent modals
 		$data.modal({
 			backdrop: (modals.length < 1)
@@ -109,7 +109,7 @@ var BLCAdmin = (function($) {
 		});
 		
 		BLCAdmin.initializeModalTabs($data);
-        BLCAdmin.initializeModalButtons($data, readOnly);
+        BLCAdmin.initializeModalButtons($data);
 		BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
 		BLCAdmin.initializeFields();
 	}
@@ -162,17 +162,12 @@ var BLCAdmin = (function($) {
     		}
     	},
     	
-    	initializeModalButtons : function($data, readOnly) {
+    	initializeModalButtons : function($data) {
             var $buttonDiv = $data.find('div.entity-form-actions');
             if ($buttonDiv.length > 0) {
                 var $footer = $('<div>', { 'class' : 'modal-footer' });
                 $buttonDiv.remove().appendTo($footer);
                 $data.append($footer);
-            }
-            if (readOnly == null || !readOnly) {
-                $buttonDiv.find('button').show();
-            } else {
-                $buttonDiv.find('button').hide();
             }
     	},
     	
@@ -190,7 +185,7 @@ var BLCAdmin = (function($) {
 			showModal($element, onModalHide, onModalHideArgs);
     	},
     	
-    	showLinkAsModal : function(link, onModalHide, onModalHideArgs, readOnly) {
+    	showLinkAsModal : function(link, onModalHide, onModalHideArgs) {
     	    var $modal = getModalSkeleton();
     	    $modal.find('.modal-header h3').text(BLCAdmin.messages.loading);
     	    $modal.find('.modal-body').append($('<i>', { 'class' : 'icon-spin icon-spinner' }));
@@ -198,27 +193,7 @@ var BLCAdmin = (function($) {
     	    $modal.find('.modal-body').css('text-align', 'center').css('font-size', '24px');
             
     	    BLCAdmin.showElementAsModal($modal, onModalHide, onModalHideArgs);
-    	    
     	    BLCAdmin.modalNavigateTo(link);
-    	    
-    	    /*
-    	    BLC.ajax({
-    	        url : link,
-    	        type : "GET"
-    	    }, function(data) {
-    			// Create a modal out of the server response
-    	        var $data;
-    	        if (data.trim) {
-    	            $data = $(data.trim());
-    	        } else {
-    	            $data = $(data);
-    	        }
-    			$data.attr('id', 'modal' + modals.length);
-    			$('body').append($data);
-    			
-    			showModal($data, onModalHide, onModalHideArgs, readOnly);
-    		});
-    		*/
     	},
     	
     	// Convenience function for hiding the replacing the current modal with the given link

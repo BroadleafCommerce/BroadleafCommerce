@@ -382,7 +382,7 @@ $(document).ready(function() {
     $('body').on('click', 'button.sub-list-grid-view', function() {
         var link = BLCAdmin.listGrid.getButtonLink($(this));
 
-        BLCAdmin.showLinkAsModal(link, null, null, true);
+        BLCAdmin.showLinkAsModal(link);
 
         return false;
     });
