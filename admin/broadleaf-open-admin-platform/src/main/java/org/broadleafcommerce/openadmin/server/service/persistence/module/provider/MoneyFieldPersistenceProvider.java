@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -54,6 +55,14 @@ public class MoneyFieldPersistenceProvider extends AbstractMoneyFieldPersistence
 
     @Override
     protected Currency getCurrency(ExtractValueRequest extractValueRequest, Property property) {
+        String currencyCodeField = extractValueRequest.getMetadata().getCurrencyCodeField();
+        if (!StringUtils.isEmpty(currencyCodeField)) {
+            try {
+                return Currency.getInstance((String) extractValueRequest.getFieldManager().getFieldValue(extractValueRequest.getEntity(), currencyCodeField));
+            } catch (Exception e) {
+                //do nothing
+            }
+        }
         return Money.defaultCurrency();
     }
     
