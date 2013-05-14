@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.money.Money;
@@ -101,7 +102,7 @@ import java.util.Map;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderImpl_baseOrder")
-public class OrderImpl implements Order, AdminMainEntity {
+public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiable {
 
     private static final long serialVersionUID = 1L;
 
@@ -153,14 +154,14 @@ public class OrderImpl implements Order, AdminMainEntity {
     @Column(name = "ORDER_SUBTOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = Presentation.Group.Name.General,
             order=Presentation.FieldOrder.SUBTOTAL, fieldType=SupportedFieldType.MONEY,prominent=true,
-            currencyCodeField="currency.currencyCode", groupOrder = Presentation.Group.Order.General,
+            groupOrder = Presentation.Group.Order.General,
             gridOrder = 4000)
     protected BigDecimal subTotal;
 
     @Column(name = "ORDER_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = Presentation.Group.Name.General,
             order=Presentation.FieldOrder.TOTAL, fieldType= SupportedFieldType.MONEY,prominent=true,
-            currencyCodeField="currency.currencyCode", groupOrder = Presentation.Group.Order.General,
+            groupOrder = Presentation.Group.Order.General,
             gridOrder = 5000)
     protected BigDecimal total;
 
@@ -199,7 +200,7 @@ public class OrderImpl implements Order, AdminMainEntity {
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Adjustments",
-                tab = Presentation.Tab.Name.Adjustments, tabOrder = Presentation.Tab.Order.Adjustments,
+                tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
                 order = Presentation.FieldOrder.ADJUSTMENTS)
     protected List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
 
@@ -209,7 +210,7 @@ public class OrderImpl implements Order, AdminMainEntity {
             referencedColumnName = "OFFER_CODE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @AdminPresentationCollection(friendlyName="OrderImpl_Offer_Codes",
-                tab = Presentation.Tab.Name.Adjustments, tabOrder = Presentation.Tab.Order.Adjustments,
+                tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
                 manyToField = "orders", order = Presentation.FieldOrder.OFFERCODES)
     protected List<OfferCode> addedOfferCodes = new ArrayList<OfferCode>();
 
@@ -679,6 +680,14 @@ public class OrderImpl implements Order, AdminMainEntity {
     }
 
     @Override
+    public String getCurrencyCode() {
+        if (getCurrency() != null) {
+            return getCurrency().getCurrencyCode();
+        }
+        return null;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -730,14 +739,14 @@ public class OrderImpl implements Order, AdminMainEntity {
                 public static final String OrderItems = "OrderImpl_Order_Items_Tab";
                 public static final String FulfillmentGroups = "OrderImpl_Fulfillment_Groups_Tab";
                 public static final String Payment = "OrderImpl_Payment_Tab";
-                public static final String Adjustments = "OrderImpl_Adjustments_Tab";
+                public static final String Advanced = "OrderImpl_Advanced_Tab";
             }
 
             public static class Order {
                 public static final int OrderItems = 2000;
                 public static final int FulfillmentGroups = 3000;
                 public static final int Payment = 4000;
-                public static final int Adjustments = 5000;
+                public static final int Advanced = 5000;
             }
         }
 

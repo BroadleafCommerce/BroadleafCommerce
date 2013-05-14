@@ -19,9 +19,14 @@ package org.broadleafcommerce.core.payment.domain;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,7 +48,14 @@ import java.util.Date;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_PAYMENT_DETAILS")
-public class PaymentInfoDetailImpl implements PaymentInfoDetail {
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                                            booleanOverrideValue = true))
+    }
+)
+public class PaymentInfoDetailImpl implements PaymentInfoDetail, CurrencyCodeIdentifiable {
 
     private static final long serialVersionUID = 1L;
 
@@ -63,12 +75,12 @@ public class PaymentInfoDetailImpl implements PaymentInfoDetail {
     protected PaymentInfoDetailType type;
 
     @Column(name = "PAYMENT_AMOUNT")
-    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Amount")
+    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Amount", fieldType = SupportedFieldType.MONEY)
     protected BigDecimal amount;
 
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Currency_Code")
+    @AdminPresentation(excluded = true)
     protected BroadleafCurrency currency;
 
     @Column(name = "DATE_RECORDED")
@@ -133,5 +145,13 @@ public class PaymentInfoDetailImpl implements PaymentInfoDetail {
     @Override
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    @Override
+    public String getCurrencyCode() {
+        if (currency != null) {
+            return currency.getCurrencyCode();
+        }
+        return ((CurrencyCodeIdentifiable) paymentInfo).getCurrencyCode();
     }
 }

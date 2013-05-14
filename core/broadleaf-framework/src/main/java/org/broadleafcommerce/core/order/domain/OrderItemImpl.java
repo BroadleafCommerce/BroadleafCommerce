@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -80,7 +81,7 @@ import java.util.Map;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemImpl_baseOrderItem")
-public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity {
+public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable {
 
     private static final Log LOG = LogFactory.getLog(OrderItemImpl.class);
     private static final long serialVersionUID = 1L;
@@ -111,18 +112,19 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity {
     @Column(name = "PRICE", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "OrderItemImpl_Item_Price", order = Presentation.FieldOrder.PRICE,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
-            fieldType = SupportedFieldType.MONEY)
+            fieldType = SupportedFieldType.MONEY, prominent = true, gridOrder = 3000)
     protected BigDecimal price;
 
     @Column(name = "QUANTITY", nullable = false)
     @AdminPresentation(friendlyName = "OrderItemImpl_Item_Quantity", order = Presentation.FieldOrder.QUANTITY,
-            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing)
+            group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
+            prominent = true, gridOrder = 2000)
     protected int quantity;
 
     @Column(name = "RETAIL_PRICE", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderItemImpl_Item_Retail_Price", order = Presentation.FieldOrder.RETAILPRICE,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
-            fieldType = SupportedFieldType.MONEY)
+            fieldType = SupportedFieldType.MONEY, prominent = true, gridOrder = 4000)
     protected BigDecimal retailPrice;
 
     @Column(name = "SALE_PRICE", precision=19, scale=5)
@@ -133,7 +135,8 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity {
 
     @Column(name = "NAME")
     @AdminPresentation(friendlyName = "OrderItemImpl_Item_Name", order=Presentation.FieldOrder.NAME,
-            group = Presentation.Group.Name.Description, prominent=true, groupOrder = Presentation.Group.Order.Description)
+            group = Presentation.Group.Name.Description, prominent=true, gridOrder = 1000,
+            groupOrder = Presentation.Group.Order.Description)
     protected String name;
 
     @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = { CascadeType.ALL })
@@ -152,6 +155,8 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity {
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = { CascadeType.ALL },
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+    @AdminPresentationCollection(friendlyName="OrderItemImpl_Adjustments", order = Presentation.FieldOrder.ADJUSTMENTS,
+                    tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<OrderItemAdjustment>();
 
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemQualifierImpl.class, cascade = { CascadeType.ALL },
@@ -607,7 +612,15 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity {
     public String getMainEntityName() {
         return getName();
     }
-    
+
+    @Override
+    public String getCurrencyCode() {
+        if (getOrder().getCurrency() != null) {
+            return getOrder().getCurrency().getCurrencyCode();
+        }
+        return null;
+    }
+
     public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = orderItem.getClass().getMethod("clone", new Class[]{});
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") &&
@@ -802,7 +815,8 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity {
             public static final int TOTALTAX = 6000;
             public static final int CATEGORY = 1000;
             public static final int PRICEDETAILS = 1000;
-            public static final int DISCOUNTALLOWED = 2000;
+            public static final int ADJUSTMENTS = 2000;
+            public static final int DISCOUNTALLOWED = 3000;
         }
     }
 }

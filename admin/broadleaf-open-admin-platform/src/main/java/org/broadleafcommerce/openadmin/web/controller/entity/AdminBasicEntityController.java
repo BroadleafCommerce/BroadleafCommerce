@@ -702,6 +702,34 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
+        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId,"updateCollectionItem");
+    }
+
+    /**
+     * Shows the appropriate modal dialog to edit the selected collection item
+     *
+     * @param request
+     * @param response
+     * @param model
+     * @param pathVars
+     * @param id
+     * @param collectionField
+     * @param collectionItemId
+     * @return the return view path
+     * @throws Exception
+     */
+    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/view", method = RequestMethod.GET)
+    public String showViewCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
+        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId,"viewCollectionItem");
+    }
+
+    protected String showViewUpdateCollection(HttpServletRequest request, Model model, Map<String, String> pathVars,
+                                              String id, String collectionField, String collectionItemId,
+                                              String modalHeaderType) throws ServiceException {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
@@ -710,7 +738,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
         Entity parentEntity = service.getRecord(ppr, id, mainMetadata);
-        
+
         ppr = PersistencePackageRequest.fromMetadata(md);
 
         if (md instanceof BasicCollectionMetadata &&
@@ -731,7 +759,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) md;
 
             EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
-            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty, 
+            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
                     collectionItemId);
 
             formService.populateEntityFormFields(entityForm, entity);
@@ -743,7 +771,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             MapMetadata fmd = (MapMetadata) md;
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty, 
+            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
                     collectionItemId);
             EntityForm entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
 
@@ -755,7 +783,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "updateCollectionItem");
+        model.addAttribute("modalHeaderType", modalHeaderType);
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, sectionKey);
         return "modules/modalContainer";

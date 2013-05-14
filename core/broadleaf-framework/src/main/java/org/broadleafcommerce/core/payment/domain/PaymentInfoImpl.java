@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -109,7 +110,7 @@ import javax.persistence.Transient;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PaymentInfoImpl_basePaymentInfo")
-public class PaymentInfoImpl implements PaymentInfo {
+public class PaymentInfoImpl implements PaymentInfo, CurrencyCodeIdentifiable {
 
     private static final long serialVersionUID = 1L;
 
@@ -346,9 +347,16 @@ public class PaymentInfoImpl implements PaymentInfo {
     public BroadleafCurrency getCurrency() {
         if (order != null) {
             return order.getCurrency();
-        } else {
-            return null;
         }
+        return null;
+    }
+
+    @Override
+    public String getCurrencyCode() {
+        if (getCurrency() != null) {
+            return getCurrency().getCurrencyCode();
+        }
+        return null;
     }
 
     @Override

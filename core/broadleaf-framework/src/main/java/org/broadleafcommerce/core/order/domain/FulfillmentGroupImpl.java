@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -115,7 +116,7 @@ import javax.persistence.TableGenerator;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "FulfillmentGroupImpl_baseFulfillmentGroup")
-public class FulfillmentGroupImpl implements FulfillmentGroup {
+public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdentifiable {
 
     private static final long serialVersionUID = 1L;
 
@@ -701,6 +702,14 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Deprecated
     public void setService(String service) {
         this.service = service;
+    }
+
+    @Override
+    public String getCurrencyCode() {
+        if (getOrder().getCurrency() != null) {
+            return getOrder().getCurrency().getCurrencyCode();
+        }
+        return null;
     }
 
     @Override

@@ -16,8 +16,13 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
+import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
@@ -40,7 +45,14 @@ import java.math.BigDecimal;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_AMOUNT_ITEM")
-public class AmountItemImpl implements AmountItem {
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                                            booleanOverrideValue = true))
+    }
+)
+public class AmountItemImpl implements AmountItem, CurrencyCodeIdentifiable {
 
     private static final long serialVersionUID = 1L;
     
@@ -162,6 +174,11 @@ public class AmountItemImpl implements AmountItem {
 
     public void setSystemId(String systemId) {
         this.systemId = systemId;
+    }
+
+    @Override
+    public String getCurrencyCode() {
+        return ((CurrencyCodeIdentifiable) paymentInfo).getCurrencyCode();
     }
 
     @Override

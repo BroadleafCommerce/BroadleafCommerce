@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -59,6 +60,13 @@ public class MoneyFieldPersistenceProvider extends AbstractMoneyFieldPersistence
         if (!StringUtils.isEmpty(currencyCodeField)) {
             try {
                 return Currency.getInstance((String) extractValueRequest.getFieldManager().getFieldValue(extractValueRequest.getEntity(), currencyCodeField));
+            } catch (Exception e) {
+                //do nothing
+            }
+        }
+        if (extractValueRequest.getEntity() instanceof CurrencyCodeIdentifiable) {
+            try {
+                return Currency.getInstance(((CurrencyCodeIdentifiable) extractValueRequest.getEntity()).getCurrencyCode());
             } catch (Exception e) {
                 //do nothing
             }

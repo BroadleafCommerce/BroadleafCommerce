@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -60,7 +61,7 @@ import java.util.List;
                                             booleanOverrideValue = true))
     }
 )
-public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
+public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCodeIdentifiable {
 
     private static final long serialVersionUID = 1L;
 
@@ -178,6 +179,11 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     @Override
     public void setTotalTax(Money totalTax) { 
         this.totalTax = Money.toAmount(totalTax);
+    }
+
+    @Override
+    public String getCurrencyCode() {
+        return ((CurrencyCodeIdentifiable) fulfillmentGroup).getCurrencyCode();
     }
 
     @Override

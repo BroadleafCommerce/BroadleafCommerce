@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -61,7 +62,7 @@ import java.util.List;
                                             booleanOverrideValue = true))
     }
 )
-public class OrderItemPriceDetailImpl implements OrderItemPriceDetail {
+public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyCodeIdentifiable {
 
     private static final long serialVersionUID = 1L;
 
@@ -169,4 +170,11 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail {
         this.useSalePrice = Boolean.valueOf(useSalePrice);
     }
 
+    @Override
+    public String getCurrencyCode() {
+        if (getCurrency() != null) {
+            return getCurrency().getCurrencyCode();
+        }
+        return null;
+    }
 }

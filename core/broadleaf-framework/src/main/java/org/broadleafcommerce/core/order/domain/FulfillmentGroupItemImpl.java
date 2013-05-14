@@ -19,9 +19,9 @@ package org.broadleafcommerce.core.order.domain;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
@@ -66,7 +66,7 @@ import java.util.List;
                                             booleanOverrideValue = true))
     }
 )
-public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable {
+public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable, CurrencyCodeIdentifiable {
 
     private static final Log LOG = LogFactory.getLog(FulfillmentGroupItemImpl.class);
     private static final long serialVersionUID = 1L;
@@ -243,6 +243,11 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     @Override
     public void setTotalTax(Money totalTax) {
         this.totalTax = Money.toAmount(totalTax);
+    }
+
+    @Override
+    public String getCurrencyCode() {
+        return ((CurrencyCodeIdentifiable) fulfillmentGroup).getCurrencyCode();
     }
 
     public void checkCloneable(FulfillmentGroupItem fulfillmentGroupItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {

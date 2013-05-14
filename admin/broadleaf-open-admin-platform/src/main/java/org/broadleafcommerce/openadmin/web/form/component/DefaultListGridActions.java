@@ -48,6 +48,7 @@ public class DefaultListGridActions {
         .withButtonClass("sub-list-grid-view")
         .withIconClass("icon-book")
         .withDisplayText("View")
+        .withUrlPostfix("/view")
         .withForListGridReadOnly(true);
     
 }

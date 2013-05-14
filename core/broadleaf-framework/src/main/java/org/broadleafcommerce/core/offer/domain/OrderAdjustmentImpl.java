@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -60,7 +61,7 @@ import java.math.BigDecimal;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderAdjustmentImpl_baseOrderAdjustment")
-public class OrderAdjustmentImpl implements OrderAdjustment {
+public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentifiable {
 
     public static final long serialVersionUID = 1L;
 
@@ -159,6 +160,14 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
     @Override
     public void setValue(Money value) {
         this.value = value.getAmount();
+    }
+
+    @Override
+    public String getCurrencyCode() {
+        if (order.getCurrency() != null) {
+            return order.getCurrency().getCurrencyCode();
+        }
+        return null;
     }
 
     @Override
