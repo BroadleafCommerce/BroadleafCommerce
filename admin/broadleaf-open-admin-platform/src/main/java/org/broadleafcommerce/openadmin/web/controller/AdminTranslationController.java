@@ -68,7 +68,7 @@ public class AdminTranslationController extends AdminAbstractController {
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute TranslationForm form, BindingResult result) throws Exception {
+            @ModelAttribute(value="form") TranslationForm form, BindingResult result) throws Exception {
         extensionManager.applyTransformation(form);
         
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
@@ -98,7 +98,7 @@ public class AdminTranslationController extends AdminAbstractController {
      */
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String showAddTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute TranslationForm form, BindingResult result) throws Exception {
+            @ModelAttribute(value="form") TranslationForm form, BindingResult result) throws Exception {
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
         
         EntityForm entityForm = formService.buildTranslationForm(form);
@@ -126,7 +126,7 @@ public class AdminTranslationController extends AdminAbstractController {
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String addTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute EntityForm entityForm, BindingResult result) throws Exception {
+            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
         TranslationForm form = getTranslationForm(entityForm);
         
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.UPDATE);
@@ -138,7 +138,7 @@ public class AdminTranslationController extends AdminAbstractController {
     
     @RequestMapping(value = "/update", method = RequestMethod.GET)
     public String showUpdateTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute TranslationForm form, BindingResult result) throws Exception {
+            @ModelAttribute(value="form") TranslationForm form, BindingResult result) throws Exception {
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
         
         EntityForm entityForm = formService.buildTranslationForm(form);
@@ -164,7 +164,7 @@ public class AdminTranslationController extends AdminAbstractController {
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String updateTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute EntityForm entityForm, BindingResult result) throws Exception {
+            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
         TranslationForm form = getTranslationForm(entityForm);
         
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.UPDATE);
@@ -187,7 +187,7 @@ public class AdminTranslationController extends AdminAbstractController {
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String deleteTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute TranslationForm form, BindingResult result) throws Exception {
+            @ModelAttribute(value="form") TranslationForm form, BindingResult result) throws Exception {
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.UPDATE);
         
         translationService.deleteTranslationById(form.getTranslationId());

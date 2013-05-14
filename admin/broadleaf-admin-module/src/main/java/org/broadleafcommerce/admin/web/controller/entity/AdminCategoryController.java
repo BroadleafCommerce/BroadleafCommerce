@@ -61,8 +61,8 @@ public class AdminCategoryController extends AdminBasicEntityController {
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
         super.viewEntityList(request, response, model, pathVars, requestParams);
         
         List<Category> parentCategories = catalogService.findAllParentCategories();

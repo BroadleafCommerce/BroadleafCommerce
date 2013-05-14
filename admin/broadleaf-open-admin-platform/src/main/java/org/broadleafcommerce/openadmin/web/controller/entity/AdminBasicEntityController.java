@@ -71,15 +71,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to 
@@ -182,7 +183,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String viewAddEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
+            @PathVariable  Map<String, String> pathVars,
             @RequestParam(defaultValue = "") String entityType) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
@@ -244,8 +245,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String addEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @ModelAttribute EntityForm entityForm, BindingResult result) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
         String sectionKey = getSectionKey(pathVars);
 
         Entity entity = service.addEntity(entityForm, getSectionCustomCriteria());
@@ -283,7 +284,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
+            @PathVariable  Map<String, String> pathVars,
             @PathVariable("id") String id) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
@@ -358,9 +359,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id,
-            @ModelAttribute EntityForm entityForm, BindingResult result,
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result,
             RedirectAttributes ra) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
@@ -439,9 +440,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{id}/delete", method = RequestMethod.POST)
     public String removeEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id,
-            @ModelAttribute EntityForm entityForm, BindingResult result) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         service.removeEntity(entityForm, getSectionCustomCriteria());
 
@@ -463,10 +464,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{owningClass:.*}/{collectionField:.*}/select", method = RequestMethod.GET)
     public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String owningClass,
-            @PathVariable String collectionField,
-            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value = "owningClass") String owningClass,
+            @PathVariable(value="collectionField") String collectionField,
+            @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams);
         ClassMetadata mainMetadata = service.getClassMetadata(ppr);
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
@@ -508,9 +509,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{collectionField:.*}/{id}/view", method = RequestMethod.GET)
     public String viewCollectionItemDetails(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String collectionField,
-            @PathVariable String id) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="id") String id) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
@@ -538,10 +539,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{id}/{collectionField:.*}", method = RequestMethod.GET)
     public String getCollectionFieldRecords(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id,
-            @PathVariable String collectionField,
-            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, requestParams);
@@ -602,10 +603,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{id}/{collectionField:.*}/add", method = RequestMethod.GET)
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id,
-            @PathVariable String collectionField,
-            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
@@ -697,10 +698,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}", method = RequestMethod.GET)
     public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id,
-            @PathVariable String collectionField,
-            @PathVariable String collectionItemId) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
@@ -775,10 +776,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{id}/{collectionField:.*}/add", method = RequestMethod.POST)
     public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id,
-            @PathVariable String collectionField,
-            @ModelAttribute EntityForm entityForm) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @ModelAttribute(value="entityForm") EntityForm entityForm) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
@@ -814,11 +815,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}", method = RequestMethod.POST)
     public String updateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id,
-            @PathVariable String collectionField,
-            @PathVariable String collectionItemId,
-            @ModelAttribute EntityForm entityForm) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId,
+            @ModelAttribute(value="entityForm") EntityForm entityForm) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
@@ -856,11 +857,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
     @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/sequence", method = RequestMethod.POST)
     public @ResponseBody Map<String, Object> updateCollectionItemSequence(HttpServletRequest request, 
             HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id,
-            @PathVariable String collectionField,
-            @PathVariable String collectionItemId,
-            @RequestParam String newSequence) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId,
+            @RequestParam(value="newSequence") String newSequence) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
@@ -916,10 +917,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/delete", method = RequestMethod.POST)
     public String removeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id,
-            @PathVariable String collectionField,
-            @PathVariable String collectionItemId) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));

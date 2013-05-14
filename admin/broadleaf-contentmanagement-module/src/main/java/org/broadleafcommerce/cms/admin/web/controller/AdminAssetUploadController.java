@@ -68,7 +68,7 @@ public class AdminAssetUploadController extends AdminAbstractController {
 
     @RequestMapping(value = "/{id}/chooseAsset", method = RequestMethod.GET)
     public String chooseMediaForMapKey(HttpServletRequest request, HttpServletResponse response, Model model, 
-            @PathVariable String sectionKey, @PathVariable String id) throws Exception {
+            @PathVariable(value="sectionKey") String sectionKey, @PathVariable(value="id") String id) throws Exception {
         Map<String, String> pathVars = new HashMap<String, String>();
         pathVars.put("sectionKey", AdminAssetController.SECTION_KEY);
         assetController.viewEntityList(request, response, model, pathVars, null);
@@ -89,7 +89,7 @@ public class AdminAssetUploadController extends AdminAbstractController {
     @RequestMapping(value = "/{id}/uploadAsset", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
     public @ResponseBody Map<String, Object> upload(HttpServletRequest request,
             @RequestParam("file") MultipartFile file, 
-            @PathVariable String sectionKey, @PathVariable String id) throws IOException {
+            @PathVariable(value="sectionKey") String sectionKey, @PathVariable(value="id") String id) throws IOException {
         Map<String, Object> responseMap = new HashMap<String, Object>();
         
         Map<String, String> properties = new HashMap<String, String>();
@@ -132,7 +132,7 @@ public class AdminAssetUploadController extends AdminAbstractController {
      */
     public String upload(HttpServletRequest request,
             @RequestParam("file") MultipartFile file,
-            @PathVariable String sectionKey) throws IOException {
+            @PathVariable(value="sectionKey") String sectionKey) throws IOException {
         
         StaticAsset staticAsset = staticAssetService.createStaticAssetFromFile(file, null);
         staticAssetStorageService.createStaticAssetStorageFromFile(file, staticAsset);

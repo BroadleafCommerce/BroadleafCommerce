@@ -148,10 +148,10 @@ public class AdminProductController extends AdminBasicEntityController {
     @Override
     @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}", method = RequestMethod.GET)
     public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id,
-            @PathVariable String collectionField,
-            @PathVariable String collectionItemId) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
         if ("additionalSkus".equals(collectionField)) {
             return showUpdateAdditionalSku(request, response, model, id, collectionItemId);
         }
@@ -161,10 +161,10 @@ public class AdminProductController extends AdminBasicEntityController {
     @Override
     @RequestMapping(value = "/{id}/{collectionField}/add", method = RequestMethod.GET)
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id,
-            @PathVariable String collectionField,
-            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
         if ("additionalSkus".equals(collectionField)) {
             return showAddAdditionalSku(request, response, model, id);
         } 

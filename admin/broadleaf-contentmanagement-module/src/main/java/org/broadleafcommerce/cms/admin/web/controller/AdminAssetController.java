@@ -67,8 +67,8 @@ public class AdminAssetController extends AdminBasicEntityController {
     
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
         String returnPath = super.viewEntityList(request, response, model, pathVars, requestParams);
         
         
@@ -103,8 +103,8 @@ public class AdminAssetController extends AdminBasicEntityController {
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id) throws Exception {
         model.addAttribute("cmsUrlPrefix", staticAssetService.getStaticAssetUrlPrefix());
         return super.viewEntityForm(request, response, model, pathVars, id);
     }

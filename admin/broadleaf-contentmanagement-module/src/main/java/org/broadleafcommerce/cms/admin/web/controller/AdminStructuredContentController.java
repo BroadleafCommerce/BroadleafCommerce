@@ -59,8 +59,8 @@ public class AdminStructuredContentController extends AdminBasicEntityController
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id) throws Exception {
         // Get the normal entity form for this item
         String returnPath = super.viewEntityForm(request, response, model, pathVars, id);
         EntityForm ef = (EntityForm) model.asMap().get("entityForm");
@@ -83,9 +83,9 @@ public class AdminStructuredContentController extends AdminBasicEntityController
     
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id,
-            @ModelAttribute EntityForm entityForm, BindingResult result,
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result,
             RedirectAttributes ra) throws Exception {
         // Attach the dynamic form info so that the update service will know how to split up the fields
         DynamicEntityFormInfo info = new DynamicEntityFormInfo()
@@ -99,7 +99,7 @@ public class AdminStructuredContentController extends AdminBasicEntityController
     
     @RequestMapping(value = "/{propertyName}/dynamicForm", method = RequestMethod.GET)
     public String getDynamicForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
+            @PathVariable  Map<String, String> pathVars,
             @PathVariable("propertyName") String propertyName,
             @RequestParam("propertyTypeId") String propertyTypeId) throws Exception {
         DynamicEntityFormInfo info = new DynamicEntityFormInfo()

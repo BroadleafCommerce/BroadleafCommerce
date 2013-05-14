@@ -56,8 +56,8 @@ public class AdminOfferController extends AdminBasicEntityController {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable String id) throws Exception {
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id) throws Exception {
         String view = super.viewEntityForm(request, response, model, pathVars, id);
         model.addAttribute("additionalControllerClasses", "offer-form");
         return view;
@@ -65,7 +65,7 @@ public class AdminOfferController extends AdminBasicEntityController {
     
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String viewAddEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
+            @PathVariable  Map<String, String> pathVars,
             @RequestParam(defaultValue = "") String entityType) throws Exception {
         String view = super.viewAddEntityForm(request, response, model, pathVars, entityType);
         model.addAttribute("additionalControllerClasses", "offer-form");

@@ -54,8 +54,8 @@ public class AdminCatalogActionsController extends AdminAbstractController {
                     method = RequestMethod.GET,
                     produces = "application/json")
     public @ResponseBody Map<String, Object> generateSkus(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Long productId,
-            @PathVariable String skusFieldName) {
+            @PathVariable(value = "productId") Long productId,
+            @PathVariable(value = "skusFieldName") String skusFieldName) {
         HashMap<String, Object> result = new HashMap<String, Object>();
         Integer skusGenerated = adminCatalogService.generateSkusFromProduct(productId);
         
