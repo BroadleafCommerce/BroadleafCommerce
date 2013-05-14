@@ -20,6 +20,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.logging.SupportLogManager;
+import org.broadleafcommerce.common.logging.SupportLogger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -75,6 +77,7 @@ import java.util.Set;
 public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderConfigurer implements InitializingBean {
 
     private static final Log LOG = LogFactory.getLog(RuntimeEnvironmentPropertiesConfigurer.class);
+    protected SupportLogger logger = SupportLogManager.getLogger("UserOverride", this.getClass());
     
     protected static final String SHARED_PROPERTY_OVERRIDE = "property-shared-override";
     protected static final String PROPERTY_OVERRIDE = "property-override";
@@ -187,26 +190,24 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
             allLocations.add(propertyOverride);
         }
         
-        if (LOG.isDebugEnabled()) {
-            Properties props = new Properties();
-            for (Resource resource : allLocations) {
-                if (resource.exists()) {
-                    // We will log source-control managed properties with trace and overrides with info
-                    if (((resource.equals(sharedPropertyOverride) || resource.equals(propertyOverride)) && LOG.isDebugEnabled())
-                            || LOG.isTraceEnabled()) {
-                        props = new Properties(props);
-                        props.load(resource.getInputStream());
-                        for (Entry<Object, Object> entry : props.entrySet()) {
-                            if (resource.equals(sharedPropertyOverride) || resource.equals(propertyOverride)) {
-                                LOG.debug("Read " + entry.getKey() + " from " + resource.getFilename());
-                            } else {
-                                LOG.trace("Read " + entry.getKey() + " from " + resource.getFilename());
-                            }
+        Properties props = new Properties();
+        for (Resource resource : allLocations) {
+            if (resource.exists()) {
+                // We will log source-control managed properties with trace and overrides with info
+                if (((resource.equals(sharedPropertyOverride) || resource.equals(propertyOverride)))
+                        || LOG.isTraceEnabled()) {
+                    props = new Properties(props);
+                    props.load(resource.getInputStream());
+                    for (Entry<Object, Object> entry : props.entrySet()) {
+                        if (resource.equals(sharedPropertyOverride) || resource.equals(propertyOverride)) {
+                            logger.support("Read " + entry.getKey() + " from " + resource.getFilename());
+                        } else {
+                            LOG.trace("Read " + entry.getKey() + " from " + resource.getFilename());
                         }
                     }
-                } else {
-                    LOG.debug("Unable to locate resource: " + resource.getFilename());
                 }
+            } else {
+                LOG.debug("Unable to locate resource: " + resource.getFilename());
             }
         }
 
