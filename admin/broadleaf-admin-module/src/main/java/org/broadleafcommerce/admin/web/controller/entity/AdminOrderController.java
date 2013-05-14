@@ -65,23 +65,42 @@ public class AdminOrderController extends AdminBasicEntityController {
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
-        String returnPath = super.showUpdateCollectionItem(request, response, model, pathVars, id, collectionField, collectionItemId);
-        
+        String returnPath = super.showUpdateCollectionItem(request, response, model, pathVars, id, collectionField,
+                        collectionItemId);
+        showViewOrderItemCollectionItem(request, response, model, pathVars, id, collectionField,
+                collectionItemId);
+        return returnPath;
+    }
+
+    @Override
+    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/view", method = RequestMethod.GET)
+    public String showViewCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
+        String returnPath = super.showViewCollectionItem(request, response, model, pathVars, id, collectionField,
+                        collectionItemId);
+        showViewOrderItemCollectionItem(request, response, model, pathVars, id, collectionField,
+                collectionItemId);
+
+        return returnPath;
+    }
+
+    protected void showViewOrderItemCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model, Map<String, String> pathVars, String id, String collectionField, String collectionItemId) throws Exception {
         if ("orderItems".equals(collectionField)) {
             EntityForm ef = (EntityForm) model.asMap().get("entityForm");
-            
+
             ListGrid adjustmentsGrid = ef.findListGrid("orderItemAdjustments");
             if (adjustmentsGrid != null && CollectionUtils.isEmpty(adjustmentsGrid.getRecords())) {
                 ef.removeListGrid("orderItemAdjustments");
             }
-            
+
             ListGrid priceDetailsGrid = ef.findListGrid("orderItemPriceDetails");
             if (priceDetailsGrid != null && CollectionUtils.isEmpty(priceDetailsGrid.getRecords())) {
                 ef.removeListGrid("orderItemPriceDetails");
             }
         }
-        
-        return returnPath;
     }
-    
+
 }
