@@ -118,14 +118,11 @@
                     <span th:case="*" th:remove="tag">
                         <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
                            <span th:remove="tag" th:text="${field.displayValue}" />
-                           <a th:href="@{${listGrid.path + '/' + field.entityViewPath}}" class="modal-view">
-                                <i class="icon-external-link"></i>
-                           </a>
                         </span>
-                        
+
                         <span th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity}" th:remove="tag">
                            <span th:remove="tag" th:text="${field.displayValue}" />
-                           <a th:href="@{${record.externalEntityPath}}" class="modal-view">
+                           <a th:href="@{${record.externalEntityPath + '/tester2'}}" class="modal-view">
                                  <i class="icon-external-link"></i>
                            </a>
                         </span>
