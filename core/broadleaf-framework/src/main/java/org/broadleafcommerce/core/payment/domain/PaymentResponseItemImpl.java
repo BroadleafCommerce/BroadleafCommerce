@@ -27,6 +27,11 @@ import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Index;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -44,10 +49,6 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -109,7 +110,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     @Column(name = "TRANSACTION_SUCCESS")
     @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Successful", order = 11, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
-    protected Boolean transactionSuccess;
+    protected Boolean transactionSuccess = false;
 
     @Column(name = "TRANSACTION_TIMESTAMP", nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -223,11 +224,13 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         this.referenceNumber = referenceNumber;
     }
 
+    @Override
     @Deprecated
     public Money getAmountPaid() {
         return BroadleafCurrencyUtils.getMoney(amountPaid, getCurrency());
     }
 
+    @Override
     @Deprecated
     public void setAmountPaid(Money amountPaid) {
         this.amountPaid = Money.toAmount(amountPaid);

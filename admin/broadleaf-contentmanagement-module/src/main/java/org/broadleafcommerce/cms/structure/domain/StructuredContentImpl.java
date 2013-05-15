@@ -219,14 +219,14 @@ public class StructuredContentImpl implements StructuredContent {
     @AdminPresentation(friendlyName = "StructuredContentImpl_Deleted", order = 2, 
         group = Presentation.Group.Name.Internal, groupOrder = Presentation.Group.Order.Internal,
         visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Boolean deletedFlag;
+    protected Boolean deletedFlag = false;
 
     @Column(name = "ARCHIVED_FLAG")
     @Index(name="SC_ARCHVD_FLG_INDX", columnNames={"ARCHIVED_FLAG"})
     @AdminPresentation(friendlyName = "StructuredContentImpl_Archived", order = 3, 
         group = Presentation.Group.Name.Internal, groupOrder = Presentation.Group.Order.Internal,
         visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Boolean archivedFlag;
+    protected Boolean archivedFlag = false;
 
     @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order = 4, 
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)

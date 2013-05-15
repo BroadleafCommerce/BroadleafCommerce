@@ -182,7 +182,7 @@ public class OfferImpl implements Offer, Status {
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable",
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
-    protected Boolean stackable;
+    protected Boolean stackable = false;
 
     @Column(name = "TARGET_SYSTEM")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Target_System",
@@ -194,7 +194,7 @@ public class OfferImpl implements Offer, Status {
     @AdminPresentation(friendlyName = "OfferImpl_Apply_To_Sale_Price",
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
-    protected Boolean applyToSalePrice;
+    protected Boolean applyToSalePrice = false;
 
     @Column(name = "APPLIES_TO_RULES")
     @AdminPresentation(excluded = true)
@@ -224,7 +224,7 @@ public class OfferImpl implements Offer, Status {
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
         visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Boolean combinableWithOtherOffers;
+    protected Boolean combinableWithOtherOffers = false;
 
     @Column(name = "OFFER_DELIVERY_TYPE")
     @AdminPresentation(excluded = true)
@@ -234,7 +234,7 @@ public class OfferImpl implements Offer, Status {
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Automatically_Added", order = 5000,
             group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
             fieldType = SupportedFieldType.BOOLEAN)
-    protected Boolean automaticallyAdded;;
+    protected Boolean automaticallyAdded = false;
 
     @Column(name = "MAX_USES")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order", order = 7,
@@ -297,7 +297,7 @@ public class OfferImpl implements Offer, Status {
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
         visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Boolean totalitarianOffer;
+    protected Boolean totalitarianOffer = false;
     
     @ManyToMany(targetEntity = OfferRuleImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_OFFER_RULE_MAP", 
@@ -340,7 +340,7 @@ public class OfferImpl implements Offer, Status {
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
         visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Boolean treatAsNewFormat;
+    protected Boolean treatAsNewFormat = false;
     
     @Column(name = "QUALIFYING_ITEM_MIN_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName="OfferImpl_Qualifying_Item_Subtotal",
@@ -579,6 +579,7 @@ public class OfferImpl implements Offer, Status {
         return combinableWithOtherOffers;
     }
 
+    @Override
     public boolean isAutomaticallyAdded() {
         if (automaticallyAdded == null) {
             if (deliveryType != null) {
@@ -591,6 +592,7 @@ public class OfferImpl implements Offer, Status {
     }
 
     
+    @Override
     public void setAutomaticallyAdded(boolean automaticallyAdded) {
         this.automaticallyAdded = automaticallyAdded;
     }

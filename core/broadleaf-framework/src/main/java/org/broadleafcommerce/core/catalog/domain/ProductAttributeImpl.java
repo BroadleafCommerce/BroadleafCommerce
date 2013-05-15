@@ -79,7 +79,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /** The searchable. */
     @Column(name = "SEARCHABLE")
     @AdminPresentation(excluded = true)
-    protected Boolean searchable;
+    protected Boolean searchable = false;
     
     /** The product. */
     @ManyToOne(targetEntity = ProductImpl.class, optional=false)
@@ -90,6 +90,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getId()
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -97,6 +98,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setId(java.lang.Long)
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -104,6 +106,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getValue()
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -111,6 +114,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setValue(java.lang.String)
      */
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
@@ -118,6 +122,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getSearchable()
      */
+    @Override
     public Boolean getSearchable() {
         return searchable;
     }
@@ -125,6 +130,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setSearchable(java.lang.Boolean)
      */
+    @Override
     public void setSearchable(Boolean searchable) {
         this.searchable = searchable;
     }
@@ -132,6 +138,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getName()
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -139,6 +146,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setName(java.lang.String)
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -146,12 +154,14 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return value;
     }
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getProduct()
      */
+    @Override
     public Product getProduct() {
         return product;
     }
@@ -159,6 +169,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setProduct(org.broadleafcommerce.core.catalog.domain.Product)
      */
+    @Override
     public void setProduct(Product product) {
         this.product = product;
     }

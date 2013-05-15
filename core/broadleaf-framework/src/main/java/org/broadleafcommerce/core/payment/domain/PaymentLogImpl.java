@@ -27,6 +27,9 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.Index;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,8 +43,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -88,7 +89,7 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Column(name = "TRANSACTION_SUCCESS")
     @AdminPresentation(friendlyName = "PaymentLogImpl_Transaction_Successfule", order = 6, group = "PaymentLogImpl_Payment_Log", readOnly = true)
-    protected Boolean transactionSuccess;
+    protected Boolean transactionSuccess = false;
 
     @Column(name = "EXCEPTION_MESSAGE")
     @AdminPresentation(friendlyName = "PaymentLogImpl_Exception_Message", order = 7, group = "PaymentLogImpl_Payment_Log", readOnly = true)

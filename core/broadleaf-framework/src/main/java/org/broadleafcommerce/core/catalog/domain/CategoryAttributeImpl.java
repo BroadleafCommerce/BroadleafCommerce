@@ -72,7 +72,7 @@ public class CategoryAttributeImpl implements CategoryAttribute {
 
     @Column(name = "SEARCHABLE")
     @AdminPresentation(excluded = true)
-    protected Boolean searchable;
+    protected Boolean searchable = false;
     
     @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
     @JoinColumn(name = "CATEGORY_ID")

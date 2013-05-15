@@ -65,7 +65,7 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
 
     @Column(name = "HIDDEN")
     @Index(name = "HIDDEN_INDEX", columnNames = {"HIDDEN"})
-    protected Boolean hidden;
+    protected Boolean hidden = false;
 
     @Override
     public String getDisplay() {

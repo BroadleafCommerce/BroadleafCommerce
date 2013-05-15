@@ -61,7 +61,7 @@ public class LocaleImpl implements Locale {
     @AdminPresentation(friendlyName = "LocaleImpl_Is_Default", order = 3, 
         group = "LocaleImpl_Details", 
         prominent = true, gridOrder = 3)
-    protected Boolean defaultFlag;
+    protected Boolean defaultFlag = false;
 
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")

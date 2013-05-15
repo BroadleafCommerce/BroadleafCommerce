@@ -63,10 +63,10 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     protected String moduleName;
 
     @Column(name = "IS_ACTIVE", nullable = false)
-    protected Boolean isActive;
+    protected Boolean isActive = false;
 
     @Column(name = "IS_DEFAULT", nullable = false)
-    protected Boolean isDefault;
+    protected Boolean isDefault = false;
 
     @Column(name = "CONFIG_TYPE", nullable = false)
     protected String configType;

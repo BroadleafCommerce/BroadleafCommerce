@@ -53,7 +53,7 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency {
 
     @Column(name = "DEFAULT_FLAG")
     @AdminPresentation(friendlyName = "BroadleafCurrencyImpl_Is_Default", group = "BroadleafCurrencyImpl_Details", excluded = true)
-    protected Boolean defaultFlag;
+    protected Boolean defaultFlag = false;
 
     @Override
     public String getCurrencyCode() {

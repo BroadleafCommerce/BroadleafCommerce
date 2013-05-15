@@ -47,6 +47,13 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,12 +68,6 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 @Entity
@@ -181,18 +182,18 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     protected String orderItemType;
 
     @Column(name = "ITEM_TAXABLE_FLAG")
-    protected Boolean itemTaxable;
+    protected Boolean itemTaxable = false;
 
     @Column(name = "RETAIL_PRICE_OVERRIDE")
-    protected Boolean retailPriceOverride;
+    protected Boolean retailPriceOverride = false;
 
     @Column(name = "SALE_PRICE_OVERRIDE")
-    protected Boolean salePriceOverride;
+    protected Boolean salePriceOverride = false;
 
     @Column(name = "DISCOUNTS_ALLOWED")
     @AdminPresentation(friendlyName = "OrderItemImpl_Discounts_Allowed", order=Presentation.FieldOrder.DISCOUNTALLOWED,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
-    protected Boolean discountsAllowed;
+    protected Boolean discountsAllowed = false;
 
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")

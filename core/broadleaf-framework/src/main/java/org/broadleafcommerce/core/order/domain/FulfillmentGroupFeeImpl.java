@@ -29,6 +29,10 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -45,9 +49,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
@@ -89,7 +90,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     
     @Column(name = "FEE_TAXABLE_FLAG")
     @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Taxable", order = 5000)
-    protected Boolean feeTaxable; 
+    protected Boolean feeTaxable = false; 
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_FG_FEE_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_FEE_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))

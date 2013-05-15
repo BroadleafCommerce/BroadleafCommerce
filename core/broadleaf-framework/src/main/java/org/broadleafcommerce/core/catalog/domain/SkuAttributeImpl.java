@@ -89,7 +89,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /** The searchable. */
     @Column(name = "SEARCHABLE")
     @AdminPresentation(excluded = true)
-    protected Boolean searchable;
+    protected Boolean searchable = false;
   
     /** The sku. */
     @ManyToOne(targetEntity = SkuImpl.class, optional=false)
@@ -100,6 +100,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getId()
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -107,6 +108,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setId(java.lang.Long)
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -114,6 +116,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getValue()
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -121,6 +124,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setValue(java.lang.String)
      */
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
@@ -128,6 +132,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSearchable()
      */
+    @Override
     public Boolean getSearchable() {
         return searchable;
     }
@@ -135,6 +140,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setSearchable(java.lang.Boolean)
      */
+    @Override
     public void setSearchable(Boolean searchable) {
         this.searchable = searchable;
     }
@@ -142,6 +148,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getName()
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -149,6 +156,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setName(java.lang.String)
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -164,6 +172,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#getSku()
      */
+    @Override
     public Sku getSku() {
         return sku;
     }
@@ -171,6 +180,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.SkuAttribute#setSku(org.broadleafcommerce.core.catalog.domain.Sku)
      */
+    @Override
     public void setSku(Sku sku) {
         this.sku = sku;
     }

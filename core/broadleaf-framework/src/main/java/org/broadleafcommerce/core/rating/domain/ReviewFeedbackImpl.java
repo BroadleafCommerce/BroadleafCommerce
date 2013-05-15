@@ -49,41 +49,49 @@ public class ReviewFeedbackImpl implements ReviewFeedback {
     protected Customer customer;
 
     @Column(name = "IS_HELPFUL", nullable = false)
-    protected Boolean isHelpful;
+    protected Boolean isHelpful = false;
 
     @ManyToOne(optional = false, targetEntity = ReviewDetailImpl.class)
     @JoinColumn(name = "REVIEW_DETAIL_ID")
     @Index(name="REVIEWFEED_DETAIL_INDEX", columnNames={"REVIEW_DETAIL_ID"})
     protected ReviewDetail reviewDetail;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public Customer getCustomer() {
         return customer;
     }
 
+    @Override
     public ReviewDetail getReviewDetail() {
         return reviewDetail;
     }
 
+    @Override
     public Boolean getIsHelpful() {
         return isHelpful;
     }
 
+    @Override
     public void setIsHelpful(Boolean isHelpful) {
         this.isHelpful = isHelpful;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
+    @Override
     public void setReviewDetail(ReviewDetail reviewDetail) {
         this.reviewDetail = reviewDetail;
     }
