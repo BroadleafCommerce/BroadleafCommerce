@@ -103,6 +103,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
     }
 
     protected String defaultEnvironment = "development";
+    protected String determinedEnvironment = null;
     protected RuntimeEnvironmentKeyResolver keyResolver;
     protected Set<String> environments = Collections.emptySet();
     protected Set<Resource> propertyLocations;
@@ -277,14 +278,17 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
     }
 
     public String determineEnvironment() {
-        String environment = keyResolver.resolveRuntimeEnvironmentKey();
+        if (determinedEnvironment != null) {
+            return determinedEnvironment;
+        }
+        determinedEnvironment = keyResolver.resolveRuntimeEnvironmentKey();
 
-        if (environment == null) {
+        if (determinedEnvironment == null) {
             LOG.warn("Unable to determine runtime environment, using default environment '" + defaultEnvironment + "'");
-            return defaultEnvironment;
+            determinedEnvironment = defaultEnvironment;
         }
 
-        return environment.toLowerCase();
+        return determinedEnvironment.toLowerCase();
     }
 
     @Override
