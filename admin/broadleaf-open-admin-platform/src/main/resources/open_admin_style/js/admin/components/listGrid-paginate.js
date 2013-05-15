@@ -502,7 +502,11 @@
         
         updateUrlFromScroll : function($tbody) {
             var topIndex = this.getTopVisibleIndex($tbody);
-            BLCAdmin.history.replaceUrlParameter('startIndex', topIndex);
+            if (topIndex == 0) {
+                BLCAdmin.history.replaceUrlParameter('startIndex');
+            } else {
+                BLCAdmin.history.replaceUrlParameter('startIndex', topIndex);
+            }
         },
         
         createPadding : function($tbody, startRange, endRange) {

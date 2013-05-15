@@ -52,6 +52,7 @@
             //fill out the criteria and sorts based on the current URL parameters
             var $header = $('#listGrid-main-header');
             var params = BLCAdmin.history.getUrlParameters();
+            $('i.filter-icon').removeClass('icon-filter');
             if (params) {
                 var sortProperty = params['sortProperty'];
                 if (sortProperty) {
@@ -302,14 +303,25 @@ $(document).ready(function() {
     $('body').on('click', '.custom-entity-search a', function(event) {
         //this takes place on the main list grid screen so there should be a single list grid
         var search = $('body').find('input').val();
-        var $firstHeader = $('body').find('.list-grid-table th.th1');
-        $firstHeader.find('input.listgrid-criteria-input').val(search);
+        var $firstHeader = $('body').find('#listGrid-main-header th:first-child');
+        var $input = $firstHeader.find('input.listgrid-criteria-input');
+        
+        $input.val(search);
+        
+        var submitData = {};
+        submitData[$input.data('name')] =  $input.val();
+        
         BLC.ajax({
-            url: $(this).closest('form').action,
+            url: $(this).closest('form').attr('action'),
             type: "GET",
-            data: $firstHeader.find('div.filter-fields :input').serialize()
+            data: submitData
         }, function(data) {
+            BLCAdmin.history.replaceUrlParameter('startIndex');
+            for (key in submitData) {
+                BLCAdmin.history.replaceUrlParameter(key, submitData[key]);
+            }
             BLCAdmin.listGrid.replaceRelatedListGrid($(data));
+            $input.trigger('input');
         });
         return false;
     });
