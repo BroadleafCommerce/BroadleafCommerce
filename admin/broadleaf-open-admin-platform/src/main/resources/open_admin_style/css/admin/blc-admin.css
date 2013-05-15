@@ -552,7 +552,6 @@ table.table-hover tbody tr.draggable:hover {
     box-sizing: content-box;
     display: none;
     position: absolute;
-    right: 0;
     background: #fff;
     background: rgba(255, 255, 255, 0.98);
     list-style: none;
