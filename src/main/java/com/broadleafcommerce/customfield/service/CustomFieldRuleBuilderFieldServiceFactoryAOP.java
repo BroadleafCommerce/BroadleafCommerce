@@ -61,7 +61,7 @@ public class CustomFieldRuleBuilderFieldServiceFactoryAOP {
                         SupportedFieldType type = SupportedFieldType.valueOf(customField.getCustomFieldType());
                         StringBuilder fieldName = new StringBuilder();
                         fieldName.append(CustomFieldInfo.RULE_BUILDER_TYPE_PREFIXES.get(response.getName()).get(targetType));
-                        fieldName.append(CustomFieldInfo.CUSTOM_FIELD_FIELD_NAMES.get(targetType.getType()));
+                        fieldName.append(CustomFieldInfo.CUSTOM_FIELD_GETTER_NAMES.get(targetType.getType()));
                         fieldName.append(FieldManager.MAPFIELDSEPARATOR);
                         fieldName.append(customField.getAttributeName());
 

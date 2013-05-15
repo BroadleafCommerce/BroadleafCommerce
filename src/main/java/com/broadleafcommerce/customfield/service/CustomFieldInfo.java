@@ -48,6 +48,19 @@ public class CustomFieldInfo {
         CUSTOM_FIELD_FIELD_NAMES.put(CustomFieldTargetType.REQUEST.getType(), REQUESTDTO_ATTRIBUTE_FIELD);
     }
 
+    private static final String PRODUCT_ATTRIBUTE_FIELD_GETTER = "getProductAttributes()";
+    private static final String SKU_ATTRIBUTE_FIELD_GETTER = "getSkuAttributes()";
+    private static final String ORDER_ITEM_ATTRIBUTE_FIELD_GETTER = "getOrderItemAttributes()";
+    private static final String CUSTOMER_ATTRIBUTE_FIELD_GETTER = "getCustomerAttributes()";
+    private static final String REQUESTDTO_ATTRIBUTE_FIELD_GETTER = "getRequestDTOAttributes()";
+    public static final Map<String, String> CUSTOM_FIELD_GETTER_NAMES = new HashMap<String, String>();
+    static {
+        CUSTOM_FIELD_GETTER_NAMES.put(CustomFieldTargetType.CUSTOMER.getType(), CUSTOMER_ATTRIBUTE_FIELD_GETTER);
+        CUSTOM_FIELD_GETTER_NAMES.put(CustomFieldTargetType.ORDERITEM.getType(), ORDER_ITEM_ATTRIBUTE_FIELD_GETTER);
+        CUSTOM_FIELD_GETTER_NAMES.put(CustomFieldTargetType.PRODUCT.getType(), PRODUCT_ATTRIBUTE_FIELD_GETTER);
+        CUSTOM_FIELD_GETTER_NAMES.put(CustomFieldTargetType.SKU.getType(), SKU_ATTRIBUTE_FIELD_GETTER);
+        CUSTOM_FIELD_GETTER_NAMES.put(CustomFieldTargetType.REQUEST.getType(), REQUESTDTO_ATTRIBUTE_FIELD_GETTER);
+    }
     private static final String BLCOPERATORS_BOOLEAN = "blcOperators_Boolean";
     private static final String BLCOPERATORS_DATE = "blcOperators_Date";
     private static final String BLCOPERATOS_NUMERIC = "blcOperators_Numeric";
