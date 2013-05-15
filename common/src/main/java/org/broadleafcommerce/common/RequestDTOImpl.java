@@ -18,8 +18,11 @@ package org.broadleafcommerce.common;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by bpolster.
@@ -37,6 +40,8 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
     @AdminPresentation(friendlyName = "RequestDTOImpl_Is_Secure")
     private Boolean secure;
 
+    private Map<String, String> requestDTOAttributes = new HashMap<String, String>();
+
     public RequestDTOImpl() {
             // no arg constructor - used by rule builder
     }
@@ -45,6 +50,13 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
         requestURI = request.getRequestURI();
         fullUrlWithQueryString = request.getRequestURL().toString();
         secure = ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
+        for (Object param : request.getParameterMap().keySet()) {
+            if (param != null && param.toString().startsWith("attr") && request.getParameterValues(param.toString()) != null)
+            {
+                requestDTOAttributes.put(param.toString(), request.getParameterValues(param.toString())[0]);
+            }
+
+        }
     }
 
     /**
@@ -66,6 +78,14 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
      */
     public Boolean isSecure() {
         return secure;
+    }
+
+    public Map<String, String> getRequestDTOAttributes() {
+        return requestDTOAttributes;
+    }
+
+    public void setRequestDTOAttributes(Map<String, String> requestDTOAttributes) {
+        this.requestDTOAttributes = requestDTOAttributes;
     }
 
 }
