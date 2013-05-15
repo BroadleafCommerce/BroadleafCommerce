@@ -15,12 +15,6 @@
             buttons.add($('> span.' + activeClass, buttons)).removeClass(activeClass);
         },
         
-        removeFilter : function () {
-            var criteria = $(this).parent().parent();
-            $(this).parent().remove();
-            BLCAdmin.listGrid.filter.showOperators(criteria);
-        },
-        
         showOperators : function (criteria) {
             if ( $(criteria).children().length > 1) {
                 $(criteria).next().show();
@@ -28,20 +22,7 @@
                 $(criteria).next().hide();
             }
         },
-        
-        createCriteria : function () {
-            var fContainer = $("<div class=\"listgrid-criteria-container\">");
-            var fieldIdx = $(this).data('fieldIndex');
-            var fInput = $("<input class=\"listgrid-criteria-input\"" +
-                    " name=\"criteria[" + fieldIdx + "].filterValues\"type=\"text\" placeholder=\"criteria\" />");
-            var lRemove = $("<a class=\"remove-filter\" href=\"#\">Remove</a>");
-            lRemove.click(BLCAdmin.listGrid.filter.removeFilter());
-            fContainer.append(fInput);
-            fContainer.append(lRemove);
 
-            return fContainer;
-        },
-        
         clearActiveSorts : function($context) {
             $context.closest('thead').find('i.sort-icon').removeClass('listgrid-icon-down').removeClass('listgrid-icon-up');
             $context.closest('thead').find('input.sort-direction').removeClass('active').val('');
@@ -122,8 +103,6 @@
         BLCAdmin.listGrid.filter.showOperators(criteria);
     });
 
-    $('.listgrid-headerBtn.dropdown .remove-filter').click(BLCAdmin.listGrid.filter.removeFilter());
-
     // reset other active states
     $(document).on('click.fndtn', '.listgrid-headerBtn.dropdown:not(.split), .listgrid-headerBtn.dropdown.split span', function (e) {
         var $el = $(this),
@@ -199,6 +178,12 @@ $(document).ready(function() {
     
     $('body').on('click', 'button.listgrid-clear-filter', function() {
         $(this).closest('.filter-fields').find('input.listgrid-criteria-input').val('');
+        //clear out the foreign key display value
+        $foreignKeyDisplay = $(this).closest('.filter-fields').find('div.foreign-key-value-container span.display-value');
+        if ($foreignKeyDisplay) {
+            $foreignKeyDisplay.text('');
+        }
+        $(this).closest('th').find('.filter-icon').removeClass('icon-filter');
         $(this).attr('disabled', 'disabled');
         $(this).closest('ul').find('div.filter-fields .listgrid-filter').click();
         
@@ -241,7 +226,7 @@ $(document).ready(function() {
     $('body').on('click', 'div.filter-fields button.listgrid-filter', function(event) {
         $(this).closest('ul').removeClass('show-dropdown');
         
-        var $inputs = $(this).closest('thead').find('div.filter-fields :input');
+        var $inputs = $(this).closest('thead').find('div.filter-fields :input.listgrid-criteria-input');
         var nonBlankInputs = [];
         $inputs.each(function(index, input) {
             //since these filter inputs do not have 'real' input names in the DOM, give it here to make serialization easier

@@ -109,6 +109,10 @@ input[type="text"], input[type="password"], input[type="date"], input[type="date
     margin: 7px 0 0px 0px;
 }
 
+.listgrid-headerBtn.dropdown > ul > li > div.filter-fields .foreign-key-value-container {
+    color: black;
+}
+
 .entity-form .custom-checkbox {
 }
 
