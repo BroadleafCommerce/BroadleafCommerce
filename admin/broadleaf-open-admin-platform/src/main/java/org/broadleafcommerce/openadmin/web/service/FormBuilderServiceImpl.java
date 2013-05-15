@@ -663,7 +663,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         
         ef.addAction(DefaultEntityFormActions.DELETE);
-        
     }
 
     @Override

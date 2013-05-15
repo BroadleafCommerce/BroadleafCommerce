@@ -67,7 +67,7 @@
     
     <div class="entity-form-actions">
         <button th:each="action : ${entityForm.actions}" 
-            class="button radius dark right" 
+            class="button radius dark" 
             th:type="${action.buttonType}"
             th:classappend="${action.buttonClass}">
             <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />

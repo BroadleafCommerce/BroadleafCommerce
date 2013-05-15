@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -262,7 +263,15 @@ public class EntityForm {
     }
 
     public void addAction(EntityFormAction action) {
-        getActions().add(action);
+        actions.add(action);
+    }
+    
+    public void removeAction(EntityFormAction action) {
+        actions.remove(action);
+    }
+    
+    public void removeAllActions() {
+        actions.clear();
     }
     
     public EntityForm getDynamicForm(String name) {
@@ -301,6 +310,12 @@ public class EntityForm {
         }
         
         actions.clear();
+    }
+
+    public List<EntityFormAction> getActions() {
+        List<EntityFormAction> clonedActions = new ArrayList<EntityFormAction>(actions);
+        Collections.reverse(clonedActions);
+        return Collections.unmodifiableList(clonedActions);
     }
     
     /* *********************** */
@@ -377,10 +392,6 @@ public class EntityForm {
 
     public void setDynamicFormInfos(Map<String, DynamicEntityFormInfo> dynamicFormInfos) {
         this.dynamicFormInfos = dynamicFormInfos;
-    }
-
-    public List<EntityFormAction> getActions() {
-        return actions;
     }
 
     public void setActions(List<EntityFormAction> actions) {

@@ -90,7 +90,7 @@ public class AdminProductController extends AdminBasicEntityController {
         
         EntityForm entityForm = formService.createEntityForm(collectionMetadata);
         
-        entityForm.getActions().remove(DefaultEntityFormActions.DELETE);
+        entityForm.removeAction(DefaultEntityFormActions.DELETE);
 
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/simpleAddEntity");
@@ -128,7 +128,7 @@ public class AdminProductController extends AdminBasicEntityController {
         // Build the entity form for the modal that includes the subcollections
         EntityForm entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap);
         
-        entityForm.getActions().remove(DefaultEntityFormActions.DELETE);
+        entityForm.removeAction(DefaultEntityFormActions.DELETE);
         
         // Ensure that operations on the Sku subcollections go to the proper URL
         for (ListGrid lg : entityForm.getAllListGrids()) {

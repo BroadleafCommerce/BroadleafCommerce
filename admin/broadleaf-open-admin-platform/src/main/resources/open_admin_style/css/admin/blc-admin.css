@@ -163,6 +163,7 @@ div.field-label.inline {
 }
 
 .entity-form-actions {
+	text-align: right;
 	margin-top: 20px;
 }
 
@@ -206,8 +207,9 @@ div.field-label.inline {
 }
 
 h2#mainEntityName {
-	margin-bottom: 30px;
+	margin-bottom: 15px;
 	color: #98B30A;
+	margin-top: 0;
 }
 
 /* --------------------------------------------------
