@@ -36,7 +36,7 @@ public class OfferRuleType implements Serializable, BroadleafEnumerationType {
     public static final OfferRuleType FULFILLMENT_GROUP = new OfferRuleType("FULFILLMENT_GROUP", "Fulfillment Group");
     public static final OfferRuleType CUSTOMER = new OfferRuleType("CUSTOMER", "Customer");
     public static final OfferRuleType TIME = new OfferRuleType("TIME", "Time");
-
+    public static final OfferRuleType REQUEST = new OfferRuleType("REQUEST", "Request");
     public static OfferRuleType getInstance(final String type) {
         return TYPES.get(type);
     }

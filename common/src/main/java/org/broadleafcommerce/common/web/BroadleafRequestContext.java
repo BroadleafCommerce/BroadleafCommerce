@@ -17,6 +17,7 @@
 package org.broadleafcommerce.common.web;
 
 
+import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -78,7 +79,8 @@ public class BroadleafRequestContext {
     protected Boolean ignoreSite = false;
     protected Map<String, Object> additionalProperties = new HashMap<String, Object>();
     protected MessageSource messageSource;
-
+    protected RequestDTO requestDTO;
+    
     /**
      * Gets the current request on the context
      * @return
@@ -309,5 +311,13 @@ public class BroadleafRequestContext {
 
     public void setTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
+    }
+
+    public RequestDTO getRequestDTO() {
+        return requestDTO;
+    }
+
+    public void setRequestDTO(RequestDTO requestDTO) {
+        this.requestDTO = requestDTO;
     }
 }

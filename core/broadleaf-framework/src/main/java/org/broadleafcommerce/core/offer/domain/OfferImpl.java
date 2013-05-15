@@ -314,6 +314,12 @@ public class OfferImpl implements Offer, Status {
                     ruleIdentifier = RuleIdentifier.CUSTOMER, friendlyName = "OfferImpl_Customer_Rule")
             ),
             @AdminPresentationMapField(
+                            fieldName = RuleIdentifier.REQUEST_FIELD_KEY,
+                            fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE,
+                                    group = Presentation.Group.Name.Qualifiers, groupOrder = Presentation.Group.Order.Qualifiers,
+                                    ruleIdentifier = RuleIdentifier.REQUEST, friendlyName = "Generic_Request_Rule")
+                    ),
+                    @AdminPresentationMapField(
                     fieldName = RuleIdentifier.TIME_FIELD_KEY,
                             fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE,
                                     group = Presentation.Group.Name.ActivityRange, groupOrder = Presentation.Group.Order.ActivityRange,

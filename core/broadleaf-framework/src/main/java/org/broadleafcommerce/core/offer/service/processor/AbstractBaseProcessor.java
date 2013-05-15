@@ -241,7 +241,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             //Unable to execute the MVEL expression for some reason
             //Return false, but notify about the bad expression through logs
             LOG.warn("Unable to parse and/or execute an mvel expression. Reporting to the logs and returning false " +
-                    "for the match expression", e);
+                    "for the match expression:" + expression, e);
             return false;
         }
 

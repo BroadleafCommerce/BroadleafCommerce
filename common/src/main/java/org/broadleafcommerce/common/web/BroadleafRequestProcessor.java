@@ -18,6 +18,7 @@ package org.broadleafcommerce.common.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -65,6 +66,9 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
     @Resource(name = "blTimeZoneResolver")
     protected BroadleafTimeZoneResolver broadleafTimeZoneResolver;
 
+    @Resource(name = "blRequestDTOResolver")
+    protected BroadleafRequestDTOResolver broadleafRequestDTOResolver;
+
     @Override
     public void process(WebRequest request) {
         Site site = siteResolver.resolveSite(request);
@@ -82,7 +86,7 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
         Locale locale = localeResolver.resolveLocale(request);
         TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
         BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
-
+        RequestDTO requestDTO = broadleafRequestDTOResolver.resolveRequestDTO(request);
         SandBox currentSandbox = sandboxResolver.resolveSandBox(request, site);
         if (currentSandbox != null) {
             SandBoxContext previewSandBoxContext = new SandBoxContext();
@@ -98,6 +102,7 @@ public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
         brc.setTheme(theme);
         brc.setMessageSource(messageSource);
         brc.setTimeZone(timeZone);
+        brc.setRequestDTO(requestDTO);
         Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute("blRuleMap", WebRequest.SCOPE_REQUEST);
         if (ruleMap == null) {
             LOG.trace("Creating ruleMap and adding in Locale.");
