@@ -596,7 +596,7 @@ ul.orbit-bullets li.active.has-thumb { background-position: 0 0; border-top: 2px
 
 @media print { .reveal-modal { border: solid 1px #000; background: #fff; } }
 /* Tabs ---------------------- */
-.tabs { list-style: none; border-bottom: none; display: block; height: 44px; padding: 0; margin-bottom: -1px; white-space: nowrap; overflow: hidden; }
+.tabs { list-style: none; border-bottom: none; display: block; height: 43px; padding: 0; margin-bottom: -1px; white-space: nowrap; overflow: hidden; }
 .tabs.contained { margin-bottom: 0; margin-left: 0; }
 .tabs dt, .tabs li.section-title { color: #b3b3b3; cursor: default; display: block; float: left; font-size: 12px; height: 40px; line-height: 40px; padding: 0; padding-right: 9px; padding-left: 20px; font-weight: normal; width: auto; text-transform: uppercase; }
 .tabs dt:first-child, .tabs li.section-title:first-child { padding: 0; padding-right: 9px; }

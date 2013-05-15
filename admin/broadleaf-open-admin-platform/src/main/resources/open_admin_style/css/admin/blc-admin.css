@@ -182,7 +182,9 @@ div.field-label.inline {
 
 .tabs dd.active, .tabs li.active {
 	border-top: 3px solid #424242;
-	border-bottom: 1px solid #FFF;
+	border-bottom: none;
+	background-color: white;
+	padding-bottom: 1px;
 }
 
 .tabs.vertical dd, .tabs.vertical li {
