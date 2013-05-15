@@ -109,10 +109,6 @@ input[type="text"], input[type="password"], input[type="date"], input[type="date
     margin: 7px 0 0px 0px;
 }
 
-.listgrid-headerBtn.dropdown > ul > li > div.filter-fields .foreign-key-value-container {
-    color: black;
-}
-
 .entity-form .custom-checkbox {
 }
 
@@ -156,6 +152,10 @@ div.field-label {
 }
 div.field-label.inline {
 	display: inline-block;
+}
+
+.field-label.inline.required:after {
+    content: "*";
 }
 
 .modal .entity-form-actions {
@@ -845,9 +845,17 @@ table.table-hover tbody tr.draggable:hover {
     margin-left: 2px;
 }
 
+.listgrid-criteria-container {
+    color: black;
+}
+
 .listgrid-criteria-container input {
 	width: 100%;
 	margin-bottom: 4px;
+}
+
+.listgrid-criteria-container .datepicker-container input {
+    width: 95%;
 }
 
 .listgrid-headerBtn.dropdown > ul > li > div.filter-fields,
