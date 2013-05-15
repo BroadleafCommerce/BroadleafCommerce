@@ -131,9 +131,14 @@ public class OfferDaoImpl implements OfferDao {
         c.add(Calendar.DATE, -1);
         //offer.endDate+1>currentTime
         criteria.add(Restrictions.gt("endDate", c.getTime()));
-        criteria.add(Restrictions.or(Restrictions.eq("archiveStatus.archived", 'N'), Restrictions.isNull("archiveStatus.archived")));
-        return criteria.list();
+        criteria.add(Restrictions.or(Restrictions.eq("archiveStatus.archived", 'N'),
+                Restrictions.isNull("archiveStatus.archived")));
 
+        // Automatically Added or (Automatically Added is null and deliveryType is Automatic)
+        criteria.add(Restrictions.or(Restrictions.eq("automaticallyAdded", true),
+                Restrictions.and(Restrictions.isNull("automaticallyAdded"),
+                        Restrictions.eq("deliveryType", "AUTOMATIC"))));
+        return criteria.list();
     }
 
 }

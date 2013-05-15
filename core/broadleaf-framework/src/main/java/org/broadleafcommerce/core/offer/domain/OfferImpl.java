@@ -226,13 +226,15 @@ public class OfferImpl implements Offer, Status {
         visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean combinableWithOtherOffers;
 
-    @Column(name = "OFFER_DELIVERY_TYPE", nullable=false)
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Delivery_Type", order = 5000,
-        group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
-        fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDeliveryType")
-    @Index(name="OFFER_DELIVERY_INDEX", columnNames={"OFFER_DELIVERY_TYPE"})
+    @Column(name = "OFFER_DELIVERY_TYPE")
+    @AdminPresentation(excluded = true)
     protected String deliveryType;
+
+    @Column(name = "AUTOMATICALLY_ADDED")
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Automatically_Added", order = 5000,
+            group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
+            fieldType = SupportedFieldType.BOOLEAN)
+    protected Boolean automaticallyAdded;;
 
     @Column(name = "MAX_USES")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order", order = 7,
@@ -576,9 +578,34 @@ public class OfferImpl implements Offer, Status {
     public boolean getCombinableWithOtherOffers() {
         return combinableWithOtherOffers;
     }
+
+    public boolean isAutomaticallyAdded() {
+        if (automaticallyAdded == null) {
+            if (deliveryType != null) {
+                OfferDeliveryType offerDeliveryType = OfferDeliveryType.getInstance(deliveryType);
+                return OfferDeliveryType.AUTOMATIC.equals(offerDeliveryType);
+            }
+            return false;
+        }
+        return automaticallyAdded;
+    }
+
     
+    public void setAutomaticallyAdded(boolean automaticallyAdded) {
+        this.automaticallyAdded = automaticallyAdded;
+    }
+
     @Override
+    @Deprecated
+    @JsonIgnore
     public OfferDeliveryType getDeliveryType() {
+        if (deliveryType == null) {
+            if (isAutomaticallyAdded()) {
+                return OfferDeliveryType.AUTOMATIC;
+            } else {
+                return OfferDeliveryType.MANUAL;
+            }
+        }
         return OfferDeliveryType.getInstance(deliveryType);
     }
 
