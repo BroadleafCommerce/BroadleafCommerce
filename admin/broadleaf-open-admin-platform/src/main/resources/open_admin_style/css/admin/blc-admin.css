@@ -546,6 +546,10 @@ table.table-hover tbody tr.draggable:hover {
     right: 10px;
 }
 
+.listgrid-header-wrapper th:first-child .listgrid-headerBtn.dropdown > ul {
+	right: inherit;
+}
+
 .listgrid-headerBtn.dropdown > ul {
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
@@ -559,6 +563,7 @@ table.table-hover tbody tr.draggable:hover {
     padding: 0;
     border: 1px solid #cccccc;
     z-index: 40;
+    right: 0;
 }
 
 .listgrid-headerBtn.dropdown > ul li {
