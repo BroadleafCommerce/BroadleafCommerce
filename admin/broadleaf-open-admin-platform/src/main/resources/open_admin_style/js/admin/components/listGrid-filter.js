@@ -65,6 +65,9 @@
                     var icon = $closestSortHeader.find('div i.sort-icon');
                     icon.toggleClass('listgrid-icon-up', ascending);
                     icon.toggleClass('listgrid-icon-down', !ascending);
+                    
+                    delete params['sortProperty'];
+                    delete params['sortDirection'];
                 }
                 
                 //iterate through the rest of the parameters and fill out the criteria inputs as necessary
@@ -227,6 +230,11 @@ $(document).ready(function() {
         $(this).closest('ul').removeClass('show-dropdown');
         
         var $inputs = $(this).closest('thead').find('div.filter-fields :input.listgrid-criteria-input');
+        
+        //also grab the sorts and ensure those inputs are also serialized
+        var $sorts = $(this).closest('thead').find('input.sort-direction.active, input.sort-property.active');
+        $inputs = $inputs.add($.makeArray($sorts));
+        
         var nonBlankInputs = [];
         $inputs.each(function(index, input) {
             //since these filter inputs do not have 'real' input names in the DOM, give it here to make serialization easier
@@ -240,20 +248,18 @@ $(document).ready(function() {
                     value: BLCAdmin.dates.getServerDate($(input).val())
                 })[0];
             }
-                        
+            
             //only submit fields that have a value set and are not a sort field. Sort fields will be added separately
-            if ($(input).val() && !$(input).hasClass('sort-direction') && !$(input).hasClass('sort-property')) {
-                //toggle the filter icon for this field as active or not
-                var filterIcon = $(input).parents('.listgrid-headerBtn').find('div i.filter-icon');
-                filterIcon.toggleClass('icon-filter', !!$(input).val());
-
+            if ($(input).val()) {
+                if (!$(input).hasClass('sort-direction') && !$(input).hasClass('sort-property')) {
+                  //toggle the filter icon for this field as active or not
+                    var filterIcon = $(input).parents('.listgrid-headerBtn').find('div i.filter-icon');
+                    filterIcon.toggleClass('icon-filter', !!$(input).val());
+                }
                 nonBlankInputs.push(input);
             }
+            
         });
-        
-        //also grab the sorts and ensure those inputs are also serialized
-        var sorts = $(this).closest('thead').find('input.sort-direction.active, input.sort-property.active');
-        nonBlankInputs = nonBlankInputs.concat($.makeArray(sorts));
         
         var $tbody = $(this).closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
         BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);
@@ -266,7 +272,7 @@ $(document).ready(function() {
             if ($tbody.data('listgridtype') == 'main') {
                 
                 $(nonBlankInputs).each(function(index, input) {
-                    BLCAdmin.history.replaceUrlParameter($(input).data('name'), input.value);
+                    BLCAdmin.history.replaceUrlParameter(input.name, input.value);
                 });
             }
             BLCAdmin.listGrid.hideLoadingSpinner($tbody);
