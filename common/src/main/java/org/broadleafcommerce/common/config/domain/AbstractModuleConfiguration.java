@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.config.domain;
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -60,15 +61,19 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     protected Long id;
 
     @Column(name = "MODULE_NAME", nullable = false)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Module_Name")
     protected String moduleName;
 
     @Column(name = "IS_ACTIVE", nullable = false)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Active")
     protected Boolean isActive = false;
 
     @Column(name = "IS_DEFAULT", nullable = false)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Default")
     protected Boolean isDefault = false;
 
     @Column(name = "CONFIG_TYPE", nullable = false)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Config_Type")
     protected String configType;
 
     @Embedded

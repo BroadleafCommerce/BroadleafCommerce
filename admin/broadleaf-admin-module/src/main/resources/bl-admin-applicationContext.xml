@@ -143,6 +143,7 @@
                 <value>classpath:/messages/MerchandisingMessages</value>
                 <value>classpath:/messages/PromotionMessages</value>
                 <value>classpath:/messages/RuleMessages</value>
+                <value>classpath:/messages/AbstractModuleMessages</value>
             </list>
         </property>
     </bean>
