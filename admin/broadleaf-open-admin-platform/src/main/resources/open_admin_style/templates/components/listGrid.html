@@ -44,7 +44,7 @@
                     </div>
                 </th>
                 
-                <th width="65">
+                <th width="65" th:unless="${listGrid.hideIdColumn}">
                     <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort}">
                         <div class="listgrid-title">
                         Id
@@ -140,7 +140,7 @@
                         
                 </td>
                 
-                <td data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
+                <td th:unless="${listGrid.hideIdColumn}" data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
 
 
             </tr>

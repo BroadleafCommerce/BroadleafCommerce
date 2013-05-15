@@ -56,6 +56,7 @@ public class ListGrid {
     protected int pageSize;
     protected Boolean canFilterAndSort;
     protected Boolean isReadOnly;
+    protected Boolean hideIdColumn;
     
     protected AddMethodType addMethodType;
     protected String listGridType;
@@ -154,6 +155,10 @@ public class ListGrid {
     
     public Boolean getClickable() {
         return !"main".equals(listGridType);
+    }
+    
+    public Boolean getHideIdColumn() {
+        return hideIdColumn == null ? false : hideIdColumn;
     }
 
     /* ************************** */
@@ -306,6 +311,10 @@ public class ListGrid {
     
     public void setReadOnly(Boolean readOnly) {
         this.isReadOnly = readOnly;
+    }
+
+    public void setHideIdColumn(Boolean hideIdColumn) {
+        this.hideIdColumn = hideIdColumn;
     }
     
 }

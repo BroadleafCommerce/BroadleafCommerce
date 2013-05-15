@@ -169,6 +169,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         boolean editable = false;
         boolean sortable = false;
         boolean readOnly = false;
+        boolean hideIdColumn = false;
         String idProperty = "id";
         // Get the header fields for this list grid. Note that the header fields are different depending on the
         // kind of field this is.
@@ -236,17 +237,28 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             Property p2 = cmd.getPMap().get("key");
             BasicFieldMetadata keyMd = (BasicFieldMetadata) p2.getMetadata();
+            keyMd.setFriendlyName("Key");
             Field hf = createHeaderField(p2, keyMd);
             headerFields.add(hf);
-
-            for (Property p : cmd.getProperties()) {
-                if (p.getMetadata() instanceof BasicFieldMetadata) {
-                    BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
-                    if (md.getTargetClass().equals(mmd.getValueClassName())) {
-                        if (md.isProminent() != null && md.isProminent() 
-                                && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
-                            hf = createHeaderField(p, md);
-                            headerFields.add(hf);
+            
+            if (mmd.isSimpleValue()) {
+                Property valueProperty = cmd.getPMap().get("value");
+                BasicFieldMetadata valueMd = (BasicFieldMetadata) valueProperty.getMetadata();
+                valueMd.setFriendlyName("Value");
+                hf = createHeaderField(valueProperty, valueMd);
+                headerFields.add(hf);
+                idProperty = "key";
+                hideIdColumn = true;
+            } else {
+                for (Property p : cmd.getProperties()) {
+                    if (p.getMetadata() instanceof BasicFieldMetadata) {
+                        BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+                        if (md.getTargetClass().equals(mmd.getValueClassName())) {
+                            if (md.isProminent() != null && md.isProminent() 
+                                    && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
+                                hf = createHeaderField(p, md);
+                                headerFields.add(hf);
+                            }
                         }
                     }
                 }
@@ -270,6 +282,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         listGrid.setContainingEntityId(containingEntityId);
         listGrid.setReadOnly(readOnly);
+        listGrid.setHideIdColumn(hideIdColumn);
         
         if (editable) {
             listGrid.getRowActions().add(DefaultListGridActions.UPDATE);
@@ -628,7 +641,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
 
             DynamicResultSet subCollectionEntities = collectionRecords.get(p.getName());
-            String containingEntityId = entity.getPMap().get("id").getValue();
+            String containingEntityId = entity.getPMap().get(ef.getIdProperty()).getValue();
             ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p, ef.getSectionKey());
             listGrid.setListGridType(ListGrid.Type.INLINE);
 
@@ -655,7 +668,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Override
     public void populateEntityFormFields(EntityForm ef, Entity entity) {
-        ef.setId(entity.findProperty("id").getValue());
+        ef.setId(entity.findProperty(ef.getIdProperty()).getValue());
         ef.setEntityType(entity.getType()[0]);
 
         for (Entry<String, Field> entry : ef.getFields().entrySet()) {
@@ -670,7 +683,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     @Override
     public void populateAdornedEntityFormFields(EntityForm ef, Entity entity, AdornedTargetList adornedList) {
         Field field = ef.getFields().get(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
-        Property entityProp = entity.findProperty("id");
+        Property entityProp = entity.findProperty(ef.getIdProperty());
         field.setValue(entityProp.getValue());
 
         if (StringUtils.isNotBlank(adornedList.getSortField())) {
@@ -774,16 +787,24 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                 .withFriendlyName("Key");
         }
         ef.addMapKeyField(keyField);
-
+        
         // Set the fields for this form
-        List<Property> mapFormProperties = new ArrayList<Property>(Arrays.asList(cmd.getProperties()));
-        CollectionUtils.filter(mapFormProperties, new Predicate() {
-            @Override
-            public boolean evaluate(Object object) {
-                Property p = (Property) object;
-                return ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), mapStructure.getValueClassName());
-            }
-        });
+        List<Property> mapFormProperties;
+        if (mapMd.isSimpleValue()) {
+            ef.setIdProperty("key");
+            mapFormProperties = new ArrayList<Property>();
+            Property valueProp = cmd.getPMap().get("value");
+            mapFormProperties.add(valueProp);
+        } else {
+            mapFormProperties = new ArrayList<Property>(Arrays.asList(cmd.getProperties()));
+            CollectionUtils.filter(mapFormProperties, new Predicate() {
+                @Override
+                public boolean evaluate(Object object) {
+                    Property p = (Property) object;
+                    return ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), mapStructure.getValueClassName());
+                }
+            });
+        }
 
         setEntityFormFields(ef, mapFormProperties);
 

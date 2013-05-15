@@ -42,14 +42,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -144,12 +145,12 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     protected PersistencePackageRequest getRequestForEntityForm(EntityForm entityForm, String[] customCriteria) {
         // Ensure the ID property is on the form
-        Field idField = entityForm.findField("id");
+        Field idField = entityForm.findField(entityForm.getIdProperty());
         if (idField == null) {
             idField = new Field();
-            idField.setName("id");
+            idField.setName(entityForm.getIdProperty());
             idField.setValue(entityForm.getId());
-            entityForm.getFields().put("id", idField);
+            entityForm.getFields().put(entityForm.getIdProperty(), idField);
         }
         
         List<Property> propList = getPropertiesFromEntityForm(entityForm);
@@ -193,13 +194,18 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             Assert.isTrue(entities != null && entities.length == 1);
             entity = entities[0];
         } else if (md instanceof MapMetadata) {
+            MapMetadata mmd = (MapMetadata) md;
             FilterAndSortCriteria fasc = new FilterAndSortCriteria(ppr.getForeignKey().getManyToField());
             fasc.setFilterValue(containingEntityId);
             ppr.addFilterAndSortCriteria(fasc);
 
             Entity[] entities = fetch(ppr).getRecords();
             for (Entity e : entities) {
-                Property p = e.getPMap().get("id");
+                String idProperty = getIdProperty(containingClassMetadata);
+                if (mmd.isSimpleValue()) {
+                    idProperty = "key";
+                }
+                Property p = e.getPMap().get(idProperty);
                 if (p.getValue().equals(collectionItemId)) {
                     entity = e;
                     break;
@@ -352,7 +358,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         ppr.setCeilingEntityClassname(ppr.getEntity().getType()[0]);
 
         Property p = new Property();
-        p.setName("id");
+        p.setName(entityForm.getIdProperty());
         p.setValue(collectionItemId);
         properties.add(p);
 
