@@ -242,45 +242,36 @@ h2#mainEntityName {
 */
 nav > ul.blc-accordion {
     margin: 0 0 22px 0;
-    border-bottom: 1px solid #e9e9e9;
 }
 
 nav > ul.blc-accordion > li {
-    border-left: 3px solid #ccc;
-    background: #f2f2f2;
     list-style: none;
     margin: 0;
     padding: 0;
-    border-top: 1px solid #e9e9e9;
 }
 
 nav > ul.blc-accordion > li.active {
-    margin-top: 0;
-    border-top: 1px solid #4d4d4d;
-    border-left: 4px solid #1a1a1a;
-    background: #4d4d4d;
 }
 
 nav > ul.blc-accordion > li .title {
     padding-top: 13px;
     background: #f2f2f2;
-    border-width: 1px 1px 0 0;
+	border: 1px solid #CCC;
+	border-bottom: none;
     color: #555;
     cursor: pointer;
     padding: 15px;
     margin: 0;
     position: relative;
-    border-left: 1px solid #e9e9e9;
-    border-right: 1px solid #e9e9e9;
     -webkit-transition: 0.15s background linear;
     -moz-transition: 0.15s background linear;
     -o-transition: 0.15s background linear;
     transition: 0.15s background linear;
 }
 
-nav > ul.blc-accordion > li.active .title {
-    background: #4d4d4d;
-    border: none;
+nav > ul.blc-accordion > li.active .title,
+nav > ul.blc-accordion > li:last-child .title {
+	border-bottom: 1px solid #CCC;
 }
 
 nav > ul.blc-accordion > li .title::after {
@@ -317,7 +308,6 @@ nav > ul.blc-accordion > li.active .title > h5 {
     padding: 2px 6px;
     font-size: 14px;
     margin: 0;
-    color: #fff;
 }
 
 nav > ul.blc-accordion > li .content {
@@ -327,17 +317,20 @@ nav > ul.blc-accordion > li .content {
 
 nav > ul.blc-accordion > li.active .content {
     padding: 0px;
-    border-left: none;
-    border-right: 1px solid #e9e9e9;
-    background: #fff;
+    border: 1px solid #CCC;
+    border-top: none;
+    border-bottom: none;
+    margin: 0 3px;
+}
+
+nav > ul.blc-accordion > li:last-child .content {
+	border-bottom: 1px solid #CCC;
 }
 
 nav > ul.blc-accordion > li > .content > ul {
     padding-top: 10px;
     padding-bottom: 10px;
-    border-left: solid 3px #ddd;
-    border-right: solid 1px #eee;
-    margin-left: -4px;
+    margin-left: 0;
     -webkit-box-shadow: 1px 0 0 white inset;
     -moz-box-shadow: 1px 0 0 white inset;
     box-shadow: 1px 0 0 white inset;
@@ -346,29 +339,25 @@ nav > ul.blc-accordion > li > .content > ul {
 nav > ul.blc-accordion > li > .content > ul li {
     border: none;
     list-style: none;
-    padding: 2px;
+    padding: 0;
 }
 
 nav > ul.blc-accordion > li > .content > ul li a {
     cursor: pointer !important;
     font-weight: normal;
     color: #666 !important;
-    padding: 7px 0 7px 20px;
-    background: #fff !important;
-}
-
-nav > ul.blc-accordion > li > .content > ul li a:hover {
-    color: #111 !important;
-    background: #fff !important;
-}
-
-nav > ul.blc-accordion > li > .content > ul li.active {
-    border: none;
+    padding: 2px 0 2px 20px;
+    width: 100%;
+    display: inline-block;
 }
 
 nav > ul.blc-accordion > li > .content > ul li.active a {
     font-weight: bold;
-    color: #222 !important;
+}
+
+nav > ul.blc-accordion > li > .content > ul li a:hover, 
+nav > ul.blc-accordion > li > .content > ul li.active a {
+    color: #8EAA2B !important;
 }
 
 /* -----------------------------------------
