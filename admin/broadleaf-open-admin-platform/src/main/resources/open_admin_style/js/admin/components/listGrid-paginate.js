@@ -374,7 +374,7 @@
                 //console.log('Loading more records -- ' + url);
                 
                 BLC.ajax({ url: url, type: 'GET' }, function(data) {
-                    var $newTbody = $(data.trim()).find('tbody');
+                    var $newTbody = data.find('tbody');
                     BLCAdmin.listGrid.paginate.injectRecords($tbody, $newTbody);
                     BLCAdmin.listGrid.paginate.releaseLock();
                     BLCAdmin.listGrid.hideLoadingSpinner($tbody);

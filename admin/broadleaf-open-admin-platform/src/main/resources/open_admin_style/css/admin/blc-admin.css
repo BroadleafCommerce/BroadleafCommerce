@@ -1344,6 +1344,16 @@ div.imagePreviewContainer {
 	float: left;
 }
 
+div#thumbnail-zoom {
+	position: absolute;
+	z-index: 99999999;
+	font-size: 19px;
+	background-color: #FFF;
+	padding: 10px;
+	border: 1px solid #CCC;
+	border-radius: 4px;
+}
+
 /* -----------------------------------------
    Login/Forgot Password Forms
 ----------------------------------------- */

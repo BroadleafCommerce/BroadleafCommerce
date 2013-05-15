@@ -105,8 +105,9 @@
                         </span>
                         
                         <span th:if="${field.fieldType == 'IMAGE'}">
-                            <img th:style="${'height: ' + field.height + 'px;'}"
-                                th:src="@{${field.value}}" />
+                            <img class="thumbnail" th:style="${'height: ' + field.height + 'px;'}"
+                                th:src="@{${field.value + record.getField('thumbnailKey').value}}"
+                                th:attr="data-fullurl=@{${field.value}}" />
                         </span>
                             
                         <span th:unless="${headerField.mainEntityLink 
@@ -128,8 +129,9 @@
                         </span>
                         
                         <span th:if="${field.fieldType == 'IMAGE'}">
-                            <img th:style="${'height: ' + field.height + 'px;'}"
-                                th:src="@{${field.value}}" />
+                            <img class="thumbnail" th:style="${'height: ' + field.height + 'px;'}"
+                                th:src="@{${field.value + record.getField('thumbnailKey').value}}"
+                                th:attr="data-fullurl=@{${field.value}}" />
                         </span>
                         
                         <span th:unless="${(headerField.mainEntityLink and record.canLinkToExternalEntity)

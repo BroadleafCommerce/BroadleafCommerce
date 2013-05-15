@@ -1,7 +1,8 @@
 <div class="field-label" th:text="#{asset_url_image_label}" />
 <img class="thumbnail" 
     th:if="*{fields['__${field.name}__'].value != null}"
-    blc:src="@{${cmsUrlPrefix} + *{fields['__${field.name}__'].value} + '?largeAdminThumbnail'}"/>
+    blc:src="@{${cmsUrlPrefix} + *{fields['__${field.name}__'].value} + '?largeAdminThumbnail'}"
+    th:attr="data-fullurl=@{${cmsUrlPrefix} + *{fields['__${field.name}__'].value}}" />
     
 <img class="thumbnail" 
     th:unless="*{fields['__${field.name}__'].value != null}" />

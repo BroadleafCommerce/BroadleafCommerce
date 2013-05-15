@@ -49,7 +49,7 @@ public class AssetFormBuilderServiceImpl implements AssetFormBuilderService {
             .withFriendlyName("Asset_thumbnail")
             .withFieldType(SupportedFieldType.STRING.toString())
             .withOrder(Integer.MIN_VALUE)
-            .withColumnWidth("70px")
+            .withColumnWidth("50px")
             .withFilterSortDisabled(true));
         
         for (ListGridRecord record : listGrid.getRecords()) {
@@ -72,12 +72,16 @@ public class AssetFormBuilderServiceImpl implements AssetFormBuilderService {
                 .withFriendlyName("Asset_thumbnail")
                 .withFieldType(SupportedFieldType.IMAGE.toString())
                 .withOrder(Integer.MIN_VALUE)
-                .withValue(imageUrl + "?smallAdminThumbnail");
+                .withValue(imageUrl);
             
             // Add a hidden field for the large thumbnail path
             record.getHiddenFields().add(new Field()
                 .withName("cmsUrlPrefix")
                 .withValue(staticAssetUrlPrefix));
+            
+            record.getHiddenFields().add(new Field()
+                .withName("thumbnailKey")
+                .withValue("?smallAdminThumbnail"));
             
             record.getHiddenFields().add(new Field()
                 .withName("servletContext")

@@ -4,7 +4,8 @@
     
     <img class="thumbnail" 
         th:if="*{fields['__${field.name}__'].value != null}"
-        th:src="@{*{fields['__${field.name}__'].value + '?largeAdminThumbnail'}}"/>
+        th:src="@{*{fields['__${field.name}__'].value + '?largeAdminThumbnail'}}"
+        th:attr="data-fullurl=@{*{fields['__${field.name}__'].value}}" />
         
     <img class="thumbnail" 
         th:unless="*{fields['__${field.name}__'].value != null}" />

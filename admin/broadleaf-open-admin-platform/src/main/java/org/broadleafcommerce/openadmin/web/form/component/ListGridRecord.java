@@ -105,6 +105,9 @@ public class ListGridRecord {
             for (Field field : fields) {
                 fieldMap.put(field.getName(), field);
             }
+            for (Field hiddenField : hiddenFields) {
+                fieldMap.put(hiddenField.getName(), hiddenField);
+            }
         }
         Field field = fieldMap.get(fieldName);
         

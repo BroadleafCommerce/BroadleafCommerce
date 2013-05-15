@@ -94,6 +94,7 @@ $(document).ready(function() {
     		var $this = $(this);
     		    		   
     		$this.find('img.thumbnail').attr("src", fields['assetUrl'] + '?largeAdminThumbnail');
+    		$this.find('img.thumbnail').data("fullurl", fields['assetUrl']);
     		
     		var mediaItem = $this.find('input.mediaItem');
     		if (mediaItem.length > 0) {
