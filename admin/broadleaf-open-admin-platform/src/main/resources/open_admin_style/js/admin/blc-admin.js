@@ -172,6 +172,10 @@ var BLCAdmin = (function($) {
     	},
     	
     	showMessageAsModal : function(header, message) {
+			if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {
+			    BLCAdmin.hideCurrentModal();
+			}
+			
     	    var $modal = getModalSkeleton();
     	    
     	    $modal.find('.modal-header h3').text(header);
@@ -181,18 +185,24 @@ var BLCAdmin = (function($) {
     	},
     	
     	showElementAsModal : function($element, onModalHide, onModalHideArgs) {
+			if (BLCAdmin.currentModal() != null && BLCAdmin.currentModal().hasClass('loading-modal')) {
+			    BLCAdmin.hideCurrentModal();
+			}
+			
 			$('body').append($element);
 			showModal($element, onModalHide, onModalHideArgs);
     	},
     	
     	showLinkAsModal : function(link, onModalHide, onModalHideArgs) {
+    	    // Show a loading message
     	    var $modal = getModalSkeleton();
+    	    $modal.addClass('loading-modal');
     	    $modal.find('.modal-header h3').text(BLCAdmin.messages.loading);
     	    $modal.find('.modal-body').append($('<i>', { 'class' : 'icon-spin icon-spinner' }));
-            
     	    $modal.find('.modal-body').css('text-align', 'center').css('font-size', '24px');
-            
     	    BLCAdmin.showElementAsModal($modal, onModalHide, onModalHideArgs);
+            
+    	    // Then replace it with the actual requested link
     	    BLCAdmin.modalNavigateTo(link);
     	},
     	
@@ -213,6 +223,8 @@ var BLCAdmin = (function($) {
         			BLCAdmin.initializeModalButtons(BLCAdmin.currentModal());
         		    BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
         			BLCAdmin.initializeFields();
+        			
+        			BLCAdmin.currentModal().removeClass('loading-modal');
         		});
     		} else {
     		    showLinkAsModal(link);
