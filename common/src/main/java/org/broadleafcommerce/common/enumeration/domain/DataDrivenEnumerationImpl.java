@@ -85,7 +85,11 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
 
     @Override
     public Boolean getModifiable() {
-        return modifiable;
+        if (modifiable == null) {
+            return Boolean.FALSE;
+        } else {
+            return modifiable;
+        }
     }
 
     @Override

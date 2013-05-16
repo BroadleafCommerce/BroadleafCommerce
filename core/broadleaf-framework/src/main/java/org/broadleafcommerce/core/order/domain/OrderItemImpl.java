@@ -182,18 +182,18 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     protected String orderItemType;
 
     @Column(name = "ITEM_TAXABLE_FLAG")
-    protected Boolean itemTaxable = false;
+    protected Boolean itemTaxable;
 
     @Column(name = "RETAIL_PRICE_OVERRIDE")
-    protected Boolean retailPriceOverride = false;
+    protected Boolean retailPriceOverride;
 
     @Column(name = "SALE_PRICE_OVERRIDE")
-    protected Boolean salePriceOverride = false;
+    protected Boolean salePriceOverride;
 
     @Column(name = "DISCOUNTS_ALLOWED")
     @AdminPresentation(friendlyName = "OrderItemImpl_Discounts_Allowed", order=Presentation.FieldOrder.DISCOUNTALLOWED,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
-    protected Boolean discountsAllowed = false;
+    protected Boolean discountsAllowed;
 
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")

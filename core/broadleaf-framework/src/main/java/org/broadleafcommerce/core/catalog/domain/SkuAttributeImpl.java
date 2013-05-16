@@ -134,7 +134,11 @@ public class SkuAttributeImpl implements SkuAttribute {
      */
     @Override
     public Boolean getSearchable() {
-        return searchable;
+        if (searchable == null) {
+            return Boolean.FALSE;
+        } else {
+            return searchable;
+        }
     }
 
     /* (non-Javadoc)

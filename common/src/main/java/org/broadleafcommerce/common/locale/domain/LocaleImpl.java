@@ -97,7 +97,11 @@ public class LocaleImpl implements Locale {
 
     @Override
     public Boolean getDefaultFlag() {
-        return defaultFlag;
+        if (defaultFlag == null) {
+            return Boolean.FALSE;
+        } else {
+            return defaultFlag;
+        }
     }
 
     @Override

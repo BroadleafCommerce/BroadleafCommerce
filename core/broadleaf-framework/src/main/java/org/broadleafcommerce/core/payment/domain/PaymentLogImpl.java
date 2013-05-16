@@ -192,7 +192,11 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Override
     public Boolean getTransactionSuccess() {
-        return transactionSuccess;
+        if (transactionSuccess == null) {
+            return Boolean.FALSE;
+        } else {
+            return transactionSuccess;
+        }
     }
 
     @Override

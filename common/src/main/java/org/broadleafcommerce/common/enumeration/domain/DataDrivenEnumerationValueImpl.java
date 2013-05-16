@@ -79,7 +79,11 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
 
     @Override
     public Boolean getHidden() {
-        return hidden;
+        if (hidden == null) {
+            return Boolean.FALSE;
+        } else {
+            return hidden;
+        }
     }
 
     @Override

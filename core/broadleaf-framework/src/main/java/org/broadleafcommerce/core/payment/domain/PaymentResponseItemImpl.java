@@ -248,7 +248,11 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     @Override
     public Boolean getTransactionSuccess() {
-        return transactionSuccess;
+        if (transactionSuccess == null) {
+            return Boolean.FALSE;
+        } else {
+            return transactionSuccess;
+        }
     }
 
     @Override

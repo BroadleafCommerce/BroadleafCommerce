@@ -101,7 +101,11 @@ public class CategoryAttributeImpl implements CategoryAttribute {
 
     @Override
     public Boolean getSearchable() {
-        return searchable;
+        if (searchable == null) {
+            return Boolean.FALSE;
+        } else {
+            return searchable;
+        }
     }
 
     @Override

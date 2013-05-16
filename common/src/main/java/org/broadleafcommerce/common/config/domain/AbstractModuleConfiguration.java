@@ -101,7 +101,11 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
 
     @Override
     public Boolean getIsActive() {
-        return this.isActive;
+        if (this.isActive == null) {
+            return Boolean.FALSE;
+        } else {
+            return this.isActive;
+        }
     }
 
     @Override
@@ -111,7 +115,11 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
 
     @Override
     public Boolean getIsDefault() {
-        return this.isDefault;
+        if (this.isDefault == null) {
+            return Boolean.FALSE;
+        } else {
+            return this.isDefault;
+        }
     }
 
     @Override
