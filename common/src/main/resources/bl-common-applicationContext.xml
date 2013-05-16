@@ -70,7 +70,7 @@
         <property name="suffix" value=".html" />
         <property name="templateMode" value="HTML5" />        
         <property name="characterEncoding" value="UTF-8" />
-        <property name="cacheable" value="false"/>
+        <property name="cacheable" value="true"/>
         <property name="cacheTTLMs" value="300000" />
         <property name="order" value="500"/> 
     </bean>  

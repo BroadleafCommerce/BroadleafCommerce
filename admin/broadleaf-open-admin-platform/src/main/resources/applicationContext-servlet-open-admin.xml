@@ -94,7 +94,7 @@
                 <ref bean="blDialect" />
             </set>
         </property>
-        <property name="cacheManager"><null/></property>
+        <!--<property name="cacheManager"><null/></property>-->
     </bean>
 
 </beans>
