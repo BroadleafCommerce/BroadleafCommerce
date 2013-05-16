@@ -179,9 +179,9 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
         Class<?>[] cache;
         synchronized(LOCK_OBJECT) {
-            //cache = POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
-            //TODO re-enable the cache above
-            cache = null;
+            cache = POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
+            //FIXME re-enable the cache above
+            //cache = null;
             if (cache == null) {
                 List<Class<?>> entities = new ArrayList<Class<?>>();
                 for (Object item : getSessionFactory().getAllClassMetadata().values()) {
@@ -620,7 +620,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
             Map<String, FieldMetadata> cacheData;
             synchronized(LOCK_OBJECT) {
                 cacheData = METADATA_CACHE.get(cacheKey);
-                cacheData = null; //FIXME: APA delete this line
+                //cacheData = null; //FIXME: APA delete this line
                 if (cacheData == null) {
                     Map<String, FieldMetadata> props = getPropertiesForEntityClass(
                         clazz,
