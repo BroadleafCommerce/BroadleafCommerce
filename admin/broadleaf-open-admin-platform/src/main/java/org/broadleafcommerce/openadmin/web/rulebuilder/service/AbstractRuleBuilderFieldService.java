@@ -128,6 +128,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setFields(final List<FieldData> fields) {
         List<FieldData> proxyFields = (List<FieldData>) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[]{List.class}, new InvocationHandler() {
             @Override
@@ -187,6 +188,13 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
 
     @PostConstruct
     private void construct() {
+        // This cannot be null during startup as we do not want to remove the null safety checks in a multi-tenant env.
+        if (BroadleafRequestContext.getBroadleafRequestContext() == null) {
+            BroadleafRequestContext brc = new BroadleafRequestContext();
+            brc.setIgnoreSite(true);
+            BroadleafRequestContext.setBroadleafRequestContext(brc);
+        }
+                    
         PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(DynamicEntityRemoteService.DEFAULTPERSISTENCEMANAGERREF);
         persistenceManager.setTargetMode(TargetModeType.SANDBOX);
         dynamicEntityDao = persistenceManager.getDynamicEntityDao();

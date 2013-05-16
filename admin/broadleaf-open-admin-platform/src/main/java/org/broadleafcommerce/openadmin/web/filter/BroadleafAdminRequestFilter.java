@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.web.filter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
+import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -46,7 +47,7 @@ public class BroadleafAdminRequestFilter extends OncePerRequestFilter {
     private Set<String> ignoreSuffixes;
 
     @Resource(name = "blAdminRequestProcessor")
-    protected BroadleafAdminRequestProcessor requestProcessor;
+    protected BroadleafWebRequestProcessor requestProcessor;
 
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
