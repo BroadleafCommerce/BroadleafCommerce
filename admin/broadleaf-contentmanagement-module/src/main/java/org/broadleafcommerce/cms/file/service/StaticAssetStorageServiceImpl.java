@@ -130,7 +130,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
      * exists or java.tmp.io if that property has not been set.
      */
     protected String getBaseDirectory() {
-        if (assetFileSystemPath != null) {
+        if (assetFileSystemPath != null && !"".equals(assetFileSystemPath.trim())) {
             return assetFileSystemPath;
         } else {
             return DEFAULT_STORAGE_DIRECTORY;
