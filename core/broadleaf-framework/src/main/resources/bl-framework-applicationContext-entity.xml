@@ -37,8 +37,7 @@
     <bean id="org.broadleafcommerce.core.catalog.domain.SkuFee" class="org.broadleafcommerce.core.catalog.domain.SkuFeeImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfoImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfoImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.marketing.domain.TargetContent" class="org.broadleafcommerce.core.marketing.domain.TargetContentImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl" scope="prototype"/>    
     <bean id="org.broadleafcommerce.core.offer.domain.Offer" class="org.broadleafcommerce.core.offer.domain.OfferImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.offer.domain.OfferRule" class="org.broadleafcommerce.core.offer.domain.OfferRuleImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.offer.domain.CustomerOffer" class="org.broadleafcommerce.core.offer.domain.CustomerOfferImpl" scope="prototype"/>
@@ -66,8 +65,6 @@
     <bean id="org.broadleafcommerce.core.search.domain.SearchSynonym" class="org.broadleafcommerce.core.search.domain.SearchSynonymImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.search.redirect.domain.SearchRedirect" class="org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.util.domain.CodeType" class="org.broadleafcommerce.core.util.domain.CodeTypeImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.content.domain.Content" class="org.broadleafcommerce.core.content.domain.ContentImpl" scope="prototype" />
-    <bean id="org.broadleafcommerce.core.content.domain.ContentDetails" class="org.broadleafcommerce.core.content.domain.ContentDetailsImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.offer.domain.OfferItemCriteria" class="org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.offer.domain.OfferAudit" class="org.broadleafcommerce.core.offer.domain.OfferAuditImpl" scope="prototype"/>
 

@@ -85,21 +85,6 @@
     </aop:config>
 
     <aop:config>
-        <aop:pointcut id="blTargetContentServiceOperation" expression="execution(* org.broadleafcommerce.core.marketing.service.TargetContentService.remove*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blTargetContentServiceOperation"/>
-    </aop:config>
-
-    <!--<aop:config>
-        <aop:pointcut id="blPricingServiceOperation" expression="execution(* org.broadleafcommerce.core.pricing.service.PricingService.executePricing(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPricingServiceOperation"/>
-    </aop:config>-->
-    
-    <aop:config>
-        <aop:pointcut id="blTargetContentServiceOperation2" expression="execution(* org.broadleafcommerce.core.marketing.service.TargetContentService.update*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blTargetContentServiceOperation2"/>
-    </aop:config>
-
-    <aop:config>
         <aop:pointcut id="blPaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.core.payment.service.PaymentInfoService.save(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPaymentInfoServiceOperation"/>
     </aop:config>
@@ -162,11 +147,6 @@
     <aop:config>
         <aop:pointcut id="blAvailabilityServiceOperation" expression="execution(* org.broadleafcommerce.core.inventory.service.AvailabilityService.*(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAvailabilityServiceOperation"/>
-    </aop:config>
-
-    <aop:config>
-        <aop:pointcut id="blContentServiceOperation" expression="execution(* org.broadleafcommerce.core.content.service.ContentService.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blContentServiceOperation"/>
     </aop:config>
 
 </beans>

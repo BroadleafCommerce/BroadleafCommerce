@@ -103,7 +103,7 @@
 
     <bean id="blStaticMapNamedOperationComponent" class="org.broadleafcommerce.cms.file.service.operation.StaticMapNamedOperationComponent">
         <property name="namedOperations">
-            <map>
+            <map>                                          
                 <entry key="smallAdminThumbnail">
                     <map>
                         <entry key="resize-width-amount" value="30"/>
