@@ -122,7 +122,7 @@
                            <span th:remove="tag" th:text="${field.displayValue}" />
                         </span>
 
-                        <span th:if="${record.canLinkToExternalEntity}" th:remove="tag">
+                        <span th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity}" th:remove="tag">
                            <span th:remove="tag" th:text="${field.displayValue}" />
                            <a th:href="@{${record.externalEntityPath}}" class="modal-view">
                                  <i class="icon-external-link"></i>
@@ -135,7 +135,7 @@
                                 th:attr="data-fullurl=@{${field.value}}" />
                         </span>
                         
-                        <span th:unless="${record.canLinkToExternalEntity
+                        <span th:unless="${(headerField.mainEntityLink and record.canLinkToExternalEntity)
                                 or headerField.canLinkToExternalEntity
                                 or field.fieldType == 'IMAGE'}"
                               th:remove="tag" th:text="${field.displayValue}" />
