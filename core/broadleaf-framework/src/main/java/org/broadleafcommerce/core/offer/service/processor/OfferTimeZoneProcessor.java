@@ -18,16 +18,14 @@ package org.broadleafcommerce.core.offer.service.processor;
 
 import org.broadleafcommerce.core.offer.domain.Offer;
 
-import java.util.List;
-
+import java.util.TimeZone;
 
 /**
- * @author Priyesh Patel
+ * 
+ * 
+ *
  */
-public interface AbstractBaseProcessorExtensionListener {
-    
-    public List<Offer> removeAdditionalOffers(List<Offer> offers, AbstractBaseProcessor processor);
+public interface OfferTimeZoneProcessor {
 
-    public List<Offer> removeOutOfDateOffers(List<Offer> offers, AbstractBaseProcessor abstractBaseProcessor);
-
+    public TimeZone getTimeZone(Offer offer);
 }

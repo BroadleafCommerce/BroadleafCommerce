@@ -34,6 +34,7 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
     @AdminPresentation(friendlyName = "RequestDTOImpl_Request_URI")
     private String requestURI;
 
+
     @AdminPresentation(friendlyName = "RequestDTOImpl_Full_Url")
     private String fullUrlWithQueryString;
 
@@ -86,6 +87,26 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
 
     public void setRequestDTOAttributes(Map<String, String> requestDTOAttributes) {
         this.requestDTOAttributes = requestDTOAttributes;
+    }
+
+    public String getFullUrlWithQueryString() {
+        return fullUrlWithQueryString;
+    }
+
+    public void setFullUrlWithQueryString(String fullUrlWithQueryString) {
+        this.fullUrlWithQueryString = fullUrlWithQueryString;
+    }
+
+    public Boolean getSecure() {
+        return secure;
+    }
+
+    public void setSecure(Boolean secure) {
+        this.secure = secure;
+    }
+
+    public void setRequestURI(String requestURI) {
+        this.requestURI = requestURI;
     }
 
 }

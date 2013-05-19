@@ -19,9 +19,12 @@ package org.broadleafcommerce.core.offer.service.processor;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.RequestDTO;
+import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
@@ -33,18 +36,21 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.tool.hbm2x.StringUtils;
+import org.joda.time.LocalDateTime;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.annotation.Resource;
 
@@ -57,9 +63,8 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
     private static final Log LOG = LogFactory.getLog(AbstractBaseProcessor.class);
     private static final Map EXPRESSION_CACHE = new LRUMap(1000);
-    @Resource(name = "blAbstractBaseProcessorExtensionManager")
-    protected AbstractBaseProcessorExtensionListener extensionManager;
-
+    @Resource(name = "blOfferTimeZoneProcessor")
+    protected OfferTimeZoneProcessor offerTimeZoneProcessor;
     protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
         CandidatePromotionItems candidates = new CandidatePromotionItems();
         if (offer.getQualifyingItemCriteria() == null || offer.getQualifyingItemCriteria().size() == 0) {
@@ -289,20 +294,102 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     public List<Offer> filterOffers(List<Offer> offers, Customer customer) {
         List<Offer> filteredOffers = new ArrayList<Offer>();
         if (offers != null && !offers.isEmpty()) {
-            if (extensionManager != null) {
-                filteredOffers = extensionManager.removeOutOfDateOffers(offers, this);
-            } else {
-                filteredOffers = removeOutOfDateOffers(offers);
-            }
-            if (extensionManager != null) {
-                filteredOffers = extensionManager.removeAdditionalOffers(filteredOffers, this);
-            }
+            filteredOffers = removeOutOfDateOffers(offers);
+            offers = removeTimePeriodOffers(offers);
+            offers = removeInvalidRequestOffers(offers);
             filteredOffers = removeInvalidCustomerOffers(filteredOffers, customer);
         }
         return filteredOffers;
     }
 
+    protected List<Offer> removeInvalidRequestOffers(List<Offer> offers) {
+        RequestDTO requestDTO = BroadleafRequestContext.getBroadleafRequestContext().getRequestDTO();
 
+        List<Offer> offersToRemove = new ArrayList<Offer>();
+        for (Offer offer : offers) {
+            if (!couldOfferApplyToRequestDTO(offer, requestDTO)) {
+                offersToRemove.add(offer);
+            }
+        }
+        // remove all offers in the offersToRemove list from original offers list
+        for (Offer offer : offersToRemove) {
+            offers.remove(offer);
+        }
+        return offers;
+
+    }
+
+    protected boolean couldOfferApplyToRequestDTO(Offer offer, RequestDTO requestDTO) {
+        boolean appliesToRequestRule = false;
+
+        String rule = null;
+
+        OfferRule customerRule = offer.getOfferMatchRules().get(OfferRuleType.REQUEST.getType());
+        if (customerRule != null) {
+            rule = customerRule.getMatchRule();
+        }
+
+        if (rule != null) {
+            HashMap<String, Object> vars = new HashMap<String, Object>();
+            vars.put("request", requestDTO);
+            Boolean expressionOutcome = executeExpression(rule, vars);
+            if (expressionOutcome != null && expressionOutcome) {
+                appliesToRequestRule = true;
+            }
+        } else {
+            appliesToRequestRule = true;
+        }
+
+        return appliesToRequestRule;
+    }
+    /**
+     * Removes all offers that are not within the timezone and timeperiod of the offer.  
+     * If an offer does not fall within the timezone or timeperiod rule,
+     * that offer will be removed.  
+     *
+     * @param offers
+     * @return List of Offers within the timezone or timeperiod of the offer
+     */
+    protected List<Offer> removeTimePeriodOffers(List<Offer> offers) {
+        List<Offer> offersToRemove = new ArrayList<Offer>();
+
+        for (Offer offer : offers) {
+            if (!couldOfferApplyToTimePeriod(offer)) {
+                offersToRemove.add(offer);
+            }
+        }
+        // remove all offers in the offersToRemove list from original offers list
+        for (Offer offer : offersToRemove) {
+            offers.remove(offer);
+        }
+        return offers;
+    }
+
+    protected boolean couldOfferApplyToTimePeriod(Offer offer) {
+        boolean appliesToTimePeriod = false;
+
+        String rule = null;
+
+        OfferRule timeRule = offer.getOfferMatchRules().get(OfferRuleType.TIME.getType());
+        if (timeRule != null) {
+            rule = timeRule.getMatchRule();
+        }
+        
+        if (rule != null) {
+            TimeZone timeZone = offerTimeZoneProcessor.getTimeZone(offer);
+            TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar(timeZone));
+            HashMap<String, Object> vars = new HashMap<String, Object>();
+            vars.put("time", timeDto);
+            Boolean expressionOutcome = executeExpression(rule, vars);
+            if (expressionOutcome != null && expressionOutcome) {
+                appliesToTimePeriod = true;
+            }
+        } else {
+            appliesToTimePeriod = true;
+        }
+
+        return appliesToTimePeriod;
+    }
     /**
      * Removes all out of date offers.  If an offer does not have a start date, or the start
      * date is a later date, that offer will be removed.  Offers without a start date should
@@ -314,12 +401,46 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @return List of Offers with valid dates
      */
     protected List<Offer> removeOutOfDateOffers(List<Offer> offers){
-        Date now = SystemTime.asDate();
         List<Offer> offersToRemove = new ArrayList<Offer>();
         for (Offer offer : offers) {
-            if ((offer.getStartDate() == null) || (offer.getStartDate().after(now))){
+            TimeZone timeZone = offerTimeZoneProcessor.getTimeZone(offer);
+
+            Calendar current = new GregorianCalendar(timeZone);
+            Calendar start = null;
+            if (offer.getStartDate() != null) {
+                LocalDateTime startDate = new LocalDateTime(offer.getStartDate());
+                start = new GregorianCalendar(timeZone);
+                start.set(Calendar.YEAR, startDate.getYear());
+                start.set(Calendar.MONTH, startDate.getMonthOfYear() - 1);
+                start.set(Calendar.DAY_OF_MONTH, startDate.getDayOfMonth());
+                start.set(Calendar.HOUR_OF_DAY, startDate.getHourOfDay());
+                start.set(Calendar.MINUTE, startDate.getMinuteOfHour());
+                start.set(Calendar.SECOND, startDate.getSecondOfMinute());
+                start.get(Calendar.HOUR_OF_DAY);//do not delete this line
+                start.get(Calendar.MINUTE);
+                if (LOG.isTraceEnabled()) {
+                    LOG.debug("Offer: " + offer.getName() + " timeZone:" + timeZone + " startTime:" + start.getTime() + " currentTime:" + current.getTime());
+                }
+            }
+            Calendar end = null;
+            if (offer.getEndDate() != null) {
+                LocalDateTime endDate = new LocalDateTime(offer.getEndDate());
+                end = new GregorianCalendar(timeZone);
+                end.set(Calendar.YEAR, endDate.getYear());
+                end.set(Calendar.MONTH, endDate.getMonthOfYear() - 1);
+                end.set(Calendar.DAY_OF_MONTH, endDate.getDayOfMonth());
+                end.set(Calendar.HOUR_OF_DAY, endDate.getHourOfDay());
+                end.set(Calendar.MINUTE, endDate.getMinuteOfHour());
+                end.set(Calendar.SECOND, endDate.getSecondOfMinute());
+                end.get(Calendar.HOUR_OF_DAY);//do not delete this line
+                end.get(Calendar.MINUTE);
+                if (LOG.isTraceEnabled()) {
+                    LOG.debug("Offer: " + offer.getName() + " endTime:" + start.getTime());
+                }
+            }
+            if ((offer.getStartDate() == null) || (start.after(current))) {
                 offersToRemove.add(offer);
-            } else if (offer.getEndDate() != null && offer.getEndDate().before(now)){
+            } else if (offer.getEndDate() != null && end.before(current)) {
                 offersToRemove.add(offer);
             }
         }
@@ -328,6 +449,8 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             offers.remove(offer);
         }
         return offers;
+
+        // return offers;
     }
 
     /**
