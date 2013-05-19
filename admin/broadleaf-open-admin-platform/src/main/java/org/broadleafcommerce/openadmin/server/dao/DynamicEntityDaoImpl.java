@@ -50,6 +50,7 @@ import org.hibernate.mapping.Property;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -110,7 +111,12 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
 
     @Resource(name="blDynamicDaoHelperImpl")
     protected DynamicDaoHelper dynamicDaoHelper;
-    
+
+    @Value("${cache.entity.dao.metadata.ttl}")
+    protected int cacheEntityMetaDataTtl;
+
+    protected long lastCacheFlushTime = System.currentTimeMillis();
+
     @Override
     public Criteria createCriteria(Class<?> entityClass) {
         return ((HibernateEntityManager) getStandardEntityManager()).getSession().createCriteria(entityClass);
@@ -172,16 +178,34 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
         return ejb3ConfigurationDao.getConfiguration().getClassMapping(targetClassName);
     }
 
+    protected boolean useCache() {
+        if (cacheEntityMetaDataTtl < 0) {
+            return true;
+        }
+        if (cacheEntityMetaDataTtl == 0) {
+            return false;
+        } else {
+            if ((System.currentTimeMillis() - lastCacheFlushTime) > cacheEntityMetaDataTtl) {
+                lastCacheFlushTime = System.currentTimeMillis();
+                METADATA_CACHE.clear();
+                POLYMORPHIC_ENTITY_CACHE.clear();
+                return true; // cache is empty
+            } else {
+                return true;
+            }
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao#getAllPolymorphicEntitiesFromCeiling(java.lang.Class)
      */
     @Override
     public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
-        Class<?>[] cache;
+        Class<?>[] cache = null;
         synchronized(LOCK_OBJECT) {
-            cache = POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
-            //FIXME re-enable the cache above
-            //cache = null;
+            if (useCache()) {
+                cache = POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
+            }
             if (cache == null) {
                 List<Class<?>> entities = new ArrayList<Class<?>>();
                 for (Object item : getSessionFactory().getAllClassMetadata().values()) {
@@ -617,10 +641,12 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
         for (Class<?> clazz : entities) {
             String cacheKey = getCacheKey(foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, clazz, configurationKey, isParentExcluded);
 
-            Map<String, FieldMetadata> cacheData;
+            Map<String, FieldMetadata> cacheData = null;
             synchronized(LOCK_OBJECT) {
-                cacheData = METADATA_CACHE.get(cacheKey);
-                //cacheData = null; //FIXME: APA delete this line
+                if (useCache()) {
+                    cacheData = METADATA_CACHE.get(cacheKey);
+                }
+
                 if (cacheData == null) {
                     Map<String, FieldMetadata> props = getPropertiesForEntityClass(
                         clazz,
