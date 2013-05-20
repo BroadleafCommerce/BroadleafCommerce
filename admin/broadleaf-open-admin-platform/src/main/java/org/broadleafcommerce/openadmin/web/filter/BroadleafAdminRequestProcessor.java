@@ -70,13 +70,11 @@ public class BroadleafAdminRequestProcessor implements BroadleafWebRequestProces
         
         Locale locale = localeResolver.resolveLocale(request);
         brc.setLocale(locale);
-
         
         brc.setMessageSource(messageSource);
         
         TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
         brc.setTimeZone(timeZone);
-
     }
 
 }
