@@ -15,4 +15,16 @@ public interface TaxProvider extends ModuleProvider {
      */
     public Order calculateTaxForOrder(Order order, ModuleConfiguration config) throws TaxException;
 
+    /**
+     * This method provides the implementation an opportunity to finalize taxes on the order. This is 
+     * often required when tax sub systems require tax documents to be created on checkout. This method 
+     * will typically be called by the checkout workflow, rather than by the pricing workflow.
+     * 
+     * @param order
+     * @param config
+     * @return
+     * @throws TaxException
+     */
+    public Order commitTaxForOrder(Order order, ModuleConfiguration config) throws TaxException;
+
 }
