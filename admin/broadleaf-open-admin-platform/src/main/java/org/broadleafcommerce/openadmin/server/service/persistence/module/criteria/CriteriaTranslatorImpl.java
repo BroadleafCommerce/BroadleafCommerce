@@ -3,12 +3,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.criter
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -18,6 +13,9 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -88,9 +86,10 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
                 explicitPath = filterMapping.getRestriction().getFieldPathBuilder().getPath(original, filterMapping.getFieldPath());
             }
 
-            if (!filterMapping.getFilterValues().isEmpty() || filterMapping.getFilterValues() instanceof EmptyFilterValues) {
+            if (filterMapping.getRestriction() != null) {
                 Predicate predicate = filterMapping.getRestriction().buildRestriction(criteriaBuilder, original,
-                        ceilingEntity, filterMapping.getFullPropertyName(), explicitPath, filterMapping.getFilterValues());
+                        ceilingEntity, filterMapping.getFullPropertyName(), explicitPath,
+                        filterMapping.getFilterValues() == null ? new ArrayList<String>():filterMapping.getFilterValues());
                 restrictions.add(predicate);
             }
 
