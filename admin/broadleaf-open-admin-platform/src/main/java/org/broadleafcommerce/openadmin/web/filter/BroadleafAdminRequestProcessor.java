@@ -62,6 +62,8 @@ public class BroadleafAdminRequestProcessor implements BroadleafWebRequestProces
         Site site = siteResolver.resolveSite(request);
 
         BroadleafRequestContext brc = new BroadleafRequestContext();
+        BroadleafRequestContext.setBroadleafRequestContext(brc);
+        
         brc.setSite(site);
         brc.setWebRequest(request);
         
@@ -77,7 +79,6 @@ public class BroadleafAdminRequestProcessor implements BroadleafWebRequestProces
         TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
         brc.setTimeZone(timeZone);
 
-        BroadleafRequestContext.setBroadleafRequestContext(brc);
     }
 
 }
