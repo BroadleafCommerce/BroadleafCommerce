@@ -1,10 +1,11 @@
-package org.broadleafcommerce.core.pricing.service.tax.provider;
+package org.broadleafcommerce.core.pricing.service;
 
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.TaxException;
+import org.broadleafcommerce.core.pricing.service.tax.provider.TaxProvider;
 
 import java.util.List;
 

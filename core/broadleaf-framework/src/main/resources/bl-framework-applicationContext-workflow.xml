@@ -18,7 +18,7 @@
         <property name="factor" value="0.00"/>
     </bean>
     
-    <bean id="blTaxService" class="org.broadleafcommerce.core.pricing.service.tax.provider.TaxServiceImpl"/>
+    <bean id="blTaxService" class="org.broadleafcommerce.core.pricing.service.TaxServiceImpl"/>
     
     <bean id="blFulfillmentLocationResolver" class="org.broadleafcommerce.core.pricing.service.fulfillment.SimpleFulfillmentLocationResolver" />
 

@@ -17,8 +17,8 @@
 package org.broadleafcommerce.core.pricing.service.workflow;
 
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.pricing.service.TaxService;
 import org.broadleafcommerce.core.pricing.service.module.TaxModule;
-import org.broadleafcommerce.core.pricing.service.tax.provider.TaxService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 
 public class TaxActivity extends BaseActivity<PricingContext> {

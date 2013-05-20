@@ -1,4 +1,4 @@
-package org.broadleafcommerce.core.pricing.service.tax.provider;
+package org.broadleafcommerce.core.pricing.service;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.TaxException;
