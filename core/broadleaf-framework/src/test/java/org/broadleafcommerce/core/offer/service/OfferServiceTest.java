@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
@@ -27,6 +26,7 @@ import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.domain.OfferRuleImpl;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
@@ -38,7 +38,7 @@ import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferP
 import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessorImpl;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessorImpl;
-import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
+import org.broadleafcommerce.core.offer.service.processor.OfferTimeZoneProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessorImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
@@ -64,6 +64,9 @@ import org.easymock.IAnswer;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
+
+import junit.framework.TestCase;
 
 /**
  * 
@@ -72,15 +75,16 @@ import java.util.List;
  */
 public class OfferServiceTest extends TestCase { 
     
-    private OfferServiceImpl offerService;
-    private CustomerOfferDao customerOfferDaoMock;
-    private OfferCodeDao offerCodeDaoMock;
-    private OfferDao offerDaoMock;
-    private OrderItemDao orderItemDaoMock;
-    private OrderService orderServiceMock;
-    private OrderItemService orderItemServiceMock;
-    private FulfillmentGroupItemDao fgItemDaoMock;
-    private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
+    protected OfferServiceImpl offerService;
+    protected CustomerOfferDao customerOfferDaoMock;
+    protected OfferCodeDao offerCodeDaoMock;
+    protected OfferDao offerDaoMock;
+    protected OrderItemDao orderItemDaoMock;
+    protected OrderService orderServiceMock;
+    protected OrderItemService orderItemServiceMock;
+    protected FulfillmentGroupItemDao fgItemDaoMock;
+    protected OfferDataItemProvider dataProvider = new OfferDataItemProvider();
+    protected OfferTimeZoneProcessor offerTimeZoneProcessorMock;
 
     private FulfillmentGroupService fgServiceMock;
     private OrderMultishipOptionService multishipOptionServiceMock;
@@ -101,12 +105,13 @@ public class OfferServiceTest extends TestCase {
         fgItemDaoMock = EasyMock.createMock(FulfillmentGroupItemDao.class);
         fgServiceMock = EasyMock.createMock(FulfillmentGroupService.class);
         multishipOptionServiceMock = EasyMock.createMock(OrderMultishipOptionService.class);
+        offerTimeZoneProcessorMock = EasyMock.createMock(OfferTimeZoneProcessor.class);
 
-
-        OrderOfferProcessor orderProcessor = new OrderOfferProcessorImpl();
+        OrderOfferProcessorImpl orderProcessor = new OrderOfferProcessorImpl();
         orderProcessor.setOfferDao(offerDaoMock);
         orderProcessor.setOrderItemDao(orderItemDaoMock);
         orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        orderProcessor.setOfferTimeZoneProcessor(offerTimeZoneProcessorMock);
         offerService.setOrderOfferProcessor(orderProcessor);
 
         ItemOfferProcessor itemProcessor = new ItemOfferProcessorImpl();
@@ -132,6 +137,7 @@ public class OfferServiceTest extends TestCase {
 
         EasyMock.replay(fgServiceMock);
         EasyMock.replay(multishipOptionServiceMock);
+        EasyMock.replay(offerTimeZoneProcessorMock);
     }
 
     public void verify() {
@@ -145,6 +151,7 @@ public class OfferServiceTest extends TestCase {
 
         EasyMock.verify(fgServiceMock);
         EasyMock.verify(multishipOptionServiceMock);
+        EasyMock.verify(offerTimeZoneProcessorMock);
     }
 
     public void testApplyOffersToOrder_Order() throws Exception {
@@ -191,6 +198,8 @@ public class OfferServiceTest extends TestCase {
         EasyMock.expect(fgItemDaoMock.create()).andAnswer(OfferDataItemProvider.getCreateFulfillmentGroupItemAnswer()).anyTimes();
         fgItemDaoMock.delete(EasyMock.isA(FulfillmentGroupItem.class));
         EasyMock.expectLastCall().anyTimes();
+
+        EasyMock.expect(offerTimeZoneProcessorMock.getTimeZone(EasyMock.isA(OfferImpl.class))).andReturn(TimeZone.getTimeZone("CST")).anyTimes();
 
         replay();
 
@@ -379,6 +388,7 @@ public class OfferServiceTest extends TestCase {
         EasyMock.expect(fgItemDaoMock.create()).andAnswer(OfferDataItemProvider.getCreateFulfillmentGroupItemAnswer()).anyTimes();
         fgItemDaoMock.delete(EasyMock.isA(FulfillmentGroupItem.class));
         EasyMock.expectLastCall().anyTimes();
+        EasyMock.expect(offerTimeZoneProcessorMock.getTimeZone(EasyMock.isA(OfferImpl.class))).andReturn(TimeZone.getTimeZone("CST")).anyTimes();
 
         replay();
 

@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
@@ -30,6 +30,9 @@ import org.easymock.classextension.EasyMock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
+
+import junit.framework.TestCase;
 
 /**
  * 
@@ -38,24 +41,30 @@ import java.util.List;
  */
 public class OrderOfferProcessorTest extends TestCase {
 
-    private OfferDao offerDaoMock;
-    private OrderOfferProcessorImpl orderProcessor;
-    private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
+    protected OfferDao offerDaoMock;
+    protected OrderOfferProcessorImpl orderProcessor;
+    protected OfferDataItemProvider dataProvider = new OfferDataItemProvider();
+    protected OfferTimeZoneProcessor offerTimeZoneProcessorMock;
     
     @Override
     protected void setUp() throws Exception {
         offerDaoMock = EasyMock.createMock(OfferDao.class);
+        offerTimeZoneProcessorMock = EasyMock.createMock(OfferTimeZoneProcessor.class);
         orderProcessor = new OrderOfferProcessorImpl();
         orderProcessor.setOfferDao(offerDaoMock);
+        orderProcessor.setOfferTimeZoneProcessor(offerTimeZoneProcessorMock);
         orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
     }
     
     public void replay() {
+        EasyMock.expect(offerTimeZoneProcessorMock.getTimeZone(EasyMock.isA(OfferImpl.class))).andReturn(TimeZone.getTimeZone("CST")).anyTimes();
         EasyMock.replay(offerDaoMock);
+        EasyMock.replay(offerTimeZoneProcessorMock);
     }
     
     public void verify() {
         EasyMock.verify(offerDaoMock);
+        EasyMock.verify(offerTimeZoneProcessorMock);
     }
     
     public void testFilterOffers() throws Exception {

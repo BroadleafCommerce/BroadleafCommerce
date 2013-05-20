@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -27,6 +26,7 @@ import org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
@@ -59,6 +59,9 @@ import org.easymock.IAnswer;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
+
+import junit.framework.TestCase;
 
 /**
  * 
@@ -67,17 +70,18 @@ import java.util.List;
  */
 public class FulfillmentGroupOfferProcessorTest extends TestCase {
 
-    private OfferDao offerDaoMock;
-    private OrderItemDao orderItemDaoMock;
-    private OfferServiceImpl offerService;
-    private OfferDataItemProvider dataProvider = new OfferDataItemProvider();
-    private OrderService orderServiceMock;
-    private OrderItemService orderItemServiceMock;
-    private FulfillmentGroupItemDao fgItemDaoMock;
-    private FulfillmentGroupService fgServiceMock;
-    private OrderMultishipOptionService multishipOptionServiceMock;
+    protected OfferDao offerDaoMock;
+    protected OrderItemDao orderItemDaoMock;
+    protected OfferServiceImpl offerService;
+    protected final OfferDataItemProvider dataProvider = new OfferDataItemProvider();
+    protected OrderService orderServiceMock;
+    protected OrderItemService orderItemServiceMock;
+    protected FulfillmentGroupItemDao fgItemDaoMock;
+    protected FulfillmentGroupService fgServiceMock;
+    protected OrderMultishipOptionService multishipOptionServiceMock;
+    protected OfferTimeZoneProcessor offerTimeZoneProcessorMock;
 
-    private FulfillmentGroupOfferProcessorImpl fgProcessor;
+    protected FulfillmentGroupOfferProcessorImpl fgProcessor;
 
     @Override
     protected void setUp() throws Exception {
@@ -98,9 +102,11 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         fgProcessor.setOrderItemDao(orderItemDaoMock);
         fgProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 
-        OrderOfferProcessor orderProcessor = new OrderOfferProcessorImpl();
+        OrderOfferProcessorImpl orderProcessor = new OrderOfferProcessorImpl();
         orderProcessor.setOfferDao(offerDaoMock);
         orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        offerTimeZoneProcessorMock = EasyMock.createMock(OfferTimeZoneProcessor.class);
+        orderProcessor.setOfferTimeZoneProcessor(offerTimeZoneProcessorMock);
         orderProcessor.setOrderItemDao(orderItemDaoMock);
 
         ItemOfferProcessor itemProcessor = new ItemOfferProcessorImpl();
@@ -126,6 +132,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         EasyMock.replay(fgItemDaoMock);
         EasyMock.replay(fgServiceMock);
         EasyMock.replay(multishipOptionServiceMock);
+        EasyMock.replay(offerTimeZoneProcessorMock);
     }
 
     public void verify() {
@@ -136,6 +143,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         EasyMock.verify(fgItemDaoMock);
         EasyMock.verify(fgServiceMock);
         EasyMock.verify(multishipOptionServiceMock);
+        EasyMock.verify(offerTimeZoneProcessorMock);
     }
 
     public void testApplyAllFulfillmentGroupOffersWithOrderItemOffers() throws Exception {
@@ -199,6 +207,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         EasyMock.expect(fgItemDaoMock.create()).andAnswer(OfferDataItemProvider.getCreateFulfillmentGroupItemAnswer()).anyTimes();
         fgItemDaoMock.delete(EasyMock.isA(FulfillmentGroupItem.class));
         EasyMock.expectLastCall().anyTimes();
+        EasyMock.expect(offerTimeZoneProcessorMock.getTimeZone(EasyMock.isA(OfferImpl.class))).andReturn(TimeZone.getTimeZone("CST")).anyTimes();
 
         replay();
 
@@ -338,12 +347,12 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 
         PromotableOrder order = dataProvider.createBasicPromotableOrder();
         List<Offer> offers = dataProvider.createFGBasedOffer("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75244", OfferDiscountType.PERCENT_OFF);
-        boolean couldApply = fgProcessor.couldOfferApplyToFulfillmentGroup(offers.get(0), (PromotableFulfillmentGroup) order.getFulfillmentGroups().get(0));
+        boolean couldApply = fgProcessor.couldOfferApplyToFulfillmentGroup(offers.get(0), order.getFulfillmentGroups().get(0));
         //test that the valid fg offer is included
         assertTrue(couldApply);
 
         offers = dataProvider.createFGBasedOffer("order.subTotal.getAmount()>20", "fulfillmentGroup.address.postalCode==75240", OfferDiscountType.PERCENT_OFF);
-        couldApply = fgProcessor.couldOfferApplyToFulfillmentGroup(offers.get(0), (PromotableFulfillmentGroup) order.getFulfillmentGroups().get(0));
+        couldApply = fgProcessor.couldOfferApplyToFulfillmentGroup(offers.get(0), order.getFulfillmentGroups().get(0));
         //test that the invalid fg offer is excluded
         assertFalse(couldApply);
 
@@ -392,6 +401,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 
     public class CandidateFulfillmentGroupOfferAnswer implements IAnswer<CandidateFulfillmentGroupOffer> {
 
+        @Override
         public CandidateFulfillmentGroupOffer answer() throws Throwable {
             return new CandidateFulfillmentGroupOfferImpl();
         }
@@ -400,6 +410,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 
     public class FulfillmentGroupAdjustmentAnswer implements IAnswer<FulfillmentGroupAdjustment> {
 
+        @Override
         public FulfillmentGroupAdjustment answer() throws Throwable {
             return new FulfillmentGroupAdjustmentImpl();
         }
@@ -408,6 +419,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 
     public class CandidateItemOfferAnswer implements IAnswer<CandidateItemOffer> {
 
+        @Override
         public CandidateItemOffer answer() throws Throwable {
             return new CandidateItemOfferImpl();
         }
@@ -416,6 +428,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 
     public class OrderItemAdjustmentAnswer implements IAnswer<OrderItemAdjustment> {
 
+        @Override
         public OrderItemAdjustment answer() throws Throwable {
             return new OrderItemAdjustmentImpl();
         }

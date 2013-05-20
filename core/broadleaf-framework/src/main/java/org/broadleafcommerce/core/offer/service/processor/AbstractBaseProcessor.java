@@ -63,8 +63,10 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
     private static final Log LOG = LogFactory.getLog(AbstractBaseProcessor.class);
     private static final Map EXPRESSION_CACHE = new LRUMap(1000);
+    
     @Resource(name = "blOfferTimeZoneProcessor")
     protected OfferTimeZoneProcessor offerTimeZoneProcessor;
+    
     protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
         CandidatePromotionItems candidates = new CandidatePromotionItems();
         if (offer.getQualifyingItemCriteria() == null || offer.getQualifyingItemCriteria().size() == 0) {
@@ -303,7 +305,10 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     }
 
     protected List<Offer> removeInvalidRequestOffers(List<Offer> offers) {
-        RequestDTO requestDTO = BroadleafRequestContext.getBroadleafRequestContext().getRequestDTO();
+        RequestDTO requestDTO = null;
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            BroadleafRequestContext.getBroadleafRequestContext().getRequestDTO();
+        }
 
         List<Offer> offersToRemove = new ArrayList<Offer>();
         for (Offer offer : offers) {
@@ -376,7 +381,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         }
         
         if (rule != null) {
-            TimeZone timeZone = offerTimeZoneProcessor.getTimeZone(offer);
+            TimeZone timeZone = getOfferTimeZoneProcessor().getTimeZone(offer);
             TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar(timeZone));
             HashMap<String, Object> vars = new HashMap<String, Object>();
             vars.put("time", timeDto);
@@ -403,7 +408,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     protected List<Offer> removeOutOfDateOffers(List<Offer> offers){
         List<Offer> offersToRemove = new ArrayList<Offer>();
         for (Offer offer : offers) {
-            TimeZone timeZone = offerTimeZoneProcessor.getTimeZone(offer);
+            TimeZone timeZone = getOfferTimeZoneProcessor().getTimeZone(offer);
 
             Calendar current = new GregorianCalendar(timeZone);
             Calendar start = null;
@@ -509,4 +514,13 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
         return appliesToCustomer;
     }
+
+    public OfferTimeZoneProcessor getOfferTimeZoneProcessor() {
+        return offerTimeZoneProcessor;
+    }
+
+    public void setOfferTimeZoneProcessor(OfferTimeZoneProcessor offerTimeZoneProcessor) {
+        this.offerTimeZoneProcessor = offerTimeZoneProcessor;
+    }
+
 }
