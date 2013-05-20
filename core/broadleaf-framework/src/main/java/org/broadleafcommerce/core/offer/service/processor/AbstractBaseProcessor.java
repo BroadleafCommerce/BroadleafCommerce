@@ -307,7 +307,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     protected List<Offer> removeInvalidRequestOffers(List<Offer> offers) {
         RequestDTO requestDTO = null;
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
-            BroadleafRequestContext.getBroadleafRequestContext().getRequestDTO();
+            requestDTO = BroadleafRequestContext.getBroadleafRequestContext().getRequestDTO();
         }
 
         List<Offer> offersToRemove = new ArrayList<Offer>();
