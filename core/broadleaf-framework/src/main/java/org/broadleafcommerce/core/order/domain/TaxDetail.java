@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 
@@ -34,58 +35,73 @@ public interface TaxDetail extends Serializable {
      * 
      * @return the id
      */
-    Long getId();
+    public Long getId();
 
     /**
      * Sets the id.
      * 
      * @param id the new id
      */
-    void setId(Long id);
+    public void setId(Long id);
     
     /**
      * Gets the tax type
      * 
      * @return the tax type
      */
-    TaxType getType();
+    public TaxType getType();
 
     /**
      * Sets the tax type
      * 
      * @param type the tax type
      */
-    void setType(TaxType type);
+    public void setType(TaxType type);
 
     /**
      * Gets the tax amount
      * 
      * @return the tax amount
      */
-    Money getAmount();
+    public Money getAmount();
 
     /**
      * Sets the tax amount
      * 
      * @param amount the tax amount
      */
-    void setAmount(Money amount);   
+    public void setAmount(Money amount);
 
     /**
      * Gets the tax rate
      * 
      * @return the rate
      */
-    BigDecimal getRate();
+    public BigDecimal getRate();
 
     /**
      * Sets the tax rate.
      * 
      * @param name the tax rate
      */
-    void setRate(BigDecimal rate);
+    public void setRate(BigDecimal rate);
     
     public BroadleafCurrency getCurrency();
 
     public void setCurrency(BroadleafCurrency currency);
+
+    /**
+     * Returns the configuration of the module that was used to calculate taxes. Allows 
+     * for tracking, especially when more than one module may be used by the system.
+     * @return
+     */
+    public ModuleConfiguration getModuleConfiguration();
+
+    /**
+     * Sets the module configuration that was used to calculate taxes.  Allows for tracking 
+     * of which module was used, especially in cases where more than one module is available 
+     * over time.
+     * @param config
+     */
+    public void setModuleConfiguration(ModuleConfiguration config);
 }

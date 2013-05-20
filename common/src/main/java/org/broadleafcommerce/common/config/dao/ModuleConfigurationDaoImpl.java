@@ -60,8 +60,16 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<ModuleConfiguration> readByType(ModuleConfigurationType type) {
+    public List<ModuleConfiguration> readAllByType(ModuleConfigurationType type) {
         Query query = em.createNamedQuery("BC_READ_MODULE_CONFIG_BY_TYPE");
+        query.setParameter("configType", type.getType());
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ModuleConfiguration> readActiveByType(ModuleConfigurationType type) {
+        Query query = em.createNamedQuery("BC_READ_ACTIVE_MODULE_CONFIG_BY_TYPE");
         query.setParameter("configType", type.getType());
         return query.getResultList();
     }

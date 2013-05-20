@@ -49,8 +49,13 @@ public class ModuleConfigurationServiceImpl implements ModuleConfigurationServic
     }
 
     @Override
-    public List<ModuleConfiguration> findByType(ModuleConfigurationType type) {
-        return moduleConfigDao.readByType(type);
+    public List<ModuleConfiguration> findActiveConfigurationsByType(ModuleConfigurationType type) {
+        return moduleConfigDao.readActiveByType(type);
+    }
+
+    @Override
+    public List<ModuleConfiguration> findAllConfigurationByType(ModuleConfigurationType type) {
+        return moduleConfigDao.readAllByType(type);
     }
 
     @Override

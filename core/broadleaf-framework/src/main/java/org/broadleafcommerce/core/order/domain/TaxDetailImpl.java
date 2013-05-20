@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration;
+import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
@@ -27,6 +29,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,7 +40,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -81,6 +84,9 @@ public class TaxDetailImpl implements TaxDetail {
     @AdminPresentation(friendlyName = "TaxDetailImpl_Currency_Code", order=1, group = "FixedPriceFulfillmentOptionImpl_Details", prominent=true)
     protected BroadleafCurrency currency;
 
+    @ManyToOne(targetEntity = AbstractModuleConfiguration.class)
+    @JoinColumn(name = "MODULE_CONFIG_ID")
+    protected ModuleConfiguration moduleConfiguation;
     
     public TaxDetailImpl() {
         
@@ -140,6 +146,16 @@ public class TaxDetailImpl implements TaxDetail {
     @Override
     public void setCurrency(BroadleafCurrency currency) {
         this.currency = currency;
+    }
+
+    @Override
+    public ModuleConfiguration getModuleConfiguration() {
+        return this.moduleConfiguation;
+    }
+
+    @Override
+    public void setModuleConfiguration(ModuleConfiguration config) {
+        this.moduleConfiguation = config;
     }
     
 }

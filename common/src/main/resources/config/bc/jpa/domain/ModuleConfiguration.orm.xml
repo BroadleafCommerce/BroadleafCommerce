@@ -9,6 +9,12 @@
         </query>
     </named-query>
     
+    <named-query name="BC_READ_ACTIVE_MODULE_CONFIG_BY_TYPE" >
+        <query>SELECT config FROM org.broadleafcommerce.common.config.domain.ModuleConfiguration config 
+               WHERE config.configType = :configType AND config.isActive = true
+        </query>
+    </named-query>
+    
     <named-query name="BC_BATCH_UPDATE_MODULE_CONFIG_DEFAULT" >
         <query>UPDATE org.broadleafcommerce.common.config.domain.ModuleConfiguration config 
                SET config.isDefault = false

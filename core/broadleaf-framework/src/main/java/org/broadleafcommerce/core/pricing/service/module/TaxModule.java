@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.pricing.service.module;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.TaxException;
 
+@Deprecated
 public interface TaxModule {
     
     public String getName();

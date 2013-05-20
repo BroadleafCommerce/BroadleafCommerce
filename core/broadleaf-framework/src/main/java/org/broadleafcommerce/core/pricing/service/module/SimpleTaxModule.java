@@ -44,6 +44,7 @@ import java.util.Map;
  * 
  * @author jfischer, brian polster
  */
+@Deprecated
 public class SimpleTaxModule implements TaxModule {
 
     public static final String MODULENAME = "simpleTaxModule";
@@ -66,6 +67,7 @@ public class SimpleTaxModule implements TaxModule {
 
     protected boolean taxFees;
 
+    @Override
     public Order calculateTaxForOrder(Order order) throws TaxException {
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             
@@ -136,10 +138,12 @@ public class SimpleTaxModule implements TaxModule {
         return order;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -394,6 +398,7 @@ public class SimpleTaxModule implements TaxModule {
      * @deprecated
      * @return
      */
+    @Deprecated
     public Double getFactor() {
         return getDefaultItemTaxRate();
     }
@@ -403,6 +408,7 @@ public class SimpleTaxModule implements TaxModule {
      * @deprecated
      * @return
      */
+    @Deprecated
     public void setFactor(Double factor) {
         setDefaultItemTaxRate(factor);
     }

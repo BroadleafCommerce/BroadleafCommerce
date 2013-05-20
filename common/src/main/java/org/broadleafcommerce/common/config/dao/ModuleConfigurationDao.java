@@ -29,7 +29,9 @@ public interface ModuleConfigurationDao {
 
     public void delete(ModuleConfiguration config);
 
-    public List<ModuleConfiguration> readByType(ModuleConfigurationType type);
+    public List<ModuleConfiguration> readAllByType(ModuleConfigurationType type);
+
+    public List<ModuleConfiguration> readActiveByType(ModuleConfigurationType type);
 
     public List<ModuleConfiguration> readByType(Class<? extends ModuleConfiguration> type);
 

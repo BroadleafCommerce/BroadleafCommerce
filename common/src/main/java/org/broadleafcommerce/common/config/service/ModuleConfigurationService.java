@@ -29,7 +29,9 @@ public interface ModuleConfigurationService {
 
     public void delete(ModuleConfiguration config);
 
-    public List<ModuleConfiguration> findByType(ModuleConfigurationType type);
+    public List<ModuleConfiguration> findActiveConfigurationsByType(ModuleConfigurationType type);
+
+    public List<ModuleConfiguration> findAllConfigurationByType(ModuleConfigurationType type);
 
     public List<ModuleConfiguration> findByType(Class<? extends ModuleConfiguration> type);
 
