@@ -21,10 +21,9 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
@@ -76,14 +75,14 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     
     @Column(name = "NAME")
     @AdminPresentation(friendlyName = "FulfillmentOptionImpl_name",
-        order = Presentation.FieldOrder.NAME, prominent = true, gridOrder = 1000)
+            order = Presentation.FieldOrder.NAME, prominent = true, gridOrder = 1000, translatable = true)
     protected String name;
 
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION")
     @AdminPresentation(friendlyName = "FulfillmentOptionImpl_longDescription",
-        order = Presentation.FieldOrder.DESCRIPTION)
+            order = Presentation.FieldOrder.DESCRIPTION, translatable = true)
     protected String longDescription;
 
     @Column(name = "USE_FLAT_RATES")
@@ -112,7 +111,7 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
 
     @Override
     public String getName() {
-        return name;
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
@@ -122,7 +121,7 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
 
     @Override
     public String getLongDescription() {
-        return longDescription;
+        return DynamicTranslationProvider.getValue(this, "longDescription", longDescription);
     }
 
     @Override

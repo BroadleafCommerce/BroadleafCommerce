@@ -8,6 +8,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import java.io.Serializable;
 
@@ -17,6 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -57,7 +59,9 @@ public class TranslationImpl implements Serializable, Translation {
     @Column(name = "LOCALE_CODE")
     protected String localeCode;
 
-    @Column(name = "TRANSLATED_VALUE")
+    @Column(name = "TRANSLATED_VALUE", length = Integer.MAX_VALUE - 1)
+    @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     protected String translatedValue;
 
     /* ************************ */

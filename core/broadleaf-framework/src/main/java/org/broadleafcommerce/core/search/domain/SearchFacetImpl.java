@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -66,7 +67,8 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     protected Field field;
     
     @Column(name = "LABEL")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description", groupOrder = 1, prominent = true)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description",
+            groupOrder = 1, prominent = true, translatable = true)
     protected String label;
     
     @Column(name =  "SHOW_ON_SEARCH")
@@ -119,7 +121,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
 
     @Override
     public String getLabel() {
-        return label;
+        return DynamicTranslationProvider.getValue(this, "label", label);
     }
 
     @Override
