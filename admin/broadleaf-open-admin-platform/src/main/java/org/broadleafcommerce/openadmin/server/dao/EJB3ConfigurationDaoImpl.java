@@ -36,8 +36,11 @@ public class EJB3ConfigurationDaoImpl implements EJB3ConfigurationDao {
         synchronized(this) {
             if (configuration == null) {
                 Ejb3Configuration temp = new Ejb3Configuration();
+                String previousValue = persistenceUnitInfo.getProperties().getProperty("hibernate.hbm2ddl.auto");
+                persistenceUnitInfo.getProperties().setProperty("hibernate.hbm2ddl.auto", "none");
                 configuration = temp.configure(persistenceUnitInfo, new HashMap());
                 configuration.getHibernateConfiguration().buildSessionFactory();
+                persistenceUnitInfo.getProperties().setProperty("hibernate.hbm2ddl.auto", previousValue);
             }
         }
         return configuration;
