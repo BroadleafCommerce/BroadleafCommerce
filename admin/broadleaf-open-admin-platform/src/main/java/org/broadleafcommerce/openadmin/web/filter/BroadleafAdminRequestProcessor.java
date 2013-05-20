@@ -66,13 +66,11 @@ public class BroadleafAdminRequestProcessor implements BroadleafWebRequestProces
         
         brc.setSite(site);
         brc.setWebRequest(request);
+        brc.setIgnoreSite(site == null);
         
         Locale locale = localeResolver.resolveLocale(request);
         brc.setLocale(locale);
 
-        if (site == null) {
-            brc.setIgnoreSite(true);
-        }
         
         brc.setMessageSource(messageSource);
         
