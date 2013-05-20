@@ -39,9 +39,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.lang.reflect.Constructor;
 import java.util.Map;
+
+import javax.annotation.Resource;
 /**
  * @author jfischer
  */
@@ -147,7 +148,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             String message = exploitProtectionService.cleanString(e.getMessage());
             throw recreateSpecificServiceException(e, message, e.getCause());
         } catch (Exception e) {
-            LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
+            LOG.error("Problem inspecting results for " + ceilingEntityFullyQualifiedClassname, e);
             throw new ServiceException(exploitProtectionService.cleanString("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname), e);
         }
     }
@@ -160,6 +161,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.fetch(persistencePackage, cto);
         } catch (ServiceException e) {
+            LOG.error("Problem fetching results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             String message = exploitProtectionService.cleanString(e.getMessage());
             throw recreateSpecificServiceException(e, message, e.getCause());
         }
