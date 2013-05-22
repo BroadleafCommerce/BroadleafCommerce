@@ -1,5 +1,6 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -86,10 +87,10 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
                 explicitPath = filterMapping.getRestriction().getFieldPathBuilder().getPath(original, filterMapping.getFieldPath(), criteriaBuilder);
             }
 
-            if (filterMapping.getRestriction() != null) {
+            if (filterMapping.getRestriction() != null && !CollectionUtils.isEmpty(filterMapping.getFilterValues())) {
                 Predicate predicate = filterMapping.getRestriction().buildRestriction(criteriaBuilder, original,
                         ceilingEntity, filterMapping.getFullPropertyName(), explicitPath,
-                        filterMapping.getFilterValues() == null ? new ArrayList<String>():filterMapping.getFilterValues());
+                        filterMapping.getFilterValues());
                 restrictions.add(predicate);
             }
 
