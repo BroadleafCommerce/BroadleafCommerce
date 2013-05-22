@@ -22,7 +22,7 @@ public class LikePredicateProvider implements PredicateProvider<String, String> 
         if (explicitPath != null) {
             path = explicitPath;
         } else {
-            path = fieldPathBuilder.getPath(root, fullPropertyName);
+            path = fieldPathBuilder.getPath(root, fullPropertyName, builder);
         }
         return builder.like(builder.lower(path), directValues.get(0));
     }

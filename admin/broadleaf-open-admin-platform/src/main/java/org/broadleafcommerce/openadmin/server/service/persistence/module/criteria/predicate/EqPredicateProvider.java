@@ -23,7 +23,7 @@ public class EqPredicateProvider implements PredicateProvider<Serializable, Seri
         if (explicitPath != null) {
             path = explicitPath;
         } else {
-            path = fieldPathBuilder.getPath(root, fullPropertyName);
+            path = fieldPathBuilder.getPath(root, fullPropertyName, builder);
         }
         return builder.equal(path, directValues.get(0));
     }

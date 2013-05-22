@@ -51,10 +51,10 @@ public class SkuRestrictionFactoryImpl implements RestrictionFactory {
                     FieldPath fieldPath = fieldPathBuilder.getFieldPath(root, fullPropertyName);
                     if ((StringUtils.isNotEmpty(skuPropertyPrefix) && fullPropertyName.startsWith(skuPropertyPrefix))
                                             || CollectionUtils.isEmpty(fieldPath.getAssociationPath())) {
-                        Path targetPropertyPath = fieldPathBuilder.getPath(root, fieldPath);
+                        Path targetPropertyPath = fieldPathBuilder.getPath(root, fieldPath, builder);
                         Path defaultSkuPropertyPath = fieldPathBuilder.getPath(root,
-                                DEFAULT_SKU_PATH_PREFIX + fullPropertyName);
-                        Path productPath = fieldPathBuilder.getPath(root, "product");
+                                DEFAULT_SKU_PATH_PREFIX + fullPropertyName, builder);
+                        Path productPath = fieldPathBuilder.getPath(root, "product", builder);
                         Predicate propertyExpression;
                         Predicate defaultSkuExpression;
                         if (delegateRestriction.getPredicateProvider() instanceof LikePredicateProvider) {

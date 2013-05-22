@@ -23,7 +23,7 @@ public class BetweenDatePredicateProvider implements PredicateProvider<Comparabl
         if (explicitPath != null) {
             path = explicitPath;
         } else {
-            path = fieldPathBuilder.getPath(root, fullPropertyName);
+            path = fieldPathBuilder.getPath(root, fullPropertyName, builder);
         }
         if (directValues.size() == 2) {
             if (directValues.get(0) == null) {

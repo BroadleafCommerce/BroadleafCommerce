@@ -34,7 +34,7 @@ public class Restriction {
         return this;
     }
 
-    Predicate buildRestriction(CriteriaBuilder builder, From root, String ceilingEntity, String targetPropertyName, Path explicitPath, List<String> directValues) {
+    public Predicate buildRestriction(CriteriaBuilder builder, From root, String ceilingEntity, String targetPropertyName, Path explicitPath, List<String> directValues) {
         List<Object> convertedValues = new ArrayList<Object>();
         if (filterValueConverter != null) {
             for (String item : directValues) {

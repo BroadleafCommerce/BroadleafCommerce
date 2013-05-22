@@ -22,7 +22,7 @@ public class BetweenPredicateProvider implements PredicateProvider<Comparable, C
         if (explicitPath != null) {
             path = explicitPath;
         } else {
-            path = fieldPathBuilder.getPath(root, fullPropertyName);
+            path = fieldPathBuilder.getPath(root, fullPropertyName, builder);
         }
         if (directValues.size() > 1) {
             return builder.between(path, directValues.get(0), directValues.get(1));

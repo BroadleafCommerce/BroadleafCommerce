@@ -22,7 +22,7 @@ public class IsNullPredicateProvider implements PredicateProvider {
         if (explicitPath != null) {
             path = explicitPath;
         } else {
-            path = fieldPathBuilder.getPath(root, fullPropertyName);
+            path = fieldPathBuilder.getPath(root, fullPropertyName, builder);
         }
         return builder.isNull(path);
     }

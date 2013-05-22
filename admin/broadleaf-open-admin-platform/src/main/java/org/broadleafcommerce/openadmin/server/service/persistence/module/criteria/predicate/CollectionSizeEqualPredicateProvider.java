@@ -23,7 +23,7 @@ public class CollectionSizeEqualPredicateProvider implements PredicateProvider<C
         if (explicitPath != null) {
             path = explicitPath;
         } else {
-            path = fieldPathBuilder.getPath(root, fullPropertyName);
+            path = fieldPathBuilder.getPath(root, fullPropertyName, builder);
         }
         return builder.equal(builder.size(path), directValues.get(0));
     }

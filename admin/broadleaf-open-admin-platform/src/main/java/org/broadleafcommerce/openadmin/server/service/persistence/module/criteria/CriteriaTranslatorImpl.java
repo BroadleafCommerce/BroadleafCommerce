@@ -83,7 +83,7 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         for (FilterMapping filterMapping : filterMappings) {
             Path explicitPath = null;
             if (filterMapping.getFieldPath() != null) {
-                explicitPath = filterMapping.getRestriction().getFieldPathBuilder().getPath(original, filterMapping.getFieldPath());
+                explicitPath = filterMapping.getRestriction().getFieldPathBuilder().getPath(original, filterMapping.getFieldPath(), criteriaBuilder);
             }
 
             if (filterMapping.getRestriction() != null) {
@@ -96,7 +96,7 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
             if (filterMapping.getSortDirection() != null) {
                 Path sortPath = explicitPath;
                 if (sortPath == null && !StringUtils.isEmpty(filterMapping.getFullPropertyName())) {
-                    sortPath = filterMapping.getRestriction().getFieldPathBuilder().getPath(original, filterMapping.getFullPropertyName());
+                    sortPath = filterMapping.getRestriction().getFieldPathBuilder().getPath(original, filterMapping.getFullPropertyName(), criteriaBuilder);
                 }
                 if (sortPath != null) {
                     addSorting(criteriaBuilder, sorts, filterMapping, sortPath);
