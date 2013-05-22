@@ -19,8 +19,8 @@
     <input type="hidden" th:field="*{entityType}" />
     <input type="hidden" th:field="*{id}" />
     
-    <div class="tabs-container">
-        <dl class="tabs" th:classappend="${additionalTabClasses}" th:if="${renderTabs}">
+    <div class="tabs-container" th:if="${renderTabs}">
+        <dl class="tabs" th:classappend="${additionalTabClasses}">
             <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'">
                 <a th:href="'#tab' + ${tabStat.count}" th:text="#{${tab.title}}" />
             </dd>

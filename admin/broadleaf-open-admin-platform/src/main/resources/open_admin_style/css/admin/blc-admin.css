@@ -130,10 +130,6 @@ fieldset {
 	margin: 0 0 25px 0;
 }
 
-fieldset:last-child {
-	margin-bottom: 0;
-}
-
 fieldset legend {
 	background-color: #FAFAFA;
 	border-width: 1px;
@@ -1352,6 +1348,10 @@ div#thumbnail-zoom {
 	padding: 10px;
 	border: 1px solid #CCC;
 	border-radius: 4px;
+}
+
+.mCSB_container.mCS_no_scrollbar {
+	margin-right: 15px !important;
 }
 
 /* -----------------------------------------

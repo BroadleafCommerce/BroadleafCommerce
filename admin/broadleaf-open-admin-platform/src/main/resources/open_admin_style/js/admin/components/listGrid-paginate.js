@@ -491,7 +491,22 @@
                     BLCAdmin.listGrid.paginate.updateTableFooter($wrapper.find('tbody'));
                 }
             } else if ($modalBody.length > 0) {
-                var maxHeight = $modalBody.height() - $wrapper.prev().height() - $wrapper.next().height() - 10;
+                var maxHeight = $modalBody.height() - $wrapper.prev().height() - $wrapper.next().height() - 28;
+                
+                if ($wrapper.parent().find('label').length > 0) {
+                    maxHeight -= $wrapper.parent().find('label').outerHeight();
+                    maxHeight -= 5;
+                }
+                
+                if ($wrapper.parent().find('.listgrid-toolbar').length > 0) {
+                    maxHeight -= $wrapper.parent().find('.listgrid-toolbar').outerHeight();
+                }
+                
+                var minHeight = $wrapper.find('table tr:not(.width-control-header)').outerHeight() + 1;
+                if (maxHeight < minHeight) {
+                    maxHeight = minHeight;
+                }
+                
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
             } else {
