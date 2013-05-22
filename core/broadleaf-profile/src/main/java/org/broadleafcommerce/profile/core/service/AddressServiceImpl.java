@@ -21,7 +21,7 @@ import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.profile.core.dao.AddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.service.exception.AddressValidationException;
+import org.broadleafcommerce.profile.core.service.exception.AddressVerificationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,8 +37,8 @@ public class AddressServiceImpl implements AddressService {
     @Resource(name = "blModuleConfigurationService")
     protected ModuleConfigurationService moduleConfigService;
 
-    @Resource(name = "blAddressValidationProviders")
-    protected List<AddressValidationProvider> providers;
+    @Resource(name = "blAddressVerificationProviders")
+    protected List<AddressVerificationProvider> providers;
 
     @Override
     public Address saveAddress(Address address) {
@@ -61,7 +61,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public List<Address> validateAddress(Address address) throws AddressValidationException {
+    public List<Address> verifyAddress(Address address) throws AddressVerificationException {
 
         if (providers != null && !providers.isEmpty()) {
 
@@ -82,14 +82,14 @@ public class AddressServiceImpl implements AddressService {
                     config = moduleConfigs.get(0);
                 }
 
-                for (AddressValidationProvider provider : providers) {
+                for (AddressVerificationProvider provider : providers) {
                     if (provider.canRespond(config)) {
                         return provider.validateAddress(address, config);
                     }
                 }
             }
         }
-        throw new AddressValidationException("No providers were configured to handle address validation");
+        throw new AddressVerificationException("No providers were configured to handle address validation");
     }
 
 }

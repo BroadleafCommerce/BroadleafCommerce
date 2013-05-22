@@ -14,22 +14,27 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.core.service;
+package org.broadleafcommerce.profile.core.service.exception;
 
-import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
-import org.broadleafcommerce.common.config.service.ModuleProvider;
-import org.broadleafcommerce.profile.core.domain.Address;
 
-import java.util.List;
+public class AddressVerificationException extends Exception {
 
-/**
- * Allows for pluggable address validators.
- * 
- * @author Kelly Tisdell
- *
- */
-public interface AddressValidationProvider extends ModuleProvider {
+    private static final long serialVersionUID = 1L;
 
-    public List<Address> validateAddress(Address address, ModuleConfiguration config);
+    public AddressVerificationException() {
+        super();
+    }
+
+    public AddressVerificationException(String arg0, Throwable arg1) {
+        super(arg0, arg1);
+    }
+
+    public AddressVerificationException(String arg0) {
+        super(arg0);
+    }
+
+    public AddressVerificationException(Throwable arg0) {
+        super(arg0);
+    }
 
 }

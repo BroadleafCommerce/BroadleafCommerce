@@ -17,7 +17,7 @@
 package org.broadleafcommerce.profile.core.service;
 
 import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.service.exception.AddressValidationException;
+import org.broadleafcommerce.profile.core.service.exception.AddressVerificationException;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public interface AddressService {
     public void delete(Address address);
 
     /**
-     * Validates the address and returns a collection of addresses. If the address was 
+     * Verifies the address and returns a collection of addresses. If the address was 
      * invalid but close to a match, this method should return a list of one or more addresses that may be valid. 
      * If the address is valid, implementations should return the valid address in the list. 
      * Implementations may set the tokenized address, zip four, and verification level. If the address could not 
@@ -43,6 +43,6 @@ public interface AddressService {
      * @param address
      * @return
      */
-    public List<Address> validateAddress(Address address) throws AddressValidationException;
+    public List<Address> verifyAddress(Address address) throws AddressVerificationException;
 
 }
