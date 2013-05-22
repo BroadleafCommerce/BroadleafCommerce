@@ -124,6 +124,10 @@ public class AddressImpl implements Address {
     @AdminPresentation(friendlyName = "AddressImpl_Address_2", order=60, group = "AddressImpl_Address")
     protected String addressLine2;
 
+    @Column(name = "ADDRESS_LINE3")
+    @AdminPresentation(friendlyName = "AddressImpl_Address_3", order = 60, group = "AddressImpl_Address")
+    protected String addressLine3;
+
     @Column(name = "CITY", nullable = false)
     @AdminPresentation(friendlyName = "AddressImpl_City", order=70, group = "AddressImpl_Address")
     protected String city;
@@ -242,6 +246,16 @@ public class AddressImpl implements Address {
     @Override
     public void setAddressLine2(String addressLine2) {
         this.addressLine2 = addressLine2;
+    }
+
+    @Override
+    public String getAddressLine3() {
+        return addressLine3;
+    }
+
+    @Override
+    public void setAddressLine3(String addressLine3) {
+        this.addressLine3 = addressLine3;
     }
 
     @Override

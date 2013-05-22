@@ -32,6 +32,10 @@ public interface Address extends Serializable {
 
     public String getAddressLine2();
 
+    public void setAddressLine3(String addressLine3);
+
+    public String getAddressLine3();
+
     public void setCity(String city);
 
     public String getCity();
