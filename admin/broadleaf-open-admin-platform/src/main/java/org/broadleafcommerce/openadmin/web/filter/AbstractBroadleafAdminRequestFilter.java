@@ -2,6 +2,7 @@ package org.broadleafcommerce.openadmin.web.filter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,9 @@ public abstract class AbstractBroadleafAdminRequestFilter extends OncePerRequest
 
     private Set<String> ignoreSuffixes;
 
+    @Value("${asset.server.url.prefix.internal}")
+    private String assetPrefix;
+
     /**
      * Determines if the passed in URL should be processed by the content management system.
      * <p/>
@@ -32,7 +36,7 @@ public abstract class AbstractBroadleafAdminRequestFilter extends OncePerRequest
      */
     protected boolean shouldProcessURL(HttpServletRequest request, String requestURI) {
         int pos = requestURI.lastIndexOf(".");
-        if (pos > 0) {
+        if (pos > 0 && !requestURI.contains(assetPrefix)) {
             String suffix = requestURI.substring(pos);
             if (getIgnoreSuffixes().contains(suffix.toLowerCase())) {
                 if (LOG.isTraceEnabled()) {
