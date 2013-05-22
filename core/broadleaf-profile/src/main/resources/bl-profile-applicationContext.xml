@@ -22,6 +22,10 @@
     
     <bean id="blEncryptionModule" class="org.broadleafcommerce.common.encryption.PassthroughEncryptionModule"/>
     
-
+    <bean id="blAddressValidationProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list/>
+        </property>
+    </bean>
     
 </beans>

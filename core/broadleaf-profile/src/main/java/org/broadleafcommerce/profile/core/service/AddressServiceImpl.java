@@ -16,9 +16,15 @@
 
 package org.broadleafcommerce.profile.core.service;
 
+import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
+import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
+import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.profile.core.dao.AddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.service.exception.AddressValidationException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -28,19 +34,62 @@ public class AddressServiceImpl implements AddressService {
     @Resource(name="blAddressDao")
     protected AddressDao addressDao;
 
+    @Resource(name = "blModuleConfigurationService")
+    protected ModuleConfigurationService moduleConfigService;
+
+    @Resource(name = "blAddressValidationProviders")
+    protected List<AddressValidationProvider> providers;
+
+    @Override
     public Address saveAddress(Address address) {
         return addressDao.save(address);
     }
 
+    @Override
     public Address readAddressById(Long addressId) {
         return addressDao.readAddressById(addressId);
     }
 
+    @Override
     public Address create() {
         return addressDao.create();
     }
 
+    @Override
     public void delete(Address address) {
         addressDao.delete(address);
     }
+
+    @Override
+    public List<Address> validateAddress(Address address) throws AddressValidationException {
+
+        if (providers != null && !providers.isEmpty()) {
+
+            List<ModuleConfiguration> moduleConfigs = moduleConfigService.findActiveConfigurationsByType(ModuleConfigurationType.ADDRESS_VERIFICATION);
+
+            if (moduleConfigs != null && !moduleConfigs.isEmpty()) {
+                //Try to find a default configuration
+                ModuleConfiguration config = null;
+                for (ModuleConfiguration configuration : moduleConfigs) {
+                    if (configuration.getIsDefault()) {
+                        config = configuration;
+                        break;
+                    }
+                }
+
+                if (config == null) {
+                    //if there wasn't a default one, use the first active one...
+                    config = moduleConfigs.get(0);
+                }
+
+                for (AddressValidationProvider provider : providers) {
+                    if (provider.canRespond(config)) {
+                        return provider.validateAddress(address, config);
+                    }
+                }
+            }
+        }
+        throw new AddressValidationException("No providers were configured to handle address validation");
+    }
+
 }
