@@ -31,7 +31,14 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -39,7 +46,6 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -48,11 +54,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
@@ -72,8 +73,15 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "FulfillmentGroupItemId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FulfillmentGroupItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupItemImpl", allocationSize = 150)
+    @GeneratedValue(generator = "FulfillmentGroupItemId")
+    @GenericGenerator(
+        name="FulfillmentGroupItemId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="FulfillmentGroupItemImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl")
+        }
+    )
     @Column(name = "FULFILLMENT_GROUP_ITEM_ID")
     protected Long id;
 
@@ -159,14 +167,17 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         this.quantity = quantity;
     }
 
+    @Override
     public Money getRetailPrice() {
         return orderItem.getRetailPrice();
     }
 
+    @Override
     public Money getSalePrice() {
         return orderItem.getSalePrice();
     }
 
+    @Override
     public Money getPrice() {
         return orderItem.getAveragePrice();
     }

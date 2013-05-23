@@ -54,11 +54,7 @@ public class PageItemCriteriaImpl implements PageItemCriteria {
         name="PageItemCriteriaId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="PageItemCriteriaImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.PageItemCriteriaImpl")
         }
     )
@@ -80,34 +76,42 @@ public class PageItemCriteriaImpl implements PageItemCriteria {
     @JoinTable(name = "BLC_QUAL_CRIT_PAGE_XREF", joinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "PAGE_ID"))
     protected Page page;
     
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public Integer getQuantity() {
         return quantity;
     }
 
+    @Override
     public void setQuantity(Integer receiveQuantity) {
         this.quantity = receiveQuantity;
     }
 
+    @Override
     public String getMatchRule() {
         return orderItemMatchRule;
     }
 
+    @Override
     public void setMatchRule(String matchRule) {
         this.orderItemMatchRule = matchRule;
     }
 
+    @Override
     public Page getPage() {
         return page;
     }
 
+    @Override
     public void setPage(Page page) {
         this.page = page;
     }
@@ -149,6 +153,7 @@ public class PageItemCriteriaImpl implements PageItemCriteria {
         return true;
     }
 
+    @Override
     public PageItemCriteria cloneEntity() {
         PageItemCriteriaImpl newField = new PageItemCriteriaImpl();
         newField.quantity = quantity;

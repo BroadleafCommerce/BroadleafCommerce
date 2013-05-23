@@ -25,7 +25,9 @@ import org.broadleafcommerce.core.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -37,7 +39,6 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -45,7 +46,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -58,8 +58,15 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "PaymentResponseItemId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PaymentResponseItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentResponseItemImpl", allocationSize = 50)
+    @GeneratedValue(generator = "PaymentResponseItemId")
+    @GenericGenerator(
+        name="PaymentResponseItemId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="PaymentResponseItemImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl")
+        }
+    )
     @Column(name = "PAYMENT_RESPONSE_ITEM_ID")
     protected Long id;
 

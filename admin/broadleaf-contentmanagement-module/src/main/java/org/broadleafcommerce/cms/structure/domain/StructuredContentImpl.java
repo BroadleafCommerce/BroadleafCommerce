@@ -37,7 +37,9 @@ import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,7 +53,6 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -62,7 +63,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 /**
  * Created by bpolster.
@@ -92,14 +92,15 @@ public class StructuredContentImpl implements StructuredContent {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "StructuredContentId", strategy = GenerationType.TABLE)
-    @TableGenerator(
-        name = "StructuredContentId", 
-        table = "SEQUENCE_GENERATOR", 
-        pkColumnName = "ID_NAME", 
-        valueColumnName = "ID_VAL", 
-        pkColumnValue = "StructuredContentImpl", 
-        allocationSize = 10)
+    @GeneratedValue(generator = "StructuredContentId")
+    @GenericGenerator(
+        name="StructuredContentId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="StructuredContentImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.structure.domain.StructuredContentImpl")
+        }
+    )
     @Column(name = "SC_ID")
     protected Long id;
 

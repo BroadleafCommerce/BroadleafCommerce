@@ -20,11 +20,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
-import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.annotations.Cache;
@@ -65,11 +60,7 @@ public class OfferCodeImpl implements OfferCode {
         name="OfferCodeId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="OfferCodeImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferCodeImpl")
         }
     )
@@ -113,68 +104,84 @@ public class OfferCodeImpl implements OfferCode {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<Order> orders = new ArrayList<Order>();
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public Offer getOffer() {
         return offer;
     }
 
+    @Override
     public void setOffer(Offer offer) {
         this.offer = offer;
     }
 
+    @Override
     public String getOfferCode() {
         return offerCode;
     }
 
+    @Override
     public void setOfferCode(String offerCode) {
         this.offerCode = offerCode;
     }
 
+    @Override
     public int getMaxUses() {
         return maxUses;
     }
 
+    @Override
     public void setMaxUses(int maxUses) {
         this.maxUses = maxUses;
     }
 
+    @Override
     @Deprecated
     public int getUses() {
         return uses;
     }
 
+    @Override
     @Deprecated
     public void setUses(int uses) {
         this.uses = uses;
     }
 
+    @Override
     public Date getStartDate() {
         return offerCodeStartDate;
     }
 
+    @Override
     public void setStartDate(Date startDate) {
         this.offerCodeStartDate = startDate;
     }
 
+    @Override
     public Date getEndDate() {
         return offerCodeEndDate;
     }
 
+    @Override
     public void setEndDate(Date endDate) {
         this.offerCodeEndDate = endDate;
     }
 
+    @Override
     public List<Order> getOrders() {
         return orders;
     }
 
+    @Override
     public void setOrders(List<Order> orders) {
         this.orders = orders;
     }

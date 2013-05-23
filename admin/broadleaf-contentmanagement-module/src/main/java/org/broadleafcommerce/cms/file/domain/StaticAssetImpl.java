@@ -37,7 +37,9 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +50,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -58,7 +59,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 /**
@@ -86,8 +86,15 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
     private static final long serialVersionUID = 6990685254640110350L;
 
     @Id
-    @GeneratedValue(generator = "StaticAssetId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "StaticAssetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StaticAssetFolderImpl", allocationSize = 10)
+    @GeneratedValue(generator = "StaticAssetId")
+    @GenericGenerator(
+        name="StaticAssetId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="StaticAssetImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.file.domain.StaticAssetImpl")
+        }
+    )
     @Column(name = "STATIC_ASSET_ID")
     protected Long id;
 
@@ -205,46 +212,57 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
     @AdminPresentation(excluded = true)
     protected String storageType;
 
+    @Override
     public String getFullUrl() {
         return fullUrl;
     }
 
+    @Override
     public void setFullUrl(String fullUrl) {
         this.fullUrl = fullUrl;
     }
 
+    @Override
     public String getTitle() {
         return title;
     }
 
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
 
+    @Override
     public String getAltText() {
         return altText;
     }
 
+    @Override
     public void setAltText(String altText) {
         this.altText = altText;
     }
 
+    @Override
     public Long getFileSize() {
         return fileSize;
     }
 
+    @Override
     public void setFileSize(Long fileSize) {
         this.fileSize = fileSize;
     }
 
+    @Override
     public Map<String, StaticAssetDescription> getContentMessageValues() {
         return contentMessageValues;
     }
 
+    @Override
     public void setContentMessageValues(Map<String, StaticAssetDescription> contentMessageValues) {
         this.contentMessageValues = contentMessageValues;
     }
 
+    @Override
     public Boolean getArchivedFlag() {
         if (archivedFlag == null) {
             return Boolean.FALSE;
@@ -253,94 +271,117 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
         }
     }
 
+    @Override
     public void setArchivedFlag(Boolean archivedFlag) {
         this.archivedFlag = archivedFlag;
     }
 
+    @Override
     public Long getOriginalAssetId() {
         return originalAssetId;
     }
 
+    @Override
     public void setOriginalAssetId(Long originalAssetId) {
         this.originalAssetId = originalAssetId;
     }
 
+    @Override
     public SandBox getSandbox() {
         return sandbox;
     }
 
+    @Override
     public void setSandbox(SandBox sandbox) {
         this.sandbox = sandbox;
     }
 
+    @Override
     public String getMimeType() {
         return mimeType;
     }
 
+    @Override
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
 
+    @Override
     public String getFileExtension() {
         return fileExtension;
     }
 
+    @Override
     public void setFileExtension(String fileExtension) {
         this.fileExtension = fileExtension;
     }
 
+    @Override
     public SandBox getOriginalSandBox() {
         return originalSandBox;
     }
 
+    @Override
     public void setOriginalSandBox(SandBox originalSandBox) {
         this.originalSandBox = originalSandBox;
     }
 
+    @Override
     public AdminAuditable getAuditable() {
         return auditable;
     }
 
+    @Override
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
     }
 
+    @Override
     public Boolean getDeletedFlag() {
         return deletedFlag;
     }
 
+    @Override
     public void setDeletedFlag(Boolean deletedFlag) {
         this.deletedFlag = deletedFlag;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public Boolean getLockedFlag() {
         return lockedFlag;
     }
 
+    @Override
     public void setLockedFlag(Boolean lockedFlag) {
         this.lockedFlag = lockedFlag;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public Site getSite() {
         return site;
     }
 
+    @Override
     public void setSite(Site site) {
         this.site = site;
     }

@@ -28,12 +28,15 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -43,8 +46,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.util.List;
 
 /**
  * Created by bpolster.
@@ -59,14 +60,15 @@ public class PageTemplateImpl implements PageTemplate {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "PageTemplateId", strategy = GenerationType.TABLE)
-    @TableGenerator(
-        name = "PageTemplateId", 
-        table = "SEQUENCE_GENERATOR", 
-        pkColumnName = "ID_NAME", 
-        valueColumnName = "ID_VAL", 
-        pkColumnValue = "PageTemplateImpl", 
-        allocationSize = 10)
+    @GeneratedValue(generator = "PageTemplateId")
+    @GenericGenerator(
+        name="PageTemplateId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="PageTemplateImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.PageTemplateImpl")
+        }
+    )
     @Column(name = "PAGE_TMPLT_ID")
     @AdminPresentation(friendlyName = "PageTemplateImpl_Template_Id", 
         visibility = VisibilityEnum.HIDDEN_ALL, 

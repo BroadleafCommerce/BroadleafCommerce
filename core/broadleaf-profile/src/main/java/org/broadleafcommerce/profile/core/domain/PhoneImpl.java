@@ -17,22 +17,18 @@
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
-import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -43,8 +39,15 @@ public class PhoneImpl implements Phone {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "PhoneId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PhoneId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PhoneImpl", allocationSize = 50)
+    @GeneratedValue(generator = "PhoneId")
+    @GenericGenerator(
+        name="PhoneId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="PhoneImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.PhoneImpl")
+        }
+    )
     @Column(name = "PHONE_ID")
     protected Long id;
 
@@ -60,34 +63,42 @@ public class PhoneImpl implements Phone {
     @AdminPresentation(friendlyName = "PhoneImpl_Active_Phone", order=3, group = "PhoneImpl_Phone")
     protected boolean isActive = true;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
+    @Override
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
+    @Override
     public boolean isDefault() {
         return isDefault;
     }
 
+    @Override
     public void setDefault(boolean isDefault) {
         this.isDefault = isDefault;
     }
 
+    @Override
     public boolean isActive() {
         return isActive;
     }
 
+    @Override
     public void setActive(boolean isActive) {
         this.isActive = isActive;
     }

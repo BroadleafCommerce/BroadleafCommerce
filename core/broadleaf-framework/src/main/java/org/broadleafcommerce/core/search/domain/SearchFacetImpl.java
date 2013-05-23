@@ -26,6 +26,8 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,7 +37,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -43,7 +44,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -54,8 +54,15 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "SearchFacetId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SearchFacetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchFacetImpl", allocationSize = 50)
+    @GeneratedValue(generator = "SearchFacetId")
+    @GenericGenerator(
+        name="SearchFacetId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="SearchFacetImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.SearchFacetImpl")
+        }
+    )
     @Column(name = "SEARCH_FACET_ID")
     @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
@@ -159,10 +166,12 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
         this.canMultiselect = canMultiselect;
     }
 
+    @Override
     public List<RequiredFacet> getRequiredFacets() {
         return requiredFacets;
     }
 
+    @Override
     public void setRequiredFacets(List<RequiredFacet> requiredFacets) {
         this.requiredFacets = requiredFacets;
     }

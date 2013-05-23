@@ -23,18 +23,19 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.inventory.service.type.AvailabilityStatusType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.util.Date;
 
 /**
  * The Class SkuAvailabilityImpl is the default implementation of {@link SkuAvailability}.
@@ -65,8 +66,15 @@ public class SkuAvailabilityImpl implements SkuAvailability {
 
     /** The id. */
     @Id
-    @GeneratedValue(generator = "SkuAvailabilityId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SkuAvailabilityId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuAvailabilityImpl", allocationSize = 50)
+    @GeneratedValue(generator = "SkuAvailabilityId")
+    @GenericGenerator(
+        name="SkuAvailabilityId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="SkuAvailabilityImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.inventory.domain.SkuAvailabilityImpl")
+        }
+    )
     @Column(name = "SKU_AVAILABILITY_ID")
     @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Sku_Availability_ID", group = "SkuAvailabilityImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;

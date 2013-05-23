@@ -23,20 +23,21 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.math.BigDecimal;
 
 /**
  * @author jfischer
@@ -57,8 +58,15 @@ public class AmountItemImpl implements AmountItem, CurrencyCodeIdentifiable {
     private static final long serialVersionUID = 1L;
     
     @Id
-    @GeneratedValue(generator = "AmountItemId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "AmountItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AmountItemImpl", allocationSize = 50)
+    @GeneratedValue(generator = "AmountItemId")
+    @GenericGenerator(
+        name="AmountItemId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="AmountItemImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.AmountItemImpl")
+        }
+    )
     @Column(name = "AMOUNT_ITEM_ID")
     protected Long id;
     
@@ -93,6 +101,7 @@ public class AmountItemImpl implements AmountItem, CurrencyCodeIdentifiable {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.payment.domain.AmountItem#getId()
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -100,6 +109,7 @@ public class AmountItemImpl implements AmountItem, CurrencyCodeIdentifiable {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.payment.domain.AmountItem#setId(java.lang.Long)
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -107,6 +117,7 @@ public class AmountItemImpl implements AmountItem, CurrencyCodeIdentifiable {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.payment.domain.AmountItem#getShortDescription()
      */
+    @Override
     public String getShortDescription() {
         return shortDescription;
     }
@@ -114,6 +125,7 @@ public class AmountItemImpl implements AmountItem, CurrencyCodeIdentifiable {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.payment.domain.AmountItem#setShortDescription(java.lang.String)
      */
+    @Override
     public void setShortDescription(String shortDescription) {
         this.shortDescription = shortDescription;
     }
@@ -121,6 +133,7 @@ public class AmountItemImpl implements AmountItem, CurrencyCodeIdentifiable {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.payment.domain.AmountItem#getDescription()
      */
+    @Override
     public String getDescription() {
         return description;
     }
@@ -128,6 +141,7 @@ public class AmountItemImpl implements AmountItem, CurrencyCodeIdentifiable {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.payment.domain.AmountItem#setDescription(java.lang.String)
      */
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
@@ -135,6 +149,7 @@ public class AmountItemImpl implements AmountItem, CurrencyCodeIdentifiable {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.payment.domain.AmountItem#getUnitPrice()
      */
+    @Override
     public BigDecimal getUnitPrice() {
         return unitPrice;
     }
@@ -142,6 +157,7 @@ public class AmountItemImpl implements AmountItem, CurrencyCodeIdentifiable {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.payment.domain.AmountItem#setUnitPrice(java.math.BigDecimal)
      */
+    @Override
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
@@ -149,6 +165,7 @@ public class AmountItemImpl implements AmountItem, CurrencyCodeIdentifiable {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.payment.domain.AmountItem#getQuantity()
      */
+    @Override
     public Long getQuantity() {
         return quantity;
     }
@@ -156,22 +173,27 @@ public class AmountItemImpl implements AmountItem, CurrencyCodeIdentifiable {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.payment.domain.AmountItem#setQuantity(java.lang.Long)
      */
+    @Override
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
     }
 
+    @Override
     public PaymentInfo getPaymentInfo() {
         return paymentInfo;
     }
 
+    @Override
     public void setPaymentInfo(PaymentInfo paymentInfo) {
         this.paymentInfo = paymentInfo;
     }
 
+    @Override
     public String getSystemId() {
         return systemId;
     }
 
+    @Override
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }

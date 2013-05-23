@@ -33,16 +33,13 @@ public class TranslationImpl implements Serializable, Translation {
     @Id
     @GeneratedValue(generator = "TranslationId")
     @GenericGenerator(
-            name = "TranslationId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-            parameters = {
-                    @Parameter(name = "table_name", value = "SEQUENCE_GENERATOR"),
-                    @Parameter(name = "segment_column_name", value = "ID_NAME"),
-                    @Parameter(name = "value_column_name", value = "ID_VAL"),
-                    @Parameter(name = "segment_value", value = "TranslationImpl"),
-                    @Parameter(name = "increment_size", value = "50"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.i18n.domain.TranslationImpl")
-            })
+        name = "TranslationId",
+        strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+                @Parameter(name = "segment_value", value = "TranslationImpl"),
+                @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.i18n.domain.TranslationImpl")
+        }
+    )
     @Column(name = "TRANSLATION_ID")
     protected Long id;
 

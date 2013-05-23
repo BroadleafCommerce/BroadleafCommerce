@@ -27,21 +27,22 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
@@ -62,8 +63,15 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "DiscreteOrderItemFeePriceId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "DiscreteOrderItemFeePriceId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "DiscreteOrderItemFeePriceImpl", allocationSize = 50)
+    @GeneratedValue(generator = "DiscreteOrderItemFeePriceId")
+    @GenericGenerator(
+        name="DiscreteOrderItemFeePriceId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="DiscreteOrderItemFeePriceImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePriceImpl")
+        }
+    )
     @Column(name = "DISC_ITEM_FEE_PRICE_ID")
     protected Long id;
 

@@ -59,13 +59,14 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     /** The id. */
     @Id
     @GeneratedValue(generator = "SkuBundleItemId")
-    @GenericGenerator(name = "SkuBundleItemId", strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator", parameters = {
-          @Parameter(name = "table_name", value = "SEQUENCE_GENERATOR"),
-          @Parameter(name = "segment_column_name", value = "ID_NAME"),
-          @Parameter(name = "value_column_name", value = "ID_VAL"),
-          @Parameter(name = "segment_value", value = "SkuBundleItemImpl"),
-          @Parameter(name = "increment_size", value = "50"),
-          @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl") })
+    @GenericGenerator(
+        name="SkuBundleItemId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name = "segment_value", value = "SkuBundleItemImpl"),
+            @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl")
+        }
+    )
     @Column(name = "SKU_BUNDLE_ITEM_ID")
     @AdminPresentation(friendlyName = "SkuBundleItemImpl_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
@@ -143,6 +144,7 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     }
 
 
+    @Override
     public Money getSalePrice() {
         if (itemSalePrice == null) {
             return sku.getSalePrice();

@@ -54,11 +54,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
         name="SCItemCriteriaId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="StructuredContentItemCriteriaImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.StructuredContentItemCriteriaImpl")
         }
     )
@@ -83,6 +79,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#getId()
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -90,6 +87,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#setId(java.lang.Long)
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -97,6 +95,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#getReceiveQuantity()
      */
+    @Override
     public Integer getQuantity() {
         return quantity;
     }
@@ -104,6 +103,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#setReceiveQuantity(java.lang.Integer)
      */
+    @Override
     public void setQuantity(Integer receiveQuantity) {
         this.quantity = receiveQuantity;
     }
@@ -118,10 +118,12 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
         this.orderItemMatchRule = matchRule;
     }
 
+    @Override
     public StructuredContent getStructuredContent() {
         return structuredContent;
     }
 
+    @Override
     public void setStructuredContent(StructuredContent structuredContent) {
         this.structuredContent = structuredContent;
     }
@@ -163,6 +165,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
         return true;
     }
 
+    @Override
     public StructuredContentItemCriteria cloneEntity() {
         StructuredContentItemCriteriaImpl newField = new StructuredContentItemCriteriaImpl();
         newField.quantity = quantity;

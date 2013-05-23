@@ -25,12 +25,15 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.SiteImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.lang.reflect.Method;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -38,8 +41,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.lang.reflect.Method;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -51,8 +52,15 @@ public class SandBoxImpl implements SandBox {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "SandBoxId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SandBoxId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SandBoxImpl", allocationSize = 50)
+    @GeneratedValue(generator = "SandBoxId")
+    @GenericGenerator(
+        name="SandBoxId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="SandBoxImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.common.sandbox.domain.SandBoxImpl")
+        }
+    )
     @Column(name = "SANDBOX_ID")
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
@@ -116,10 +124,12 @@ public class SandBoxImpl implements SandBox {
         }
     }
 
+    @Override
     public Long getAuthor() {
         return author;
     }
 
+    @Override
     public void setAuthor(Long author) {
         this.author = author;
     }

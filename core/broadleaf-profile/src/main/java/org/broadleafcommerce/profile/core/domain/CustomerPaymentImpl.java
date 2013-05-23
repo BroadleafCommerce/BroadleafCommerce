@@ -20,6 +20,11 @@ import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -28,7 +33,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -36,10 +40,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
-import java.util.HashMap;
-import java.util.Map;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -50,8 +51,15 @@ public class CustomerPaymentImpl implements CustomerPayment {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CustomerPaymentId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CustomerPaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CustomerPaymentImpl", allocationSize = 50)
+    @GeneratedValue(generator = "CustomerPaymentId")
+    @GenericGenerator(
+        name="CustomerPaymentId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="CustomerPaymentImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl")
+        }
+    )
     @Column(name = "CUSTOMER_PAYMENT_ID")
     protected Long id;
 

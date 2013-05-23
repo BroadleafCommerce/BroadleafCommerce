@@ -48,11 +48,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
         name="FeaturedProductId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="FeaturedProductImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl")
         }
     )
@@ -76,46 +72,57 @@ public class FeaturedProductImpl implements FeaturedProduct {
     @Index(name="PRODFEATURED_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     protected Product product = new ProductImpl();
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
     
+    @Override
     public void setSequence(Long sequence) {
         this.sequence = sequence;
     }
 
+    @Override
     public Long getSequence() {
         return this.sequence;
     }
 
+    @Override
     public String getPromotionMessage() {
         return promotionMessage;
     }
 
+    @Override
     public void setPromotionMessage(String promotionMessage) {
         this.promotionMessage = promotionMessage;
     }
 
+    @Override
     public Category getCategory() {
         return category;
     }
 
+    @Override
     public void setCategory(Category category) {
         this.category = category;
     }
 
+    @Override
     public Product getProduct() {
         return product;
     }
 
+    @Override
     public void setProduct(Product product) {
         this.product = product;
     }
     
+    @Override
     public Product getRelatedProduct() {
         return product;
     }

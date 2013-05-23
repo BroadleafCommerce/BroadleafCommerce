@@ -18,6 +18,8 @@ package org.broadleafcommerce.core.util.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,7 +29,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 @Entity
 @Table(name = "BLC_CODE_TYPES")
@@ -40,7 +41,14 @@ public class CodeTypeImpl implements CodeType {
 
     @Id
     @GeneratedValue(generator = "CodeTypeId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CodeTypeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CodeTypeId", allocationSize = 50)
+    @GenericGenerator(
+        name="CodeTypeId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="CodeTypeImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.util.domain.CodeTypeImpl")
+        }
+    )
     @Column(name = "CODE_ID")
     protected Long id;
 
@@ -56,48 +64,59 @@ public class CodeTypeImpl implements CodeType {
     @Column(name = "MODIFIABLE")
     protected Character modifiable;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getCodeType() {
         return codeType;
     }
 
+    @Override
     public void setCodeType(String codeType) {
         this.codeType = codeType;
     }
 
+    @Override
     public String getKey() {
         return key;
     }
 
+    @Override
     public void setKey(String key) {
         this.key = key;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public Boolean isModifiable() {
         if(modifiable == null)
             return null;
         return modifiable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
 
+    @Override
     public Boolean getModifiable() {
         return isModifiable();
     }
 
+    @Override
     public void setModifiable(Boolean modifiable) {
         if(modifiable == null) {
             this.modifiable = null;

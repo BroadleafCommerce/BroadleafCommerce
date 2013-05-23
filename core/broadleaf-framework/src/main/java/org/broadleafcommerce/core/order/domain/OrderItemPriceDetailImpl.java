@@ -32,6 +32,8 @@ import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -41,7 +43,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -49,7 +50,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 
 @Entity
@@ -68,8 +68,15 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OrderItemPriceDetailId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OrderItemPriceDetailId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderItemPriceDetailImpl", allocationSize = 100)
+    @GeneratedValue(generator = "OrderItemPriceDetailId")
+    @GenericGenerator(
+        name="OrderItemPriceDetailId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="OrderItemPriceDetailImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl")
+        }
+    )
     @Column(name = "ORDER_ITEM_PRICE_DTL_ID")
     @AdminPresentation(friendlyName = "OrderItemPriceDetailImpl_Id", group = "OrderItemPriceDetailImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;

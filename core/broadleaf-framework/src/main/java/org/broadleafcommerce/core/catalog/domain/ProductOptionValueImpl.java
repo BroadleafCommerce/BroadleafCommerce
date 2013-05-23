@@ -52,12 +52,12 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @Id
     @GeneratedValue(generator = "ProductOptionValueId")
     @GenericGenerator(
-            name = "ProductOptionValueId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-            parameters = {
-                    @Parameter(name = "segment_value", value = "ProductOptionValueImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl")
-            })
+        name = "ProductOptionValueId",
+        strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+                @Parameter(name = "segment_value", value = "ProductOptionValueImpl"),
+                @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl")
+        })
     @Column(name = "PRODUCT_OPTION_VALUE_ID")
     protected Long id;
 

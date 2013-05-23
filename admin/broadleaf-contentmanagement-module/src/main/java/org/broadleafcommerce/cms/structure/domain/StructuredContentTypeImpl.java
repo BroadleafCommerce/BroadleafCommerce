@@ -23,18 +23,18 @@ import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 /**
  * Created by bpolster.
@@ -49,8 +49,15 @@ public class StructuredContentTypeImpl implements StructuredContentType {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "StructuredContentTypeId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "StructuredContentTypeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StructuredContentTypeImpl", allocationSize = 10)
+    @GeneratedValue(generator = "StructuredContentTypeId")
+    @GenericGenerator(
+        name="StructuredContentTypeId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="StructuredContentTypeImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl")
+        }
+    )
     @Column(name = "SC_TYPE_ID")
     protected Long id;
 

@@ -20,7 +20,9 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +31,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -47,8 +47,15 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "DataDrivenEnumerationId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "DataDrivenEnumerationId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "DataDrivenEnumerationId", allocationSize = 50)
+    @GeneratedValue(generator = "DataDrivenEnumerationId")
+    @GenericGenerator(
+        name="DataDrivenEnumerationId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="DataDrivenEnumerationImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl")
+        }
+    )
     @Column(name = "ENUM_ID")
     protected Long id;
     

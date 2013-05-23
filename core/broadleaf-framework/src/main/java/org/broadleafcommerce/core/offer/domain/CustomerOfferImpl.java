@@ -45,11 +45,7 @@ public class CustomerOfferImpl implements CustomerOffer {
         name="CustomerOfferId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="CustomerOfferImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.CustomerOfferImpl")
         }
     )
@@ -66,26 +62,32 @@ public class CustomerOfferImpl implements CustomerOffer {
     @Index(name="CUSTOFFER_OFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public Offer getOffer() {
         return offer;
     }
 
+    @Override
     public void setOffer(Offer offer) {
         this.offer = offer;
     }
 
+    @Override
     public Customer getCustomer() {
         return customer;
     }
 
+    @Override
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }

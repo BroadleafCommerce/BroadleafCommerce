@@ -16,18 +16,19 @@
 
 package org.broadleafcommerce.common.email.domain;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.util.Date;
 
 /**
  * @author jfischer
@@ -41,8 +42,15 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OpenId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OpenId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "EmailTrackingOpensImpl", allocationSize = 50)
+    @GeneratedValue(generator = "OpenId")
+    @GenericGenerator(
+        name="OpenId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="EmailTrackingOpensImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.common.email.domain.EmailTrackingOpensImpl")
+        }
+    )
     @Column(name = "OPEN_ID")
     protected Long id;
 
@@ -60,6 +68,7 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingOpens#getId()
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -67,6 +76,7 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingOpens#setId(java.lang.Long)
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -74,6 +84,7 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingOpens#getDateOpened()
      */
+    @Override
     public Date getDateOpened() {
         return dateOpened;
     }
@@ -81,6 +92,7 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingOpens#setDateOpened(java.util.Date)
      */
+    @Override
     public void setDateOpened(Date dateOpened) {
         this.dateOpened = dateOpened;
     }
@@ -88,6 +100,7 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingOpens#getUserAgent()
      */
+    @Override
     public String getUserAgent() {
         return userAgent;
     }
@@ -95,6 +108,7 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingOpens#setUserAgent(java.lang.String)
      */
+    @Override
     public void setUserAgent(String userAgent) {
         if (userAgent.length() > 255) {
             userAgent = userAgent.substring(0,254);
@@ -105,6 +119,7 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingOpens#getEmailTracking()
      */
+    @Override
     public EmailTracking getEmailTracking() {
         return emailTracking;
     }
@@ -112,6 +127,7 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingOpens#setEmailTracking(org.broadleafcommerce.common.email.domain.EmailTrackingImpl)
      */
+    @Override
     public void setEmailTracking(EmailTracking emailTracking) {
         this.emailTracking = emailTracking;
     }

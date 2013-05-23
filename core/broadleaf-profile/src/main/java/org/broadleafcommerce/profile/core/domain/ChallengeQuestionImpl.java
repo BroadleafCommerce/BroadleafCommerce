@@ -20,16 +20,16 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -41,8 +41,15 @@ public class ChallengeQuestionImpl implements ChallengeQuestion {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "ChallengeQuestionId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "ChallengeQuestionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ChallengeQuestionImpl", allocationSize = 50)
+    @GeneratedValue(generator = "ChallengeQuestionId")
+    @GenericGenerator(
+        name="ChallengeQuestionId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="ChallengeQuestionImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl")
+        }
+    )
     @Column(name = "QUESTION_ID")
     protected Long id;
 
@@ -50,22 +57,27 @@ public class ChallengeQuestionImpl implements ChallengeQuestion {
     @AdminPresentation(friendlyName = "ChallengeQuestionImpl_Challenge_Question", group = "ChallengeQuestionImpl_Customer")
     protected String question;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getQuestion() {
         return question;
     }
 
+    @Override
     public void setQuestion(String question) {
         this.question = question;
     }
 
+    @Override
     public String toString() {
         return question;
     }

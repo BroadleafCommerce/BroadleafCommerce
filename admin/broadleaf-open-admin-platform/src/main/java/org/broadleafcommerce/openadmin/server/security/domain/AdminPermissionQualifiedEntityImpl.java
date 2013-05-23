@@ -21,19 +21,20 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.lang.reflect.Method;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.lang.reflect.Method;
 
 /**
  * Created by IntelliJ IDEA.
@@ -52,8 +53,15 @@ public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualif
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "AdminPermissionEntityId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "AdminPermissionEntityId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminPermissionEntityImpl", allocationSize = 50)
+    @GeneratedValue(generator = "AdminPermissionEntityId")
+    @GenericGenerator(
+        name="AdminPermissionEntityId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="AdminPermissionEntityImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionQualifiedEntityImpl")
+        }
+    )
     @Column(name = "ADMIN_PERMISSION_ENTITY_ID")
     protected Long id;
 

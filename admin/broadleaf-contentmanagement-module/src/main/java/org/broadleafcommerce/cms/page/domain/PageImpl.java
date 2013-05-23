@@ -34,7 +34,14 @@ import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -43,7 +50,6 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -54,11 +60,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by bpolster.
@@ -88,14 +89,15 @@ public class PageImpl implements Page {
     private static final Integer ZERO = new Integer(0);
 
     @Id
-    @GeneratedValue(generator = "PageId", strategy = GenerationType.TABLE)
-    @TableGenerator(
-        name = "PageId", 
-        table = "SEQUENCE_GENERATOR", 
-        pkColumnName = "ID_NAME", 
-        valueColumnName = "ID_VAL", 
-        pkColumnValue = "PageImpl", 
-        allocationSize = 10)
+    @GeneratedValue(generator = "PageId")
+    @GenericGenerator(
+            name="PageId",
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                @Parameter(name="segment_value", value="PageImpl"),
+                @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.PageImpl")
+            }
+        )
     @Column(name = "PAGE_ID")
     protected Long id;
     
@@ -311,10 +313,12 @@ public class PageImpl implements Page {
         this.originalPageId = originalPageId;
     }
 
+    @Override
     public String getFullUrl() {
         return fullUrl;
     }
 
+    @Override
     public void setFullUrl(String fullUrl) {
         this.fullUrl = fullUrl;
     }
@@ -329,22 +333,27 @@ public class PageImpl implements Page {
         this.description = description;
     }
 
+    @Override
     public SandBox getOriginalSandBox() {
         return originalSandBox;
     }
 
+    @Override
     public void setOriginalSandBox(SandBox originalSandBox) {
         this.originalSandBox = originalSandBox;
     }
 
+    @Override
     public AdminAuditable getAuditable() {
         return auditable;
     }
 
+    @Override
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
     }
 
+    @Override
     public Boolean getLockedFlag() {
         if (lockedFlag == null) {
             return Boolean.FALSE;
@@ -353,6 +362,7 @@ public class PageImpl implements Page {
         }
     }
 
+    @Override
     public void setLockedFlag(Boolean lockedFlag) {
         this.lockedFlag = lockedFlag;
     }

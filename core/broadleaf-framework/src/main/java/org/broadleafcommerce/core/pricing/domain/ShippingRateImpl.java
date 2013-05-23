@@ -18,18 +18,19 @@ package org.broadleafcommerce.core.pricing.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -41,8 +42,15 @@ public class ShippingRateImpl implements ShippingRate {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "ShippingRateId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "ShippingRateId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ShippingRateImpl", allocationSize = 50)
+    @GeneratedValue(generator = "ShippingRateId")
+    @GenericGenerator(
+        name="ShippingRateId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="ShippingRateImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.pricing.domain.ShippingRateImpl")
+        }
+    )
     @Column(name = "ID")
     protected Long id;
 

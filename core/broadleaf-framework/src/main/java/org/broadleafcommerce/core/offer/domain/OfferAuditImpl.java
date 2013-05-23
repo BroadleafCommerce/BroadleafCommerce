@@ -16,18 +16,19 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.util.Date;
 
 @Entity
 @Table(name = "BLC_OFFER_AUDIT")
@@ -37,8 +38,15 @@ public class OfferAuditImpl implements OfferAudit {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OfferAuditId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OfferAuditId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OfferAuditImpl", allocationSize = 50)
+    @GeneratedValue(generator = "OfferAuditId")
+    @GenericGenerator(
+        name="OfferAuditId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="OfferAuditImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferAuditImpl")
+        }
+    )
     @Column(name = "OFFER_AUDIT_ID")
     protected Long id;
 
@@ -57,42 +65,52 @@ public class OfferAuditImpl implements OfferAudit {
     @Column(name = "REDEEMED_DATE")
     protected Date redeemedDate;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public Long getOfferId() {
         return offerId;
     }
 
+    @Override
     public void setOfferId(Long offerId) {
         this.offerId = offerId;
     }
 
+    @Override
     public Long getCustomerId() {
         return customerId;
     }
 
+    @Override
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }
 
+    @Override
     public Long getOrderId() {
         return orderId;
     }
 
+    @Override
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 
+    @Override
     public Date getRedeemedDate() {
         return redeemedDate;
     }
 
+    @Override
     public void setRedeemedDate(Date redeemedDate) {
         this.redeemedDate = redeemedDate;
     }

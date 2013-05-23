@@ -17,17 +17,17 @@
 package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.encryption.EncryptionModule;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 /**
@@ -51,8 +51,15 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     protected EncryptionModule encryptionModule;
 
     @Id
-    @GeneratedValue(generator = "CreditCardPaymentId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CreditCardPaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CreditCardPaymentInfoImpl", allocationSize = 50)
+    @GeneratedValue(generator = "CreditCardPaymentId")
+    @GenericGenerator(
+            name="CreditCardPaymentId",
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                @Parameter(name="segment_value", value="CreditCardPaymentInfoImpl"),
+                @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfoImpl")
+            }
+        )
     @Column(name = "PAYMENT_ID")
     protected Long id;
 
@@ -78,6 +85,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#getId()
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -85,6 +93,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#setId(long)
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -92,6 +101,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#getReferenceNumber()
      */
+    @Override
     public String getReferenceNumber() {
         return referenceNumber;
     }
@@ -99,6 +109,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#setReferenceNumber(java.lang.String)
      */
+    @Override
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
@@ -106,6 +117,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#getPan()
      */
+    @Override
     public String getPan() {
         return encryptionModule.decrypt(pan);
     }
@@ -113,6 +125,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#setPan(java.lang.Long)
      */
+    @Override
     public void setPan(String pan) {
         this.pan = encryptionModule.encrypt(pan);
     }
@@ -120,6 +133,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#getExpirationMonth()
      */
+    @Override
     public Integer getExpirationMonth() {
         return expirationMonth;
     }
@@ -127,6 +141,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#setExpirationMonth(java.lang.Integer)
      */
+    @Override
     public void setExpirationMonth(Integer expirationMonth) {
         this.expirationMonth = expirationMonth;
     }
@@ -134,6 +149,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#getExpirationYear()
      */
+    @Override
     public Integer getExpirationYear() {
         return expirationYear;
     }
@@ -141,6 +157,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#setExpirationYear(java.lang.Integer)
      */
+    @Override
     public void setExpirationYear(Integer expirationYear) {
         this.expirationYear = expirationYear;
     }
@@ -148,6 +165,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
     * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#getNameOnCard()
     */
+    @Override
     public String getNameOnCard() {
         return nameOnCard;
     }
@@ -155,22 +173,27 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
     * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#setNameOnCard(java.lang.String)
     */
+    @Override
     public void setNameOnCard(String nameOnCard) {
         this.nameOnCard = nameOnCard;
     }
 
+    @Override
     public String getCvvCode() {
         return cvvCode;
     }
 
+    @Override
     public void setCvvCode(String cvvCode) {
         this.cvvCode = cvvCode;
     }
 
+    @Override
     public EncryptionModule getEncryptionModule() {
         return encryptionModule;
     }
 
+    @Override
     public void setEncryptionModule(EncryptionModule encryptionModule) {
         this.encryptionModule = encryptionModule;
     }

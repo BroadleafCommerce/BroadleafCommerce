@@ -18,20 +18,21 @@ package org.broadleafcommerce.core.rating.domain;
 
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.util.Date;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -39,8 +40,15 @@ import java.util.Date;
 public class RatingDetailImpl implements RatingDetail {
 
     @Id
-    @GeneratedValue(generator = "RatingDetailId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "RatingDetailId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "RatingDetailImpl", allocationSize = 50)
+    @GeneratedValue(generator = "RatingDetailId")
+    @GenericGenerator(
+        name="RatingDetailId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="RatingDetailImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.rating.domain.RatingDetailImpl")
+        }
+    )
     @Column(name = "RATING_DETAIL_ID")
     private Long id;
 
@@ -70,26 +78,32 @@ public class RatingDetailImpl implements RatingDetail {
         this.customer = customer;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public Double getRating() {
         return rating;
     }
 
+    @Override
     public Date getRatingSubmittedDate() {
         return ratingSubmittedDate;
     }
 
+    @Override
     public Customer getCustomer() {
         return customer;
     }
 
+    @Override
     public void setRating(Double newRating) {
         this.rating = newRating;
     }
 
+    @Override
     public RatingSummary getRatingSummary() {
         return ratingSummary;
     }

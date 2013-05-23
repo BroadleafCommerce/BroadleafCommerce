@@ -47,15 +47,11 @@ public class OrderItemQualifierImpl implements OrderItemQualifier {
     @Id
     @GeneratedValue(generator = "OrderItemQualifierId")
     @GenericGenerator(
-            name = "OrderItemQualifierId",
+        name = "OrderItemQualifierId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
-                    @Parameter(name = "segment_value", value = "OrderItemQualifierImpl"),
-            @Parameter(name="increment_size", value="50"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl")
+            @Parameter(name = "segment_value", value = "OrderItemQualifierImpl"),
+            @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl")
         }
     )
     @Column(name = "ITEM_OFFER_QUALIFIER_ID")

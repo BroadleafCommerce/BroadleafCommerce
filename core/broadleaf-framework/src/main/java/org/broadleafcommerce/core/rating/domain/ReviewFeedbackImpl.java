@@ -18,19 +18,19 @@ package org.broadleafcommerce.core.rating.domain;
 
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -38,8 +38,15 @@ import javax.persistence.TableGenerator;
 public class ReviewFeedbackImpl implements ReviewFeedback {
 
     @Id
-    @GeneratedValue(generator = "ReviewFeedbackId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "ReviewFeedbackId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ReviewFeedbackImpl", allocationSize = 50)
+    @GeneratedValue(generator = "ReviewFeedbackId")
+    @GenericGenerator(
+        name="ReviewFeedbackId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="ReviewFeedbackImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.rating.domain.ReviewFeedbackImpl")
+        }
+    )
     @Column(name = "REVIEW_FEEDBACK_ID")
     protected Long id;
 

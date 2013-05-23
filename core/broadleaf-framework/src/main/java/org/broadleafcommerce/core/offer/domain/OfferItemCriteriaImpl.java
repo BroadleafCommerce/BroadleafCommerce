@@ -54,11 +54,7 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
         name="OfferItemCriteriaId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="OfferItemCriteriaImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl")
         }
     )
@@ -76,26 +72,32 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
     @AdminPresentation(friendlyName = "OfferItemCriteriaImpl_Order_Item_Match_Rule", group = "OfferItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected String orderItemMatchRule;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public Integer getQuantity() {
         return quantity;
     }
 
+    @Override
     public void setQuantity(Integer receiveQuantity) {
         this.quantity = receiveQuantity;
     }
 
+    @Override
     public String getMatchRule() {
         return orderItemMatchRule;
     }
 
+    @Override
     public void setMatchRule(String matchRule) {
         this.orderItemMatchRule = matchRule;
     }

@@ -28,6 +28,8 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -39,7 +41,6 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -48,7 +49,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
@@ -67,8 +67,15 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "FulfillmentGroupFeeId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FulfillmentGroupFeeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupFeeImpl", allocationSize = 50)
+    @GeneratedValue(generator = "FulfillmentGroupFeeId")
+    @GenericGenerator(
+        name="FulfillmentGroupFeeId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="FulfillmentGroupFeeImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl")
+        }
+    )
     @Column(name = "FULFILLMENT_GROUP_FEE_ID")
     protected Long id;
 

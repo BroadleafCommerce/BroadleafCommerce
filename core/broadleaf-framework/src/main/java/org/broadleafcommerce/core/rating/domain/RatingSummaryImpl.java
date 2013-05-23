@@ -17,21 +17,22 @@
 package org.broadleafcommerce.core.rating.domain;
 
 import org.broadleafcommerce.core.rating.service.type.RatingType;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -39,8 +40,15 @@ import java.util.List;
 public class RatingSummaryImpl implements RatingSummary {
 
     @Id
-    @GeneratedValue(generator = "RatingSummaryId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "RatingSummaryId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "RatingSummaryImpl", allocationSize = 50)
+    @GeneratedValue(generator = "RatingSummaryId")
+    @GenericGenerator(
+        name="RatingSummaryId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="RatingSummaryImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.rating.domain.RatingSummaryImpl")
+        }
+    )
     @Column(name = "RATING_SUMMARY_ID")
     private Long id;
 
@@ -72,38 +80,47 @@ public class RatingSummaryImpl implements RatingSummary {
         this.reviews = new ArrayList<ReviewDetail>();
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public Double getAverageRating() {
         return averageRating;
     }
 
+    @Override
     public String getItemId() {
         return itemId;
     }
 
+    @Override
     public Integer getNumberOfRatings() {
         return getRatings().size();
     }
 
+    @Override
     public Integer getNumberOfReviews() {
         return getReviews().size();
     }
 
+    @Override
     public RatingType getRatingType() {
         return new RatingType(ratingTypeStr);
     }
 
+    @Override
     public List<RatingDetail> getRatings() {
         return ratings == null ? new ArrayList<RatingDetail>() : ratings;
     }
 
+    @Override
     public List<ReviewDetail> getReviews() {
         return reviews == null ? new ArrayList<ReviewDetail>() : reviews;
     }
 
+    @Override
     public void resetAverageRating() {
         if (ratings == null || ratings.isEmpty()) {
             this.averageRating = new Double(0);

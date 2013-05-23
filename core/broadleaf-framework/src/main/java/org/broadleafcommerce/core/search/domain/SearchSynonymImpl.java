@@ -19,15 +19,15 @@ package org.broadleafcommerce.core.search.domain;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 @Entity
 @Table(name = "BLC_SEARCH_SYNONYM")
@@ -35,8 +35,15 @@ import javax.persistence.TableGenerator;
 public class SearchSynonymImpl implements SearchSynonym {
     
     @Id
-    @GeneratedValue(generator = "SearchSynonymId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SearchSynonymId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchSynonymImpl", allocationSize = 50)
+    @GeneratedValue(generator = "SearchSynonymId")
+    @GenericGenerator(
+        name="SearchSynonymId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="SearchSynonymImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.SearchSynonymImpl")
+        }
+    )
     @Column(name = "SEARCH_SYNONYM_ID")
     private Long id;
     
@@ -53,15 +60,19 @@ public class SearchSynonymImpl implements SearchSynonym {
     public void setId(Long id) {
         this.id = id;
     }
+    @Override
     public String getTerm() {
         return term;
     }
+    @Override
     public void setTerm(String term) {
         this.term = term;
     }
+    @Override
     public String[] getSynonyms() {
         return synonyms.split("|");
     }
+    @Override
     public void setSynonyms(String[] synonyms) {
         this.synonyms = StringUtils.join(synonyms, '|');
     }

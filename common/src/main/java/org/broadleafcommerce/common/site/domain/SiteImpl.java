@@ -33,15 +33,20 @@ import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -50,10 +55,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by bpolster.
@@ -70,8 +71,15 @@ public class SiteImpl implements Site, Status {
     private static final Log LOG = LogFactory.getLog(SiteImpl.class);
 
     @Id
-    @GeneratedValue(generator = "SiteId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SiteId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SiteImpl", allocationSize = 10)
+    @GeneratedValue(generator = "SiteId")
+    @GenericGenerator(
+        name="SiteId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="SiteImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.common.site.domain.SiteImpl")
+        }
+    )
     @Column(name = "SITE_ID")
     protected Long id;
 

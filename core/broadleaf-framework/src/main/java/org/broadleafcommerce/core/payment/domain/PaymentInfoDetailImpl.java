@@ -27,20 +27,21 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @author Jerry Ocanas (jocanas)
@@ -60,8 +61,15 @@ public class PaymentInfoDetailImpl implements PaymentInfoDetail, CurrencyCodeIde
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "PaymentInfoDetailId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PaymentInfoDetailId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentInfoDetailImpl", allocationSize = 50)
+    @GeneratedValue(generator = "PaymentInfoDetailId")
+    @GenericGenerator(
+        name="PaymentInfoDetailId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="PaymentInfoDetailImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.PaymentInfoDetailImpl")
+        }
+    )
     @Column(name = "PAYMENT_DETAIL_ID")
     protected Long id;
 

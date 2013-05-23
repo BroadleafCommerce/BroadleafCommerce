@@ -20,19 +20,19 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 /**
  * @author Jeff Fischer
@@ -47,8 +47,15 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "DataDrivenEnumerationValueId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "DataDrivenEnumerationValueId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "DataDrivenEnumerationValueId", allocationSize = 50)
+    @GeneratedValue(generator = "DataDrivenEnumerationValueId")
+    @GenericGenerator(
+        name="DataDrivenEnumerationValueId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="DataDrivenEnumerationValueImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl")
+        }
+    )
     @Column(name = "ENUM_VAL_ID")
     protected Long id;
 
