@@ -237,16 +237,16 @@
             </build>
         </profile>
     </profiles>
-    <!--<distributionManagement>
+    <distributionManagement>
         <snapshotRepository>
             <id>snapshots</id>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/pricelist-module-snapshots/</url>
+            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/customfield-module-snapshots/</url>
         </snapshotRepository>
         <repository>
             <id>releases</id>
-            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/pricelist-module-releases/</url>
+            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/customfield-module-releases/</url>
         </repository>
-    </distributionManagement>-->
+    </distributionManagement>
     <reporting>
         <plugins>
             <plugin>
