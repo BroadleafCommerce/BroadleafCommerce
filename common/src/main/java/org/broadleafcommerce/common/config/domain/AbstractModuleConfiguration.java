@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -58,7 +59,7 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     protected Long id;
 
     @Column(name = "MODULE_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Module_Name")
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Module_Name", prominent = true)
     protected String moduleName;
 
     @Column(name = "IS_ACTIVE", nullable = false)
@@ -70,7 +71,8 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     protected Boolean isDefault = false;
 
     @Column(name = "CONFIG_TYPE", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Config_Type")
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Config_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.config.service.type.ModuleConfigurationType")
     protected String configType;
 
     @Embedded
