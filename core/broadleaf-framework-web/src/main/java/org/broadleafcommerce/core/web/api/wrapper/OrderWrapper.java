@@ -22,14 +22,16 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is a JAXB wrapper around Order.
@@ -64,15 +66,15 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
 
     @XmlElement(name = "orderItem")
     @XmlElementWrapper(name = "orderItems")
-    protected List<OrderItemWrapper> orderItems;
+    protected List<OrderItemWrapper> orderItems = new LinkedList<OrderItemWrapper>();
 
     @XmlElement(name = "fulfillmentGroup")
     @XmlElementWrapper(name = "fulfillmentGroups")
-    protected List<FulfillmentGroupWrapper> fulfillmentGroups;
+    protected List<FulfillmentGroupWrapper> fulfillmentGroups = new LinkedList<FulfillmentGroupWrapper>();
 
     @XmlElement(name = "paymentInfo")
     @XmlElementWrapper(name = "paymentInfos")
-    protected List<PaymentInfoWrapper> paymentInfos;
+    protected List<PaymentInfoWrapper> paymentInfos = new LinkedList<PaymentInfoWrapper>();
 
     @Override
     public void wrap(Order model, HttpServletRequest request) {

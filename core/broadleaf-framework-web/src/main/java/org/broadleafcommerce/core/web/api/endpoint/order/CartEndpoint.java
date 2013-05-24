@@ -169,13 +169,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
                     productOptions.remove("skuId");
                     productOptions.remove("quantity");
                     productOptions.remove("priceOrder");
-                    
-                    //If a Sku ID was not supplied and no product options were supplied, then we can't process this request
-                    if (skuId == null && productOptions.size() == 0) {
-                        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                                .type(MediaType.TEXT_PLAIN).entity("You must submit a Sku Id, or a map of product option / values.").build());
-                    }
-                    
+
                     OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
                     orderItemRequestDTO.setCategoryId(categoryId);
                     orderItemRequestDTO.setProductId(productId);

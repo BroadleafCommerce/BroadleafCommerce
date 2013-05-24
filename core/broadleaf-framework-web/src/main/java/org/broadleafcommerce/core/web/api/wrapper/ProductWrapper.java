@@ -85,10 +85,7 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
         this.model = model.getModel();
         this.promoMessage = model.getPromoMessage();
         
-        if (model.getDefaultSku() != null) {
-            this.defaultSku = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
-            this.defaultSku.wrap(model.getDefaultSku(), request);
-        }
+        wrapSku(model, request);
         
         if (model.getDefaultCategory() != null) {
             this.defaultCategoryId = model.getDefaultCategory().getId();
@@ -102,6 +99,13 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
                 optionWrapper.wrap(option, request);
                 this.productOptions.add(optionWrapper);
             }
+        }
+    }
+
+    protected void wrapSku(Product model, HttpServletRequest request) {
+        if (model.getDefaultSku() != null) {
+            this.defaultSku = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
+            this.defaultSku.wrap(model.getDefaultSku(), request);
         }
     }
 }

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
 import org.broadleafcommerce.core.order.service.exception.ProductOptionValidationException;
@@ -26,6 +28,7 @@ import java.util.regex.Pattern;
 @Service("blProductOptionValidationService")
 public class ProductOptionValidationServiceImpl implements ProductOptionValidationService  {
 
+    private static final Log LOG = LogFactory.getLog(ProductOptionValidationServiceImpl.class);
 
 
     /* (non-Javadoc)
@@ -36,6 +39,7 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
         if (productOption.getProductOptionValidationType() == ProductOptionValidationType.REGEX) {
             if (!validateRegex(productOption.getValidationSring(), value))
             {
+                LOG.error(productOption.getErrorMessage() + ". Value [" + value + "] does not match regex string [" + productOption.getValidationSring() + "]");
                 throw new ProductOptionValidationException(productOption.getErrorMessage(), productOption.getErrorCode());
             }
         }
