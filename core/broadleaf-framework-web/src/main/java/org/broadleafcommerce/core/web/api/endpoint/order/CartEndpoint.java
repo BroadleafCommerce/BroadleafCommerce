@@ -123,7 +123,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
      * <li>quantity</li>
      * <li>priceOrder</li>
      * 
-     * You must provide a skuId OR product options. Product options can be posted as form or querystring parameters. 
+     * You must provide a ProductId OR ProductId with product options. Product options can be posted as form or querystring parameters. 
      * You must pass in the ProductOption attributeName as the key and the 
      * ProductOptionValue attributeValue as the value.  See {@link CatalogEndpoint}.
      * 
@@ -131,7 +131,6 @@ public abstract class CartEndpoint extends BaseEndpoint {
      * @param uriInfo
      * @param categoryId
      * @param productId
-     * @param skuId
      * @param quantity
      * @param priceOrder
      * @return OrderWrapper
