@@ -136,11 +136,10 @@ public abstract class CartEndpoint extends BaseEndpoint {
      * @param priceOrder
      * @return OrderWrapper
      */
-    public OrderWrapper addSkuToOrder(HttpServletRequest request,
+    public OrderWrapper addProductToOrder(HttpServletRequest request,
             UriInfo uriInfo,
             Long categoryId,
             Long productId,
-            Long skuId,
             int quantity,
             boolean priceOrder) {
         Customer customer = CustomerState.getCustomer(request);
@@ -170,10 +169,11 @@ public abstract class CartEndpoint extends BaseEndpoint {
                     productOptions.remove("quantity");
                     productOptions.remove("priceOrder");
 
+
+
                     OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
                     orderItemRequestDTO.setCategoryId(categoryId);
                     orderItemRequestDTO.setProductId(productId);
-                    orderItemRequestDTO.setSkuId(skuId);
                     orderItemRequestDTO.setCategoryId(categoryId);
                     orderItemRequestDTO.setQuantity(quantity);
                     
