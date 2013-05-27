@@ -20,6 +20,13 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,10 +34,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is a JAXB wrapper around OrderItem.
@@ -74,6 +77,10 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
     @XmlElement(name = "orderItemAttribute")
     @XmlElementWrapper(name = "orderItemAttributes")
     protected List<OrderItemAttributeWrapper> orderItemAttributes;
+    
+    @XmlElement(name = "orderItemPriceDetails")
+    @XmlElementWrapper(name = "orderItemPriceDetails")
+    protected List<OrderItemPriceDetailWrapper> orderItemPriceDetails = new LinkedList<OrderItemPriceDetailWrapper>();;
 
     @Override
     public void wrap(OrderItem model, HttpServletRequest request) {
@@ -100,6 +107,14 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
                         (OrderItemAttributeWrapper) context.getBean(OrderItemAttributeWrapper.class.getName());
                 orderItemAttributeWrapper.wrap(itemAttributes.get(key), request);
                 this.orderItemAttributes.add(orderItemAttributeWrapper);
+            }
+        }
+        if (!model.getOrderItemPriceDetails().isEmpty()) {
+            for (OrderItemPriceDetail orderItemPriceDetail : model.getOrderItemPriceDetails()) {
+                OrderItemPriceDetailWrapper orderItemPriceDetailWrapper =
+                        (OrderItemPriceDetailWrapper) context.getBean(OrderItemPriceDetailWrapper.class.getName());
+                orderItemPriceDetailWrapper.wrap(orderItemPriceDetail, request);
+                this.orderItemPriceDetails.add(orderItemPriceDetailWrapper);
             }
         }
         

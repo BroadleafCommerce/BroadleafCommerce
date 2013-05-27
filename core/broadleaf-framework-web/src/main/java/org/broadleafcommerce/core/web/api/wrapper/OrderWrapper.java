@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -76,6 +77,10 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
     @XmlElementWrapper(name = "paymentInfos")
     protected List<PaymentInfoWrapper> paymentInfos = new LinkedList<PaymentInfoWrapper>();
 
+    @XmlElement(name = "orderAdjustments")
+    @XmlElementWrapper(name = "orderAdjustments")
+    protected List<OrderAdjustmentWrapper> orderAdjustments = new LinkedList<OrderAdjustmentWrapper>();
+
     @Override
     public void wrap(Order model, HttpServletRequest request) {
         this.id = model.getId();
@@ -112,6 +117,12 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
             }
         }
 
+        this.orderAdjustments = new ArrayList<OrderAdjustmentWrapper>();
+        for (OrderAdjustment orderAdjustment : model.getOrderAdjustments()) {
+            OrderAdjustmentWrapper orderItemWrapper = (OrderAdjustmentWrapper) context.getBean(OrderAdjustmentWrapper.class.getName());
+            orderItemWrapper.wrap(orderAdjustment, request);
+            this.orderAdjustments.add(orderItemWrapper);
+        }
         CustomerWrapper customerWrapper = (CustomerWrapper) context.getBean(CustomerWrapper.class.getName());
         customerWrapper.wrap(model.getCustomer(), request);
         this.customer = customerWrapper;
