@@ -92,12 +92,17 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     @Resource(name="blStaticAssetStorageService")
     protected StaticAssetStorageService staticAssetStorageService;
 
-    private Random random = new Random();
-    private String FILE_NAME_CHARS = "0123456789abcdef";
+    private final Random random = new Random();
+    private final String FILE_NAME_CHARS = "0123456789abcdef";
 
     @Override
     public StaticAsset findStaticAssetById(Long id) {
         return staticAssetDao.readStaticAssetById(id);
+    }
+    
+    @Override
+    public List<StaticAsset> readAllStaticAssets() {
+        return staticAssetDao.readAllStaticAssets();
     }
 
     static {

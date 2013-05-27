@@ -17,14 +17,21 @@
 package org.broadleafcommerce.cms.url.dao;
 
 import org.broadleafcommerce.cms.url.domain.URLHandler;
+import org.broadleafcommerce.cms.url.domain.URLHandlerImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * Created by ppatel.
@@ -45,12 +52,29 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
         query.setParameter("incomingURL", uri);
 
         @SuppressWarnings("unchecked")
-        List<URLHandler> results = (List<URLHandler>) query.getResultList();
+        List<URLHandler> results = query.getResultList();
         if (results != null && !results.isEmpty()) {
             return results.get(0);
         } else {
             return null;
         }
+    }
+    
+    @Override
+    public List<URLHandler> findAllURLHandlers() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<URLHandler> criteria = builder.createQuery(URLHandler.class);
+        Root<URLHandlerImpl> handler = criteria.from(URLHandlerImpl.class);
+        criteria.select(handler);
+        try {
+            return em.createQuery(criteria).getResultList();
+        } catch (NoResultException e) {
+            return new ArrayList<URLHandler>();
+        }
+    }
+    
+    public URLHandler saveURLHandler(URLHandler handler) {
+        return em.merge(handler);
     }
 
 }

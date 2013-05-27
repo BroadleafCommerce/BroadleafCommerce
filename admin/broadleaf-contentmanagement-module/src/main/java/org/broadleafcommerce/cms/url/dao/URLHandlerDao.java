@@ -18,6 +18,8 @@ package org.broadleafcommerce.cms.url.dao;
 
 import org.broadleafcommerce.cms.url.domain.URLHandler;
 
+import java.util.List;
+
 
 /**
  * Created by ppatel.
@@ -26,5 +28,13 @@ public interface URLHandlerDao {
 
 
     public URLHandler findURLHandlerByURI(String uri);
+    
+    /**
+     * Gets all the URL handlers configured in the system
+     * @return
+     */
+    public List<URLHandler> findAllURLHandlers();
+
+    public URLHandler saveURLHandler(URLHandler handler);
 
 }

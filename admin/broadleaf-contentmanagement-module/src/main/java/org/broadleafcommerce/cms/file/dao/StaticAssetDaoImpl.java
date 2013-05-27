@@ -24,11 +24,17 @@ import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * Created by bpolster.
@@ -49,7 +55,19 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
 
     @Override
     public StaticAsset readStaticAssetById(Long id) {
-        return (StaticAsset) em.find(StaticAssetImpl.class, id);
+        return em.find(StaticAssetImpl.class, id);
+    }
+    
+    public List<StaticAsset> readAllStaticAssets() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<StaticAsset> criteria = builder.createQuery(StaticAsset.class);
+        Root<StaticAssetImpl> handler = criteria.from(StaticAssetImpl.class);
+        criteria.select(handler);
+        try {
+            return em.createQuery(criteria).getResultList();
+        } catch (NoResultException e) {
+            return new ArrayList<StaticAsset>();
+        }
     }
 
     @Override
@@ -83,7 +101,7 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
     @Override
     public void delete(StaticAsset asset) {
         if (!em.contains(asset)) {
-            asset = (StaticAsset) readStaticAssetById(asset.getId());
+            asset = readStaticAssetById(asset.getId());
         }
         em.remove(asset);
     }

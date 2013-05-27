@@ -259,6 +259,11 @@ public class CatalogServiceImpl implements CatalogService {
         return productOptionDao.readAllProductOptions();
     }
     
+    @Transactional("blTransactionManager")
+    public ProductOption saveProductOption(ProductOption option) {
+        return productOptionDao.saveProductOption(option);
+    }
+    
     @Override
     public ProductOption findProductOptionById(Long productOptionId) {
         return productOptionDao.readProductOptionById(productOptionId);

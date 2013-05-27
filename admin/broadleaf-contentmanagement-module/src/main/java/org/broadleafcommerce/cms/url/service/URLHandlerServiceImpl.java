@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.url.service;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.url.dao.URLHandlerDao;
@@ -26,6 +27,9 @@ import org.broadleafcommerce.cms.url.domain.NullURLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandler;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -37,7 +41,7 @@ import javax.annotation.Resource;
 public class URLHandlerServiceImpl implements URLHandlerService {
     private static final Log LOG = LogFactory.getLog(URLHandlerServiceImpl.class);
     
-    private NullURLHandler NULL_URL_HANDLER = new NullURLHandler();
+    private final NullURLHandler NULL_URL_HANDLER = new NullURLHandler();
 
     @Resource(name="blURLHandlerDao")
     protected URLHandlerDao urlHandlerDao;
@@ -51,6 +55,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
      * @param uri
      * @return
      */
+    @Override
     public URLHandler findURLHandlerByURI(String uri) {
         URLHandler urlHandler = lookupHandlerFromCache(uri);
         if (urlHandler instanceof NullURLHandler) {
@@ -123,6 +128,17 @@ public class URLHandlerServiceImpl implements URLHandlerService {
         } else {
             return NULL_URL_HANDLER;
         }
+    }
+    
+    @Override
+    public List<URLHandler> findAllURLHandlers() {
+        return urlHandlerDao.findAllURLHandlers();
+    }
+    
+    @Override
+    @Transactional("blTransactionManager")
+    public URLHandler saveURLHandler(URLHandler handler) {
+        return urlHandlerDao.saveURLHandler(handler);
     }
 
 }

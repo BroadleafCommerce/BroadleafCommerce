@@ -18,6 +18,8 @@ package org.broadleafcommerce.cms.url.service;
 
 import org.broadleafcommerce.cms.url.domain.URLHandler;
 
+import java.util.List;
+
 
 /**
  * Created by bpolster.
@@ -32,5 +34,9 @@ public interface URLHandlerService {
      * @return
      */
     public URLHandler findURLHandlerByURI(String uri);
+    
+    public List<URLHandler> findAllURLHandlers();
+    
+    public URLHandler saveURLHandler(URLHandler handler);
 
 }

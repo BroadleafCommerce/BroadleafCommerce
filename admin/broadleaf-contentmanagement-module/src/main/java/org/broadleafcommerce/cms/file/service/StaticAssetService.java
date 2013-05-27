@@ -33,6 +33,8 @@ public interface StaticAssetService extends SandBoxItemListener {
 
 
     public StaticAsset findStaticAssetById(Long id);
+    
+    public List<StaticAsset> readAllStaticAssets();
 
     public StaticAsset findStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox);
 

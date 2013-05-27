@@ -19,12 +19,16 @@ package org.broadleafcommerce.cms.file.dao;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 
+import java.util.List;
+
 /**
  * Created by bpolster.
  */
 public interface StaticAssetDao {
 
     public StaticAsset readStaticAssetById(Long id);
+    
+    public List<StaticAsset> readAllStaticAssets();
 
     public void delete(StaticAsset asset);
 

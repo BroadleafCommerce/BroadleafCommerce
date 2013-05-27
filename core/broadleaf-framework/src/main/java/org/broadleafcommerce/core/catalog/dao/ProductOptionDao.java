@@ -32,6 +32,8 @@ public interface ProductOptionDao {
     
     public ProductOption readProductOptionById(Long id);
     
+    public ProductOption saveProductOption(ProductOption option);
+    
     public ProductOptionValue readProductOptionValueById(Long id);
     
 }

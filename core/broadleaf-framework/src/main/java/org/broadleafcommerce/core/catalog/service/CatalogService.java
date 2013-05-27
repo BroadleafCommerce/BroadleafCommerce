@@ -165,6 +165,8 @@ public interface CatalogService {
     
     public List<ProductOption> readAllProductOptions();
     
+    public ProductOption saveProductOption(ProductOption option);
+    
     public ProductOption findProductOptionById(Long productOptionId);
     
     public ProductOptionValue findProductOptionValueById(Long productOptionValueId);

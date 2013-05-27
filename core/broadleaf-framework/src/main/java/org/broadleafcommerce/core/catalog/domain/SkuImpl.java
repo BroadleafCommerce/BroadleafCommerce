@@ -792,7 +792,7 @@ public class SkuImpl implements Sku {
 
     @Override
     public void setInventoryType(InventoryType inventoryType) {
-        this.inventoryType = inventoryType.getType();
+        this.inventoryType = (inventoryType == null) ? null : inventoryType.getType();
     }
 
     @Override
