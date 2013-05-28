@@ -41,7 +41,7 @@ import javax.persistence.Table;
 @EntityListeners(value = { AuditableListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blStandardElements")
-public class AbstractModuleConfiguration implements ModuleConfiguration {
+public abstract class AbstractModuleConfiguration implements ModuleConfiguration {
 
     private static final long serialVersionUID = 1L;
 
