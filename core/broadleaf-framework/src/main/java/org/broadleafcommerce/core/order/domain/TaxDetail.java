@@ -104,4 +104,56 @@ public interface TaxDetail extends Serializable {
      * @param config
      */
     public void setModuleConfiguration(ModuleConfiguration config);
+
+    /**
+     * Optionally sets the name of the tax jurisdiction.
+     * @param jurisdiction
+     */
+    public void setJurisdictionName(String jurisdiction);
+
+    /**
+     * Returns the name of the tax jurisdiction. May return null.
+     * @return
+     */
+    public String getJurisdictionName();
+
+    /**
+     * Sets the name of the tax, if applicable.
+     * @param taxName
+     */
+    public void setTaxName(String taxName);
+
+    /**
+     * Gets the name of the tax. May return null.
+     * @return
+     */
+    public String getTaxName();
+
+    /**
+     * Sets the region, as a string. Typically this will be a 
+     * State, Province, or County.
+     * @param region
+     */
+    public void setRegion(String region);
+
+    /**
+     * Returns the name of the region used for tax calculation. May 
+     * return null.
+     * @return
+     */
+    public String getRegion();
+
+    /**
+     * Sets the country used for tax calculation.
+     * @param country
+     */
+    public void setCountry(String country);
+
+    /**
+     * Returns the country, as a string, used for tax calculation. 
+     * May return null.
+     * @return
+     */
+    public String getCountry();
+
 }
