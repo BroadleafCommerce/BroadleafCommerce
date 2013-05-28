@@ -991,10 +991,6 @@ i.listgrid-table-spinner {
     font-size: 20px;
 }
 
-.listgrid-container.single-listgrid span.listgrid-table-footer {
-	margin-bottom: 0;
-}
-
 span.listgrid-table-footer {
 	background-color: #EEE;
 	display: block;
