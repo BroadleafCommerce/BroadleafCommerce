@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
@@ -126,6 +127,15 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
             this.sku = skuWrapper;
             
             ProductWrapper productWrapper = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
+            productWrapper.wrap(doi.getProduct(), request);
+            this.product = productWrapper;
+        } else if (model instanceof BundleOrderItem) {
+            BundleOrderItem doi = (BundleOrderItem) model;
+            SkuWrapper skuWrapper = (SkuWrapper) context.getBean(SkuWrapper.class.getName());
+            skuWrapper.wrap(doi.getSku(), request);
+            this.sku = skuWrapper;
+
+            ProductBundleWrapper productWrapper = (ProductBundleWrapper) context.getBean(ProductBundleWrapper.class.getName());
             productWrapper.wrap(doi.getProduct(), request);
             this.product = productWrapper;
         }
