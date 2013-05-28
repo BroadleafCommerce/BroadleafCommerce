@@ -65,6 +65,11 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -87,12 +92,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 
 /**
  * @author jfischer
@@ -783,7 +782,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             try {
                 primaryKey = getPrimaryKey(entity, mergedProperties);
             } catch (Exception e) {
-                LOG.error("Error getting primary key", e);
+                //don't do anything - this is a valid case
             }
             if (primaryKey == null) {
                 Serializable instance = (Serializable) Class.forName(entity.getType()[0]).newInstance();
