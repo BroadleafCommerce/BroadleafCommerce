@@ -50,6 +50,9 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     @Resource(name = "blAdminNavigationDao")
     protected AdminNavigationDao adminNavigationDao;
 
+    @Resource(name="blAdditionalSectionAuthorizations")
+    protected List<SectionAuthorization> additionalSectionAuthorizations = new ArrayList<SectionAuthorization>();
+
     @Override
     public AdminMenu buildMenu(AdminUser adminUser) {
         AdminMenu adminMenu = new AdminMenu();
@@ -126,12 +129,13 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
 
     @Override
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section) {
+        boolean response = false;
         List<AdminPermission> authorizedPermissions = section.getPermissions();
         if (!CollectionUtils.isEmpty(adminUser.getAllRoles())) {
             for (AdminRole role : adminUser.getAllRoles()) {
                 for (AdminPermission permission : role.getAllPermissions()){
                     if (checkPermissions(authorizedPermissions, permission)) {
-                        return true;
+                        response = true;
                     }
                 }
             }
@@ -139,12 +143,21 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
         if (!CollectionUtils.isEmpty(adminUser.getAllPermissions())) {
             for (AdminPermission permission : adminUser.getAllPermissions()){
                 if (checkPermissions(authorizedPermissions, permission)) {
-                    return true;
+                    response = true;
                 }
             }
         }
 
-        return false;
+        if (response) {
+            for (SectionAuthorization sectionAuthorization : additionalSectionAuthorizations) {
+                if (!sectionAuthorization.isUserAuthorizedToViewSection(adminUser, section)) {
+                    response = false;
+                    break;
+                }
+            }
+        }
+
+        return response;
     }
 
     protected boolean checkPermissions(List<AdminPermission> authorizedPermissions, AdminPermission permission) {
@@ -195,5 +208,13 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
             return section.getId().compareTo(section2.getId());
         }
 
+    }
+
+    public List<SectionAuthorization> getAdditionalSectionAuthorizations() {
+        return additionalSectionAuthorizations;
+    }
+
+    public void setAdditionalSectionAuthorizations(List<SectionAuthorization> additionalSectionAuthorizations) {
+        this.additionalSectionAuthorizations = additionalSectionAuthorizations;
     }
 }

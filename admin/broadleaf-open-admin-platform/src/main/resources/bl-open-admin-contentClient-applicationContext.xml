@@ -105,4 +105,12 @@
             </list>
         </property>
     </bean>
+
+    <bean id="blAdditionalSectionAuthorizations" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <ref bean="blConfigurationManagementSectionAuthorization"/>
+            </list>
+        </property>
+    </bean>
 </beans>
