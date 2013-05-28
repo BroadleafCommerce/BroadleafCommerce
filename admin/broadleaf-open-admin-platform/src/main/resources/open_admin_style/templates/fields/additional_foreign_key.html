@@ -25,19 +25,17 @@
         <span class="display-value-none-selected" style="display: none;" th:inline="text">&lt;[[#{No_Value_Selected}]]&gt;</span>
         <span
             class="display-value read-only"
-            th:attr="data-select-url=@{${field.owningEntityClass + '/' + field.name + '/select'}}"
             th:text="*{fields['__${field.name}__'].displayValue}" />
             
         <button class="clear-foreign-key tiny radius secondary button hover-cursor"
             type="button" th:inline="text"
-            th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}"
-            th:attr="data-select-url=@{${field.owningEntityClass + '/' + field.name + '/select'}}">
+            th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
             <i class="icon-remove"></i>&nbsp;[[#{Clear}]]
         </button>
         
         <button class="to-one-lookup tiny radius secondary button hover-cursor"
             type="button" th:inline="text"
-            th:attr="data-select-url=@{${field.owningEntityClass + '/' + field.name + '/select'}}">
+            th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}}">
             <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
         </button>
 
