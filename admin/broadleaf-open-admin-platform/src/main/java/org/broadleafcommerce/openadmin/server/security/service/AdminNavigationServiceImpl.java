@@ -131,19 +131,23 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section) {
         boolean response = false;
         List<AdminPermission> authorizedPermissions = section.getPermissions();
-        if (!CollectionUtils.isEmpty(adminUser.getAllRoles())) {
-            for (AdminRole role : adminUser.getAllRoles()) {
-                for (AdminPermission permission : role.getAllPermissions()){
-                    if (checkPermissions(authorizedPermissions, permission)) {
-                        response = true;
+        checkAuth: {
+            if (!CollectionUtils.isEmpty(adminUser.getAllRoles())) {
+                for (AdminRole role : adminUser.getAllRoles()) {
+                    for (AdminPermission permission : role.getAllPermissions()){
+                        if (checkPermissions(authorizedPermissions, permission)) {
+                            response = true;
+                            break checkAuth;
+                        }
                     }
                 }
             }
-        }
-        if (!CollectionUtils.isEmpty(adminUser.getAllPermissions())) {
-            for (AdminPermission permission : adminUser.getAllPermissions()){
-                if (checkPermissions(authorizedPermissions, permission)) {
-                    response = true;
+            if (!CollectionUtils.isEmpty(adminUser.getAllPermissions())) {
+                for (AdminPermission permission : adminUser.getAllPermissions()){
+                    if (checkPermissions(authorizedPermissions, permission)) {
+                        response = true;
+                        break checkAuth;
+                    }
                 }
             }
         }
