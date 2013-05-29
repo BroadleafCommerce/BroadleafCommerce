@@ -64,7 +64,9 @@
 $(document).ready(function() {
 	
 	$('body').on('mouseover', 'img.thumbnail', function() {
-	    $.doTimeout('hover', 250, BLCAdmin.imagezoom.showImage, this);
+	    if (!$(this).hasClass('placeholder-image')) {
+	        $.doTimeout('hover', 250, BLCAdmin.imagezoom.showImage, this);
+	    }
 	});
 	
 	$('body').on('click', 'img.thumbnail', function() {

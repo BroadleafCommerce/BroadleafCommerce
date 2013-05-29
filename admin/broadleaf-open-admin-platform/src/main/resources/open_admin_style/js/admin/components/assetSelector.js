@@ -95,6 +95,8 @@ $(document).ready(function() {
     		    		   
     		$this.find('img.thumbnail').attr("src", fields['assetUrl'] + '?largeAdminThumbnail');
     		$this.find('img.thumbnail').data("fullurl", fields['assetUrl']);
+    		$this.find('img.thumbnail').parent().attr("href", fields['assetUrl']);
+    		$this.find('img.thumbnail').removeClass('placeholder-image');
     		
     		var mediaItem = $this.find('input.mediaItem');
     		if (mediaItem.length > 0) {
