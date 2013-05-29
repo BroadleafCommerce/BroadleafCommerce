@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
@@ -82,7 +83,7 @@ import javax.persistence.Table;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PageImpl_basePage")
-public class PageImpl implements Page {
+public class PageImpl implements Page, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
     
@@ -474,6 +475,11 @@ public class PageImpl implements Page {
                 public static final int Rules = 1000;
             }
         }
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getFullUrl();
     }
 }
 

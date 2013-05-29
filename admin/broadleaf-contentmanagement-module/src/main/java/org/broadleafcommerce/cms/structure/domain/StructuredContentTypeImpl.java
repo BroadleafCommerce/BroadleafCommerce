@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -44,7 +45,7 @@ import javax.persistence.Table;
 @Table(name = "BLC_SC_TYPE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentTypeImpl_baseStructuredContentType")
-public class StructuredContentTypeImpl implements StructuredContentType {
+public class StructuredContentTypeImpl implements StructuredContentType, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -112,6 +113,11 @@ public class StructuredContentTypeImpl implements StructuredContentType {
     @Override
     public void setStructuredContentFieldTemplate(StructuredContentFieldTemplate scft) {
         this.structuredContentFieldTemplate = scft;
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getName();
     }
 }
 

@@ -20,6 +20,7 @@
 package org.broadleafcommerce.cms.url.domain;
 
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -29,6 +30,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,7 +50,7 @@ import javax.persistence.Table;
 @Table(name = "BLC_URL_HANDLER")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "URLHandlerImpl_friendyName")
-public class URLHandlerImpl implements URLHandler, java.io.Serializable {
+public class URLHandlerImpl implements URLHandler, Serializable, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -134,6 +137,11 @@ public class URLHandlerImpl implements URLHandler, java.io.Serializable {
     @Override
     public void setUrlRedirectType(URLRedirectType redirectType) {
         this.urlRedirectType = redirectType.getType();
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getIncomingURL();
     }
 
 }

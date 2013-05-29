@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.server.security.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -57,7 +58,7 @@ import javax.persistence.Table;
 @Table(name = "BLC_ADMIN_ROLE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "AdminRoleImpl_baseAdminRole")
-public class AdminRoleImpl implements AdminRole {
+public class AdminRoleImpl implements AdminRole, AdminMainEntity {
 
     private static final Log LOG = LogFactory.getLog(AdminRoleImpl.class);
     private static final long serialVersionUID = 1L;
@@ -178,6 +179,11 @@ public class AdminRoleImpl implements AdminRole {
         }
 
         return clone;
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getName();
     }
 
 }

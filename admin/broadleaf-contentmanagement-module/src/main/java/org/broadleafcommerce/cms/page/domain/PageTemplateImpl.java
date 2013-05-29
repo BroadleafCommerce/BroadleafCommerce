@@ -18,6 +18,7 @@ package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -55,7 +56,7 @@ import javax.persistence.Table;
 @Table(name = "BLC_PAGE_TMPLT")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PageTemplateImpl_basePageTemplate")
-public class PageTemplateImpl implements PageTemplate {
+public class PageTemplateImpl implements PageTemplate, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -160,6 +161,11 @@ public class PageTemplateImpl implements PageTemplate {
     @Override
     public void setFieldGroups(List<FieldGroup> fieldGroups) {
         this.fieldGroups = fieldGroups;
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getTemplateName();
     }
 }
 

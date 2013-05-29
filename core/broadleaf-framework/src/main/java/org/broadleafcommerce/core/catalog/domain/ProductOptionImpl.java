@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -54,7 +55,7 @@ import javax.persistence.Table;
 @Table(name = "BLC_PRODUCT_OPTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(friendlyName = "ProductOptionImpl_baseProductOption", populateToOneFields=PopulateToOneFieldsEnum.TRUE)
-public class ProductOptionImpl implements ProductOption {
+public class ProductOptionImpl implements ProductOption, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -253,6 +254,11 @@ public class ProductOptionImpl implements ProductOption {
     @Override
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getLabel();
     }
 
 }
