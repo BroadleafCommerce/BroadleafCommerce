@@ -29,6 +29,7 @@
             
         <button class="clear-foreign-key tiny radius secondary button hover-cursor"
             type="button" th:inline="text"
+            th:unless="${field.required}"
             th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
             <i class="icon-remove"></i>&nbsp;[[#{Clear}]]
         </button>
