@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -41,6 +42,7 @@ import javax.persistence.Table;
 @EntityListeners(value = { AuditableListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blStandardElements")
+@AdminPresentationClass(excludeFromPolymorphism = true)
 public abstract class AbstractModuleConfiguration implements ModuleConfiguration {
 
     private static final long serialVersionUID = 1L;
