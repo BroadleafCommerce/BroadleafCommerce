@@ -415,17 +415,28 @@ $(document).ready(function() {
      * Clears out a previously-selected foreign key on both a form and listgrid criteria
      */
     $('body').on('click', 'button.clear-foreign-key', function(event) {        
+        var $container = $(this).closest('div.additional-foreign-key-container');
         var $this = $(this);
-        //remove the current display value
+        // Remove the current display value
         $this.prev().html($(this).prev().prev().html());
         
-        //remove the criteria input val
-        $this.closest('.additional-foreign-key-container').find('.value').val('');
+        // Remove the criteria input val
+        $container.find('.value').val('');
         $this.toggle();
         
-        $this.closest('.additional-foreign-key-container').find('.external-link-container').hide();
+        $container.find('.external-link-container').hide();
         
-        //don't follow the link; prevents page jumping
+        // Clear out the dynamic form that this field drives, if any
+        var onChangeTrigger = $container.find('input.value').data('onchangetrigger');
+        if (onChangeTrigger) {
+            var trigger = onChangeTrigger.split("-");
+            if (trigger[0] == 'dynamicForm') {
+                var $fieldSet = $("fieldset[data-dynamicpropertyname='" + trigger[1] + "']");
+                $fieldSet.hide();
+            }
+        }
+        
+        // Don't follow the link; prevents page jumping
         return false;
     });
     
