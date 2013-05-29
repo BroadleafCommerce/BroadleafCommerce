@@ -19,7 +19,7 @@ package org.broadleafcommerce.openadmin.web.processor;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.service.AdminNavigationService;
+import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
