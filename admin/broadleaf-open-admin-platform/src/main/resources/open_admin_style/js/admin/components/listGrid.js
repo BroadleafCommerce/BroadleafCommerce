@@ -260,8 +260,14 @@ $(document).ready(function() {
             var $valueField = $this.find('input.value');
             $valueField.val(fields['id']);
             $this.find('span.display-value').html(fields[displayValueProp]);
-            //ensure that the clear button shows up after selecting a value
+            
+            // Ensure that the clear button shows up after selecting a value
             $this.find('button.clear-foreign-key').show();
+            
+            // Ensure that the external link button points to the correct URL
+            var $externalLink = $this.find('span.external-link-container a')
+            $externalLink.attr('href', $externalLink.data('foreign-key-link') + '/' + fields['id']);
+            $externalLink.parent().show();
             
             // To-one fields potentially trigger a dynamicform. We test to see if this field should
             // trigger a form, and bind the necessary event if it should.
@@ -409,12 +415,15 @@ $(document).ready(function() {
      * Clears out a previously-selected foreign key on both a form and listgrid criteria
      */
     $('body').on('click', 'button.clear-foreign-key', function(event) {        
+        var $this = $(this);
         //remove the current display value
-        $(this).prev().html($(this).prev().prev().html());
+        $this.prev().html($(this).prev().prev().html());
         
         //remove the criteria input val
-        $(this).closest('.additional-foreign-key-container').find('.value').val('');
-        $(this).toggle();
+        $this.closest('.additional-foreign-key-container').find('.value').val('');
+        $this.toggle();
+        
+        $this.closest('.additional-foreign-key-container').find('.external-link-container').hide();
         
         //don't follow the link; prevents page jumping
         return false;

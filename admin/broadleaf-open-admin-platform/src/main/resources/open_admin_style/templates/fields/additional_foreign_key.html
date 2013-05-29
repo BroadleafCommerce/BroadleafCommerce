@@ -39,8 +39,10 @@
             <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
         </button>
 
-        <span th:if="${field.canLinkToExternalEntity}" th:remove="tag">
-           <a th:href="@{${'/' + field.entityViewPath}}" class="modal-view">
+        <span class="external-link-container" th:style="${!field.canLinkToExternalEntity or #strings.isEmpty(field.value)}? 'display: none;'">
+           <a th:href="@{${'/' + field.entityViewPath}}" 
+              th:attr="data-foreign-key-link=@{${'/' + field.foreignKeyClass}}"
+              class="modal-view">
                 <i class="icon-external-link"></i>
            </a>
         </span>

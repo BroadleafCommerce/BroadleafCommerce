@@ -363,7 +363,7 @@ public class EntityForm {
     }
 
     public String getSectionKey() {
-        return sectionKey;
+        return sectionKey.charAt(0) == '/' ? sectionKey : '/' + sectionKey;
     }
     
     public void setSectionKey(String sectionKey) {

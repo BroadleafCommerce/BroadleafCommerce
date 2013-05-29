@@ -165,8 +165,6 @@ public class Field {
     /**
      * Used to build a link for this particular field value to be displayed in a modal. This is used to build the link for
      * a 'to-one-lookup' field.
-     * 
-     * @return
      */
     public String getEntityViewPath() {
         return getForeignKeyClass() + "/" + getValue();
@@ -174,7 +172,6 @@ public class Field {
     
     /**
      * Used for linking in toOneLookup fields as well as linking to the entity via a 'name' field
-     * @return
      */
     public boolean getCanLinkToExternalEntity() {
         return SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString().equals(fieldType);
