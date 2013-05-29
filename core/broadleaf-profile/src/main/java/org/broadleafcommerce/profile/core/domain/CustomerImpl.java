@@ -175,6 +175,12 @@ public class CustomerImpl implements Customer, AdminMainEntity {
             tab = Presentation.Tab.Name.Contact, tabOrder = Presentation.Tab.Order.Contact)
     protected List<CustomerPayment> customerPayments  = new ArrayList<CustomerPayment>();
 
+    @Column(name = "TAX_EXEMPTION_CODE")
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_TaxExemptCode", order = 5000,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            visibility = VisibilityEnum.GRID_HIDDEN)
+    protected String taxExemptionCode;
+
     @Transient
     protected String unencodedPassword;
 
@@ -189,8 +195,6 @@ public class CustomerImpl implements Customer, AdminMainEntity {
 
     @Transient
     protected boolean loggedIn;
-
-    protected String taxExemption;
 
     @Override
     public Long getId() {
@@ -396,10 +400,12 @@ public class CustomerImpl implements Customer, AdminMainEntity {
         this.customerLocale = customerLocale;
     }
 
+    @Override
     public Map<String, CustomerAttribute> getCustomerAttributes() {
         return customerAttributes;
     }
 
+    @Override
     public void setCustomerAttributes(Map<String, CustomerAttribute> customerAttributes) {
         this.customerAttributes = customerAttributes;
     }
@@ -510,12 +516,12 @@ public class CustomerImpl implements Customer, AdminMainEntity {
     }
 
     @Override
-    public String getTaxExemption() {
-        return this.taxExemption;
+    public String getTaxExemptionCode() {
+        return this.taxExemptionCode;
     }
 
     @Override
-    public void setTaxExemption(String exemption) {
-        this.taxExemption = exemption;
+    public void setTaxExemptionCode(String exemption) {
+        this.taxExemptionCode = exemption;
     }
 }
