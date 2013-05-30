@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.page.service;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -50,22 +51,24 @@ import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
 import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
  * Created by bpolster.
  */
 @Service("blPageService")
 public class PageServiceImpl extends AbstractContentService implements PageService, SandBoxItemListener {
-    private static final Log LOG = LogFactory.getLog(PageServiceImpl.class);
+    protected static final Log LOG = LogFactory.getLog(PageServiceImpl.class);
     
-    private static String AND = " && ";
+    protected static String AND = " && ";
 
     @Resource(name="blPageDao")
     protected PageDao pageDao;
@@ -92,9 +95,9 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
 
     protected List<ArchivedPagePublisher> archivedPageListeners;
     
-    private PageDTO NULL_PAGE = new NullPageDTO();    
+    protected final PageDTO NULL_PAGE = new NullPageDTO();    
     
-    private List<PageDTO> EMPTY_PAGE_DTO = new ArrayList<PageDTO>();
+    protected final List<PageDTO> EMPTY_PAGE_DTO = new ArrayList<PageDTO>();
 
     /**
      * Returns the page with the passed in id.
@@ -111,6 +114,12 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
     public PageTemplate findPageTemplateById(Long id) {
         return pageDao.readPageTemplateById(id);
     }
+    
+    @Override
+    @Transactional("blTransactionManager")
+    public PageTemplate savePageTemplate(PageTemplate template) {
+        return pageDao.savePageTemplate(template);
+    }
 
     /**
      * Returns the page-fields associated with the passed in page-id.
@@ -122,7 +131,7 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
      */
     @Override
     public Map<String, PageField> findPageFieldsByPageId(Long pageId) {
-        Page page = (Page) findPageById(pageId);
+        Page page = findPageById(pageId);
         return pageDao.readPageFieldsByPage(page);
     }
 
@@ -253,7 +262,7 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
     }
 
     // Returns true if the src and dest sandbox are the same.
-    private boolean checkForSandboxMatch(SandBox src, SandBox dest) {
+    protected boolean checkForSandboxMatch(SandBox src, SandBox dest) {
         if (src != null) {
             if (dest != null) {
                 return src.getId().equals(dest.getId());
@@ -263,7 +272,7 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
     }
 
     // Returns true if the dest sandbox is production.
-    private boolean isProductionSandBox(SandBox dest) {
+    protected boolean isProductionSandBox(SandBox dest) {
         if (dest == null) {
             return true;
         } else {
@@ -373,7 +382,7 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
        }
     }
     
-    private List<ItemCriteriaDTO> buildItemCriteriaDTOList(Page page) {
+    protected List<ItemCriteriaDTO> buildItemCriteriaDTOList(Page page) {
         List<ItemCriteriaDTO> itemCriteriaDTOList = new ArrayList<ItemCriteriaDTO>();
         for(PageItemCriteria criteria : page.getQualifyingItemCriteria()) {
             ItemCriteriaDTO criteriaDTO = new ItemCriteriaDTO();
@@ -454,7 +463,7 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
         return true;
     }
 
-    private Locale findLanguageOnlyLocale(Locale locale) {
+    protected Locale findLanguageOnlyLocale(Locale locale) {
         if (locale != null ) {
             Locale languageOnlyLocale = localeService.findLocaleByCode(LocaleUtil.findLanguageCode(locale));
             if (languageOnlyLocale != null) {
@@ -517,7 +526,17 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
 
     @Override
     public List<Page> findPages(SandBox sandbox, Criteria c) {
-        return (List<Page>) findItems(sandbox, c, Page.class, PageImpl.class, "originalPageId");
+        return findItems(sandbox, c, Page.class, PageImpl.class, "originalPageId");
+    }
+    
+    @Override
+    public List<Page> readAllPages() {
+        return pageDao.readAllPages();
+    }
+
+    @Override
+    public List<PageTemplate> readAllPageTemplates() {
+        return pageDao.readAllPageTemplates();
     }
 
     @Override
@@ -615,14 +634,14 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
         }
     }
     
-    private Cache getPageCache() {
+    protected Cache getPageCache() {
         if (pageCache == null) {
             pageCache = CacheManager.getInstance().getCache("cmsPageCache");
         }
         return pageCache;
     }
 
-    private String buildKey(SandBox currentSandbox, Locale locale, String uri) {
+    protected String buildKey(SandBox currentSandbox, Locale locale, String uri) {
         StringBuffer key = new StringBuffer(uri);
         if (locale != null) {
             key.append("-").append(locale.getLocaleCode());
@@ -635,16 +654,16 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
         return key.toString();
     }
 
-    private String buildKey(Page page) {
+    protected String buildKey(Page page) {
         return buildKey(page.getSandbox(), page.getPageTemplate().getLocale(), page.getFullUrl());
     }
     
-    private void addPageListToCache(List<PageDTO> pageList, String key) {
+    protected void addPageListToCache(List<PageDTO> pageList, String key) {
         getPageCache().put(new Element(key, pageList));
     }
     
     @SuppressWarnings("unchecked")
-    private List<PageDTO> getPageListFromCache(String key) {
+    protected List<PageDTO> getPageListFromCache(String key) {
         Element cacheElement = getPageCache().get(key);
         if (cacheElement != null && cacheElement.getValue() != null) {
             return (List<PageDTO>) cacheElement.getValue();
@@ -668,6 +687,7 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
      *
      * @param baseKey
      */
+    @Override
     public void removePageFromCache(String baseKey) {
         // Remove secure and non-secure instances of the page.
         // Typically the page will be in one or the other if at all.
@@ -675,18 +695,22 @@ public class PageServiceImpl extends AbstractContentService implements PageServi
         getPageCache().remove(baseKey+"-"+false);
     }
 
+    @Override
     public List<ArchivedPagePublisher> getArchivedPageListeners() {
         return archivedPageListeners;
     }
 
+    @Override
     public void setArchivedPageListeners(List<ArchivedPagePublisher> archivedPageListeners) {
         this.archivedPageListeners = archivedPageListeners;
     }
 
+    @Override
     public boolean isAutomaticallyApproveAndPromotePages() {
         return automaticallyApproveAndPromotePages;
     }
 
+    @Override
     public void setAutomaticallyApproveAndPromotePages(boolean automaticallyApproveAndPromotePages) {
         this.automaticallyApproveAndPromotePages = automaticallyApproveAndPromotePages;
     }

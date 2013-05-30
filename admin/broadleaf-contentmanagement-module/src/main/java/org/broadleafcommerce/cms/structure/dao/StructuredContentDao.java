@@ -52,6 +52,12 @@ public interface StructuredContentDao {
      * @return the list of found items
      */
     public List<StructuredContentType> retrieveAllStructuredContentTypes();
+    
+    /**
+     * Finds all content regardless of the {@link Sandbox} they are a member of
+     * @return the list of {@link StructuredContent}, an empty list of none are found
+     */
+    public List<StructuredContent> findAllContentItems();
 
     public Map<String,StructuredContentField> readFieldsForStructuredContentItem(StructuredContent sc);
 
@@ -69,6 +75,11 @@ public interface StructuredContentDao {
      * @param content
      */
     public void delete(StructuredContent content);
+    
+    /**
+     * Saves the given <b>type</b> and returns the merged instance
+     */
+    public StructuredContentType saveStructuredContentType(StructuredContentType type);
 
     /**
      * Pass through function for backwards compatibility to get a list of structured content.

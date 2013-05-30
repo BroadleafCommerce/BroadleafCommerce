@@ -28,13 +28,19 @@ import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * Created by bpolster.
@@ -55,12 +61,12 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
 
     @Override
     public StructuredContent findStructuredContentById(Long contentId) {
-        return (StructuredContent) em.find(StructuredContentImpl.class, contentId);
+        return em.find(StructuredContentImpl.class, contentId);
     }
 
     @Override
     public StructuredContentType findStructuredContentTypeById(Long contentTypeId) {
-        return (StructuredContentType) em.find(StructuredContentTypeImpl.class, contentTypeId);
+        return em.find(StructuredContentTypeImpl.class, contentTypeId);
     }
 
     @Override
@@ -68,13 +74,28 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         Query query = em.createNamedQuery("BC_READ_ALL_STRUCTURED_CONTENT_TYPES");
         return query.getResultList();
     }
+    
+    @Override
+    public List<StructuredContent> findAllContentItems() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<StructuredContent> criteria = builder.createQuery(StructuredContent.class);
+        Root<StructuredContentImpl> sc = criteria.from(StructuredContentImpl.class);
 
+        criteria.select(sc);
+
+        try {
+            return em.createQuery(criteria).getResultList();
+        } catch (NoResultException e) {
+            return new ArrayList<StructuredContent>();
+        }
+    }
+    
     @Override
     public Map<String, StructuredContentField> readFieldsForStructuredContentItem(StructuredContent sc) {
         Query query = em.createNamedQuery("BC_READ_CONTENT_FIELDS_BY_CONTENT_ID");
         query.setParameter("structuredContent", sc);
 
-        List<StructuredContentField> fields = (List<StructuredContentField>) query.getResultList();
+        List<StructuredContentField> fields = query.getResultList();
         Map<String, StructuredContentField> fieldMap = new HashMap<String, StructuredContentField>();
         for (StructuredContentField scField : fields) {
             fieldMap.put(scField.getFieldKey(), scField);
@@ -93,6 +114,11 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
             content = findStructuredContentById(content.getId());
         }
         em.remove(content);
+    }
+    
+    @Override
+    public StructuredContentType saveStructuredContentType(StructuredContentType type) {
+        return em.merge(type);
     }
 
     @Override

@@ -29,13 +29,19 @@ import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * Created by bpolster.
@@ -56,12 +62,18 @@ public class PageDaoImpl implements PageDao {
 
     @Override
     public Page readPageById(Long id) {
-        return (Page) em.find(PageImpl.class, id);
+        return em.find(PageImpl.class, id);
     }
 
     @Override
     public PageTemplate readPageTemplateById(Long id) {
-        return (PageTemplate) em.find(PageTemplateImpl.class, id);
+        return em.find(PageTemplateImpl.class, id);
+    }
+    
+
+    @Override
+    public PageTemplate savePageTemplate(PageTemplate template) {
+        return em.merge(template);
     }
 
     @Override
@@ -70,7 +82,7 @@ public class PageDaoImpl implements PageDao {
         query.setParameter("page", page);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
 
-        List<PageField> pageFields = (List<PageField>) query.getResultList();
+        List<PageField> pageFields = query.getResultList();
         Map<String, PageField> pageFieldMap = new HashMap<String, PageField>();
         for (PageField pageField : pageFields) {
             pageFieldMap.put(pageField.getFieldKey(), pageField);
@@ -86,7 +98,7 @@ public class PageDaoImpl implements PageDao {
     @Override
     public void delete(Page page) {
         if (!em.contains(page)) {
-            page = (Page) readPageById(page.getId());
+            page = readPageById(page.getId());
         }
         em.remove(page);
     }
@@ -107,7 +119,7 @@ public class PageDaoImpl implements PageDao {
         // locale
         if (sandBox == null) {
             query = em.createNamedQuery("BC_READ_PAGE_BY_URI");
-        } else if (SandBoxType.PRODUCTION.equals(sandBox)) {
+        } else if (SandBoxType.PRODUCTION.equals(sandBox.getSandBoxType())) {
             query = em.createNamedQuery("BC_READ_PAGE_BY_URI_AND_PRODUCTION_SANDBOX");
             query.setParameter("sandbox", sandBox);
         } else {
@@ -120,6 +132,36 @@ public class PageDaoImpl implements PageDao {
         query.setParameter("uri", uri);
 
         return query.getResultList();
+    }
+    
+    @Override
+    public List<Page> readAllPages() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Page> criteria = builder.createQuery(Page.class);
+        Root<PageImpl> page = criteria.from(PageImpl.class);
+
+        criteria.select(page);
+
+        try {
+            return em.createQuery(criteria).getResultList();
+        } catch (NoResultException e) {
+            return new ArrayList<Page>();
+        }
+    }
+    
+    @Override
+    public List<PageTemplate> readAllPageTemplates() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<PageTemplate> criteria = builder.createQuery(PageTemplate.class);
+        Root<PageTemplateImpl> template = criteria.from(PageTemplateImpl.class);
+
+        criteria.select(template);
+
+        try {
+            return em.createQuery(criteria).getResultList();
+        } catch (NoResultException e) {
+            return new ArrayList<PageTemplate>();
+        }
     }
 
     @Override

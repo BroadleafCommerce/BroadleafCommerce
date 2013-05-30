@@ -100,7 +100,13 @@ public interface StructuredContentService extends SandBoxItemListener {
      * @return
      */
     public List<StructuredContent> findContentItems(SandBox sandbox, Criteria criteria);
-
+    
+    /**
+     * Finds all content items regardless of the {@link Sandbox} they are a member of
+     * @return
+     */
+    public List<StructuredContent> findAllContentItems();
+    
     /**
      * Follows the same rules as {@link #findContentItems(org.broadleafcommerce.common.sandbox.domain.SandBox, org.hibernate.Criteria) findContentItems}.
      *
@@ -151,6 +157,10 @@ public interface StructuredContentService extends SandBoxItemListener {
      */
     public StructuredContent updateStructuredContent(StructuredContent content, SandBox sandbox);
 
+    /**
+     * Saves the given <b>type</b> and returns the merged instance
+     */
+    public StructuredContentType saveStructuredContentType(StructuredContentType type);
 
     /**
      * If deleting and item where content.originalItemId != null
