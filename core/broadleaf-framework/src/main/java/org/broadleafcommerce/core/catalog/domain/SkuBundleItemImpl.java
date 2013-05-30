@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.apache.commons.lang.ClassUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -31,10 +30,10 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -120,10 +119,8 @@ public class SkuBundleItemImpl implements SkuBundleItem {
                 returnPrice = dynamicPrices.getSalePrice();
             } else {
                 DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(sku, salePrice);
-                List<Class<?>> list = ClassUtils.getAllInterfaces(getClass());
-                Class<?>[] intfArray = list.toArray(new Class<?>[list.size()]);
-                SkuBundleItem proxy = (SkuBundleItem) Proxy.newProxyInstance(getClass().getClassLoader(), intfArray, handler);
-                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuBundleItemPrice(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+                Sku proxy = (Sku) Proxy.newProxyInstance(sku.getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(sku.getClass()), handler);
+                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
                 returnPrice = dynamicPrices.getSalePrice();
             }
         } else {
