@@ -230,7 +230,7 @@ public class OfferImpl implements Offer, Status {
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Automatically_Added", order = 5000,
             group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
             fieldType = SupportedFieldType.BOOLEAN)
-    protected Boolean automaticallyAdded;
+    protected Boolean automaticallyAdded = false;
 
     @Column(name = "MAX_USES")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Max_Uses_Per_Order", order = 7,
