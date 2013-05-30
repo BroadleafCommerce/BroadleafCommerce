@@ -212,16 +212,31 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
                     ClassMetadata metadata = (ClassMetadata) item;
                     Class<?> mappedClass = metadata.getMappedClass();
                     if (mappedClass != null && ceilingClass.isAssignableFrom(mappedClass)) {
-                        AdminPresentationClass adminPresentationClass = mappedClass.getAnnotation(AdminPresentationClass.class);
-                        if (adminPresentationClass == null || !adminPresentationClass.excludeFromPolymorphism()) {
-                            entities.add(mappedClass);
-                        }
+                        entities.add(mappedClass);
                     }
                 }
                 Class<?>[] sortedEntities = sortEntities(ceilingClass, entities);
 
-                cache = sortedEntities;
-                POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, sortedEntities);
+                List<Class<?>> filteredSortedEntities = new ArrayList<Class<?>>();
+
+                for (int i = 0; i < sortedEntities.length; i++) {
+                    Class<?> item = sortedEntities[i];
+                    //We filter out abstract classes because they can't be instantiated.
+                    if (Modifier.isAbstract(item.getModifiers())) {
+                        continue;
+                    }
+
+                    //We filter out classes that are marked to exclude from polymorphism
+                    AdminPresentationClass adminPresentationClass = item.getAnnotation(AdminPresentationClass.class);
+                    if (adminPresentationClass == null || (adminPresentationClass != null && !adminPresentationClass.excludeFromPolymorphism())) {
+                        filteredSortedEntities.add(sortedEntities[i]);
+                    }
+                }
+
+                Class<?>[] filteredEntities = new Class<?>[filteredSortedEntities.size()];
+                filteredEntities = filteredSortedEntities.toArray(filteredEntities);
+                cache = filteredEntities;
+                POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, filteredEntities);
             }
         }
 

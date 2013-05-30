@@ -33,7 +33,7 @@ public class ConfigurationManagementSectionAuthorizationImpl implements SectionA
             //Only show this section if there is an extension of AbstractModuleConfiguration
             return !section.getCeilingEntity().equals("org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration") ||
                     dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Class.forName("org.broadleafcommerce.common" +
-                            ".config.domain.AbstractModuleConfiguration")).length > 1;
+                            ".config.domain.AbstractModuleConfiguration")).length >= 1;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
