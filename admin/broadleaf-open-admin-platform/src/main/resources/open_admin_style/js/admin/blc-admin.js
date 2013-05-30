@@ -209,6 +209,7 @@ var BLCAdmin = (function($) {
     	// Convenience function for hiding the replacing the current modal with the given link
     	modalNavigateTo : function(link) {
     		if (BLCAdmin.currentModal()) {
+    		    BLCAdmin.currentModal().data('initialized', 'false');
     		    BLC.ajax({
     		        url : link,
     		        type : "GET"

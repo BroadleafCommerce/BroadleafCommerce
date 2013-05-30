@@ -433,6 +433,10 @@
             var thWidths = [];
             var $modalBody = $tbody.closest('.modal-body');
             
+            if ($modalBody.length > 0) {
+                $modalBody.css('overflow-y', 'hidden');
+            }
+            
             // Clear out widths
             $headerTable.css('width', '');
             $table.css('width', '');
@@ -509,6 +513,7 @@
                 
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
+                $modalBody.css('overflow-y', 'auto');
             } else {
                 $wrapper.css('max-height', maxSubCollectionListGridHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxSubCollectionListGridHeight);

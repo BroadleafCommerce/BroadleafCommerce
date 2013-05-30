@@ -11,6 +11,7 @@ body {
 
 html {
 	overflow: -moz-scrollbars-vertical; 
+    overflow-y: scroll;
 }
 
 [role="main"] {
