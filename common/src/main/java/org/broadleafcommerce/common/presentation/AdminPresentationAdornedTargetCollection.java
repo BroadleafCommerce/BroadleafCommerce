@@ -163,6 +163,10 @@ public @interface AdminPresentationAdornedTargetCollection {
      *
      * <p>This is the field in the target entity that represents
      * its primary key</p>
+     * 
+     * <p>Note that this should just be the property name, not the path to the property.
+     * For example, if the target object is CountryImpl, then the value for the 
+     * targetObjectIdProperty should just be "abbreviation".
      *
      * @return primary key field of the target entity
      */
