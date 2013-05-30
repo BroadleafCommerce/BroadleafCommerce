@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.file.service;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.common.AssetNotFoundException;
 import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.cms.file.dao.StaticAssetStorageDao;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
@@ -180,9 +181,9 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         StaticAsset staticAsset = findStaticAsset(fullUrl, sandBox);
         if (staticAsset == null) {
             if (sandBox == null) {
-                throw new RuntimeException("Unable to find an asset for the url (" + fullUrl + ") using the production sandBox.");
+                throw new AssetNotFoundException("Unable to find an asset for the url (" + fullUrl + ") using the production sandBox.");
             } else {
-                throw new RuntimeException("Unable to find an asset for the url (" + fullUrl + ") using the sandBox id (" + sandBox.getId() + "), or the production sandBox.");
+                throw new AssetNotFoundException("Unable to find an asset for the url (" + fullUrl + ") using the sandBox id (" + sandBox.getId() + "), or the production sandBox.");
             }
         }
         String mimeType = staticAsset.getMimeType();
