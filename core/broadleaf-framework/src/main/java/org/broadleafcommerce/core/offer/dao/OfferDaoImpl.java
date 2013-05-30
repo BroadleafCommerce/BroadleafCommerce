@@ -117,7 +117,7 @@ public class OfferDaoImpl implements OfferDao {
     }
 
     public List<Offer> readOffersByAutomaticDeliveryType() {
-        //em.flush();
+        //TODO change this to a JPA criteria
 
         Criteria criteria = ((HibernateEntityManager) em).getSession().createCriteria(OfferImpl.class);
 
@@ -130,7 +130,7 @@ public class OfferDaoImpl implements OfferDao {
         c.setTime(SystemTime.asDate());
         c.add(Calendar.DATE, -1);
         //offer.endDate+1>currentTime
-        criteria.add(Restrictions.gt("endDate", c.getTime()));
+        criteria.add(Restrictions.or(Restrictions.isNull("endDate"), Restrictions.gt("endDate", c.getTime())));
         criteria.add(Restrictions.or(Restrictions.eq("archiveStatus.archived", 'N'),
                 Restrictions.isNull("archiveStatus.archived")));
 
