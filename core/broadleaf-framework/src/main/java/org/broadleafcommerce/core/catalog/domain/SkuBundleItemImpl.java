@@ -122,8 +122,8 @@ public class SkuBundleItemImpl implements SkuBundleItem {
                 DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(sku, salePrice);
                 List<Class<?>> list = ClassUtils.getAllInterfaces(getClass());
                 Class<?>[] intfArray = list.toArray(new Class<?>[list.size()]);
-                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), intfArray, handler);
-                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+                SkuBundleItem proxy = (SkuBundleItem) Proxy.newProxyInstance(getClass().getClassLoader(), intfArray, handler);
+                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuBundleItemPrice(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
                 returnPrice = dynamicPrices.getSalePrice();
             }
         } else {
