@@ -41,6 +41,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.hibernate.mapping.PersistentClass;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -247,6 +248,9 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             }
 
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
+
+            Assert.isTrue(instance != null, "Entity not found");
+
             FieldManager fieldManager = getFieldManager();
             Map map = (Map) fieldManager.getFieldValue(instance, mapStructure.getMapProperty());
             
@@ -359,6 +363,9 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             }
 
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
+
+            Assert.isTrue(instance != null, "Entity not found");
+
             FieldManager fieldManager = getFieldManager();
             Map map = (Map) fieldManager.getFieldValue(instance, mapStructure.getMapProperty());
             
@@ -439,6 +446,9 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             }
 
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
+
+            Assert.isTrue(instance != null, "Entity not found");
+
             FieldManager fieldManager = getFieldManager();
             Map map = (Map) fieldManager.getFieldValue(instance, mapStructure.getMapProperty());
             

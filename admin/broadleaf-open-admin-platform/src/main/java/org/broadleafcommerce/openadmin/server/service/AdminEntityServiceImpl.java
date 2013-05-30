@@ -42,15 +42,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -88,7 +87,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         Entity[] entities = fetch(request).getRecords();
 
-        Assert.isTrue(entities != null && entities.length == 1);
+        Assert.isTrue(entities != null && entities.length == 1, "Entity not found");
 
         Entity entity = entities[0];
         return entity;
@@ -191,7 +190,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             ppr.addFilterAndSortCriteria(fasc);
 
             Entity[] entities = fetch(ppr).getRecords();
-            Assert.isTrue(entities != null && entities.length == 1);
+            Assert.isTrue(entities != null && entities.length == 1, "Entity not found");
             entity = entities[0];
         } else if (md instanceof MapMetadata) {
             MapMetadata mmd = (MapMetadata) md;

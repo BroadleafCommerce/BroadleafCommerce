@@ -44,6 +44,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
@@ -114,13 +115,22 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
         return filterMappings;
     }
 
-    protected Serializable createPopulatedAdornedTargetInstance(AdornedTargetList adornedTargetList, Entity entity) throws InstantiationException, IllegalAccessException, ClassNotFoundException, NumberFormatException, InvocationTargetException, NoSuchMethodException {
+    protected Serializable createPopulatedAdornedTargetInstance(AdornedTargetList adornedTargetList, Entity entity) throws InstantiationException, IllegalAccessException, ClassNotFoundException, NumberFormatException, InvocationTargetException, NoSuchMethodException, FieldNotAvailableException {
         Serializable instance = (Serializable) Class.forName(StringUtils.isEmpty(adornedTargetList
                 .getAdornedTargetEntityPolymorphicType())? adornedTargetList.getAdornedTargetEntityClassname(): adornedTargetList.getAdornedTargetEntityPolymorphicType()).newInstance();
         String targetPath = adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty();
         String linkedPath = adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty();
         getFieldManager().setFieldValue(instance, linkedPath, Long.valueOf(entity.findProperty(linkedPath).getValue()));
+
+        Object test1 = getFieldManager().getFieldValue(instance, adornedTargetList.getLinkedObjectPath());
+        Object test1PersistedObject = persistenceManager.getDynamicEntityDao().retrieve(test1.getClass(), Long.valueOf(entity.findProperty(linkedPath).getValue()));
+        Assert.isTrue(test1PersistedObject != null, "Entity not found");
+
         getFieldManager().setFieldValue(instance, targetPath, Long.valueOf(entity.findProperty(targetPath).getValue()));
+
+        Object test2 = getFieldManager().getFieldValue(instance, adornedTargetList.getTargetObjectPath());
+        Object test2PersistedObject = persistenceManager.getDynamicEntityDao().retrieve(test2.getClass(), Long.valueOf(entity.findProperty(targetPath).getValue()));
+        Assert.isTrue(test2PersistedObject != null, "Entity not found");
 
         return instance;
     }
@@ -275,6 +285,9 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
         try {
             AdornedTargetRetrieval adornedTargetRetrieval = new AdornedTargetRetrieval(persistencePerspective, entity, adornedTargetList).invokeForUpdate();
             List<Serializable> records = adornedTargetRetrieval.getRecords();
+
+            Assert.isTrue(!CollectionUtils.isEmpty(records), "Entity not found");
+
             int index = adornedTargetRetrieval.getIndex();
             Map<String, FieldMetadata> mergedProperties = adornedTargetRetrieval.getMergedProperties();
             FieldManager fieldManager = getFieldManager();
@@ -369,6 +382,8 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             filterCriteriaInsertedTarget.setFilterValue(entity.findProperty(adornedTargetList.getTargetObjectPath() + "." + adornedTargetList.getTargetIdProperty()).getValue());
             List<FilterMapping> filterMappings = getAdornedTargetFilterMappings(persistencePerspective, ctoInserted, mergedProperties, adornedTargetList);
             List<Serializable> recordsInserted = getPersistentRecords(adornedTargetList.getAdornedTargetEntityClassname(), filterMappings, ctoInserted.getFirstResult(), ctoInserted.getMaxResults());
+
+            Assert.isTrue(!CollectionUtils.isEmpty(recordsInserted), "Entity not found");
 
             persistenceManager.getDynamicEntityDao().remove(recordsInserted.get(0));
         } catch (Exception e) {

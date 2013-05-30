@@ -64,6 +64,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -557,6 +558,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 primaryKey = getPrimaryKey(entity, mergedProperties);
             }
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), primaryKey);
+
+            Assert.isTrue(instance != null, "Entity not found");
+
             instance = createPopulatedInstance(instance, entity, mergedProperties, false);
             if (!entity.isValidationFailure()) {
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
@@ -836,6 +840,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
             Object primaryKey = getPrimaryKey(entity, mergedProperties);
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), primaryKey);
+
+            Assert.isTrue(instance != null, "Entity not found");
 
             switch (persistencePerspective.getOperationTypes().getRemoveType()) {
                 case NONDESTRUCTIVEREMOVE:
