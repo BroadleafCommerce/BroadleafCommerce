@@ -136,7 +136,10 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                             } catch (FieldNotAvailableException e) {
                                 throw new IllegalArgumentException(e);
                             }
-                            if (rule != null) {
+                            if (mvel == null) {
+                                //cause the rule to be deleted
+                                populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), null);
+                            } else if (rule != null) {
                                 rule.setMatchRule(mvel);
                             } else {
                                 //create a new instance, persist and set
