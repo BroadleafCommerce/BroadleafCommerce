@@ -807,6 +807,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
                 public static final String Inventory = "ProductImpl_Inventory_Tab";
                 public static final String Shipping = "ProductImpl_Shipping_Tab";
                 public static final String Advanced = "ProductImpl_Advanced_Tab";
+
             }
             
             public static class Order {
@@ -828,6 +829,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
                 public static final String Inventory = "SkuImpl_Sku_Inventory";
                 public static final String Badges = "ProductImpl_Badges";
                 public static final String Shipping = "ProductWeight_Shipping";
+                public static final String Financial = "ProductImpl_Financial";
             }
             
             public static class Order {
@@ -839,6 +841,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
                 public static final int Badges = 1000;
                 public static final int Shipping = 1000;
             }
+
         }
 
         public static class FieldOrder {
