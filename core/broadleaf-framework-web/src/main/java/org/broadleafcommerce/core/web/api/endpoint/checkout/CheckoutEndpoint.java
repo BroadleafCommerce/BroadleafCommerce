@@ -36,8 +36,7 @@ import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.broadleafcommerce.core.web.order.CartState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,87 +76,75 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
     //This should only be called for modules that need to engage the workflow directly without doing a complete checkout.
     //e.g. PayPal for doing an authorize and retrieving the redirect: url to PayPal
     public PaymentResponseItemWrapper executePayment(HttpServletRequest request, PaymentReferenceMapWrapper mapWrapper) {
-        Customer customer = CustomerState.getCustomer(request);
+        Order cart = CartState.getCart();
+        if (cart != null) {
+            try {
+                Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
+                PaymentInfo paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
+                Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
+                payments.put(paymentInfo, referenced);
 
-        if (customer != null) {
-            Order cart = orderService.findCartForCustomer(customer);
-            if (cart != null) {
-                try {
-                        Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
-                        PaymentInfo paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
-                        Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
-                        payments.put(paymentInfo, referenced);
+                CompositePaymentResponse compositePaymentResponse = compositePaymentService.executePayment(cart, payments);
+                PaymentResponseItem responseItem = compositePaymentResponse.getPaymentResponse().getResponseItems().get(paymentInfo);
 
-                        CompositePaymentResponse compositePaymentResponse = compositePaymentService.executePayment(cart, payments);
-                        PaymentResponseItem responseItem = compositePaymentResponse.getPaymentResponse().getResponseItems().get(paymentInfo);
+                PaymentResponseItemWrapper paymentResponseItemWrapper = context.getBean(PaymentResponseItemWrapper.class);
+                paymentResponseItemWrapper.wrap(responseItem, request);
 
-                        PaymentResponseItemWrapper paymentResponseItemWrapper = context.getBean(PaymentResponseItemWrapper.class);
-                        paymentResponseItemWrapper.wrap(responseItem, request);
+                return paymentResponseItemWrapper;
 
-                        return paymentResponseItemWrapper;
-
-                } catch (PaymentException e) {
-                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("An error occured with payment.").build());
-                }
+            } catch (PaymentException e) {
+                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .type(MediaType.TEXT_PLAIN).entity("An error occured with payment.").build());
             }
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
-        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
-                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+
     }
 
     public OrderWrapper performCheckout(HttpServletRequest request, List<PaymentReferenceMapWrapper> mapWrappers) {
-        Customer customer = CustomerState.getCustomer(request);
+        Order cart = CartState.getCart();
+        if (cart != null) {
+            try {
+                if (mapWrappers != null && !mapWrappers.isEmpty()) {
+                    Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
+                    orderService.removePaymentsFromOrder(cart, PaymentInfoType.CREDIT_CARD);
 
-        if (customer != null) {
-            Order cart = orderService.findCartForCustomer(customer);
-            if (cart != null) {
-                try {
-                    if (mapWrappers != null && !mapWrappers.isEmpty()) {
-                        Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
-                        orderService.removePaymentsFromOrder(cart, PaymentInfoType.CREDIT_CARD);
+                    for (PaymentReferenceMapWrapper mapWrapper : mapWrappers) {
+                        PaymentInfo paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
+                        paymentInfo.setOrder(cart);
+                        Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
 
-                        for (PaymentReferenceMapWrapper mapWrapper : mapWrappers) {
-                            PaymentInfo paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
-                            paymentInfo.setOrder(cart);
-                            Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
-
-                            if (cart.getPaymentInfos() == null) {
-                                cart.setPaymentInfos(new ArrayList<PaymentInfo>());
-                            }
-
-                            cart.getPaymentInfos().add(paymentInfo);
-                            payments.put(paymentInfo, referenced);
+                        if (cart.getPaymentInfos() == null) {
+                            cart.setPaymentInfos(new ArrayList<PaymentInfo>());
                         }
 
-                        CheckoutResponse response = checkoutService.performCheckout(cart, payments);
-                        Order order = response.getOrder();
-                        OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                        wrapper.wrap(order,request);
-                        return wrapper;
-                    }
-                } catch (CheckoutException e) {
-
-                    cart.setStatus(OrderStatus.IN_PROCESS);
-
-                    try {
-                        orderService.save(cart, false);
-                    } catch (PricingException e1) {
-                        LOG.error("An unexpected error occured saving / pricing the cart.", e1);
+                        cart.getPaymentInfos().add(paymentInfo);
+                        payments.put(paymentInfo, referenced);
                     }
 
-                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("An error occured during checkout.").build());
+                    CheckoutResponse response = checkoutService.performCheckout(cart, payments);
+                    Order order = response.getOrder();
+                    OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                    wrapper.wrap(order, request);
+                    return wrapper;
                 }
+            } catch (CheckoutException e) {
+
+                cart.setStatus(OrderStatus.IN_PROCESS);
+
+                try {
+                    orderService.save(cart, false);
+                } catch (PricingException e1) {
+                    LOG.error("An unexpected error occured saving / pricing the cart.", e1);
+                }
+
+                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .type(MediaType.TEXT_PLAIN).entity("An error occured during checkout.").build());
             }
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
-        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
-                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+
     }
 }

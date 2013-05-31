@@ -29,8 +29,7 @@ import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupItemWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.broadleafcommerce.core.web.order.CartState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,131 +61,106 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
     protected FulfillmentGroupService fulfillmentGroupService;
 
     public List<FulfillmentGroupWrapper> findFulfillmentGroupsForOrder(HttpServletRequest request) {
-        Customer customer = CustomerState.getCustomer(request);
-
-        if (customer != null) {
-            Order cart = orderService.findCartForCustomer(customer);
-            if (cart != null && cart.getFulfillmentGroups() != null && !cart.getFulfillmentGroups().isEmpty()) {
-                List<FulfillmentGroup> fulfillmentGroups = cart.getFulfillmentGroups();
-                List<FulfillmentGroupWrapper> fulfillmentGroupWrappers = new ArrayList<FulfillmentGroupWrapper>();
-                for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
-                    FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
-                    fulfillmentGroupWrapper.wrap(fulfillmentGroup, request);
-                    fulfillmentGroupWrappers.add(fulfillmentGroupWrapper);
-                }
-                return fulfillmentGroupWrappers;
+        Order cart = CartState.getCart();
+        if (cart != null && cart.getFulfillmentGroups() != null && !cart.getFulfillmentGroups().isEmpty()) {
+            List<FulfillmentGroup> fulfillmentGroups = cart.getFulfillmentGroups();
+            List<FulfillmentGroupWrapper> fulfillmentGroupWrappers = new ArrayList<FulfillmentGroupWrapper>();
+            for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+                FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
+                fulfillmentGroupWrapper.wrap(fulfillmentGroup, request);
+                fulfillmentGroupWrappers.add(fulfillmentGroupWrapper);
             }
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+            return fulfillmentGroupWrappers;
         }
-        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
-                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
     }
 
     public OrderWrapper removeAllFulfillmentGroupsFromOrder(HttpServletRequest request,
             boolean priceOrder) {
-        Customer customer = CustomerState.getCustomer(request);
-
-        if (customer != null) {
-            Order cart = orderService.findCartForCustomer(customer);
-            if (cart != null) {
-                try {
-                    fulfillmentGroupService.removeAllFulfillmentGroupsFromOrder(cart, priceOrder);
-                    OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                    wrapper.wrap(cart, request);
-                    return wrapper;
-                } catch (PricingException e) {
-                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
-                }
+        Order cart = CartState.getCart();
+        if (cart != null) {
+            try {
+                fulfillmentGroupService.removeAllFulfillmentGroupsFromOrder(cart, priceOrder);
+                OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                wrapper.wrap(cart, request);
+                return wrapper;
+            } catch (PricingException e) {
+                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
             }
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
-        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
-                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+
     }
 
     public FulfillmentGroupWrapper addFulfillmentGroupToOrder(HttpServletRequest request,
             FulfillmentGroupWrapper wrapper,
             boolean priceOrder) {
-        Customer customer = CustomerState.getCustomer(request);
+        Order cart = CartState.getCart();
+        if (cart != null) {
+            FulfillmentGroupRequest fulfillmentGroupRequest = wrapper.unwrap(request, context);
 
-        if (customer != null) {
-            Order cart = orderService.findCartForCustomer(customer);
-            if (cart != null) {
-                FulfillmentGroupRequest fulfillmentGroupRequest = wrapper.unwrap(request, context);
-
-                if (fulfillmentGroupRequest.getOrder() != null && fulfillmentGroupRequest.getOrder().getId().equals(cart.getId())){
-                    try {
-                        fulfillmentGroupRequest.setOrder(cart);
-                        FulfillmentGroup fulfillmentGroup = fulfillmentGroupService.addFulfillmentGroupToOrder(fulfillmentGroupRequest, priceOrder);
-                        FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
-                        fulfillmentGroupWrapper.wrap(fulfillmentGroup, request);
-                        return fulfillmentGroupWrapper;
-                    } catch (PricingException e) {
-                        throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                                .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
-                    }
+            if (fulfillmentGroupRequest.getOrder() != null && fulfillmentGroupRequest.getOrder().getId().equals(cart.getId())) {
+                try {
+                    fulfillmentGroupRequest.setOrder(cart);
+                    FulfillmentGroup fulfillmentGroup = fulfillmentGroupService.addFulfillmentGroupToOrder(fulfillmentGroupRequest, priceOrder);
+                    FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
+                    fulfillmentGroupWrapper.wrap(fulfillmentGroup, request);
+                    return fulfillmentGroupWrapper;
+                } catch (PricingException e) {
+                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
                 }
             }
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
-        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
-                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+
     }
 
     public FulfillmentGroupWrapper addItemToFulfillmentGroup(HttpServletRequest request,
             Long fulfillmentGroupId,
             FulfillmentGroupItemWrapper wrapper,
             boolean priceOrder) {
-        Customer customer = CustomerState.getCustomer(request);
+        Order cart = CartState.getCart();
+        if (cart != null) {
+            FulfillmentGroupItemRequest fulfillmentGroupItemRequest = wrapper.unwrap(request, context);
+            if (fulfillmentGroupItemRequest.getOrderItem() != null) {
+                FulfillmentGroup fulfillmentGroup = null;
+                OrderItem orderItem = null;
 
-        if (customer != null) {
-            Order cart = orderService.findCartForCustomer(customer);
-            if (cart != null) {
-                FulfillmentGroupItemRequest fulfillmentGroupItemRequest = wrapper.unwrap(request, context);
-                if (fulfillmentGroupItemRequest.getOrderItem() != null) {
-                    FulfillmentGroup fulfillmentGroup = null;
-                    OrderItem orderItem = null;
-
-                    for (FulfillmentGroup fg : cart.getFulfillmentGroups()) {
-                        if (fg.getId().equals(fulfillmentGroupId)){
-                            fulfillmentGroup = fg;
-                        }
+                for (FulfillmentGroup fg : cart.getFulfillmentGroups()) {
+                    if (fg.getId().equals(fulfillmentGroupId)) {
+                        fulfillmentGroup = fg;
                     }
-                    fulfillmentGroupItemRequest.setFulfillmentGroup(fulfillmentGroup);
+                }
+                fulfillmentGroupItemRequest.setFulfillmentGroup(fulfillmentGroup);
 
-                    for (OrderItem oi : cart.getOrderItems()) {
-                        if (oi.getId().equals(fulfillmentGroupItemRequest.getOrderItem().getId())){
-                            orderItem = oi;
-                        }
+                for (OrderItem oi : cart.getOrderItems()) {
+                    if (oi.getId().equals(fulfillmentGroupItemRequest.getOrderItem().getId())) {
+                        orderItem = oi;
                     }
-                    fulfillmentGroupItemRequest.setOrderItem(orderItem);
+                }
+                fulfillmentGroupItemRequest.setOrderItem(orderItem);
 
-                    if (fulfillmentGroup != null && orderItem != null) {
-                        try {
-                            FulfillmentGroup fg = fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, priceOrder);
-                            FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
-                            fulfillmentGroupWrapper.wrap(fg, request);
-                            return fulfillmentGroupWrapper;
+                if (fulfillmentGroup != null && orderItem != null) {
+                    try {
+                        FulfillmentGroup fg = fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, priceOrder);
+                        FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
+                        fulfillmentGroupWrapper.wrap(fg, request);
+                        return fulfillmentGroupWrapper;
 
-                        } catch (PricingException e) {
-                            throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                                    .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
-                        }
+                    } catch (PricingException e) {
+                        throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                                .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
                     }
                 }
             }
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
-        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
-                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+
     }
 }
