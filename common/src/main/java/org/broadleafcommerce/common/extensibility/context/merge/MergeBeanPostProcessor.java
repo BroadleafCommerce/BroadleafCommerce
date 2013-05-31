@@ -117,7 +117,7 @@ public class MergeBeanPostProcessor implements BeanPostProcessor, PriorityOrdere
                 }
             } else {
                 throw new IllegalArgumentException("Bean (" + beanName + ") is specified as a merge target, but is not" +
-                        "of type List or Map");
+                        " of type ListFactoryBean, SetFactoryBean or MapFactoryBean");
             }
         }
 
