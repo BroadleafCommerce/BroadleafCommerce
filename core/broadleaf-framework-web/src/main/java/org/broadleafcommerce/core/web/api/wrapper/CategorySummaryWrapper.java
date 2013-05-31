@@ -18,31 +18,30 @@ package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * This is a JAXB wrapper class for wrapping a collection of categories.
- */
-@XmlRootElement(name = "categories")
+@XmlRootElement(name = "categorySummary")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class CategoriesWrapper extends BaseWrapper implements APIWrapper<List<Category>> {
+public class CategorySummaryWrapper extends BaseWrapper implements APIWrapper<Category> {
 
-    @XmlElement(name = "category")
-    protected List<CategorySummaryWrapper> categories = new ArrayList<CategorySummaryWrapper>();
+    @XmlElement
+    protected Long id;
+
+    @XmlElement
+    protected String name;
+
+    @XmlElement
+    protected String description;
 
     @Override
-    public void wrap(List<Category> cats, HttpServletRequest request) {
-        for (Category category : cats) {
-            CategorySummaryWrapper wrapper = (CategorySummaryWrapper) context.getBean(CategorySummaryWrapper.class.getName());
-            wrapper.wrap(category, request);
-            categories.add(wrapper);
-        }
+    public void wrap(Category model, HttpServletRequest request) {
+        this.id = model.getId();
+        this.name = model.getName();
+        this.description = model.getDescription();
     }
+
 }

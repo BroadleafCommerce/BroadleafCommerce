@@ -159,8 +159,6 @@ public abstract class CartEndpoint extends BaseEndpoint {
                 productOptions.remove("quantity");
                 productOptions.remove("priceOrder");
 
-
-
                 OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
                 orderItemRequestDTO.setCategoryId(categoryId);
                 orderItemRequestDTO.setProductId(productId);

@@ -35,6 +35,7 @@ public class OfferWrapper extends BaseWrapper implements APIWrapper<Offer> {
 
     @XmlElement
     protected String marketingMessage;;
+
     @XmlElement
     protected BroadleafEnumerationTypeWrapper offerType;;
 

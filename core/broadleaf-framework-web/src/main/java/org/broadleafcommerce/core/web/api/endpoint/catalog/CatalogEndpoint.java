@@ -34,6 +34,7 @@ import org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.MediaWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductBundleWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.ProductSummaryWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.RelatedProductWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
@@ -112,7 +113,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
      * @param offset the starting point in the record set, defaults to 0
      * @return the list of product instances that fit the search criteria
      */
-    public List<ProductWrapper> findProductsByName(HttpServletRequest request,
+    public List<ProductSummaryWrapper> findProductsByName(HttpServletRequest request,
             String name,
             int limit,
             int offset) {
@@ -123,16 +124,10 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             result = catalogService.findProductsByName(name, limit, offset);
         }
 
-        List<ProductWrapper> out = new ArrayList<ProductWrapper>();
+        List<ProductSummaryWrapper> out = new ArrayList<ProductSummaryWrapper>();
         if (result != null) {
             for (Product product : result) {
-                ProductWrapper wrapper;
-                if (product instanceof ProductBundle) {
-                    wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
-                } else {
-                    wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
-                    
-                }
+                ProductWrapper wrapper = (ProductWrapper) context.getBean(ProductSummaryWrapper.class.getName());
                 wrapper.wrap(product, request);
                 out.add(wrapper);
             }
@@ -265,7 +260,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
     }
     
-    public List<ProductWrapper> findProductsForCategory(HttpServletRequest request,
+    public List<ProductSummaryWrapper> findProductsForCategory(HttpServletRequest request,
             Long id,
             int limit,
             int offset,
@@ -273,7 +268,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             List<Product> products;
-            ArrayList<ProductWrapper> out = new ArrayList<ProductWrapper>();
+            ArrayList<ProductSummaryWrapper> out = new ArrayList<ProductSummaryWrapper>();
             if (activeOnly) {
                 products = catalogService.findActiveProductsByCategory(category, new Date(), limit, offset);
             } else {
@@ -281,13 +276,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             if (products != null) {
                 for (Product product : products) {
-                    ProductWrapper wrapper;
-                    if (product instanceof ProductBundle) {
-                        wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
-                    } else {
-                        wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
-                        
-                    }
+                    ProductSummaryWrapper wrapper = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
                     wrapper.wrap(product, request);
                     out.add(wrapper);
                 }

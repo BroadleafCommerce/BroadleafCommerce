@@ -17,11 +17,13 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
+import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -38,16 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "product")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
-
-    @XmlElement
-    protected Long id;
-    
-    @XmlElement
-    protected String name;
-
-    @XmlElement
-    protected String description;
+public class ProductWrapper extends ProductSummaryWrapper implements APIWrapper<Product> {
 
     @XmlElement
     protected Date activeStartDate;
@@ -65,47 +58,63 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product>{
     protected String promoMessage;
     
     @XmlElement
-    protected SkuWrapper defaultSku;
-    
-    @XmlElement
     protected Long defaultCategoryId;
 
-    @XmlElement(name = "productOption")
-    @XmlElementWrapper(name = "productOptions")
-    protected List<ProductOptionWrapper> productOptions;
-    
+    @XmlElement(name = "upsaleProduct")
+    @XmlElementWrapper(name = "upsaleProducts")
+    protected List<RelatedProductWrapper> upsaleProducts;
+
+    @XmlElement(name = "crossSaleProduct")
+    @XmlElementWrapper(name = "crossSaleProducts")
+    protected List<RelatedProductWrapper> crossSaleProducts;
+
+    @XmlElement(name = "productAttribute")
+    @XmlElementWrapper(name = "productAttributes")
+    protected List<ProductAttributeWrapper> productAttributes;
+
     @Override
     public void wrap(Product model, HttpServletRequest request) {
-        this.id = model.getId();
-        this.name = model.getName();
-        this.description = model.getDescription();
+        super.wrap(model, request);
         this.activeStartDate = model.getActiveStartDate();
         this.activeEndDate = model.getActiveEndDate();
         this.manufacturer = model.getManufacturer();
         this.model = model.getModel();
         this.promoMessage = model.getPromoMessage();
         
-        wrapSku(model, request);
-        
         if (model.getDefaultCategory() != null) {
             this.defaultCategoryId = model.getDefaultCategory().getId();
         }
 
-        if (model.getProductOptions() != null) {
-            this.productOptions = new ArrayList<ProductOptionWrapper>();
-            List<ProductOption> options = model.getProductOptions();
-            for (ProductOption option : options) {
-                ProductOptionWrapper optionWrapper = (ProductOptionWrapper)context.getBean(ProductOptionWrapper.class.getName());
-                optionWrapper.wrap(option, request);
-                this.productOptions.add(optionWrapper);
+        if (model.getUpSaleProducts() != null && !model.getUpSaleProducts().isEmpty()) {
+            upsaleProducts = new ArrayList<RelatedProductWrapper>();
+            for (RelatedProduct p : model.getUpSaleProducts()) {
+                RelatedProductWrapper upsaleProductWrapper =
+                        (RelatedProductWrapper) context.getBean(RelatedProductWrapper.class.getName());
+                upsaleProductWrapper.wrap(p, request);
+                upsaleProducts.add(upsaleProductWrapper);
             }
         }
-    }
 
-    protected void wrapSku(Product model, HttpServletRequest request) {
-        if (model.getDefaultSku() != null) {
-            this.defaultSku = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
-            this.defaultSku.wrap(model.getDefaultSku(), request);
+        if (model.getCrossSaleProducts() != null && !model.getCrossSaleProducts().isEmpty()) {
+            crossSaleProducts = new ArrayList<RelatedProductWrapper>();
+            for (RelatedProduct p : model.getCrossSaleProducts()) {
+                RelatedProductWrapper crossSaleProductWrapper =
+                        (RelatedProductWrapper) context.getBean(RelatedProductWrapper.class.getName());
+                crossSaleProductWrapper.wrap(p, request);
+                crossSaleProducts.add(crossSaleProductWrapper);
+            }
         }
+
+        if (model.getProductAttributes() != null) {
+            productAttributes = new ArrayList<ProductAttributeWrapper>();
+            if (model.getProductAttributes() != null) {
+                for (Map.Entry<String, ProductAttribute> entry : model.getProductAttributes().entrySet()) {
+                    ProductAttributeWrapper wrapper = (ProductAttributeWrapper) context.getBean(ProductAttributeWrapper.class.getName());
+                    wrapper.wrap(entry.getValue(), request);
+                    productAttributes.add(wrapper);
+                }
+            }
+        }
+
     }
 }

@@ -21,14 +21,15 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
 
 @XmlRootElement(name = "productBundle")
 @XmlAccessorType(value = XmlAccessType.FIELD)
@@ -36,7 +37,6 @@ public class ProductBundleWrapper extends ProductWrapper {
 
     @XmlElement
     protected Integer priority;
-    
 
     @XmlElement
     protected Money bundleItemsRetailPrice;

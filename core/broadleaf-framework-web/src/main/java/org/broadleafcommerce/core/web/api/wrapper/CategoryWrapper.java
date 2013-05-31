@@ -17,9 +17,14 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,9 +32,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  *  This is a JAXB wrapper for a Broadleaf Category.  There may be several reasons to extend this class.
@@ -45,16 +47,7 @@ import java.util.List;
  */
 @XmlRootElement(name = "category")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>{
-
-    @XmlElement
-    protected Long id;
-
-    @XmlElement
-    protected String name;
-
-    @XmlElement
-    protected String description;
+public class CategoryWrapper extends CategorySummaryWrapper implements APIWrapper<Category> {
 
     @XmlElement
     protected String url;
@@ -70,42 +63,64 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
 
     @XmlElement(name = "category")
     @XmlElementWrapper(name = "subcategories")
-    List<CategoryWrapper> subcategories;
+    protected List<CategorySummaryWrapper> subcategories;
 
     @XmlElement(name = "product")
     @XmlElementWrapper(name = "products")
-    List<ProductWrapper> products;
+    protected List<ProductSummaryWrapper> products;
 
+    @XmlElement(name = "categoryAttribute")
+    @XmlElementWrapper(name = "categoryAttributes")
+    protected List<CategoryAttributeWrapper> categoryAttributes;
+
+    @Override
     public void wrap(Category category, HttpServletRequest request) {
-
+        super.wrap(category, request);
         Integer subcategoryDepth = (Integer) request.getAttribute("subcategoryDepth");
         wrap(category, subcategoryDepth, request);
-
     }
 
-    private void wrap(Category category, Integer depth, HttpServletRequest request) {
-        this.id = category.getId();
-        this.name = category.getName();
-        this.description = category.getDescription();
+    protected void wrap(Category category, Integer depth, HttpServletRequest request) {
+        super.wrap(category, request);
         this.activeStartDate = category.getActiveStartDate();
         this.activeEndDate = category.getActiveEndDate();
         this.url = category.getUrl();
         this.urlKey = category.getUrlKey();
+
+        if (category.getCategoryAttributes() != null && !category.getCategoryAttributes().isEmpty()) {
+            categoryAttributes = new ArrayList<CategoryAttributeWrapper>();
+            for (CategoryAttribute attribute : category.getCategoryAttributes()) {
+                CategoryAttributeWrapper wrapper = (CategoryAttributeWrapper) context.getBean(CategoryAttributeWrapper.class.getName());
+                wrapper.wrap(attribute, request);
+                categoryAttributes.add(wrapper);
+            }
+        }
 
         Integer productLimit = (Integer) request.getAttribute("productLimit");
         Integer productOffset = (Integer) request.getAttribute("productOffset");
         Integer subcategoryLimit = (Integer) request.getAttribute("subcategoryLimit");
         Integer subcategoryOffset = (Integer) request.getAttribute("subcategoryOffset");
 
-        if (productLimit != null && productOffset != null &&
-                subcategoryLimit != null && subcategoryOffset != null && depth != null) {
+        if (productLimit != null && productOffset == null) {
+            productOffset = 1;
+        }
+
+        if (subcategoryLimit != null && subcategoryOffset == null) {
+            subcategoryOffset = 1;
+        }
+
+        if (depth == null) {
+            depth = 1;
+        }
+
+        if (productLimit != null && productOffset != null) {
 
             CatalogService catalogService = (CatalogService) context.getBean("blCatalogService");
 
             List<Product> productList = catalogService.findProductsForCategory(category, productLimit, productOffset);
             if (productList != null && !productList.isEmpty()) {
                 if (products == null) {
-                    products = new ArrayList<ProductWrapper>();
+                    products = new ArrayList<ProductSummaryWrapper>();
                 }
 
                 for (Product p: productList) {
@@ -120,12 +135,15 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
                 }
             }
 
+        }
+
+        if (subcategoryLimit != null && subcategoryOffset != null && depth != null) {
             subcategories = buildSubcategoryTree(subcategories, category, request, depth);
         }
     }
 
 
-    protected List<CategoryWrapper> buildSubcategoryTree(List<CategoryWrapper> wrappers, Category root, HttpServletRequest request, int depth){
+    protected List<CategorySummaryWrapper> buildSubcategoryTree(List<CategorySummaryWrapper> wrappers, Category root, HttpServletRequest request, int depth) {
         CatalogService catalogService = (CatalogService) context.getBean("blCatalogService");
 
         if (depth <= 0) {
@@ -137,12 +155,12 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
 
         List<Category> subcategories = catalogService.findAllSubCategories(root, subcategoryLimit, subcategoryOffset);
         if (subcategories !=null && !subcategories.isEmpty() && wrappers == null) {
-            wrappers = new ArrayList<CategoryWrapper>();
+            wrappers = new ArrayList<CategorySummaryWrapper>();
         }
 
         for (Category c : subcategories) {
             CategoryWrapper subcategoryWrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
-            subcategoryWrapper.wrap(c, depth-1, request);
+            subcategoryWrapper.wrap(c, depth - 1, request);
             wrappers.add(subcategoryWrapper);
         }
 
