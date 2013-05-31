@@ -353,7 +353,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * able to specify that. It could also add additional types if desired.
      * 
      * @param classTree
-     * @returna a List<ClassTree> representing all potentially avaialble entity types to create a product for.
+     * @return a List<ClassTree> representing all potentially avaialble entity types to create
      */
     protected List<ClassTree> getAddEntityTypes(ClassTree classTree) {
         return classTree.getCollapsedClassTrees();
