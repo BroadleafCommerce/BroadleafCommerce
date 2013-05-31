@@ -164,4 +164,20 @@ public class MergeBeanPostProcessor implements BeanPostProcessor, PriorityOrdere
     public void setTargetRef(String targetRef) {
         this.targetRef = targetRef;
     }
+
+    public Placement getPlacement() {
+        return placement;
+    }
+
+    public void setPlacement(Placement placement) {
+        this.placement = placement;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 }
