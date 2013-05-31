@@ -21,13 +21,14 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.GenericFilterBean;
 
+import java.io.IOException;
+
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 /**
  * This is a basic filter for finding the customer ID on the request and setting the customer object on the request.  This should come after any security filters.
@@ -43,6 +44,7 @@ import java.io.IOException;
  * User: Kelly Tisdell
  * Date: 4/18/12
  */
+@Deprecated
 public class RestApiCustomerStateFilter extends GenericFilterBean implements Ordered {
 
     @Resource(name="blCustomerService")
