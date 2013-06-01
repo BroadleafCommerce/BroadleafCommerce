@@ -6,6 +6,10 @@ import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -14,9 +18,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -87,11 +88,21 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
                 explicitPath = filterMapping.getRestriction().getFieldPathBuilder().getPath(original, filterMapping.getFieldPath(), criteriaBuilder);
             }
 
-            if (filterMapping.getRestriction() != null && !CollectionUtils.isEmpty(filterMapping.getFilterValues())) {
-                Predicate predicate = filterMapping.getRestriction().buildRestriction(criteriaBuilder, original,
-                        ceilingEntity, filterMapping.getFullPropertyName(), explicitPath,
-                        filterMapping.getFilterValues());
-                restrictions.add(predicate);
+            if (filterMapping.getRestriction() != null) {
+                List directValues = null;
+                boolean shouldConvert = true;
+                if (CollectionUtils.isNotEmpty(filterMapping.getFilterValues())) {
+                    directValues = filterMapping.getFilterValues();
+                } else if (CollectionUtils.isNotEmpty(filterMapping.getDirectFilterValues())) {
+                    directValues = filterMapping.getDirectFilterValues();
+                    shouldConvert = false;
+                }
+                
+                if (directValues != null) {
+                    Predicate predicate = filterMapping.getRestriction().buildRestriction(criteriaBuilder, original,
+                            ceilingEntity, filterMapping.getFullPropertyName(), explicitPath, directValues, shouldConvert);
+                    restrictions.add(predicate);
+                }
             }
 
             if (filterMapping.getSortDirection() != null) {

@@ -20,7 +20,6 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.BooleanUtils;
@@ -481,13 +480,14 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         if (productOptionValueFilterIDs.size() > 0) {
             FilterMapping filterMapping = new FilterMapping()
                 .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix)?"":skuPropertyPrefix + "productOptionValues.id"))
+                .withDirectFilterValues(productOptionValueFilterIDs)
                 .withRestriction(new Restriction()
                     .withPredicateProvider(new PredicateProvider() {
                         @Override
                         public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
                                                         From root, String ceilingEntity,
                                                         String fullPropertyName, Path explicitPath, List directValues) {
-                            return explicitPath.as(Long.class).in(productOptionValueFilterIDs);
+                            return explicitPath.as(Long.class).in(directValues);
                         }
                     })
                 );
@@ -496,13 +496,14 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         if (productOptionValueFilterValues.size() > 0) {
             FilterMapping filterMapping = new FilterMapping()
                 .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix)?"":skuPropertyPrefix + "productOptionValues.attributeValue"))
+                .withDirectFilterValues(productOptionValueFilterValues)
                 .withRestriction(new Restriction()
                     .withPredicateProvider(new PredicateProvider() {
                         @Override
                         public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
                                                         From root, String ceilingEntity,
                                                         String fullPropertyName, Path explicitPath, List directValues) {
-                            return explicitPath.as(String.class).in(productOptionValueFilterValues);
+                            return explicitPath.as(String.class).in(directValues);
                         }
                     })
                 );

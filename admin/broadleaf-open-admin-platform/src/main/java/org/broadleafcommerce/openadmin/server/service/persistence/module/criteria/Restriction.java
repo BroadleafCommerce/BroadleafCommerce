@@ -3,12 +3,13 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.criter
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.converter.FilterValueConverter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -34,15 +35,18 @@ public class Restriction {
         return this;
     }
 
-    public Predicate buildRestriction(CriteriaBuilder builder, From root, String ceilingEntity, String targetPropertyName, Path explicitPath, List<String> directValues) {
+    public Predicate buildRestriction(CriteriaBuilder builder, From root, String ceilingEntity, String targetPropertyName, 
+            Path explicitPath, List directValues, boolean shouldConvert) {
         List<Object> convertedValues = new ArrayList<Object>();
-        if (filterValueConverter != null) {
-            for (String item : directValues) {
-                convertedValues.add(filterValueConverter.convert(item));
+        if (shouldConvert && filterValueConverter != null) {
+            for (Object item : directValues) {
+                String stringItem = (String) item;
+                convertedValues.add(filterValueConverter.convert(stringItem));
             }
         } else {
             convertedValues.addAll(directValues);
         }
+        
         return predicateProvider.buildPredicate(builder, fieldPathBuilder, root, ceilingEntity, targetPropertyName,
                 explicitPath, convertedValues);
     }

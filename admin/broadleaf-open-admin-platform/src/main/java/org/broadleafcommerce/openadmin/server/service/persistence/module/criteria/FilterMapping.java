@@ -1,5 +1,6 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class FilterMapping {
 
     protected String fullPropertyName;
     protected List<String> filterValues = new ArrayList<String>();
+    protected List directFilterValues = new ArrayList();
     protected SortDirection sortDirection;
     protected Restriction restriction;
     protected FieldPath fieldPath;
@@ -26,6 +28,11 @@ public class FilterMapping {
 
     public FilterMapping withFilterValues(List<String> filterValues) {
         setFilterValues(filterValues);
+        return this;
+    }
+    
+    public FilterMapping withDirectFilterValues(List directFilterValues) {
+        setDirectFilterValues(directFilterValues);
         return this;
     }
 
@@ -57,6 +64,10 @@ public class FilterMapping {
     }
 
     public void setFilterValues(List<String> filterValues) {
+        if (CollectionUtils.isNotEmpty(directFilterValues)) {
+            throw new IllegalArgumentException("Cannot set both filter values and direct filter values");
+        }
+        
         List<String> parsedValues = new ArrayList<String>();
         for (String unfiltered : filterValues) {
             parsedValues.addAll(Arrays.asList(parseFilterValue(unfiltered)));
@@ -86,6 +97,17 @@ public class FilterMapping {
 
     public void setFieldPath(FieldPath fieldPath) {
         this.fieldPath = fieldPath;
+    }
+    
+    public List getDirectFilterValues() {
+        return directFilterValues;
+    }
+    
+    public void setDirectFilterValues(List directFilterValues) {
+        if (CollectionUtils.isNotEmpty(filterValues)) {
+            throw new IllegalArgumentException("Cannot set both filter values and direct filter values");
+        }
+        this.directFilterValues = directFilterValues;
     }
 
     protected String[] parseFilterValue(String filterValue) {
