@@ -31,6 +31,8 @@
  *
  */
 (function($) {
+    var uniqueModifier = 1;
+
     $.fn.conditionsBuilder = function(options) {
         if(options == "data") {
             var builder = $(this).eq(0).data("conditionsBuilder");
@@ -360,6 +362,11 @@
         }
     }
 
+    function getUniqueModifier() {
+        uniqueModifier++;
+        return uniqueModifier;
+    }
+
     function onOperatorSelectChange(e) {
         var $this = $(this);
         var option = $this.find("> :selected");
@@ -416,9 +423,10 @@
             case "BOOLEAN":
                 $this.after($("<span>", {"class": "radioContainer"}));
                 radioContainer = container.find(".radioContainer");
-                radioContainer.append($("<input>", {"type": "radio", "name": "ruleBuilderBooleanRadio", "value":"true", "class": "true"}));
+                var modifier = getUniqueModifier();
+                radioContainer.append($("<input>", {"type": "radio", "name": "ruleBuilderBooleanRadio" + modifier, "value":"true", "class": "true"}));
                 radioContainer.append($("<span>", {"style": "margin-right: 10px; margin-left: 3px", "text" : BLCAdmin.messages.booleanTrue}));
-                radioContainer.append($("<input>", {"type": "radio", "name": "ruleBuilderBooleanRadio", "value":"false", "class": "false", "checked": "true"}));
+                radioContainer.append($("<input>", {"type": "radio", "name": "ruleBuilderBooleanRadio" + modifier, "value":"false", "class": "false", "checked": "true"}));
                 radioContainer.append($("<span>", {"style": "margin-right: 10px; margin-left: 3px", "text" : BLCAdmin.messages.booleanFalse}));
                 break;
             case "SELECT":
