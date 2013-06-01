@@ -78,12 +78,7 @@ import javax.persistence.Table;
         @AdminPresentationOverride(name = "auditable.createdBy.name", value = @AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
         @AdminPresentationOverride(name = "auditable.updatedBy.name", value = @AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
         @AdminPresentationOverride(name = "auditable.dateCreated", value = @AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
-        @AdminPresentationOverride(name = "auditable.dateUpdated", value = @AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
-        @AdminPresentationOverride(name = "locale.id", value = @AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name = "locale.localeCode", value = @AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name = "locale.friendlyName", value = @AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name = "locale.defaultFlag", value = @AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name = "locale.defaultCurrency", value=@AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL))
+        @AdminPresentationOverride(name = "auditable.dateUpdated", value = @AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL))
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentImpl_baseStructuredContent")
@@ -117,13 +112,15 @@ public class StructuredContentImpl implements StructuredContent {
 
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
     @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Locale", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Locale", order = 2,
+        group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
+        prominent = true, gridOrder = 2)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName", lookupType = LookupType.DROPDOWN)
     protected Locale locale;
 
     @Column(name = "PRIORITY", nullable = false)
     @AdminPresentation(friendlyName = "StructuredContentImpl_Priority", order = 3, 
-            group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
+        group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
     protected Integer priority;
 
     @ManyToMany(targetEntity = StructuredContentRuleImpl.class, cascade = {CascadeType.ALL})
