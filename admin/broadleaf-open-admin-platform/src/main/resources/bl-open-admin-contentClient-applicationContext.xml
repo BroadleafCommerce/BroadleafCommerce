@@ -10,10 +10,10 @@
     <context:component-scan base-package="org.broadleafcommerce.openadmin.server.service.artifact">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.server.service.artifact.upload.*"/>
     </context:component-scan>
-    
+
     <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
         <property name="xsrfProtectionEnabled" value="false" />
-        <property name="xssProtectionEnabled" value="false" />
+        <property name="xssProtectionEnabled" value="true" />
     </bean>
     
     <bean id="blPasswordEncoder" class="org.springframework.security.authentication.encoding.PlaintextPasswordEncoder"/>

@@ -99,12 +99,12 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                     }
                     populateQuantityBaseRuleCollection(translator, RuleIdentifier.ENTITY_KEY_MAP.get
                             (populateValueRequest.getMetadata().getRuleIdentifier()),
-                            populateValueRequest.getMetadata().getRuleIdentifier(), populateValueRequest.getRequestedValue(), rules, valueType);
+                            populateValueRequest.getMetadata().getRuleIdentifier(), populateValueRequest.getProperty().getUnHtmlEncodedValue(), rules, valueType);
                     break;
                 }
                 case RULE_SIMPLE:{
                     DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
-                    DataWrapper dw = convertJsonToDataWrapper(populateValueRequest.getRequestedValue());
+                    DataWrapper dw = convertJsonToDataWrapper(populateValueRequest.getProperty().getUnHtmlEncodedValue());
                     if (dw == null || StringUtils.isEmpty(dw.getError())) {
                         String mvel = convertMatchRuleJsonToMvel(translator, RuleIdentifier.ENTITY_KEY_MAP.get(populateValueRequest.getMetadata().getRuleIdentifier()),
                                 populateValueRequest.getMetadata().getRuleIdentifier(), dw);
@@ -222,14 +222,16 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         BasicFieldMetadata originalFM = (BasicFieldMetadata) entry.getValue();
                         if (originalFM.getFieldType() == SupportedFieldType.RULE_SIMPLE ||
                                 originalFM.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY) {
-                            Property orginalProp = addFilterPropertiesRequest.getEntity().findProperty(originalFM
+                            Property originalProp = addFilterPropertiesRequest.getEntity().findProperty(originalFM
                                     .getName());
-                            if (orginalProp == null) {
-                                orginalProp = new Property();
-                                orginalProp.setName(originalFM.getName());
-                                additionalProperties.add(orginalProp);
+                            if (originalProp == null) {
+                                originalProp = new Property();
+                                originalProp.setName(originalFM.getName());
+                                additionalProperties.add(originalProp);
                             }
-                            orginalProp.setValue(prop.getValue());
+                            originalProp.setValue(prop.getValue());
+                            originalProp.setRawValue(prop.getRawValue());
+                            originalProp.setUnHtmlEncodedValue(prop.getUnHtmlEncodedValue());
                             itr.remove();
                             break;
                         }
