@@ -97,6 +97,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                     } catch (FieldNotAvailableException e) {
                         throw new IllegalArgumentException(e);
                     }
+                    //AntiSamy HTML encodes the rule JSON - pass the unHTMLEncoded version
                     populateQuantityBaseRuleCollection(translator, RuleIdentifier.ENTITY_KEY_MAP.get
                             (populateValueRequest.getMetadata().getRuleIdentifier()),
                             populateValueRequest.getMetadata().getRuleIdentifier(), populateValueRequest.getProperty().getUnHtmlEncodedValue(), rules, valueType);
@@ -104,6 +105,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                 }
                 case RULE_SIMPLE:{
                     DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
+                    //AntiSamy HTML encodes the rule JSON - pass the unHTMLEncoded version
                     DataWrapper dw = convertJsonToDataWrapper(populateValueRequest.getProperty().getUnHtmlEncodedValue());
                     if (dw == null || StringUtils.isEmpty(dw.getError())) {
                         String mvel = convertMatchRuleJsonToMvel(translator, RuleIdentifier.ENTITY_KEY_MAP.get(populateValueRequest.getMetadata().getRuleIdentifier()),
