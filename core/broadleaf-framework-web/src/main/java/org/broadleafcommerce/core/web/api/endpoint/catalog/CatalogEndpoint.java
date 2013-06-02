@@ -127,7 +127,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         List<ProductSummaryWrapper> out = new ArrayList<ProductSummaryWrapper>();
         if (result != null) {
             for (Product product : result) {
-                ProductWrapper wrapper = (ProductWrapper) context.getBean(ProductSummaryWrapper.class.getName());
+                ProductSummaryWrapper wrapper = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
                 wrapper.wrap(product, request);
                 out.add(wrapper);
             }
