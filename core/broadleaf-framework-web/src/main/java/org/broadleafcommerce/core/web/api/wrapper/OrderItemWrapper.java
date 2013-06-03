@@ -64,7 +64,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
     protected Money salePrice;
 
     @XmlElement
-    protected CategoryWrapper category;
+    protected CategorySummaryWrapper category;
 
     @XmlElement
     protected Long orderId;
@@ -73,7 +73,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
     protected SkuWrapper sku;
 
     @XmlElement
-    protected ProductWrapper product;
+    protected ProductSummaryWrapper product;
     
     @XmlElement(name = "orderItemAttribute")
     @XmlElementWrapper(name = "orderItemAttributes")
@@ -92,7 +92,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
         this.salePrice = model.getSalePrice();
 
         if (model.getCategory() != null) {
-            CategoryWrapper categoryWrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
+            CategorySummaryWrapper categoryWrapper = (CategorySummaryWrapper) context.getBean(CategorySummaryWrapper.class.getName());
             categoryWrapper.wrap(model.getCategory(), request);
             this.category = categoryWrapper;
         }
@@ -126,7 +126,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
             skuWrapper.wrap(doi.getSku(), request);
             this.sku = skuWrapper;
             
-            ProductWrapper productWrapper = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
+            ProductSummaryWrapper productWrapper = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
             productWrapper.wrap(doi.getProduct(), request);
             this.product = productWrapper;
         } else if (model instanceof BundleOrderItem) {

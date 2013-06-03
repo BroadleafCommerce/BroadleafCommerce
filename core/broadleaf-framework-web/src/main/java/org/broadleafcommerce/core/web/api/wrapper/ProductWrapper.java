@@ -105,7 +105,7 @@ public class ProductWrapper extends ProductSummaryWrapper implements APIWrapper<
             }
         }
 
-        if (model.getProductAttributes() != null) {
+        if (model.getProductAttributes() != null && !model.getProductAttributes().isEmpty()) {
             productAttributes = new ArrayList<ProductAttributeWrapper>();
             if (model.getProductAttributes() != null) {
                 for (Map.Entry<String, ProductAttribute> entry : model.getProductAttributes().entrySet()) {
