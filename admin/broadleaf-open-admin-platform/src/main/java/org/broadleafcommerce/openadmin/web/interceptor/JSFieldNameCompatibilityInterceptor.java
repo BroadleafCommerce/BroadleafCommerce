@@ -44,7 +44,5 @@ public class JSFieldNameCompatibilityInterceptor extends HandlerInterceptorAdapt
             }
             entityForm.clearFieldsMap();
         }
-
-        System.out.print("test");
     }
 }
