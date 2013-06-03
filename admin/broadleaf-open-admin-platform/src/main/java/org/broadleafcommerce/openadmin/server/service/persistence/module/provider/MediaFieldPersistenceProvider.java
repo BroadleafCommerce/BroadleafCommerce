@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -80,7 +79,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             }
         
             if (Media.class.isAssignableFrom(valueType)) {
-                Media newMedia = convertJsonToMedia(populateValueRequest.getRequestedValue());
+                Media newMedia = convertJsonToMedia(populateValueRequest.getProperty().getUnHtmlEncodedValue());
                 Media media;
                 try {
                     media = (Media) populateValueRequest.getFieldManager().getFieldValue(instance,
@@ -178,7 +177,6 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     protected Media convertJsonToMedia(String jsonProp) {
         try {
             ObjectMapper om = new ObjectMapper();
-            jsonProp = StringEscapeUtils.unescapeHtml(jsonProp);
             return om.readValue(jsonProp, MediaImpl.class);
         } catch (Exception e) {
             throw new RuntimeException(e);
