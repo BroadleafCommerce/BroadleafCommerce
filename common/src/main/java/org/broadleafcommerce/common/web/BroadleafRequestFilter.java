@@ -47,7 +47,7 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
     /**
      * Parameter/Attribute name for the current language
      */
-    public static String REQUEST_DTO = "blRequestDTO";
+    public static String REQUEST_DTO_PARAM_NAME = "blRequestDTO";
 
     // Properties to manage URLs that will not be processed by this filter.
     private static final String BLC_ADMIN_GWT = "org.broadleafcommerce.admin";
@@ -88,8 +88,8 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
             LOG.trace("Process URL Filter Begin " + requestURIWithoutContext);
         }
 
-        if (request.getAttribute(REQUEST_DTO) == null) {
-            request.setAttribute(REQUEST_DTO, new RequestDTOImpl(request));
+        if (request.getAttribute(REQUEST_DTO_PARAM_NAME) == null) {
+            request.setAttribute(REQUEST_DTO_PARAM_NAME, new RequestDTOImpl(request));
         }
 
         try {

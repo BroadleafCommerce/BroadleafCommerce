@@ -64,6 +64,15 @@ public class BroadleafRequestContext {
         return false;
     }
     
+    public static boolean hasCurrency() {
+        if (getBroadleafRequestContext() != null) {
+            if (getBroadleafRequestContext().getBroadleafCurrency() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected HttpServletRequest request;
     protected HttpServletResponse response;
     protected WebRequest webRequest;
