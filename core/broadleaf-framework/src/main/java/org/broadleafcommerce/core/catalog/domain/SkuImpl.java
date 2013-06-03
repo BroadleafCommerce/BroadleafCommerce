@@ -445,7 +445,7 @@ public class SkuImpl implements Sku {
             
             returnPrice = dynamicPrices.getRetailPrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
-        } else {
+        } else if (retailPrice != null) {
             returnPrice = new Money(retailPrice, getCurrency());
         }
 
