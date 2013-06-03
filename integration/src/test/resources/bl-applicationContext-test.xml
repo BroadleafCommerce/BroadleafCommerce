@@ -147,7 +147,5 @@
         <tx:attributes>
           <tx:method name="*" propagation="REQUIRED"/>
         </tx:attributes>
-    </tx:advice>
-    
-    <bean id="blUpdateCartServiceExtensionManager" class="org.broadleafcommerce.core.web.service.UpdateCartServiceExtensionManager" />
+    </tx:advice>       
 </beans>

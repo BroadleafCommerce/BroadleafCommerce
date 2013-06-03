@@ -26,12 +26,13 @@ import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.ListIterator;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
-import java.util.ListIterator;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -46,7 +47,7 @@ public class OrderDaoImpl implements OrderDao {
     protected CustomerDao customerDao;
     
     @Resource(name = "blOrderDaoExtensionManager")
-    protected OrderDaoExtensionListener extensionManager;
+    protected OrderDaoExtensionManager extensionManager;
 
     @Override
     public Order readOrderById(final Long orderId) {
@@ -123,7 +124,7 @@ public class OrderDaoImpl implements OrderDao {
         }
 
         if (extensionManager != null) {
-            extensionManager.attachAdditionalDataToNewCart(customer, order);
+            extensionManager.getProxy().attachAdditionalDataToNewCart(customer, order);
         }
         
         order = save(order);
@@ -166,7 +167,7 @@ public class OrderDaoImpl implements OrderDao {
             
         // Apply any additional filters that extension modules have registered
         if (orders != null && !orders.isEmpty() && extensionManager != null) {
-            extensionManager.applyAdditionalOrderLookupFilter(customer, name, orders);
+            extensionManager.getProxy().applyAdditionalOrderLookupFilter(customer, name, orders);
         }
         
         return orders == null || orders.isEmpty() ? null : orders.get(0);

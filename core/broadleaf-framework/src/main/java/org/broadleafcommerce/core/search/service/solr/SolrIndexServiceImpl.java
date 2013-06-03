@@ -33,8 +33,11 @@ import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
@@ -45,7 +48,6 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -56,6 +58,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -83,7 +87,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     protected SolrHelperService shs;
 
     @Resource(name = "blSolrSearchServiceExtensionManager")
-    protected SolrSearchServiceExtensionListener extensionManager;
+    protected SolrSearchServiceExtensionManager extensionManager;
 
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager transactionManager;
@@ -103,6 +107,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         BroadleafRequestContext savedContext = BroadleafRequestContext.getBroadleafRequestContext();
         HashMap savedPricing = SkuPricingConsiderationContext.getSkuPricingConsiderationContext();
         DynamicSkuPricingService savedPricingService = SkuPricingConsiderationContext.getSkuPricingService();
+        DynamicSkuActiveDatesService savedActiveDateServcie = SkuActiveDateConsiderationContext.getSkuActiveDatesService();
         try {
             Long numProducts = productDao.readCountAllActiveProducts(SystemTime.asDate());
             if (LOG.isDebugEnabled()) {
@@ -128,6 +133,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             BroadleafRequestContext.setBroadleafRequestContext(savedContext);
             SkuPricingConsiderationContext.setSkuPricingConsiderationContext(savedPricing);
             SkuPricingConsiderationContext.setSkuPricingService(savedPricingService);
+            SkuActiveDateConsiderationContext.setSkuActiveDatesService(savedActiveDateServcie);
         }
 
         // Swap the active and the reindex cores
@@ -165,7 +171,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         try {
             List<Product> products = readAllActiveProducts(page, pageSize);
             List<Field> fields = fieldDao.readAllProductFields();
-
             List<Locale> locales = getAllLocales();
 
             Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
@@ -297,7 +302,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                                 copyFieldValue = new ArrayList<String>();
                                 copyFieldValues.put(prefix, copyFieldValue);
                             }
-                            copyFieldValue.add(value.toString());
+                            if (value != null) {
+                                copyFieldValue.add(value.toString());
+                            }
                         }
                     }
                 }
@@ -315,17 +322,17 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                         String solrFacetPropertyName = shs.getPropertyNameForFieldFacet(field, prefix);
                         Object value = entry.getValue();
 
-                        if (facetType.equals(FieldType.PRICE) || field.getTranslatable() ||
-                                prefix.equals(shs.getDefaultLocalePrefix())) {
+                        //if (facetType.equals(FieldType.PRICE) || field.getTranslatable() ||
+                        //      prefix.equals(shs.getDefaultLocalePrefix())) {
                             if (!addedProperties.contains(solrFacetPropertyName)) {
                                 document.addField(solrFacetPropertyName, value);
                             }
-                        }
+                        //}
                     }
                 }
             } catch (Exception e) {
                 LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
-                        + product.getId() + "]");
+                        + product.getId() + "]", e);
             }
         }
 
@@ -347,6 +354,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
         document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
         document.addField(shs.getProductIdFieldName(), product.getId());
+        extensionManager.getProxy().attachAdditionalBasicFields(product, document, shs);
 
         // The explicit categories are the ones defined by the product itself
         for (CategoryProductXref categoryXref : product.getAllParentCategoryXrefs()) {
@@ -401,31 +409,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         Map<String, Object> values = new HashMap<String, Object>();
 
-        if (fieldType.equals(FieldType.PRICE)) {
-            Object propertyValue = PropertyUtils.getProperty(product, propertyName);
-            values.put("", propertyValue);
+        if (extensionManager != null) {
+            ExtensionResultStatusType result = extensionManager.getProxy().addPropertyValues(product, field, fieldType, values, propertyName, locales);
 
-            if (extensionManager != null) {
-                extensionManager.addPriceFieldPropertyValues(product, field, values, propertyName);
-            }
-        } else {
-            for (Locale locale : locales) {
-                String localeCode = locale.getLocaleCode();
-
-                // If the field isn't translatable, we want to use the default locale's property
-                if (!field.getTranslatable() && !locale.getDefaultFlag()) {
-                    locale = shs.getDefaultLocale();
-                }
-
-                // To fetch the appropriate translated property, we need to set the current request context's locale
-                if (field.getTranslatable()) {
-                    BroadleafRequestContext tempContext = new BroadleafRequestContext();
-                    tempContext.setLocale(locale);
-                    BroadleafRequestContext.setBroadleafRequestContext(tempContext);
-                }
-
+            if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
                 Object propertyValue = PropertyUtils.getProperty(product, propertyName);
-                values.put(localeCode, propertyValue);
+                values.put("", propertyValue);
             }
         }
 

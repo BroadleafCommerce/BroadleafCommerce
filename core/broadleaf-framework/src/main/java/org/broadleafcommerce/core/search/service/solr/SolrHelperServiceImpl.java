@@ -32,6 +32,9 @@ import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 /**
@@ -48,6 +51,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     protected static final String GLOBAL_FACET_TAG_FIELD = "a";
     protected static final String DEFAULT_NAMESPACE = "d";
 
+    protected static final String PREFIX_SEPARATOR = "_";
+
     protected static Locale defaultLocale;
     protected static SolrServer server;
 
@@ -55,7 +60,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     protected LocaleService localeService;
 
     @Resource(name = "blSolrSearchServiceExtensionManager")
-    protected SolrSearchServiceExtensionListener extensionManager;
+    protected SolrSearchServiceExtensionManager extensionManager;
 
     @Override
     public void swapActiveCores() throws ServiceException {
@@ -111,19 +116,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType) {
-        String prefix = "";
-        if (searchableFieldType.equals(FieldType.PRICE)) {
-            if (extensionManager != null) {
-                prefix = extensionManager.getPrefixForPriceField();
-            }
-        } else {
-            if (field.getTranslatable()) {
-                prefix = getLocalePrefix();
-            } else {
-                prefix = getDefaultLocalePrefix();
-            }
-        }
-
+        List<String> prefixList = new ArrayList<String>();
+        extensionManager.getProxy().buildPrefixListForSearchableField(field, searchableFieldType, prefixList);
+        String prefix = convertPrefixListToString(prefixList);
         return getPropertyNameForFieldSearchable(field, searchableFieldType, prefix);
     }
 
@@ -134,20 +129,22 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             return null;
         }
 
-        String prefix = "";
-        if (fieldType.equals(FieldType.PRICE)) {
-            if (extensionManager != null) {
-                prefix = extensionManager.getPrefixForPriceField();
-            }
-        } else {
-            if (field.getTranslatable()) {
-                prefix = getLocalePrefix();
-            } else {
-                prefix = getDefaultLocalePrefix();
-            }
-        }
+        List<String> prefixList = new ArrayList<String>();
+
+        extensionManager.getProxy().buildPrefixListForSearchableFacet(field, prefixList);
+        String prefix = convertPrefixListToString(prefixList);
 
         return getPropertyNameForFieldFacet(field, prefix);
+    }
+
+    protected String convertPrefixListToString(List<String> prefixList) {
+        StringBuilder prefixString = new StringBuilder();
+        for (String prefix : prefixList) {
+            if (prefix != null && !prefix.isEmpty()) {
+                prefixString = prefixString.append(prefix).append(PREFIX_SEPARATOR);
+            }
+        }
+        return prefixString.toString();
     }
 
     @Override
@@ -201,7 +198,6 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 .toString();
     }
 
-    @Override
     public String getLocalePrefix() {
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
             Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();

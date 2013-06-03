@@ -33,6 +33,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -102,7 +103,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     protected SolrIndexService solrIndexService;
 
     @Resource(name = "blSolrSearchServiceExtensionManager")
-    protected SolrSearchServiceExtensionListener extensionManager;
+    protected SolrSearchServiceExtensionManager extensionManager;
 
     public SolrSearchServiceImpl(String solrServer) throws IOException, ParserConfigurationException, SAXException {
         if ("solrhome".equals(solrServer)) {
@@ -254,6 +255,16 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         return findProducts(sb.toString(), facets, searchCriteria, null);
     }
 
+    public String getLocalePrefix() {
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+            if (locale != null) {
+                return locale.getLocaleCode() + "_";
+            }
+        }
+        return "";
+    }
+
     /**
      * Given a qualified solr query string (such as "category:2002"), actually performs a solr search. It will
      * take into considering the search criteria to build out facets / pagination / sorting.
@@ -280,6 +291,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         attachSortClause(solrQuery, searchCriteria, defaultSort);
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
         attachFacets(solrQuery, namedFacetMap);
+        
+        // TODO: Append active/start dates
+        extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets,
+                searchCriteria, defaultSort);
 
         if (LOG.isTraceEnabled()) {
             try {
@@ -428,7 +443,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
 
             if (extensionManager != null) {
-                extensionManager.filterSearchFacetRanges(dto, facetRanges);
+                extensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
             }
 
             if (facetRanges != null && facetRanges.size() > 0) {
@@ -443,7 +458,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     /**
      * Builds out the DTOs for facet results from the search. This will then be used by the view layer to
-     * display which values are avaialble given the current constraints as well as the count of the values.
+     * display which values are available given the current constraints as well as the count of the values.
      * 
      * @param namedFacetMap
      * @param response

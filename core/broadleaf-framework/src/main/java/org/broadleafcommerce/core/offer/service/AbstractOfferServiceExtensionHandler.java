@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.order.dao;
+package org.broadleafcommerce.core.offer.service;
 
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.core.extension.AbstractExtensionHandler;
+import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.offer.domain.Offer;
 
 import java.util.List;
 
@@ -25,10 +26,10 @@ import java.util.List;
 /**
  * @author Andre Azzolini (apazzolini)
  */
-public interface OrderDaoExtensionListener {
+public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandler implements OfferServiceExtensionHandler {
     
-    public void attachAdditionalDataToNewCart(Customer customer, Order cart);
-    
-    public void applyAdditionalOrderLookupFilter(Customer customer, String name, List<Order> orders);
+    public ExtensionResultStatusType applyAdditionalFilters(List<Offer> offers) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 
 }

@@ -16,15 +16,20 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import org.broadleafcommerce.core.extension.AbstractExtensionHandler;
+import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 
 /**
- * @author Andre Azzolini (apazzolini)
+ * @author bpolster
  */
-public interface OrderServiceExtensionListener {
+public abstract class AbstractOrderServiceExtensionHandler extends AbstractExtensionHandler implements
+        OrderServiceExtensionHandler {
     
-    public void attachAdditionalDataToNewNamedCart(Customer customer, Order cart);
+    public ExtensionResultStatusType attachAdditionalDataToNewNamedCart(Customer customer, Order cart) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
     
 }

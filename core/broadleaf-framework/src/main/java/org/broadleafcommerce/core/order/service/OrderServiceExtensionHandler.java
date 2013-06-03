@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.service;
+package org.broadleafcommerce.core.order.service;
 
-import org.broadleafcommerce.core.extension.ExtensionManager;
-import org.springframework.stereotype.Service;
+import org.broadleafcommerce.core.extension.ExtensionHandler;
+import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.profile.core.domain.Customer;
 
 
 /**
  * @author Andre Azzolini (apazzolini), bpolster
  */
-@Service("blUpdateCartServiceExtensionManager")
-public class UpdateCartServiceExtensionManager extends ExtensionManager<UpdateCartServiceExtensionHandler> {
+public interface OrderServiceExtensionHandler extends ExtensionHandler {
     
-    public UpdateCartServiceExtensionManager() {
-        super(UpdateCartServiceExtensionHandler.class);
-    }
+    public ExtensionResultStatusType attachAdditionalDataToNewNamedCart(Customer customer, Order cart);
+    
 }

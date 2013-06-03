@@ -96,10 +96,5 @@
                 <bean class="org.broadleafcommerce.openadmin.server.util.LocaleConverter" />
             </set>
         </property>
-    </bean>
-    
-    <bean id="blSolrSearchServiceExtensionManager" class="org.broadleafcommerce.core.search.service.solr.SolrSearchServiceExtensionManager" />
-    <bean id="blOrderServiceExtensionManager" class="org.broadleafcommerce.core.order.service.OrderServiceExtensionManager" />
-    <bean id="blOrderDaoExtensionManager" class="org.broadleafcommerce.core.order.dao.OrderDaoExtensionManager" />
-    <bean id="blOfferServiceExtensionManager" class="org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager" />
+    </bean>                    
 </beans>

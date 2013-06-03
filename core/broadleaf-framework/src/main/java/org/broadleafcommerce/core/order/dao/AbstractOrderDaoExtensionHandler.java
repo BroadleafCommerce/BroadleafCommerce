@@ -16,26 +16,25 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import org.broadleafcommerce.core.extension.ExtensionManager;
-import org.springframework.stereotype.Service;
+import org.broadleafcommerce.core.extension.AbstractExtensionHandler;
+import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.util.List;
 
 
 /**
  * @author Andre Azzolini (apazzolini), bpolster
  */
-@Service("blOrderDaoExtensionManager")
-public class OrderDaoExtensionManager extends ExtensionManager<OrderDaoExtensionHandler> {
-
-    public OrderDaoExtensionManager() {
-        super(OrderDaoExtensionHandler.class);
+public class AbstractOrderDaoExtensionHandler extends AbstractExtensionHandler implements OrderDaoExtensionHandler {
+    
+    public ExtensionResultStatusType attachAdditionalDataToNewCart(Customer customer, Order cart) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+    
+    public ExtensionResultStatusType applyAdditionalOrderLookupFilter(Customer customer, String name, List<Order> orders) {
+        return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    /**
-     * By default, this manager will allow other handlers to process the method when a handler returns
-     * HANDLED.
-     */
-    @Override
-    public boolean continueOnHandled() {
-        return true;
-    }
 }

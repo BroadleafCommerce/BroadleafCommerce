@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.offer.service;
 
+import org.broadleafcommerce.core.extension.ExtensionHandler;
+import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.offer.domain.Offer;
 
 import java.util.List;
@@ -24,8 +26,8 @@ import java.util.List;
 /**
  * @author Andre Azzolini (apazzolini)
  */
-public interface OfferServiceExtensionListener {
+public interface OfferServiceExtensionHandler extends ExtensionHandler {
     
-    public void applyAdditionalFilters(List<Offer> offers);
+    public ExtensionResultStatusType applyAdditionalFilters(List<Offer> offers);
 
 }

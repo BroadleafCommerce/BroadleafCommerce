@@ -16,63 +16,19 @@
 
 package org.broadleafcommerce.core.search.service.solr;
 
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.search.domain.Field;
-import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
-import org.broadleafcommerce.core.search.domain.SearchFacetRange;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import org.broadleafcommerce.core.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 
 /**
- * @author Andre Azzolini (apazzolini)
+ * Manages extension points for SolrSearchService
+ * @author bpolster
  */
-public class SolrSearchServiceExtensionManager implements SolrSearchServiceExtensionListener {
-    
-    protected List<SolrSearchServiceExtensionListener> listeners = new ArrayList<SolrSearchServiceExtensionListener>();
+@Service("blSolrSearchServiceExtensionManager")
+public class SolrSearchServiceExtensionManager extends ExtensionManager<SolrSearchServiceExtensionHandler> {
 
-    @Override
-    public String getPrefix() {
-        StringBuilder sb = new StringBuilder();
-        for (SolrSearchServiceExtensionListener listener : listeners) {
-            sb.append(listener.getPrefix());
-        }
-        return sb.toString();
-    }
-    
-    @Override
-    public String getPrefixForPriceField() {
-        StringBuilder sb = new StringBuilder();
-        for (SolrSearchServiceExtensionListener listener : listeners) {
-            sb.append(listener.getPrefixForPriceField());
-        }
-        return sb.toString();
-    }
-
-    @Override
-    public void addPriceFieldPropertyValues(Product product, Field field, Map<String, Object> values, String propertyName) 
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        for (SolrSearchServiceExtensionListener listener : listeners) {
-            listener.addPriceFieldPropertyValues(product, field, values, propertyName);
-        }
-    }
-    
-    @Override
-    public void filterSearchFacetRanges(SearchFacetDTO dto, List<SearchFacetRange> ranges) {
-        for (SolrSearchServiceExtensionListener listener : listeners) {
-            listener.filterSearchFacetRanges(dto, ranges);
-        }
-    }
-    
-    public List<SolrSearchServiceExtensionListener> getListeners() {
-        return listeners;
-    }
-
-    public void setListeners(List<SolrSearchServiceExtensionListener> listeners) {
-        this.listeners = listeners;
+    public SolrSearchServiceExtensionManager() {
+        super(SolrSearchServiceExtensionHandler.class);
     }
 
 }

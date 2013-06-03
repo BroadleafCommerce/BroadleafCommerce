@@ -16,32 +16,17 @@
 
 package org.broadleafcommerce.core.offer.service;
 
-import org.broadleafcommerce.core.offer.domain.Offer;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.core.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 
 /**
- * @author Andre Azzolini (apazzolini)
+ * @author Andre Azzolini (apazzolini), bpolster
  */
-public class OfferServiceExtensionManager implements OfferServiceExtensionListener {
-    
-    protected List<OfferServiceExtensionListener> listeners = new ArrayList<OfferServiceExtensionListener>();
-
-    @Override
-    public void applyAdditionalFilters(List<Offer> offers) {
-        for (OfferServiceExtensionListener listener : listeners) {
-            listener.applyAdditionalFilters(offers);
-        }
-    }
-    
-    public List<OfferServiceExtensionListener> getListeners() {
-        return listeners;
-    }
-
-    public void setListeners(List<OfferServiceExtensionListener> listeners) {
-        this.listeners = listeners;
+@Service("blOfferServiceExtensionManager")
+public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceExtensionHandler> {
+    public OfferServiceExtensionManager() {
+        super(OfferServiceExtensionHandler.class);
     }
 
 }

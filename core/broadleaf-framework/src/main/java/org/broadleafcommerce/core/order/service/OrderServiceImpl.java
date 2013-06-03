@@ -62,10 +62,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author apazzolini
@@ -109,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
     protected MergeCartService mergeCartService;
     
     @Resource(name = "blOrderServiceExtensionManager")
-    protected OrderServiceExtensionListener extensionManager;
+    protected OrderServiceExtensionManager extensionManager;
     
     /* Workflows */
     @Resource(name = "blAddItemWorkflow")
@@ -150,7 +151,7 @@ public class OrderServiceImpl implements OrderService {
         namedOrder.setStatus(OrderStatus.NAMED);
         
         if (extensionManager != null) {
-            extensionManager.attachAdditionalDataToNewNamedCart(customer, namedOrder);
+            extensionManager.getProxy().attachAdditionalDataToNewNamedCart(customer, namedOrder);
         }
         
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {

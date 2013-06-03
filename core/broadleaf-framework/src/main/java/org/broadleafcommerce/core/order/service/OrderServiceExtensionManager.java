@@ -16,33 +16,24 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.profile.core.domain.Customer;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.core.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 
 /**
- * @author Andre Azzolini (apazzolini)
+ * @author Andre Azzolini (apazzolini), bpolster
  */
-public class OrderServiceExtensionManager implements OrderServiceExtensionListener {
-    
-    protected List<OrderServiceExtensionListener> listeners = new ArrayList<OrderServiceExtensionListener>();
+@Service("blOrderServiceExtensionManager")
+public class OrderServiceExtensionManager extends ExtensionManager<OrderServiceExtensionHandler> {
 
-    @Override
-    public void attachAdditionalDataToNewNamedCart(Customer customer, Order cart) {
-        for (OrderServiceExtensionListener listener : listeners) {
-            listener.attachAdditionalDataToNewNamedCart(customer, cart);
-        }
-    }
-    
-    public List<OrderServiceExtensionListener> getListeners() {
-        return listeners;
+    public OrderServiceExtensionManager() {
+        super(OrderServiceExtensionHandler.class);
     }
 
-    public void setListeners(List<OrderServiceExtensionListener> listeners) {
-        this.listeners = listeners;
+    /**
+     * By default,this extension manager will continue on handled allowing multiple handlers to interact with the order.
+     */
+    public boolean continueOnHandled() {
+        return true;
     }
-
 }

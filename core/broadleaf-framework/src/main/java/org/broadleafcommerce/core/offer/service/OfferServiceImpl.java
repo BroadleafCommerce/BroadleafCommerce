@@ -42,10 +42,11 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * The Class OfferServiceImpl.
@@ -81,7 +82,7 @@ public class OfferServiceImpl implements OfferService {
     protected PromotableItemFactory promotableItemFactory;
 
     @Resource(name = "blOfferServiceExtensionManager")
-    protected OfferServiceExtensionListener extensionManager;
+    protected OfferServiceExtensionManager extensionManager;
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -159,7 +160,7 @@ public class OfferServiceImpl implements OfferService {
         }
         
         if (extensionManager != null) {
-            extensionManager.applyAdditionalFilters(offers);
+            extensionManager.getProxy().applyAdditionalFilters(offers);
         }
         
         return offers;

@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.web.service;
+package org.broadleafcommerce.core.order.dao;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.extension.ExtensionHandler;
+import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.util.List;
 
 
 /**
- * @author Andre Azzolini (apazzolini)
+ * @author Andre Azzolini (apazzolini), bpolster
  */
-public interface UpdateCartServiceExtensionListener {
+public interface OrderDaoExtensionHandler extends ExtensionHandler {
     
-    public void validateCart(Order cart);
+    public ExtensionResultStatusType attachAdditionalDataToNewCart(Customer customer, Order cart);
     
-    public Boolean isAvailable(DiscreteOrderItem doi, BroadleafCurrency currency);
+    public ExtensionResultStatusType applyAdditionalOrderLookupFilter(Customer customer, String name, List<Order> orders);
 
 }
