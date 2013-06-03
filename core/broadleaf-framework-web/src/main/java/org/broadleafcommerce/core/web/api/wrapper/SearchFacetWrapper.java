@@ -28,26 +28,42 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * This wrapper provides information about the search facets available 
+ * for use with a search.
+ * 
+ * Search facets are typically returned from a catalog search as part of the result. 
+ * You can use facets to narrow a search.
+ * 
+ * @author Kelly Tisdell
+ *
+ */
 @XmlRootElement(name = "searchFacet")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class SearchFacetWrapper extends BaseWrapper implements APIWrapper<SearchFacetDTO> {
 
+    /*
+     * Name of the field. (e.g. you might have a field name 
+     * like "price" or "description")
+     */
     @XmlElement
     protected String fieldName;
 
+    /*
+     * Indicates if this facet is active in the current search.
+     */
     @XmlElement
-    protected Boolean showQuantity;
+    protected Boolean active = Boolean.FALSE;
 
-    @XmlElement
-    protected Boolean active;
-
+    /*
+     * List of values that are appropriate for this facet.
+     */
     @XmlElement
     protected List<SearchFacetValueWrapper> values;
 
     @Override
     public void wrap(SearchFacetDTO model, HttpServletRequest request) {
         this.fieldName = model.getFacet().getField().getAbbreviation();
-        this.showQuantity = model.isShowQuantity();
         this.active = model.isActive();
 
         if (model.getFacetValues() != null) {
