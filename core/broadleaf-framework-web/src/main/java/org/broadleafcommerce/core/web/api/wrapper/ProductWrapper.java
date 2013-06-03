@@ -16,6 +16,9 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
@@ -43,6 +46,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ProductWrapper extends ProductSummaryWrapper implements APIWrapper<Product> {
 
     @XmlElement
+    protected String longDescription;
+
+    @XmlElement
     protected Date activeStartDate;
 
     @XmlElement
@@ -60,6 +66,12 @@ public class ProductWrapper extends ProductSummaryWrapper implements APIWrapper<
     @XmlElement
     protected Long defaultCategoryId;
 
+    @XmlElement
+    protected Money defaultRetailPrice;
+
+    @XmlElement
+    protected Money defaultSalePrice;
+
     @XmlElement(name = "upsaleProduct")
     @XmlElementWrapper(name = "upsaleProducts")
     protected List<RelatedProductWrapper> upsaleProducts;
@@ -72,6 +84,10 @@ public class ProductWrapper extends ProductSummaryWrapper implements APIWrapper<
     @XmlElementWrapper(name = "productAttributes")
     protected List<ProductAttributeWrapper> productAttributes;
 
+    @XmlElement(name = "media")
+    @XmlElementWrapper(name = "mediaItems")
+    protected List<MediaWrapper> media;
+
     @Override
     public void wrap(Product model, HttpServletRequest request) {
         super.wrap(model, request);
@@ -80,7 +96,13 @@ public class ProductWrapper extends ProductSummaryWrapper implements APIWrapper<
         this.manufacturer = model.getManufacturer();
         this.model = model.getModel();
         this.promoMessage = model.getPromoMessage();
+        this.longDescription = model.getLongDescription();
         
+        if (model.getDefaultSku() != null) {
+            this.defaultRetailPrice = model.getDefaultSku().getRetailPrice();
+            this.defaultSalePrice = model.getDefaultSku().getSalePrice();
+        }
+
         if (model.getDefaultCategory() != null) {
             this.defaultCategoryId = model.getDefaultCategory().getId();
         }
@@ -116,5 +138,19 @@ public class ProductWrapper extends ProductSummaryWrapper implements APIWrapper<
             }
         }
 
+        if (model.getMedia() != null && !model.getMedia().isEmpty()) {
+            Map<String, Media> mediaMap = model.getMedia();
+            media = new ArrayList<MediaWrapper>();
+            StaticAssetService staticAssetService = (StaticAssetService) this.context.getBean("blStaticAssetService");
+            for (Media med : mediaMap.values()) {
+                MediaWrapper wrapper = (MediaWrapper) context.getBean(MediaWrapper.class.getName());
+                wrapper.wrap(med, request);
+                if (wrapper.isAllowOverrideUrl()) {
+                    wrapper.setUrl(staticAssetService.convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
+                }
+                media.add(wrapper);
+            }
+        }
     }
+
 }
