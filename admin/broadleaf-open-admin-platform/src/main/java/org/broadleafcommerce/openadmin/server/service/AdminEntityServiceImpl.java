@@ -134,7 +134,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         
         for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
             Property p = new Property();
-            p.setName(entry.getKey());
+            p.setName(JSCompatibilityHelper.unEncodeFieldname(entry.getKey()));
             p.setValue(entry.getValue().getValue());
             properties.add(p);
         }

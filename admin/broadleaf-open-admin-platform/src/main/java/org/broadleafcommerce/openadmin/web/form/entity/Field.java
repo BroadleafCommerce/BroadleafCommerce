@@ -320,5 +320,5 @@ public class Field {
     public void setFilterSortDisabled(Boolean isFilterSortDisabled) {
         this.isFilterSortDisabled = isFilterSortDisabled;
     }
-    
+
 }

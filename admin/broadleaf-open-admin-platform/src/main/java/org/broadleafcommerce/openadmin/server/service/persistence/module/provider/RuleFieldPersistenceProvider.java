@@ -186,7 +186,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                 }
             }
             Property jsonProperty = convertSimpleRuleToJson(translator, mapper, val,
-                    extractValueRequest.getMetadata().getName() + "Json", extractValueRequest.getMetadata().getRuleIdentifier());
+                    property.getName() + "Json", extractValueRequest.getMetadata().getRuleIdentifier());
             extractValueRequest.getProps().add(jsonProperty);
         }
         if (extractValueRequest.getMetadata().getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY) {
@@ -224,11 +224,10 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         BasicFieldMetadata originalFM = (BasicFieldMetadata) entry.getValue();
                         if (originalFM.getFieldType() == SupportedFieldType.RULE_SIMPLE ||
                                 originalFM.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY) {
-                            Property originalProp = addFilterPropertiesRequest.getEntity().findProperty(originalFM
-                                    .getName());
+                            Property originalProp = addFilterPropertiesRequest.getEntity().findProperty(entry.getKey());
                             if (originalProp == null) {
                                 originalProp = new Property();
-                                originalProp.setName(originalFM.getName());
+                                originalProp.setName(entry.getKey());
                                 additionalProperties.add(originalProp);
                             }
                             originalProp.setValue(prop.getValue());

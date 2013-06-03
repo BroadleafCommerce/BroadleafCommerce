@@ -66,6 +66,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,8 +74,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -382,7 +381,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
                         // We're dealing with rule builders, so we'll create those specialized fields
                         f = new RuleBuilderField();
-                        ((RuleBuilderField) f).setJsonFieldName(fmd.getName() + "Json");
+                        ((RuleBuilderField) f).setJsonFieldName(property.getName() + "Json");
                         ((RuleBuilderField) f).setDataWrapper(new DataWrapper());
                         ((RuleBuilderField) f).setFieldBuilder(fmd.getRuleIdentifier());
                         
