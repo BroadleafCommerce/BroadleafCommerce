@@ -40,6 +40,7 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
@@ -403,9 +404,10 @@ public class SkuImpl implements Sku {
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
         } else if (salePrice != null) {
             // We have an explicitly set sale price directly on this entity. We will not apply any adjustments
-            return new Money(salePrice, getCurrency());
-        } else if (hasDefaultSku()) {
-            // Otherwise, we'll pull the sale price from the default sku
+            returnPrice = new Money(salePrice, getCurrency());
+        }
+
+        if (returnPrice == null && hasDefaultSku()) {
             returnPrice = lookupDefaultSku().getSalePrice();
             optionValueAdjustments = getProductOptionValueAdjustments();
         }
@@ -443,10 +445,11 @@ public class SkuImpl implements Sku {
             
             returnPrice = dynamicPrices.getRetailPrice();
             optionValueAdjustments = dynamicPrices.getPriceAdjustment();
-        } else if (retailPrice != null) {
-            // We have an explicitly set retail price directly on this entity. We will not apply any adjustments
-            return new Money(retailPrice, getCurrency());
-        } else if (hasDefaultSku()) {
+        } else {
+            returnPrice = new Money(retailPrice, getCurrency());
+        }
+
+        if (returnPrice == null && hasDefaultSku()) {
             // Otherwise, we'll pull the retail price from the default sku
             returnPrice = lookupDefaultSku().getRetailPrice();
             optionValueAdjustments = getProductOptionValueAdjustments();
@@ -599,10 +602,19 @@ public class SkuImpl implements Sku {
 
     @Override
     public Date getActiveStartDate() {
-        if (activeStartDate == null && hasDefaultSku()) {
-            return lookupDefaultSku().getActiveStartDate();
+        Date returnDate = null;
+        if (SkuActiveDateConsiderationContext.hasDynamicActiveDates()) {
+            returnDate = SkuActiveDateConsiderationContext.getSkuActiveDatesService().getDynamicSkuActiveStartDate(this);
+        }
+
+        if (returnDate == null) {
+            if (activeStartDate == null && hasDefaultSku()) {
+                return lookupDefaultSku().getActiveStartDate();
+            } else {
+                return activeStartDate;
+            }
         } else {
-            return activeStartDate;
+            return returnDate;
         }
     }
 
@@ -613,10 +625,19 @@ public class SkuImpl implements Sku {
 
     @Override
     public Date getActiveEndDate() {
-        if (activeEndDate == null && hasDefaultSku()) {
-            return lookupDefaultSku().getActiveEndDate();
+        Date returnDate = null;
+        if (SkuActiveDateConsiderationContext.hasDynamicActiveDates()) {
+            returnDate = SkuActiveDateConsiderationContext.getSkuActiveDatesService().getDynamicSkuActiveEndDate(this);
+        }
+
+        if (returnDate == null) {
+            if (activeEndDate == null && hasDefaultSku()) {
+                return lookupDefaultSku().getActiveEndDate();
+            } else {
+                return activeEndDate;
+            }
         } else {
-            return activeEndDate;
+            return returnDate;
         }
     }
 

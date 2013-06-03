@@ -48,13 +48,6 @@ public class LocaleFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options("[]")
                 .type(SupportedFieldType.STRING)
                 .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_localeIsDefault")
-                .name("defaultFlag")
-                .operators("blcOperators_Boolean")
-                .options("[]")
-                .type(SupportedFieldType.BOOLEAN)
-                .build());
     }
 
     @Override

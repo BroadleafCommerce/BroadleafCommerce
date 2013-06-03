@@ -32,6 +32,7 @@ public class RuleIdentifier {
     public static final String SKU = "SKU_FIELDS";
     public static final String TIME = "TIME_FIELDS";
     public static final String REQUEST = "REQUEST_FIELDS";
+    public static final String PRICING_CONTEXT = "PRICING_CONTEXT_FIELDS";
     public static final String PRODUCT = "PRODUCT_FIELDS";
 
     public static final String CUSTOMER_ENTITY_KEY = "customer";
@@ -42,6 +43,7 @@ public class RuleIdentifier {
     public static final String SKU_ENTITY_KEY = "sku";
     public static final String TIME_ENTITY_KEY = "time";
     public static final String REQUEST_ENTITY_KEY = "request";
+    public static final String PRICING_CONTEXT_ENTITY_KEY = "pricingContext";
     public static final String PRODUCT_ENTITY_KEY = "product";
 
     public static final String CUSTOMER_FIELD_KEY = "CUSTOMER";
@@ -50,6 +52,7 @@ public class RuleIdentifier {
     public static final String FULFILLMENT_GROUP_FIELD_KEY = "FULFILLMENT_GROUP";
     public static final String TIME_FIELD_KEY = "TIME";
     public static final String REQUEST_FIELD_KEY = "REQUEST";
+    public static final String PRICING_CONTEXT_FIELD_KEY = "PRICING_CONTEXT";
     public static final String PRODUCT_FIELD_KEY = "PRODUCT";
 
     public static Map<String, String> ENTITY_KEY_MAP = new HashMap<String, String>();
@@ -63,5 +66,6 @@ public class RuleIdentifier {
         ENTITY_KEY_MAP.put(TIME, TIME_ENTITY_KEY);
         ENTITY_KEY_MAP.put(REQUEST, REQUEST_ENTITY_KEY);
         ENTITY_KEY_MAP.put(PRODUCT, PRODUCT_ENTITY_KEY);
+        ENTITY_KEY_MAP.put(PRICING_CONTEXT, PRICING_CONTEXT_ENTITY_KEY);
     }
 }
