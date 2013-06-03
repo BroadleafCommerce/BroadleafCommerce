@@ -15,8 +15,11 @@
  */
 package org.broadleafcommerce.core.web.api.endpoint.catalog;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
@@ -27,6 +30,10 @@ import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
+import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.CategoriesWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper;
@@ -34,14 +41,14 @@ import org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.MediaWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductBundleWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.ProductSummaryWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.RelatedProductWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuWrapper;
+import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -78,6 +85,15 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
     @Resource(name="blCatalogService")
     protected CatalogService catalogService;
 
+    @Resource(name = "blSearchService")
+    protected SearchService searchService;
+
+    @Resource(name = "blSearchFacetDTOService")
+    protected SearchFacetDTOService facetService;
+
+    @Resource(name = "blExploitProtectionService")
+    protected ExploitProtectionService exploitProtectionService;
+
     //We don't inject this here because of a few dependency issues. Instead, we look this up dynamically
     //using the ApplicationContext
     protected StaticAssetService staticAssetService;
@@ -105,34 +121,57 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
     }
 
     /**
-     * Search for {@code Product} instances whose name starts with
-     * or is equal to the passed in product name.
-     *
-     * @param name
-     * @param limit the maximum number of results, defaults to 20
-     * @param offset the starting point in the record set, defaults to 0
-     * @return the list of product instances that fit the search criteria
+     * This uses Broadleaf's search service to search for products. CategoryId is optional. If used, it 
+     * will attempt to search for products within that category.
+     * @param request
+     * @param q
+     * @param categoryId
+     * @param pageSize
+     * @param page
+     * @return
      */
-    public List<ProductSummaryWrapper> findProductsByName(HttpServletRequest request,
-            String name,
-            int limit,
-            int offset) {
-        List<Product> result;
-        if (name == null) {
-            result = catalogService.findAllProducts(limit, offset);
-        } else {
-            result = catalogService.findProductsByName(name, limit, offset);
+    public SearchResultsWrapper findProductsByQuery(HttpServletRequest request,
+            String q,
+            Long categoryId,
+            Integer pageSize,
+            Integer page) {
+        try {
+            if (StringUtils.isNotEmpty(q)) {
+                q = StringUtils.trim(q);
+                q = exploitProtectionService.cleanString(q);
+            }
+        } catch (ServiceException e) {
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN).entity("The search query: " + q + " was incorrect or malformed.").build());
         }
 
-        List<ProductSummaryWrapper> out = new ArrayList<ProductSummaryWrapper>();
-        if (result != null) {
-            for (Product product : result) {
-                ProductSummaryWrapper wrapper = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
-                wrapper.wrap(product, request);
-                out.add(wrapper);
+        Category category = null;
+        if (categoryId != null) {
+            category = catalogService.findCategoryById(categoryId);
+            if (category == null) {
+                throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                        .type(MediaType.TEXT_PLAIN).entity("Category ID, " + categoryId + ", was not associated with a category.").build());
             }
         }
-        return out;
+
+        List<SearchFacetDTO> availableFacets = searchService.getSearchFacets();
+        ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
+        try {
+            ProductSearchResult result = null;
+            if (category != null) {
+                result = searchService.findProductsByCategoryAndQuery(category, q, searchCriteria);
+            } else {
+                result = searchService.findProductsByQuery(q, searchCriteria);
+            }
+            facetService.setActiveFacetResults(result.getFacets(), request);
+
+            SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());
+            wrapper.wrap(result, request);
+            return wrapper;
+        } catch (ServiceException e) {
+            throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .type(MediaType.TEXT_PLAIN).entity("Problem occured executing search.").build());
+        }
     }
 
     /**
@@ -252,32 +291,6 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                 for (CategoryAttribute attribute : category.getCategoryAttributes()) {
                     CategoryAttributeWrapper wrapper = (CategoryAttributeWrapper)context.getBean(CategoryAttributeWrapper.class.getName());
                     wrapper.wrap(attribute, request);
-                    out.add(wrapper);
-                }
-            }
-            return out;
-        }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
-    }
-    
-    public List<ProductSummaryWrapper> findProductsForCategory(HttpServletRequest request,
-            Long id,
-            int limit,
-            int offset,
-            boolean activeOnly) {
-        Category category = catalogService.findCategoryById(id);
-        if (category != null) {
-            List<Product> products;
-            ArrayList<ProductSummaryWrapper> out = new ArrayList<ProductSummaryWrapper>();
-            if (activeOnly) {
-                products = catalogService.findActiveProductsByCategory(category, new Date(), limit, offset);
-            } else {
-                products = catalogService.findProductsForCategory(category, limit, offset);
-            }
-            if (products != null) {
-                for (Product product : products) {
-                    ProductSummaryWrapper wrapper = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
-                    wrapper.wrap(product, request);
                     out.add(wrapper);
                 }
             }
