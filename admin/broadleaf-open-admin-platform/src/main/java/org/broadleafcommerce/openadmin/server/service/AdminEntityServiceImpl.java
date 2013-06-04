@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
@@ -42,14 +43,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -293,6 +296,28 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
             ppr.getEntity().setType(new String[] { fmd.getCollectionCeilingEntity() });
+            
+            // If we're looking up an entity instead of trying to create one on the fly, let's make sure 
+            // that we're not changing the target entity at all and only creating the association to the id
+            if (fmd.getAddMethodType().equals(AddMethodType.LOOKUP)) {
+                List<String> fieldsToRemove = new ArrayList<String>();
+                
+                String idProp = getIdProperty(mainMetadata);
+                for (String key : entityForm.getFields().keySet()) {
+                    if (!idProp.equals(key)) {
+                        fieldsToRemove.add(key);
+                    }
+                }
+                
+                for (String key : fieldsToRemove) {
+                    ListIterator<Property> li = properties.listIterator();
+                    while (li.hasNext()) {
+                        if (li.next().getName().equals(key)) {
+                            li.remove();
+                        }
+                    }
+                }
+            }
 
             Property fp = new Property();
             fp.setName(ppr.getForeignKey().getManyToField());
