@@ -306,8 +306,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             int productLimit,
             int productOffset,
             int subcategoryLimit,
-            int subcategoryOffset,
-            int subcategoryDepth) {
+            int subcategoryOffset) {
         Category cat = catalogService.findCategoryById(id);
         if (cat != null) {
 
@@ -316,7 +315,6 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             request.setAttribute("productOffset", productOffset);
             request.setAttribute("subcategoryLimit", subcategoryLimit);
             request.setAttribute("subcategoryOffset", subcategoryOffset);
-            request.setAttribute("subcategoryDepth", subcategoryDepth);
 
             CategoryWrapper wrapper = (CategoryWrapper)context.getBean(CategoryWrapper.class.getName());
             wrapper.wrap(cat, request);

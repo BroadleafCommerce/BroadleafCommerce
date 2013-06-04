@@ -76,12 +76,6 @@ public class CategoryWrapper extends CategorySummaryWrapper implements APIWrappe
     @Override
     public void wrap(Category category, HttpServletRequest request) {
         super.wrap(category, request);
-        Integer subcategoryDepth = (Integer) request.getAttribute("subcategoryDepth");
-        wrap(category, subcategoryDepth, request);
-    }
-
-    protected void wrap(Category category, Integer depth, HttpServletRequest request) {
-        super.wrap(category, request);
         this.activeStartDate = category.getActiveStartDate();
         this.activeEndDate = category.getActiveEndDate();
         this.url = category.getUrl();
@@ -109,10 +103,6 @@ public class CategoryWrapper extends CategorySummaryWrapper implements APIWrappe
             subcategoryOffset = 1;
         }
 
-        if (depth == null) {
-            depth = 1;
-        }
-
         if (productLimit != null && productOffset != null) {
 
             CatalogService catalogService = (CatalogService) context.getBean("blCatalogService");
@@ -137,18 +127,14 @@ public class CategoryWrapper extends CategorySummaryWrapper implements APIWrappe
 
         }
 
-        if (subcategoryLimit != null && subcategoryOffset != null && depth != null) {
-            subcategories = buildSubcategoryTree(subcategories, category, request, depth);
+        if (subcategoryLimit != null && subcategoryOffset != null) {
+            subcategories = buildSubcategoryTree(subcategories, category, request);
         }
     }
 
 
-    protected List<CategorySummaryWrapper> buildSubcategoryTree(List<CategorySummaryWrapper> wrappers, Category root, HttpServletRequest request, int depth) {
+    protected List<CategorySummaryWrapper> buildSubcategoryTree(List<CategorySummaryWrapper> wrappers, Category root, HttpServletRequest request) {
         CatalogService catalogService = (CatalogService) context.getBean("blCatalogService");
-
-        if (depth <= 0) {
-            return wrappers;
-        }
 
         Integer subcategoryLimit = (Integer) request.getAttribute("subcategoryLimit");
         Integer subcategoryOffset = (Integer) request.getAttribute("subcategoryOffset");
