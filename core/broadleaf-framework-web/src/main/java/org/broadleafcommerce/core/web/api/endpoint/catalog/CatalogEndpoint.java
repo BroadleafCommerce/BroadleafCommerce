@@ -364,7 +364,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrap(cat, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                .type(MediaType.TEXT_PLAIN).entity("Category with Id or name of " + searchParameter + " could not be found").build());
     }
 
     public List<CategoryAttributeWrapper> findCategoryAttributesForCategory(HttpServletRequest request,
