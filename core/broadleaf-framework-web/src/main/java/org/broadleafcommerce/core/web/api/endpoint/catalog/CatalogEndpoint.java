@@ -121,8 +121,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
     }
 
     /**
-     * This uses Broadleaf's search service to search for products. CategoryId is optional. If used, it 
-     * will attempt to search for products within that category.
+     * This uses Broadleaf's search service to search for products within a category.
      * @param request
      * @param q
      * @param categoryId
@@ -130,39 +129,83 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
      * @param page
      * @return
      */
-    public SearchResultsWrapper findProductsByQuery(HttpServletRequest request,
-            String q,
+    public SearchResultsWrapper findProductsByCategoryAndQuery(HttpServletRequest request,
             Long categoryId,
+            String q,
             Integer pageSize,
             Integer page) {
         try {
             if (StringUtils.isNotEmpty(q)) {
                 q = StringUtils.trim(q);
                 q = exploitProtectionService.cleanString(q);
+            } else {
+                throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                        .type(MediaType.TEXT_PLAIN).entity("Search query was empty. Set parameter 'q' to query for a product. (e.g. q=My Product Name).").build());
             }
         } catch (ServiceException e) {
             throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
                     .type(MediaType.TEXT_PLAIN).entity("The search query: " + q + " was incorrect or malformed.").build());
         }
 
+        if (categoryId == null) {
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN).entity("The categoryId was null.").build());
+        }
+
         Category category = null;
-        if (categoryId != null) {
-            category = catalogService.findCategoryById(categoryId);
-            if (category == null) {
-                throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                        .type(MediaType.TEXT_PLAIN).entity("Category ID, " + categoryId + ", was not associated with a category.").build());
-            }
+        category = catalogService.findCategoryById(categoryId);
+        if (category == null) {
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN).entity("Category ID, " + categoryId + ", was not associated with a category.").build());
         }
 
         List<SearchFacetDTO> availableFacets = searchService.getSearchFacets();
         ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
         try {
             ProductSearchResult result = null;
-            if (category != null) {
-                result = searchService.findProductsByCategoryAndQuery(category, q, searchCriteria);
+            result = searchService.findProductsByCategoryAndQuery(category, q, searchCriteria);
+            facetService.setActiveFacetResults(result.getFacets(), request);
+
+            SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());
+            wrapper.wrap(result, request);
+            return wrapper;
+        } catch (ServiceException e) {
+            throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .type(MediaType.TEXT_PLAIN).entity("Problem occured executing search.").build());
+        }
+    }
+
+    /**
+     * Queries the products. The parameter q, which represents the query, is required. It can be any 
+     * string, but is typically a name or keyword, similar to a search engine search.
+     * @param request
+     * @param q
+     * @param pageSize
+     * @param page
+     * @return
+     */
+    public SearchResultsWrapper findProductsByQuery(HttpServletRequest request,
+            String q,
+            Integer pageSize,
+            Integer page) {
+        try {
+            if (StringUtils.isNotEmpty(q)) {
+                q = StringUtils.trim(q);
+                q = exploitProtectionService.cleanString(q);
             } else {
-                result = searchService.findProductsByQuery(q, searchCriteria);
+                throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                        .type(MediaType.TEXT_PLAIN).entity("Search query was empty. Set parameter 'q' to query for a product. (e.g. q=My Product Name).").build());
             }
+        } catch (ServiceException e) {
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+                    .type(MediaType.TEXT_PLAIN).entity("The search query: " + q + " was incorrect or malformed.").build());
+        }
+
+        List<SearchFacetDTO> availableFacets = searchService.getSearchFacets();
+        ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
+        try {
+            ProductSearchResult result = null;
+            result = searchService.findProductsByQuery(q, searchCriteria);
             facetService.setActiveFacetResults(result.getFacets(), request);
 
             SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());
@@ -465,6 +508,10 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             staticAssetService = (StaticAssetService)this.context.getBean("blStaticAssetService");
         }
         return staticAssetService;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(StringUtils.isNotEmpty(null));
     }
 }
 
