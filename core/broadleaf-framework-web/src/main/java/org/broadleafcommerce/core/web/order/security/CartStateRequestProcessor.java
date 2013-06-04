@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
@@ -46,7 +47,7 @@ import javax.annotation.Resource;
  * @see {@link org.springframework.web.portlet.context.PortletWebRequest}
  */
 @Component("blCartStateRequestProcessor")
-public class CartStateRequestProcessor implements BroadleafWebRequestProcessor {
+public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProcessor {
 
     /** Logger for this class and subclasses */
     protected final Log LOG = LogFactory.getLog(getClass());

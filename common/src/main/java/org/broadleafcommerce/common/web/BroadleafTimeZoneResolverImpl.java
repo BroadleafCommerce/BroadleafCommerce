@@ -18,6 +18,7 @@ package org.broadleafcommerce.common.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
@@ -42,6 +43,9 @@ public class BroadleafTimeZoneResolverImpl implements BroadleafTimeZoneResolver 
      */
     public static String TIMEZONE_CODE_PARAM = "blTimeZoneCode";
 
+    @Value("${use.session.for.request.processing}")
+    protected boolean useSessionInRequestProcessing;
+
 
     @Override
     public TimeZone resolveTimeZone(WebRequest request) {
@@ -61,7 +65,7 @@ public class BroadleafTimeZoneResolverImpl implements BroadleafTimeZoneResolver 
         }
 
         // Third, check the session 
-        if (timeZone == null) {
+        if (timeZone == null && useSessionInRequestProcessing) {
             //@TODO verify if we should take this from global session
             timeZone = (TimeZone) request.getAttribute(TIMEZONE_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
             if (LOG.isTraceEnabled()) {
@@ -78,7 +82,9 @@ public class BroadleafTimeZoneResolverImpl implements BroadleafTimeZoneResolver 
             }
         }
 
-        request.setAttribute(TIMEZONE_VAR, timeZone, WebRequest.SCOPE_GLOBAL_SESSION);
+        if (useSessionInRequestProcessing) {
+            request.setAttribute(TIMEZONE_VAR, timeZone, WebRequest.SCOPE_GLOBAL_SESSION);
+        }
         return timeZone;
     }
 }

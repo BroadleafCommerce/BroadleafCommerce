@@ -25,16 +25,18 @@ import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.time.FixedTimeSource;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Responsible for determining the SandBox to use for the current request. 
@@ -76,6 +78,9 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      */
     public static String SANDBOX_VAR = "blSandbox";
     
+    @Value("${use.session.for.request.processing}")
+    protected boolean useSessionInRequestProcessing;
+
     @Resource(name = "blSandBoxDao")
     private SandBoxDao sandBoxDao;
     
@@ -109,8 +114,10 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Removing sandbox from session.");
                 }
-                request.removeAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
-                request.removeAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+                if (useSessionInRequestProcessing) {
+                    request.removeAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+                    request.removeAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+                }
             }
             if (sandboxId != null) {
                 currentSandbox = sandBoxDao.retrieve(sandboxId);
@@ -166,16 +173,19 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
             }
         }
 
-        if (sandboxId == null) {
-            // check the session
-            sandboxId = (Long) request.getAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
-            if (LOG.isTraceEnabled()) {
-                if (sandboxId != null) {
-                    LOG.trace("SandboxId found in session " + sandboxId);
+        if (useSessionInRequestProcessing) {
+            if (sandboxId == null) {
+                // check the session            
+                sandboxId = (Long) request.getAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+
+                if (LOG.isTraceEnabled()) {
+                    if (sandboxId != null) {
+                        LOG.trace("SandboxId found in session " + sandboxId);
+                    }
                 }
+            } else {
+                request.setAttribute(SANDBOX_ID_VAR, sandboxId, WebRequest.SCOPE_GLOBAL_SESSION);
             }
-        } else {
-            request.setAttribute(SANDBOX_ID_VAR, sandboxId, WebRequest.SCOPE_GLOBAL_SESSION);
         }
         return sandboxId;
     }
@@ -205,13 +215,15 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
             LOG.debug(e);
         }
 
-        if (overrideTime == null) {
-            overrideTime = (Date) request.getAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Setting date-time for sandbox mode to " + overrideTime + " for sandboxDateTimeParam = " + sandboxDateTimeParam);
+        if (useSessionInRequestProcessing) {
+            if (overrideTime == null) {
+                overrideTime = (Date) request.getAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Setting date-time for sandbox mode to " + overrideTime + " for sandboxDateTimeParam = " + sandboxDateTimeParam);
+                }
+                request.setAttribute(SANDBOX_DATE_TIME_VAR, overrideTime, WebRequest.SCOPE_GLOBAL_SESSION);
             }
-            request.setAttribute(SANDBOX_DATE_TIME_VAR, overrideTime, WebRequest.SCOPE_GLOBAL_SESSION);
         }
 
         if (overrideTime != null) {

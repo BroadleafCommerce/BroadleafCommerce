@@ -104,7 +104,7 @@ public class AdminAssetUploadController extends AdminAbstractController {
             staticAssetUrlPrefix = "/" + staticAssetUrlPrefix;
         }
 
-        String assetUrl = request.getSession().getServletContext().getContextPath() + staticAssetUrlPrefix +
+        String assetUrl = request.getContextPath() + staticAssetUrlPrefix +
                 staticAsset.getFullUrl();
 
         responseMap.put("assetUrl", assetUrl);

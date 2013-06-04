@@ -42,7 +42,7 @@ import javax.annotation.Resource;
  * @see {@link BroadleafRequestFilter}
  */
 @Component("blRequestProcessor")
-public class BroadleafRequestProcessor implements BroadleafWebRequestProcessor {
+public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProcessor {
 
     protected final Log LOG = LogFactory.getLog(getClass());
 

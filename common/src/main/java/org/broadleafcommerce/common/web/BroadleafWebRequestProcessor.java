@@ -61,4 +61,11 @@ public interface BroadleafWebRequestProcessor {
      */
     public void process(WebRequest request);
     
+    /**
+     * Should be called if work needs to be done after the request has been processed.
+     * 
+     * @param request
+     */
+    public void postProcess(WebRequest request);
+
 }

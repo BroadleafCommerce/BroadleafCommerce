@@ -17,49 +17,34 @@
 package org.broadleafcommerce.common.web.filter;
 
 import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
-import org.broadleafcommerce.common.i18n.service.TranslationService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 
 import javax.annotation.Resource;
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Responsible for setting the necessary attributes on the {@link TranslationConsiderationContext}.
  * 
- * @author Andre Azzolini (apazzolini)
+ * @author Andre Azzolini (apazzolini), bpolster
  */
 @Component("blTranslationFilter")
-public class TranslationFilter implements Filter {
+public class TranslationFilter extends GenericFilterBean {
     
-    @Resource(name = "blTranslationService")
-    protected TranslationService translationService;
-    
-    @Value("${i18n.translation.enabled}")
-    protected boolean translationEnabled = false;
+    @Resource(name = "blTranslationRequestProcessor")
+    protected TranslationRequestProcessor translationRequestProcessor;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        TranslationConsiderationContext.setTranslationConsiderationContext(translationEnabled);
-        TranslationConsiderationContext.setTranslationService(translationService);
+        translationRequestProcessor.process(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
         filterChain.doFilter(request, response);
     }
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        // Do nothing
-    }
-
-    @Override
-    public void destroy() {
-        // Do nothing
-    }
-
 }

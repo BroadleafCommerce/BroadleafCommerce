@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.service.BroadleafCurrencyService;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -54,6 +55,9 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
     @Resource(name = "blCurrencyService")
     private BroadleafCurrencyService broadleafCurrencyService;
 
+    @Value("${use.session.for.request.processing}")
+    protected boolean useSessionInRequestProcessing;
+
     /**
      * Responsible for returning the currency to use for the current request.
      */
@@ -79,13 +83,13 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
         }
 
         // 3) Check session for currency
-        if (currency == null) {
+        if (currency == null && useSessionInRequestProcessing) {
             currency = (BroadleafCurrency) request.getAttribute(CURRENCY_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
         }
 
         // 4) Check locale for currency
         if (currency == null) {
-            Locale locale = (Locale) request.getAttribute(BroadleafLocaleResolverImpl.LOCALE_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            Locale locale = (Locale) request.getAttribute(BroadleafLocaleResolverImpl.LOCALE_VAR, WebRequest.SCOPE_REQUEST);
             if (locale != null) {
                 currency = locale.getDefaultCurrency();
             }
@@ -96,7 +100,9 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
             currency = broadleafCurrencyService.findDefaultBroadleafCurrency();
         }
 
-        request.setAttribute(CURRENCY_VAR, currency, WebRequest.SCOPE_GLOBAL_SESSION);
+        if (useSessionInRequestProcessing) {
+            request.setAttribute(CURRENCY_VAR, currency, WebRequest.SCOPE_GLOBAL_SESSION);
+        }
         return currency;
     }
 }

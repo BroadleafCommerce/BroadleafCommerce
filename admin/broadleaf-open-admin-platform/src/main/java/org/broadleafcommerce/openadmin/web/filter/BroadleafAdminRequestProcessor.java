@@ -21,11 +21,11 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.BroadleafLocaleResolver;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.broadleafcommerce.common.web.BroadleafTimeZoneResolver;
-import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
@@ -41,7 +41,7 @@ import javax.annotation.Resource;
  * @see {@link org.broadleafcommerce.common.web.BroadleafRequestFilter}
  */
 @Component("blAdminRequestProcessor")
-public class BroadleafAdminRequestProcessor implements BroadleafWebRequestProcessor {
+public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestProcessor {
 
     protected final Log LOG = LogFactory.getLog(getClass());
 

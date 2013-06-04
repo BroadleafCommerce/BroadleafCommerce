@@ -18,7 +18,7 @@ package org.broadleafcommerce.profile.web.core.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
+import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.context.ApplicationEvent;
@@ -43,7 +43,7 @@ import javax.annotation.Resource;
  * @see {@link CustomerStateFilter}
  */
 @Component("blCustomerStateRequestProcessor")
-public class CustomerStateRequestProcessor implements ApplicationEventPublisherAware, BroadleafWebRequestProcessor {
+public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestProcessor implements ApplicationEventPublisherAware {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());

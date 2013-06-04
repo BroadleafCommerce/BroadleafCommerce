@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -49,6 +50,9 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
     @Resource(name = "blLocaleService")
     private LocaleService localeService;  
     
+    @Value("${use.session.for.request.processing}")
+    protected boolean useSessionInRequestProcessing;
+
     @Override
     public Locale resolveLocale(HttpServletRequest request) {
         return resolveLocale(new ServletWebRequest(request));
@@ -65,14 +69,16 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
         if (locale == null && request.getParameter(LOCALE_CODE_PARAM) != null) {
             String localeCode = request.getParameter(LOCALE_CODE_PARAM);
             locale = localeService.findLocaleByCode(localeCode);
-            request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            if (useSessionInRequestProcessing) {
+                request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            }
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Attempt to find locale by param " + localeCode + " resulted in " + locale);
             }
         }
 
         // Third, check the session
-        if (locale == null) {
+        if (locale == null && useSessionInRequestProcessing) {
             locale = (Locale) request.getAttribute(LOCALE_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Attempt to find locale from session resulted in " + locale);
@@ -82,13 +88,17 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
         // Finally, use the default
         if (locale == null) {
             locale = localeService.findDefaultLocale();
-            request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            if (useSessionInRequestProcessing) {
+                request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            }
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Locale set to default locale " + locale);
             }
         }
 
-        request.setAttribute(LOCALE_VAR, locale, WebRequest.SCOPE_GLOBAL_SESSION);
+        if (useSessionInRequestProcessing) {
+            request.setAttribute(LOCALE_VAR, locale, WebRequest.SCOPE_GLOBAL_SESSION);
+        }
         return locale;
     }
 }
