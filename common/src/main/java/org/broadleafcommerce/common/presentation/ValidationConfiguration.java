@@ -35,7 +35,12 @@ public @interface ValidationConfiguration {
      * <p>The fully qualified classname of the org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidator
      * instance to use for validation</p>
      * 
-     * @return the validator classname
+     * <p>If you need to do dependency injection, this can also correspond to a bean ID that implements the 
+     * org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidator interface.</p>
+     * 
+     * @return the validator implementation. This implementation should be an instance of
+     * org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidator and could be either a bean
+     * name or fully-qualified class name
      */
     String validationImplementation();
     

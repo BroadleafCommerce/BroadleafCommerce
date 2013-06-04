@@ -156,4 +156,15 @@
             </list>
         </property>
     </bean>
+    
+    <!-- Global validators, used by EntityValidationService. All entities that pass through the admin will be validated
+     by the beans declared in this list -->
+    <bean id="blGlobalEntityPropertyValidators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blRequiredPropertyValidator"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>

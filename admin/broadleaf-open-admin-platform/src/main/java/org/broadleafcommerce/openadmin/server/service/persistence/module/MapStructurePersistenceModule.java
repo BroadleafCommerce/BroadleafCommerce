@@ -306,12 +306,6 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                 map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), convertedPrimitive);
             }
             
-            boolean validated = validate(entity, instance, valueMergedProperties);
-            if (validated) {
-                //only save if the validation passes
-                instance = persistenceManager.getDynamicEntityDao().merge(instance);
-            }
-            
             Entity[] responses = getMapRecords(instance, mapStructure, ceilingMergedProperties, valueMergedProperties, entity.findProperty("symbolicId"));
             for (Entity response : responses) {
                 if (response.findProperty(mapStructure.getKeyPropertyName()).getValue().equals(persistencePackage.getEntity().findProperty(mapStructure.getKeyPropertyName()).getValue())) {

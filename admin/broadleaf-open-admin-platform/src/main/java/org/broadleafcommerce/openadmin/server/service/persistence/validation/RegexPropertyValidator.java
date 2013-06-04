@@ -16,7 +16,10 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -27,10 +30,17 @@ import java.util.Map;
  * 
  * @author Phillip Verheyden
  */
-public class RegexPropertyValidator implements PropertyValidator {
+@Component("blRegexPropertyValidator")
+public class RegexPropertyValidator extends ValidationConfigurationBasedPropertyValidator {
 
     @Override
-    public boolean validate(Entity entity, Map<String, String> validationConfiguration, Serializable instance, String value) {
+    public boolean validateInternal(Entity entity,
+            Serializable instance,
+            Map<String, FieldMetadata> entityFieldMetadata,
+            Map<String, String> validationConfiguration,
+            BasicFieldMetadata propertyMetadata,
+            String propertyName,
+            String value) {
         String expression = validationConfiguration.get("regularExpression");
         return (value == null) ? true : value.matches(expression);
     }

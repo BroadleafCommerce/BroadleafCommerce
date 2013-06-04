@@ -16,12 +16,16 @@
 
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,22 +38,22 @@ import java.util.Map;
  */
 public class Entity implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    protected static final long serialVersionUID = 1L;
 
-    private String[] type;
-    private Property[] properties;
-    private boolean isDirty = false;
-    private Boolean isDeleted = false;
-    private Boolean isInactive = false;
-    private Boolean isActive = false;
-    private Boolean isLocked = false;
-    private String lockedBy;
-    private String lockedDate;
-    private boolean multiPartAvailableOnThread = false;
-    private boolean isValidationFailure = false;
-    private String[][] validationErrors;
+    protected String[] type;
+    protected Property[] properties;
+    protected boolean isDirty = false;
+    protected Boolean isDeleted = false;
+    protected Boolean isInactive = false;
+    protected Boolean isActive = false;
+    protected Boolean isLocked = false;
+    protected String lockedBy;
+    protected String lockedDate;
+    protected boolean multiPartAvailableOnThread = false;
+    protected boolean isValidationFailure = false;
+    protected Map<String, List<String>> validationErrors = new HashMap<String, List<String>>();
     
-    private Map<String, Property> pMap = null;
+    protected Map<String, Property> pMap = null;
 
     public String[] getType() {
         return type;
@@ -154,18 +158,13 @@ public class Entity implements Serializable {
      * property in messages.properties to support different locales
      */
     public void addValidationError(String fieldName, String errorOrErrorKey) {
-        if (getValidationErrors() == null) {
-            setValidationErrors(new String[0][2]);
+        Map<String, List<String>> fieldErrors = getValidationErrors();
+        List<String> errorMessages = fieldErrors.get(fieldName);
+        if (errorMessages == null) {
+            errorMessages = new ArrayList<String>();
+            fieldErrors.put(fieldName, errorMessages);
         }
-        String[][] allErrors = getValidationErrors();
-        String[][] newErrors = new String[allErrors.length + 1][2];
-        for (int j=0;j<allErrors.length;j++) {
-            newErrors[j][0] = allErrors[j][0];
-            newErrors[j][1] = allErrors[j][1];
-        }
-        newErrors[newErrors.length - 1][0] = fieldName;
-        newErrors[newErrors.length - 1][1] = errorOrErrorKey;
-        setValidationErrors(newErrors);
+        errorMessages.add(errorOrErrorKey);
         setValidationFailure(true);
     }
 
@@ -194,12 +193,17 @@ public class Entity implements Serializable {
     }
 
     /**
-     * The validation errors returned here are all 2-element arrays. Index 0 holds the property name that failed validation
-     * while index 1 holds the validation error message (which could be either a message key or the actual message itself)
+     * Validation error map where the key corresponds to the property that failed validation (which could be dot-separated)
+     * and the value corresponds to a list of the error messages, in the case of multiple errors on the same field.
      * 
-     * @return a list of 2-element arrays that correspond to validation errors on this Entity
+     * For instance, you might have a configuration where the field is both a Required validator and a regex validator.
+     * The validation map in this case might contain something like:
+     *      
+     *      defaultSku.name => ['This field is required', 'Cannot have numbers in name']
+     * 
+     * @return a map keyed by property name to the list of error messages for that property
      */
-    public String[][] getValidationErrors() {
+    public Map<String, List<String>> getValidationErrors() {
         return validationErrors;
     }
 
@@ -211,8 +215,8 @@ public class Entity implements Serializable {
      * @param validationErrors
      * @see #addValidationError(String, String)
      */
-    public void setValidationErrors(String[][] validationErrors) {
-        if (validationErrors != null && validationErrors.length > 0) {
+    public void setValidationErrors(Map<String, List<String>> validationErrors) {
+        if (MapUtils.isNotEmpty(validationErrors)) {
             setValidationFailure(true);
         }
         this.validationErrors = validationErrors;

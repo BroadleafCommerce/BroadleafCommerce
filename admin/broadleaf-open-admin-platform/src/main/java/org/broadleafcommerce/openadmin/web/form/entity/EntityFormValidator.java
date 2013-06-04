@@ -21,6 +21,9 @@ import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Validator used at the controller level to ensure that an Entity has passed validation from the PersistenceModule or
  * CustomPersistenceHandler. This should be used as a final validation step after attempting the save
@@ -40,8 +43,10 @@ public class EntityFormValidator {
         boolean result = true;
         if (entity.isValidationFailure()) {
             result = false;
-            for (String[] validationError : entity.getValidationErrors()) {
-                errors.rejectValue(String.format("fields[%s].value", validationError[0]), validationError[1], validationError[1]);
+            for (Map.Entry<String, List<String>> propertyErrors : entity.getValidationErrors().entrySet()) {
+                for (String errorMessage : propertyErrors.getValue()) {
+                    errors.rejectValue(String.format("fields[%s].value", propertyErrors.getKey()), errorMessage, errorMessage);
+                }
             }
         }
         

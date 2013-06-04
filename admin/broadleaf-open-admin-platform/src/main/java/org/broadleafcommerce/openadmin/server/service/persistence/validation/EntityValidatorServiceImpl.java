@@ -16,17 +16,23 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
-import org.broadleafcommerce.common.presentation.ConfigurationItem;
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -38,34 +44,92 @@ import java.util.Map;
  * @see {@link ValidationConfiguration}
  */
 @Service("blEntityValidatorService")
-public class EntityValidatorServiceImpl implements EntityValidatorService {
+public class EntityValidatorServiceImpl implements EntityValidatorService, ApplicationContextAware {
+    
+    @Resource(name = "blGlobalEntityPropertyValidators")
+    protected List<PropertyValidator> globalEntityValidators;
+    
+    protected ApplicationContext applicationContext;
 
     @Override
-    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> mergedProperties) {
-
+    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata) {
         //validate each individual property according to their validation configuration
         for (Property property : entity.getProperties()) {
-            FieldMetadata metadata = mergedProperties.get(property.getName());
+            FieldMetadata metadata = propertiesMetadata.get(property.getName());
             if (metadata instanceof BasicFieldMetadata) {
+                //First execute the default field validators
+                if (CollectionUtils.isNotEmpty(globalEntityValidators)) {
+                    for (PropertyValidator validator : globalEntityValidators) {
+                        PropertyValidationResult result = validator.validate(entity,
+                                instance,
+                                propertiesMetadata,
+                                null,
+                                (BasicFieldMetadata)metadata,
+                                property.getName(),
+                                property.getValue());
+                        if (!result.isValid()) {
+                            entity.addValidationError(property.getName(), result.getErrorMessage());
+                        }
+                    }
+                }
+                
+                //Now execute the validators configured for this particular field
                 Map<String, Map<String, String>> validations =
                         ((BasicFieldMetadata) metadata).getValidationConfigurations();
                 for (Map.Entry<String, Map<String, String>> validation : validations.entrySet()) {
-                    String validatorClassname = validation.getKey();
+                    String validationImplementation = validation.getKey();
                     Map<String, String> configuration = validation.getValue();
 
                     PropertyValidator validator = null;
-                    try {
-                        validator = (PropertyValidator) Class.forName(validatorClassname).newInstance();
-                    } catch (Exception e) {
-                        throw new PersistenceException(e);
+                    
+                    //attempt bean resolution to find the validator
+                    if (applicationContext.containsBean(validationImplementation)) {
+                        validator = applicationContext.getBean(validationImplementation, PropertyValidator.class);
+                    } 
+                    
+                    //not a bean, attempt to instantiate the class
+                    if (validator == null) {
+                        try {
+                            validator = (PropertyValidator) Class.forName(validationImplementation).newInstance();
+                        } catch (Exception e) {
+                            //do nothing
+                        }
                     }
-                    boolean validationResult = validator.validate(entity, configuration, instance, property.getValue());
-                    if (!validationResult) {
-                        entity.addValidationError(property.getName(), configuration.get(ConfigurationItem.ERROR_MESSAGE));
+                    
+                    if (validator == null) {
+                        throw new PersistenceException("Could not find validator: " + validationImplementation + 
+                                " for property: " + property.getName());
+                    }
+                    
+                    PropertyValidationResult result = validator.validate(entity,
+                                                                    instance,
+                                                                    propertiesMetadata,
+                                                                    configuration,
+                                                                    (BasicFieldMetadata)metadata,
+                                                                    property.getName(),
+                                                                    property.getValue());
+                    if (!result.isValid()) {
+                        entity.addValidationError(property.getName(), result.getErrorMessage());
                     }
                 }
             }
         }
     }
+    
+    @Override
+    public List<PropertyValidator> getGlobalEntityValidators() {
+        return globalEntityValidators;
+    }
+
+    @Override
+    public void setGlobalEntityValidators(List<PropertyValidator> globalEntityValidators) {
+        this.globalEntityValidators = globalEntityValidators;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
 
 }
