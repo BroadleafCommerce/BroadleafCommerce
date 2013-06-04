@@ -27,4 +27,16 @@ public interface TaxProvider extends ModuleProvider {
      */
     public Order commitTaxForOrder(Order order, ModuleConfiguration config) throws TaxException;
 
+    /**
+     * Some tax integrators or tax programs allow you to cancel the tax for an order. This prevents external, 
+     * or third party, systems from being out of synch from a reporting or tax reconcilliation perspective. Implementors should 
+     * not modify the order, or remove tax details from the order.  The order should be considered immutable.  Any compensating 
+     * transactions or modifications to the order should be done outside of this method.  Implementations that do not allow 
+     * for this should simply implement this method in a way that it is a pass through, or does nothing.
+     * @param order
+     * @param config
+     * @throws TaxException
+     */
+    public void cancelTaxForOrder(Order order, ModuleConfiguration config) throws TaxException;
+
 }
