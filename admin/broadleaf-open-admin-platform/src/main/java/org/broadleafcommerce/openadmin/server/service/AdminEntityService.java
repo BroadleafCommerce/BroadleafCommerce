@@ -59,10 +59,11 @@ public interface AdminEntityService {
      * @param request
      * @param id
      * @param cmd
+     * @param isCollectionRequest whether or not this record request was initiated from a collection on a parent entity
      * @return the Entity
      * @throws ServiceException
      */
-    public Entity getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd) 
+    public Entity getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd, boolean isCollectionRequest)
             throws ServiceException;
 
     /**

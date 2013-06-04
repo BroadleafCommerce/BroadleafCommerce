@@ -77,7 +77,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd)
+    public Entity getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd, boolean isCollectionRequest)
             throws ServiceException {
         String idProperty = getIdProperty(cmd);
         
