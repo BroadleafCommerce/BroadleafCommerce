@@ -159,8 +159,8 @@ public class CategoryWrapper extends CategorySummaryWrapper implements APIWrappe
         }
 
         for (Category c : subcategories) {
-            CategoryWrapper subcategoryWrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
-            subcategoryWrapper.wrap(c, depth - 1, request);
+            CategorySummaryWrapper subcategoryWrapper = (CategorySummaryWrapper) context.getBean(CategorySummaryWrapper.class.getName());
+            subcategoryWrapper.wrap(c, request);
             wrappers.add(subcategoryWrapper);
         }
 
