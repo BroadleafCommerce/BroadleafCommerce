@@ -28,6 +28,7 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
@@ -41,12 +42,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFieldService, ApplicationContextAware {
+public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFieldService, ApplicationContextAware, InitializingBean {
 
     protected DynamicEntityDao dynamicEntityDao;
     protected ApplicationContext applicationContext;
@@ -186,9 +185,9 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
 
     public abstract void init();
 
-    @PostConstruct
-    private void construct() {
-        // This bean only is valid when the following bean is active. (admin) 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // This bean only is valid when the following bean is active. (admin)
         if (applicationContext.containsBean(DynamicEntityRemoteService.DEFAULTPERSISTENCEMANAGERREF)) {
             // This cannot be null during startup as we do not want to remove the null safety checks in a multi-tenant env.
             if (BroadleafRequestContext.getBroadleafRequestContext() == null) {
@@ -204,4 +203,5 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
             init();
         }
     }
+
 }
