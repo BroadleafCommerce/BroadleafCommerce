@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -78,7 +80,12 @@ public class AdminRoleImpl implements AdminRole, AdminMainEntity {
     protected Long id;
 
     @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName = "AdminRoleImpl_Name", order = 1, group = "AdminRoleImpl_Role")
+    @AdminPresentation(friendlyName = "AdminRoleImpl_Name", order = 1, group = "AdminRoleImpl_Role",
+            validationConfigurations = { @ValidationConfiguration(
+                    validationImplementation = "blRegexPropertyValidator",
+                    configurationItems = { @ConfigurationItem(itemName = "regularExpression", itemValue = "ROLE_[.]+"),
+                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "roleNameError") }
+                    ) })
     protected String name;
 
     @Column(name = "DESCRIPTION", nullable=false)
