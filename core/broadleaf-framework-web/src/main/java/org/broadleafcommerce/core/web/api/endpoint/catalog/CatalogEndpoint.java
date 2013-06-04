@@ -323,6 +323,50 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
     }
 
+    /**
+     * Allows you to search for a category by ID or by name.
+     * @param request
+     * @param searchParameter
+     * @param productLimit
+     * @param productOffset
+     * @param subcategoryLimit
+     * @param subcategoryOffset
+     * @return
+     */
+    public CategoryWrapper findCategoryIdOrName(HttpServletRequest request,
+            String searchParameter,
+            int productLimit,
+            int productOffset,
+            int subcategoryLimit,
+            int subcategoryOffset) {
+
+        Category cat = null;
+
+        if (searchParameter != null) {
+            try {
+                cat = catalogService.findCategoryById(Long.parseLong(searchParameter));
+            } catch (NumberFormatException e) {
+                List<Category> categories = catalogService.findCategoriesByName(searchParameter);
+                if (categories != null && !categories.isEmpty()) {
+                    cat = categories.get(0);
+                }
+            }
+        }
+        if (cat != null) {
+
+            //Explicitly setting these request attributes because the CategoryWrapper.wrap() method needs them
+            request.setAttribute("productLimit", productLimit);
+            request.setAttribute("productOffset", productOffset);
+            request.setAttribute("subcategoryLimit", subcategoryLimit);
+            request.setAttribute("subcategoryOffset", subcategoryOffset);
+
+            CategoryWrapper wrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
+            wrapper.wrap(cat, request);
+            return wrapper;
+        }
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
+    }
+
     public List<CategoryAttributeWrapper> findCategoryAttributesForCategory(HttpServletRequest request,
             Long id) {
         Category category = catalogService.findCategoryById(id);
