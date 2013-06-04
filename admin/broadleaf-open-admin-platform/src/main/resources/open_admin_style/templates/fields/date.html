@@ -1,4 +1,4 @@
-<div class="field-label" th:text="#{${field.friendlyName}}" />
+<div class="field-label" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
 
 <div class="datepicker-container">
     <input type="text" class="three datepicker" th:field="*{fields['__${field.name}__'].value}" />

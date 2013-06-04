@@ -1,4 +1,4 @@
-<div class="field-label" th:text="#{${field.friendlyName}}" />
+<div class="field-label" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
 <select class="six" th:field="*{fields['__${field.name}__'].value}">
     <option th:each="entry : *{fields['__${field.name}__'].options}"
             th:value="${entry.key}"

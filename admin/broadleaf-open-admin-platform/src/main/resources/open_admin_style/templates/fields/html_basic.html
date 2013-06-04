@@ -1,4 +1,4 @@
-<div class="field-label" th:text="#{${field.friendlyName}}" />
+<div class="field-label" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
 
 <div class="twelve indented-form-value">
     <textarea class="redactor" name="content" th:field="*{fields['__${field.name}__'].value}"/>

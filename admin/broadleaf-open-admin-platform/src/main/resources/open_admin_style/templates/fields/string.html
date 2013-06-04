@@ -1,3 +1,3 @@
-<div class="field-label inline" th:text="#{${field.friendlyName}}" />
+<div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
 <div th:substituteby="components/fieldTranslation" />
-<input type="text" class="twelve" th:field="*{fields['__${field.name}__'].value}" />
+<input type="text" class="twelve" th:required="${field.required}" th:field="*{fields['__${field.name}__'].value}" />

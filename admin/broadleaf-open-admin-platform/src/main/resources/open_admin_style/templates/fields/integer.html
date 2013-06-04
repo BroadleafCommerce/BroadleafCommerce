@@ -1,2 +1,2 @@
-<div class="field-label" th:text="#{${field.friendlyName}}" />
+<div class="field-label" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
 <input type="number" class="two" th:field="*{fields['__${field.name}__'].value}" />

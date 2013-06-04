@@ -1,5 +1,5 @@
 <div th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}">
-    <div class="field-label" th:text="#{${field.friendlyName}}" />
+    <div class="field-label" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
 
     <select class="six" th:field="*{fields['__${field.name}__'].value}" th:if="${! #maps.isEmpty(field.options)}">
         <option value="" th:text="#{Default_Select}" />
@@ -19,7 +19,7 @@
     <input type="hidden" class="display-value-property" th:value="*{fields['__${field.name}__'].foreignKeyDisplayValueProperty}"  />
     <input type="hidden" class="value" th:field="*{fields['__${field.name}__'].value}" th:attr="data-onchangetrigger=${field.onChangeTrigger}" />
     
-    <label th:for="${field.name}" th:text="#{${field.friendlyName}}" />
+    <label th:for="${field.name}" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
     
     <div class="foreign-key-value-container">
         <span class="display-value-none-selected" style="display: none;" th:inline="text">&lt;[[#{No_Value_Selected}]]&gt;</span>

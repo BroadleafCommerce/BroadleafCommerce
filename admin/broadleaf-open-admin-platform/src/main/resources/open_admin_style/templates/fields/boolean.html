@@ -1,4 +1,4 @@
-<div class="field-label" th:text="#{${field.friendlyName}}" />
+<div class="field-label" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
 
 <div class="custom-checkbox">
     <label th:for="${field.name + '-true'}" th:inline="text" style="font-weight: 400; display: inline-block; width: 60px;">

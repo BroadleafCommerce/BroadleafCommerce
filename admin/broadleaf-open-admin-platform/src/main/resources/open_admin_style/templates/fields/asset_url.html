@@ -7,7 +7,7 @@
 <img class="thumbnail" 
     th:unless="*{fields['__${field.name}__'].value != null}" />
     
-<div class="field-label" th:text="#{${field.friendlyName}}" />
+<div class="field-label" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
 <div class="twelve" style="margin-left: 20px; margin-bottom: 10px;">
    <span th:text="*{fields['__${field.name}__'].displayValue}"/> 
 </div>  

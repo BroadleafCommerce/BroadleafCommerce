@@ -1,6 +1,6 @@
 <div class="asset-selector-container">  
     <div class="field-label" th:text="#{${field.friendlyName}}" />
-    <input type="hidden" class="mediaUrl" th:field="*{fields['__${field.name}__'].value}" />
+    <input type="hidden" class="mediaUrl" th:field="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" />
     
     <img class="thumbnail" 
         th:if="*{fields['__${field.name}__'].value != null}"
