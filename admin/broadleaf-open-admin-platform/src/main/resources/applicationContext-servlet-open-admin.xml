@@ -99,6 +99,6 @@
     </bean>
 
     <mvc:interceptors>
-      <bean class="org.broadleafcommerce.openadmin.web.interceptor.JSFieldNameCompatibilityInterceptor" />
+      <bean class="org.broadleafcommerce.openadmin.web.compatibility.JSFieldNameCompatibilityInterceptor" />
     </mvc:interceptors>
 </beans>
