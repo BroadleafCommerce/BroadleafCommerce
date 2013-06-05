@@ -43,6 +43,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,9 +52,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -137,7 +136,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         
         for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
             Property p = new Property();
-            p.setName(JSCompatibilityHelper.unEncodeFieldname(entry.getKey()));
+            p.setName(entry.getKey());
             p.setValue(entry.getValue().getValue());
             properties.add(p);
         }
