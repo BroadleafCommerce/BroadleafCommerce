@@ -570,10 +570,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{id}/{collectionField:.*}/add", method = RequestMethod.GET)
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars,
+            @PathVariable Map<String, String> pathVars,
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
-            @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));

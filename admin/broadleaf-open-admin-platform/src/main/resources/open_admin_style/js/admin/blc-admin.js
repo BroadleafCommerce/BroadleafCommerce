@@ -322,6 +322,14 @@ var BLCAdmin = (function($) {
             for (var i = 0; i < updateHandlers.length; i++) {
                 updateHandlers[i]($container);
             }
+    	},
+    	
+    	getModals : function() {
+    	    var modalsCopy = [];
+    	    for (var i = 0; i < modals.length; i++) {
+    	        modalsCopy[i] = modals[i];
+    	    }
+    	    return modalsCopy;
     	}
 	};
 	

@@ -5,7 +5,23 @@
         replaceRelatedListGrid : function($headerWrapper, alert) {
             var $table = $headerWrapper.find('table');
             var tableId = $table.attr('id');
-            var $oldTable = $('#' + tableId);
+            var $oldTable = null;
+            
+            // Go through the modals from top to bottom looking for the replacement list grid
+            var modals = BLCAdmin.getModals();
+            if (modals.length > 0) {
+                for (var i = modals.length - 1; i >= 0; i--) {
+                    $oldTable = $(modals[i]).find('#' + tableId);
+                    if ($oldTable != null && $oldTable.length > 0) {
+                        break;
+                    }
+                }
+            }
+                    
+            // If we didn't find it in a modal, use the element from the body
+            if ($oldTable == null || $oldTable.length == 0) {
+               $oldTable = $('#' + tableId);
+            }
             
             var currentIndex = BLCAdmin.listGrid.paginate.getTopVisibleIndex($oldTable.find('tbody'));
             
