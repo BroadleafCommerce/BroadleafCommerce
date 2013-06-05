@@ -29,15 +29,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class ProductOptionValueWrapper extends BaseWrapper implements
         APIWrapper<ProductOptionValue> {
-
-    @XmlElement
-    protected Long id;
     
     @XmlElement
     protected String attributeValue;
-    
-    @XmlElement
-    protected Long displayOrder;
     
     @XmlElement
     protected Money priceAdjustment;
@@ -47,9 +41,7 @@ public class ProductOptionValueWrapper extends BaseWrapper implements
     
     @Override
     public void wrap(ProductOptionValue model, HttpServletRequest request) {
-        this.id = model.getId();
         this.attributeValue = model.getAttributeValue();
-        this.displayOrder = model.getDisplayOrder();
         this.priceAdjustment = model.getPriceAdjustment();
         this.productOptionId = model.getProductOption().getId();
     }

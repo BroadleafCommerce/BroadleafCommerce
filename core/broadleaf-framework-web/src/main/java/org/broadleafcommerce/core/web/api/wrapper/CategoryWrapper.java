@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.web.api.wrapper;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 
 import java.util.ArrayList;
@@ -47,7 +46,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "category")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class CategoryWrapper extends CategorySummaryWrapper implements APIWrapper<Category> {
+public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category> {
+
+    @XmlElement
+    protected CategorySummaryWrapper categorySummary;
 
     @XmlElement
     protected String url;
@@ -75,7 +77,10 @@ public class CategoryWrapper extends CategorySummaryWrapper implements APIWrappe
 
     @Override
     public void wrap(Category category, HttpServletRequest request) {
-        super.wrap(category, request);
+
+        this.categorySummary = (CategorySummaryWrapper) context.getBean(CategorySummaryWrapper.class.getName());
+        this.categorySummary.wrap(category, request);
+
         this.activeStartDate = category.getActiveStartDate();
         this.activeEndDate = category.getActiveEndDate();
         this.url = category.getUrl();
@@ -114,12 +119,7 @@ public class CategoryWrapper extends CategorySummaryWrapper implements APIWrappe
                 }
 
                 for (Product p: productList) {
-                    ProductSummaryWrapper productSummaryWrapper;
-                    if (p instanceof ProductBundle) {
-                        productSummaryWrapper = (ProductWrapper) context.getBean(ProductBundleWrapper.class.getName());
-                    } else {
-                        productSummaryWrapper = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
-                    }
+                    ProductSummaryWrapper productSummaryWrapper = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
                     productSummaryWrapper.wrap(p, request);
                     products.add(productSummaryWrapper);
                 }

@@ -15,6 +15,9 @@
  */
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 
@@ -41,6 +44,18 @@ public class ProductSummaryWrapper extends BaseWrapper implements APIWrapper<Pro
     @XmlElement
     protected String description;
 
+    @XmlElement
+    protected String longDescripion;
+
+    @XmlElement
+    protected Money retailPrice;
+
+    @XmlElement
+    protected Money salePrice;
+
+    @XmlElement
+    protected MediaWrapper primaryMedia;
+
     @XmlElement(name = "productOption")
     @XmlElementWrapper(name = "productOptions")
     protected List<ProductOptionWrapper> productOptions;
@@ -50,6 +65,9 @@ public class ProductSummaryWrapper extends BaseWrapper implements APIWrapper<Pro
         this.id = model.getId();
         this.name = model.getName();
         this.description = model.getDescription();
+        this.longDescripion = model.getLongDescription();
+        this.retailPrice = model.getDefaultSku().getRetailPrice();
+        this.salePrice = model.getDefaultSku().getSalePrice();
 
         if (model.getProductOptions() != null && !model.getProductOptions().isEmpty()) {
             this.productOptions = new ArrayList<ProductOptionWrapper>();
@@ -58,6 +76,18 @@ public class ProductSummaryWrapper extends BaseWrapper implements APIWrapper<Pro
                 ProductOptionWrapper optionWrapper = (ProductOptionWrapper) context.getBean(ProductOptionWrapper.class.getName());
                 optionWrapper.wrap(option, request);
                 this.productOptions.add(optionWrapper);
+            }
+        }
+
+        if (model.getMedia() != null && !model.getMedia().isEmpty()) {
+            Media media = model.getMedia().get("primary");
+            if (media != null) {
+                StaticAssetService staticAssetService = (StaticAssetService) this.context.getBean("blStaticAssetService");
+                primaryMedia = (MediaWrapper) context.getBean(MediaWrapper.class.getName());
+                primaryMedia.wrap(media, request);
+                if (primaryMedia.isAllowOverrideUrl()) {
+                    primaryMedia.setUrl(staticAssetService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
+                }
             }
         }
     }

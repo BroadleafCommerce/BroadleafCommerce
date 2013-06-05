@@ -18,7 +18,6 @@ package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.media.domain.Media;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
@@ -43,10 +42,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "product")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class ProductWrapper extends ProductSummaryWrapper implements APIWrapper<Product> {
+public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
 
     @XmlElement
-    protected String longDescription;
+    protected ProductSummaryWrapper productSummary;
 
     @XmlElement
     protected Date activeStartDate;
@@ -66,12 +65,6 @@ public class ProductWrapper extends ProductSummaryWrapper implements APIWrapper<
     @XmlElement
     protected Long defaultCategoryId;
 
-    @XmlElement
-    protected Money defaultRetailPrice;
-
-    @XmlElement
-    protected Money defaultSalePrice;
-
     @XmlElement(name = "upsaleProduct")
     @XmlElementWrapper(name = "upsaleProducts")
     protected List<RelatedProductWrapper> upsaleProducts;
@@ -90,19 +83,16 @@ public class ProductWrapper extends ProductSummaryWrapper implements APIWrapper<
 
     @Override
     public void wrap(Product model, HttpServletRequest request) {
-        super.wrap(model, request);
+
+        this.productSummary = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
+        this.productSummary.wrap(model, request);
+
         this.activeStartDate = model.getActiveStartDate();
         this.activeEndDate = model.getActiveEndDate();
         this.manufacturer = model.getManufacturer();
         this.model = model.getModel();
         this.promoMessage = model.getPromoMessage();
-        this.longDescription = model.getLongDescription();
         
-        if (model.getDefaultSku() != null) {
-            this.defaultRetailPrice = model.getDefaultSku().getRetailPrice();
-            this.defaultSalePrice = model.getDefaultSku().getSalePrice();
-        }
-
         if (model.getDefaultCategory() != null) {
             this.defaultCategoryId = model.getDefaultCategory().getId();
         }

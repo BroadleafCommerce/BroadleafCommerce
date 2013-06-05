@@ -19,14 +19,15 @@ package org.broadleafcommerce.core.web.api.wrapper;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is a JAXB wrapper around Product.
@@ -37,9 +38,6 @@ import java.util.List;
 @XmlRootElement(name = "productOption")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<ProductOption> {
-
-    @XmlElement
-    protected Long id;
     
     @XmlElement
     protected String attributeName;
@@ -59,7 +57,6 @@ public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<Prod
     
     @Override
     public void wrap(ProductOption model, HttpServletRequest request) {
-        this.id = model.getId();
         this.attributeName = model.getAttributeName();
         this.label = model.getLabel();
         this.required = model.getRequired();
