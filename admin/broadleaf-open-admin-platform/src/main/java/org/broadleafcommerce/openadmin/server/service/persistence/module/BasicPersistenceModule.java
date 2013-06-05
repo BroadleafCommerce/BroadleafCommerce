@@ -288,10 +288,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 throw new ValidationException(entity, "The entity has failed validation");
             }
             else {
-                Map<String, Serializable> persistedEntities = fieldManager.persistMiddleEntities();
-                for (Entry<String, Serializable> entry : persistedEntities.entrySet()) {
-                    fieldManager.setFieldValue(instance, entry.getKey(), entry.getValue());
-                }
+                fieldManager.persistMiddleEntities();
             }
         } catch (IllegalAccessException e) {
             throw new PersistenceException(e);
