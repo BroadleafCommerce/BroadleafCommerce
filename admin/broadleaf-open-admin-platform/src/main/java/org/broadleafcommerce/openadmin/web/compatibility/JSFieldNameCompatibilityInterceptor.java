@@ -1,4 +1,4 @@
-package org.broadleafcommerce.openadmin.web.interceptor;
+package org.broadleafcommerce.openadmin.web.compatibility;
 
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.Property;
@@ -9,10 +9,9 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -29,7 +28,7 @@ public class JSFieldNameCompatibilityInterceptor extends HandlerInterceptorAdapt
             if (entity != null) {
                 for (Property property : entity.getProperties()) {
                     if (property.getName().contains(".")) {
-                        property.setName(JSCompatibilityHelper.encodeFieldName(property.getName()));
+                        property.setName(JSCompatibilityHelper.encode(property.getName()));
                     }
                 }
             }
@@ -38,9 +37,10 @@ public class JSFieldNameCompatibilityInterceptor extends HandlerInterceptorAdapt
                 entityForm.clearFieldsMap();
                 for (Map.Entry<String, Field> field : entityForm.getFields().entrySet()) {
                     if (field.getKey().contains(".")) {
-                        field.getValue().setName(JSCompatibilityHelper.encodeFieldName(field.getValue().getName()));
+                        field.getValue().setName(JSCompatibilityHelper.encode(field.getValue().getName()));
                         if (field.getValue() instanceof RuleBuilderField) {
-                            ((RuleBuilderField) field.getValue()).setJsonFieldName(JSCompatibilityHelper.encodeFieldName(((RuleBuilderField) field.getValue()).getJsonFieldName()));
+                            ((RuleBuilderField) field.getValue()).setJsonFieldName(JSCompatibilityHelper.encode((
+                                    (RuleBuilderField) field.getValue()).getJsonFieldName()));
                         }
                     }
                 }
