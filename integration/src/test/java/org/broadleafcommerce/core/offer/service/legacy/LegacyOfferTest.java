@@ -348,6 +348,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         
         Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         offer.setDeliveryType(OfferDeliveryType.AUTOMATIC);
+        offer.setAutomaticallyAdded(true);
         offer = offerService.save(offer);
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);

@@ -692,6 +692,7 @@ public class OfferDataItemProvider {
         offer.setApplyDiscountToSalePrice(applyToSalePrice);
         offer.setCombinableWithOtherOffers(combinableWithOtherOffers);
         offer.setDeliveryType(deliveryType);
+        offer.setAutomaticallyAdded(OfferDeliveryType.AUTOMATIC==deliveryType);
         offer.setDiscountType(type);
         offer.setEndDate(endDate);
         offer.setMaxUses(maxUses);

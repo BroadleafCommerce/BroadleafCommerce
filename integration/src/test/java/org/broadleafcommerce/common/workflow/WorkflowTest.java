@@ -84,7 +84,7 @@ public class WorkflowTest extends BaseTest {
      */
     @Test
     public void testSameOrderingConfiguredActivity() {
-        Assert.assertEquals(activities.get(6).getClass(), TestRollbackActivity.class);
+        Assert.assertEquals(activities.get(7).getClass(), TestRollbackActivity.class);
     }
     
     @Test

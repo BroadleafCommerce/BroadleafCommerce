@@ -78,7 +78,7 @@ public class AuditableListener {
         Long customerId = 0L;
         try {
             BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
-            if (requestContext != null) {
+            if (requestContext != null && requestContext.getRequest() != null) {
                 Object customer = requestContext.getRequest().getAttribute(customerRequestAttributeName);
                 if (customer != null) {
                     Class<?> customerClass = customer.getClass();
