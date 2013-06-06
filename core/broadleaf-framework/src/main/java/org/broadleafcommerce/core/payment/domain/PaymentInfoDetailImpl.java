@@ -79,6 +79,8 @@ public class PaymentInfoDetailImpl implements PaymentInfoDetail, CurrencyCodeIde
     protected PaymentInfo paymentInfo;
 
     @Column(name = "PAYMENT_INFO_DETAIL_TYPE")
+    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Type", fieldType = SupportedFieldType.STRING,
+            prominent = true, gridOrder = 1000)
     protected PaymentInfoDetailType type;
 
     @Column(name = "PAYMENT_AMOUNT")
