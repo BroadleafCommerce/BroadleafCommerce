@@ -98,7 +98,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     public String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType, String prefix) {
         return new StringBuilder()
                 .append(prefix)
-                .append(field.getPropertyName()).append("_").append(searchableFieldType.getType())
+                .append(field.getAbbreviation()).append("_").append(searchableFieldType.getType())
                 .toString();
     }
 
@@ -110,7 +110,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
         return new StringBuilder()
                 .append(prefix)
-                .append(field.getPropertyName()).append("_").append(field.getFacetFieldType().getType())
+                .append(field.getAbbreviation()).append("_").append(field.getFacetFieldType().getType())
                 .toString();
     }
 
@@ -175,19 +175,6 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public String getExplicitCategoryFieldName() {
         return "explicitCategory";
-    }
-
-    @Override
-    public String getSearchableFieldName(String prefix) {
-        return new StringBuilder()
-                .append(prefix)
-                .append("searchable")
-                .toString();
-    }
-
-    @Override
-    public String getSearchableFieldName() {
-        return getSearchableFieldName(getLocalePrefix());
     }
 
     @Override

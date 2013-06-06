@@ -51,6 +51,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
+import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.springframework.beans.factory.DisposableBean;
 import org.xml.sax.SAXException;
@@ -237,8 +238,29 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         query = sanitizeQuery(query);
 
-        query = shs.getSearchableFieldName() + ":(" + query + ")";
+        query = buildQueryString(query);
+
         return findProducts(query, facets, searchCriteria, null);
+    }
+
+    public String buildQueryString(String query) {
+        StringBuilder queryBuilder = new StringBuilder();
+        List<Field> fields = fieldDao.readAllProductFields();
+        for (Field currentField : fields) {
+            if (currentField.getSearchable()) {
+                appendFieldToQuery(queryBuilder, currentField, query);
+            }
+        }
+        return queryBuilder.toString();
+    }
+
+    public void appendFieldToQuery(StringBuilder queryBuilder, Field currentField, String query) {
+        for (FieldType currentType : currentField.getSearchableFieldTypes()) {
+            queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, currentType));
+        }
+        queryBuilder.append(":(");
+        queryBuilder.append(query);
+        queryBuilder.append(") ");
     }
 
     @Override
@@ -251,7 +273,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         StringBuilder sb = new StringBuilder();
         sb.append(shs.getCategoryFieldName()).append(":").append(category.getId())
                 .append(" AND ")
-                .append(shs.getSearchableFieldName()).append(":(").append(query).append(")");
+                .append(buildQueryString(query));
         return findProducts(sb.toString(), facets, searchCriteria, null);
     }
 
@@ -292,7 +314,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
         attachFacets(solrQuery, namedFacetMap);
         
-        // TODO: Append active/start dates
         extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets,
                 searchCriteria, defaultSort);
 

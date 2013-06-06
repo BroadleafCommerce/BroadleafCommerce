@@ -96,5 +96,4 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType attachAdditionalBasicFields(Product product, SolrInputDocument document,
             SolrHelperService shs);
-
 }

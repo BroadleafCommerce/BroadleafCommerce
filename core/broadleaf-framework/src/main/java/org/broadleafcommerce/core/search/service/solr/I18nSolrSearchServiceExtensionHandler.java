@@ -17,12 +17,15 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
+import org.broadleafcommerce.common.i18n.service.TranslationService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -46,6 +49,14 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
 
     @Resource(name = "blSolrSearchServiceExtensionManager")
     protected SolrSearchServiceExtensionManager extensionManager;
+
+    @Resource(name = "blTranslationService")
+    protected TranslationService translationService;
+
+    @Value("${i18n.translation.enabled}")
+    protected boolean translationEnabled = false;
+
+    private static String ATTR_MAP = SolrIndexServiceImpl.ATTR_MAP;
 
     @PostConstruct
     public void init() {
@@ -73,15 +84,18 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
 
             for (Locale locale : locales) {
                 String localeCode = locale.getLocaleCode();
+                TranslationConsiderationContext.setTranslationConsiderationContext(translationEnabled);
+                TranslationConsiderationContext.setTranslationService(translationService);
+                BroadleafRequestContext tempContext = new BroadleafRequestContext();
+                tempContext.setLocale(locale);
+                BroadleafRequestContext.setBroadleafRequestContext(tempContext);
 
-                // To fetch the appropriate translated property, we need to set the current request context's locale
-                if (field.getTranslatable()) {
-                    BroadleafRequestContext tempContext = new BroadleafRequestContext();
-                    tempContext.setLocale(locale);
-                    BroadleafRequestContext.setBroadleafRequestContext(tempContext);
+                final Object propertyValue;
+                if (propertyName.contains(ATTR_MAP)) {
+                    propertyValue = PropertyUtils.getMappedProperty(product, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
+                } else {
+                    propertyValue = PropertyUtils.getProperty(product, propertyName);
                 }
-
-                Object propertyValue = PropertyUtils.getProperty(product, propertyName);
                 values.put(localeCode, propertyValue);
             }
         }

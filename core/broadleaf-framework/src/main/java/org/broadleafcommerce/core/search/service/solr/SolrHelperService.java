@@ -129,17 +129,6 @@ public interface SolrHelperService {
     public String getExplicitCategoryFieldName();
 
     /**
-     * @param prefix
-     * @return the searchable field name, with the global and specific prefix as appropriate
-     */
-    public String getSearchableFieldName(String prefix);
-
-    /**
-     * @return the searchable field name, with the global and locale prefixes as appropriate
-     */
-    public String getSearchableFieldName();
-
-    /**
      * @param category
      * @return the default sort field name for this category
      */

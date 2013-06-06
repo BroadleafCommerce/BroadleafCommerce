@@ -92,6 +92,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager transactionManager;
 
+    public static String ATTR_MAP = "productAttributes";
+
     @Override
     @SuppressWarnings("rawtypes")
     public void rebuildIndex() throws ServiceException, IOException {
@@ -270,9 +272,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         attachBasicDocumentFields(product, document);
 
-        // Add data-driven user specified searchable fields
+        // Keep track of searchable fields added to the index.   We need to also add the search facets if 
+        // they weren't already added as a searchable field.
         List<String> addedProperties = new ArrayList<String>();
-        Map<String, List<String>> copyFieldValues = new HashMap<String, List<String>>();
 
         for (Field field : fields) {
             try {
@@ -289,22 +291,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                             String solrPropertyName = shs.getPropertyNameForFieldSearchable(field, sft, prefix);
                             Object value = entry.getValue();
 
-                            // Add the field to Solr to search directly against it
-                            if (sft.equals(FieldType.PRICE) || field.getTranslatable() ||
-                                    prefix.equals(shs.getDefaultLocalePrefix())) {
-                                document.addField(solrPropertyName, value);
-                                addedProperties.add(solrPropertyName);
-                            }
-
-                            // Add this field to the copyField so that we can search against its content generally
-                            List<String> copyFieldValue = copyFieldValues.get(prefix);
-                            if (copyFieldValue == null) {
-                                copyFieldValue = new ArrayList<String>();
-                                copyFieldValues.put(prefix, copyFieldValue);
-                            }
-                            if (value != null) {
-                                copyFieldValue.add(value.toString());
-                            }
+                            document.addField(solrPropertyName, value);
+                            addedProperties.add(solrPropertyName);
                         }
                     }
                 }
@@ -322,22 +310,15 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                         String solrFacetPropertyName = shs.getPropertyNameForFieldFacet(field, prefix);
                         Object value = entry.getValue();
 
-                        //if (facetType.equals(FieldType.PRICE) || field.getTranslatable() ||
-                        //      prefix.equals(shs.getDefaultLocalePrefix())) {
-                            if (!addedProperties.contains(solrFacetPropertyName)) {
-                                document.addField(solrFacetPropertyName, value);
-                            }
-                        //}
+                        if (!addedProperties.contains(solrFacetPropertyName)) {
+                            document.addField(solrFacetPropertyName, value);
+                        }
                     }
                 }
             } catch (Exception e) {
                 LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
                         + product.getId() + "]", e);
             }
-        }
-
-        for (Entry<String, List<String>> entry : copyFieldValues.entrySet()) {
-            document.addField(shs.getSearchableFieldName(entry.getKey()), StringUtils.join(entry.getValue(), " "));
         }
 
         return document;
@@ -403,17 +384,18 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             List<Locale> locales) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String propertyName = field.getPropertyName();
-        if (propertyName.contains("productAttributes.")) {
-            propertyName = convertToMappedProperty(propertyName, "productAttributes", "mappedProductAttributes");
-        }
-
         Map<String, Object> values = new HashMap<String, Object>();
 
         if (extensionManager != null) {
             ExtensionResultStatusType result = extensionManager.getProxy().addPropertyValues(product, field, fieldType, values, propertyName, locales);
 
             if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-                Object propertyValue = PropertyUtils.getProperty(product, propertyName);
+                final Object propertyValue;
+                if (propertyName.contains(ATTR_MAP)) {
+                    propertyValue = PropertyUtils.getMappedProperty(product, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
+                } else {
+                    propertyValue = PropertyUtils.getProperty(product, propertyName);
+                }
                 values.put("", propertyValue);
             }
         }
