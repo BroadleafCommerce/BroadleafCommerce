@@ -47,7 +47,7 @@ public class StateImpl implements State {
 
     @Column(name = "NAME", nullable = false)
     @Index(name="STATE_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "StateImpl_State", order=9, group = "StateImpl_Address")
+    @AdminPresentation(friendlyName = "StateImpl_State", order=9, group = "StateImpl_Address", prominent = true)
     protected String name;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)

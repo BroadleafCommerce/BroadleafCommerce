@@ -20,8 +20,12 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
@@ -44,10 +48,14 @@ import javax.persistence.UniqueConstraint;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_ADDRESS", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "ADDRESS_NAME" }))
-@AdminPresentationOverrides(
-    value = {
-        @AdminPresentationOverride(name="address.firstName", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="address.lastName", value=@AdminPresentation(excluded = true))
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "address.firstName", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
+        @AdminPresentationMergeOverride(name = "address.lastName", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
+        @AdminPresentationMergeOverride(name = "address.addressLine1", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true))
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
@@ -69,7 +77,8 @@ public class CustomerAddressImpl implements CustomerAddress {
     protected Long id;
 
     @Column(name = "ADDRESS_NAME")
-    @AdminPresentation(friendlyName = "CustomerAddressImpl_Address_Name", order=1, group = "CustomerAddressImpl_Identification", groupOrder = 1)
+    @AdminPresentation(friendlyName = "CustomerAddressImpl_Address_Name", order=1,
+            group = "CustomerAddressImpl_Identification", groupOrder = 1, prominent = true)
     protected String addressName;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
