@@ -420,7 +420,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withFriendlyName(fmd.getFriendlyName())
                          .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())
                          .withForeignKeyClass(fmd.getForeignKeyClass())
-                         .withOwningEntityClass(fmd.getOwningClass()!=null?fmd.getOwningClass():fmd.getTargetClass())
+                         .withOwningEntityClass(fmd.getOwningClass()!=null?fmd.getOwningClass():fmd.getInheritedFromType())
                          .withRequired(required)
                          .withReadOnly(fmd.getReadOnly())
                          .withTranslatable(fmd.getTranslatable())
