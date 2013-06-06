@@ -86,7 +86,10 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
                 String localeCode = locale.getLocaleCode();
                 TranslationConsiderationContext.setTranslationConsiderationContext(translationEnabled);
                 TranslationConsiderationContext.setTranslationService(translationService);
-                BroadleafRequestContext tempContext = new BroadleafRequestContext();
+                BroadleafRequestContext tempContext = BroadleafRequestContext.getBroadleafRequestContext();
+                if (tempContext == null) {
+                    tempContext = new BroadleafRequestContext();
+                }
                 tempContext.setLocale(locale);
                 BroadleafRequestContext.setBroadleafRequestContext(tempContext);
 
