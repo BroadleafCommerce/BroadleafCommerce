@@ -5,11 +5,11 @@ $(document).ready(function() {
 	});
 	
 	$('body').on('shown', '.modal', function () {
-		$("body").css({ overflow: 'hidden' });
+		$("html").css({ overflow: 'hidden' });
 	});
 	
 	$('body').on('hide', '.modal', function () {
-		$("body").css({ overflow: 'inherit' });
+		$("html").css({ overflow: 'inherit' });
 	});
 	
 	$('body').on('click', 'a.modal-view', function() {
