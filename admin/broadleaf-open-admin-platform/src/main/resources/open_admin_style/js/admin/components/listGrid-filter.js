@@ -52,8 +52,8 @@
             //fill out the criteria and sorts based on the current URL parameters
             var $header = $('#listGrid-main-header');
             var params = BLCAdmin.history.getUrlParameters();
-            $('i.filter-icon').removeClass('icon-filter');
             if (params) {
+                $('i.filter-icon').removeClass('icon-filter');
                 var sortProperty = params['sortProperty'];
                 if (sortProperty) {
                     //first enable the clear sorts button
@@ -180,7 +180,8 @@ $(document).ready(function() {
         return false;
     });
     
-    $('body').on('click', 'button.listgrid-clear-filter', function() {
+    $('body').on('click', 'button.listgrid-clear-filter', function(event) {
+        event.preventDefault();
         $(this).closest('.filter-fields').find('input.listgrid-criteria-input').val('');
         //clear out the foreign key display value
         $foreignKeyDisplay = $(this).closest('.filter-fields').find('div.foreign-key-value-container span.display-value');
@@ -228,6 +229,7 @@ $(document).ready(function() {
      * be sent to the server
      */
     $('body').on('click', 'div.filter-fields button.listgrid-filter', function(event) {
+        event.preventDefault();
         $(this).closest('ul').removeClass('show-dropdown');
         
         var $inputs = $(this).closest('thead').find('div.filter-fields :input.listgrid-criteria-input');
