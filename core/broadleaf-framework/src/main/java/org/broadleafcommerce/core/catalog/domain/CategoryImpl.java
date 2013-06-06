@@ -300,6 +300,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OrderBy(value="sequence")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(friendlyName = "featuredProductsTitle", order = 1000,
             tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
@@ -312,6 +313,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @OneToMany(mappedBy = "category", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "crossSaleProductsTitle", order = 2000,
             tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
             targetObjectProperty = "relatedSaleProduct",
@@ -323,6 +325,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @OneToMany(mappedBy = "category", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle", order = 3000,
             tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
             targetObjectProperty = "relatedSaleProduct",
