@@ -100,6 +100,10 @@ public class CriteriaTransferObject {
     public Map<String, FilterAndSortCriteria> getCriteriaMap() {
         return criteriaMap;
     }
+    
+    public void setCriteriaMap(Map<String, FilterAndSortCriteria> criteriaMap) {
+        this.criteriaMap = criteriaMap;
+    }
 
     public FilterAndSortCriteria get(String name) {
         if (criteriaMap.containsKey(name)) {
