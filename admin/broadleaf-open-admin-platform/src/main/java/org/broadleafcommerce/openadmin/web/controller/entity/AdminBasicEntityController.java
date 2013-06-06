@@ -38,6 +38,7 @@ import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationTyp
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -725,6 +726,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
 
             EntityForm entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap);
+            entityForm.removeAction(DefaultEntityFormActions.DELETE);
 
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/simpleEditEntity");
