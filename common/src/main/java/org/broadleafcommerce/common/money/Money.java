@@ -36,13 +36,17 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Money implements Serializable, Cloneable, Comparable<Money>, Externalizable {
     
     private static final long serialVersionUID = 1L;
 
+    @XmlElement
+    @XmlJavaTypeAdapter(value = BigDecimalRoundingAdapter.class)
     private BigDecimal amount;
 
+    @XmlElement
+    @XmlJavaTypeAdapter(CurrencyAdapter.class)
     private final Currency currency;
     
     public static final Money ZERO = new Money(BigDecimal.ZERO);
@@ -153,14 +157,10 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         this.amount = BankersRounding.setScale(amount, scale);
     }
 
-    @XmlElement
-    @XmlJavaTypeAdapter(value = BigDecimalRoundingAdapter.class)
     public BigDecimal getAmount() {
         return amount;
     }
 
-    @XmlElement
-    @XmlJavaTypeAdapter(CurrencyAdapter.class)
     public Currency getCurrency() {
         return currency;
     }
