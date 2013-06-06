@@ -25,7 +25,7 @@ import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.time.FixedTimeSource;
 import org.broadleafcommerce.common.time.SystemTime;
-import org.springframework.beans.factory.annotation.Value;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -77,9 +77,6 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      * Request attribute to store the current sandbox
      */
     public static String SANDBOX_VAR = "blSandbox";
-    
-    @Value("${use.session.for.request.processing}")
-    protected boolean useSessionInRequestProcessing;
 
     @Resource(name = "blSandBoxDao")
     private SandBoxDao sandBoxDao;
@@ -114,7 +111,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Removing sandbox from session.");
                 }
-                if (useSessionInRequestProcessing) {
+                if (BLCRequestUtils.isOKtoUseSession(request)) {
                     request.removeAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
                     request.removeAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
                 }
@@ -173,7 +170,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
             }
         }
 
-        if (useSessionInRequestProcessing) {
+        if (BLCRequestUtils.isOKtoUseSession(request)) {
             if (sandboxId == null) {
                 // check the session            
                 sandboxId = (Long) request.getAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
@@ -215,7 +212,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
             LOG.debug(e);
         }
 
-        if (useSessionInRequestProcessing) {
+        if (BLCRequestUtils.isOKtoUseSession(request)) {
             if (overrideTime == null) {
                 overrideTime = (Date) request.getAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
             } else {

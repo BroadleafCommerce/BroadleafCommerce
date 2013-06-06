@@ -44,7 +44,6 @@ import javax.servlet.http.HttpServletRequest;
  * User: Kelly Tisdell
  * Date: 4/18/12
  */
-@Deprecated
 public class RestApiCustomerStateFilter extends GenericFilterBean implements Ordered {
 
     @Resource(name="blCustomerService")
