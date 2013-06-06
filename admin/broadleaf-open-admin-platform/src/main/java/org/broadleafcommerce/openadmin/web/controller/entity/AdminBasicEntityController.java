@@ -59,15 +59,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to 
@@ -120,7 +119,20 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 canCreate = false;
             }
         }
-
+        if (canCreate) {
+            checkReadOnly: {
+                //check if all the metadata is read only
+                for (Property property : cmd.getProperties()) {
+                    if (property.getMetadata() instanceof BasicFieldMetadata) {
+                        if (((BasicFieldMetadata) property.getMetadata()).getReadOnly() == null ||
+                                !((BasicFieldMetadata) property.getMetadata()).getReadOnly()) {
+                            break checkReadOnly;
+                        }
+                    }
+                }
+                canCreate = false;
+            }
+        }
         if (canCreate) {
             mainActions.add(DefaultMainActions.ADD);
         }
