@@ -16,6 +16,14 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -46,6 +54,13 @@ import javax.persistence.UniqueConstraint;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(columnNames = {"CUSTOMER_ID", "PAYMENT_TOKEN"}))
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "billingAddress.addressLine1", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true))
+    }
+)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class CustomerPaymentImpl implements CustomerPayment {
 
     private static final long serialVersionUID = 1L;
@@ -65,6 +80,7 @@ public class CustomerPaymentImpl implements CustomerPayment {
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
+    @AdminPresentation(excluded = true)
     protected Customer customer;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = AddressImpl.class, optional = false)

@@ -20,6 +20,10 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -39,6 +43,12 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "PHONE_NAME" }))
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true))
+    }
+)
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class CustomerPhoneImpl implements CustomerPhone{
 
@@ -58,7 +68,8 @@ public class CustomerPhoneImpl implements CustomerPhone{
     protected Long id;
 
     @Column(name = "PHONE_NAME")
-    @AdminPresentation(friendlyName = "CustomerPhoneImpl_Phone_Name", order=1, group = "CustomerPhoneImpl_Identification", groupOrder = 1)
+    @AdminPresentation(friendlyName = "CustomerPhoneImpl_Phone_Name", order=1, group = "CustomerPhoneImpl_Identification",
+            groupOrder = 1, prominent = true, gridOrder = 1)
     protected String phoneName;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)

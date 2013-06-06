@@ -78,7 +78,7 @@ public class CustomerAddressImpl implements CustomerAddress {
 
     @Column(name = "ADDRESS_NAME")
     @AdminPresentation(friendlyName = "CustomerAddressImpl_Address_Name", order=1,
-            group = "CustomerAddressImpl_Identification", groupOrder = 1, prominent = true)
+            group = "CustomerAddressImpl_Identification", groupOrder = 1, prominent = true, gridOrder = 1)
     protected String addressName;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
