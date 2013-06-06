@@ -79,9 +79,11 @@ public class PaymentInfoDetailImpl implements PaymentInfoDetail, CurrencyCodeIde
     protected PaymentInfo paymentInfo;
 
     @Column(name = "PAYMENT_INFO_DETAIL_TYPE")
-    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Type", fieldType = SupportedFieldType.STRING,
+    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Type",
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.payment.domain.PaymentInfoDetailType",
             prominent = true, gridOrder = 1000)
-    protected PaymentInfoDetailType type;
+    protected String type;
 
     @Column(name = "PAYMENT_AMOUNT")
     @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Amount", fieldType = SupportedFieldType.MONEY,
@@ -119,12 +121,14 @@ public class PaymentInfoDetailImpl implements PaymentInfoDetail, CurrencyCodeIde
 
     @Override
     public PaymentInfoDetailType getType() {
-        return type;
+        return PaymentInfoDetailType.getInstance(type);
     }
 
     @Override
     public void setType(PaymentInfoDetailType type) {
-        this.type = type;
+        if (type != null) {
+            this.type = type.getType();
+        }
     }
 
     @Override
