@@ -428,7 +428,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 fieldMetadataOverride.setReadOnly(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
                                         Boolean.parseBoolean(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.REQUIREDOVERRIDE)) {
-                fieldMetadataOverride.setRequiredOverride(RequiredOverride.REQUIRED==RequiredOverride.valueOf(stringValue));
+                if (RequiredOverride.IGNORED!=RequiredOverride.valueOf(stringValue)) {
+                    fieldMetadataOverride.setRequiredOverride(RequiredOverride.REQUIRED==RequiredOverride.valueOf(stringValue));
+                }
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.EXCLUDED)) {
                 fieldMetadataOverride.setExcluded(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
                                         Boolean.parseBoolean(stringValue));
@@ -498,7 +500,6 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setCurrencyCodeField(annot.currencyCodeField());
             override.setRuleIdentifier(annot.ruleIdentifier());
             override.setTranslatable(annot.translatable());
-            override.setRequiredOverride(RequiredOverride.REQUIRED==annot.requiredOverride());
 
             if (annot.validationConfigurations().length != 0) {
                 processValidationAnnotations(annot.validationConfigurations(), override);

@@ -285,7 +285,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 if (persistenceManager.getDynamicEntityDao().getStandardEntityManager().contains(instance)) {
                     persistenceManager.getDynamicEntityDao().refresh(instance);
                 }
-                throw new ValidationException(entity, "The entity has failed validation");
+                List<Serializable> entityList = new ArrayList<Serializable>(1);
+                entityList.add(instance);
+                Entity invalid = getRecords(mergedProperties, entityList, null, null)[0];
+                invalid.setValidationErrors(entity.getValidationErrors());
+                throw new ValidationException(invalid, "The entity has failed validation");
             }
             else {
                 fieldManager.persistMiddleEntities();
