@@ -82,7 +82,7 @@ public class StructuredContentCartRuleProcessor extends AbstractStructuredConten
         Iterator<OrderItem> items = orderItems.iterator();
         while (foundCount < itemCriteria.getQty() && items.hasNext()) {
             OrderItem currentItem = items.next();
-            vars.put("discreteOrderItem", currentItem);
+            vars.put("orderItem", currentItem);
             boolean match = executeExpression(itemCriteria.getMatchRule(), vars);
 
             if (match) {
