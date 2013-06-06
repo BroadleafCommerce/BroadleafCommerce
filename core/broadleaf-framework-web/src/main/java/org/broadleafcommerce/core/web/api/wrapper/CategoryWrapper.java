@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -31,6 +32,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *  This is a JAXB wrapper for a Broadleaf Category.  There may be several reasons to extend this class.
@@ -58,9 +60,11 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
     protected String urlKey;
 
     @XmlElement
+    @XmlJavaTypeAdapter(ISO8601DateAdapter.class)
     protected Date activeStartDate;
 
     @XmlElement
+    @XmlJavaTypeAdapter(ISO8601DateAdapter.class)
     protected Date activeEndDate;
 
     @XmlElement(name = "category")

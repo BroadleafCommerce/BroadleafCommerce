@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
@@ -33,6 +34,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * This is a JAXB wrapper around Product.
@@ -48,9 +50,11 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
     protected ProductSummaryWrapper productSummary;
 
     @XmlElement
+    @XmlJavaTypeAdapter(ISO8601DateAdapter.class)
     protected Date activeStartDate;
 
     @XmlElement
+    @XmlJavaTypeAdapter(ISO8601DateAdapter.class)
     protected Date activeEndDate;
 
     @XmlElement

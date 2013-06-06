@@ -17,14 +17,17 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Date;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * This is a JAXB wrapper to wrap Sku.
@@ -40,9 +43,11 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
     protected Long id;
 
     @XmlElement
+    @XmlJavaTypeAdapter(ISO8601DateAdapter.class)
     protected Date activeStartDate;
 
     @XmlElement
+    @XmlJavaTypeAdapter(ISO8601DateAdapter.class)
     protected Date activeEndDate;
 
     @XmlElement
