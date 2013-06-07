@@ -165,9 +165,17 @@ var BLCAdmin = (function($) {
     	initializeModalButtons : function($data) {
             var $buttonDiv = $data.find('div.entity-form-actions');
             if ($buttonDiv.length > 0) {
-                var $footer = $('<div>', { 'class' : 'modal-footer' });
+                var $footer = $data.find('div.modal-footer');
+                var append = false;
+                if (!$footer.length) {
+                    $footer = $('<div>', { 'class' : 'modal-footer' });
+                    append = true;
+                }
                 $buttonDiv.remove().appendTo($footer);
-                $data.append($footer);
+                
+                if (append) {
+                    $data.append($footer);
+                }
             }
     	},
     	
