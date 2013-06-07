@@ -34,6 +34,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class OfferWrapper extends BaseWrapper implements APIWrapper<Offer> {
 
     @XmlElement
+    protected Long offerId;
+
+    @XmlElement
     protected String marketingMessage;;
 
     @XmlElement

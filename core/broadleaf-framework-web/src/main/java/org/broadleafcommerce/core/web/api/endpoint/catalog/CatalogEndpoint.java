@@ -290,15 +290,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             Long id,
             int limit,
             int offset) {
-        Category category = catalogService.findCategoryById(id);
-        if (category != null) {
-            List<Category> categories = catalogService.findActiveSubCategoriesByCategory(category, limit, offset);
-            CategoriesWrapper wrapper = (CategoriesWrapper)context.getBean(CategoriesWrapper.class.getName());
-            wrapper.wrap(categories, request);
-            return wrapper;
-        }
-
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
+        return findSubCategories(request, id, limit, offset, true);
     }
 
     public CategoryWrapper findCategoryById(HttpServletRequest request,
@@ -333,7 +325,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
      * @param subcategoryOffset
      * @return
      */
-    public CategoryWrapper findCategoryIdOrName(HttpServletRequest request,
+    public CategoryWrapper findCategoryByIdOrName(HttpServletRequest request,
             String searchParameter,
             int productLimit,
             int productOffset,

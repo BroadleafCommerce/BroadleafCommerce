@@ -24,7 +24,6 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -67,19 +66,19 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
 
     @XmlElement(name = "orderItem")
     @XmlElementWrapper(name = "orderItems")
-    protected List<OrderItemWrapper> orderItems = new LinkedList<OrderItemWrapper>();
+    protected List<OrderItemWrapper> orderItems;
 
     @XmlElement(name = "fulfillmentGroup")
     @XmlElementWrapper(name = "fulfillmentGroups")
-    protected List<FulfillmentGroupWrapper> fulfillmentGroups = new LinkedList<FulfillmentGroupWrapper>();
+    protected List<FulfillmentGroupWrapper> fulfillmentGroups;
 
     @XmlElement(name = "paymentInfo")
     @XmlElementWrapper(name = "paymentInfos")
-    protected List<PaymentInfoWrapper> paymentInfos = new LinkedList<PaymentInfoWrapper>();
+    protected List<PaymentInfoWrapper> paymentInfos;
 
     @XmlElement(name = "orderAdjustments")
     @XmlElementWrapper(name = "orderAdjustments")
-    protected List<OrderAdjustmentWrapper> orderAdjustments = new LinkedList<OrderAdjustmentWrapper>();
+    protected List<OrderAdjustmentWrapper> orderAdjustments;
 
     @Override
     public void wrap(Order model, HttpServletRequest request) {

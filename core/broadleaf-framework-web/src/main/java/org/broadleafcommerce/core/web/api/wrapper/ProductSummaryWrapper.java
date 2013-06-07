@@ -56,6 +56,9 @@ public class ProductSummaryWrapper extends BaseWrapper implements APIWrapper<Pro
     @XmlElement
     protected MediaWrapper primaryMedia;
 
+    @XmlElement
+    protected Boolean active;
+
     @XmlElement(name = "productOption")
     @XmlElementWrapper(name = "productOptions")
     protected List<ProductOptionWrapper> productOptions;
@@ -68,6 +71,7 @@ public class ProductSummaryWrapper extends BaseWrapper implements APIWrapper<Pro
         this.longDescripion = model.getLongDescription();
         this.retailPrice = model.getDefaultSku().getRetailPrice();
         this.salePrice = model.getDefaultSku().getSalePrice();
+        this.active = model.isActive();
 
         if (model.getProductOptions() != null && !model.getProductOptions().isEmpty()) {
             this.productOptions = new ArrayList<ProductOptionWrapper>();

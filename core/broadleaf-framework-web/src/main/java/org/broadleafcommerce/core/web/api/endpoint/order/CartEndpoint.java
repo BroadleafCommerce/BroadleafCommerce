@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.api.endpoint.order;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
@@ -147,20 +148,15 @@ public abstract class CartEndpoint extends BaseEndpoint {
                 Set<String> keySet = multiValuedMap.keySet();
                 for (String key : keySet) {
                     if (multiValuedMap.getFirst(key) != null) {
-                        productOptions.put(key, multiValuedMap.getFirst(key));
+                        //Product options should be returned with "productOption." as a prefix. We'll look for those, and 
+                        //remove the prefix.
+                        if (key.startsWith("productOption.")) {
+                            productOptions.put(StringUtils.removeStart(key, "productOption."), multiValuedMap.getFirst(key));
+                        }
                     }
                 }
 
-                //Remove the items from the map that represent the other query params of the request
-                //Essentially these can't be used as product option names...
-                productOptions.remove("categoryId");
-                productOptions.remove("productId");
-                productOptions.remove("skuId");
-                productOptions.remove("quantity");
-                productOptions.remove("priceOrder");
-
                 OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
-                orderItemRequestDTO.setCategoryId(categoryId);
                 orderItemRequestDTO.setProductId(productId);
                 orderItemRequestDTO.setCategoryId(categoryId);
                 orderItemRequestDTO.setQuantity(quantity);
@@ -353,5 +349,4 @@ public abstract class CartEndpoint extends BaseEndpoint {
         }
         
     }
-
 }

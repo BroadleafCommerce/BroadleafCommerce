@@ -16,17 +16,25 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.service.SearchService;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -113,22 +121,29 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
         }
 
         if (productLimit != null && productOffset != null) {
+            SearchService searchService = (SearchService) context.getBean("blSearchService");
+            ProductSearchCriteria searchCriteria = new ProductSearchCriteria();
+            searchCriteria.setPage(productOffset);
+            searchCriteria.setPageSize(productLimit);
+            searchCriteria.setFilterCriteria(new HashMap<String, String[]>());
+            try {
+                ProductSearchResult result = searchService.findExplicitProductsByCategory(category, searchCriteria);
+                List<Product> productList = result.getProducts();
+                if (productList != null && !productList.isEmpty()) {
+                    if (products == null) {
+                        products = new ArrayList<ProductSummaryWrapper>();
+                    }
 
-            CatalogService catalogService = (CatalogService) context.getBean("blCatalogService");
-
-            List<Product> productList = catalogService.findProductsForCategory(category, productLimit, productOffset);
-            if (productList != null && !productList.isEmpty()) {
-                if (products == null) {
-                    products = new ArrayList<ProductSummaryWrapper>();
+                    for (Product p : productList) {
+                        ProductSummaryWrapper productSummaryWrapper = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
+                        productSummaryWrapper.wrap(p, request);
+                        products.add(productSummaryWrapper);
+                    }
                 }
-
-                for (Product p: productList) {
-                    ProductSummaryWrapper productSummaryWrapper = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
-                    productSummaryWrapper.wrap(p, request);
-                    products.add(productSummaryWrapper);
-                }
+            } catch (ServiceException e) {
+                throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .type(MediaType.TEXT_PLAIN).entity("An unexpected error occured  " + e.getMessage()).build());
             }
-
         }
 
         if (subcategoryLimit != null && subcategoryOffset != null) {
@@ -143,7 +158,7 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
         Integer subcategoryLimit = (Integer) request.getAttribute("subcategoryLimit");
         Integer subcategoryOffset = (Integer) request.getAttribute("subcategoryOffset");
 
-        List<Category> subcategories = catalogService.findAllSubCategories(root, subcategoryLimit, subcategoryOffset);
+        List<Category> subcategories = catalogService.findActiveSubCategoriesByCategory(root, subcategoryLimit, subcategoryOffset);
         if (subcategories !=null && !subcategories.isEmpty() && wrappers == null) {
             wrappers = new ArrayList<CategorySummaryWrapper>();
         }

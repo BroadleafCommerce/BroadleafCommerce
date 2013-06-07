@@ -57,7 +57,7 @@ public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<Prod
     
     @Override
     public void wrap(ProductOption model, HttpServletRequest request) {
-        this.attributeName = model.getAttributeName();
+        this.attributeName = "productOption." + model.getAttributeName();
         this.label = model.getLabel();
         this.required = model.getRequired();
         if (model.getType() != null) {

@@ -37,11 +37,15 @@ public class CategorySummaryWrapper extends BaseWrapper implements APIWrapper<Ca
     @XmlElement
     protected String description;
 
+    @XmlElement
+    protected Boolean active;
+
     @Override
     public void wrap(Category model, HttpServletRequest request) {
         this.id = model.getId();
         this.name = model.getName();
         this.description = model.getDescription();
+        this.active = model.isActive();
     }
 
 }
