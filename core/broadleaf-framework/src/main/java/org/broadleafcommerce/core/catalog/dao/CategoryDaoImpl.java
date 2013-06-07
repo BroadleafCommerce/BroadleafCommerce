@@ -18,14 +18,12 @@ package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -50,9 +48,6 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-
-    protected Long currentDateResolution = 10000L;
-    private Date currentDate = SystemTime.asDate();
 
     @Override
     public Category save(Category category) {
@@ -158,21 +153,10 @@ public class CategoryDaoImpl implements CategoryDao {
         return query.getResultList();
     }
 
+    @Override
     public List<Category> readActiveSubCategoriesByCategory(Category category) {
-        Date myDate;
-        Long myCurrentDateResolution = currentDateResolution;
-        synchronized (this) {
-            Date now = SystemTime.asDate();
-            if (now.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
-                currentDate = new Date(now.getTime());
-                myDate = currentDate;
-            } else {
-                myDate = currentDate;
-            }
-        }
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
         query.setParameter("defaultParentCategory", category);
-        query.setParameter("currentDate", myDate);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
@@ -181,20 +165,8 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Override
     public List<Category> readActiveSubCategoriesByCategory(Category category, int limit, int offset) {
-        Date myDate;
-        Long myCurrentDateResolution = currentDateResolution;
-        synchronized (this) {
-            Date now = SystemTime.asDate();
-            if (now.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
-                currentDate = new Date(now.getTime());
-                myDate = currentDate;
-            } else {
-                myDate = currentDate;
-            }
-        }
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
         query.setParameter("defaultParentCategory", category);
-        query.setParameter("currentDate", myDate);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
 
@@ -216,14 +188,6 @@ public class CategoryDaoImpl implements CategoryDao {
         return (Category) entityConfiguration.createEntityInstance(Category.class.getName());
     }
 
-    public Long getCurrentDateResolution() {
-        return currentDateResolution;
-    }
-
-    public void setCurrentDateResolution(Long currentDateResolution) {
-        this.currentDateResolution = currentDateResolution;
-    }
-
     @Override
     public Category findCategoryByURI(String uri) {
         Query query;
@@ -231,7 +195,7 @@ public class CategoryDaoImpl implements CategoryDao {
         query.setParameter("url", uri);
 
         @SuppressWarnings("unchecked")
-        List<Category> results = (List<Category>) query.getResultList();
+        List<Category> results = query.getResultList();
         if (results != null && !results.isEmpty()) {
             return results.get(0);
 
