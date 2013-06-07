@@ -37,7 +37,9 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SimpleValueMapStructure;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
+import org.broadleafcommerce.openadmin.server.service.persistence.validation.RequiredPropertyValidator;
 import org.hibernate.mapping.PersistentClass;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -243,6 +245,11 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(entity.getType()[0],
                 persistencePerspective);
             String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();
+            if (StringUtils.isEmpty(mapKey)) {
+                entity.addValidationError(mapStructure.getKeyPropertyName(), RequiredPropertyValidator.ERROR_MESSAGE);
+                throw new ValidationException(entity, "This entity failed validation on the 'key' property");
+            }
+            
             if (ceilingMergedProperties.containsKey(mapStructure.getMapProperty() + FieldManager.MAPFIELDSEPARATOR + mapKey)) {
                 throw new ServiceException("\"" + mapKey + "\" is a reserved property name.");
             }

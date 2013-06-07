@@ -36,6 +36,8 @@ import java.util.Map;
 @Component("blRequiredPropertyValidator")
 public class RequiredPropertyValidator implements PropertyValidator {
 
+    public static String ERROR_MESSAGE = "requiredValidationFailure";
+    
     @Override
     public PropertyValidationResult validate(Entity entity,
                             Serializable instance,
@@ -49,7 +51,7 @@ public class RequiredPropertyValidator implements PropertyValidator {
             required = propertyMetadata.getRequiredOverride();
         }
         boolean valid = required && StringUtils.isEmpty(value) ? false : true;
-        return new PropertyValidationResult(valid, "This field is required");
+        return new PropertyValidationResult(valid, ERROR_MESSAGE);
     }
 
 }
