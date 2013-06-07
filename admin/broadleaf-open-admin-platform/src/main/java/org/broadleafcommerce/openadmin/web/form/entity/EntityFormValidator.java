@@ -18,6 +18,7 @@ package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
+import org.broadleafcommerce.openadmin.server.service.JSCompatibilityHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
@@ -45,7 +46,8 @@ public class EntityFormValidator {
             result = false;
             for (Map.Entry<String, List<String>> propertyErrors : entity.getValidationErrors().entrySet()) {
                 for (String errorMessage : propertyErrors.getValue()) {
-                    errors.rejectValue(String.format("fields[%s].value", propertyErrors.getKey()), errorMessage, errorMessage);
+                    String serializedFieldName = JSCompatibilityHelper.encode(propertyErrors.getKey());
+                    errors.rejectValue(String.format("fields[%s].value", serializedFieldName), errorMessage, errorMessage);
                 }
             }
         }
