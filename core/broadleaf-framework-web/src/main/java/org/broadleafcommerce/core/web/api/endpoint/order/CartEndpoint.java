@@ -130,8 +130,8 @@ public abstract class CartEndpoint extends BaseEndpoint {
      */
     public OrderWrapper addProductToOrder(HttpServletRequest request,
             UriInfo uriInfo,
-            Long categoryId,
             Long productId,
+            Long categoryId,
             int quantity,
             boolean priceOrder) {
         
