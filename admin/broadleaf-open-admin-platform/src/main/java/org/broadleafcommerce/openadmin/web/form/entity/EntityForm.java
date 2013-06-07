@@ -97,6 +97,11 @@ public class EntityForm {
         return fields;
     }
     
+    /**
+     * Clears out the cached 'fields' variable which is used to render the form on the frontend. Use this method
+     * if you want to force the entityForm to rebuild itself based on the tabs and groups that have been assigned and 
+     * populated
+     */
     public void clearFieldsMap() {
         fields = null;
     }
