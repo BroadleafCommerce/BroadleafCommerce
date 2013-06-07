@@ -7,40 +7,40 @@
     <named-query name="BC_READ_ALL_CATEGORIES">
         <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category 
         WHERE category.archiveStatus.archived IS NULL OR category.archiveStatus.archived = 'N' 
-        AND (category.activeStartDate IS NULL OR category.activeStartDate &gt; CURRENT_TIMESTAMP) 
-        AND (category.activeEndDate IS NULL OR category.activeEndDate &lt; CURRENT_TIMESTAMP)</query>
+        AND (category.activeStartDate IS NULL OR category.activeStartDate &lt; CURRENT_TIMESTAMP)
+        AND (category.activeEndDate IS NULL OR category.activeEndDate &gt; CURRENT_TIMESTAMP)</query>
     </named-query>
 
     <named-query name="BC_READ_CATEGORY_BY_NAME">
         <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
         WHERE category.name = :categoryName 
         AND (category.archiveStatus.archived IS NULL OR category.archiveStatus.archived = 'N') 
-        AND (category.activeStartDate IS NULL OR category.activeStartDate &gt; CURRENT_TIMESTAMP) 
-        AND (category.activeEndDate IS NULL OR category.activeEndDate &lt; CURRENT_TIMESTAMP)</query>
+        AND (category.activeStartDate IS NULL OR category.activeStartDate &lt; CURRENT_TIMESTAMP)
+        AND (category.activeEndDate IS NULL OR category.activeEndDate &gt; CURRENT_TIMESTAMP)</query>
     </named-query>
 
     <named-query name="BC_READ_ALL_SUBCATEGORIES">
         <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
         WHERE category.defaultParentCategory = :defaultParentCategory 
         AND (category.archiveStatus.archived IS NULL OR category.archiveStatus.archived = 'N') 
-        AND (category.activeStartDate IS NULL OR category.activeStartDate &gt; CURRENT_TIMESTAMP) 
-        AND (category.activeEndDate IS NULL OR category.activeEndDate &lt; CURRENT_TIMESTAMP)</query>
+        AND (category.activeStartDate IS NULL OR category.activeStartDate &lt; CURRENT_TIMESTAMP)
+        AND (category.activeEndDate IS NULL OR category.activeEndDate &gt; CURRENT_TIMESTAMP)</query>
     </named-query>
 
     <named-query name="BC_READ_CATEGORY_BY_URL_KEY">
         <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
         WHERE category.urlKey = :urlKey 
         AND (category.archiveStatus.archived IS NULL OR category.archiveStatus.archived = 'N') 
-        AND (category.activeStartDate IS NULL OR category.activeStartDate &gt; CURRENT_TIMESTAMP) 
-        AND (category.activeEndDate IS NULL OR category.activeEndDate &lt; CURRENT_TIMESTAMP)</query>
+        AND (category.activeStartDate IS NULL OR category.activeStartDate &lt; CURRENT_TIMESTAMP)
+        AND (category.activeEndDate IS NULL OR category.activeEndDate &gt; CURRENT_TIMESTAMP)</query>
     </named-query>
 
     <named-query name="BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY" >
         <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
         WHERE category.defaultParentCategory.id = :defaultParentCategoryId
         AND (category.archiveStatus.archived IS NULL OR category.archiveStatus.archived = 'N') 
-        AND (category.activeStartDate IS NULL OR category.activeStartDate &gt; CURRENT_TIMESTAMP) 
-        AND (category.activeEndDate IS NULL OR category.activeEndDate &lt; CURRENT_TIMESTAMP)
+        AND (category.activeStartDate IS NULL OR category.activeStartDate &lt; CURRENT_TIMESTAMP)
+        AND (category.activeEndDate IS NULL OR category.activeEndDate &gt; CURRENT_TIMESTAMP)
         </query>
     </named-query>
 
@@ -49,8 +49,8 @@
                FROM org.broadleafcommerce.core.catalog.domain.Category category
                WHERE category.url = :url 
                AND (category.archiveStatus.archived IS NULL OR category.archiveStatus.archived = 'N')
-               AND (category.activeStartDate IS NULL OR category.activeStartDate &gt; CURRENT_TIMESTAMP) 
-               AND (category.activeEndDate IS NULL OR category.activeEndDate &lt; CURRENT_TIMESTAMP)
+               AND (category.activeStartDate IS NULL OR category.activeStartDate &lt; CURRENT_TIMESTAMP)
+               AND (category.activeEndDate IS NULL OR category.activeEndDate &gt; CURRENT_TIMESTAMP)
         </query>
     </named-query>
 </entity-mappings>
