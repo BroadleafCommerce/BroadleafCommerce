@@ -166,7 +166,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readActiveSubCategoriesByCategory(Category category, int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
-        query.setParameter("defaultParentCategory", category);
+        query.setParameter("defaultParentCategoryId", category.getId());
         query.setFirstResult(offset);
         query.setMaxResults(limit);
 
