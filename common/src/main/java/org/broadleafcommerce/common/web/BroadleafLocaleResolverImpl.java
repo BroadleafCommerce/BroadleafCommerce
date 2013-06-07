@@ -47,6 +47,12 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
      */
     public static String LOCALE_CODE_PARAM = "blLocaleCode";
 
+    /**
+     * Attribute indicating that the LOCALE was pulled from session.   Other filters may want to 
+     * behave differently if this is the case.
+     */
+    public static String LOCALE_PULLED_FROM_SESSION = "blLocalePulledFromSession";
+
     @Resource(name = "blLocaleService")
     private LocaleService localeService;
 
@@ -80,6 +86,11 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Attempt to find locale from session resulted in " + locale);
             }
+
+            if (locale != null) {
+                request.setAttribute(LOCALE_PULLED_FROM_SESSION, Boolean.TRUE, WebRequest.SCOPE_REQUEST);
+            }
+
         }
 
         // Finally, use the default
