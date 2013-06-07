@@ -826,4 +826,10 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             public static final int DISCOUNTALLOWED = 3000;
         }
     }
+
+    @Override
+    public boolean isSkuActive() {
+        //abstract method, by default return true
+        return true;
+    }
 }

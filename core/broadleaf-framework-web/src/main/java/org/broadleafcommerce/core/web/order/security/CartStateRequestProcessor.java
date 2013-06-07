@@ -62,7 +62,7 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
     @Resource(name = "blUpdateCartService")
     protected UpdateCartService updateCartService;
 
-    private static String cartRequestAttributeName = "cart";
+    protected static String cartRequestAttributeName = "cart";
 
     @Override
     public void process(WebRequest request) {

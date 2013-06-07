@@ -454,4 +454,10 @@ public interface OrderItem extends Serializable, Cloneable {
      */
     Money getTotalPriceBeforeAdjustments(boolean allowSalesPrice);
 
+    /**
+     * Returns a boolean indicating whether this sku is active.  This is used to determine whether a user
+     * the sku can add the sku to their cart.
+     */
+    public boolean isSkuActive();
+
 }

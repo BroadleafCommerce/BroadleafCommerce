@@ -181,8 +181,12 @@ public abstract class CartEndpoint extends BaseEndpoint {
                 throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                         .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the order.").build());
             } catch (AddToCartException e) {
+                if (e.getCause() != null) {
+                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .type(MediaType.TEXT_PLAIN).entity("" + e.getCause()).build());
+                }
                 throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured adding the item to the cart.").build());
+                        .type(MediaType.TEXT_PLAIN).entity("An error occured adding the item to the cart." + e.getCause()).build());
             }
         }
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)

@@ -106,4 +106,9 @@ public interface DiscreteOrderItem extends OrderItem, SkuAccessor, Cloneable {
      */
     public BundleOrderItem findParentItem();
 
+    /**
+     * Returns a boolean indicating whether this sku is active.  This is used to determine whether a user
+     * the sku can add the sku to their cart.
+     */
+    public boolean isSkuActive();
 }

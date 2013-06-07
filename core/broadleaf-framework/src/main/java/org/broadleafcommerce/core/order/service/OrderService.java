@@ -480,4 +480,6 @@ public interface OrderService {
 
     public void deleteOrder(Order cart);
 
+    Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException;
+
 }

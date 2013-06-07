@@ -385,6 +385,19 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     @Override
+    public boolean isSkuActive() {
+        if (getSku() != null && !getSku().isActive()) {
+            return false;
+        }
+        for (DiscreteOrderItem discreteItem : getDiscreteOrderItems()) {
+            if (!discreteItem.isSkuActive()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public OrderItem clone() {
         BundleOrderItemImpl orderItem = (BundleOrderItemImpl) super.clone();
         if (discreteOrderItems != null) {

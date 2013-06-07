@@ -567,6 +567,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(value = "blTransactionManager", rollbackFor = { RemoveFromCartException.class })
+    public Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException {
+        Order order = findOrderById(orderId);
+        try {
+
+            for (OrderItem currentItem : new ArrayList<OrderItem>(order.getOrderItems())) {
+                if (!currentItem.isSkuActive()) {
+                    removeItem(orderId, currentItem.getId(), priceOrder);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RemoveFromCartException("Could not remove from cart", e.getCause());
+        }
+        return findOrderById(orderId);
+    }
+
+    @Override
     public boolean getAutomaticallyMergeLikeItems() {
         return automaticallyMergeLikeItems;
     }
