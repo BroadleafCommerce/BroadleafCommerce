@@ -103,6 +103,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
         this.id = model.getId();
         this.name = model.getName();
         this.quantity = model.getQuantity();
+        this.orderId = model.getOrder().getId();
 
         if (model.getCategory() != null) {
             CategorySummaryWrapper categoryWrapper = (CategorySummaryWrapper) context.getBean(CategorySummaryWrapper.class.getName());
@@ -110,10 +111,8 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
             this.category = categoryWrapper;
         }
 
-        this.orderId = model.getOrder().getId();
-        
-        Map<String, OrderItemAttribute> itemAttributes = model.getOrderItemAttributes();
-        if (itemAttributes != null && ! itemAttributes.isEmpty()) {
+        if (model.getOrderItemAttributes() != null && !model.getOrderItemAttributes().isEmpty()) {
+            Map<String, OrderItemAttribute> itemAttributes = model.getOrderItemAttributes();
             this.orderItemAttributes = new ArrayList<OrderItemAttributeWrapper>();
             Set<String> keys = itemAttributes.keySet();
             for (String key : keys) {

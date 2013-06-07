@@ -116,12 +116,15 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
             }
         }
 
-        this.orderAdjustments = new ArrayList<OrderAdjustmentWrapper>();
-        for (OrderAdjustment orderAdjustment : model.getOrderAdjustments()) {
-            OrderAdjustmentWrapper orderItemWrapper = (OrderAdjustmentWrapper) context.getBean(OrderAdjustmentWrapper.class.getName());
-            orderItemWrapper.wrap(orderAdjustment, request);
-            this.orderAdjustments.add(orderItemWrapper);
+        if (model.getOrderAdjustments() != null && !model.getOrderAdjustments().isEmpty()) {
+            this.orderAdjustments = new ArrayList<OrderAdjustmentWrapper>();
+            for (OrderAdjustment orderAdjustment : model.getOrderAdjustments()) {
+                OrderAdjustmentWrapper orderItemWrapper = (OrderAdjustmentWrapper) context.getBean(OrderAdjustmentWrapper.class.getName());
+                orderItemWrapper.wrap(orderAdjustment, request);
+                this.orderAdjustments.add(orderItemWrapper);
+            }
         }
+
         CustomerWrapper customerWrapper = (CustomerWrapper) context.getBean(CustomerWrapper.class.getName());
         customerWrapper.wrap(model.getCustomer(), request);
         this.customer = customerWrapper;
