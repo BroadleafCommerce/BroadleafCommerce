@@ -28,14 +28,14 @@ public class Property implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
-    private String name;
-    private String value;
-    private String displayValue;
-    private FieldMetadata metadata = new BasicFieldMetadata();
-    private boolean isAdvancedCollection = false;
-    private Boolean isDirty = false;
-    private String unHtmlEncodedValue;
-    private String rawValue;
+    protected String name;
+    protected String value;
+    protected String displayValue;
+    protected FieldMetadata metadata = new BasicFieldMetadata();
+    protected boolean isAdvancedCollection = false;
+    protected Boolean isDirty = false;
+    protected String unHtmlEncodedValue;
+    protected String rawValue;
 
     public String getName() {
         return name;
@@ -99,6 +99,11 @@ public class Property implements Serializable {
 
     public void setAdvancedCollection(boolean advancedCollection) {
         isAdvancedCollection = advancedCollection;
+    }
+    
+    @Override
+    public String toString() {
+        return getName() + ": " + getValue();
     }
 
     @Override
