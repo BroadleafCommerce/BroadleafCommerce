@@ -188,24 +188,7 @@ public interface CategoryDao {
     @Nonnull
     public List<Category> readActiveSubCategoriesByCategory(@Nonnull Category category, @Nonnull int limit, @Nonnull int offset);
 
-    /**
-     * Retrieve the value in milliseconds for how long the current data/time is cached when performing
-     * an active category query. By caching the current date/time, the same query can be generated
-     * repeatedly, which allows the query cache to be utilized. The default value is 10000 milliseconds.
-     *
-     * @return the value in milliseconds for how long the current date/time is cached
-     */
     @Nonnull
-    public Long getCurrentDateResolution();
-
-    /**
-     * Set the value in milliseconds for how long the current date/time is cached when performing
-     * an active category query. The default value is 10000 milliseconds.
-     *
-     * @param currentDateResolution the value in milliseconds for how long the current date/time is cached
-     */
-    public void setCurrentDateResolution(@Nonnull  Long currentDateResolution);
-    @Nonnull
-    Category findCategoryByURI(String uri);
+    public Category findCategoryByURI(String uri);
 
 }
