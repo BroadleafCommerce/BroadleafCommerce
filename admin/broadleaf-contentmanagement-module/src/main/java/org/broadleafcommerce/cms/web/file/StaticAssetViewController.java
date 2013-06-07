@@ -29,6 +29,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +44,12 @@ public class StaticAssetViewController extends AbstractController {
     private static final String SANDBOX_ID_VAR = "blSandboxId";
     private String assetServerUrlPrefix;
     private String viewResolverName;
+
+    @PostConstruct
+    public void init() {
+        //allow static assets to be cached
+        setCacheSeconds(-1);
+    }
 
     @Resource(name="blStaticAssetStorageService")
     protected StaticAssetStorageService staticAssetStorageService;
