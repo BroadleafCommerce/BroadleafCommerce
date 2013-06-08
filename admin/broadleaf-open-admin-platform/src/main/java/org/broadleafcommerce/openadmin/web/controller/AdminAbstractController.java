@@ -83,7 +83,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     protected EntityConfiguration entityConfiguration;
 
     @Resource(name = "blEntityFormValidator")
-    protected EntityFormValidator entityValidator;
+    protected EntityFormValidator entityFormValidator;
     
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;

@@ -443,7 +443,7 @@ $(document).ready(function() {
                             if (isAdornedModal) {
                                 $contentTabs = $newForm.closest('.modal-body').find('> ul.tabs-content > li');
                             } else {
-                                $contentTabs = $newForm.find('ul.tabs-content li')
+                                $contentTabs = $newForm.find('> ul.tabs-content > li')
                             }
                             $contentTabs.removeClass('active');
                             $($contentTabs[tabIndex]).addClass('active').css('display', 'block');

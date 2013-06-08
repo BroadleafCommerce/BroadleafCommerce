@@ -231,13 +231,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
 
         Entity entity = service.addEntity(entityForm, getSectionCustomCriteria());
-        entityValidator.validate(entityForm, entity, result);
+        entityFormValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
             ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(entityForm.getEntityType()));
             entityForm.clearFieldsMap();
             //TODO: this is currently removing valid properties (ones that came across the wire as null)
-            formService.populateEntityForm(cmd, entity, entityForm);
+            formService.populateEntityForm(cmd, entity, entityForm, false);
 
             formService.removeNonApplicableFields(cmd, entityForm, entityForm.getEntityType());
 
@@ -381,7 +381,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria());
         
-        entityValidator.validate(entityForm, entity, result);
+        entityFormValidator.validate(entityForm, entity, result);
         if (result.hasErrors()) {
             Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
             ClassMetadata cmd = service.getClassMetadata(ppr);
@@ -634,7 +634,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         
         // First, we must save the collection entity
         Entity savedEntity = service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity);
-        entityValidator.validate(entityForm, savedEntity, result);
+        entityFormValidator.validate(entityForm, savedEntity, result);
         
         if (result.hasErrors()) {
             FieldMetadata md = collectionProperty.getMetadata();
@@ -809,9 +809,30 @@ public class AdminBasicEntityController extends AdminAbstractController {
         
         return returnPath;
     }
-
+    
     protected String showViewUpdateCollection(HttpServletRequest request, Model model, Map<String, String> pathVars,
             String id, String collectionField, String collectionItemId, String modalHeaderType) throws ServiceException {
+        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, modalHeaderType, null, null);
+    }
+
+    /**
+     * Shows the view and populates the model for updating a collection item. You can also pass in an entityform and entity
+     * which are optional. If they are not passed in then they are automatically looked up
+     * 
+     * @param request
+     * @param model
+     * @param pathVars
+     * @param id
+     * @param collectionField
+     * @param collectionItemId
+     * @param modalHeaderType
+     * @param ef
+     * @param entity
+     * @return
+     * @throws ServiceException
+     */
+    protected String showViewUpdateCollection(HttpServletRequest request, Model model, Map<String, String> pathVars,
+            String id, String collectionField, String collectionItemId, String modalHeaderType, EntityForm entityForm, Entity entity) throws ServiceException {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
@@ -828,11 +849,18 @@ public class AdminBasicEntityController extends AdminAbstractController {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-            Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true);
+            if (entity == null) {
+                entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true);
+            }
 
             Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
-
-            EntityForm entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap);
+            if (entityForm == null) {
+                entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap);
+            } else {
+                formService.populateEntityForm(collectionMetadata, entity, subRecordsMap, entityForm, true);
+                //remove all the actions since we're not trying to redisplay them on the form
+                entityForm.removeAllActions();
+            }
             entityForm.removeAction(DefaultEntityFormActions.DELETE);
 
             model.addAttribute("entityForm", entityForm);
@@ -841,9 +869,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 ((AdornedTargetCollectionMetadata) md).getMaintainedAdornedTargetFields().length > 0) {
             AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) md;
 
-            EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
-            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
-                    collectionItemId);
+            //EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
+            //Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
+            //        collectionItemId);
 
             formService.populateEntityFormFields(entityForm, entity);
             formService.populateAdornedEntityFormFields(entityForm, entity, ppr.getAdornedList());
@@ -854,9 +882,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
             MapMetadata fmd = (MapMetadata) md;
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-            Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
-                    collectionItemId);
-            EntityForm entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
+            //Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
+            //        collectionItemId);
+            //EntityForm entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
 
             formService.populateEntityFormFields(entityForm, entity);
             formService.populateMapEntityFormFields(entityForm, entity);
@@ -893,7 +921,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId,
-            @ModelAttribute(value="entityForm") EntityForm entityForm) throws Exception {
+            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
@@ -903,8 +931,14 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Entity entity = service.getRecord(ppr, id, mainMetadata, false);
         
         // First, we must save the collection entity
-        service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, collectionItemId);
+        Entity savedEntity = service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, collectionItemId);
+        entityFormValidator.validate(entityForm, savedEntity, result);
 
+        if (result.hasErrors()) {
+            return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, 
+                    "updateCollectionItem", entityForm, savedEntity); 
+        }
+        
         // Next, we must get the new list grid that represents this collection
         ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey);
         model.addAttribute("listGrid", listGrid);

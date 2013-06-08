@@ -92,7 +92,7 @@ public interface FormBuilderService {
     /**
      * Populates the given <b>ef</b> with all of the fields based on the properties from <b>cmd</b>. For all the fields that
      * are created, no values are set (as <b>cmd</b> usually does not have any). In order to fill out values in the given
-     * <b>ef</b>, consider instead calling {@link #populateEntityForm(ClassMetadata, Entity, EntityForm)}
+     * <b>ef</b>, consider instead calling {@link #populateEntityForm(ClassMetadata, Entity, EntityForm, boolean)}
      * 
      * @param cmd
      * @param ef
@@ -124,6 +124,20 @@ public interface FormBuilderService {
      * @see {@link #populateEntityForm(ClassMetadata, EntityForm)}
      */
     public void populateEntityForm(ClassMetadata cmd, Entity entity, EntityForm ef) 
+            throws ServiceException;
+
+    /**
+     * Populates a given <b>ef</b> based on the given <b>cmd</b> to initially create fields with the necessary metadata
+     * and then fills those fields out based on the property values from <b>entity</b>.
+     * 
+     * @param cmd
+     * @param entity
+     * @param ef
+     * @param formFieldsVisibilityOverride TODO
+     * @throws ServiceException
+     * @see {@link #populateEntityForm(ClassMetadata, EntityForm)}
+     */
+    public void populateEntityForm(ClassMetadata cmd, Entity entity, EntityForm ef, boolean formFieldsVisibilityOverride) 
             throws ServiceException;
     
     /**
@@ -177,6 +191,9 @@ public interface FormBuilderService {
      * @throws ServiceException
      */
     public void populateEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords, EntityForm entityForm)
+            throws ServiceException;
+    
+    public void populateEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords, EntityForm ef, boolean formFieldsVisibilityOverride)
             throws ServiceException;
 
     /**
