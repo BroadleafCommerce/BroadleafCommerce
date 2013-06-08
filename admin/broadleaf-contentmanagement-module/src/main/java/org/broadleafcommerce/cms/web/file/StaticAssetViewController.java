@@ -45,12 +45,6 @@ public class StaticAssetViewController extends AbstractController {
     private String assetServerUrlPrefix;
     private String viewResolverName;
 
-    @PostConstruct
-    public void init() {
-        //allow static assets to be cached
-        setCacheSeconds(-1);
-    }
-
     @Resource(name="blStaticAssetStorageService")
     protected StaticAssetStorageService staticAssetStorageService;
 
