@@ -172,13 +172,19 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 int order = 0;
                 for (ProductOption option : options) {
                     //add this to the built Sku properties
-                    properties.put("productOption" + option.getId(), createIndividualOptionField(option, order));
+                    FieldMetadata md = createIndividualOptionField(option, order);
+                    if (md != null) {
+                        properties.put("productOption" + option.getId(), md);
+                    }
                 }
             } else {
                 Long productId = Long.parseLong(persistencePackage.getCustomCriteria()[0]);
                 Product product = catalogService.findProductById(productId);
                 for (ProductOption option : product.getProductOptions()) {
-                    properties.put("productOption" + option.getId(), createIndividualOptionField(option, 0));
+                    FieldMetadata md = createIndividualOptionField(option, 0);
+                    if (md != null) {
+                        properties.put("productOption" + option.getId(), md);
+                    }
                 }
             }
 
@@ -295,35 +301,39 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      */
     public static FieldMetadata createIndividualOptionField(ProductOption option, int order) {
         BasicFieldMetadata metadata = new BasicFieldMetadata();
-        metadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
-        metadata.setMutable(true);
-        metadata.setInheritedFromType(SkuImpl.class.getName());
-        metadata.setAvailableToTypes(new String[] { SkuImpl.class.getName() });
-        metadata.setForeignKeyCollection(false);
-        metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+        List<ProductOptionValue> allowedValues = option.getAllowedValues();
+        if (CollectionUtils.isNotEmpty(allowedValues)) {
+            metadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
+            metadata.setMutable(true);
+            metadata.setInheritedFromType(SkuImpl.class.getName());
+            metadata.setAvailableToTypes(new String[] { SkuImpl.class.getName() });
+            metadata.setForeignKeyCollection(false);
+            metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+    
+            //Set up the enumeration based on the product option values
+            String[][] optionValues = new String[allowedValues.size()][2];
+            for (int i = 0; i < allowedValues.size(); i++) {
+                ProductOptionValue value = option.getAllowedValues().get(i);
+                optionValues[i][0] = value.getId().toString();
+                optionValues[i][1] = value.getAttributeValue();
+            }
+            metadata.setEnumerationValues(optionValues);
+    
+            metadata.setName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
+            metadata.setFriendlyName(option.getLabel());
+            metadata.setGroup("productOption_group");
+            metadata.setGroupOrder(-1);
+            metadata.setOrder(order);
+            metadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+            metadata.setProminent(false);
+            metadata.setVisibility(VisibilityEnum.FORM_EXPLICITLY_SHOWN);
+            metadata.setBroadleafEnumeration("");
+            metadata.setReadOnly(false);
+            metadata.setRequiredOverride(BooleanUtils.isFalse(option.getRequired()));
 
-        //Set up the enumeration based on the product option values
-        String[][] optionValues = new String[option.getAllowedValues().size()][2];
-        for (int i = 0; i < option.getAllowedValues().size(); i++) {
-            ProductOptionValue value = option.getAllowedValues().get(i);
-            optionValues[i][0] = value.getId().toString();
-            optionValues[i][1] = value.getAttributeValue();
+            return metadata;
         }
-        metadata.setEnumerationValues(optionValues);
-
-        metadata.setName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
-        metadata.setFriendlyName(option.getLabel());
-        metadata.setGroup("Options");
-        metadata.setGroupOrder(-1);
-        metadata.setOrder(order);
-        metadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-        metadata.setProminent(false);
-        metadata.setVisibility(VisibilityEnum.GRID_HIDDEN);
-        metadata.setBroadleafEnumeration("");
-        metadata.setReadOnly(false);
-        metadata.setRequiredOverride(BooleanUtils.isFalse(option.getRequired()));
-
-        return metadata;
+        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -578,6 +588,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                                                                             getProductOptionProperties(entity),
                                                                             adminInstance);
             if (errorEntity != null) {
+                entity.setValidationErrors(errorEntity.getValidationErrors());
                 return errorEntity;
             }
 
