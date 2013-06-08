@@ -226,7 +226,7 @@ public class EntityForm {
     }
 
     public void addMapKeyField(Field field) {
-        addField(field, MAP_KEY_GROUP, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
+        addField(field, MAP_KEY_GROUP, 0, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
     }
 
     public void addField(Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
