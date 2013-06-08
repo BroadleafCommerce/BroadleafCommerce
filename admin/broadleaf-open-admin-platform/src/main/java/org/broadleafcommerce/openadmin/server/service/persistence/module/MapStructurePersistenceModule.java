@@ -396,27 +396,36 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             }
             Map<String, FieldMetadata> valueMergedProperties = filterOutCollectionMetadata(valueUnfilteredMergedProperties);
             
+            if (StringUtils.isEmpty(mapKey)) {
+                entity.addValidationError(mapStructure.getKeyPropertyName(), RequiredPropertyValidator.ERROR_MESSAGE);
+                LOG.debug("No key property passed in for map, failing validation");
+            }
+            
             if (persistentClass != null) {
                 Serializable valueInstance = (Serializable) map.get(entity.findProperty("priorKey").getValue());
-                if (!entity.findProperty("priorKey").getValue().equals(entity.findProperty(mapStructure.getKeyPropertyName()).getValue())) {
-                    map.remove(entity.findProperty("priorKey").getValue());
-                }
+                
+                //allow validation on other properties in order to show key validation errors along with all the other properties
+                //validation errors
                 valueInstance = createPopulatedInstance(valueInstance, entity, valueMergedProperties, false);
-                /*
-                 * TODO this map manipulation code currently assumes the key value is a String. This should be widened to accept
-                 * additional types of primitive objects.
-                 */
-                map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), valueInstance);
+                
+                if (StringUtils.isNotEmpty(mapKey) && !entity.isValidationFailure()) {
+                    if (!entity.findProperty("priorKey").getValue().equals(mapKey)) {
+                        map.remove(entity.findProperty("priorKey").getValue());
+                    }
+                    /*
+                     * TODO this map manipulation code currently assumes the key value is a String. This should be widened to accept
+                     * additional types of primitive objects.
+                     */
+                    map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), valueInstance);
+                }
             } else {
-                map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), entity.findProperty(((SimpleValueMapStructure) mapStructure).getValuePropertyName()).getValue());
+                if (StringUtils.isNotEmpty(mapKey) && !entity.isValidationFailure()) {
+                    map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), entity.findProperty(((SimpleValueMapStructure) mapStructure).getValuePropertyName()).getValue());
+                }
             }
             
             
-            //FIXME: //validate(entity, instance, null);
-            if (!entity.isValidationFailure()) {
-                //only save if the validation passes
-                instance = persistenceManager.getDynamicEntityDao().merge(instance);
-            }
+            instance = persistenceManager.getDynamicEntityDao().merge(instance);
             
             return getMapRecords(instance, mapStructure, ceilingMergedProperties, valueMergedProperties, entity.findProperty("symbolicId"))[0];
         } catch (Exception e) {

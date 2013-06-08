@@ -66,11 +66,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -93,6 +88,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 
 /**
  * @author jfischer
@@ -285,11 +286,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 if (persistenceManager.getDynamicEntityDao().getStandardEntityManager().contains(instance)) {
                     persistenceManager.getDynamicEntityDao().refresh(instance);
                 }
-                List<Serializable> entityList = new ArrayList<Serializable>(1);
-                entityList.add(instance);
-                Entity invalid = getRecords(mergedProperties, entityList, null, null)[0];
-                invalid.setValidationErrors(entity.getValidationErrors());
-                throw new ValidationException(invalid, "The entity has failed validation");
+                //List<Serializable> entityList = new ArrayList<Serializable>(1);
+                //entityList.add(instance);
+                //Entity invalid = getRecords(mergedProperties, entityList, null, null)[0];
+                //invalid.setValidationErrors(entity.getValidationErrors());
+                throw new ValidationException(entity, "The entity has failed validation");
             }
             else {
                 fieldManager.persistMiddleEntities();

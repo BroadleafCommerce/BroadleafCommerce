@@ -843,6 +843,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Entity parentEntity = service.getRecord(ppr, id, mainMetadata, false);
 
         ppr = PersistencePackageRequest.fromMetadata(md);
+        
+        if (entityForm != null) {
+            entityForm.clearFieldsMap();
+        }
 
         if (md instanceof BasicCollectionMetadata &&
                 ((BasicCollectionMetadata) md).getAddMethodType().equals(AddMethodType.PERSIST)) {
@@ -869,9 +873,15 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 ((AdornedTargetCollectionMetadata) md).getMaintainedAdornedTargetFields().length > 0) {
             AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) md;
 
-            //EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
-            //Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
-            //        collectionItemId);
+            if (entity == null) {
+                entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
+                    collectionItemId);
+            }
+            if (entityForm == null) {
+                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
+            } else {
+                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, entityForm);
+            }
 
             formService.populateEntityFormFields(entityForm, entity);
             formService.populateAdornedEntityFormFields(entityForm, entity, ppr.getAdornedList());
@@ -882,9 +892,16 @@ public class AdminBasicEntityController extends AdminAbstractController {
             MapMetadata fmd = (MapMetadata) md;
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-            //Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
-            //        collectionItemId);
-            //EntityForm entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
+            if (entity == null) {
+                entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
+                    collectionItemId);
+            }
+            
+            if (entityForm == null) {
+                entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
+            } else {
+                formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id, entityForm);
+            }
 
             formService.populateEntityFormFields(entityForm, entity);
             formService.populateMapEntityFormFields(entityForm, entity);
