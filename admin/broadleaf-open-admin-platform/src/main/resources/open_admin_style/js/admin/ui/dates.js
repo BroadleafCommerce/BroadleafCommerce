@@ -76,7 +76,7 @@
         });
     });
     
-    BLCAdmin.addSubmitHandler(function($form) {
+    BLCAdmin.addPostValidationSubmitHandler(function($form) {
         $form.find('.datepicker').each(function(index, element) {
             var $hiddenClone = $('<input>', {
                 type: 'hidden',

@@ -103,7 +103,7 @@
         });
     });
     
-    BLCAdmin.addSubmitHandler(function($form) {
+    BLCAdmin.addPostValidationSubmitHandler(function($form) {
         for (var i = 0; i < BLCAdmin.conditions.conditionCount(); i++) {
             var condition = BLCAdmin.conditions.getConditionByIndex(i);
             var hiddenId = condition.hiddenId;

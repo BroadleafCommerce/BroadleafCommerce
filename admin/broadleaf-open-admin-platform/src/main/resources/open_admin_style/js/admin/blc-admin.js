@@ -3,7 +3,9 @@ var BLCAdmin = (function($) {
     
 	// This will keep track of our current active modals so that we are able to overlay them
 	var modals = [];
-	var preFormSubmitHandlers = [];
+	var preValidationFormSubmitHandlers = [];
+	var validationFormSubmitHandlers = [];
+	var postValidationFormSubmitHandlers = [];
 	var initializationHandlers = [];
 	var updateHandlers = [];
 	var stackedModalOptions = {
@@ -115,9 +117,28 @@ var BLCAdmin = (function($) {
 	}
 	
 	return {
-	    addSubmitHandler : function(fn) {
-	        preFormSubmitHandlers.push(fn);
+	    /**
+	     * Handlers to run before client-side validation takes place
+	     */
+	    addPreValidationSubmitHandler : function(fn) {
+	        preValidationFormSubmitHandlers.push(fn);
 	    },
+	    
+	    /**
+	     * Handlers explicitly designed to validate forms on the client before submitting to the server. If a single handler
+	     * in the list of client-side validation handlers returns 'false', then the form will not be submitted to the
+	     * server
+	     */
+	    addValidationSubmitHandler : function(fn) {
+            validationFormSubmitHandlers.push(fn);
+        },
+        
+        /**
+         * Handlers designed to execute after validation has taken place but before the form has been submitted to the server
+         */
+        addPostValidationSubmitHandler : function(fn) {
+            postValidationFormSubmitHandlers.push(fn);
+        },
 	    
 	    addInitializationHandler : function(fn) {
 	        initializationHandlers.push(fn);
@@ -127,11 +148,41 @@ var BLCAdmin = (function($) {
 	        updateHandlers.push(fn);
 	    },
 	    
-    	runSubmitHandlers : function($form) {
-            for (var i = 0; i < preFormSubmitHandlers.length; i++) {
-                preFormSubmitHandlers[i]($form);
+    	runPreValidationSubmitHandlers : function($form) {
+            for (var i = 0; i < preValidationFormSubmitHandlers.length; i++) {
+                preValidationFormSubmitHandlers[i]($form);
             }
     	},
+    	
+    	/**
+    	 * Returns false if a single validation handler returns false. All validation handlers are iterated through before
+    	 * returning. If this method returns false, then the form should not be submitted to the server
+    	 */
+    	runValidationSubmitHandlers : function($form) {
+    	    var pass = true;
+            for (var i = 0; i < validationFormSubmitHandlers.length; i++) {
+                var pass = validationFormSubmitHandlers[i]($form);
+            }
+            return pass;
+        },
+        
+        runPostValidationSubmitHandlers : function($form) {
+            for (var i = 0; i < postValidationFormSubmitHandlers.length; i++) {
+                postValidationFormSubmitHandlers[i]($form);
+            }
+        },
+        
+        /**
+         * Convenience method to submit all pre-validation, validation and post-validation handlers for the form. This will
+         * return the result of invoking 'runValidationSubmitHandlers' to denote whether or not the form should actually
+         * be submitted to the server
+         */
+        runSubmitHandlers : function($form) {
+            BLCAdmin.runPreValidationSubmitHandlers($form);
+            var submit = BLCAdmin.runValidationSubmitHandlers($form);
+            BLCAdmin.runPostValidationSubmitHandlers($form);
+            return submit;
+        },
     	
     	setModalMaxHeight : function($modal) {
     		// Resize the modal height to the user's browser

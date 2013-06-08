@@ -36,7 +36,8 @@ $(document).ready(function() {
 	});
 	
 	$('body').on('submit', 'form.entity-form', function(event) {
-        BLCAdmin.runSubmitHandlers($(this));
+        var submit = BLCAdmin.runSubmitHandlers($(this));
+        return submit;
 	});
 	
     $('body').on('click', 'button.add-main-entity', function(event) {
@@ -50,15 +51,17 @@ $(document).ready(function() {
     });
     
 	$('body').on('submit', 'form.modal-add-entity-form', function(event) {
-        BLCAdmin.runSubmitHandlers($(this));
+        var submit = BLCAdmin.runSubmitHandlers($(this));
         
-		BLC.ajax({
-			url: this.action,
-			type: "POST",
-			data: $(this).serialize()
-		}, function(data) {
-			$('.modal .modal-body .tabs-content').replaceWith($(data).find('.modal-body .tabs-content'));
-	    });
+        if (submit) {
+    		BLC.ajax({
+    			url: this.action,
+    			type: "POST",
+    			data: $(this).serialize()
+    		}, function(data) {
+    			$('.modal .modal-body .tabs-content').replaceWith($(data).find('.modal-body .tabs-content'));
+    	    });
+        }
 		return false;
 	});
 	    
