@@ -493,14 +493,29 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         ef.setId(entity.findProperty(idProperty).getValue());
         ef.setEntityType(entity.getType()[0]);
 
+        populateEntityFormFieldValues(cmd, entity, ef, false);
+        
+        Property p = entity.findProperty(BasicPersistenceModule.MAIN_ENTITY_NAME_PROPERTY);
+        if (p != null) {
+            ef.setMainEntityName(p.getValue());
+        }
+    }
+
+    @Override
+    public void populateEntityFormFieldValues(ClassMetadata cmd, Entity entity, EntityForm ef, boolean formFieldsOverride) {
         // Set the appropriate property values
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata basicFM = (BasicFieldMetadata) p.getMetadata();
 
                 Property entityProp = entity.findProperty(p.getName());
-
-                if (entityProp == null && !SupportedFieldType.PASSWORD_CONFIRM.equals(basicFM.getExplicitFieldType())) {
+                
+                if (entityProp == null && (formFieldsOverride || basicFM.getVisibility().equals(VisibilityEnum.FORM_EXPLICITLY_SHOWN))) {
+                    Field field = ef.findField(p.getName());
+                    if (field != null) {
+                        field.setValue(null);
+                    }
+                } else if (entityProp == null && !SupportedFieldType.PASSWORD_CONFIRM.equals(basicFM.getExplicitFieldType())) {
                     ef.removeField(p.getName());
                 } else {
                     Field field = ef.findField(p.getName());
@@ -517,23 +532,18 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                 }
                             }
                         } 
-			if (basicFM.getFieldType() == SupportedFieldType.MEDIA) {
+                        if (basicFM.getFieldType() == SupportedFieldType.MEDIA) {
                             field.setValue(entityProp.getValue());
                             field.setDisplayValue(entityProp.getDisplayValue());
                             MediaField mf = (MediaField) field;
                             mf.setMedia(convertJsonToMedia(entityProp.getValue()));
-			} else if (!SupportedFieldType.PASSWORD_CONFIRM.equals(basicFM.getExplicitFieldType())){
+                        } else if (!SupportedFieldType.PASSWORD_CONFIRM.equals(basicFM.getExplicitFieldType())){
                             field.setValue(entityProp.getValue());
                             field.setDisplayValue(entityProp.getDisplayValue());
                         }
                     }
                 }
             }
-        }
-        
-        Property p = entity.findProperty(BasicPersistenceModule.MAIN_ENTITY_NAME_PROPERTY);
-        if (p != null) {
-            ef.setMainEntityName(p.getValue());
         }
     }
 
@@ -621,7 +631,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
     }
 
-   @Override
+    @Override
     public EntityForm createEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords)
             throws ServiceException {
         EntityForm ef = createStandardEntityForm();
@@ -711,6 +721,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             String parentId)
             throws ServiceException {
         EntityForm ef = createStandardEntityForm();
+        return buildAdornedListForm(adornedMd, adornedList, parentId, ef);
+    }
+    
+    @Override
+    public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
+            String parentId, EntityForm ef)
+            throws ServiceException {
         ef.setEntityType(adornedList.getAdornedTargetEntityClassname());
 
         // Get the metadata for this adorned field
@@ -753,10 +770,17 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return ef;
     }
 
+
     @Override
     public EntityForm buildMapForm(MapMetadata mapMd, final MapStructure mapStructure, ClassMetadata cmd, String parentId)
             throws ServiceException {
         EntityForm ef = createStandardEntityForm();
+        return buildMapForm(mapMd, mapStructure, cmd, parentId, ef);
+    }
+    
+    @Override
+    public EntityForm buildMapForm(MapMetadata mapMd, final MapStructure mapStructure, ClassMetadata cmd, String parentId, EntityForm ef)
+            throws ServiceException {
         ForeignKey foreignKey = (ForeignKey) mapMd.getPersistencePerspective()
                 .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
         ef.setEntityType(foreignKey.getForeignKeyClass());
@@ -790,6 +814,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                 .withFieldType(SupportedFieldType.STRING.toString())
                                 .withFriendlyName("Key");
         }
+        keyField.setRequired(true);
         ef.addMapKeyField(keyField);
         
         // Set the fields for this form
@@ -816,7 +841,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 .withName("priorKey")
                 .withFieldType(SupportedFieldType.HIDDEN.toString());
         ef.addHiddenField(f);
-
         return ef;
     }
     

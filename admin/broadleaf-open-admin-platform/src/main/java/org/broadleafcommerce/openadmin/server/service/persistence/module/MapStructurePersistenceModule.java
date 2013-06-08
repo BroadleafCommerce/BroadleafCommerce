@@ -37,7 +37,6 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SimpleValueMapStructure;
-import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.RequiredPropertyValidator;
 import org.hibernate.mapping.PersistentClass;
@@ -247,7 +246,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();
             if (StringUtils.isEmpty(mapKey)) {
                 entity.addValidationError(mapStructure.getKeyPropertyName(), RequiredPropertyValidator.ERROR_MESSAGE);
-                throw new ValidationException(entity, "This entity failed validation on the 'key' property");
+                LOG.debug("No key property passed in for map, failing validation");
             }
             
             if (ceilingMergedProperties.containsKey(mapStructure.getMapProperty() + FieldManager.MAPFIELDSEPARATOR + mapKey)) {
@@ -305,12 +304,12 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                  * TODO this map manipulation code currently assumes the key value is a String. This should be widened to accept
                  * additional types of primitive objects.
                  */
-                map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), valueInstance); 
+                map.put(mapKey, valueInstance); 
             } else {
                 String propertyName = ((SimpleValueMapStructure) mapStructure).getValuePropertyName();
                 String value = entity.findProperty(propertyName).getValue();
                 Object convertedPrimitive = convertPrimitiveBasedOnType(propertyName, value, valueMergedProperties);
-                map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), convertedPrimitive);
+                map.put(mapKey, convertedPrimitive);
             }
             
             Entity[] responses = getMapRecords(instance, mapStructure, ceilingMergedProperties, valueMergedProperties, entity.findProperty("symbolicId"));

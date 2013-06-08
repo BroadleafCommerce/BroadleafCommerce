@@ -59,14 +59,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to 
@@ -235,6 +236,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         if (result.hasErrors()) {
             ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(entityForm.getEntityType()));
             entityForm.clearFieldsMap();
+            //TODO: this is currently removing valid properties (ones that came across the wire as null)
             formService.populateEntityForm(cmd, entity, entityForm);
 
             formService.removeNonApplicableFields(cmd, entityForm, entityForm.getEntityType());
@@ -600,6 +602,85 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 .withStartIndex(getStartIndex(requestParams))
                 .withMaxIndex(getMaxIndex(requestParams));
 
+        return buildAddCollectionItemModel(request, response, model, id, collectionField, sectionKey, collectionProperty, md, ppr, null, null);
+    }
+    
+    /**
+     * Adds the requested collection item
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param pathVars
+     * @param id
+     * @param collectionField
+     * @param entityForm
+     * @return the return view path
+     * @throws Exception
+     */
+    @RequestMapping(value = "/{id}/{collectionField:.*}/add", method = RequestMethod.POST)
+    public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+        String sectionKey = getSectionKey(pathVars);
+        String mainClassName = getClassNameForSection(sectionKey);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
+        Entity entity = service.getRecord(ppr, id, mainMetadata, false);
+        
+        // First, we must save the collection entity
+        Entity savedEntity = service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity);
+        entityValidator.validate(entityForm, savedEntity, result);
+        
+        if (result.hasErrors()) {
+            FieldMetadata md = collectionProperty.getMetadata();
+            ppr = PersistencePackageRequest.fromMetadata(md);
+            return buildAddCollectionItemModel(request, response, model, id, collectionField, sectionKey, collectionProperty,
+                    md, ppr, entityForm, savedEntity);
+        }
+
+        // Next, we must get the new list grid that represents this collection
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey);
+        model.addAttribute("listGrid", listGrid);
+
+        // We return the new list grid so that it can replace the currently visible one
+        setModelAttributes(model, sectionKey);
+        return "views/standaloneListGrid";
+    }
+
+    /**
+     * Builds out all of the model information needed for showing the add modal for collection items on both the initial GET
+     * as well as after a POST with validation errors
+     * 
+     * @param request
+     * @param model
+     * @param id
+     * @param collectionField
+     * @param sectionKey
+     * @param collectionProperty
+     * @param md
+     * @param ppr
+     * @return the appropriate view to display for the modal
+     * @see {@link #addCollectionItem(HttpServletRequest, HttpServletResponse, Model, Map, String, String, EntityForm, BindingResult)}
+     * @see {@link #showAddCollectionItem(HttpServletRequest, HttpServletResponse, Model, Map, String, String, MultiValueMap)}
+     * @throws ServiceException
+     */
+    protected String buildAddCollectionItemModel(HttpServletRequest request, HttpServletResponse response,
+            Model model,
+            String id,
+            String collectionField,
+            String sectionKey,
+            Property collectionProperty,
+            FieldMetadata md, PersistencePackageRequest ppr, EntityForm entityForm, Entity entity) throws ServiceException {
+        
+        if (entityForm != null) {
+            entityForm.clearFieldsMap();
+        }
+        
         if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
 
@@ -607,8 +688,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
             // and sometimes show a list grid to allow the user to associate an existing record.
             if (fmd.getAddMethodType().equals(AddMethodType.PERSIST)) {
                 ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-                EntityForm entityForm = formService.createEntityForm(collectionMetadata);
-
+                if (entityForm == null) {
+                    entityForm = formService.createEntityForm(collectionMetadata);
+                } else {
+                    formService.populateEntityForm(collectionMetadata, entityForm);
+                    formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm, true);
+                }
                 entityForm.getTabs().iterator().next().getIsVisible();
 
                 model.addAttribute("entityForm", entityForm);
@@ -636,8 +721,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
             listGrid.setSubCollectionFieldName(collectionField);
             listGrid.setPathOverride(request.getRequestURL().toString());
             listGrid.setFriendlyName(collectionMetadata.getPolymorphicEntities().getFriendlyName());
-            EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
-
+            if (entityForm == null) {
+                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
+            } else {
+                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, entityForm);
+                formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm, true);
+            }
+            
             if (fmd.getMaintainedAdornedTargetFields().length > 0) {
                 listGrid.setListGridType(ListGrid.Type.ADORNED_WITH_FORM);
             } else {
@@ -650,8 +740,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
         } else if (md instanceof MapMetadata) {
             MapMetadata fmd = (MapMetadata) md;
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-
-            EntityForm entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
+            
+            if (entityForm == null) {
+                entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
+            } else {
+                formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id, entityForm);
+                formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm, true);
+            }
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/mapAddEntity");
         }
@@ -687,7 +782,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
     }
 
     /**
-     * Shows the appropriate modal dialog to view the selected collection item
+     * Shows the appropriate modal dialog to view the selected collection item. This will display the modal as readonly
      *
      * @param request
      * @param response
@@ -777,44 +872,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         return "modules/modalContainer";
     }
 
-    /**
-     * Adds the requested collection item
-     * 
-     * @param request
-     * @param response
-     * @param model
-     * @param pathVars
-     * @param id
-     * @param collectionField
-     * @param entityForm
-     * @return the return view path
-     * @throws Exception
-     */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/add", method = RequestMethod.POST)
-    public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars,
-            @PathVariable(value="id") String id,
-            @PathVariable(value="collectionField") String collectionField,
-            @ModelAttribute(value="entityForm") EntityForm entityForm) throws Exception {
-        String sectionKey = getSectionKey(pathVars);
-        String mainClassName = getClassNameForSection(sectionKey);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
-        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
 
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName);
-        Entity entity = service.getRecord(ppr, id, mainMetadata, false);
-        
-        // First, we must save the collection entity
-        service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity);
-
-        // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey);
-        model.addAttribute("listGrid", listGrid);
-
-        // We return the new list grid so that it can replace the currently visible one
-        setModelAttributes(model, sectionKey);
-        return "views/standaloneListGrid";
-    }
 
     /**
      * Updates the specified collection item

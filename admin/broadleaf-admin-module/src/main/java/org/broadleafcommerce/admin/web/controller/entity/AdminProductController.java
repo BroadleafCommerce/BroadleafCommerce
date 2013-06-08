@@ -17,6 +17,7 @@
 package org.broadleafcommerce.admin.web.controller.entity;
 
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundleImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -40,9 +41,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * Handles admin operations for the {@link Product} entity. Editing a product requires custom criteria in order to properly
@@ -99,6 +101,20 @@ public class AdminProductController extends AdminBasicEntityController {
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, SECTION_KEY);
         return "modules/modalContainer";
+    }
+    
+    @Override
+    protected String buildAddCollectionItemModel(HttpServletRequest request, HttpServletResponse response,
+            Model model,
+            String id,
+            String collectionField,
+            String sectionKey,
+            Property collectionProperty,
+            FieldMetadata md, PersistencePackageRequest ppr, EntityForm entityForm, Entity entity) throws ServiceException {
+        if ("additionalSkus".equals(collectionField) && ppr.getCustomCriteria().length == 0) {
+            ppr.withCustomCriteria(new String[] { id });
+        }
+        return super.buildAddCollectionItemModel(request, response, model, id, collectionField, sectionKey, collectionProperty, md, ppr, entityForm, entity);
     }
     
     protected String showUpdateAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,

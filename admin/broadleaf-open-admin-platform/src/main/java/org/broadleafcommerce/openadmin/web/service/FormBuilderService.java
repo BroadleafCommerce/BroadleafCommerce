@@ -127,6 +127,20 @@ public interface FormBuilderService {
             throws ServiceException;
     
     /**
+     * Populates the given {@link EntityForm} with values based on the {@link Entity} that has been passed in. The 
+     * {@link ClassMetadata} is used to determine which properties should be attempted to be populated
+     * 
+     * @param cmd 'inspect' metadata for the class being populated
+     * @param entity the {@link Entity} that should be used to fill out the field values in the given {@link EntityForm}
+     * @param ef the {@link EntityForm} to populate field values from the given {@link Entity}
+     * @param formFieldsOverride If true, then if a field within the {@link EntityForm} is not found in the corresponding
+     * {@link Entity}, then it is removed from the {@link EntityForm}. However, in some cases (like when submitting a form}
+     * values for checkboxes and radio buttons are not serialized over according to the HTTP spec. In this case, if this
+     * parameter is set to true then the field in the {@link EntityForm} will have a value of null.
+     */
+    public void populateEntityFormFieldValues(ClassMetadata cmd, Entity entity, EntityForm ef, boolean formFieldsOverride);
+    
+    /**
      * Builds an EntityForm that has all of the appropriate fields set up along with the values for those fields
      * from the given Entity as well as all sub-collections of the given Entity that appear in the collectionRecords map.
      * This method simply delegates to create a standard {@link EntityForm} (that has a save action) and then populates
@@ -204,6 +218,26 @@ public interface FormBuilderService {
             throws ServiceException;
 
     /**
+     * Equivalent to {@link #buildAdornedListForm(AdornedTargetCollectionMetadata, AdornedTargetList, String)} except rather than creating a
+     * new {@link EntityForm} this simply uses the {@link EntityForm} that was passed in as <b>ef</b>. Used mainly when
+     * rebuilding an {@link EntityForm} after it has already been bound by Spring.
+     * 
+     * Before invoking this method, you should invoke {@link EntityForm#clearFieldsMap()} to ensure that you have a clean
+     * set of field groups and tabs for this method to work with
+     * 
+     * @param mapMd
+     * @param mapStructure
+     * @param cmd
+     * @param parentId
+     * @param ef the form DTO to populate
+     * @return the original {@link EntityForm} passed in but fully populated
+     * @throws ServiceException
+     */
+    public EntityForm buildAdornedListForm(AdornedTargetCollectionMetadata adornedMd, AdornedTargetList adornedList,
+            String parentId, EntityForm ef)
+            throws ServiceException;
+
+    /**
      * Builds the EntityForm used in modal dialogs when adding items to map collections.
      * 
      * @param mapMd
@@ -216,4 +250,22 @@ public interface FormBuilderService {
     public EntityForm buildMapForm(MapMetadata mapMd, MapStructure mapStructure, ClassMetadata cmd, String parentId)
             throws ServiceException;
 
+    /**
+     * Equivalent to {@link #buildMapForm(MapMetadata, MapStructure, ClassMetadata, String)} except rather than creating a
+     * new {@link EntityForm} this simply uses the {@link EntityForm} that was passed in as <b>ef</b>. Used mainly when
+     * rebuilding an {@link EntityForm} after it has already been bound by Spring.
+     * 
+     * Before invoking this method, you should invoke {@link EntityForm#clearFieldsMap()} to ensure that you have a clean
+     * set of field groups and tabs for this method to work with
+     * 
+     * @param mapMd
+     * @param mapStructure
+     * @param cmd
+     * @param parentId
+     * @param ef the form DTO to populate
+     * @return the original {@link EntityForm} passed in but fully populated
+     * @throws ServiceException
+     */
+    public EntityForm buildMapForm(MapMetadata mapMd, final MapStructure mapStructure, ClassMetadata cmd, String parentId, EntityForm ef)
+            throws ServiceException;
 }

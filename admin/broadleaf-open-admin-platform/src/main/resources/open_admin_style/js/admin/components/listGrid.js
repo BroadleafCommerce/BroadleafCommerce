@@ -409,21 +409,64 @@ $(document).ready(function() {
         return false;
     });
     
-    $('body').on('submit', 'form.modal-form', function(event) {
-        BLCAdmin.runSubmitHandlers($(this));
+    $('body').on('submit', 'form.modal-form', function(event) { 
+        var $form = $(this);
+        var submit = BLCAdmin.runSubmitHandlers($form);
         
-        BLC.ajax({
-            url: this.action,
-            type: "POST",
-            data: $(this).serialize()
-        }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
-                message: BLCAdmin.messages.saved + '!', 
-                alertType: 'save-alert', 
-                autoClose: 1000 
+        if (submit) {
+            BLC.ajax({
+                url: this.action,
+                type: "POST",
+                data: $(this).serialize()
+            }, function(data) {
+                //if there is a validation error, replace the current form that's there with this new one
+                var $newForm = $(data).find('.modal-body form');
+                if ($newForm[0]) {
+                    //with adorned forms, we have just overwritten the related id property that was selected previously. Ensure
+                    //to replace that in the new form
+                    var $adornedTargetIdProperty = $(data).find('input#adornedTargetIdProperty');
+                    var isAdornedModal = false;
+                    if ($adornedTargetIdProperty[0]) {
+                        $adornedTargetIdProperty.val($form.find('input#adornedTargetIdProperty').val());
+                        isAdornedModal = true;
+                    }
+                    //we are potentially replacing a form that has tabs. Ensure those are removed from the replacing form so
+                    //we don't get double-tabs
+                    $newForm.find('.tabs-container').remove();
+                    
+                    //ensure the active tab fields on the old form is active on the new form
+                    var $modal = $form.closest('.modal');
+                    $modal.find('dl.tabs dd').each(function(tabIndex, tab) {
+                        if ($(tab).hasClass('active')) {
+                            var $contentTabs;
+                            //adorned modals are slightly different as far as active tabs go and where the content actually is
+                            if (isAdornedModal) {
+                                $contentTabs = $newForm.closest('.modal-body').find('> ul.tabs-content > li');
+                            } else {
+                                $contentTabs = $newForm.find('ul.tabs-content li')
+                            }
+                            $contentTabs.removeClass('active');
+                            $($contentTabs[tabIndex]).addClass('active').css('display', 'block');
+                        }
+                    });
+                    
+                    //swap out the forms
+                    $form.replaceWith($newForm);
+                    
+                    //since we just replaced everything, initialize all the fields back. See BLCAdmin.showModal
+                    BLCAdmin.initializeModalTabs($(BLCAdmin.currentModal()));
+                    BLCAdmin.initializeModalButtons($(BLCAdmin.currentModal()));
+                    BLCAdmin.initializeFields();
+                } else {
+                    BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
+                        message: BLCAdmin.messages.saved + '!', 
+                        alertType: 'save-alert', 
+                        autoClose: 1000 
+                    });
+                    BLCAdmin.hideCurrentModal();
+                }
             });
-            BLCAdmin.hideCurrentModal();
-        });
+        }
         return false;
     });
         
