@@ -74,7 +74,7 @@ public class FieldImpl implements Field,Serializable {
     @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition", order = 1, prominent = true)
     protected String propertyName;
     
-    @Column(name = "ABBREVIATION", unique = true)
+    @Column(name = "ABBREVIATION")
     @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_descrpition", order = 3, prominent = true)
     protected String abbreviation;
     
