@@ -68,5 +68,8 @@ public class FieldDaoImpl implements FieldDao {
         
         return em.createQuery(criteria).getResultList();
     }
-    
+
+    public Field save(Field field) {
+        return em.merge(field);
+    }
 }

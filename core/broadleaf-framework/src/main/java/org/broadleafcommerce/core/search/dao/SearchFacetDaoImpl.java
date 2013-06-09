@@ -87,4 +87,7 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         return em.createQuery(criteria).getResultList();
     }
 
+    public SearchFacet save(SearchFacet searchFacet) {
+        return em.merge(searchFacet);
+    }
 }

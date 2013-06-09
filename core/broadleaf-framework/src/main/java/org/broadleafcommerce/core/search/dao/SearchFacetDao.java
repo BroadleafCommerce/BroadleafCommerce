@@ -46,4 +46,11 @@ public interface SearchFacetDao {
      */
     public List<SearchFacet> readAllSearchFacets();
 
+    /**
+     * Persist to the data layer.
+     *
+     * @param searchFacet the instance to persist
+     * @return the instance after it has been persisted
+     */
+    public SearchFacet save(SearchFacet searchFacet);
 }
