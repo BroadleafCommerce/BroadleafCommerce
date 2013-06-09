@@ -46,6 +46,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -53,11 +57,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 
 /**
  * @author jfischer
@@ -553,7 +552,11 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             // We also need to make sure that the cto filter and sort criteria have the prefix
             Map<String, FilterAndSortCriteria> convertedCto = new HashMap<String, FilterAndSortCriteria>();
             for (Entry<String, FilterAndSortCriteria> entry : cto.getCriteriaMap().entrySet()) {
-                convertedCto.put(prefix + "." + entry.getKey(), entry.getValue());
+                if (adornedTargetList.getSortField() != null && entry.getKey().equals(adornedTargetList.getSortField())) {
+                    convertedCto.put(entry.getKey(), entry.getValue());
+                } else {
+                    convertedCto.put(prefix + "." + entry.getKey(), entry.getValue());
+                }
             }
             cto.setCriteriaMap(convertedCto);
             
