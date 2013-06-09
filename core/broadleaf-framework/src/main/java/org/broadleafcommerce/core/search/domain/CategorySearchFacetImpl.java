@@ -17,6 +17,8 @@
 package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.hibernate.annotations.Cache;
@@ -40,6 +42,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CAT_SEARCH_FACET_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class CategorySearchFacetImpl implements CategorySearchFacet,Serializable {
     
     /**
@@ -62,14 +65,15 @@ public class CategorySearchFacetImpl implements CategorySearchFacet,Serializable
     
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
+    @AdminPresentation(excluded = true)
     protected Category category;
     
     @ManyToOne(targetEntity = SearchFacetImpl.class)
     @JoinColumn(name = "SEARCH_FACET_ID")
     protected SearchFacet searchFacet;
     
-    @Column(name = "SEQUENCE",nullable=false)
-    @AdminPresentation(friendlyName = "CategorySearchFacetImpl_sequence", prominent=true)
+    @Column(name = "SEQUENCE")
+    @AdminPresentation(friendlyName = "CategorySearchFacetImpl_sequence")
     protected Long sequence;
 
     @Override
