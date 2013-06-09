@@ -17,7 +17,9 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
 
@@ -67,6 +69,7 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
 
     /** The display order. */
     @Column(name = "DISPLAY_ORDER")
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long displayOrder;
 
     /* (non-Javadoc)
