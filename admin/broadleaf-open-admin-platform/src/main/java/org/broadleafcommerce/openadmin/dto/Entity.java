@@ -19,7 +19,6 @@ package org.broadleafcommerce.openadmin.dto;
 import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
-import org.eclipse.core.internal.runtime.Product;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -169,8 +168,8 @@ public class Entity implements Serializable {
      * entity in an error state by invoking {@link #setValidationFailure(boolean)}.
      * 
      * @param fieldName - the field that is in error. This works on top-level properties (like a 'manufacturer' field on a
-     * {@link Product} entity) but can also work on properties gleaned from a related entity (like
-     * 'defaultSku.weight.weightUnitOfMeasure' on a {@link Product} entity)
+     * Product entity) but can also work on properties gleaned from a related entity (like
+     * 'defaultSku.weight.weightUnitOfMeasure' on a Product entity)
      * @param errorOrErrorKey - the error message to present to a user. Could be the actual error message or a key to a
      * property in messages.properties to support different locales
      */
