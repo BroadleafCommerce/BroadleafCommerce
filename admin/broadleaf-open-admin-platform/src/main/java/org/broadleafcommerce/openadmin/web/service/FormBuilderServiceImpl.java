@@ -124,8 +124,14 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, drs, sectionKey, 0, idProperty);
         
-        // Set the first column to be able to link to the main entity
-        listGrid.getHeaderFields().iterator().next().setMainEntityLink(true);
+        if (CollectionUtils.isNotEmpty(listGrid.getHeaderFields())) {
+            // Set the first column to be able to link to the main entity
+            listGrid.getHeaderFields().iterator().next().setMainEntityLink(true);
+        } else {
+            String message = "There are no listgrid header fields configured for the class " + cmd.getCeilingType();
+            message += "Please mark some @AdminPresentation fields with 'prominent = true'";
+            LOG.error(message);
+        }
         
         return listGrid;
     }
@@ -276,6 +282,18 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         } else if (fmd instanceof CollectionMetadata) {
             ceilingType = ((CollectionMetadata) fmd).getCollectionCeilingEntity();
         }
+        
+        if (CollectionUtils.isEmpty(headerFields)) {
+            String message = "There are no listgrid header fields configured for the class " + ceilingType + " and property '" +
+            	field.getName() + "'.";
+            if (type == ListGrid.Type.ADORNED || type == ListGrid.Type.ADORNED_WITH_FORM) {
+                message += " Please configure 'gridVisibleFields' in your @AdminPresentationAdornedTargetCollection configuration";
+            } else {
+                message += " Please mark some @AdminPresentation fields with 'prominent = true'";
+            }
+            LOG.error(message);
+        }
+        
         ListGrid listGrid = createListGrid(ceilingType, headerFields, type, drs, sectionKey, fmd.getOrder(), idProperty);
         listGrid.setSubCollectionFieldName(field.getName());
         listGrid.setFriendlyName(field.getMetadata().getFriendlyName());
