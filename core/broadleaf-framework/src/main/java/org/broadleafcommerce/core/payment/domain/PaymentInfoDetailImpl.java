@@ -126,9 +126,7 @@ public class PaymentInfoDetailImpl implements PaymentInfoDetail, CurrencyCodeIde
 
     @Override
     public void setType(PaymentInfoDetailType type) {
-        if (type != null) {
-            this.type = type.getType();
-        }
+        this.type = (type == null) ? null : type.getType();
     }
 
     @Override
