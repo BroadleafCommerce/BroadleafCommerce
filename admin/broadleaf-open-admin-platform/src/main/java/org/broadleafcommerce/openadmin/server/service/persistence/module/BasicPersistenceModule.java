@@ -427,10 +427,16 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 //Create an invisible property for the admin main entity name, if applicable.
                 //This is useful for ToOneLookups if that ToOneLookup uses AdminMainEntity to drive
                 //its display name.
-                Property propertyItem = new Property();
-                propertyItem.setName(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY);
-                propertyItem.setValue(((AdminMainEntity) entity).getMainEntityName());
-                props.add(propertyItem);
+                try {
+                    Property propertyItem = new Property();
+                    propertyItem.setName(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY);
+                    propertyItem.setValue(((AdminMainEntity) entity).getMainEntityName());
+                    props.add(propertyItem);
+                } catch (Exception e) {
+                    //do nothing here except for not add the property. Exceptions could occur when there is a validation
+                    //issue and some properties/relationships that are used for gleaning the main entity name end up
+                    //not being set
+                }
             }
             for (Entry<String, FieldMetadata> entry : mergedProperties.entrySet()) {
                 String property = entry.getKey();
