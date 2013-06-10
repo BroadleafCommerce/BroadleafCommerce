@@ -58,6 +58,8 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.EntityValidatorService;
+import org.broadleafcommerce.openadmin.server.service.persistence.validation.PopulateValueRequestValidator;
+import org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidationResult;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -115,6 +117,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Resource(name="blPersistenceProviders")
     protected List<FieldPersistenceProvider> fieldPersistenceProviders = new ArrayList<FieldPersistenceProvider>();
+    
+    @Resource(name="blPopulateValueRequestValidators")
+    protected List<PopulateValueRequestValidator> populateValidators;
 
     @Resource(name= "blDefaultFieldPersistenceProvider")
     protected FieldPersistenceProvider defaultFieldPersistenceProvider;
@@ -253,19 +258,32 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     if ((mutable == null || mutable) && (readOnly == null || !readOnly)) {
                         if (value != null) {
                             handled = false;
-                            for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
-                                FieldProviderResponse response = fieldPersistenceProvider.populateValue(new PopulateValueRequest(setId,
-                                        fieldManager, property, metadata, returnType, value, persistenceManager, this), instance);
-                                if (FieldProviderResponse.NOT_HANDLED != response) {
-                                    handled = true;
-                                }
-                                if (FieldProviderResponse.HANDLED_BREAK == response) {
-                                    break;
+                            PopulateValueRequest request = new PopulateValueRequest(setId,
+                                    fieldManager, property, metadata, returnType, value, persistenceManager, this);
+                            
+                            boolean attemptToPopulate = true;
+                            for (PopulateValueRequestValidator validator : populateValidators) {
+                                PropertyValidationResult validationResult = validator.validate(request, instance);
+                                if (!validationResult.isValid()) {
+                                    entity.addValidationError(property.getName(), validationResult.getErrorMessage());
+                                    attemptToPopulate = false;
                                 }
                             }
-                            if (!handled) {
-                                defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId,
-                                        fieldManager, property, metadata, returnType, value, persistenceManager, this), instance);
+                            
+                            if (attemptToPopulate) {
+                                for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
+                                    FieldProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
+                                    if (FieldProviderResponse.NOT_HANDLED != response) {
+                                        handled = true;
+                                    }
+                                    if (FieldProviderResponse.HANDLED_BREAK == response) {
+                                        break;
+                                    }
+                                }
+                                if (!handled) {
+                                    defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId,
+                                            fieldManager, property, metadata, returnType, value, persistenceManager, this), instance);
+                                }
                             }
                         } else {
                             try {

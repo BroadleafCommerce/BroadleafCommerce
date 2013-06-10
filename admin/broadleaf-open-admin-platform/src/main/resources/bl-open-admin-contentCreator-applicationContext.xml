@@ -165,5 +165,13 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="blPopulateValueRequestValidators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blBasicFieldTypeValidator"/>
+            </list>
+        </property>
+    </bean>
 
 </beans>
