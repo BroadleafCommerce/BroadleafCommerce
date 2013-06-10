@@ -254,7 +254,10 @@ $(document).ready(function() {
      */
     $('body').on('listGrid-adorned_with_form-rowSelected', function(event, link, fields, currentUrl) {
         $(this).find('input#adornedTargetIdProperty').val(fields['id']);
-        $('a#adornedModalTab2Link').click();
+        var $a = $('a#adornedModalTab2Link');
+        $a.removeClass('disabled');
+        $a.click();
+        $a.addClass('disabled');
     });
     
     /**

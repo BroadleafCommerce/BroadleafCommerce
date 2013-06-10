@@ -447,3 +447,9 @@ $(document).ready(function() {
         });
     });
 });
+
+$('body').on('click', '.disabled', function(e) {
+    e.stopPropagation();
+    return false;
+});
+        

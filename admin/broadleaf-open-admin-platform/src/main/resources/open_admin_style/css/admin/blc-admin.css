@@ -1385,3 +1385,7 @@ div#thumbnail-zoom {
     float: right;
     padding-bottom: 15px;
 }
+
+.disabled {
+	cursor: default;
+}
