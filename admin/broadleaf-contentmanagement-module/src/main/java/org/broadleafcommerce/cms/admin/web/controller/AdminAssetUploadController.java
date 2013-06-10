@@ -27,6 +27,7 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid.Type;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -68,10 +69,12 @@ public class AdminAssetUploadController extends AdminAbstractController {
 
     @RequestMapping(value = "/{id}/chooseAsset", method = RequestMethod.GET)
     public String chooseMediaForMapKey(HttpServletRequest request, HttpServletResponse response, Model model, 
-            @PathVariable(value="sectionKey") String sectionKey, @PathVariable(value="id") String id) throws Exception {
+            @PathVariable(value = "sectionKey") String sectionKey, 
+            @PathVariable(value = "id") String id,
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         Map<String, String> pathVars = new HashMap<String, String>();
         pathVars.put("sectionKey", AdminAssetController.SECTION_KEY);
-        assetController.viewEntityList(request, response, model, pathVars, null);
+        assetController.viewEntityList(request, response, model, pathVars, requestParams);
         
         ListGrid listGrid = (ListGrid) model.asMap().get("listGrid");
         listGrid.setListGridType(Type.ASSET);

@@ -595,13 +595,21 @@
                 callbacks: {
                     onScroll: function() {
                         var isMainGrid = $tbody.closest('table').data('listgridtype') == 'main';
+                        var isAssetGrid = $tbody.closest('table').data('listgridtype') == 'asset';
             
                         // Update the currently visible range
                         BLCAdmin.listGrid.paginate.updateTableFooter($tbody);
                         
                         // Fetch records if necessary
                         $.doTimeout('fetch', fetchDebounce, function() {
-                            var url = isMainGrid ? null : $tbody.closest('table').data('path');
+                            if (isMainGrid) {
+                                var url = null;
+                            } else if (isAssetGrid) {
+                                var url = $tbody.closest('table').data('currenturl');
+                            } else {
+                                var url = $tbody.closest('table').data('path');
+                            }
+                            
                             BLCAdmin.listGrid.paginate.loadRecords($tbody, url);
                         });
                         
