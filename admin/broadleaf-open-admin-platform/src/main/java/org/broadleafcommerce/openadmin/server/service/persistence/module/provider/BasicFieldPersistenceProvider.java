@@ -17,6 +17,8 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
@@ -56,6 +58,8 @@ import java.util.Map;
 @Component("blBasicFieldPersistenceProvider")
 @Scope("prototype")
 public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
+    
+    protected static final Log LOG = LogFactory.getLog(BasicFieldPersistenceProvider.class);
 
     protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
         BasicFieldMetadata metadata = populateValueRequest.getMetadata();
@@ -127,18 +131,21 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 case DECIMAL:
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         populateValueRequest.getFieldManager().setFieldValue(instance,
-                                populateValueRequest.getProperty().getName(), new BigDecimal(new Double(populateValueRequest.getRequestedValue())));
+                                populateValueRequest.getProperty().getName(), new BigDecimal(populateValueRequest.getRequestedValue()));
                     } else {
                         populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Double(populateValueRequest.getRequestedValue()));
                     }
                     break;
                 case MONEY:
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new BigDecimal(new Double(populateValueRequest.getRequestedValue())));
+                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new BigDecimal(populateValueRequest.getRequestedValue()));
                     } else if (Double.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                        LOG.warn("The requested Money field is of type double and could result in a loss of precision." +
+                        		" Broadleaf recommends that the type of all Money fields are 'BigDecimal' in order to avoid" +
+                        		" this loss of precision that could occur.");
                         populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Double(populateValueRequest.getRequestedValue()));
                     } else {
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Money(new Double(populateValueRequest.getRequestedValue())));
+                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Money(new BigDecimal(populateValueRequest.getRequestedValue())));
                     }
                     break;
                 case INTEGER:
