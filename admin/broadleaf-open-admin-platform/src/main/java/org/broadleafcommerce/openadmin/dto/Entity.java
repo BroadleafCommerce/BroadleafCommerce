@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.dto;
 import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
+import org.eclipse.core.internal.runtime.Product;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -100,6 +101,22 @@ public class Entity implements Serializable {
             j++;
         }
         properties = merged;
+    }
+    
+    /**
+     * Replaces all property values in this entity with the values from the given entity. This also resets the {@link #pMap}
+     * 
+     * @param entity
+     */
+    public void overridePropertyValues(Entity entity) {
+        for (Property property : entity.getProperties()) {
+            Property myProperty = findProperty(property.getName());
+            if (myProperty != null) {
+                myProperty.setValue(property.getValue());
+                myProperty.setRawValue(property.getRawValue());
+            }
+        }
+        pMap = null;
     }
     
     public Property findProperty(String name) {
