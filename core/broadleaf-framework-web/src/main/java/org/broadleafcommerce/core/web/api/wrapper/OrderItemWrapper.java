@@ -82,7 +82,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
     protected SkuWrapper sku;
 
     @XmlElement
-    protected ProductSummaryWrapper product;
+    protected Long productId;
     
     @XmlElement(name = "orderItemAttribute")
     @XmlElementWrapper(name = "orderItemAttributes")
@@ -137,20 +137,18 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
             this.salePrice = model.getSalePrice();
             DiscreteOrderItem doi = (DiscreteOrderItem) model;
 
-            SkuWrapper skuWrapper = (SkuWrapper) context.getBean(SkuWrapper.class.getName());
-            skuWrapper.wrap(doi.getSku(), request);
-            this.sku = skuWrapper;
-            
-            ProductSummaryWrapper productWrapper = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
-            productWrapper.wrap(doi.getProduct(), request);
-            this.product = productWrapper;
+            //            SkuWrapper skuWrapper = (SkuWrapper) context.getBean(SkuWrapper.class.getName());
+            //            skuWrapper.wrap(doi.getSku(), request);
+            //            this.sku = skuWrapper;
+            //            
+            //            ProductSummaryWrapper productWrapper = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
+            //            productWrapper.wrap(doi.getProduct(), request);
+            this.productId = doi.getProduct().getId();
         } else if (model instanceof BundleOrderItem) {
             BundleOrderItem boi = (BundleOrderItem) model;
             this.bundleRetailPrice = boi.getRetailPrice();
             this.bundleSalePrice = boi.getSalePrice();
-            SkuWrapper skuWrapper = (SkuWrapper) context.getBean(SkuWrapper.class.getName());
-            skuWrapper.wrap(boi.getSku(), request);
-            this.sku = skuWrapper;
+
 
             //Wrap up all the discrete order items for this bundle order item
             List<DiscreteOrderItem> discreteItems = boi.getDiscreteOrderItems();
@@ -163,9 +161,9 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
                 }
             }
 
-            ProductBundleSummaryWrapper productWrapper = (ProductBundleSummaryWrapper) context.getBean(ProductBundleSummaryWrapper.class.getName());
-            productWrapper.wrap(boi.getProduct(), request);
-            this.product = productWrapper;
+            //            ProductBundleSummaryWrapper productWrapper = (ProductBundleSummaryWrapper) context.getBean(ProductBundleSummaryWrapper.class.getName());
+            //            productWrapper.wrap(boi.getProduct(), request);
+            this.productId = boi.getProduct().getId();
         }
     }
 }
