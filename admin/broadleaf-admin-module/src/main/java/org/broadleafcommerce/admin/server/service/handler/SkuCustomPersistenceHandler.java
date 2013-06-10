@@ -548,7 +548,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                                                                              getProductOptionProperties(entity),
                                                                              null);
             if (errorEntity != null) {
-                return errorEntity;
+                entity.setValidationErrors(errorEntity.getValidationErrors());
+                return entity;
             }
 
             //persist the newly-created Sku
@@ -589,7 +590,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                                                                             adminInstance);
             if (errorEntity != null) {
                 entity.setValidationErrors(errorEntity.getValidationErrors());
-                return errorEntity;
+                return entity;
             }
 
             associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
@@ -610,7 +611,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
     /**
      * This initially removes all of the product option values that are currently related to the Sku and then re-associates
-     * the {@link PrdouctOptionValue}s
+     * the {@link ProductOptionValue}s
      * @param entity
      * @param adminInstance
      */
@@ -657,32 +658,37 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * @return <b>null</b> if successfully validation, the error entity otherwise
      */
     protected Entity validateUniqueProductOptionValueCombination(Product product, List<Property> productOptionProperties, Sku currentSku) {
-        List<Long> productOptionValueIds = new ArrayList<Long>();
-        for (Property property : productOptionProperties) {
-            productOptionValueIds.add(Long.parseLong(property.getValue()));
-        }
+        //do not attempt POV validation if no PO properties were passed in
+        if (CollectionUtils.isNotEmpty(productOptionProperties)) {
+            List<Long> productOptionValueIds = new ArrayList<Long>();
+            for (Property property : productOptionProperties) {
+                productOptionValueIds.add(Long.parseLong(property.getValue()));
+            }
+    
+            boolean validated = true;
+            for (Sku sku : product.getAdditionalSkus()) {
+                if (currentSku == null || !sku.getId().equals(currentSku.getId())) {
+                    List<Long> testList = new ArrayList<Long>();
+                    for (ProductOptionValue optionValue : sku.getProductOptionValues()) {
+                        testList.add(optionValue.getId());
+                    }
 
-        boolean validated = true;
-        for (Sku sku : product.getAdditionalSkus()) {
-            if (currentSku == null || !sku.getId().equals(currentSku.getId())) {
-                List<Long> testList = new ArrayList<Long>();
-                for (ProductOptionValue optionValue : sku.getProductOptionValues()) {
-                    testList.add(optionValue.getId());
-                }
-
-                if (productOptionValueIds.containsAll(testList) && productOptionValueIds.size() == testList.size()) {
-                    validated = false;
-                    break;
+                    if (CollectionUtils.isNotEmpty(testList) && 
+                            productOptionValueIds.containsAll(testList) && 
+                            productOptionValueIds.size() == testList.size()) {
+                        validated = false;
+                        break;
+                    }
                 }
             }
-        }
-
-        if (!validated) {
-            Entity errorEntity = new Entity();
-            for (Property productOptionProperty : productOptionProperties) {
-                errorEntity.addValidationError(productOptionProperty.getName(), "uniqueSkuError");
+    
+            if (!validated) {
+                Entity errorEntity = new Entity();
+                for (Property productOptionProperty : productOptionProperties) {
+                    errorEntity.addValidationError(productOptionProperty.getName(), "uniqueSkuError");
+                }
+                return errorEntity;
             }
-            return errorEntity;
         }
         return null;
     }
