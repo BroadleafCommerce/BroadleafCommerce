@@ -175,13 +175,28 @@ public interface FormBuilderService {
     public void populateEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords, EntityForm entityForm)
             throws ServiceException;
     
+
+    /**
+     * Delegates to {@link #populateEntityFormFields(EntityForm, Entity, boolean, boolean)} with true for populating both
+     * the id and type.
+     * 
+     * @see {@link #populateEntityFormFields(EntityForm, Entity, boolean, boolean)}
+     * @param ef
+     * @param entity
+     */
+    public void populateEntityFormFields(EntityForm ef, Entity entity);
+    
     /**
      * Sets values for all fields found on the EntityForm from the specified entity.
      * 
      * @param ef
      * @param entity
+     * @param populateType whether or not to use the type from the given {@link Entity} or keep the current value on
+     * the {@link EntityForm}
+     * @param populateId whether or not to use the id from the given {@link Entity} or keep the current value on
+     * the {@link EntityForm}
      */
-    public void populateEntityFormFields(EntityForm ef, Entity entity);
+    public void populateEntityFormFields(EntityForm ef, Entity entity, boolean populateType, boolean populateId);
 
     /**
      * Sets values for the necessary adorned fields on the EntityForm from the specified entity.

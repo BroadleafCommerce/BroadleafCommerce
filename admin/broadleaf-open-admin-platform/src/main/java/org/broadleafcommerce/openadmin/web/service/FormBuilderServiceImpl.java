@@ -703,11 +703,20 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         
         ef.addAction(DefaultEntityFormActions.DELETE);
     }
-
+    
     @Override
     public void populateEntityFormFields(EntityForm ef, Entity entity) {
-        ef.setId(entity.findProperty(ef.getIdProperty()).getValue());
-        ef.setEntityType(entity.getType()[0]);
+        populateEntityFormFields(ef, entity, true, true);
+    }
+
+    @Override
+    public void populateEntityFormFields(EntityForm ef, Entity entity, boolean populateType, boolean populateId) {
+        if (populateType) {
+            ef.setId(entity.findProperty(ef.getIdProperty()).getValue());
+        }
+        if (populateId) {
+            ef.setEntityType(entity.getType()[0]);
+        }
 
         for (Entry<String, Field> entry : ef.getFields().entrySet()) {
             Property entityProp = entity.findProperty(entry.getKey());

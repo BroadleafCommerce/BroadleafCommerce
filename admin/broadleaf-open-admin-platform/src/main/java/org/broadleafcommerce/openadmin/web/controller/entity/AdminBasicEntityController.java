@@ -873,14 +873,19 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
                     collectionItemId);
             }
+            
+            boolean populateTypeAndId = true;
             if (entityForm == null) {
                 entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
             } else {
                 entityForm.clearFieldsMap();
+                String entityType = entityForm.getEntityType();
                 formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, entityForm);
+                entityForm.setEntityType(entityType);
+                populateTypeAndId = false;
             }
 
-            formService.populateEntityFormFields(entityForm, entity);
+            formService.populateEntityFormFields(entityForm, entity, populateTypeAndId, populateTypeAndId);
             formService.populateAdornedEntityFormFields(entityForm, entity, ppr.getAdornedList());
 
             model.addAttribute("entityForm", entityForm);
@@ -894,6 +899,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                     collectionItemId);
             }
             
+            boolean populateTypeAndId = true;
             if (entityForm == null) {
                 entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
             } else {
@@ -903,9 +909,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 entityForm.clearFieldsMap();
                 formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id, entityForm);
                 entityForm.getFields().get("priorKey").setValue(priorKey);
+                populateTypeAndId = false;
             }
 
-            formService.populateEntityFormFields(entityForm, entity);
+            formService.populateEntityFormFields(entityForm, entity, populateTypeAndId, populateTypeAndId);
             formService.populateMapEntityFormFields(entityForm, entity);
 
             model.addAttribute("entityForm", entityForm);
