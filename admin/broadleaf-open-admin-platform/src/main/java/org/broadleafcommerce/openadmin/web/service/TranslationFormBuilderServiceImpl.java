@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -51,7 +52,7 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
     protected LocaleService localeService;
     
     @Override
-    public ListGrid buildListGrid(List<Translation> translations) {
+    public ListGrid buildListGrid(List<Translation> translations, boolean isRte) {
         // Set up the two header fields we're interested in for the translations list grid
         List<Field> headerFields = new ArrayList<Field>();
         headerFields.add(new Field()
@@ -105,7 +106,8 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
                 .withName("translatedValue")
                 .withFriendlyName("Translation_translatedValue")
                 .withOrder(10)
-                .withValue(t.getTranslatedValue()));
+                .withValue(t.getTranslatedValue())
+                .withDisplayValue(isRte ? getLocalizedEditToViewMessage() : t.getTranslatedValue()));
             
             listGrid.getRecords().add(record);
         }
@@ -125,7 +127,7 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
         
         ef.addField(new Field()
             .withName("translatedValue")
-            .withFieldType("string")
+            .withFieldType(formProperties.getIsRte() ? "html" : "string")
             .withFriendlyName("Translation_translatedValue")
             .withValue(formProperties.getTranslatedValue())
             .withOrder(10));
@@ -141,6 +143,10 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
         ef.addHiddenField(new Field()
             .withName("propertyName")
             .withValue(formProperties.getPropertyName()));
+        
+        ef.addHiddenField(new Field()
+            .withName("isRte")
+            .withValue(String.valueOf(formProperties.getIsRte())));
         
         return ef;
     }
@@ -165,6 +171,14 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
         f.setOptions(localeMap);
         
         return f;
+    }
+    
+    protected String getLocalizedEditToViewMessage() {
+        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
+        if (ctx != null && ctx.getMessageSource() != null) {
+            return ctx.getMessageSource().getMessage("i18n.editToView", null, ctx.getJavaLocale());
+        }
+        return null;
     }
 
 }

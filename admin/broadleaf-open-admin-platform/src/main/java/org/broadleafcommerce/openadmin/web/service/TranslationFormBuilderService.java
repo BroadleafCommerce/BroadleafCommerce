@@ -29,9 +29,10 @@ public interface TranslationFormBuilderService {
      * Builds a ListGrid for the given list of translations
      * 
      * @param translations
+     * @param isRte - whether or not the field that this translation is tied to is a rich text edit field
      * @return the list grid
      */
-    public ListGrid buildListGrid(List<Translation> translations);
+    public ListGrid buildListGrid(List<Translation> translations, boolean isRte);
 
     /**
      * Builds an EntityForm used to create or edit a translation value
@@ -40,5 +41,6 @@ public interface TranslationFormBuilderService {
      * @return the entity form
      */
     public EntityForm buildTranslationForm(TranslationForm formProperties);
+
 
 }

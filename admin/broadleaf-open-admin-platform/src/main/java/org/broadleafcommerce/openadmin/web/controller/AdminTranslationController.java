@@ -75,7 +75,7 @@ public class AdminTranslationController extends AdminAbstractController {
 
         List<Translation> translations = 
                 translationService.getTranslations(form.getCeilingEntity(), form.getEntityId(), form.getPropertyName());
-        ListGrid lg = formService.buildListGrid(translations);
+        ListGrid lg = formService.buildListGrid(translations, form.getIsRte());
         
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("form", form);
@@ -207,6 +207,7 @@ public class AdminTranslationController extends AdminAbstractController {
         form.setLocaleCode(entityForm.getFields().get("localeCode").getValue());
         form.setPropertyName(entityForm.getFields().get("propertyName").getValue());
         form.setTranslatedValue(entityForm.getFields().get("translatedValue").getValue());
+        form.setIsRte(Boolean.valueOf(entityForm.getFields().get("isRte").getValue()));
         if (StringUtils.isNotBlank(entityForm.getId())) {
             form.setTranslationId(Long.parseLong(entityForm.getId()));
         }

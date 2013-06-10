@@ -5,7 +5,8 @@
             return {
                 ceilingEntity : $container.find('.translation-ceiling').text(),
                 entityId      : $container.find('.translation-id').text(),
-                propertyName  : $container.find('.translation-property').text()
+                propertyName  : $container.find('.translation-property').text(),
+                isRte         : $container.find('.translation-rte').text()
             };
         }
     };

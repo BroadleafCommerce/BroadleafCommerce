@@ -24,6 +24,7 @@ public class TranslationForm {
     protected String localeCode;
     protected String translatedValue;
     protected Long translationId;
+    protected Boolean isRte;
 
     public String getCeilingEntity() {
         return ceilingEntity;
@@ -71,6 +72,14 @@ public class TranslationForm {
 
     public void setTranslationId(Long translationId) {
         this.translationId = translationId;
+    }
+    
+    public Boolean getIsRte() {
+        return isRte == null ? false : isRte;
+    }
+
+    public void setIsRte(Boolean isRte) {
+        this.isRte = isRte;
     }
 
 }
