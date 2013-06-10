@@ -249,7 +249,7 @@ $(document).ready(function() {
                     type: 'hidden',
                     name: $(input).attr('name'),
                     value: BLCAdmin.dates.getServerDate($(input).val())
-                })[0];
+                }).addClass('datepicker')[0];
             }
             
             //only submit fields that have a value set and are not a sort field. Sort fields will be added separately
