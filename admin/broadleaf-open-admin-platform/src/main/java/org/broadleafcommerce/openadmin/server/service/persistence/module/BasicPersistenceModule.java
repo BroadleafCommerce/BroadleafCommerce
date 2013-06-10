@@ -304,11 +304,16 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 if (persistenceManager.getDynamicEntityDao().getStandardEntityManager().contains(instance)) {
                     persistenceManager.getDynamicEntityDao().refresh(instance);
                 }
-                //List<Serializable> entityList = new ArrayList<Serializable>(1);
-                //entityList.add(instance);
-                //Entity invalid = getRecords(mergedProperties, entityList, null, null)[0];
-                //invalid.setValidationErrors(entity.getValidationErrors());
-                throw new ValidationException(entity, "The entity has failed validation");
+                
+                //re-initialize the valid properties for the entity in order to deal with the potential of not
+                //completely sending over all checkbox/radio fields
+                List<Serializable> entityList = new ArrayList<Serializable>(1);
+                entityList.add(instance);
+                Entity invalid = getRecords(mergedProperties, entityList, null, null)[0];
+                invalid.setValidationErrors(entity.getValidationErrors());
+                invalid.overridePropertyValues(entity);
+                
+                throw new ValidationException(invalid, "The entity has failed validation");
             }
             else {
                 fieldManager.persistMiddleEntities();

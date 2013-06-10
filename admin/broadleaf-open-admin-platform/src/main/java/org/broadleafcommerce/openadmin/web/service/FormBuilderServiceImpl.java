@@ -479,18 +479,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     public EntityForm createEntityForm(ClassMetadata cmd, Entity entity)
             throws ServiceException {
         EntityForm ef = createStandardEntityForm();
-        populateEntityForm(cmd, entity, ef, false);
+        populateEntityForm(cmd, entity, ef);
         return ef;
     }
 
     @Override
     public void populateEntityForm(ClassMetadata cmd, Entity entity, EntityForm ef) 
-            throws ServiceException {
-        populateEntityForm(cmd, entity, ef, false);
-    }
-
-    @Override
-    public void populateEntityForm(ClassMetadata cmd, Entity entity, EntityForm ef, boolean formFieldsVisibilityOverride) 
             throws ServiceException {
         // Get the empty form with appropriate fields
         populateEntityForm(cmd, ef);
@@ -499,7 +493,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         ef.setId(entity.findProperty(idProperty).getValue());
         ef.setEntityType(entity.getType()[0]);
 
-        populateEntityFormFieldValues(cmd, entity, ef, formFieldsVisibilityOverride);
+        populateEntityFormFieldValues(cmd, entity, ef);
         
         Property p = entity.findProperty(BasicPersistenceModule.MAIN_ENTITY_NAME_PROPERTY);
         if (p != null) {
@@ -508,7 +502,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     @Override
-    public void populateEntityFormFieldValues(ClassMetadata cmd, Entity entity, EntityForm ef, boolean formFieldsOverride) {
+    public void populateEntityFormFieldValues(ClassMetadata cmd, Entity entity, EntityForm ef) {
         // Set the appropriate property values
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
@@ -516,7 +510,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                 Property entityProp = entity.findProperty(p.getName());
                 
-                if (entityProp == null && (formFieldsOverride || basicFM.getVisibility().equals(VisibilityEnum.FORM_EXPLICITLY_SHOWN))) {
+                boolean explicitlyShown = VisibilityEnum.FORM_EXPLICITLY_SHOWN.equals(basicFM.getVisibility());
+                //always show special map fields
+                if (p.getName().equals("key") || p.getName().equals("priorKey")) {
+                    explicitlyShown = true;
+                }
+                
+                if (entityProp == null && explicitlyShown) {
                     Field field = ef.findField(p.getName());
                     if (field != null) {
                         field.setValue(null);
@@ -646,10 +646,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
     
     @Override
-    public void populateEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords, EntityForm ef, boolean formFieldsVisibilityOverride)
+    public void populateEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords, EntityForm ef)
             throws ServiceException {
         // Get the form with values for this entity
-        populateEntityForm(cmd, entity, ef, formFieldsVisibilityOverride);
+        populateEntityForm(cmd, entity, ef);
         
         // Attach the sub-collection list grids and specialty UI support
         for (Property p : cmd.getProperties()) {
@@ -687,12 +687,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     @Override
-    public void populateEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords, EntityForm ef)
-            throws ServiceException {
-        populateEntityForm(cmd, entity, collectionRecords, ef, false);
-    }
-
-    @Override
     public void populateEntityFormFields(EntityForm ef, Entity entity) {
         ef.setId(entity.findProperty(ef.getIdProperty()).getValue());
         ef.setEntityType(entity.getType()[0]);
@@ -725,7 +719,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     public void populateMapEntityFormFields(EntityForm ef, Entity entity) {
         Field field = ef.getFields().get("priorKey");
         Property entityProp = entity.findProperty("key");
-        field.setValue(entityProp.getValue());
+        if (field != null && entityProp != null) {
+            field.setValue(entityProp.getValue());
+        }
     }
 
     @Override

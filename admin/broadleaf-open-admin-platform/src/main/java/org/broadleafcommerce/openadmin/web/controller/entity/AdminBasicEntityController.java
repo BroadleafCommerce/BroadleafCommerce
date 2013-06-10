@@ -236,7 +236,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         if (result.hasErrors()) {
             ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(entityForm.getEntityType()));
             entityForm.clearFieldsMap();
-            formService.populateEntityForm(cmd, entity, entityForm, true);
+            formService.populateEntityForm(cmd, entity, entityForm);
 
             formService.removeNonApplicableFields(cmd, entityForm, entityForm.getEntityType());
 
@@ -385,7 +385,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
             ClassMetadata cmd = service.getClassMetadata(ppr);
             entityForm.clearFieldsMap();
-            formService.populateEntityForm(cmd, entity, subRecordsMap, entityForm, true);
+            formService.populateEntityForm(cmd, entity, subRecordsMap, entityForm);
             
             model.addAttribute("entity", entity);
             model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -691,7 +691,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                     entityForm = formService.createEntityForm(collectionMetadata);
                 } else {
                     formService.populateEntityForm(collectionMetadata, entityForm);
-                    formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm, true);
+                    formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm);
                 }
                 entityForm.getTabs().iterator().next().getIsVisible();
 
@@ -724,7 +724,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
             } else {
                 formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, entityForm);
-                formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm, true);
+                formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm);
             }
             
             if (fmd.getMaintainedAdornedTargetFields().length > 0) {
@@ -744,7 +744,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
             } else {
                 formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id, entityForm);
-                formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm, true);
+                formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm);
             }
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/mapAddEntity");
@@ -843,10 +843,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         ppr = PersistencePackageRequest.fromMetadata(md);
         
-        if (entityForm != null) {
-            entityForm.clearFieldsMap();
-        }
-
         if (md instanceof BasicCollectionMetadata &&
                 ((BasicCollectionMetadata) md).getAddMethodType().equals(AddMethodType.PERSIST)) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
@@ -860,7 +856,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             if (entityForm == null) {
                 entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap);
             } else {
-                formService.populateEntityForm(collectionMetadata, entity, subRecordsMap, entityForm, true);
+                entityForm.clearFieldsMap();
+                formService.populateEntityForm(collectionMetadata, entity, subRecordsMap, entityForm);
                 //remove all the actions since we're not trying to redisplay them on the form
                 entityForm.removeAllActions();
             }
@@ -879,6 +876,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             if (entityForm == null) {
                 entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
             } else {
+                entityForm.clearFieldsMap();
                 formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, entityForm);
             }
 
@@ -899,7 +897,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
             if (entityForm == null) {
                 entityForm = formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id);
             } else {
+                //save off the prior key before clearing out the fields map as it will not appear
+                //back on the saved entity
+                String priorKey = entityForm.getFields().get("priorKey").getValue();
+                entityForm.clearFieldsMap();
                 formService.buildMapForm(fmd, ppr.getMapStructure(), collectionMetadata, id, entityForm);
+                entityForm.getFields().get("priorKey").setValue(priorKey);
             }
 
             formService.populateEntityFormFields(entityForm, entity);
