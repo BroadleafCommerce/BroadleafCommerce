@@ -62,22 +62,6 @@ import java.util.Set;
  * </bean>
  * }
  * </pre>
- * 
- * <p>
- * You might instead want to use some shorthand and define the collection in-place rather than refer to a newly-created bean.
- * For this, you can instead refer to the 'collectionBean' property like so:
- * <pre>
- * {@code
- * <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
- *  <property name="collectionBean">
- *     <list>
- *         <ref bean="blPricingContextFieldService"/>
- *     </list>
- *  </property>
- *  <property name="targetRef" value="blRuleBuilderFieldServices"/>
- * </bean>
- * }
- * </pre>
  *
  * @see LateStageMergeBeanPostProcessor
  * @see EarlyStageMergeBeanPostProcessor
@@ -86,7 +70,6 @@ import java.util.Set;
 public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
 
     protected String collectionRef;
-    protected Object collectionBean;
     protected String targetRef;
     protected Placement placement = Placement.APPEND;
     protected int position;
@@ -105,12 +88,10 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         if (beanName.equals(targetRef)) {
-            if (collectionBean == null) {
-                collectionBean = applicationContext.getBean(collectionRef);
-            }
+            Object mergeCollection = applicationContext.getBean(collectionRef);
             if (bean instanceof ListFactoryBean || bean instanceof List) {
                 try {
-                    List mergeList = (List) collectionBean;
+                    List mergeList = (List) mergeCollection;
                     List sourceList;
                     if (bean instanceof ListFactoryBean) {
                         Field field = ListFactoryBean.class.getDeclaredField("sourceList");
@@ -135,7 +116,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
                 }
             } else if (bean instanceof SetFactoryBean || bean instanceof Set) {
                 try {
-                    Set mergeSet = (Set) collectionBean;
+                    Set mergeSet = (Set) mergeCollection;
                     Set sourceSet;
                     if (bean instanceof Set) {
                         Field field = SetFactoryBean.class.getDeclaredField("sourceSet");
@@ -163,7 +144,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
                 }
             } else if (bean instanceof MapFactoryBean || bean instanceof Map) {
                 try {
-                    Map mergeMap = (Map) collectionBean;
+                    Map mergeMap = (Map) mergeCollection;
                     Map sourceMap;
                     if (bean instanceof MapFactoryBean) {
                         Field field = MapFactoryBean.class.getDeclaredField("sourceMap");
@@ -229,26 +210,6 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
      */
     public void setCollectionRef(String collectionRef) {
         this.collectionRef = collectionRef;
-    }
-    
-    /**
-     * Gets the inline collection bean that should be used to merged with the bean id from {@link #getTargetRef()}
-     * 
-     * @return
-     */
-    public Object getCollectionBean() {
-        return collectionBean;
-    }
-    
-    /**
-     * If set explicitly, this collection bean is used to merge rather than looking up another bean in the application
-     * context with {@link #getCollectionRef()}. If not set explicitly (meaning, this is null), this will take on the value
-     * of the returned bean from {@link getCollectionRef()}.
-     * 
-     * @param collectionBean
-     */
-    public void setCollectionBean(Object collectionBean) {
-        this.collectionBean = collectionBean;
     }
 
     /**

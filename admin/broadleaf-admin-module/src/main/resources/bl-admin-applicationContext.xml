@@ -148,8 +148,8 @@
         </property>
     </bean>
 
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionBean">
+    <bean id="blAdminExtendedRuleBuilderFieldServices" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
             <list>
                 <ref bean="blOrderItemFieldService"/>
                 <ref bean="blCustomerFieldService"/>
@@ -162,35 +162,47 @@
                 <ref bean="blProductFieldService"/>
             </list>
         </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminExtendedRuleBuilderFieldServices" />
         <property name="targetRef" value="blRuleBuilderFieldServices" />
     </bean>
     
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionBean">
+    <bean id="blAdminExtendedRuleBuilderOptionsExtensionListeners" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
             <list>
                 <ref bean="blTimeOptionsExtensionListener" />
                 <ref bean="blInventoryTypeOptionsExtensionListener" />
                 <ref bean="blFulfillmentTypeOptionsExtensionListener" />
             </list>
         </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminExtendedRuleBuilderOptionsExtensionListeners" />
         <property name="targetRef" value="blRuleBuilderEnumOptionsExtensionListeners" />
     </bean>
     
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionBean">
+    <bean id="blAdminExtendedTranslationControllerExtensionListeners" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
             <list>
                 <ref bean="blAdminProductTranslationExtensionListener" />
             </list>
         </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminExtendedTranslationControllerExtensionListeners" />
         <property name="targetRef" value="blAdminTranslationControllerExtensionListeners" />
     </bean>
     
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionBean">
+    <bean id="blAdminExtendedPersistenceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
             <list>
                 <ref bean="blSkuPricingPersistenceProvider"/>
             </list>
         </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminExtendedPersistenceProviders" />
         <property name="targetRef" value="blPersistenceProviders" />
     </bean>
     
