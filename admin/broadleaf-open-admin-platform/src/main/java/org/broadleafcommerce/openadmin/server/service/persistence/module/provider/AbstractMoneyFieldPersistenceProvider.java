@@ -43,19 +43,25 @@ public abstract class AbstractMoneyFieldPersistenceProvider extends FieldPersist
             return FieldProviderResponse.NOT_HANDLED;
         }
         
-        BigDecimal value = (BigDecimal) extractValueRequest.getRequestedValue();
+        property.setValue(formatValue((BigDecimal)extractValueRequest.getRequestedValue(), extractValueRequest, property));
+        property.setDisplayValue(formatDisplayValue((BigDecimal)extractValueRequest.getRequestedValue(), extractValueRequest, property));
+        
+        return FieldProviderResponse.HANDLED_BREAK;
+    }
+    
+    protected String formatValue(BigDecimal value, ExtractValueRequest extractValueRequest, Property property) {
         NumberFormat format = NumberFormat.getInstance();
         format.setMaximumFractionDigits(2);
         format.setMinimumFractionDigits(2);
-        property.setValue(format.format(value));
-        
+        return format.format(value);
+    }
+    
+    protected String formatDisplayValue(BigDecimal value, ExtractValueRequest extractValueRequest, Property property) {
         Locale locale = getLocale(extractValueRequest, property);
         Currency currency = getCurrency(extractValueRequest, property);
-        format = NumberFormat.getCurrencyInstance(locale);
+        NumberFormat format = NumberFormat.getCurrencyInstance(locale);
         format.setCurrency(currency);
-        property.setDisplayValue(format.format(value));
-        
-        return FieldProviderResponse.HANDLED_BREAK;
+        return format.format(value);
     }
     
     protected abstract boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property);

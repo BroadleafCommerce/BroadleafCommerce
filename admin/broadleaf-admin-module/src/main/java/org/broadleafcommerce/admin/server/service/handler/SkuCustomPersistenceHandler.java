@@ -50,7 +50,6 @@ import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
@@ -61,18 +60,11 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -90,8 +82,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
     public static String PRODUCT_OPTION_FIELD_PREFIX = "productOption";
 
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z");
-    
     /**
      * This represents the field that all of the product option values will be stored in. This would be used in the case
      * where there are a bunch of product options and displaying each option as a grid header would have everything
@@ -378,24 +368,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 Sku sku = (Sku) records.get(i);
                 Entity entity = payload[i];
 
-                //In the list of Skus from the database, it is possible that some important properties (like name,
-                //description, etc) are actually null. This isn't a problem on the site because the getters for Sku
-                //use the defaultSku on this Sku's product if they are null. Nothing like this happens for displaying the
-                //list of Skus in the admin, however, because everything is done via property reflection. Let's attempt to
-                //actually call the getters (using bean utils) if the properties are null from this Sku, so that values
-                //actually come back from the defaultSku (just like on the site)
-                for (Property property : entity.getProperties()) {
-                    if (StringUtils.isEmpty(property.getValue())) {
-                        if (property.getName().equals("retailPrice") || property.getName().equals("salePrice")) {
-                            property.setValue("(Not set)");
-                        } else {
-                            String propertyName = property.getName();
-                            String strValue = SkuCustomPersistenceHandler.getStringValueFromGetter(propertyName, sku, helper);
-                            property.setValue(strValue);
-                        }
-                    }
-                }
-
                 List<ProductOptionValue> optionValues = sku.getProductOptionValues();
                 for (ProductOptionValue value : optionValues) {
                     Property optionProperty = new Property();
@@ -416,56 +388,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform fetch for entity: " + ceilingEntityFullyQualifiedClassname, e);
         }
-    }
-
-    /**
-     * Under the covers this uses PropertyUtils to call the getter of the property name for the given Sku, then undergoes
-     * conversion according to the formatters from <b>helper</b>.  This also attempts to only get the first-level properties
-     * so it does not try to get values for things like 'sku.weight.weight', but only 'sku.weight'.
-     * 
-     * @param propertyName - name of the property in relation to <b>sku</b>. Thus, if you are attempting to bring back the
-     * sku name, the propertyName should just be 'name' rather than 'sku.name'. 
-     * @param sku the Sku instance to get the value from
-     * @param helper a RecordHelper to help convert decimals and dates to their string equivalents
-     * @return the String value from <b>sku</b> for <b>propertyName</b>
-     * @throws NoSuchMethodException 
-     * @throws InvocationTargetException 
-     * @throws IllegalAccessException 
-     */
-    public static String getStringValueFromGetter(String propertyName, Sku sku, RecordHelper helper) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        //only attempt the getter on the first-level Sku properties
-        if (propertyName.contains(".")) {
-            StringTokenizer tokens = new StringTokenizer(propertyName, ".");
-            propertyName = tokens.nextToken();
-        }
-
-        Object value = null;
-        try {
-            value = helper.getFieldManager().getFieldValue(sku, propertyName);
-        } catch (FieldNotAvailableException e) {
-            //do nothing
-        }
-
-        String strVal;
-        if (value == null) {
-            strVal = null;
-        } else {
-            if (Date.class.isAssignableFrom(value.getClass())) {
-                strVal = dateFormat.format((Date) value);
-            } else if (Timestamp.class.isAssignableFrom(value.getClass())) {
-                strVal = dateFormat.format(new Date(((Timestamp) value).getTime()));
-            } else if (Calendar.class.isAssignableFrom(value.getClass())) {
-                strVal = dateFormat.format(((Calendar) value).getTime());
-            } else if (Double.class.isAssignableFrom(value.getClass())) {
-                strVal = helper.getDecimalFormatter().format(value);
-            } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
-                strVal = helper.getDecimalFormatter().format(((BigDecimal) value).doubleValue());
-            } else {
-                strVal = value.toString();
-            }
-        }
-
-        return strVal;
     }
 
     public static void applyProductOptionValueCriteria(List<FilterMapping> filterMappings, CriteriaTransferObject cto, PersistencePackage persistencePackage, String skuPropertyPrefix) {
