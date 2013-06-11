@@ -51,15 +51,15 @@ public class HibernateToolTask extends Task {
         super();
     }
     @SuppressWarnings("rawtypes")
-    private List configurationTasks = new ArrayList();
-    private File destDir;
+    protected List configurationTasks = new ArrayList();
+    protected File destDir;
     @SuppressWarnings("rawtypes")
-    private List generators = new ArrayList();
-    private List<ClassPathApplicationContextTask> classPathApplicationContexts = new ArrayList<ClassPathApplicationContextTask>();
-    private List<FileSystemApplicationContextTask> fileSystemApplicationContexts = new ArrayList<FileSystemApplicationContextTask>();
-    private Path classPath;
-    private boolean combinePersistenceUnits = true;
-    private boolean refineFileNames = true;
+    protected List generators = new ArrayList();
+    protected List<ClassPathApplicationContextTask> classPathApplicationContexts = new ArrayList<ClassPathApplicationContextTask>();
+    protected List<FileSystemApplicationContextTask> fileSystemApplicationContexts = new ArrayList<FileSystemApplicationContextTask>();
+    protected Path classPath;
+    protected boolean combinePersistenceUnits = true;
+    protected boolean refineFileNames = true;
     
     public ExporterTask createHbm2DDL() {
         ExporterTask generator = new Hbm2DDLExporterTask(this);
@@ -115,6 +115,7 @@ public class HibernateToolTask extends Task {
         return classPath;
     }
 
+    @Override
     public void execute() {
         AntClassLoader loader;
         MergeFileSystemAndClassPathXMLApplicationContext mergeContext;
@@ -339,6 +340,7 @@ public class HibernateToolTask extends Task {
     
     private class SqlFileFilter implements FilenameFilter {
 
+        @Override
         public boolean accept(File dir, String name) {
             return name.endsWith(".sql");
         }

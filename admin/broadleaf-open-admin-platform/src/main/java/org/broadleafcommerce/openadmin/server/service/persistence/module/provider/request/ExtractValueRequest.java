@@ -32,14 +32,14 @@ import java.util.List;
  */
 public class ExtractValueRequest {
 
-    private final List<Property> props;
-    private final FieldManager fieldManager;
-    private final BasicFieldMetadata metadata;
-    private final Object requestedValue;
-    private String displayVal;
-    private final PersistenceManager persistenceManager;
-    private final DataFormatProvider dataFormatProvider;
-    private final Serializable entity;
+    protected final List<Property> props;
+    protected final FieldManager fieldManager;
+    protected final BasicFieldMetadata metadata;
+    protected final Object requestedValue;
+    protected String displayVal;
+    protected final PersistenceManager persistenceManager;
+    protected final DataFormatProvider dataFormatProvider;
+    protected final Serializable entity;
 
     public ExtractValueRequest(List<Property> props, FieldManager fieldManager, BasicFieldMetadata metadata, 
             Object requestedValue, String displayVal, PersistenceManager persistenceManager, 
