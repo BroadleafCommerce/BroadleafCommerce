@@ -76,9 +76,9 @@ public interface FieldPersistenceProvider extends Ordered {
     FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property);
 
     /**
-     * Add criteria to the ctoConverter. The CtoConverter is used by the system to refine the fetch criteria
+     * Add {@link FilterMapping} instances. The FilterMappings are used by the system to refine the fetch criteria
      * used to retrieve lists of records for the admin. The requestedCto contains filters requested from the admin
-     * and is generally used to drive the criteria added to CtoConverter.
+     * and is generally used to drive the added FilterMapping instances.
      *
      * @param addSearchMappingRequest contains the requested cto and support classes.
      * @param filterMappings filter criteria should be added here. It is used to generate the final search criteria.
