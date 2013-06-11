@@ -20,4 +20,12 @@
          the bean as something that does not implement Spring's ApplicationListener interface. -->
     <bean id="blSequenceGeneratorCorruptionDetection" class="java.lang.Object"/>
     
+    <!-- Overrides the Quartz job for rebuilding the Solr index. Times are intended to be set so that this never actually
+        gets kicked off -->
+    <bean id="rebuildIndexTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail" ref="rebuildIndexJobDetail" />
+        <property name="startDelay" value="999999999999999" />
+        <property name="repeatInterval" value="999999999999999" />
+    </bean>
+    
 </beans>
