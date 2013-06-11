@@ -890,10 +890,12 @@ public class SkuImpl implements Sku {
 
     @Override
     public String getTaxCode() {
-        if (StringUtils.isEmpty(this.taxCode)) {
-            this.product.getTaxCode();
+        if (StringUtils.isEmpty(taxCode) && hasDefaultSku()) {
+            return lookupDefaultSku().getTaxCode();
+        } else if (StringUtils.isEmpty(taxCode)) {
+            return getProduct().getTaxCode();
         }
-        return this.taxCode;
+        return taxCode;
     }
 
     @Override
