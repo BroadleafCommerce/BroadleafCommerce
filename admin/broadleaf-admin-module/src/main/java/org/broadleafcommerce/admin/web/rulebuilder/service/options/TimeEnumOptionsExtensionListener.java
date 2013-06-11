@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.time.HourOfDayType;
 import org.broadleafcommerce.common.time.MinuteType;
 import org.broadleafcommerce.common.time.MonthType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.enums.AbstractRuleBuilderEnumOptionsExtensionListener;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,7 @@ import java.util.Map;
  * 
  * @author Andre Azzolini (apazzolini)
  */
+@Component("blTimeOptionsExtensionListener")
 public class TimeEnumOptionsExtensionListener extends AbstractRuleBuilderEnumOptionsExtensionListener {
 
     @Override

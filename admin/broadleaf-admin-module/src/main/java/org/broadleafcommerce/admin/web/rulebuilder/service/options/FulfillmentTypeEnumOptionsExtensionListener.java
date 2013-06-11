@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.common.time.HourOfDayType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.enums.AbstractRuleBuilderEnumOptionsExtensionListener;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +30,7 @@ import java.util.Map;
  * 
  * @author Andre Azzolini (apazzolini)
  */
+@Component("blFulfillmentTypeOptionsExtensionListener")
 public class FulfillmentTypeEnumOptionsExtensionListener extends AbstractRuleBuilderEnumOptionsExtensionListener {
 
     @Override

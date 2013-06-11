@@ -32,7 +32,7 @@ import javax.annotation.Resource;
 public class RuleBuilderEnumOptionsResourceHandler extends AbstractGeneratedResourceHandler {
     
     @Resource(name = "blRuleBuilderEnumOptionsExtensionManager")
-    protected RuleBuilderEnumOptionsExtensionListener ruleBuilderEnumOptions;
+    protected RuleBuilderEnumOptionsExtensionManager ruleBuilderEnumOptions;
     
     @Override
     public String getHandledFileName() {

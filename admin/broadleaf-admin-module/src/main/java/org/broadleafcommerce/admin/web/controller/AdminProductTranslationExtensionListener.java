@@ -21,12 +21,14 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.web.controller.AdminTranslationControllerExtensionListener;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
  */
+@Component("blAdminProductTranslationExtensionListener")
 public class AdminProductTranslationExtensionListener implements AdminTranslationControllerExtensionListener {
     
     @Resource(name = "blCatalogService")

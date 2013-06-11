@@ -49,16 +49,32 @@ import java.util.Set;
  * <pre>
  * {@code
  * <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
- * <property name="collectionRef" value="blPriceListRuleBuilderFieldServices"/>
- * <property name="targetRef" value="blRuleBuilderFieldServices"/>
+ *  <property name="collectionRef" value="blPriceListRuleBuilderFieldServices"/>
+ *  <property name="targetRef" value="blRuleBuilderFieldServices"/>
  * </bean>
  *
  * <bean id="blPriceListRuleBuilderFieldServices" class="org.springframework.beans.factory.config.ListFactoryBean">
- * <property name="sourceList">
- * <list>
- * <ref bean="blPricingContextFieldService"/>
- * </list>
- * </property>
+ *  <property name="sourceList">
+ *      <list>
+ *          <ref bean="blPricingContextFieldService"/>
+ *      </list>
+ *  </property>
+ * </bean>
+ * }
+ * </pre>
+ * 
+ * <p>
+ * You might instead want to use some shorthand and define the collection in-place rather than refer to a newly-created bean.
+ * For this, you can instead refer to the 'collectionBean' property like so:
+ * <pre>
+ * {@code
+ * <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+ *  <property name="collectionBean">
+ *     <list>
+ *         <ref bean="blPricingContextFieldService"/>
+ *     </list>
+ *  </property>
+ *  <property name="targetRef" value="blRuleBuilderFieldServices"/>
  * </bean>
  * }
  * </pre>
@@ -70,6 +86,7 @@ import java.util.Set;
 public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
 
     protected String collectionRef;
+    protected Object collectionBean;
     protected String targetRef;
     protected Placement placement = Placement.APPEND;
     protected int position;
@@ -88,13 +105,20 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         if (beanName.equals(targetRef)) {
-            Object mergeCollection = applicationContext.getBean(collectionRef);
-            if (bean instanceof ListFactoryBean) {
+            if (collectionBean == null) {
+                collectionBean = applicationContext.getBean(collectionRef);
+            }
+            if (bean instanceof ListFactoryBean || bean instanceof List) {
                 try {
-                    List mergeList = (List) mergeCollection;
-                    Field field = ListFactoryBean.class.getDeclaredField("sourceList");
-                    field.setAccessible(true);
-                    List sourceList = (List) field.get(bean);
+                    List mergeList = (List) collectionBean;
+                    List sourceList;
+                    if (bean instanceof ListFactoryBean) {
+                        Field field = ListFactoryBean.class.getDeclaredField("sourceList");
+                        field.setAccessible(true);
+                        sourceList = (List) field.get(bean);
+                    } else {
+                        sourceList = (List) bean;
+                    }
                     switch (placement) {
                         case APPEND:
                             sourceList.addAll(mergeList);
@@ -109,12 +133,17 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
                 } catch (Exception e) {
                     throw new BeanCreationException(e.getMessage());
                 }
-            } else if (bean instanceof SetFactoryBean) {
+            } else if (bean instanceof SetFactoryBean || bean instanceof Set) {
                 try {
-                    Set mergeSet = (Set) mergeCollection;
-                    Field field = SetFactoryBean.class.getDeclaredField("sourceSet");
-                    field.setAccessible(true);
-                    Set sourceSet = (Set) field.get(bean);
+                    Set mergeSet = (Set) collectionBean;
+                    Set sourceSet;
+                    if (bean instanceof Set) {
+                        Field field = SetFactoryBean.class.getDeclaredField("sourceSet");
+                        field.setAccessible(true);
+                        sourceSet = (Set) field.get(bean);
+                    } else {
+                        sourceSet = (Set)bean;
+                    }
                     List tempList = new ArrayList(sourceSet);
                     switch (placement) {
                         case APPEND:
@@ -132,12 +161,17 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
                 } catch (Exception e) {
                     throw new BeanCreationException(e.getMessage());
                 }
-            } else if (bean instanceof MapFactoryBean) {
+            } else if (bean instanceof MapFactoryBean || bean instanceof Map) {
                 try {
-                    Map mergeMap = (Map) mergeCollection;
-                    Field field = MapFactoryBean.class.getDeclaredField("sourceMap");
-                    field.setAccessible(true);
-                    Map sourceMap = (Map) field.get(bean);
+                    Map mergeMap = (Map) collectionBean;
+                    Map sourceMap;
+                    if (bean instanceof MapFactoryBean) {
+                        Field field = MapFactoryBean.class.getDeclaredField("sourceMap");
+                        field.setAccessible(true);
+                        sourceMap = (Map) field.get(bean);
+                    } else {
+                        sourceMap = (Map) bean;
+                    }
                     LinkedHashMap tempMap = new LinkedHashMap();
                     switch (placement) {
                         case APPEND:
@@ -195,6 +229,26 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
      */
     public void setCollectionRef(String collectionRef) {
         this.collectionRef = collectionRef;
+    }
+    
+    /**
+     * Gets the inline collection bean that should be used to merged with the bean id from {@link #getTargetRef()}
+     * 
+     * @return
+     */
+    public Object getCollectionBean() {
+        return collectionBean;
+    }
+    
+    /**
+     * If set explicitly, this collection bean is used to merge rather than looking up another bean in the application
+     * context with {@link #getCollectionRef()}. If not set explicitly (meaning, this is null), this will take on the value
+     * of the returned bean from {@link getCollectionRef()}.
+     * 
+     * @param collectionBean
+     */
+    public void setCollectionBean(Object collectionBean) {
+        this.collectionBean = collectionBean;
     }
 
     /**

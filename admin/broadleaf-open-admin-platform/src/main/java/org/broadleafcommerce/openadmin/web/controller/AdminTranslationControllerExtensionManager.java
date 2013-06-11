@@ -17,15 +17,20 @@
 package org.broadleafcommerce.openadmin.web.controller;
 
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 /**
  * @author Andre Azzolini (apazzolini)
  */
+@Component("blAdminTranslationControllerExtensionManager")
 public class AdminTranslationControllerExtensionManager implements AdminTranslationControllerExtensionListener {
     
+    @Resource(name = "blAdminTranslationControllerExtensionListeners")
     protected List<AdminTranslationControllerExtensionListener> listeners = new ArrayList<AdminTranslationControllerExtensionListener>();
     
     @Override

@@ -16,8 +16,12 @@
 
 package org.broadleafcommerce.openadmin.web.rulebuilder.enums;
 
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -25,8 +29,10 @@ import java.util.List;
  * 
  * @author Andre Azzolini (apazzolini)
  */
+@Component("blRuleBuilderEnumOptionsExtensionManager")
 public class RuleBuilderEnumOptionsExtensionManager implements RuleBuilderEnumOptionsExtensionListener {
     
+    @Resource(name = "blRuleBuilderEnumOptionsExtensionListeners")
     protected List<RuleBuilderEnumOptionsExtensionListener> listeners = new ArrayList<RuleBuilderEnumOptionsExtensionListener>();
 
     @Override
