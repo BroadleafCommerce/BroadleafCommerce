@@ -51,6 +51,8 @@ import org.broadleafcommerce.openadmin.client.dto.Property;
 import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.AdornedTargetListPersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.hibernate.Criteria;
@@ -92,6 +94,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     private static final Log LOG = LogFactory.getLog(SkuCustomPersistenceHandler.class);
 
     public static String PRODUCT_OPTION_FIELD_PREFIX = "productOption";
+    
+    @Resource(name="blAdornedTargetListPersistenceModule")
+    protected AdornedTargetListPersistenceModule adornedPersistenceModule;
 
     /**
      * This represents the field that all of the product option values will be stored in. This would be used in the case
@@ -175,6 +180,11 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             properties.put(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME, createConsolidatedOptionField(SkuImpl.class));
 
             allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
+            
+            //allow the adorned list to contribute properties as well in the case of Sku bundle items
+            adornedPersistenceModule.setPersistenceManager((PersistenceManager)helper);
+            adornedPersistenceModule.updateMergedProperties(persistencePackage, allMergedProperties);
+            
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Sku.class);
             ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
             DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
