@@ -1,9 +1,15 @@
 <footer>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script th:inline="text">
+        //<![CDATA[
+        window.jQuery || document.write('<script src="[[@{/js/admin/lib/jquery-1.9.1.js}]]"><\/script>');
+        //]]>
+    </script>
     
     <blc:bundle name="lib.js" 
                 mapping-prefix="/js/"
-                files="admin/lib/jquery-1.9.1.js,
-                       admin/lib/plugins/jquery.cookie.js,
+                files="admin/lib/plugins/jquery.cookie.js,
                        admin/lib/plugins/jquery.event.move.js,
                        admin/lib/plugins/jquery.event.swipe.js,
                        admin/lib/plugins/jquery.foundation.accordion.js,
@@ -44,27 +50,14 @@
                       
                        admin/components/entityForm.js,
                        admin/components/translations.js,
-
                        admin/components/assetSelector.js,
-                      
                        admin/components/ruleBuilder-operators.js,
+                       admin/components/ruleBuilder-options.js,
                        admin/components/ruleBuilder.js,
-                      
                        admin/components/listGrid.js,
                        admin/components/listGrid-filter.js,
                        admin/components/listGrid-paginate.js,
                       
                        admin/blc-admin-init.js" />
                           
-    <!-- TODO: REMOVE ME -->
-    <!-- This is a temporary fix. These javascript files are actually in the admin project, of which open admin has no
-        dependency on. This should eventually be moved into a JAWR bundle or referenced somewhere in a Thymeleaf Processor
-        once we figure out exactly how clients and other modules can contribute their own js/css files to the admin -->
-    <script type="text/javascript" th:src="@{/js/admin/catalog/product.js}"></script>
-    <script type="text/javascript" th:src="@{/js/admin/catalog/offer.js}"></script>
-    <script type="text/javascript" th:src="@{/js/admin/catalog/category.js}"></script>
-    
-    <!-- Dynamic resources (cannot be minified) -->
-    <script type="text/javascript" th:src="@{/js/admin/components/ruleBuilder-options.js}"></script>
-    
 </footer>

@@ -17,9 +17,10 @@
 package org.broadleafcommerce.common.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
-import org.broadleafcommerce.common.web.resource.ResourceBundlingService;
 import org.broadleafcommerce.common.web.util.ProcessorUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -44,6 +45,9 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
     @javax.annotation.Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
     
+    @Value("${bundle.enabled}")
+    protected boolean bundleEnabled;
+    
     public ResourceBundleProcessor() {
         super("bundle");
     }
@@ -63,7 +67,7 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
             files.add(file.trim());
         }
         
-        if (isProductionMode()) {
+        if (bundleEnabled) {
             String versionedBundle = bundlingService.getVersionedBundleName(name);
             versionedBundle = null;
             if (StringUtils.isBlank(versionedBundle)) {
@@ -79,20 +83,20 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
             Element e = getElement(value);
             parent.insertAfter(element, e);
         } else {
+            List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(name);
+            if (additionalBundleFiles != null) {
+                files.addAll(additionalBundleFiles);
+            }
             for (String file : files) {
                 file = file.trim();
                 String value = (String) StandardExpressionProcessor.processExpression(arguments, "@{'" + mappingPrefix + file + "'}");
                 Element e = getElement(value);
-                parent.insertAfter(element, e);
+                parent.insertBefore(element, e);
             }
         }
         
         parent.removeChild(element);
         return ProcessorResult.OK;
-    }
-    
-    protected boolean isProductionMode() {
-        return true;
     }
     
     protected Element getScriptElement(String src) {

@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.web.resource;
+package org.broadleafcommerce.common.resource.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.util.StopWatch;
+import org.broadleafcommerce.common.web.resource.AbstractGeneratedResourceHandler;
+import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -56,6 +58,11 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     // Map of known bundle names ==> bundle version
     // ex: "global.js" ==> "global12345.js"
     protected Map<String, String> bundleVersions = new HashMap<String, String>();
+    
+    // Map of known unversioned bundle names ==> additional files that should be included
+    // Configured via XML
+    // ex: "global.js" ==> ["classpath:/file1.js", "/js/file2.js"]
+    protected Map<String, List<String>> additionalBundleFiles = new HashMap<String, List<String>>();
     
     @Value("${asset.server.file.system.path}")
     protected String assetFileSystemPath;
@@ -169,6 +176,10 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         StopWatch s = new StopWatch();
         LinkedHashMap<String, Resource> foundResources = new LinkedHashMap<String, Resource>();
         
+        if (additionalBundleFiles.get(bundleName) != null) {
+            files.addAll(additionalBundleFiles.get(bundleName));
+        }
+        
         for (String file : files) {
     		for (Resource location : handler.getLocations()) {
     			try {
@@ -209,6 +220,19 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         
         s.printString("Regitering bundle");
         return versionedName;
+    }
+    
+    @Override
+    public List<String> getAdditionalBundleFiles(String bundleName) {
+        return additionalBundleFiles.get(bundleName);
+    }
+
+    public Map<String, List<String>> getAdditionalBundleFiles() {
+        return additionalBundleFiles;
+    }
+    
+    public void setAdditionalBundleFiles(Map<String, List<String>> additionalBundleFiles) {
+        this.additionalBundleFiles = additionalBundleFiles;
     }
 
 }

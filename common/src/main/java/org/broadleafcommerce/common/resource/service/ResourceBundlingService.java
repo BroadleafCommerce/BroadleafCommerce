@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.web.resource;
+package org.broadleafcommerce.common.resource.service;
 
 import org.broadleafcommerce.common.web.processor.ResourceBundleProcessor;
+import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
@@ -67,5 +68,11 @@ public interface ResourceBundlingService {
      * @return whether or not the given versioned bundle name is currently registered in the system
      */
     public boolean hasBundle(String versionedBundle);
+
+    /**
+     * @param bundleName
+     * @return a list of additional files that are registered for the given bundle name
+     */
+    public List<String> getAdditionalBundleFiles(String bundleName);
 
 }

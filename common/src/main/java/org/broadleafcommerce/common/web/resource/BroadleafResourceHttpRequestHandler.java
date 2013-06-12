@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.web.resource;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;

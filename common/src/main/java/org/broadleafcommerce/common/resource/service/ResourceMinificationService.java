@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.web.resource;
+package org.broadleafcommerce.common.resource.service;
 
 /**
  * Service responsible for interacting with YUI-compressor to minify JS/CSS resources.

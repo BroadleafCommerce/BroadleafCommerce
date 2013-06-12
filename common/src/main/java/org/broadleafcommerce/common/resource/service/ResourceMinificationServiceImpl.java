@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.web.resource;
+package org.broadleafcommerce.common.resource.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
