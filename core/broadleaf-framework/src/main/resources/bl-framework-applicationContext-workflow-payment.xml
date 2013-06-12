@@ -4,9 +4,9 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
                            http://www.springframework.org/schema/aop
-                           http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+                           http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 
     <bean p:order="1000" id="blPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.CompositeActivity">
         <property name="workflow" ref="blAuthorizeAndDebitWorkflow"/>
