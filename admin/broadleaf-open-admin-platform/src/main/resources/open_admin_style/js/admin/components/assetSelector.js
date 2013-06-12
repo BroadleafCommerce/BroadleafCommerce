@@ -42,7 +42,12 @@
                 BLCAdmin.hideCurrentModal();
             });
         	
-            BLCAdmin.showLinkAsModal('/product/1/chooseAsset', function() {
+            var currentPath = window.location.pathname;
+            if (currentPath.charAt(currentPath.length - 1) != '/') {
+                currentPath += '/';
+            }
+            
+            BLCAdmin.showLinkAsModal(currentPath + 'chooseAsset', function() {
     			$('textarea.redactor').unbind('assetInfoSelected');
     			currentRedactor = null;
         	});
