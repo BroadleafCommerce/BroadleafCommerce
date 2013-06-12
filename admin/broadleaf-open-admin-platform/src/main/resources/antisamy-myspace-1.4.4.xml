@@ -9,6 +9,30 @@ http://www.w3.org/TR/html401/struct/global.html
 
 <anti-samy-rules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="antisamy.xsd">
+    
+    <allowed-empty-tags>
+        <literal-list>
+            <literal value="p"/>
+            <literal value="br"/>
+            <literal value="hr"/>
+            <literal value="a"/>
+            <literal value="img"/>
+            <literal value="link"/>
+            <literal value="iframe"/>
+            <literal value="script"/>
+            <literal value="object"/>
+            <literal value="applet"/>
+            <literal value="frame"/>
+            <literal value="base"/>
+            <literal value="param"/>
+            <literal value="meta"/>
+            <literal value="input"/>
+            <literal value="textarea"/>
+            <literal value="embed"/>
+            <literal value="basefont"/>
+            <literal value="col"/>
+        </literal-list>
+    </allowed-empty-tags>
 
     <directives>
         <directive name="omitXmlDeclaration" value="true"/>
@@ -500,7 +524,38 @@ http://www.w3.org/TR/html401/struct/global.html
 
         <!-- Frame & related tags -->
 
-        <tag name="iframe" action="remove"/>
+        <tag name="iframe" action="validate">
+            <attribute name="width">
+                <regexp-list>
+                    <regexp name="anything"/>
+                </regexp-list>
+            </attribute>
+                
+            <attribute name="height">
+                <regexp-list>
+                    <regexp name="anything"/>
+                </regexp-list>
+            </attribute>
+                
+            <attribute name="src">
+                <regexp-list>
+                    <regexp name="anything"/>
+                </regexp-list>
+            </attribute>
+                
+            <attribute name="frameborder">
+                <regexp-list>
+                    <regexp name="anything"/>
+                </regexp-list>
+            </attribute>
+                
+            <attribute name="allowfullscreen">
+                <regexp-list>
+                    <regexp name="anything"/>
+                </regexp-list>
+            </attribute>
+        </tag>
+        
         <tag name="frameset" action="remove"/>
         <tag name="frame" action="remove"/>
 
