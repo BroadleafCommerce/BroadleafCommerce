@@ -858,10 +858,10 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
 
     @Override
     public String getTaxCode() {
-        if (StringUtils.isEmpty(this.taxCode)) {
-            return this.defaultCategory.getTaxCode();
+        if (StringUtils.isEmpty(taxCode) && getDefaultCategory() != null) {
+            return getDefaultCategory().getTaxCode();
         }
-        return this.taxCode;
+        return taxCode;
     }
 
     @Override
