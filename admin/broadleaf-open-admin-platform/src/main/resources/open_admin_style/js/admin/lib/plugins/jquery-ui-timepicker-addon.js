@@ -1,4 +1,4 @@
-/*
+/*!
  * jQuery timepicker addon
  * By: Trent Richardson [http://trentrichardson.com]
  * Version 1.2

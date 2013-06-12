@@ -1,4 +1,4 @@
-/*
+/*!
  * jQuery Foundation Top Bar 2.0.4
  * http://foundation.zurb.com
  * Copyright 2012, ZURB

@@ -1,4 +1,4 @@
-/*
+/*!
  * jQuery Foundation Joyride Plugin 2.0.3
  * http://foundation.zurb.com
  * Copyright 2012, ZURB

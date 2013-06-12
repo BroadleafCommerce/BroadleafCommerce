@@ -1,4 +1,4 @@
-/*
+/*!
  * jQuery Foundation Tooltips 2.0.2
  * http://foundation.zurb.com
  * Copyright 2012, ZURB

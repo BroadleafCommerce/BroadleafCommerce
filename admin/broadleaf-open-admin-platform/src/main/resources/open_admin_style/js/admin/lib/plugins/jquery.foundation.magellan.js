@@ -1,4 +1,4 @@
-/*
+/*!
  * jQuery Foundation Magellan 0.1.0
  * http://foundation.zurb.com
  * Copyright 2012, ZURB
