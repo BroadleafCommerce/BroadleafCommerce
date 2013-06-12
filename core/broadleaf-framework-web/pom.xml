@@ -188,9 +188,5 @@
             <groupId>commons-digester</groupId>
             <artifactId>commons-digester</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.jawr</groupId>
-            <artifactId>jawr</artifactId>
-        </dependency>
     </dependencies>
 </project>

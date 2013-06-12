@@ -44,8 +44,7 @@
             <ref bean="blRemoveFacetValuesLinkProcessor" />
             <ref bean="blToggleFacetLinkProcessor" />
             <ref bean="blUrlRewriteProcessor" />
-            <ref bean="blJawrScriptProcessor" />
-            <ref bean="blJawrCssProcessor" />
+            <ref bean="blResourceBundleProcessor" />
           </set>
         </property>     
     </bean> 

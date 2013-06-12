@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.rulebuilder.enums;
 
-import org.broadleafcommerce.openadmin.web.resource.AbstractGeneratedResourceHandler;
+import org.broadleafcommerce.common.web.resource.AbstractGeneratedResourceHandler;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -36,7 +36,7 @@ public class RuleBuilderEnumOptionsResourceHandler extends AbstractGeneratedReso
     
     @Override
     public String getHandledFileName() {
-        return "/js/admin/components/ruleBuilder-options.js";
+        return "admin/components/ruleBuilder-options.js";
     }
 
     @Override

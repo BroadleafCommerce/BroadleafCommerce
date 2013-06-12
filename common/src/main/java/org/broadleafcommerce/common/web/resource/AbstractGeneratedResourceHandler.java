@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.web.resource;
+package org.broadleafcommerce.common.web.resource;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.springframework.core.io.Resource;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -43,7 +42,7 @@ public abstract class AbstractGeneratedResourceHandler {
      * @param request
      * @return the generated resource
      */
-    public Resource getResource(HttpServletRequest request) {
+    public Resource getResource() {
         String filename = getHandledFileName();
         
         Element e = getGeneratedResourceCache().get(filename);
