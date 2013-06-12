@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.cms.file.service;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
@@ -28,6 +27,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+
+import junit.framework.TestCase;
 
 /**
  * Created by bpolster.
@@ -55,7 +56,7 @@ public class StaticAssetStorageServiceImplTest extends TestCase {
         StaticAssetStorageServiceImpl staticAssetStorageService = new StaticAssetStorageServiceImpl();
         staticAssetStorageService.assetFileSystemPath = "/test";
         staticAssetStorageService.assetServerMaxGeneratedDirectories = 2;
-        String fileName = staticAssetStorageService.generateStorageFileName("/product/myproductimage.jpg");
+        String fileName = staticAssetStorageService.generateStorageFileName("/product/myproductimage.jpg", false);
         assertTrue(fileName.equals("/test/35/ec/myproductimage.jpg"));
 
         BroadleafRequestContext brc = new BroadleafRequestContext();
@@ -66,16 +67,16 @@ public class StaticAssetStorageServiceImplTest extends TestCase {
         brc.setSite(site);
 
         // try with site specific directory
-        fileName = staticAssetStorageService.generateStorageFileName("/product/myproductimage.jpg");
+        fileName = staticAssetStorageService.generateStorageFileName("/product/myproductimage.jpg", false);
         assertTrue(fileName.equals("/test/7f/site-125/35/ec/myproductimage.jpg"));
 
         // try with 3 max generated directories
         staticAssetStorageService.assetServerMaxGeneratedDirectories = 3;
-        fileName = staticAssetStorageService.generateStorageFileName("/product/myproductimage.jpg");
+        fileName = staticAssetStorageService.generateStorageFileName("/product/myproductimage.jpg", false);
         assertTrue(fileName.equals("/test/7f/site-125/35/ec/52/myproductimage.jpg"));
         
         staticAssetStorageService.assetServerMaxGeneratedDirectories = 2;
-        fileName = staticAssetStorageService.generateStorageFileName("testwithoutslash");
+        fileName = staticAssetStorageService.generateStorageFileName("testwithoutslash", false);
         assertTrue(fileName.equals("/test/7f/site-125/e9/90/testwithoutslash"));
     }
 
@@ -101,7 +102,7 @@ public class StaticAssetStorageServiceImplTest extends TestCase {
         staticAsset.setStorageType(StorageType.FILESYSTEM);
 
         // Remember this, we may need to delete this file.
-        String fileName = staticAssetStorageService.generateStorageFileName(staticAsset);
+        String fileName = staticAssetStorageService.generateStorageFileName(staticAsset, false);
 
         boolean exceptionThrown = false;
         try {
@@ -139,7 +140,7 @@ public class StaticAssetStorageServiceImplTest extends TestCase {
         staticAsset.setStorageType(StorageType.FILESYSTEM);
 
         // Remember this, we may need to delete this file.
-        String fileName = staticAssetStorageService.generateStorageFileName(staticAsset);
+        String fileName = staticAssetStorageService.generateStorageFileName(staticAsset, false);
 
         boolean exceptionThrown = false;
         try {
