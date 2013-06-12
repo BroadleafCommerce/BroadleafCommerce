@@ -122,8 +122,8 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     }
 
     @Override
-    public String generateStorageFileName(StaticAsset staticAsset) {
-        return generateStorageFileName(staticAsset.getFullUrl());
+    public String generateStorageFileName(StaticAsset staticAsset, boolean useSharedFile) {
+        return generateStorageFileName(staticAsset.getFullUrl(), useSharedFile);
     }
 
     /**
@@ -139,13 +139,13 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     }
 
     @Override
-    public String generateStorageFileName(String fullUrl) {
+    public String generateStorageFileName(String fullUrl, boolean useSharedFile) {
         String baseDirectory = getBaseDirectory();
         StringBuilder fileName = new StringBuilder(fixPath(baseDirectory));
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null) {
             Site site = brc.getSite();
-            if (site != null) {
+            if (site != null && !useSharedFile) {
                 String siteDirectory = "/site-" + site.getId();
                 String siteHash = DigestUtils.md5Hex(siteDirectory);
                 fileName = fileName.append("/").append(siteHash.substring(0, 2)).append(siteDirectory);
@@ -175,6 +175,10 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         return fileName.toString();
     }
 
+    protected boolean shouldUseSharedFile(InputStream is) {
+        return (is != null && is instanceof GloballySharedInputStream);
+    }
+
     @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public Map<String, String> getCacheFileModel(String fullUrl, SandBox sandBox, Map<String, String> parameterMap) throws Exception {
@@ -196,20 +200,30 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             InputStream classPathInputStream = getResourceFromClasspath(staticAsset);
             if (classPathInputStream != null) {
                 // Create a file system cache file representing this file.
-                String cacheName = constructCacheFileName(staticAsset, convertedParameters);
+                String cacheName = constructCacheFileName(staticAsset, convertedParameters, true);
                 File cacheFile = new File(cacheName);
                 if (!cacheFile.exists()) {
                     createCacheFile(classPathInputStream, cacheFile);
                 }
                 returnFilePath = cacheFile.getAbsolutePath();
             } else {
-                returnFilePath = generateStorageFileName(staticAsset.getFullUrl());
+                returnFilePath = generateStorageFileName(staticAsset.getFullUrl(), false);
             }
         } else {
-            String cacheName = constructCacheFileName(staticAsset, convertedParameters);
-            File cacheFile = new File(cacheName);
+            String sharedCacheName = constructCacheFileName(staticAsset, convertedParameters, true);
+            File cacheFile = new File(sharedCacheName);
+
+            // See if the shared file exists.   This is primarily to support a multi-tenant
+            // implementation that shares assets across the tenants.   If not, check for the 
+            // site specific file.
+            if (!cacheFile.exists()) {
+                String cacheName = constructCacheFileName(staticAsset, convertedParameters, false);
+                cacheFile = new File(cacheName);
+            }
+
             if (!cacheFile.exists()) {
                 InputStream original = findInputStreamForStaticAsset(staticAsset);
+                boolean useSharedFile = shouldUseSharedFile(original);
     
                 if (!convertedParameters.isEmpty()) {
                     Operation[] operations = artifactService.buildOperations(convertedParameters, original, staticAsset.getMimeType());
@@ -219,7 +233,12 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
                         mimeType = "image/png";
                     }
                 } else {
-                    createCacheFile(original, cacheFile);
+                    if (useSharedFile) {
+                        cacheFile = new File(sharedCacheName);
+                        createCacheFile(original, cacheFile);
+                    } else {
+                        createCacheFile(original, cacheFile);
+                    }
                 }
             }
             returnFilePath = cacheFile.getAbsolutePath();
@@ -262,7 +281,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             InputStream original = new ByteArrayInputStream(baos.toByteArray());
             return original;
         } else if (StorageType.FILESYSTEM.equals(staticAsset.getStorageType())) {
-            FileInputStream assetFile = new FileInputStream(generateStorageFileName(staticAsset.getFullUrl()));
+            FileInputStream assetFile = new FileInputStream(generateStorageFileName(staticAsset.getFullUrl(), false));
             BufferedInputStream bufferedStream = new BufferedInputStream(assetFile);
             bufferedStream.mark(0);
             return bufferedStream;
@@ -279,8 +298,14 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
                 if (resource.exists()) {
                     InputStream assetFile = resource.getInputStream();
                     BufferedInputStream bufferedStream = new BufferedInputStream(assetFile);
-                    bufferedStream.mark(0);
-                    return bufferedStream;
+
+                    // Wrapping the buffered input stream with a globally shared stream allows us to 
+                    // vary the way the file names are generated on the file system.    
+                    // This benefits us (mainly in our demo site but their could be other uses) when we
+                    // have assets that are shared across sites that we also need to resize. 
+                    GloballySharedInputStream globallySharedStream = new GloballySharedInputStream(bufferedStream);
+                    globallySharedStream.mark(0);
+                    return globallySharedStream;
                 } else {
                     return null;
                 }
@@ -355,8 +380,19 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         }
     }
 
-    protected String constructCacheFileName(StaticAsset staticAsset, Map<String, String> parameterMap) {
-        String fileName = generateStorageFileName(staticAsset);
+    /**
+     * Builds a file system path for the passed in static asset and paramaterMap.
+     * 
+     * If in a multi-site implementation, the system will also prefix the filepath with a site-identifier
+     * unless the useSharedFile parameter is set to true.
+     * 
+     * @param staticAsset
+     * @param parameterMap
+     * @param useSharedFile
+     * @return
+     */
+    protected String constructCacheFileName(StaticAsset staticAsset, Map<String, String> parameterMap, boolean useSharedFile) {
+        String fileName = generateStorageFileName(staticAsset, useSharedFile);
 
         StringBuilder sb = new StringBuilder(200);
         sb.append(fileName.substring(0, fileName.lastIndexOf('.')));
@@ -410,7 +446,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         } else if (StorageType.FILESYSTEM.equals(staticAsset.getStorageType())) {
             InputStream input = file.getInputStream();
             byte[] buffer = new byte[fileBufferSize];
-            String destFileName = generateStorageFileName(staticAsset.getFullUrl());
+            String destFileName = generateStorageFileName(staticAsset.getFullUrl(), false);
             String tempFileName = destFileName.substring(0, destFileName.lastIndexOf("/") + 1) + UUID.randomUUID().toString();
             File tmpFile = new File(tempFileName);
             if (!tmpFile.getParentFile().exists()) {

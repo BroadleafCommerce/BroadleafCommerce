@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.file.service;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -85,19 +86,21 @@ public interface StaticAssetStorageService {
      * 2.  Overriding this method to introduce an alternate approach
      * 
      * @param fullUrl The URL used to represent an asset for which a name on the fileSystem is desired.
+     * @param useSharedPath If false, the system will generate a path using {@link Site} information if available.
      * 
      * @return
      */
-    String generateStorageFileName(String fullUrl);
+    String generateStorageFileName(String fullUrl, boolean useSharedPath);
 
     /**
      * By default, delegates a call to {@link #generateStorageFileName(String)} using <code>staticAsset.getFullUrl()</code>
      * as the passed in argument. 
      * 
      * @param staticAsset StaticAsset for which a filename is desired.
+     * @param useSharedPath If false, the system will generate a path using {@link Site} information if available.
      * @return
      */
-    String generateStorageFileName(StaticAsset staticAsset);
+    String generateStorageFileName(StaticAsset staticAsset, boolean useSharedPath);
 
     Map<String, String> getCacheFileModel(String fullUrl, SandBox sandBox, Map<String, String> parameterMap) throws Exception;
 
