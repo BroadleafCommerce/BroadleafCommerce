@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.common.util.sql;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -37,6 +36,7 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -55,8 +55,7 @@ public class HibernateToolTask extends Task {
     protected File destDir;
     @SuppressWarnings("rawtypes")
     protected List generators = new ArrayList();
-    protected List<ClassPathApplicationContextTask> classPathApplicationContexts = new ArrayList<ClassPathApplicationContextTask>();
-    protected List<FileSystemApplicationContextTask> fileSystemApplicationContexts = new ArrayList<FileSystemApplicationContextTask>();
+    protected List<Task> appContexts = new ArrayList<Task>();
     protected Path classPath;
     protected boolean combinePersistenceUnits = true;
     protected boolean refineFileNames = true;
@@ -69,13 +68,13 @@ public class HibernateToolTask extends Task {
     
     public ClassPathApplicationContextTask createClassPathApplicationContext() {
         ClassPathApplicationContextTask task = new ClassPathApplicationContextTask();
-        classPathApplicationContexts.add(task);
+        appContexts.add(task);
         return task;
     }
     
     public FileSystemApplicationContextTask createFileSystemApplicationContext() {
         FileSystemApplicationContextTask task = new FileSystemApplicationContextTask();
-        fileSystemApplicationContexts.add(task);
+        appContexts.add(task);
         return task;
     }
     
@@ -130,17 +129,18 @@ public class HibernateToolTask extends Task {
             loader.setThreadContextLoader();
             // launch the service merge application context to get the entity configuration for the entire framework
             String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
-            String[] otherContexts = new String[classPathApplicationContexts.size()];
-            for (int j=0;j<otherContexts.length;j++) {
-                otherContexts[j] = classPathApplicationContexts.get(j).getPath();
+            LinkedHashMap<String, MergeFileSystemAndClassPathXMLApplicationContext.ResourceType> locations = new LinkedHashMap<String, MergeFileSystemAndClassPathXMLApplicationContext.ResourceType>();
+            for (String context : contexts) {
+                locations.put(context, MergeFileSystemAndClassPathXMLApplicationContext.ResourceType.CLASSPATH);
             }
-            contexts = (String[]) ArrayUtils.addAll(contexts, otherContexts);
-            
-            String[] fileSystemItems = new String[fileSystemApplicationContexts.size()];
-            for (int j=0;j<fileSystemItems.length;j++) {
-                fileSystemItems[j] = fileSystemApplicationContexts.get(j).getPath();
+            for (Task task : appContexts) {
+                if (task instanceof ClassPathApplicationContextTask) {
+                    locations.put(((ClassPathApplicationContextTask) task).getPath(), MergeFileSystemAndClassPathXMLApplicationContext.ResourceType.CLASSPATH);
+                } else if (task instanceof FileSystemApplicationContextTask) {
+                    locations.put(((FileSystemApplicationContextTask) task).getPath(), MergeFileSystemAndClassPathXMLApplicationContext.ResourceType.FILESYSTEM);
+                }
             }
-            mergeContext = new MergeFileSystemAndClassPathXMLApplicationContext(contexts, fileSystemItems);
+            mergeContext = new MergeFileSystemAndClassPathXMLApplicationContext(locations, null);
         } catch (Exception e) {
             throw new BuildException(e, getLocation());
         } finally {
