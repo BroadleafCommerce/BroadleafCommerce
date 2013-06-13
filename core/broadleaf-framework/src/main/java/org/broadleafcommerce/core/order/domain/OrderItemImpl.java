@@ -253,7 +253,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Money getPrice() {
-        return convertToMoney(price);
+        return getAveragePrice();
     }
 
     @Override
