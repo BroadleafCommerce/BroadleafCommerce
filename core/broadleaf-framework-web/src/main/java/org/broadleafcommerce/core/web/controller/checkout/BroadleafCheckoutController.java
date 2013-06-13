@@ -194,6 +194,9 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         }
 
         FulfillmentGroup fulfillmentGroup = cart.getFulfillmentGroups().get(0);
+        if (StringUtils.isEmpty(shippingForm.getAddress().getPhonePrimary().getPhoneNumber())) {
+            shippingForm.getAddress().setPhonePrimary(null);
+        }
         fulfillmentGroup.setAddress(shippingForm.getAddress());
         fulfillmentGroup.setPersonalMessage(shippingForm.getPersonalMessage());
         fulfillmentGroup.setDeliveryInstruction(shippingForm.getDeliveryMessage());
