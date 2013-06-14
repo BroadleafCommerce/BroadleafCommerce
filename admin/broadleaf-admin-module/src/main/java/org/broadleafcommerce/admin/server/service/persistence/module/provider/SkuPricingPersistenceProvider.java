@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.admin.server.service.persistence.module.provider;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -60,7 +61,7 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
         
         Object getterValue = null;
         try {
-            getterValue = extractValueRequest.getRecordHelper().getStringValueFromGetter(extractValueRequest.getEntity(), property.getName());
+            getterValue = PropertyUtils.getProperty(extractValueRequest.getEntity(), property.getName());
         } catch (IllegalAccessException e) {
             throw new PersistenceException(e);
         } catch (InvocationTargetException e) {
@@ -77,13 +78,17 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
     }
     
     protected String formatValue(Object value, ExtractValueRequest extractValueRequest, Property property) {
-        
+        if (value == null) {
+            return null;
+        }
         BigDecimal decimalValue = (value instanceof Money) ? ((Money)value).getAmount() : (BigDecimal) value;
         return super.formatValue(decimalValue, extractValueRequest, property);
     }
     
     protected String formatDisplayValue(Object value, ExtractValueRequest extractValueRequest, Property property) {
-        
+        if (value == null) {
+            return null;
+        }
         BigDecimal decimalValue = (value instanceof Money) ? ((Money)value).getAmount() : (BigDecimal) value;
         return super.formatDisplayValue(decimalValue, extractValueRequest, property);
     }
