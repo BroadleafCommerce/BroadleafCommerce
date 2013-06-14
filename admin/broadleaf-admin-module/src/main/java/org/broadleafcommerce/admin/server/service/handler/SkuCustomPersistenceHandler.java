@@ -20,7 +20,6 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.BooleanUtils;
@@ -51,7 +50,6 @@ import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
@@ -62,13 +60,8 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -375,19 +368,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 Sku sku = (Sku) records.get(i);
                 Entity entity = payload[i];
 
-                for (Property property : entity.getProperties()) {
-                    if (property.getValue() == null && !property.getName().contains(FieldManager.MAPFIELDSEPARATOR)) {
-                        BasicFieldMetadata md = (BasicFieldMetadata) originalProps.get(property.getName());
-                        Class testClass = Class.forName(md.getTargetClass());
-                        
-                        if (Sku.class.isAssignableFrom(testClass)) {
-                            //populate the display value from the getter
-                            String getterValue = getStringValueFromGetter(sku, property, helper);
-                            property.setDisplayValue(getterValue);
-                        }
-                    }
-                }
-                
                 List<ProductOptionValue> optionValues = sku.getProductOptionValues();
                 for (ProductOptionValue value : optionValues) {
                     Property optionProperty = new Property();
@@ -579,31 +559,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 }
             }
         }
-    }
-    
-    public static String getStringValueFromGetter(Sku sku, Property property, RecordHelper recordHelper) throws IllegalAccessException,
-            InvocationTargetException, NoSuchMethodException {
-        Object value = PropertyUtils.getProperty(sku, property.getName());
-
-        String strVal;
-        if (value == null) {
-            strVal = null;
-        } else {
-            if (Date.class.isAssignableFrom(value.getClass())) {
-                strVal = recordHelper.getSimpleDateFormatter().format((Date) value);
-            } else if (Timestamp.class.isAssignableFrom(value.getClass())) {
-                strVal = recordHelper.getSimpleDateFormatter().format(new Date(((Timestamp) value).getTime()));
-            } else if (Calendar.class.isAssignableFrom(value.getClass())) {
-                strVal = recordHelper.getSimpleDateFormatter().format(((Calendar) value).getTime());
-            } else if (Double.class.isAssignableFrom(value.getClass())) {
-                strVal = recordHelper.getDecimalFormatter().format(value);
-            } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
-                strVal = recordHelper.getDecimalFormatter().format(((BigDecimal) value).doubleValue());
-            } else {
-                strVal = value.toString();
-            }
-        }
-        return strVal;
     }
 
     protected List<Property> getProductOptionProperties(Entity entity) {

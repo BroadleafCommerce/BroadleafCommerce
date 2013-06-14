@@ -102,7 +102,7 @@ import javax.persistence.criteria.Predicate;
  */
 @Component("blBasicPersistenceModule")
 @Scope("prototype")
-public class BasicPersistenceModule implements PersistenceModule, RecordHelper, ApplicationContextAware {
+public class BasicPersistenceModule implements PersistenceModule, RecordHelper, ApplicationContextAware, DataFormatProvider {
     
     private static final Log LOG = LogFactory.getLog(BasicPersistenceModule.class);
 
@@ -490,7 +490,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                 continue;
                             }
                             props.add(propertyItem);
-                            String displayVal = propertyItem.getDisplayValue();
+                            String displayVal = null;
                             boolean handled = false;
                             for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
                                 FieldProviderResponse response = fieldPersistenceProvider.extractValue(
