@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.util.sql.importsql;
 
+import org.broadleafcommerce.common.logging.SupportLogManager;
+import org.broadleafcommerce.common.logging.SupportLogger;
 import org.hibernate.tool.hbm2ddl.SingleLineSqlCommandExtractor;
 
 import java.io.Reader;
@@ -29,6 +31,8 @@ import java.io.Reader;
  */
 public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlCommandExtractor {
 
+    private static final SupportLogger LOGGER = SupportLogManager.getLogger("UserOverride", DemoSqlServerSingleLineSqlCommandExtractor.class);
+
     private static final String BOOLEANTRUEMATCH = "(?i)(true)";
     private static final String BOOLEANFALSEMATCH = "(?i)(false)";
     private static final String TIMESTAMPMATCH = "(?i)(current_date)";
@@ -36,8 +40,15 @@ public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlCom
     public static final String FALSE = "'FALSE'";
     public static final String CURRENT_TIMESTAMP = "CURRENT_TIMESTAMP";
 
+    protected boolean alreadyRun = false;
+
     @Override
     public String[] extractCommands(Reader reader) {
+        if (!alreadyRun) {
+            alreadyRun = true;
+            LOGGER.support("Converting hibernate.hbm2ddl.import_files sql statements for compatibility with Oracle");
+        }
+
         String[] statements = super.extractCommands(reader);
         for (int j=0; j<statements.length; j++) {
             //try start matches
