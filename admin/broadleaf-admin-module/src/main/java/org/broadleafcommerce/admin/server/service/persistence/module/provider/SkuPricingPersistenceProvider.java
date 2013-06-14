@@ -48,9 +48,11 @@ import java.util.Locale;
 @Component("blSkuPricingPersistenceProvider")
 public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistenceProvider {
     
+    public static int ORDER = FieldPersistenceProvider.MONEY - 1000;
+    
     @Override
     public int getOrder() {
-        return FieldPersistenceProvider.MONEY - 1000;
+        return ORDER;
     }
 
     @Override
@@ -94,7 +96,7 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
     }
     
     /**
-     * Handle all fields that have declared themselves to be apart of a Sku
+     * Handle all fields that have declared themselves to be apart of a Sku and have a field type of Money
      *  
      * @param extractValueRequest
      * @param property
