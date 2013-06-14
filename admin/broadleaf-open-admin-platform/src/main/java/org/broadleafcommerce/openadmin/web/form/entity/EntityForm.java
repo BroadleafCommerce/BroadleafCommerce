@@ -140,8 +140,23 @@ public class EntityForm {
         }
         return null;
     }
+    
+    public Tab findTabForField(String fieldName) {
+        fieldName = sanitizeFieldName(fieldName);
+        for (Tab tab : tabs) {
+            for (FieldGroup fieldGroup : tab.getFieldGroups()) {
+                for (Field field : fieldGroup.getFields()) {
+                    if (field.getName().equals(fieldName)) {
+                        return tab;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     public Field findField(String fieldName) {
+        fieldName = sanitizeFieldName(fieldName);
         for (Tab tab : tabs) {
             for (FieldGroup fieldGroup : tab.getFieldGroups()) {
                 for (Field field : fieldGroup.getFields()) {
@@ -152,6 +167,19 @@ public class EntityForm {
             }
         }
         return null;
+    }
+    
+    /**
+     * Since this field name could come from the frontend (where all fields are referenced like fields[name].value,
+     * we need to strip that part out to look up the real field name in this entity
+     * @param fieldName
+     * @return
+     */
+    public String sanitizeFieldName(String fieldName) {
+        if (fieldName.contains("[")) {
+            fieldName = fieldName.substring(fieldName.indexOf('[') + 1, fieldName.indexOf(']'));
+        }
+        return fieldName;
     }
 
     public Field removeField(String fieldName) {

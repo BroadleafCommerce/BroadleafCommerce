@@ -40,6 +40,7 @@
                 <ref bean="blAdminModuleProcessor"/>
                 <ref bean="blAdminSectionHrefProcessor"/>
                 <ref bean="blAdminFieldBuilderProcessor"/>
+                <ref bean="blErrorsProcessor"/>
             </set>
         </property>
     </bean>
