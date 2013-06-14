@@ -567,7 +567,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     public String getStringValueFromGetter(Serializable instance, String propertyName)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Object value = PropertyUtils.getProperty(instance, propertyName);
-
+        return formatValue(value);
+    }
+    
+    @Override
+    public String formatValue(Object value) {
         String strVal;
         if (value == null) {
             strVal = null;
@@ -587,7 +591,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             }
         }
         return strVal;
-
     }
 
     protected EntityResult update(PersistencePackage persistencePackage, Object primaryKey, boolean includeRealEntity) throws ServiceException {

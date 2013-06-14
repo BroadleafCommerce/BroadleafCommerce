@@ -26,7 +26,18 @@ import java.text.SimpleDateFormat;
  */
 public interface DataFormatProvider {
 
-    SimpleDateFormat getSimpleDateFormatter();
+    public SimpleDateFormat getSimpleDateFormatter();
 
-    DecimalFormat getDecimalFormatter();
+    public DecimalFormat getDecimalFormatter();
+    
+    /**
+     * Formats a aw value from an entity into its string representation used by the system. For instance, this might use
+     * the {@link #getDecimalFormatter()} to ensure that BigDecimals only show 2 decimal places or dates are formatted
+     * a certain way.
+     * 
+     * @param value
+     * @return
+     */
+    public String formatValue(Object value);
+
 }
