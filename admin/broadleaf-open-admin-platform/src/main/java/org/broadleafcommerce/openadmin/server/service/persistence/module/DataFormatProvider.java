@@ -20,7 +20,9 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 /**
+ * 
  * @author Jeff Fischer
+ * @see {@link BasicPersistenceModule}
  */
 public interface DataFormatProvider {
 

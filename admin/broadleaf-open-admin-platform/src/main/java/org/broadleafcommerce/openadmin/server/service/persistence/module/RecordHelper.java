@@ -30,7 +30,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.EntityValidatorService;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -42,9 +41,8 @@ import java.util.Map;
  * @see {@link BasicPersistenceModule}
  * @see {@link MapStructurePersistenceModule}
  * @see {@link AdornedTargetListPersistenceModule}
- *
  */
-public interface RecordHelper {
+public interface RecordHelper extends DataFormatProvider {
 
     public List<FilterMapping> getFilterMappings(PersistencePerspective persistencePerspective, CriteriaTransferObject cto,
                                                  String ceilingEntityFullyQualifiedClassname,
@@ -93,8 +91,6 @@ public interface RecordHelper {
 
     public PersistenceModule getCompatibleModule(OperationType operationType);
 
-    public DecimalFormat getDecimalFormatter();
-    
     /**
      * Validates the {@link Entity} based on the validators associated with each property
      * @param entity the instance that is attempted to be saved from. Implementers should set {@link Entity#isValidationFailure()}
