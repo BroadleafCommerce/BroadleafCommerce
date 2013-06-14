@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.admin.server.service.persistence.module.provider;
 
-import org.apache.commons.beanutils.PropertyUtils;
+import org.broadleafcommerce.admin.server.service.handler.SkuCustomPersistenceHandler;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -34,18 +34,19 @@ import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Currency;
 import java.util.Locale;
 
 /**
  * Persistence provider capable of extracting friendly display values for Sku prices, taking currency into consideration.
+ * This also assumes values gleaned from {@link SkuCustomPersistenceHandler} where {@link ExtractValueRequest#getDisplayVal()}
+ * might be different from {@link ExtractValueRequest#getRequestedValue()}, since the display value could come from the
+ * Sku getters
  * 
  * @author Andre Azzolini (apazzolini)
+ * @author Phillip Verheyden (phillipuniverse)
+ * @see {@link SkuCustomPersistenceHandler}
  */
 @Scope("prototype")
 @Component("blSkuFieldsPersistenceProvider")
@@ -62,20 +63,12 @@ public class SkuFieldsPersistenceProvider extends AbstractMoneyFieldPersistenceP
             return FieldProviderResponse.NOT_HANDLED;
         }
         
-        Object getterValue = null;
-        try {
-            getterValue = PropertyUtils.getProperty(extractValueRequest.getEntity(), property.getName());
-        } catch (IllegalAccessException e) {
-            throw new PersistenceException(e);
-        } catch (InvocationTargetException e) {
-            throw new PersistenceException(e);
-        } catch (NoSuchMethodException e) {
-            throw new PersistenceException(e);
+        property.setValue(formatValue(extractValueRequest.getRequestedValue(), extractValueRequest, property));
+        Object display = extractValueRequest.getDisplayVal();
+        if (display == null) {
+            display = extractValueRequest.getRequestedValue();
         }
-        Object actualValue = extractValueRequest.getRequestedValue();
-        
-        property.setValue(formatValue(actualValue, extractValueRequest, property));
-        property.setDisplayValue(formatDisplayValue(getterValue, extractValueRequest, property));
+        property.setDisplayValue(formatDisplayValue(display, extractValueRequest, property));
 
         return FieldProviderResponse.HANDLED_BREAK;
     }
@@ -84,14 +77,8 @@ public class SkuFieldsPersistenceProvider extends AbstractMoneyFieldPersistenceP
         if (value == null) {
             return null;
         }
-        if (SupportedFieldType.MONEY.equals(extractValueRequest.getMetadata().getFieldType())) {
-            BigDecimal decimalValue = (value instanceof Money) ? ((Money)value).getAmount() : (BigDecimal) value;
-            return super.formatValue(decimalValue, extractValueRequest, property);
-        } else if (value instanceof Date || value instanceof Timestamp || value instanceof Calendar) {
-            return extractValueRequest.getDataFormatProvider().getSimpleDateFormatter().format(value);
-        } else {
-            return value.toString();
-        }
+        BigDecimal decimalValue = (value instanceof Money) ? ((Money)value).getAmount() : (BigDecimal) value;
+        return super.formatValue(decimalValue, extractValueRequest, property);
     }
     
     protected String formatDisplayValue(Object value, ExtractValueRequest extractValueRequest, Property property) {
@@ -99,18 +86,12 @@ public class SkuFieldsPersistenceProvider extends AbstractMoneyFieldPersistenceP
             return null;
         }
         
-        if (SupportedFieldType.MONEY.equals(extractValueRequest.getMetadata().getFieldType())) {
-            BigDecimal decimalValue = (value instanceof Money) ? ((Money)value).getAmount() : (BigDecimal) value;
-            return super.formatDisplayValue(decimalValue, extractValueRequest, property);
-        } else if (value instanceof Date || value instanceof Timestamp || value instanceof Calendar) {
-            return extractValueRequest.getDataFormatProvider().getSimpleDateFormatter().format(value);
-        } else {
-            return value.toString();
-        }
+        BigDecimal decimalValue = (value instanceof Money) ? ((Money)value).getAmount() : (BigDecimal) value;
+        return super.formatDisplayValue(decimalValue, extractValueRequest, property);
     }
     
     /**
-     * Handle all fields that have declared themselves to be apart of a Sku
+     * Handle all Money fields that have declared themselves to be apart of a Sku
      *  
      * @param extractValueRequest
      * @param property
@@ -122,7 +103,8 @@ public class SkuFieldsPersistenceProvider extends AbstractMoneyFieldPersistenceP
                 extractValueRequest.getMetadata().getTargetClass().equals(SkuImpl.class.getName()) ||
                 extractValueRequest.getMetadata().getTargetClass().equals(Sku.class.getName())
                ) 
-                && !property.getName().contains(FieldManager.MAPFIELDSEPARATOR);
+                && !property.getName().contains(FieldManager.MAPFIELDSEPARATOR)
+                && SupportedFieldType.MONEY.equals(extractValueRequest.getMetadata().getFieldType());
     }
     
     protected boolean isDefaultSkuProperty(ExtractValueRequest extractValueRequest, Property property) {
