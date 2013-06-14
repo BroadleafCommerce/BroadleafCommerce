@@ -358,10 +358,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     
                     if (headerField instanceof ComboField) {
                         recordField.setValue(((ComboField) headerField).getOption(p.getValue()));
+                        recordField.setDisplayValue(p.getDisplayValue());
                     } else {
                         recordField.setValue(p.getValue());
                         recordField.setDisplayValue(p.getDisplayValue());
                     }
+                    
+                    recordField.setDerived(isDerivedField(headerField, recordField, p));
                     
                     record.getFields().add(recordField);
                 }
@@ -377,6 +380,29 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
 
         return listGrid;
+    }
+    
+    /**
+     * Determines whether or not a particular field in a record is derived. By default, this compares the display value
+     * to the field value. If they are different, than the field must be derived. The exception is money fields which has
+     * a currency code in the display value. In this case, the comparison strips out the currency symbol
+     * 
+     * @param headerField the header for this recordField
+     * @param recordField the recordField being populated
+     * @param p the property that relates to this recordField
+     * @return whether or not this field is derived
+     * @see {@link #createListGrid(String, List, org.broadleafcommerce.openadmin.web.form.component.ListGrid.Type, DynamicResultSet, String, int, String)}
+     */
+    protected Boolean isDerivedField(Field headerField, Field recordField, Property p) {
+        if (StringUtils.isEmpty(recordField.getValue())) {
+            return !StringUtils.isEmpty(recordField.getDisplayValue());
+        } else {
+            if (SupportedFieldType.MONEY.toString().equalsIgnoreCase(headerField.getFieldType())) {
+                //Money comparisons should strip out any currency symbol and only compare decimal values
+                return !recordField.getValue().equals(recordField.getDisplayValue().replaceFirst("[^0-9\\.]", ""));
+            }
+            return !recordField.getValue().equals(recordField.getDisplayValue());
+        }
     }
 
     protected void setEntityFormFields(EntityForm ef, List<Property> properties) {

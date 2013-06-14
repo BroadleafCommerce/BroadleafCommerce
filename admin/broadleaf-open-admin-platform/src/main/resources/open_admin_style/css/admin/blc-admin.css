@@ -941,6 +941,10 @@ table.list-grid-table tbody tr td {
     white-space: nowrap;
 }
 
+table.list-grid-table tbody tr td.derived {
+    color: #A0A0A0;
+}
+
 table tbody tr:nth-child(odd) {
     background: #FFF;
 }

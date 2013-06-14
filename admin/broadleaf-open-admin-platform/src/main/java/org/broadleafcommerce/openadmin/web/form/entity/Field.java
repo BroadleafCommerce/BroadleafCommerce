@@ -47,6 +47,7 @@ public class Field {
     protected Boolean isTranslatable;
     protected Boolean isMainEntityLink;
     protected Boolean isFilterSortDisabled;
+    protected Boolean isDerived;
     
     /* ************ */
     /* WITH METHODS */
@@ -134,6 +135,11 @@ public class Field {
     
     public Field withFilterSortDisabled(Boolean isFilterSortDisabled) {
         setFilterSortDisabled(isFilterSortDisabled);
+        return this;
+    }
+    
+    public Field withDerived(Boolean isDerived) {
+        setDerived(isDerived);
         return this;
     }
 
@@ -319,6 +325,14 @@ public class Field {
 
     public void setFilterSortDisabled(Boolean isFilterSortDisabled) {
         this.isFilterSortDisabled = isFilterSortDisabled;
+    }
+    
+    public Boolean getIsDerived() {
+        return isDerived == null ? false : isDerived;
+    }
+    
+    public void setDerived(Boolean isDerived) {
+        this.isDerived = isDerived;
     }
 
 }
