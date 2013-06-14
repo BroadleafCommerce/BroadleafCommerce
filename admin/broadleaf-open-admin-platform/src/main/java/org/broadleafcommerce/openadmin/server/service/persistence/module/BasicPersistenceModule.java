@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -560,6 +561,33 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         } catch (InvocationTargetException e) {
             throw new PersistenceException(e);
         }
+    }
+    
+    @Override
+    public String getStringValueFromGetter(Serializable instance, String propertyName)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        Object value = PropertyUtils.getProperty(instance, propertyName);
+
+        String strVal;
+        if (value == null) {
+            strVal = null;
+        } else {
+            if (Date.class.isAssignableFrom(value.getClass())) {
+                strVal = getSimpleDateFormatter().format((Date) value);
+            } else if (Timestamp.class.isAssignableFrom(value.getClass())) {
+                strVal = getSimpleDateFormatter().format(new Date(((Timestamp) value).getTime()));
+            } else if (Calendar.class.isAssignableFrom(value.getClass())) {
+                strVal = getSimpleDateFormatter().format(((Calendar) value).getTime());
+            } else if (Double.class.isAssignableFrom(value.getClass())) {
+                strVal = getDecimalFormatter().format(value);
+            } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
+                strVal = getDecimalFormatter().format(((BigDecimal) value).doubleValue());
+            } else {
+                strVal = value.toString();
+            }
+        }
+        return strVal;
+
     }
 
     protected EntityResult update(PersistencePackage persistencePackage, Object primaryKey, boolean includeRealEntity) throws ServiceException {

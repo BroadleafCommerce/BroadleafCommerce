@@ -30,6 +30,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.EntityValidatorService;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -110,4 +111,15 @@ public interface RecordHelper extends DataFormatProvider {
 
     public EntityResult add(PersistencePackage persistencePackage, boolean includeRealEntityObject) throws ServiceException;
 
+    /**
+     * Returns a string representation of the field on the given instance specified by the property name. The propertyName
+     * should start from the root of the given instance
+     * 
+     * @param instance
+     * @param propertyName
+     * @return
+     */
+    public String getStringValueFromGetter(Serializable instance, String propertyName)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
+    
 }
