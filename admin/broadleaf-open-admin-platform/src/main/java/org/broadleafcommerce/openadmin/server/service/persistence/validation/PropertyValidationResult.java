@@ -18,7 +18,8 @@ package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 
 /**
- * DTO representing a boolean whether or not it passed validation and String error message
+ * DTO representing a boolean whether or not it passed validation and String error message. An error message is not required
+ * if the result is not an error
  *
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link PropertyValidator}

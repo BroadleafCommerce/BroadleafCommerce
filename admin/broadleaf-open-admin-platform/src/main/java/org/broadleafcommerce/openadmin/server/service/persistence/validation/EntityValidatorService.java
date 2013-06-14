@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 
 import java.io.Serializable;
 import java.util.List;
@@ -26,13 +27,17 @@ import java.util.Map;
 
 
 /**
+ * Validates all of the populated properties for entities
  * 
  * @author Phillip Verheyden
+ * @see {@link BasicPersistenceModule#createPopulatedInstance(Serializable, Entity, Map, Boolean)}
  */
 public interface EntityValidatorService {
 
     /**
      * Validate the given entity. Implementers should set {@link Entity#setValidationFailure(boolean)} appropriately.
+     * Validation is invoked after the entire instance has been populated according to
+     * {@link BasicPersistenceModule#createPopulatedInstance(Serializable, Entity, Map, Boolean)}.
      * 
      * @param entity DTO representation of <b>instance</b>
      * @param instance actual domain representation of <b>entity</b>
@@ -46,7 +51,7 @@ public interface EntityValidatorService {
     /**
      * @return the global validators that will be executed for every {@link Entity}
      */
-    public List<PropertyValidator> getGlobalEntityValidators();
+    public List<GlobalPropertyValidator> getGlobalEntityValidators();
 
     
     /**
@@ -59,6 +64,6 @@ public interface EntityValidatorService {
      * property that is marked as required will fail validation if a value is unset.</p>
      * @param globalEntityValidators the globalEntityValidators to set
      */
-    public void setGlobalEntityValidators(List<PropertyValidator> globalEntityValidators);
+    public void setGlobalEntityValidators(List<GlobalPropertyValidator> globalEntityValidators);
 
 }

@@ -34,7 +34,7 @@ import java.util.Map;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blRequiredPropertyValidator")
-public class RequiredPropertyValidator implements PropertyValidator {
+public class RequiredPropertyValidator implements GlobalPropertyValidator {
 
     public static String ERROR_MESSAGE = "requiredValidationFailure";
     
@@ -42,7 +42,6 @@ public class RequiredPropertyValidator implements PropertyValidator {
     public PropertyValidationResult validate(Entity entity,
                             Serializable instance,
                             Map<String, FieldMetadata> entityFieldMetadata,
-                            Map<String, String> validationConfiguration,
                             BasicFieldMetadata propertyMetadata,
                             String propertyName,
                             String value) {

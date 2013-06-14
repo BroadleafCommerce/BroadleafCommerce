@@ -97,11 +97,18 @@ import javax.persistence.Transient;
  * If you want to add fields specific to your implementation of
  * BroadLeafCommerce you should extend this class and add your fields. If you
  * need to make significant changes to the SkuImpl then you should implement
- * your own version of {@link Sku}. <br>
+ * your own version of {@link Sku}.<br>
  * <br>
  * This implementation uses a Hibernate implementation of JPA configured through
  * annotations. The Entity references the following tables: BLC_SKU,
  * BLC_SKU_IMAGE
+ *
+ * !!!!!!!!!!!!!!!!!
+ * <p>For admin required field validation, if this Sku is apart of an additionalSkus list (meaning it is not a defaultSku) then
+ * it should have no required restrictions on it. All additional Skus can delegate to the defaultSku of the related product
+ * for all of its fields. For this reason, if you would like to mark more fields as required then rather than using
+ * {@link AdminPresentation#requiredOverride()}, use the mo:overrides section in bl-admin-applicationContext.xml for Product
+ * and reference each required field like 'defaultSku.name' or 'defaultSku.retailPrice'.</p>
  *
  * @author btaylor
  * @see {@link Sku}

@@ -27,6 +27,17 @@
     </bean>
 
     <mo:override id="blMetadataOverrides">
+        <!-- Add required validation to some default Sku fields. These should not occur on the additionalSkus list, which
+            is why these are marked required in this fashion rather than in @AdminPresentation annotations on SkuImpl -->
+        <mo:overrideItem ceilingEntity="org.broadleafcommerce.core.catalog.domain.Product">
+            <mo:field name="defaultSku.retailPrice">
+                <mo:property name="requiredOverride" value="true" />
+            </mo:field>
+            <mo:field name="defaultSku.name">
+                <mo:property name="requiredOverride" value="true" />
+            </mo:field>
+        </mo:overrideItem>
+    
         <mo:overrideItem configurationKey="promotionOrderItem">
             <mo:field name="category">
                 <mo:property name="excluded" value="false"/>

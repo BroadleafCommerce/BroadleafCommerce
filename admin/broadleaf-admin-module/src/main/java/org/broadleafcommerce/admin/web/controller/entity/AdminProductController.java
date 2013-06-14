@@ -33,6 +33,7 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -93,6 +94,8 @@ public class AdminProductController extends AdminBasicEntityController {
         
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
 
+        removeRequiredValidation(entityForm);
+        
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/simpleAddEntity");
                 
@@ -150,6 +153,8 @@ public class AdminProductController extends AdminBasicEntityController {
             lg.setSectionKey("org.broadleafcommerce.core.catalog.domain.Sku");
         }
 
+        removeRequiredValidation(entityForm);
+        
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/simpleEditEntity");
 
@@ -214,6 +219,18 @@ public class AdminProductController extends AdminBasicEntityController {
         }
         
         return view;
+    }
+    
+    /**
+     * Clears out any required validation on the fields within an entity form. Used for additional Skus since none of those
+     * fields should be required.
+     * 
+     * @param entityForm
+     */
+    protected void removeRequiredValidation(EntityForm entityForm) {
+        for (Field field : entityForm.getFields().values()) {
+            field.setRequired(false);
+        }
     }
     
 }

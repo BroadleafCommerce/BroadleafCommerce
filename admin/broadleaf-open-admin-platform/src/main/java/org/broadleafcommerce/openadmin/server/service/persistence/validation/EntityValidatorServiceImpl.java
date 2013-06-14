@@ -47,7 +47,7 @@ import javax.annotation.Resource;
 public class EntityValidatorServiceImpl implements EntityValidatorService, ApplicationContextAware {
     
     @Resource(name = "blGlobalEntityPropertyValidators")
-    protected List<PropertyValidator> globalEntityValidators;
+    protected List<GlobalPropertyValidator> globalEntityValidators;
     
     protected ApplicationContext applicationContext;
 
@@ -57,13 +57,12 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
         for (Property property : entity.getProperties()) {
             FieldMetadata metadata = propertiesMetadata.get(property.getName());
             if (metadata instanceof BasicFieldMetadata) {
-                //First execute the default field validators
+                //First execute the global field validators
                 if (CollectionUtils.isNotEmpty(globalEntityValidators)) {
-                    for (PropertyValidator validator : globalEntityValidators) {
+                    for (GlobalPropertyValidator validator : globalEntityValidators) {
                         PropertyValidationResult result = validator.validate(entity,
                                 instance,
                                 propertiesMetadata,
-                                null,
                                 (BasicFieldMetadata)metadata,
                                 property.getName(),
                                 property.getValue());
@@ -117,12 +116,12 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
     }
     
     @Override
-    public List<PropertyValidator> getGlobalEntityValidators() {
+    public List<GlobalPropertyValidator> getGlobalEntityValidators() {
         return globalEntityValidators;
     }
 
     @Override
-    public void setGlobalEntityValidators(List<PropertyValidator> globalEntityValidators) {
+    public void setGlobalEntityValidators(List<GlobalPropertyValidator> globalEntityValidators) {
         this.globalEntityValidators = globalEntityValidators;
     }
 
