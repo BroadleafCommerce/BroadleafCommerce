@@ -18,8 +18,8 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -80,10 +80,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationAdornedTargetCollection(friendlyName = "skuBundleItemsTitle",
-        targetObjectProperty = "sku", 
-        maintainedAdornedTargetFields = { "quantity", "itemSalePrice" }, 
-        gridVisibleFields = { "name", "quantity", "itemSalePrice" })
+    @AdminPresentationCollection(friendlyName = "skuBundleItemsTitle")
     protected List<SkuBundleItem> skuBundleItems = new ArrayList<SkuBundleItem>();
     
     @Override

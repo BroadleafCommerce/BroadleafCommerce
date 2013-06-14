@@ -50,7 +50,7 @@ import javax.persistence.Transient;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_BUNDLE_ITEM")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE)
 public class SkuBundleItemImpl implements SkuBundleItem {
 
     private static final long serialVersionUID = 1L;
@@ -71,11 +71,14 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     protected Long id;
 
     @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName = "bundleItemQuantity", requiredOverride=RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "bundleItemQuantity", prominent = true,
+        requiredOverride = RequiredOverride.REQUIRED)
     protected Integer quantity;
 
     @Column(name = "ITEM_SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "bundleItemSalePrice", tooltip="bundleItemSalePriceTooltip", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "bundleItemSalePrice", prominent = true,
+        tooltip="bundleItemSalePriceTooltip", 
+        fieldType = SupportedFieldType.MONEY)
     protected BigDecimal itemSalePrice;
 
     @ManyToOne(targetEntity = ProductBundleImpl.class, optional = false)
@@ -84,9 +87,10 @@ public class SkuBundleItemImpl implements SkuBundleItem {
 
     @ManyToOne(targetEntity = SkuImpl.class, optional = false)
     @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID")
-    @AdminPresentation()
+    @AdminPresentation(friendlyName = "Sku", prominent = true, 
+        order = 0, gridOrder = 0)
     @AdminPresentationToOneLookup()
-    private Sku sku;
+    protected Sku sku;
 
     @Transient
     protected DynamicSkuPrices dynamicPrices = null;
