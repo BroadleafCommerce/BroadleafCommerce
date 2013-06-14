@@ -49,8 +49,8 @@ import java.util.Locale;
  * @see {@link SkuCustomPersistenceHandler}
  */
 @Scope("prototype")
-@Component("blSkuPricingPersistenceProvider")
-public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistenceProvider {
+@Component("blSkuFieldsPersistenceProvider")
+public class SkuFieldsPersistenceProvider extends AbstractMoneyFieldPersistenceProvider {
     
     @Override
     public int getOrder() {
