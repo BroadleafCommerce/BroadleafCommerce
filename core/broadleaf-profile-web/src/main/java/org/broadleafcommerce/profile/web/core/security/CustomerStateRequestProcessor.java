@@ -55,7 +55,7 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
 
     private ApplicationEventPublisher eventPublisher;
 
-    private static String customerRequestAttributeName = "customer";
+    protected static String customerRequestAttributeName = "customer";
     public static final String ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME="_blc_anonymousCustomer";
     private static final String LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME="_blc_lastPublishedEvent";
 

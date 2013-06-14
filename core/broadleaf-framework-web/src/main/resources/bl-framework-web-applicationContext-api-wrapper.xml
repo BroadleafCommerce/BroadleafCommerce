@@ -13,6 +13,7 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.CountryWrapper" class="org.broadleafcommerce.core.web.api.wrapper.CountryWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.CustomerWrapper" class="org.broadleafcommerce.core.web.api.wrapper.CustomerWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.CustomerAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.CustomerAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupItemWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupWrapper" class="org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.MapElementWrapper" class="org.broadleafcommerce.core.web.api.wrapper.MapElementWrapper" scope="prototype"/>
