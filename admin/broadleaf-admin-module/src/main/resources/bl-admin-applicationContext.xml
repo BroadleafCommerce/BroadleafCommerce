@@ -197,7 +197,7 @@
     <bean id="blAdminExtendedPersistenceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
-                <ref bean="blSkuFieldsPersistenceProvider"/>
+                <ref bean="blSkuPricingPersistenceProvider"/>
             </list>
         </property>
     </bean>

@@ -27,11 +27,14 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -65,12 +68,15 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -382,7 +388,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                         
                         if (Sku.class.isAssignableFrom(testClass)) {
                             //populate the display value from the getter
-                            String getterValue = getStringValueFromGetter(sku, property, helper);
+                            String getterValue = getStringDisplayValueFromGetter(sku, property, helper, md);
+                            
                             property.setDisplayValue(getterValue);
                         }
                     }
@@ -581,6 +588,46 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
     }
     
+    /**
+     * Invokes the getter on a Sku property just like {@link #getStringValueFromGetter(Sku, Property, RecordHelper)}
+     * but also ensure correct formatting for display (specifically for if the property is a Money field)
+     * 
+     * @param sku
+     * @param property
+     * @param recordHelper
+     * @param metadata
+     * @return
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     */
+    public static String getStringDisplayValueFromGetter(Sku sku, Property property, RecordHelper recordHelper, BasicFieldMetadata metadata)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        String value = getStringValueFromGetter(sku, property, recordHelper);
+        if (value != null && metadata.getFieldType().equals(SupportedFieldType.MONEY)) {
+            BroadleafCurrency bc = sku.getCurrency();
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale();
+            Currency currency = (bc == null) ? Money.defaultCurrency() : Currency.getInstance(bc.getCurrencyCode());
+            NumberFormat format = NumberFormat.getCurrencyInstance(locale);
+            format.setCurrency(currency);
+            return format.format(new BigDecimal(value));
+        }
+        return value;
+    }
+    
+    /**
+     * Invokes the getter for the given {@link Property} on the given {@link Sku}. This assumes that the property being
+     * passed in starts at the root of Sku (so 'name' or 'retailPrice'). This also formats the string value according to its
+     * value type (like Calendar, BigDecimal, etc).
+     * 
+     * @param sku
+     * @param property
+     * @param recordHelper
+     * @return
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     */
     public static String getStringValueFromGetter(Sku sku, Property property, RecordHelper recordHelper) throws IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
         Object value = PropertyUtils.getProperty(sku, property.getName());
