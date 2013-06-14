@@ -77,6 +77,25 @@
 
 $(document).ready(function() {
     
+    $('body').on('click', 'a.show-asset-freeform-url', function(event) {
+        event.preventDefault();
+        
+        var enabled = $(this).data('enabled') == true;
+    	var $container = $(this).closest('div.asset-selector-container');
+    	
+    	if (enabled) {
+    	    $container.find('img.thumbnail').show();
+    	    $container.find('button.show-asset-selector').show();
+    	    $container.find('input.mediaUrl').attr('type', 'hidden');
+    	} else {
+    	    $container.find('img.thumbnail').hide();
+    	    $container.find('button.show-asset-selector').hide();
+    	    $container.find('input.mediaUrl').attr('type', 'text');
+    	}
+    	
+    	$(this).data('enabled', !enabled);
+    });
+    
     $('body').on('listGrid-asset-rowSelected', function(event, link, fields, currentUrl) {
         var json = {
             'assetUrl' : fields['servletContext'] + fields['cmsUrlPrefix'] + fields['fullUrl']

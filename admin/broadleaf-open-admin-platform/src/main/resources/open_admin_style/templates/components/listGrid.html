@@ -90,7 +90,7 @@
                 <td th:each="headerField : ${record.listGrid.headerFields}"
                     th:switch="${listGrid.listGridType}"
                     th:with="field=${record.getField(headerField.name)}"
-                    th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}"
+                    th:attr="data-fieldname=${field.name},data-fieldvalue=${field.displayValue}"
                     th:class="${field.isDerived ? 'derived' : ''}">
                     
                     <span th:case="'main'" th:remove="tag">
