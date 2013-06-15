@@ -19,15 +19,12 @@ package org.broadleafcommerce.admin.server.service.persistence.module.provider;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.openadmin.dto.Property;
-import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProviderAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.lang.reflect.InvocationTargetException;
 
 
 /**
@@ -61,12 +58,8 @@ public class SkuFieldsPersistenceProvider extends FieldPersistenceProviderAdapte
         if (displayValue == null) {
             try {
                 displayValue = extractValueRequest.getRecordHelper().getStringValueFromGetter(extractValueRequest.getEntity(), property.getName());
-            } catch (IllegalAccessException e) {
-                throw new PersistenceException(e);
-            } catch (InvocationTargetException e) {
-                throw new PersistenceException(e);
-            } catch (NoSuchMethodException e) {
-                throw new PersistenceException(e);
+            } catch (Exception e) {
+                //swallow all exceptions because null is fine for the display value
             }
         }
         

@@ -34,7 +34,6 @@ import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Locale;
@@ -64,12 +63,8 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
         Object getterValue = null;
         try {
             getterValue = PropertyUtils.getProperty(extractValueRequest.getEntity(), property.getName());
-        } catch (IllegalAccessException e) {
-            throw new PersistenceException(e);
-        } catch (InvocationTargetException e) {
-            throw new PersistenceException(e);
-        } catch (NoSuchMethodException e) {
-            throw new PersistenceException(e);
+        } catch (Exception e) {
+            //swallow all exceptions because null is fine for the display value
         }
         Object actualValue = extractValueRequest.getRequestedValue();
         
