@@ -49,7 +49,6 @@
                      class="field-box" 
                      blc_admin:component_id="${field}"
                      th:classappend="${!field.isVisible}? 'hidden'">
-                    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
                     
                     <div th:if="${field.readOnly}" th:remove="tag">
                         <div th:substituteby="fields/readonly" />

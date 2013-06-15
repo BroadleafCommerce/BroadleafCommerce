@@ -1,4 +1,4 @@
-<div class="field-label" th:text="#{${field.friendlyName}}" />
+<div class="field-label inline" th:text="#{${field.friendlyName}}" />
 <div class="twelve" style="margin-left: 20px; margin-bottom: 10px;" th:switch="*{fields['__${field.name}__'].fieldType}">
 
     <span th:case="'MEDIA'" th:remove="tag">

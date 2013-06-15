@@ -110,6 +110,10 @@ input[type="text"], input[type="password"], input[type="date"], input[type="date
     margin: 7px 0 0px 0px;
 }
 
+.entity-form select {
+    display: block;
+}
+
 .entity-form div.errors {
     background-color: red;
     margin-bottom: 10px;

@@ -1,5 +1,6 @@
 <div class="asset-selector-container">  
     <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
     <a class="show-asset-freeform-url" href="#">([[#{Freeform_URL}]])</a>
     <br/>
     
