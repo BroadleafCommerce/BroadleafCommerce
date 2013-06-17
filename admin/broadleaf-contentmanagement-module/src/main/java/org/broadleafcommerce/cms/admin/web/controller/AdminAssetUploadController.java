@@ -107,10 +107,11 @@ public class AdminAssetUploadController extends AdminAbstractController {
             staticAssetUrlPrefix = "/" + staticAssetUrlPrefix;
         }
 
-        String assetUrl = request.getContextPath() + staticAssetUrlPrefix +
-                staticAsset.getFullUrl();
+        String assetUrl =  staticAssetUrlPrefix + staticAsset.getFullUrl();
 
+        responseMap.put("adminDisplayAssetUrl", request.getContextPath() + assetUrl);
         responseMap.put("assetUrl", assetUrl);
+        
         if (staticAsset instanceof ImageStaticAssetImpl) {
             responseMap.put("image", Boolean.TRUE);
             responseMap.put("assetThumbnail", assetUrl + "?smallAdminThumbnail");

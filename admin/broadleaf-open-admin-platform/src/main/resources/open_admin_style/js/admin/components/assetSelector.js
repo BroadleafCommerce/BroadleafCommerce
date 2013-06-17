@@ -98,7 +98,8 @@ $(document).ready(function() {
     
     $('body').on('listGrid-asset-rowSelected', function(event, link, fields, currentUrl) {
         var json = {
-            'assetUrl' : fields['servletContext'] + fields['cmsUrlPrefix'] + fields['fullUrl']
+            'assetUrl' : fields['cmsUrlPrefix'] + fields['fullUrl'],
+            'adminDisplayAssetUrl' : fields['servletContext'] + fields['cmsUrlPrefix'] + fields['fullUrl']
         }
         
         $('div.asset-selector-container').trigger('assetInfoSelected', json);
@@ -117,9 +118,9 @@ $(document).ready(function() {
     	$container.on('assetInfoSelected', function(event, fields) {
     		var $this = $(this);
     		    		   
-    		$this.find('img.thumbnail').attr("src", fields['assetUrl'] + '?largeAdminThumbnail');
-    		$this.find('img.thumbnail').data("fullurl", fields['assetUrl']);
-    		$this.find('img.thumbnail').parent().attr("href", fields['assetUrl']);
+    		$this.find('img.thumbnail').attr("src", fields['adminDisplayAssetUrl'] + '?largeAdminThumbnail');
+    		$this.find('img.thumbnail').data("fullurl", fields['adminDisplayAssetUrl']);
+    		$this.find('img.thumbnail').parent().attr("href", fields['adminDisplayAssetUrl']);
     		$this.find('img.thumbnail').removeClass('placeholder-image');
     		
     		var mediaItem = $this.find('input.mediaItem');
