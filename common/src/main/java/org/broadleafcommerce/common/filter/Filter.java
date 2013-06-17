@@ -24,6 +24,7 @@ public class Filter {
     String name;
     String condition;
     String entityImplementationClassName;
+    String indexColumnName;
 
     public String getCondition() {
         return condition;
@@ -47,5 +48,13 @@ public class Filter {
 
     public void setEntityImplementationClassName(String entityImplementationClassName) {
         this.entityImplementationClassName = entityImplementationClassName;
+    }
+
+    public String getIndexColumnName() {
+        return indexColumnName;
+    }
+
+    public void setIndexColumnName(String indexColumnName) {
+        this.indexColumnName = indexColumnName;
     }
 }
