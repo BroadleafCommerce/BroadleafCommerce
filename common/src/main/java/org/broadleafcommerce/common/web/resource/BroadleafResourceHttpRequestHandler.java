@@ -61,6 +61,11 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
         
         return super.getResource(request);
     }
+    
+    public boolean isBundleRequest(HttpServletRequest request) {
+		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        return bundlingService.hasBundle(path);
+    }
         
     /**
      * @return a clone of the locations list that is in {@link ResourceHttpRequestHandler}. Note that we must use
