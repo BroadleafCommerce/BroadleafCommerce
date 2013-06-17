@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.web.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -383,9 +384,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
     
     /**
-     * Determines whether or not a particular field in a record is derived. By default, this compares the display value
-     * to the field value. If they are different, than the field must be derived. The exception is money fields which has
-     * a currency code in the display value. In this case, the comparison strips out the currency symbol
+     * Determines whether or not a particular field in a record is derived. By default this checks the {@link BasicFieldMetadata}
+     * for the given Property to see if something on the backend has marked it as derived
      * 
      * @param headerField the header for this recordField
      * @param recordField the recordField being populated
@@ -394,15 +394,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
      * @see {@link #createListGrid(String, List, org.broadleafcommerce.openadmin.web.form.component.ListGrid.Type, DynamicResultSet, String, int, String)}
      */
     protected Boolean isDerivedField(Field headerField, Field recordField, Property p) {
-        if (StringUtils.isEmpty(recordField.getValue())) {
-            return !StringUtils.isEmpty(recordField.getDisplayValue());
-        } else {
-            if (SupportedFieldType.MONEY.toString().equalsIgnoreCase(headerField.getFieldType())) {
-                //Money comparisons should strip out any currency symbol and only compare decimal values
-                return !recordField.getValue().equals(recordField.getDisplayValue().replaceFirst("[^0-9\\.]", ""));
-            }
-            return !recordField.getValue().equals(recordField.getDisplayValue());
-        }
+        return BooleanUtils.isTrue(((BasicFieldMetadata) p.getMetadata()).getIsDerived());
     }
 
     protected void setEntityFormFields(EntityForm ef, List<Property> properties) {

@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
@@ -60,16 +61,19 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
             return FieldProviderResponse.NOT_HANDLED;
         }
         
-        Object getterValue = null;
-        try {
-            getterValue = PropertyUtils.getProperty(extractValueRequest.getEntity(), property.getName());
-        } catch (Exception e) {
-            //swallow all exceptions because null is fine for the display value
+        Object displayValue = extractValueRequest.getRequestedValue();
+        if (displayValue == null) {
+            try {
+                displayValue = PropertyUtils.getProperty(extractValueRequest.getEntity(), property.getName());
+                ((BasicFieldMetadata)property.getMetadata()).setDerived(true);
+            } catch (Exception e) {
+                //swallow all exceptions because null is fine for the display value
+            }
         }
         Object actualValue = extractValueRequest.getRequestedValue();
         
         property.setValue(formatValue(actualValue, extractValueRequest, property));
-        property.setDisplayValue(formatDisplayValue(getterValue, extractValueRequest, property));
+        property.setDisplayValue(formatDisplayValue(displayValue, extractValueRequest, property));
 
         return FieldProviderResponse.HANDLED_BREAK;
     }

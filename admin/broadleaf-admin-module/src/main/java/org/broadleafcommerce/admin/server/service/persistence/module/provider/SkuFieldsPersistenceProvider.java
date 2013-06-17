@@ -18,6 +18,7 @@ package org.broadleafcommerce.admin.server.service.persistence.module.provider;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProviderAdapter;
@@ -58,6 +59,7 @@ public class SkuFieldsPersistenceProvider extends FieldPersistenceProviderAdapte
         if (displayValue == null) {
             try {
                 displayValue = extractValueRequest.getRecordHelper().getStringValueFromGetter(extractValueRequest.getEntity(), property.getName());
+                ((BasicFieldMetadata)property.getMetadata()).setDerived(true);
             } catch (Exception e) {
                 //swallow all exceptions because null is fine for the display value
             }

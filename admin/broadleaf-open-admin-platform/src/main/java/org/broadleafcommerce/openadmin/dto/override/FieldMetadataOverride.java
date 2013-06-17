@@ -85,6 +85,7 @@ public class FieldMetadataOverride {
     private MergedPropertyType mergedPropertyType;
     private String[][] enumerationValues;
     private String enumerationClass;
+    protected Boolean isDerived;
 
     //@AdminPresentation derived fields
     private String name;
@@ -242,6 +243,14 @@ public class FieldMetadataOverride {
 
     public void setEnumerationClass(String enumerationClass) {
         this.enumerationClass = enumerationClass;
+    }
+    
+    public Boolean getIsDerived() {
+        return isDerived;
+    }
+
+    public void setDerived(Boolean isDerived) {
+        this.isDerived = isDerived;
     }
 
     public String getName() {

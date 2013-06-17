@@ -725,6 +725,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (basicFieldMetadata.getTranslatable() != null) {
             metadata.setTranslatable(basicFieldMetadata.getTranslatable());
         }
+        if (basicFieldMetadata.getIsDerived() != null) {
+            metadata.setDerived(basicFieldMetadata.getIsDerived());
+        }
 
         attributes.put(field.getName(), metadata);
     }

@@ -32,57 +32,58 @@ public class BasicFieldMetadata extends FieldMetadata {
 
     private static final long serialVersionUID = 1L;
 
-    private SupportedFieldType fieldType;
-    private SupportedFieldType secondaryType = SupportedFieldType.INTEGER;
-    private Integer length;
-    private Boolean required;
-    private Boolean unique;
-    private Integer scale;
-    private Integer precision;
-    private Boolean mutable;
-    private String foreignKeyProperty;
-    private String foreignKeyClass;
-    private String foreignKeyDisplayValueProperty;
-    private Boolean foreignKeyCollection;
-    private MergedPropertyType mergedPropertyType;
-    private String[][] enumerationValues;
-    private String enumerationClass;
+    protected SupportedFieldType fieldType;
+    protected SupportedFieldType secondaryType = SupportedFieldType.INTEGER;
+    protected Integer length;
+    protected Boolean required;
+    protected Boolean unique;
+    protected Integer scale;
+    protected Integer precision;
+    protected Boolean mutable;
+    protected String foreignKeyProperty;
+    protected String foreignKeyClass;
+    protected String foreignKeyDisplayValueProperty;
+    protected Boolean foreignKeyCollection;
+    protected MergedPropertyType mergedPropertyType;
+    protected String[][] enumerationValues;
+    protected String enumerationClass;
+    protected Boolean isDerived;
 
     //@AdminPresentation derived fields
-    private String name;
-    private VisibilityEnum visibility;
-    private String group;
-    private Integer groupOrder;
-    private Boolean groupCollapsed;
-    private SupportedFieldType explicitFieldType;
-    private Boolean largeEntry;
-    private Boolean prominent;
+    protected String name;
+    protected VisibilityEnum visibility;
+    protected String group;
+    protected Integer groupOrder;
+    protected Boolean groupCollapsed;
+    protected SupportedFieldType explicitFieldType;
+    protected Boolean largeEntry;
+    protected Boolean prominent;
     protected Integer gridOrder;
-    private String columnWidth;
-    private String broadleafEnumeration;
-    private Boolean readOnly;
-    private Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>(5);
-    private Boolean requiredOverride;
-    private String tooltip;
-    private String helpText;
-    private String hint;
-    private String lookupDisplayProperty;
-    private String optionListEntity;
-    private String optionValueFieldName;
-    private String optionDisplayFieldName;
-    private Boolean optionCanEditValues;
-    private String[][] optionFilterParams;
-    private String[] customCriteria;
-    private Boolean useServerSideInspectionCache;
-    private Boolean toOneLookupCreatedViaAnnotation;
-    private String ruleIdentifier;
-    private LookupType lookupType;
-    private Boolean translatable;
+    protected String columnWidth;
+    protected String broadleafEnumeration;
+    protected Boolean readOnly;
+    protected Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>(5);
+    protected Boolean requiredOverride;
+    protected String tooltip;
+    protected String helpText;
+    protected String hint;
+    protected String lookupDisplayProperty;
+    protected String optionListEntity;
+    protected String optionValueFieldName;
+    protected String optionDisplayFieldName;
+    protected Boolean optionCanEditValues;
+    protected String[][] optionFilterParams;
+    protected String[] customCriteria;
+    protected Boolean useServerSideInspectionCache;
+    protected Boolean toOneLookupCreatedViaAnnotation;
+    protected String ruleIdentifier;
+    protected LookupType lookupType;
+    protected Boolean translatable;
 
     //for MapFields
-    private String mapFieldValueClass;
-    private Boolean searchable;
-    private String manyToField;
+    protected String mapFieldValueClass;
+    protected Boolean searchable;
+    protected String manyToField;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -202,6 +203,14 @@ public class BasicFieldMetadata extends FieldMetadata {
 
     public void setEnumerationClass(String enumerationClass) {
         this.enumerationClass = enumerationClass;
+    }
+    
+    public Boolean getIsDerived() {
+        return isDerived;
+    }
+
+    public void setDerived(Boolean isDerived) {
+        this.isDerived = isDerived;
     }
 
     public String getName() {
@@ -535,6 +544,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.manyToField = manyToField;
         metadata.lookupType = lookupType;
         metadata.translatable = translatable;
+        metadata.isDerived = isDerived;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 
@@ -683,6 +693,9 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (lookupType != null ? !lookupType.equals(metadata.lookupType) : metadata.lookupType != null) {
             return false;
         }
+        if (isDerived != null ? !isDerived.equals(metadata.isDerived) : metadata.isDerived != null) {
+            return false;
+        }
 
         return true;
     }
@@ -731,6 +744,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (searchable != null ? searchable.hashCode() : 0);
         result = 31 * result + (manyToField != null ? manyToField.hashCode() : 0);
         result = 31 * result + (lookupType != null ? lookupType.hashCode() : 0);
+        result = 31 * result + (isDerived != null ? isDerived.hashCode() : 0);
         return result;
     }
 
