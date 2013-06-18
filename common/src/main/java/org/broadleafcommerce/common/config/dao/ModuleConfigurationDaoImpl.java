@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.hibernate.annotations.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -63,6 +64,7 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
     public List<ModuleConfiguration> readAllByType(ModuleConfigurationType type) {
         Query query = em.createNamedQuery("BC_READ_MODULE_CONFIG_BY_TYPE");
         query.setParameter("configType", type.getType());
+        query.setHint(QueryHints.CACHEABLE, true);
         return query.getResultList();
     }
 
@@ -71,6 +73,7 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
     public List<ModuleConfiguration> readActiveByType(ModuleConfigurationType type) {
         Query query = em.createNamedQuery("BC_READ_ACTIVE_MODULE_CONFIG_BY_TYPE");
         query.setParameter("configType", type.getType());
+        query.setHint(QueryHints.CACHEABLE, true);
         return query.getResultList();
     }
 
@@ -78,6 +81,7 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
     @Override
     public List<ModuleConfiguration> readByType(Class<? extends ModuleConfiguration> type) {
         Query query = em.createQuery("SELECT config FROM " + type.getName() + " config");
+        query.setHint(QueryHints.CACHEABLE, true);
         return query.getResultList();
     }
 
