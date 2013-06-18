@@ -7,13 +7,13 @@
          </div>
     </div>
 
-    <form th:fragment="form" action="#" th:action="@{forgotUsername}" method="POST">
+    <blc:form th:fragment="form" action="#" th:action="@{forgotUsername}" method="POST">
 
         <label th:text="#{password.email}" />
         <input type="email" id="emailAddress" name="emailAddress" autofocus="autofocus" class="twelve" />
 
         <input type="submit" class="button radius right" value="Send Username"/>
-    </form>
+    </blc:form>
 
     <div th:fragment="options">
         <ul class="inline-list">

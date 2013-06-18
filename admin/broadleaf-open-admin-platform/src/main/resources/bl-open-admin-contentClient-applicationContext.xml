@@ -12,7 +12,7 @@
     </context:component-scan>
 
     <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
-        <property name="xsrfProtectionEnabled" value="false" />
+        <property name="xsrfProtectionEnabled" value="true" />
         <property name="xssProtectionEnabled" value="true" />
     </bean>
     

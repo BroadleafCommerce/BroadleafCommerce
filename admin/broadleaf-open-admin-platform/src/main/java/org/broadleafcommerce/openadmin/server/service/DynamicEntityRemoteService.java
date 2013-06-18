@@ -75,7 +75,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
                 containsCache = true;
                 persistencePackageList = new ArrayList<PersistencePackage>();
                 for (PersistencePackage persistencePackage : batchPersistencePackage.getPersistencePackages()) {
-                    exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
                     if (persistencePackage.getPersistencePerspective().getUseServerSideInspectionCache()) {
                         checkResultSetList: {
                             for (DynamicResultSet dynamicResultSet : METADATA_CACHE.get(batchPersistencePackage).getDynamicResultSets()) {
@@ -137,8 +136,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
 
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException {
-        exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
-
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
@@ -155,7 +152,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
 
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
-        exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
@@ -193,8 +189,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
 
     @Override
     public Entity add(PersistencePackage persistencePackage) throws ServiceException {
-        exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
-
         cleanEntity(persistencePackage.getEntity());
         if (persistencePackage.getEntity().isValidationFailure()) {
             return persistencePackage.getEntity();
@@ -218,8 +212,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
 
     @Override
     public Entity update(PersistencePackage persistencePackage) throws ServiceException {
-        exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
-
         cleanEntity(persistencePackage.getEntity());
         if (persistencePackage.getEntity().isValidationFailure()) {
             return persistencePackage.getEntity();
@@ -240,8 +232,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
 
     @Override
     public void remove(PersistencePackage persistencePackage) throws ServiceException {
-        exploitProtectionService.compareToken(persistencePackage.getCsrfToken());
-
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);

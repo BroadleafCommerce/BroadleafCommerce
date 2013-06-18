@@ -52,6 +52,32 @@ var BLC = (function($) {
     }
     
     function ajax(options, callback) {
+        if (options.type == null) {
+            options.type = 'GET';
+        }
+        
+        if (options.type.toUpperCase() == 'POST') {
+            if (typeof options.data == 'string') {
+                if (options.data.indexOf('csrfToken') < 0) {
+                    var csrfToken = getCsrfToken();
+                    if (csrfToken != null) {
+                        if (options.data.indexOf('=') > 0) {
+                            options.data += "&";
+                        }
+                        
+                        options.data += "csrfToken=" + csrfToken;
+                    }
+                }
+            } else if (typeof options.data == 'object') {
+                if (options.data['csrfToken'] == null || options.data['csrfToken'] == '') {
+                    var csrfToken = getCsrfToken();
+                    if (csrfToken != null) {
+                        options.data['csrfToken'] = csrfToken;
+                    }
+                }
+            }
+        }
+        
         options.success = function(data) {
             if (typeof data == "string") {
                 data = $($.trim(data));
@@ -70,6 +96,15 @@ var BLC = (function($) {
         }
         
         return $.ajax(options);
+    }
+        
+    function getCsrfToken() {
+        var csrfTokenInput = $('input[name="csrfToken"]');
+        if (csrfTokenInput.length == 0) {
+            return null;
+        }
+        
+        return csrfTokenInput.val();
     }
     
     function defaultErrorHandler(data) {

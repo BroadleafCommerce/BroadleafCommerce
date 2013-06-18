@@ -7,7 +7,7 @@
 <!--    hideTranslations - boolean value determining whether or not to hide the translation icon -->
 </comment>
 
-<form th:object="${entityForm}"
+<blc:form th:object="${entityForm}"
       method="POST"
       class="twelve columns custom entity-form"
       th:classappend="${(additionalClasses == null ? '' : additionalClasses + ' ') 
@@ -81,4 +81,4 @@
         </button>
     </div>
     
-</form>
+</blc:form>
