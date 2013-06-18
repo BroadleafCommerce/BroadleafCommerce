@@ -179,7 +179,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<PricingContext>
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                 BigDecimal fgItemAmount = fgItem.getTotalItemAmount().getAmount();
-                BigDecimal proratedAdjAmt = orderAdjAmt.multiply(fgItemAmount).divide(totalAllItems, RoundingMode.FLOOR);
+                BigDecimal proratedAdjAmt = totalAllItems.equals(BigDecimal.ZERO) ? BigDecimal.ZERO : orderAdjAmt.multiply(fgItemAmount).divide(totalAllItems, RoundingMode.FLOOR);
                 fgItem.setProratedOrderAdjustmentAmount(new Money(proratedAdjAmt, order.getCurrency()));
                 returnAmount = returnAmount.add(fgItem.getProratedOrderAdjustmentAmount());
             }
