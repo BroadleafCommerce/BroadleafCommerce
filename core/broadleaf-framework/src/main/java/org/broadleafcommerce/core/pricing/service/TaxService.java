@@ -30,4 +30,15 @@ public interface TaxService {
      */
     public Order commitTaxForOrder(Order order) throws TaxException;
 
+    /**
+     * Some tax providers store tax details from an order on an external system for reporting and tax reconcilliation. 
+     * This allows one to cancel or undo tax recording in an external system.  Typically, this will be called to offset 
+     * a call to commitTaxForOrder.  This might be called, for example, in a rollback handler for a checkout workflow activity 
+     * that calls commitTaxForOrder.
+     * 
+     * @param order
+     * @throws TaxException
+     */
+    public void cancelTax(Order order) throws TaxException;
+
 }

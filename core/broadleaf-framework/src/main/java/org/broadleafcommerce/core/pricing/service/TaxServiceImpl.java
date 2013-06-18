@@ -93,6 +93,41 @@ public class TaxServiceImpl implements TaxService {
         throw new TaxException("No eligible tax providers were configured.");
     }
 
+    @Override
+    public void cancelTax(Order order) throws TaxException {
+        List<ModuleConfiguration> configurations =
+                moduleConfigService.findActiveConfigurationsByType(ModuleConfigurationType.TAX_CALCULATION);
+
+        if (configurations != null && !configurations.isEmpty()) {
+
+            //Try to find a default configuration
+            ModuleConfiguration config = null;
+            for (ModuleConfiguration configuration : configurations) {
+                if (configuration.getIsDefault()) {
+                    config = configuration;
+                    break;
+                }
+            }
+
+            if (config == null) {
+                //if there wasn't a default one, use the first active one...
+                config = configurations.get(0);
+            }
+
+            if (providers != null && !providers.isEmpty()) {
+                for (TaxProvider provider : providers) {
+                    if (provider.canRespond(config)) {
+                        provider.cancelTax(order, config);
+                        return;
+                    }
+                }
+            }
+        }
+        if (mustCalculate) {
+            throw new TaxException("No eligible tax providers were configured.");
+        }
+    }
+
     /**
      * Sets a list of <code>TaxProvider</code> implementations.
      * 
