@@ -40,10 +40,6 @@ public class PaymentActivity extends BaseActivity<WorkflowPaymentContext> {
     protected String userName;
     protected boolean automaticallyRegisterRollbackHandlerForPayment = true;
 
-    public PaymentActivity() {
-        setAutomaticallyRegisterRollbackHandler(false);
-    }
-
     /* (non-Javadoc)
          * @see org.broadleafcommerce.core.workflow.Activity#execute(org.broadleafcommerce.core.workflow.ProcessContext)
          */

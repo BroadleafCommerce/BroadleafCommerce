@@ -29,7 +29,7 @@ public abstract class BaseActivity<T extends ProcessContext> implements Activity
     protected RollbackHandler rollbackHandler;
     protected String rollbackRegion;
     protected Map<String, Object> stateConfiguration;
-    protected boolean automaticallyRegisterRollbackHandler = true;
+    protected boolean automaticallyRegisterRollbackHandler = false;
     protected int order = Ordered.LOWEST_PRECEDENCE;
     
     @Override
