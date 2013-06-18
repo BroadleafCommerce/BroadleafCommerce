@@ -7,12 +7,12 @@
     <input type="hidden" class="mediaUrl twelve" th:field="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" />
     
     <img class="thumbnail" 
-        th:if="*{fields['__${field.name}__'].value != null}"
+        th:if="*{fields['__${field.name}__'].value != null and fields['__${field.name}__'].value != ''}"
         th:src="@{*{fields['__${field.name}__'].value + '?largeAdminThumbnail'}}"
         th:attr="data-fullurl=@{*{fields['__${field.name}__'].value}}" />
         
     <img class="thumbnail" 
-        th:unless="*{fields['__${field.name}__'].value != null}" />
+        th:unless="*{fields['__${field.name}__'].value != null and fields['__${field.name}__'].value != ''}" />
     
     <button class="show-asset-selector tiny radius secondary button hover-cursor"
         type="button" th:inline="text"
