@@ -93,12 +93,16 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     .withTargetProperty(adornedTargetList.getLinkedObjectPath() + "." + adornedTargetList.getLinkedIdProperty()))
             .withFilterValues(cto.get(adornedTargetList.getCollectionFieldName()).getFilterValues())
             .withRestriction(new Restriction()
-                .withPredicateProvider(new PredicateProvider<String, String>() {
+                .withPredicateProvider(new PredicateProvider<Serializable, String>() {
                     @Override
                     public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
-                                                    String ceilingEntity, String fullPropertyName, Path<String> explicitPath,
+                                                    String ceilingEntity, String fullPropertyName, Path<Serializable> explicitPath,
                                                     List<String> directValues) {
-                        return builder.equal(explicitPath, Long.parseLong(directValues.get(0)));
+                        if (String.class.isAssignableFrom(explicitPath.getJavaType())) {
+                            return builder.equal(explicitPath, directValues.get(0));
+                        } else {
+                            return builder.equal(explicitPath, Long.parseLong(directValues.get(0)));
+                        }
                     }
                 })
             );
@@ -109,12 +113,16 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                                         adornedTargetList.getTargetIdProperty()))
             .withFilterValues(cto.get(adornedTargetList.getCollectionFieldName() + "Target").getFilterValues())
             .withRestriction(new Restriction()
-                .withPredicateProvider(new PredicateProvider<String, String>() {
+                .withPredicateProvider(new PredicateProvider<Serializable, String>() {
                     @Override
                     public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
-                                                    String ceilingEntity, String fullPropertyName, Path<String> explicitPath,
+                                                    String ceilingEntity, String fullPropertyName, Path<Serializable> explicitPath,
                                                     List<String> directValues) {
-                        return builder.equal(explicitPath, Long.parseLong(directValues.get(0)));
+                        if (String.class.isAssignableFrom(explicitPath.getJavaType())) {
+                            return builder.equal(explicitPath, directValues.get(0));
+                        } else {
+                            return builder.equal(explicitPath, Long.parseLong(directValues.get(0)));
+                        }
                     }
                 })
             );
@@ -134,10 +142,20 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
         Object test1PersistedObject = persistenceManager.getDynamicEntityDao().retrieve(test1.getClass(), Long.valueOf(entity.findProperty(linkedPath).getValue()));
         Assert.isTrue(test1PersistedObject != null, "Entity not found");
 
-        getFieldManager().setFieldValue(instance, targetPath, Long.valueOf(entity.findProperty(targetPath).getValue()));
+        Class<?> type = getFieldManager().getField(instance.getClass(), targetPath).getType();
+        if (String.class.isAssignableFrom(type)) {
+            getFieldManager().setFieldValue(instance, targetPath, entity.findProperty(targetPath).getValue());
+        } else {
+            getFieldManager().setFieldValue(instance, targetPath, Long.valueOf(entity.findProperty(targetPath).getValue()));
+        }
 
         Object test2 = getFieldManager().getFieldValue(instance, adornedTargetList.getTargetObjectPath());
-        Object test2PersistedObject = persistenceManager.getDynamicEntityDao().retrieve(test2.getClass(), Long.valueOf(entity.findProperty(targetPath).getValue()));
+        Object test2PersistedObject;
+        if (String.class.isAssignableFrom(type)) {
+            test2PersistedObject = persistenceManager.getDynamicEntityDao().retrieve(test2.getClass(), entity.findProperty(targetPath).getValue());
+        } else {
+            test2PersistedObject = persistenceManager.getDynamicEntityDao().retrieve(test2.getClass(), Long.valueOf(entity.findProperty(targetPath).getValue()));
+        }
         Assert.isTrue(test2PersistedObject != null, "Entity not found");
 
         return instance;
