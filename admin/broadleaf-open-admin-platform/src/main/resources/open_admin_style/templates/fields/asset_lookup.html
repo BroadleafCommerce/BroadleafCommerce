@@ -12,6 +12,7 @@
         th:attr="data-fullurl=@{*{fields['__${field.name}__'].value}}" />
         
     <img class="thumbnail" 
+        th:src="@{/img/admin/placeholder-60x60.gif}"
         th:unless="*{fields['__${field.name}__'].value != null and fields['__${field.name}__'].value != ''}" />
     
     <button class="show-asset-selector tiny radius secondary button hover-cursor"
