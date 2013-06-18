@@ -49,5 +49,6 @@ public enum SupportedFieldType {
     RULE_SIMPLE,
     RULE_WITH_QUANTITY,
     STRING_LIST,
-    IMAGE
+    IMAGE,
+    COLOR
 }
