@@ -152,7 +152,11 @@
     <!-- For all payment workflow configurations, see bl-framework-applicationContext-workflow.xml -->
     <bean p:order="2000" id="blPaymentServiceActivity" class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
     <bean p:order="3000" id="blRecordOfferUsageActivity" class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity"/>
-    <bean p:order="4000" id="blCommitTaxActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CommitTaxActivity"/>
+    <bean p:order="4000" id="blCommitTaxActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CommitTaxActivity">
+        <property name="rollbackHandler">
+            <bean class="org.broadleafcommerce.core.checkout.service.workflow.CommitTaxRollbackHandler"/>
+        </property>
+    </bean>
     <bean p:order="5000" id="blCompleteOrderActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
     
 

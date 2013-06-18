@@ -18,6 +18,12 @@ public class CommitTaxActivity extends BaseActivity<CheckoutContext> {
     @Resource(name = "blTaxService")
     protected TaxService taxService;
 
+    public CommitTaxActivity() {
+        super();
+        //We can automatically register a rollback handler because the state will be in the process context.
+        super.setAutomaticallyRegisterRollbackHandler(true);
+    }
+
     @Override
     public CheckoutContext execute(CheckoutContext context) throws Exception {
         Order order = context.getSeedData().getOrder();
