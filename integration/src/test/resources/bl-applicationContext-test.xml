@@ -31,7 +31,6 @@
                 <entry key="testProperty" value="testValue"/>
             </map>
         </property>
-        <property name="automaticallyRegisterRollbackHandler" value="true"/>
     </bean>
 
     <!-- Configuration used in WorkflowTests -->
