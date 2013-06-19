@@ -134,7 +134,9 @@ public class OrderServiceImpl implements OrderService {
     /* Fields */
     protected boolean moveNamedOrderItems = true;
     protected boolean deleteEmptyNamedOrders = true;
-    protected boolean automaticallyMergeLikeItems = true;
+
+    @Value("${automatically.merge.like.items}")
+    protected boolean automaticallyMergeLikeItems;
 
     @Override
     @Transactional("blTransactionManager")
@@ -591,9 +593,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems) {
-        if (!automaticallyMergeLikeItems) {
-            throw new UnsupportedOperationException("At this time, OrderService only supports merging like items in the cart");
-        }
         this.automaticallyMergeLikeItems = automaticallyMergeLikeItems;
     }
     
