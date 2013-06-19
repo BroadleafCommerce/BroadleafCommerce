@@ -69,7 +69,6 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
         
         if (bundleEnabled) {
             String versionedBundle = bundlingService.getVersionedBundleName(name);
-            versionedBundle = null;
             if (StringUtils.isBlank(versionedBundle)) {
                 BroadleafResourceHttpRequestHandler reqHandler = getRequestHandler(name, arguments);
                 try {
