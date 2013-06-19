@@ -71,7 +71,6 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
 
             return adminEntity;
         } catch (Exception e) {
-            LOG.error("Unable to add entity for " + entity.getType()[0], e);
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
         }
     }
@@ -111,7 +110,6 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
 
             return adminEntity;
         } catch (Exception e) {
-            LOG.error("Unable to update entity for " + entity.getType()[0], e);
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
         }
     }

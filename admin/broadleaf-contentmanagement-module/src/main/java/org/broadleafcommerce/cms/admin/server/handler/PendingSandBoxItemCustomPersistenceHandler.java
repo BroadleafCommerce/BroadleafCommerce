@@ -46,7 +46,7 @@ import java.util.Map;
  */
 public class PendingSandBoxItemCustomPersistenceHandler extends SandBoxItemCustomPersistenceHandler {
 
-    private Log LOG = LogFactory.getLog(PendingSandBoxItemCustomPersistenceHandler.class);
+    private final Log LOG = LogFactory.getLog(PendingSandBoxItemCustomPersistenceHandler.class);
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
@@ -70,7 +70,6 @@ public class PendingSandBoxItemCustomPersistenceHandler extends SandBoxItemCusto
         AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
         if (adminUser == null) {
             ServiceException e = new ServiceException("Unable to determine current user logged in status");
-            LOG.error("Unable to determine current user logged in status", e);
             throw e;
         }
         try {
@@ -135,7 +134,6 @@ public class PendingSandBoxItemCustomPersistenceHandler extends SandBoxItemCusto
 
             return response;
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to execute persistence activity for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }

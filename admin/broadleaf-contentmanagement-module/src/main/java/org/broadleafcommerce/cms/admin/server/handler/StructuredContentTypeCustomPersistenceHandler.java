@@ -50,13 +50,14 @@ import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * Created by jfischer
@@ -225,7 +226,6 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
             return results;
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform inspect for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }
@@ -240,7 +240,6 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
             return results;
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }
@@ -317,7 +316,6 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
             return fetchEntityBasedOnId(structuredContentId);
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }

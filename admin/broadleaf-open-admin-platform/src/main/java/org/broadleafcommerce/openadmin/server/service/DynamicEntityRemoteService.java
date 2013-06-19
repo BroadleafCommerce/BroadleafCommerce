@@ -202,10 +202,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
                 LOG.warn("Not saving entity as it has failed validation");
                 return ((ValidationException) e).getEntity();
             } else if (e.getCause() instanceof ValidationException) {
+                LOG.warn("Not saving entity as it has failed validation");
                 return ((ValidationException) e.getCause()).getEntity();
             }
             
             String message = exploitProtectionService.cleanString(e.getMessage());
+            LOG.error("Problem adding new " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             throw recreateSpecificServiceException(e, message, e.getCause());
         }
     }
@@ -221,10 +223,14 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.update(persistencePackage);
         } catch (ServiceException e) {
-            if (e.getCause() instanceof ValidationException) {
+            if (e instanceof ValidationException) {
+                LOG.warn("Not saving entity as it has failed validation");
+                return ((ValidationException) e).getEntity();
+            } else if (e.getCause() instanceof ValidationException) {
                 LOG.warn("Not saving entity as it has failed validation");
                 return ((ValidationException) e.getCause()).getEntity();
             }
+            LOG.error("Problem updating " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             String message = exploitProtectionService.cleanString(e.getMessage());
             throw recreateSpecificServiceException(e, message, e.getCause());
         }
@@ -237,6 +243,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             persistenceManager.remove(persistencePackage);
         } catch (ServiceException e) {
+            LOG.error("Problem removing " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             String message = exploitProtectionService.cleanString(e.getMessage());
             throw recreateSpecificServiceException(e, message, e.getCause());
         }

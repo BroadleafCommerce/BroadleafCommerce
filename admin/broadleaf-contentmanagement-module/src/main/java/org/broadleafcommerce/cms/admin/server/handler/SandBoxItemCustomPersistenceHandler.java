@@ -44,18 +44,19 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
  */
 public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private Log LOG = LogFactory.getLog(SandBoxItemCustomPersistenceHandler.class);
+    private final Log LOG = LogFactory.getLog(SandBoxItemCustomPersistenceHandler.class);
 
     @Resource(name="blSandBoxService")
     protected SandBoxService sandBoxService;
@@ -119,7 +120,6 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
         AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
         if (adminUser == null) {
             ServiceException e = new ServiceException("Unable to determine current user logged in status");
-            LOG.error("Unable to determine current user logged in status", e);
             throw e;
         }
         try {
@@ -208,7 +208,6 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
 
             return response;
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to execute persistence activity for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }

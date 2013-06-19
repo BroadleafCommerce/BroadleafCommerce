@@ -100,7 +100,6 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             
             return helper.getRecord(adminProperties, adminInstance, null, null);
         } catch (Exception e) {
-            LOG.error("Unable to add entity for " + entity.getType()[0], e);
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
         }
     }
@@ -131,7 +130,6 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             
             return helper.getRecord(adminProperties, adminInstance, null, null);
         } catch (Exception e) {
-            LOG.error("Unable to update entity for " + entity.getType()[0], e);
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
         }
     }

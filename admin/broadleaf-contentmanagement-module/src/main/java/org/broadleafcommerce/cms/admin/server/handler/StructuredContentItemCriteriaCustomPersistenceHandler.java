@@ -31,18 +31,19 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
+import java.util.Map;
+
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.Map;
 
 /**
  * @author Jeff Fischer
  */
 public class StructuredContentItemCriteriaCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private Log LOG = LogFactory.getLog(StructuredContentItemCriteriaCustomPersistenceHandler.class);
+    private final Log LOG = LogFactory.getLog(StructuredContentItemCriteriaCustomPersistenceHandler.class);
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
@@ -86,7 +87,6 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
 
             return adminEntity;
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
         }
     }
@@ -135,7 +135,6 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
 
             return adminEntity;
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
         }
     }
@@ -175,7 +174,6 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
 
             dynamicEntityDao.remove(adminInstance);
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
         }
     }

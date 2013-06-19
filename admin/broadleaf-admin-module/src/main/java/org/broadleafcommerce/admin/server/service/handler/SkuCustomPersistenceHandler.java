@@ -191,8 +191,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         } catch (Exception e) {
             ServiceException ex = new ServiceException("Unable to retrieve inspection results for " +
                     persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
-            LOG.error("Unable to retrieve inspection results for " +
-                    persistencePackage.getCeilingEntityFullyQualifiedClassname(), ex);
             throw ex;
         }
     }
@@ -385,7 +383,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
             return new DynamicResultSet(metadata, payload, totalRecords);
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform fetch for entity: " + ceilingEntityFullyQualifiedClassname, e);
         }
     }
@@ -490,7 +487,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             }
             return result;
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform fetch for entity: " + Sku.class.getName(), e);
         }
     }
@@ -526,7 +522,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             }
             return result;
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to perform fetch for entity: " + Sku.class.getName(), e);
         }
     }

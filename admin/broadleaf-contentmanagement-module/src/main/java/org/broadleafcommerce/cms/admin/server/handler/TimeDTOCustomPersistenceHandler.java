@@ -82,7 +82,6 @@ public class TimeDTOCustomPersistenceHandler extends CustomPersistenceHandlerAda
             return results;
         } catch (Exception e) {
             ServiceException ex = new ServiceException("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
-            LOG.error("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), ex);
             throw ex;
         }
     }
