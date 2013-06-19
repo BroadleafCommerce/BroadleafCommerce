@@ -100,7 +100,6 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
             }
             out.flush();
             minifiedBytes = baos.toByteArray();
-                System.out.println(new String(minifiedBytes));
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
