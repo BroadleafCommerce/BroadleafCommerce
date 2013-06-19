@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -61,20 +62,20 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     protected Long id;
 
     @Column(name = "MODULE_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Module_Name", prominent = true)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Module_Name", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected String moduleName;
 
     @Column(name = "IS_ACTIVE", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Active")
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Active", requiredOverride = RequiredOverride.REQUIRED)
     protected Boolean isActive = false;
 
     @Column(name = "IS_DEFAULT", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Default")
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Default", requiredOverride = RequiredOverride.REQUIRED)
     protected Boolean isDefault = false;
 
     @Column(name = "CONFIG_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Config_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.common.config.service.type.ModuleConfigurationType")
+            broadleafEnumeration = "org.broadleafcommerce.common.config.service.type.ModuleConfigurationType", requiredOverride = RequiredOverride.REQUIRED)
     protected String configType;
 
     @Embedded
