@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public interface ModuleConfiguration extends Serializable {
 
@@ -31,15 +32,21 @@ public interface ModuleConfiguration extends Serializable {
 
     public void setModuleName(String name);
 
-    public Boolean getIsActive();
+    public void setActiveStartDate(Date startDate);
 
-    public void setIsActive(Boolean isActive);
+    public Date getActiveStartDate();
 
-    public Boolean getIsDefault();
+    public void setActiveEndDate(Date startDate);
+
+    public Date getActiveEndDate();
 
     public void setIsDefault(Boolean isDefault);
 
-    public void setModuleConfigurationType(ModuleConfigurationType moduleConfigurationType);
+    public Boolean getIsDefault();
+
+    public void setPriority(Integer priority);
+
+    public Integer getPriority();
 
     public ModuleConfigurationType getModuleConfigurationType();
 

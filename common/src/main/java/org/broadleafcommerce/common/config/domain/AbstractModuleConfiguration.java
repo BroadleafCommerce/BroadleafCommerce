@@ -19,14 +19,19 @@ package org.broadleafcommerce.common.config.domain;
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -38,13 +43,22 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+/**
+ * Modules that need to be configured via the database should extend this.  Classes that 
+ * extend this MUST call setModuleConfigurationType(ModuleConfigurationType type) in their 
+ * constructor.
+ * 
+ * @author Kelly Tisdell
+ *
+ */
+
 @Entity
 @Table(name = "BLC_MODULE_CONFIGURATION")
 @EntityListeners(value = { AuditableListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(excludeFromPolymorphism = true)
-public abstract class AbstractModuleConfiguration implements ModuleConfiguration {
+@AdminPresentationClass(excludeFromPolymorphism = true, friendlyName = "AbstractModuleConfiguration")
+public abstract class AbstractModuleConfiguration implements ModuleConfiguration, Status {
 
     private static final long serialVersionUID = 1L;
 
@@ -62,24 +76,37 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     protected Long id;
 
     @Column(name = "MODULE_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Module_Name", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Module_Name", order = 2000, prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected String moduleName;
 
-    @Column(name = "IS_ACTIVE", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Active", requiredOverride = RequiredOverride.REQUIRED)
-    protected Boolean isActive = false;
+    @Column(name = "ACTIVE_START_DATE", nullable = true)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Active_Start_Date", order = 3000, prominent = true, fieldType = SupportedFieldType.DATE)
+    protected Date activeStartDate;
+
+    @Column(name = "ACTIVE_END_DATE", nullable = true)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Active_End_Date", order = 4000, prominent = true, fieldType = SupportedFieldType.DATE)
+    protected Date activeEndDate;
 
     @Column(name = "IS_DEFAULT", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Default", requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Default", order = 5000, prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected Boolean isDefault = false;
 
     @Column(name = "CONFIG_TYPE", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Config_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.common.config.service.type.ModuleConfigurationType", requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Config_Type", order = 1000, prominent = true, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.config.service.type.ModuleConfigurationType",
+            requiredOverride = RequiredOverride.REQUIRED, readOnly = true)
     protected String configType;
+
+    @Column(name = "MODULE_PRIORITY", nullable = false)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Priority",
+            order = 6000, prominent = true, requiredOverride = RequiredOverride.REQUIRED, tooltip = "AbstractModuleConfiguration_Priority_Tooltip")
+    protected Integer priority = 100;
 
     @Embedded
     protected Auditable auditable = new Auditable();
+    
+    @Embedded
+    protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
     @Override
     public Long getId() {
@@ -102,26 +129,11 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     }
 
     @Override
-    public Boolean getIsActive() {
-        if (this.isActive == null) {
-            return Boolean.FALSE;
-        } else {
-            return this.isActive;
-        }
-    }
-
-    @Override
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    @Override
     public Boolean getIsDefault() {
         if (this.isDefault == null) {
-            return Boolean.FALSE;
-        } else {
-            return this.isDefault;
+            this.isDefault = Boolean.FALSE;
         }
+        return this.isDefault;
     }
 
     @Override
@@ -129,8 +141,10 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
         this.isDefault = isDefault;
     }
 
-    @Override
-    public void setModuleConfigurationType(ModuleConfigurationType moduleConfigurationType) {
+    /**
+     * Subclasses of this must set the ModuleConfigType in their constructor.
+     */
+    protected void setModuleConfigurationType(ModuleConfigurationType moduleConfigurationType) {
         this.configType = moduleConfigurationType.getType();
     }
 
@@ -147,6 +161,51 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     @Override
     public Auditable getAuditable() {
         return this.auditable;
+    }
+
+    @Override
+    public void setArchived(Character archived) {
+        archiveStatus.setArchived(archived);
+    }
+
+    @Override
+    public Character getArchived() {
+        return archiveStatus.getArchived();
+    }
+
+    @Override
+    public boolean isActive() {
+        return DateUtil.isActive(activeStartDate, activeEndDate, true) && 'Y' != getArchived();
+    }
+
+    @Override
+    public void setActiveStartDate(Date startDate) {
+        this.activeStartDate = startDate;
+    }
+
+    @Override
+    public Date getActiveStartDate() {
+        return this.activeStartDate;
+    }
+
+    @Override
+    public void setActiveEndDate(Date endDate) {
+        this.activeEndDate = endDate;
+    }
+
+    @Override
+    public Date getActiveEndDate() {
+        return this.activeEndDate;
+    }
+
+    @Override
+    public Integer getPriority() {
+        return priority;
+    }
+
+    @Override
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 
 }
