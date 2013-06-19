@@ -41,4 +41,8 @@ public interface Locale extends Serializable {
 
     public void setDefaultCurrency(BroadleafCurrency currency);
 
+    public Boolean getUseInSearchIndex();
+    
+    public void setUseInSearchIndex(Boolean useInSearchIndex);
+
 }

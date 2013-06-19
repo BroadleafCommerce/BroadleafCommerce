@@ -70,6 +70,12 @@ public class LocaleImpl implements Locale {
         prominent = true)
     protected BroadleafCurrency defaultCurrency;
 
+    @Column (name = "USE_IN_SEARCH_INDEX")
+    @AdminPresentation(friendlyName = "LocaleImpl_Use_In_Search_Index", order = 5, 
+        group = "LocaleImpl_Details", 
+        prominent = true, gridOrder = 3)
+    protected Boolean useInSearchIndex = false;
+    
     @Override
     public String getLocaleCode() {
         return localeCode;
@@ -112,6 +118,16 @@ public class LocaleImpl implements Locale {
     @Override
     public void setDefaultCurrency(BroadleafCurrency defaultCurrency) {
         this.defaultCurrency = defaultCurrency;
+    }
+    
+    @Override
+    public Boolean getUseInSearchIndex() {
+        return useInSearchIndex == null ? false : useInSearchIndex;
+    }
+
+    @Override
+    public void setUseInSearchIndex(Boolean useInSearchIndex) {
+        this.useInSearchIndex = useInSearchIndex;
     }
 
     @Override
