@@ -1,6 +1,6 @@
 <blc:form method="post" class="uploadFileForm"
     enctype="multipart/form-data"  
-    th:attr="action=@{${'/asset/uploadAsset'}}"
+    th:action="@{${'/asset/uploadAsset'}}"
     id="assetUploadForm">
     
     <input id="assetUploadFile" type="file" name="file" />
