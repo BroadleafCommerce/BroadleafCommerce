@@ -20,11 +20,14 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderAttribute;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -80,6 +83,10 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
     @XmlElementWrapper(name = "orderAdjustments")
     protected List<OrderAdjustmentWrapper> orderAdjustments;
 
+    @XmlElement(name = "orderAttribute")
+    @XmlElementWrapper(name = "orderAttributes")
+    protected List<OrderAttributeWrapper> orderAttributes;
+
     @Override
     public void wrap(Order model, HttpServletRequest request) {
         this.id = model.getId();
@@ -124,7 +131,17 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
                 this.orderAdjustments.add(orderItemWrapper);
             }
         }
-
+        if (model.getOrderAttributes() != null && !model.getOrderAttributes().isEmpty()) {
+            Map<String, OrderAttribute> itemAttributes = model.getOrderAttributes();
+            this.orderAttributes = new ArrayList<OrderAttributeWrapper>();
+            Set<String> keys = itemAttributes.keySet();
+            for (String key : keys) {
+                OrderAttributeWrapper orderAttributeWrapper =
+                        (OrderAttributeWrapper) context.getBean(OrderAttributeWrapper.class.getName());
+                orderAttributeWrapper.wrap(itemAttributes.get(key), request);
+                this.orderAttributes.add(orderAttributeWrapper);
+            }
+        }
         CustomerWrapper customerWrapper = (CustomerWrapper) context.getBean(CustomerWrapper.class.getName());
         customerWrapper.wrap(model.getCustomer(), request);
         this.customer = customerWrapper;
