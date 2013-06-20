@@ -22,7 +22,6 @@
         <mapping-file>config/bc/jpa/domain/FulfillmentOption.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Store.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file> 
-        <mapping-file>config/bc/jpa/domain/SearchIntercept.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Rating.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/SearchRedirect.orm.xml</mapping-file>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryImpl</class>
