@@ -20,15 +20,15 @@ import org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.hibernate.annotations.QueryHints;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.List;
 
 @Repository("blModuleConfigurationDao")
 public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
@@ -73,6 +73,7 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
     public List<ModuleConfiguration> readActiveByType(ModuleConfigurationType type) {
         Query query = em.createNamedQuery("BC_READ_ACTIVE_MODULE_CONFIG_BY_TYPE");
         query.setParameter("configType", type.getType());
+        query.setParameter("currentDate", SystemTime.asDate());
         query.setHint(QueryHints.CACHEABLE, true);
         return query.getResultList();
     }

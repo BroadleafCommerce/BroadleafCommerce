@@ -14,8 +14,8 @@
         <query>SELECT config FROM org.broadleafcommerce.common.config.domain.ModuleConfiguration config 
                WHERE config.configType = :configType 
                AND (config.archiveStatus.archived IS NULL OR config.archiveStatus.archived = 'N')
-               AND (config.activeStartDate IS NOT NULL AND config.activeStartDate &lt; CURRENT_TIME) 
-               AND (config.activeEndDate IS NULL OR config.activeEndDate &gt; CURRENT_TIME) 
+               AND (config.activeStartDate IS NOT NULL AND config.activeStartDate &lt; :currentDate)
+               AND (config.activeEndDate IS NULL OR config.activeEndDate &gt; :currentDate)
                ORDER BY config.priority ASC
         </query>
     </named-query>
