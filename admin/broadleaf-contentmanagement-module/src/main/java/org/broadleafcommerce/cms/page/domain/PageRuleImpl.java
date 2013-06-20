@@ -57,7 +57,7 @@ public class PageRuleImpl implements PageRule {
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @Column(name = "MATCH_RULE")
+    @Column(name = "MATCH_RULE", length = Integer.MAX_VALUE - 1)
     protected String matchRule;
 
     /* (non-Javadoc)

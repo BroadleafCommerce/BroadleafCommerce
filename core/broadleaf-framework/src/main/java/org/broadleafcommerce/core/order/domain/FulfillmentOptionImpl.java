@@ -80,7 +80,7 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
 
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @Column(name = "LONG_DESCRIPTION")
+    @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "FulfillmentOptionImpl_longDescription",
             order = Presentation.FieldOrder.DESCRIPTION, translatable = true)
     protected String longDescription;

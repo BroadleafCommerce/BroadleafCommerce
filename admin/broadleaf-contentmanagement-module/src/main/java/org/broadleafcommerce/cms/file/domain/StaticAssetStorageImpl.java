@@ -58,7 +58,7 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @Index(name="STATIC_ASSET_ID_INDEX", columnNames={"STATIC_ASSET_ID"})
     protected Long staticAssetId;
 
-    @Column (name = "FILE_DATA")
+    @Column (name = "FILE_DATA", length = Integer.MAX_VALUE - 1)
     @Lob
     protected Blob fileData;
 

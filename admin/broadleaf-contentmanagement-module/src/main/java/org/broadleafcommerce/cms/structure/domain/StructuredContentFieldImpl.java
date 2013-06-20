@@ -74,7 +74,7 @@ public class StructuredContentFieldImpl implements StructuredContentField {
     @Column (name = "VALUE")
     protected String stringValue;
 
-    @Column (name = "LOB_VALUE")
+    @Column (name = "LOB_VALUE", length = Integer.MAX_VALUE - 1)
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     protected String lobValue;

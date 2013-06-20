@@ -87,7 +87,7 @@ public class SkuFeeImpl implements SkuFee {
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @Column(name = "EXPRESSION")
+    @Column(name = "EXPRESSION", length = Integer.MAX_VALUE - 1)
     protected String expression;
 
     @Column(name = "FEE_TYPE")
