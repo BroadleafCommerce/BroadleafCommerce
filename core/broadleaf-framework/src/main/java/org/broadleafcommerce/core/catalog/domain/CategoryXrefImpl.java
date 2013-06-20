@@ -19,6 +19,8 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
 
@@ -41,6 +43,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY_XREF")
 @AdminPresentationClass(excludeFromPolymorphism = false)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class CategoryXrefImpl implements CategoryXref {
 
     /** The Constant serialVersionUID. */

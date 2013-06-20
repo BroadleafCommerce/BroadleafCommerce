@@ -61,5 +61,23 @@ public interface OfferDao {
     OfferInfo save(OfferInfo offerInfo);
 
     void delete(OfferInfo offerInfo);
+
+    /**
+     * Returns the number of milliseconds that the current date/time will be cached for queries before refreshing.
+     * This aids in query caching, otherwise every query that utilized current date would be different and caching
+     * would be ineffective.
+     *
+     * @return the milliseconds to cache the current date/time
+     */
+    public Long getCurrentDateResolution();
+
+    /**
+     * Sets the number of milliseconds that the current date/time will be cached for queries before refreshing.
+     * This aids in query caching, otherwise every query that utilized current date would be different and caching
+     * would be ineffective.
+     *
+     * @param currentDateResolution the milliseconds to cache the current date/time
+     */
+    public void setCurrentDateResolution(Long currentDateResolution);
     
 }

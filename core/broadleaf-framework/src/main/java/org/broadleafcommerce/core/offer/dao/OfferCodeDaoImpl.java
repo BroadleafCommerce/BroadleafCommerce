@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.offer.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -60,6 +61,8 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
         OfferCode offerCode = null;
         Query query = em.createNamedQuery("BC_READ_OFFER_CODE_BY_CODE");
         query.setParameter("code", code);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         List<OfferCode> result = query.getResultList();
         if (result.size() > 0) {
             offerCode = result.get(0);

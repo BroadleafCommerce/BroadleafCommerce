@@ -77,9 +77,12 @@ public class CategoryDaoImpl implements CategoryDao {
 
         criteria.select(category);
         criteria.where(builder.isNull(category.get("defaultParentCategory")));
+        TypedQuery<Category> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
         try {
-            return em.createQuery(criteria).getResultList();
+            return query.getResultList();
         } catch (NoResultException e) {
             return null;
         }
@@ -98,6 +101,8 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readCategoriesByName(String categoryName, int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_CATEGORY_BY_NAME", Category.class);
         query.setParameter("categoryName", categoryName);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         query.setFirstResult(offset);
         query.setMaxResults(limit);
 
@@ -117,6 +122,8 @@ public class CategoryDaoImpl implements CategoryDao {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_CATEGORIES", Category.class);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
         return query.getResultList();
     }
@@ -124,12 +131,14 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Product> readAllProducts() {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ALL_PRODUCTS", Product.class);
+        //don't cache - could take up too much memory
         return query.getResultList();
     }
 
     @Override
     public List<Product> readAllProducts(int limit, int offset) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ALL_PRODUCTS", Product.class);
+        //don't cache - could take up too much memory
         query.setFirstResult(offset);
         query.setMaxResults(limit);
 
@@ -140,6 +149,9 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readAllSubCategories(Category category) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES", Category.class);
         query.setParameter("defaultParentCategory", category);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
         return query.getResultList();
     }
 
@@ -147,6 +159,8 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readAllSubCategories(Category category, int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES", Category.class);
         query.setParameter("defaultParentCategory", category);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         query.setFirstResult(offset);
         query.setMaxResults(limit);
 
@@ -167,6 +181,8 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readActiveSubCategoriesByCategory(Category category, int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
         query.setParameter("defaultParentCategoryId", category.getId());
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         query.setFirstResult(offset);
         query.setMaxResults(limit);
 
@@ -193,6 +209,8 @@ public class CategoryDaoImpl implements CategoryDao {
         Query query;
         query = em.createNamedQuery("BC_READ_CATEGORY_OUTGOING_URL");
         query.setParameter("url", uri);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
         @SuppressWarnings("unchecked")
         List<Category> results = query.getResultList();

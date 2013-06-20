@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.Date;
 import java.util.List;
 
 @Repository("blModuleConfigurationDao")
@@ -38,6 +39,25 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    protected Long currentDateResolution = 10000L;
+    protected Date currentDate = SystemTime.asDate();
+
+    private String DATE_LOCK = "DATE_LOCK"; // for use in synchronization
+
+    protected Date getDateFactoringInDateResolution(Date currentDate) {
+        Date myDate;
+        Long myCurrentDateResolution = currentDateResolution;
+        synchronized(DATE_LOCK) {
+            if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
+                this.currentDate = new Date(currentDate.getTime());
+                myDate = currentDate;
+            } else {
+                myDate = this.currentDate;
+            }
+        }
+        return myDate;
+    }
 
     @Override
     public ModuleConfiguration readById(Long id) {
@@ -73,7 +93,11 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
     public List<ModuleConfiguration> readActiveByType(ModuleConfigurationType type) {
         Query query = em.createNamedQuery("BC_READ_ACTIVE_MODULE_CONFIG_BY_TYPE");
         query.setParameter("configType", type.getType());
-        query.setParameter("currentDate", SystemTime.asDate());
+
+        Date myDate = SystemTime.asDate();
+        myDate = getDateFactoringInDateResolution(myDate);
+
+        query.setParameter("currentDate", myDate);
         query.setHint(QueryHints.CACHEABLE, true);
         return query.getResultList();
     }
@@ -81,9 +105,19 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
     @SuppressWarnings("unchecked")
     @Override
     public List<ModuleConfiguration> readByType(Class<? extends ModuleConfiguration> type) {
+        //TODO change this to a JPA criteria expression
         Query query = em.createQuery("SELECT config FROM " + type.getName() + " config");
         query.setHint(QueryHints.CACHEABLE, true);
         return query.getResultList();
     }
 
+    @Override
+    public Long getCurrentDateResolution() {
+        return currentDateResolution;
+    }
+
+    @Override
+    public void setCurrentDateResolution(Long currentDateResolution) {
+        this.currentDateResolution = currentDateResolution;
+    }
 }

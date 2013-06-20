@@ -22,18 +22,19 @@ import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.hibernate.ejb.HibernateEntityManager;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.List;
+import java.util.Map;
 
 @Repository("blTranslationDao")
 public class TranslationDaoImpl implements TranslationDao {
@@ -85,8 +86,10 @@ public class TranslationDaoImpl implements TranslationDao {
             builder.equal(translation.get("fieldName"), fieldName)
         );
 
+        TypedQuery<Translation> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         try {
-            return em.createQuery(criteria).getResultList();
+            return query.getResultList();
         } catch (NoResultException e) {
             return null;
         }
@@ -104,9 +107,10 @@ public class TranslationDaoImpl implements TranslationDao {
             builder.equal(translation.get("fieldName"), fieldName),
             builder.equal(translation.get("localeCode"), localeCode)
         );
-
+        TypedQuery<Translation> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         try {
-            return em.createQuery(criteria).getSingleResult();
+            return query.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

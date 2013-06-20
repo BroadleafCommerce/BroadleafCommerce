@@ -21,11 +21,9 @@ import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -35,6 +33,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bpolster.
@@ -81,6 +81,7 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
             query.setParameter("targetSandbox", targetSandBox);
             query.setParameter("fullUrl", fullUrl);
         }
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         List<StaticAsset> results = query.getResultList();
         if (CollectionUtils.isEmpty(results)) {

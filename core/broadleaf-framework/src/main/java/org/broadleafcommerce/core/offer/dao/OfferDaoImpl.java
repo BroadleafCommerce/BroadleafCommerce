@@ -35,12 +35,14 @@ import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.stereotype.Repository;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 @Repository("blOfferDao")
 public class OfferDaoImpl implements OfferDao {
@@ -51,47 +53,77 @@ public class OfferDaoImpl implements OfferDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    protected Long currentDateResolution = 10000L;
+    protected Date currentDate = SystemTime.asDate();
+
+    private String DATE_LOCK = "DATE_LOCK"; // for use in synchronization
+
+    protected Date getDateFactoringInDateResolution(Date currentDate) {
+        Date myDate;
+        Long myCurrentDateResolution = currentDateResolution;
+        synchronized(DATE_LOCK) {
+            if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
+                this.currentDate = new Date(currentDate.getTime());
+                myDate = currentDate;
+            } else {
+                myDate = this.currentDate;
+            }
+        }
+        return myDate;
+    }
+
+    @Override
     public Offer create() {
         return ((Offer) entityConfiguration.createEntityInstance(Offer.class.getName()));
     }
 
+    @Override
     public OfferInfo createOfferInfo() {
         return ((OfferInfo) entityConfiguration.createEntityInstance(OfferInfo.class.getName()));
     }
 
+    @Override
     public CandidateOrderOffer createCandidateOrderOffer() {
         return ((CandidateOrderOffer) entityConfiguration.createEntityInstance(CandidateOrderOffer.class.getName()));
     }
-    
+
+    @Override
     public CandidateItemOffer createCandidateItemOffer() {
         return ((CandidateItemOffer) entityConfiguration.createEntityInstance(CandidateItemOffer.class.getName()));
     }
 
+    @Override
     public CandidateFulfillmentGroupOffer createCandidateFulfillmentGroupOffer() {
         return ((CandidateFulfillmentGroupOffer) entityConfiguration.createEntityInstance(CandidateFulfillmentGroupOffer.class.getName()));
     }
 
+    @Override
     public OrderItemAdjustment createOrderItemAdjustment() {
         return ((OrderItemAdjustment) entityConfiguration.createEntityInstance(OrderItemAdjustment.class.getName()));
     }
 
+    @Override
     public OrderItemPriceDetailAdjustment createOrderItemPriceDetailAdjustment() {
         return ((OrderItemPriceDetailAdjustment) entityConfiguration.createEntityInstance(OrderItemPriceDetailAdjustment.class.getName()));
     }
 
+    @Override
     public OrderAdjustment createOrderAdjustment() {
         return ((OrderAdjustment) entityConfiguration.createEntityInstance(OrderAdjustment.class.getName()));
     }
 
+    @Override
     public FulfillmentGroupAdjustment createFulfillmentGroupAdjustment() {
         return ((FulfillmentGroupAdjustment) entityConfiguration.createEntityInstance(FulfillmentGroupAdjustment.class.getName()));
     }
 
+    @Override
     public void delete(Offer offer) {
         ((Status) offer).setArchived('Y');
         em.merge(offer);
     }
 
+    @Override
     public void delete(OfferInfo offerInfo) {
         if (!em.contains(offerInfo)) {
             offerInfo = (OfferInfo) em.find(entityConfiguration.lookupEntityClass(OfferInfo.class.getName()), offerInfo.getId());
@@ -99,37 +131,42 @@ public class OfferDaoImpl implements OfferDao {
         em.remove(offerInfo);
     }
 
+    @Override
     public Offer save(Offer offer) {
         return em.merge(offer);
     }
 
+    @Override
     public OfferInfo save(OfferInfo offerInfo) {
         return em.merge(offerInfo);
     }
 
+    @Override
     public List<Offer> readAllOffers() {
         Query query = em.createNamedQuery("BC_READ_ALL_OFFERS");
         return query.getResultList();
     }
 
+    @Override
     public Offer readOfferById(Long offerId) {
         return em.find(OfferImpl.class, offerId);
     }
 
+    @Override
     public List<Offer> readOffersByAutomaticDeliveryType() {
         //TODO change this to a JPA criteria
-
         Criteria criteria = ((HibernateEntityManager) em).getSession().createCriteria(OfferImpl.class);
 
+        Date myDate = SystemTime.asDate();
+        myDate = getDateFactoringInDateResolution(myDate);
+
         Calendar c = Calendar.getInstance();
-        c.setTime(SystemTime.asDate());
+        c.setTime(myDate);
         c.add(Calendar.DATE, +1);
-        //offer.startDate-1<currentTime
         criteria.add(Restrictions.lt("startDate", c.getTime()));
         c = Calendar.getInstance();
-        c.setTime(SystemTime.asDate());
+        c.setTime(myDate);
         c.add(Calendar.DATE, -1);
-        //offer.endDate+1>currentTime
         criteria.add(Restrictions.or(Restrictions.isNull("endDate"), Restrictions.gt("endDate", c.getTime())));
         criteria.add(Restrictions.or(Restrictions.eq("archiveStatus.archived", 'N'),
                 Restrictions.isNull("archiveStatus.archived")));
@@ -138,7 +175,19 @@ public class OfferDaoImpl implements OfferDao {
         criteria.add(Restrictions.or(Restrictions.eq("automaticallyAdded", true),
                 Restrictions.and(Restrictions.isNull("automaticallyAdded"),
                         Restrictions.eq("deliveryType", "AUTOMATIC"))));
+
+        criteria.setCacheable(true);
+
         return criteria.list();
     }
 
+    @Override
+    public Long getCurrentDateResolution() {
+        return currentDateResolution;
+    }
+
+    @Override
+    public void setCurrentDateResolution(Long currentDateResolution) {
+        this.currentDateResolution = currentDateResolution;
+    }
 }
