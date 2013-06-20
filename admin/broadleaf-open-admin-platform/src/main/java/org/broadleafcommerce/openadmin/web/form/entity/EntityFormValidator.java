@@ -20,7 +20,9 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.JSCompatibilityHelper;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.AbstractBindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 
 import java.util.List;
 import java.util.Map;
@@ -46,8 +48,28 @@ public class EntityFormValidator {
             result = false;
             for (Map.Entry<String, List<String>> propertyErrors : entity.getValidationErrors().entrySet()) {
                 for (String errorMessage : propertyErrors.getValue()) {
-                    String serializedFieldName = JSCompatibilityHelper.encode(propertyErrors.getKey());
-                    errors.rejectValue(String.format("fields[%s].value", serializedFieldName), errorMessage, errorMessage);
+                    String unserializedFieldName = propertyErrors.getKey();
+                    String serializedFieldName = JSCompatibilityHelper.encode(unserializedFieldName);
+                    
+                    /**
+                     * Rather than just use errors.rejectValue directly, we need to instantiate the FieldError object ourself
+                     * and add it to the binding result. This is so that we can resolve the actual rejected value ourselves
+                     * rather than rely on Spring to do it for us. If we rely on Spring, Spring will attempt to resolve something
+                     * like fields['defaultSku__name'] immediately (at the time of invoking errors.rejectValue). At that point,
+                     * the field names within the EntityForm are still in their unserialized state, and thus Spring would only
+                     * find fields['defaultSku.name'] and there would be an empty string for the rejected value. Then on the
+                     * frontend, Thymeleaf's th:field processor relies on Spring's BindingResult to provide the value that
+                     * was actually rejected so you can get blank form fields.
+                     * 
+                     * With this implementation, we avoid all of those additional problems because we are referencing the
+                     * field that is being rejected along with providing our own method for getting the rejected value
+                     */
+                    String[] errorCodes = ((AbstractBindingResult) errors).resolveMessageCodes(errorMessage, serializedFieldName);
+                    FieldError fieldError = new FieldError(
+                            "entityForm", String.format("fields[%s].value", serializedFieldName),
+                            form.getFields().get(unserializedFieldName).getValue(), false,
+                            errorCodes, null, errorMessage);
+                    ((AbstractBindingResult) errors).addError(fieldError);
                 }
             }
         }
