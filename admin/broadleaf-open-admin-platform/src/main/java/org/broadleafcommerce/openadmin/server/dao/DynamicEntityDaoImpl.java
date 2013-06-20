@@ -88,6 +88,11 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     protected static final Object LOCK_OBJECT = new Object();
     protected static final Map<String,Map<String, FieldMetadata>> METADATA_CACHE = new LRUMap<String, Map<String, FieldMetadata>>(100, 1000);
     protected static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE = new LRUMap<Class<?>, Class<?>[]>(100, 1000);
+    /*
+     * This is the same as POLYMORPHIC_ENTITY_CACHE, except that it does not contain classes that are abstract or have been marked for exclusion 
+     * from polymorphism
+     */
+    protected static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap<Class<?>, Class<?>[]>(100, 1000);
     
     protected EntityManager standardEntityManager;
 
@@ -189,6 +194,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
                 lastCacheFlushTime = System.currentTimeMillis();
                 METADATA_CACHE.clear();
                 POLYMORPHIC_ENTITY_CACHE.clear();
+                POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.clear();
                 return true; // cache is empty
             } else {
                 return true;
@@ -196,15 +202,24 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
         }
     }
 
+    @Override
+    public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
+        return getAllPolymorphicEntitiesFromCeiling(ceilingClass, true);
+    }
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao#getAllPolymorphicEntitiesFromCeiling(java.lang.Class)
      */
     @Override
-    public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass) {
+    public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, boolean includeUnqualifiedPolymorphicEntities) {
         Class<?>[] cache = null;
         synchronized(LOCK_OBJECT) {
             if (useCache()) {
-                cache = POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
+                if (includeUnqualifiedPolymorphicEntities) {
+                    cache = POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
+                } else {
+                    cache = POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.get(ceilingClass);
+                }
             }
             if (cache == null) {
                 List<Class<?>> entities = new ArrayList<Class<?>>();
@@ -221,22 +236,25 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
 
                 for (int i = 0; i < sortedEntities.length; i++) {
                     Class<?> item = sortedEntities[i];
-                    //We filter out abstract classes because they can't be instantiated.
-                    if (Modifier.isAbstract(item.getModifiers())) {
-                        continue;
-                    }
-
-                    //We filter out classes that are marked to exclude from polymorphism
-                    AdminPresentationClass adminPresentationClass = item.getAnnotation(AdminPresentationClass.class);
-                    if (adminPresentationClass == null || (adminPresentationClass != null && !adminPresentationClass.excludeFromPolymorphism())) {
+                    if (includeUnqualifiedPolymorphicEntities) {
                         filteredSortedEntities.add(sortedEntities[i]);
+                    } else {
+                        if (isExcludeClassFromPolymorphism(item)) {
+                            continue;
+                        } else {
+                            filteredSortedEntities.add(sortedEntities[i]);
+                        }
                     }
                 }
 
                 Class<?>[] filteredEntities = new Class<?>[filteredSortedEntities.size()];
                 filteredEntities = filteredSortedEntities.toArray(filteredEntities);
                 cache = filteredEntities;
-                POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, filteredEntities);
+                if (includeUnqualifiedPolymorphicEntities) {
+                    POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, filteredEntities);
+                } else {
+                    POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.put(ceilingClass, filteredEntities);
+                }
             }
         }
 
@@ -300,7 +318,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
             return;
         }
         if (clazz.getSuperclass().equals(testClass)) {
-            ClassTree myTree = new ClassTree(clazz.getName());
+            ClassTree myTree = new ClassTree(clazz.getName(), isExcludeClassFromPolymorphism(clazz));
             createClassTreeFromAnnotation(clazz, myTree);
             tree.setChildren((ClassTree[]) ArrayUtils.add(tree.getChildren(), myTree));
         } else {
@@ -353,7 +371,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
         ClassTree classTree = null;
         if (!ArrayUtils.isEmpty(polymorphicClasses)) {
             Class<?> topClass = polymorphicClasses[polymorphicClasses.length-1];
-            classTree = new ClassTree(topClass.getName());
+            classTree = new ClassTree(topClass.getName(), isExcludeClassFromPolymorphism(topClass));
             createClassTreeFromAnnotation(topClass, classTree);
             for (int j=polymorphicClasses.length-1; j >= 0; j--) {
                 addClassToTree(polymorphicClasses[j], classTree);
@@ -1350,11 +1368,28 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
         this.fieldMetadataProviders = fieldMetadataProviders;
     }
 
+    @Override
     public FieldMetadataProvider getDefaultFieldMetadataProvider() {
         return defaultFieldMetadataProvider;
     }
 
     public void setDefaultFieldMetadataProvider(FieldMetadataProvider defaultFieldMetadataProvider) {
         this.defaultFieldMetadataProvider = defaultFieldMetadataProvider;
+    }
+
+    protected boolean isExcludeClassFromPolymorphism(Class<?> clazz) {
+        //We filter out abstract classes because they can't be instantiated.
+        if (Modifier.isAbstract(clazz.getModifiers())) {
+            return true;
+        }
+
+        //We filter out classes that are marked to exclude from polymorphism
+        AdminPresentationClass adminPresentationClass = clazz.getAnnotation(AdminPresentationClass.class);
+        if (adminPresentationClass == null) {
+            return false;
+        } else if (adminPresentationClass.excludeFromPolymorphism()) {
+            return true;
+        }
+        return false;
     }
 }

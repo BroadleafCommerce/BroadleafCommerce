@@ -45,6 +45,8 @@ public interface DynamicEntityDao {
 
     public abstract Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass);
 
+    public abstract Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, boolean includeUnqualifiedPolymorphicEntities);
+
     public ClassTree getClassTreeFromCeiling(Class<?> ceilingClass);
 
     public ClassTree getClassTree(Class<?>[] polymorphicClasses);

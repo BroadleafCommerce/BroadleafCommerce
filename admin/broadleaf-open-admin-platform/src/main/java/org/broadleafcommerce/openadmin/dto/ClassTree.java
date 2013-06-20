@@ -25,20 +25,28 @@ import java.util.List;
  */
 public class ClassTree implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     protected String fullyQualifiedClassname;
     protected String name;
     protected String friendlyName;
     protected ClassTree[] children = new ClassTree[0];
     protected int left;
     protected int right;
+    protected boolean excludeFromPolymorphism;
 
-    public ClassTree(String fullyQualifiedClassname, String friendlyName) {
+    public ClassTree(String fullyQualifiedClassname, String friendlyName, boolean excludeFromPolymorphism) {
         setFullyQualifiedClassname(fullyQualifiedClassname);
         this.friendlyName = friendlyName;
+        this.excludeFromPolymorphism = excludeFromPolymorphism;
+    }
+
+    public ClassTree(String fullyQualifiedClassname, boolean excludeFromPolymorphism) {
+        this(fullyQualifiedClassname, null, excludeFromPolymorphism);
     }
 
     public ClassTree(String fullyQualifiedClassname) {
-        this(fullyQualifiedClassname, null);
+        this(fullyQualifiedClassname, null, false);
     }
 
     public ClassTree() {
@@ -68,7 +76,9 @@ public class ClassTree implements Serializable {
     }
 
     protected void addChildren(ClassTree tree, List<ClassTree> list) {
-        list.add(tree);
+        if (!tree.isExcludeFromPolymorphism()) {
+            list.add(tree);
+        }
 
         for (ClassTree child : tree.getChildren()) {
             addChildren(child, list);
@@ -142,5 +152,9 @@ public class ClassTree implements Serializable {
 
     public void setRight(int right) {
         this.right = right;
+    }
+
+    public boolean isExcludeFromPolymorphism() {
+        return this.excludeFromPolymorphism;
     }
 }

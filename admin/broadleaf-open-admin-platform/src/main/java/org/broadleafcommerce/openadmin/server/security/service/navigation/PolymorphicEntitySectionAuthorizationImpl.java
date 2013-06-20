@@ -13,8 +13,8 @@ import javax.persistence.PersistenceContext;
 /**
  * @author Jeff Fischer
  */
-@Component("blConfigurationManagementSectionAuthorization")
-public class ConfigurationManagementSectionAuthorizationImpl implements SectionAuthorization {
+@Component("blPolymorphicEntityCheckSectionAuthorization")
+public class PolymorphicEntitySectionAuthorizationImpl implements SectionAuthorization {
 
     @Resource(name="blDynamicEntityDao")
     protected DynamicEntityDao dynamicEntityDao;
@@ -29,11 +29,12 @@ public class ConfigurationManagementSectionAuthorizationImpl implements SectionA
 
     @Override
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section) {
+
         try {
-            //Only show this section if there is an extension of AbstractModuleConfiguration
-            return !section.getCeilingEntity().equals("org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration") ||
-                    dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Class.forName("org.broadleafcommerce.common" +
-                            ".config.domain.AbstractModuleConfiguration")).length >= 1;
+            //Only display this section if there are 1 or more entities relative to the ceiling 
+            //for this section that are qualified to be created by the admin
+            return dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(
+                    Class.forName(section.getCeilingEntity()), false).length > 0;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
