@@ -67,7 +67,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,6 +74,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -584,7 +585,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             field.setValue(entityProp.getValue());
                             field.setDisplayValue(entityProp.getDisplayValue());
                             MediaField mf = (MediaField) field;
-                            mf.setMedia(convertJsonToMedia(entityProp.getValue()));
+                            mf.setMedia(convertJsonToMedia(entityProp.getUnHtmlEncodedValue()));
                         } else if (!SupportedFieldType.PASSWORD_CONFIRM.equals(basicFM.getExplicitFieldType())){
                             field.setValue(entityProp.getValue());
                             field.setDisplayValue(entityProp.getDisplayValue());
