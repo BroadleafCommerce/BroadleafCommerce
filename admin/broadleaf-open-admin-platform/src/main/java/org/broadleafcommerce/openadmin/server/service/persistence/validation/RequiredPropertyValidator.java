@@ -49,7 +49,7 @@ public class RequiredPropertyValidator implements GlobalPropertyValidator {
         if (propertyMetadata.getRequiredOverride() != null) {
             required = propertyMetadata.getRequiredOverride();
         }
-        boolean valid = required && StringUtils.isEmpty(value) ? false : true;
+        boolean valid = !(required && StringUtils.isEmpty(value));
         return new PropertyValidationResult(valid, ERROR_MESSAGE);
     }
 

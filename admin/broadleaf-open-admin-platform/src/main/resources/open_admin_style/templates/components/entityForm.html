@@ -20,11 +20,12 @@
     <input type="hidden" th:field="*{id}" />
     
     <div class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">
-        <span th:each="err,status : ${springFieldBindStatus.errors.fieldErrors}" th:inline="text">
-            Error on tab '[[#{${entityForm.findTabForField(err.field).title}}]]',
-            field '[[#{${entityForm.findField(err.field).friendlyName}}]]': [[#{${err.defaultMessage}}]]
-            <br th:unless="${status.last}"/>
-        </span>
+        <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
+            <b>[[#{__${tab.key}__}]]</b>
+            <span class="fieldError error" th:each="field : ${tab.value.entrySet()}">
+                [[#{__${field.key}__}]]: [[#{__${field.value}__}]]
+            </span>
+        </div>
     </div>
     
     <div class="tabs-container" th:if="${renderTabs}">
@@ -34,7 +35,7 @@
             </dd>
         </dl> 
     </div>
-
+    
     <ul class="tabs-content" th:style="${verticalTabs}? 'margin-left: 250px;'">
         <li th:each="tab : ${entityForm.tabs}" 
             th:class="'tab' + ${tabStat.count} + 'Tab'" 

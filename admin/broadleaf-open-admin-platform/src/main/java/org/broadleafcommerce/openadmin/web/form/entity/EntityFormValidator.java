@@ -64,12 +64,14 @@ public class EntityFormValidator {
                      * With this implementation, we avoid all of those additional problems because we are referencing the
                      * field that is being rejected along with providing our own method for getting the rejected value
                      */
-                    String[] errorCodes = ((AbstractBindingResult) errors).resolveMessageCodes(errorMessage, serializedFieldName);
-                    FieldError fieldError = new FieldError(
-                            "entityForm", String.format("fields[%s].value", serializedFieldName),
-                            form.getFields().get(unserializedFieldName).getValue(), false,
-                            errorCodes, null, errorMessage);
-                    ((AbstractBindingResult) errors).addError(fieldError);
+                    if (form.getFields().get(unserializedFieldName) != null) {
+                        String[] errorCodes = ((AbstractBindingResult) errors).resolveMessageCodes(errorMessage, serializedFieldName);
+                        FieldError fieldError = new FieldError(
+                                "entityForm", String.format("fields[%s].value", serializedFieldName),
+                                form.getFields().get(unserializedFieldName).getValue(), false,
+                                errorCodes, null, errorMessage);
+                        ((AbstractBindingResult) errors).addError(fieldError);
+                    }
                 }
             }
         }

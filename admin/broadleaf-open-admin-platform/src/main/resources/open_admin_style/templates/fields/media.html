@@ -1,6 +1,5 @@
 <div class="asset-selector-container">  
     <div class="field-label" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
-    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
     <input type="hidden" class="mediaItem" th:field="*{fields['__${field.name}__'].value}" />
     
     <a th:if="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}"
@@ -18,6 +17,5 @@
         th:attr="data-select-url=@{${'/'+sectionKey+ '/' + entityForm.id + '/chooseAsset'}}">
         <i class="icon-camera"></i>&nbsp;[[#{Select_Upload_Image}]]
     </button>
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 </div>
-
-

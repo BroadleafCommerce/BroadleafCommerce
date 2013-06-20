@@ -115,15 +115,14 @@ input[type="text"], input[type="password"], input[type="date"], input[type="date
 }
 
 .entity-form div.errors {
-    background-color: red;
     margin-bottom: 10px;
-    border-radius: 3px;
-    padding: 5px;
 }
 
 .entity-form div.errors span {
-    color: white;
-    font-weight: bold;
+    color: #c60f13;
+    display: block;
+    margin-left: 10px;
+    padding: 2px;
 }
 
 .entity-form .custom-checkbox {

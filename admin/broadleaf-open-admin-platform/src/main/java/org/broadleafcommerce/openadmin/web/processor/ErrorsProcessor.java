@@ -16,13 +16,17 @@
 
 package org.broadleafcommerce.openadmin.web.processor;
 
+import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.servlet.support.BindStatus;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.attr.AbstractAttrProcessor;
-import org.thymeleaf.spring3.naming.SpringContextVariableNames;
 import org.thymeleaf.spring3.util.FieldUtils;
 
 import java.util.HashMap;
@@ -30,7 +34,13 @@ import java.util.Map;
 
 
 /**
+ * Processor that returns all the errors within an {@link EntityForm} organized by tab, according to the expression passed
+ * in as an argument.
  * 
+ * For instance, if you would like to get all of the errors for the {@link EntityForm}, invoke this processor with an
+ * attribute that looks like:
+ * 
+ *      blc_admin:errors="*{*}"
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
@@ -48,14 +58,35 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
 
     @Override
     protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
-        final String attributeValue = element.getAttributeValue(attributeName);
+        String attributeValue = element.getAttributeValue(attributeName);
         
-        final BindStatus bindStatus = 
-            FieldUtils.getBindStatus(arguments, attributeValue, true);
+        BindStatus bindStatus = FieldUtils.getBindStatus(arguments, attributeValue, true);
         
         if (bindStatus.isError()) {
-            final Map<String,Object> localVariables = new HashMap<String,Object>();
-            ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put(SpringContextVariableNames.SPRING_FIELD_BIND_STATUS, bindStatus);
+            EntityForm form = (EntityForm) ((BindingResult)bindStatus.getErrors()).getTarget();
+            
+            Map<String, Map<String, String>> result = new HashMap<String, Map<String, String>>();
+            for (FieldError err : bindStatus.getErrors().getFieldErrors()) {
+                Tab tab = form.findTabForField(err.getField());
+                //TODO: didn't find a tab for the field, save these to use in the global errors. This will also
+                //make hidden fields work with validation (methinks)
+                if (tab != null) {
+                    Map<String, String> tabErrors = result.get(tab.getTitle());
+                    if (tabErrors == null) {
+                        tabErrors = new HashMap<String, String>();
+                        result.put(tab.getTitle(), tabErrors);
+                    }
+                    
+                    tabErrors.put(form.findField(err.getField()).getFriendlyName(), err.getCode());
+                }
+            }
+            
+            for (ObjectError err : bindStatus.getErrors().getGlobalErrors()) {
+                
+            }
+            
+            Map<String,Object> localVariables = new HashMap<String,Object>();
+            localVariables.put("tabErrors", result);
             return ProcessorResult.setLocalVariables(localVariables);
         }
         return ProcessorResult.OK;
