@@ -20,16 +20,18 @@ import org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.hibernate.annotations.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.Date;
-import java.util.List;
 
 @Repository("blModuleConfigurationDao")
 public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
@@ -43,7 +45,7 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
     protected Long currentDateResolution = 10000L;
     protected Date currentDate = SystemTime.asDate();
 
-    private String DATE_LOCK = "DATE_LOCK"; // for use in synchronization
+    private final String DATE_LOCK = "DATE_LOCK"; // for use in synchronization
 
     protected Date getDateFactoringInDateResolution(Date currentDate) {
         Date myDate;
@@ -76,7 +78,8 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
 
     @Override
     public void delete(ModuleConfiguration config) {
-        em.remove(config);
+        ((Status) config).setArchived('Y');
+        em.merge(config);
     }
 
     @SuppressWarnings("unchecked")
