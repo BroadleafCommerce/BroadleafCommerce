@@ -161,7 +161,7 @@ public class FieldImpl implements Field,Serializable {
 
     @Override
     public void setFacetFieldType(FieldType facetFieldType) {
-        this.facetFieldType = facetFieldType.getType();
+        this.facetFieldType = facetFieldType == null ? null : facetFieldType.getType();
     }
 
     @Override

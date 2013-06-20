@@ -255,12 +255,13 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     public void appendFieldToQuery(StringBuilder queryBuilder, Field currentField, String query) {
-        for (FieldType currentType : currentField.getSearchableFieldTypes()) {
+        List<FieldType> searchableFieldTypes = shs.getSearchableFieldTypes(currentField);
+        for (FieldType currentType : searchableFieldTypes) {
             queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, currentType));
+            queryBuilder.append(":(");
+            queryBuilder.append(query);
+            queryBuilder.append(") ");
         }
-        queryBuilder.append(":(");
-        queryBuilder.append(query);
-        queryBuilder.append(") ");
     }
 
     @Override

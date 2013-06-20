@@ -24,6 +24,8 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
+import java.util.List;
+
 /**
  * @author Andre Azzolini (apazzolini)
  */
@@ -75,6 +77,15 @@ public interface SolrHelperService {
      * @return the property name for the facet type of this field
      */
     public String getPropertyNameForFieldFacet(Field field, String prefix);
+    
+    /**
+     * Returns the searchable field types for the given field. If there were none configured, will return
+     * a list with TEXT FieldType.
+     * 
+     * @param field
+     * @return the searchable field types for the given field
+     */
+    public List<FieldType> getSearchableFieldTypes(Field field);
 
     /**
      * Returns the property name for the given field and field type. This will apply the global prefix to the field,

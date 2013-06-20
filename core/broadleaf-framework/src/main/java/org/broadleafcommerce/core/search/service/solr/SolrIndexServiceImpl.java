@@ -280,7 +280,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             try {
                 // Index the searchable fields
                 if (field.getSearchable()) {
-                    for (FieldType sft : field.getSearchableFieldTypes()) {
+                    List<FieldType> searchableFieldTypes = shs.getSearchableFieldTypes(field);
+                    for (FieldType sft : searchableFieldTypes) {
                         Map<String, Object> propertyValues = getPropertyValues(product, field, sft, locales);
 
                         // Build out the field for every prefix

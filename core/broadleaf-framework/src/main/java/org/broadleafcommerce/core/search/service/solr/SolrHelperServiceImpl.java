@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.search.service.solr;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
@@ -112,6 +113,22 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 .append(prefix)
                 .append(field.getAbbreviation()).append("_").append(field.getFacetFieldType().getType())
                 .toString();
+    }
+    
+    @Override
+    public List<FieldType> getSearchableFieldTypes(Field field) {
+        // We will index all configured searchable field types
+        List<FieldType> typesToConsider = new ArrayList<FieldType>();
+        if (CollectionUtils.isNotEmpty(field.getSearchableFieldTypes())) {
+            typesToConsider.addAll(field.getSearchableFieldTypes());
+        }
+        
+        // If there were no searchable field types configured, we will use TEXT as a default one
+        if (CollectionUtils.isEmpty(typesToConsider)) {
+            typesToConsider.add(FieldType.TEXT);
+        }
+        
+        return typesToConsider;
     }
 
     @Override
