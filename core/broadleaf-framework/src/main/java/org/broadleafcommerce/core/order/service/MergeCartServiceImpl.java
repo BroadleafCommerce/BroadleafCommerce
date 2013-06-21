@@ -30,12 +30,12 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * The 2.0 implementation of merge cart service. Instead of merging items directly from one cart to another, we will
@@ -84,7 +84,20 @@ public class MergeCartServiceImpl implements MergeCartService {
         } else if (anonymousCart == null || anonymousCart.getOrderItems().size() == 0) {
             // The anonymous cart is of no use, use the customer cart
             mergeCartResponse.setOrder(customerCart);
+            
+            // The anonymous cart is owned by a different customer, so there is no chance for a single customer to have
+            // multiple IN_PROCESS carts. We can go ahead and clean up this empty cart anyway since it's empty
+            if (anonymousCart != null) {
+                orderService.cancelOrder(anonymousCart);
+            }
+            
         } else if (customerCart == null || customerCart.getOrderItems().size() == 0) {
+            // Delete the saved customer order since it is completely empty anyway. We do not want 2 IN_PROCESS orders
+            // hanging around
+            if (customerCart != null) {
+                orderService.cancelOrder(customerCart);
+            }
+            
             // The customer cart is of no use, use the anonymous cart
             setNewCartOwnership(anonymousCart, customer);
             mergeCartResponse.setOrder(anonymousCart);
@@ -105,7 +118,7 @@ public class MergeCartServiceImpl implements MergeCartService {
         
         return mergeCartResponse;
     }
-
+    
     @Override
     public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder)
             throws PricingException, RemoveFromCartException {
