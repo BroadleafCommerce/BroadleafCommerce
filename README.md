@@ -149,7 +149,7 @@ We use GitHub issues heavily for reporting bugs. See the [issues tab](https://gi
 ### Code Contributions
 If you see a bug in Broadleaf then the best way to ensure it's resolved is to fix it yourself! We welcome any and all pull requests of code that you would like to see within Broadleaf. While we may not accept all pull requests, we would love for you to kick off a discussion. Key guidelines to getting your pull request accepted:
 
-1. Requests should be based off of the 'develop' branch if you want to target the next Broadleaf release. To target older versions of Braodleaf, use the corresponding branch (version 2.0.x should use 'BroadleafCommerce-2.0.x', version 2.2.x should be based off of the 'BroadleafCommerce-2.2.x' branch, etc). 
+1. Requests should be based off of the 'develop' branch if you want to target the next Broadleaf release. To target older versions of Broadleaf, use the corresponding branch (version 2.0.x should use 'BroadleafCommerce-2.0.x', version 2.2.x should be based off of the 'BroadleafCommerce-2.2.x' branch, etc).
 2. Try to match the Broadleaf code styles as closely as possible
 3. Provide comments on non-obvious code functionality
 4. Provide a unit test demonstrating your code
