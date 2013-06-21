@@ -641,7 +641,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 return entityResult;
             }
         } catch (Exception e) {
-            LOG.error("Problem editing entity", e);
             throw new ServiceException("Problem updating entity : " + e.getMessage(), e);
         }
     }
@@ -785,7 +784,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             );
             allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
         } catch (Exception e) {
-            LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
         }
     }
@@ -867,11 +865,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             } else {
                 return update(persistencePackage, primaryKey, includeRealEntityObject);
             }
-        } catch (ServiceException e) {
-            LOG.error("Problem adding new entity", e);
-            throw e;
         } catch (Exception e) {
-            LOG.error("Problem adding new entity", e);
             throw new ServiceException("Problem adding new entity : " + e.getMessage(), e);
         }
     }
@@ -928,7 +922,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     break;
             }
         } catch (Exception e) {
-            LOG.error("Problem removing entity", e);
             throw new ServiceException("Problem removing entity : " + e.getMessage(), e);
         }
     }
@@ -990,7 +983,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings);
 
         } catch (Exception e) {
-            LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
         }
 

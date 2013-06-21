@@ -223,7 +223,6 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
 //                }
             }
         } catch (Exception e) {
-            LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
         }
     }
@@ -320,7 +319,6 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             }
             return responses[0];
         } catch (Exception e) {
-            LOG.error("Problem editing entity", e);
             throw new ServiceException("Problem updating entity : " + e.getMessage(), e);
         }
     }
@@ -429,7 +427,6 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             
             return getMapRecords(instance, mapStructure, ceilingMergedProperties, valueMergedProperties, entity.findProperty("symbolicId"))[0];
         } catch (Exception e) {
-            LOG.error("Problem editing entity", e);
             throw new ServiceException("Problem updating entity : " + e.getMessage(), e);
         }
     }
@@ -466,7 +463,6 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                 persistenceManager.getDynamicEntityDao().remove((Serializable) value);
             }
         } catch (Exception e) {
-            LOG.error("Problem editing entity", e);
             throw new ServiceException("Problem removing entity : " + e.getMessage(), e);
         }
     }
@@ -534,11 +530,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(records.get(0).getClass().getName(),
                             persistencePerspective);
             payload = getMapRecords(records.get(0), mapStructure, ceilingMergedProperties, valueMergedProperties, null);
-        } catch (ServiceException e) {
-            LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
-            throw e;
         } catch (Exception e) {
-            LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
         }
         

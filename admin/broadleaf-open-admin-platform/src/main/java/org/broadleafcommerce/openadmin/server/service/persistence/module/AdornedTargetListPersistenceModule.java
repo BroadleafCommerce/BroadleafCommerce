@@ -46,10 +46,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -57,6 +53,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 
 /**
  * @author jfischer
@@ -67,10 +68,12 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
 
     private static final Log LOG = LogFactory.getLog(AdornedTargetListPersistenceModule.class);
 
+    @Override
     public boolean isCompatible(OperationType operationType) {
         return OperationType.ADORNEDTARGETLIST.equals(operationType);
     }
 
+    @Override
     public void extractProperties(Class<?>[] inheritanceLine, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties) throws NumberFormatException {
         if (mergedProperties.get(MergedPropertyType.ADORNEDTARGETLIST) != null) {
             extractPropertiesFromMetadata(inheritanceLine, mergedProperties.get(MergedPropertyType.ADORNEDTARGETLIST), properties, true, MergedPropertyType.ADORNEDTARGETLIST);
@@ -195,7 +198,6 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                 allMergedProperties.put(MergedPropertyType.ADORNEDTARGETLIST, joinMergedProperties);
             }
         } catch (Exception e) {
-            LOG.error("Problem fetching results for " + ceilingEntityFullyQualifiedClassname, e);
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
         }
     }
@@ -289,7 +291,6 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                 payload = getRecords(mergedPropertiesTarget, recordsInserted2, mergedProperties, adornedTargetList.getTargetObjectPath())[0];
             }
         } catch (Exception e) {
-            LOG.error("Problem editing entity", e);
             throw new ServiceException("Problem adding new entity : " + e.getMessage(), e);
         }
 
@@ -369,7 +370,6 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
 
             return entity;
         } catch (Exception e) {
-            LOG.error("Problem editing entity", e);
             throw new ServiceException("Problem updating entity : " + e.getMessage(), e);
         }
     }
@@ -413,7 +413,6 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
 
             persistenceManager.getDynamicEntityDao().remove(recordsInserted.get(0));
         } catch (Exception e) {
-            LOG.error("Problem removing entity", e);
             throw new ServiceException("Problem removing entity : " + e.getMessage(), e);
         }
     }
@@ -447,7 +446,6 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             payload = getRecords(mergedPropertiesTarget, records, mergedProperties, adornedTargetList.getTargetObjectPath());
             totalRecords = getTotalRecords(adornedTargetList.getAdornedTargetEntityClassname(), adornedTargetRetrieval.getFilterMappings());
         } catch (Exception e) {
-            LOG.error("Problem fetching results for " + adornedTargetList.getAdornedTargetEntityClassname(), e);
             throw new ServiceException("Unable to fetch results for " + adornedTargetList.getAdornedTargetEntityClassname(), e);
         }
 
