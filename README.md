@@ -24,7 +24,7 @@ controlling persistence of our rich domain model.
 
 ### Search
 Flexible domain search capabilities in BroadleafCommerce are provided through integration
-with Solr
+with Solr.
 
 ### Task Scheduling
 Scheduling of repetitive tasks in BroadleafCommerce is offered through the 
@@ -32,12 +32,11 @@ Quartz job scheduling system.
 
 ### Email
 Email support is provided throughout the BroadleafCommerce framework in either synchronous 
-or asynchronous (JMS) modes. Email presentation customization is achieved via Thymeleaf templates
+or asynchronous (JMS) modes. Email presentation customization is achieved via Thymeleaf templates.
 
 ### Modular Design
 Important e-commerce touchpoints are embodied in the concept of BroadleafCommerce 
 "Modules". A module can provide interaction with a credit card processor, or even a shipping provider. 
-The USPS shipping support is a great example of the pluggable architecture BroadleafCommerce employs. 
 Any number of custom modules may be developed and utilized with BroadleafCommerce.
 
 ### Configurable Workflows
@@ -88,6 +87,15 @@ BroadleafCommerce includes a wholely extendible administrative application built
 for catalog, order and customer functions and provides a robust, rule-driven environment for creating
 and managing discount promotions.
 
+### Admin Customization
+BroadleafCommerce provides a robust set of admin presentation annotations that allow configuration of domain
+class display and persistence semantics without touching any admin code. This provides an easy-to-consume approach
+for introducing entity extensions and additional fields into the admin forms so that your business users can immediately
+start to benefit. We also provide a full annotation or xml-based approach for overriding the admin config declared
+inside BroadleafCommerce so that you can have an impact on our defaults. And for more advanced customizations, our admin
+platform is based on Spring MVC, so your Spring knowledge will translate here as well when it comes to adding additional
+controllers, and the like.
+
 ### Content Management
 BroadleafCommerce includes a robus content management system for creating and
 managing static pages and content. We also include a powerful content targeting feature that allows
@@ -96,7 +104,7 @@ business users to dynamically drive the most appropriate content to users.
 
 Local Framework Development
 ===============
-Broadleaf Commerce requires JDK 1.6 or 1.7 to build and/or run. At this time Broadleaf has not been tested with Java 8.
+Broadleaf Commerce recommends JDK 1.7, but will build/run with JDK 1.6 or 1.7. At this time Broadleaf has not been tested with Java 8.
 
 The easiest way to get Broadleaf running locally is to clone this repository and execute a clean install via Maven:
 
@@ -141,7 +149,7 @@ We use GitHub issues heavily for reporting bugs. See the [issues tab](https://gi
 ### Code Contributions
 If you see a bug in Broadleaf then the best way to ensure it's resolved is to fix it yourself! We welcome any and all pull requests of code that you would like to see within Broadleaf. While we may not accept all pull requests, we would love for you to kick off a discussion. Key guidelines to getting your pull request accepted:
 
-    1. Reqeusts should be based off of the 'develop' branch if you want to target the next Broadleaf release. To target older versions of Braodleaf, use the corresponding branch (version 2.0.x should use 'BroadleafCommerce-2.0.x', version 2.2.x should be based off of the 'BroadleafCommerce-2.2.x' branch, etc). 
+    1. Requests should be based off of the 'develop' branch if you want to target the next Broadleaf release. To target older versions of Braodleaf, use the corresponding branch (version 2.0.x should use 'BroadleafCommerce-2.0.x', version 2.2.x should be based off of the 'BroadleafCommerce-2.2.x' branch, etc). 
     2. Try to match the Broadleaf code styles as closely as possible
     3. Provide comments on non-obvious code functionality
     4. Provide a unit test demonstrating your code
