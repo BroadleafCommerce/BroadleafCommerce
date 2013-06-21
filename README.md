@@ -1,13 +1,4 @@
-[Broadleaf Developer Site](http://www.broadleafcommerce.org)
-
-BroadleafCommerce is an open-source, e-commerce framework written entirely in Java on top of the Spring framework. 
-It is targeted at facilitating the development of enterprise-class, commerce-driven
-sites by providing a robust data model, services and specialized tooling that take care 
-of most of the "heavy lifting" work. To accomplish this goal, we have developed our 
-platform based on the key feature sets required by world-class online retailers - and 
-we're committed to continually expanding our feature offering. We've also taken extra 
-steps to guarantee interoperability with today's enterprise by utilizing standards wherever 
-possible and incorporating best-of-breed, open-source software libraries from the community.
+BroadleafCommerce is an open-source, e-commerce framework written entirely in Java on top of the Spring framework. It is targeted at facilitating the development of enterprise-class, commerce-driven sites by providing a robust data model, services and specialized tooling that take care of most of the "heavy lifting" work. To accomplish this goal, we have developed our platform based on the key feature sets required by world-class online retailers - and we're committed to continually expanding our feature offering. We've also taken extra steps to guarantee interoperability with today's enterprise by utilizing standards wherever possible and incorporating best-of-breed, open-source software libraries from the community.
 
 
 Getting Started
@@ -16,19 +7,16 @@ Check out our [getting started guide](http://docs.broadleafcommerce.org/current/
 
 Support
 =======
-Broadleaf commerce offers [commercial support and training](http://broadleafcommerce.com/services) which can also include professional services. Community support is offered through the [Broadleaf forums](http://forum.broadleafcommerce.org) or [our GitHub issues](https://github.com/BroadleafCommerce/BroadleafCommerce).
+Broadleaf commerce offers [commercial support and training](http://broadleafcommerce.com/services) which can also include professional services. Community support is offered through the [Broadleaf forums](http://forum.broadleafcommerce.org) and/or [our GitHub issues](https://github.com/BroadleafCommerce/BroadleafCommerce).
 
 Key Features and Technologies
 =============================
 
 ### Spring Framework
-Spring is the enterprise Java platform on which BroadleafCommerce is based. 
-It provides numerous features, including dependency injection and transaction control.
+Spring is the enterprise Java platform on which BroadleafCommerce is based.  It provides numerous features, including dependency injection and transaction control.
 
 ### Security
-Spring Security provides a robust security framework for controlling authentication 
-and authorization at both the code and page level and is utilized by BroadleafCommerce for access 
-control.
+Spring Security provides a robust security framework for controlling authentication and authorization at both the code and page level and is utilized by BroadleafCommerce for access control.
 
 ### Persistence
 JPA and Hibernate represent the BroadleafCommerce ORM infrastructure for 
