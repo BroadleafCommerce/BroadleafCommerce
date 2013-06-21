@@ -117,6 +117,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 Media media = (Media) extractValueRequest.getRequestedValue();
                 String jsonString = convertMediaToJson(media);
                 property.setValue(jsonString);
+                property.setUnHtmlEncodedValue(jsonString);
                 property.setDisplayValue(extractValueRequest.getDisplayVal());
             } else {
                 throw new UnsupportedOperationException("MEDIA type is currently only supported on fields of type Media");
@@ -139,14 +140,16 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     if (prop.getName().startsWith(entry.getKey())) {
                         BasicFieldMetadata originalFM = (BasicFieldMetadata) entry.getValue();
                         if (originalFM.getFieldType() == SupportedFieldType.MEDIA) {
-                            Property orginalProp = addFilterPropertiesRequest.getEntity().findProperty(originalFM
+                            Property originalProp = addFilterPropertiesRequest.getEntity().findProperty(originalFM
                                     .getName());
-                            if (orginalProp == null) {
-                                orginalProp = new Property();
-                                orginalProp.setName(originalFM.getName());
-                                additionalProperties.add(orginalProp);
+                            if (originalProp == null) {
+                                originalProp = new Property();
+                                originalProp.setName(originalFM.getName());
+                                additionalProperties.add(originalProp);
                             }
-                            orginalProp.setValue(prop.getValue());
+                            originalProp.setValue(prop.getValue());
+                            originalProp.setRawValue(prop.getRawValue());
+                            originalProp.setUnHtmlEncodedValue(prop.getUnHtmlEncodedValue());
                             itr.remove();
                             break;
                         }
