@@ -1260,6 +1260,10 @@ a.add-main-condition {
     width: 52px;
 }
 
+.entity-form select.all-any-none {
+    display: inline-block;
+}
+
 .all-any-none-wrapper, .conditional, .rule {
     margin: 10px 0 0;
 }
