@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.server.security.domain;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -79,6 +80,8 @@ public class AdminModuleImpl implements AdminModule {
     protected String icon;
 
     @OneToMany(mappedBy = "module", targetEntity = AdminSectionImpl.class)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
     protected List<AdminSection> sections = new ArrayList<AdminSection>();
 
     @Column(name = "DISPLAY_ORDER", nullable=true)
