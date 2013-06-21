@@ -526,7 +526,8 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                 sortCriteria.setSortAscending(adornedTargetList.getSortAscending());
             }
             
-            Class<?>[] entities = persistenceManager.getPolymorphicEntities(adornedTargetList.getAdornedTargetEntityClassname());
+            Class<?>[] entities = persistenceManager.getPolymorphicEntities(adornedTargetList
+                    .getAdornedTargetEntityClassname());
             mergedProperties = persistenceManager.getDynamicEntityDao().getMergedProperties(
                     adornedTargetList.getAdornedTargetEntityClassname(),
                     entities,
@@ -544,7 +545,8 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             
             String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
             Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
-            Map<String, FieldMetadata> mergedPropertiesTarget = persistenceManager.getDynamicEntityDao().getMergedProperties(
+            Map<String, FieldMetadata> mergedPropertiesTarget = persistenceManager.getDynamicEntityDao()
+                    .getMergedProperties(
                     ceilingEntityFullyQualifiedClassname,
                     entities2,
                     null,

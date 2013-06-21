@@ -241,7 +241,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
         }
         try {
             Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(entity.getType()[0],
-                persistencePerspective);
+                    persistencePerspective);
             String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();
             if (StringUtils.isEmpty(mapKey)) {
                 entity.addValidationError(mapStructure.getKeyPropertyName(), RequiredPropertyValidator.ERROR_MESSAGE);
@@ -252,7 +252,8 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                 throw new ServiceException("\"" + mapKey + "\" is a reserved property name.");
             }
 
-            Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
+            Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()
+                    [0]), Long.valueOf(entity.findProperty("symbolicId").getValue()));
 
             Assert.isTrue(instance != null, "Entity not found");
 
@@ -354,7 +355,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
         }
         try {
             Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(entity.getType()[0],
-                persistencePerspective);
+                    persistencePerspective);
             String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();
             if (ceilingMergedProperties.containsKey(mapStructure.getMapProperty() + FieldManager.MAPFIELDSEPARATOR + mapKey)) {
                 throw new ServiceException("\"" + mapKey + "\" is a reserved property name.");
@@ -445,7 +446,7 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
         }
         try {
             Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(entity.getType()[0],
-                persistencePerspective);
+                    persistencePerspective);
             String mapKey = entity.findProperty(mapStructure.getKeyPropertyName()).getValue();
             if (ceilingMergedProperties.containsKey(mapStructure.getMapProperty() + FieldManager.MAPFIELDSEPARATOR + mapKey)) {
                 throw new ServiceException("\"" + mapKey + "\" is a reserved property name.");
@@ -521,14 +522,15 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             Map<String, FieldMetadata> valueMergedProperties = filterOutCollectionMetadata(valueUnfilteredMergedProperties);
 
             List<FilterMapping> filterMappings = getFilterMappings(persistencePerspective, cto, persistencePackage
-                                .getFetchTypeFullyQualifiedClassname(), mergedProperties);
+                    .getFetchTypeFullyQualifiedClassname(), mergedProperties);
             totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings);
             if (totalRecords > 1) {
                 throw new ServiceException("Queries to retrieve an entity containing a MapStructure must return only 1 entity. Your query returned ("+totalRecords+") values.");
             }
             List<Serializable> records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
-            Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(records.get(0).getClass().getName(),
-                            persistencePerspective);
+            Map<String, FieldMetadata> ceilingMergedProperties = getSimpleMergedProperties(records.get(0).getClass()
+                    .getName(),
+                    persistencePerspective);
             payload = getMapRecords(records.get(0), mapStructure, ceilingMergedProperties, valueMergedProperties, null);
         } catch (Exception e) {
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
