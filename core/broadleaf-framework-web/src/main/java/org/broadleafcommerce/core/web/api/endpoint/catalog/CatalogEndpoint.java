@@ -25,7 +25,6 @@ import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
@@ -40,7 +39,6 @@ import org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.MediaWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.ProductBundleWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.RelatedProductWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper;
@@ -108,12 +106,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             ProductWrapper wrapper;
-            if (product instanceof ProductBundle) {
-                wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
-            } else {
-                wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
-                
-            }
+            wrapper = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
             wrapper.wrap(product, request);
             return wrapper;
         }

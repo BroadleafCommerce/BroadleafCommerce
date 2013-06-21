@@ -19,6 +19,7 @@ import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 
 import java.util.ArrayList;
@@ -63,16 +64,33 @@ public class ProductSummaryWrapper extends BaseWrapper implements APIWrapper<Pro
     @XmlElementWrapper(name = "productOptions")
     protected List<ProductOptionWrapper> productOptions;
 
+    //the following are bundle properties
+    @XmlElement
+    protected Integer priority;
+
+    @XmlElement
+    protected Money bundleItemsRetailPrice;
+
+    @XmlElement
+    protected Money bundleItemsSalePrice;
     @Override
     public void wrap(Product model, HttpServletRequest request) {
         this.id = model.getId();
         this.name = model.getName();
         this.description = model.getDescription();
         this.longDescripion = model.getLongDescription();
-        this.retailPrice = model.getDefaultSku().getRetailPrice();
-        this.salePrice = model.getDefaultSku().getSalePrice();
-        this.active = model.isActive();
 
+        this.active = model.isActive();
+        if (model instanceof ProductBundle) {
+
+            ProductBundle bundle = (ProductBundle) model;
+            this.priority = bundle.getPriority();
+            this.bundleItemsRetailPrice = bundle.getBundleItemsRetailPrice();
+            this.bundleItemsSalePrice = bundle.getBundleItemsSalePrice();
+        } else {
+            this.retailPrice = model.getDefaultSku().getRetailPrice();
+            this.salePrice = model.getDefaultSku().getSalePrice();
+        }
         if (model.getProductOptions() != null && !model.getProductOptions().isEmpty()) {
             this.productOptions = new ArrayList<ProductOptionWrapper>();
             List<ProductOption> options = model.getProductOptions();

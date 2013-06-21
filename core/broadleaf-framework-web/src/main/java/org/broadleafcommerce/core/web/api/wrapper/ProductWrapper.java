@@ -21,7 +21,9 @@ import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -85,6 +87,13 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
     @XmlElementWrapper(name = "mediaItems")
     protected List<MediaWrapper> media;
 
+    //following are bundle properties
+
+
+    @XmlElement(name = "skuBundleItem")
+    @XmlElementWrapper(name = "skuBundleItems")
+    protected List<SkuBundleItemWrapper> skuBundleItems;
+
     @Override
     public void wrap(Product model, HttpServletRequest request) {
 
@@ -143,6 +152,21 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
                     wrapper.setUrl(staticAssetService.convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
                 }
                 media.add(wrapper);
+            }
+        }
+
+        if (model instanceof ProductBundle) {
+
+            ProductBundle bundle = (ProductBundle) model;
+
+            if (bundle.getSkuBundleItems() != null) {
+                this.skuBundleItems = new ArrayList<SkuBundleItemWrapper>();
+                List<SkuBundleItem> bundleItems = bundle.getSkuBundleItems();
+                for (SkuBundleItem item : bundleItems) {
+                    SkuBundleItemWrapper skuBundleItemsWrapper = (SkuBundleItemWrapper) context.getBean(SkuBundleItemWrapper.class.getName());
+                    skuBundleItemsWrapper.wrap(item, request);
+                    this.skuBundleItems.add(skuBundleItemsWrapper);
+                }
             }
         }
     }

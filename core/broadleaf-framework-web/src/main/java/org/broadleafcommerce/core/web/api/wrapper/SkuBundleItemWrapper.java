@@ -47,6 +47,17 @@ public class SkuBundleItemWrapper extends BaseWrapper implements APIWrapper<SkuB
     @XmlElement
     protected SkuWrapper sku;
     
+    @XmlElement
+    protected String name;
+
+    @XmlElement
+    protected Boolean active;
+
+    @XmlElement
+    protected String description;
+
+    @XmlElement
+    protected String longDescription;
     @Override
     public void wrap(SkuBundleItem model, HttpServletRequest request) {
         this.id = model.getId();
@@ -54,8 +65,13 @@ public class SkuBundleItemWrapper extends BaseWrapper implements APIWrapper<SkuB
         this.salePrice = model.getSalePrice();
         this.retailPrice = model.getRetailPrice();
         this.bundleId = model.getBundle().getId();
-        this.sku = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
-        this.sku.wrap(model.getSku(), request);
+        this.name = model.getSku().getName();
+        this.description = model.getSku().getDescription();
+        this.longDescription = model.getSku().getLongDescription();
+        this.active = model.getSku().isActive();
+        // this.sku = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
+        // this.sku.wrap(model.getSku(), request);
+
     }
 
 }
