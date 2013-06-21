@@ -316,10 +316,6 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         
         for (Entry<Long, Integer> entry : oiQuantityMap.entrySet()) {
             if (entry.getValue() != 0) {
-                System.out.println(entry.getValue());
-                for (OrderItem oi : order.getDiscreteOrderItems()) {
-                    System.out.println(oi.getClass().getName());
-                }
                 throw new IllegalStateException("Not enough fulfillment group items found for DiscreteOrderItem id: " + entry.getKey());
             }
         }
