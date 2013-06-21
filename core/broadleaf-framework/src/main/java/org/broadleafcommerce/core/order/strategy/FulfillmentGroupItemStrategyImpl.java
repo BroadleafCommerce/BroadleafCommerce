@@ -33,14 +33,13 @@ import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -190,8 +189,8 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             if (orderItem instanceof BundleOrderItem) {
                 List<OrderItem> itemsToUpdate = new ArrayList<OrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
                 for (OrderItem oi : itemsToUpdate) {
-                    int qtyMultiplier = oi.getQuantity() / orderItem.getQuantity();
-                    order = updateItemQuantity(order, oi, (qtyMultiplier * orderItemQuantityDelta));
+                    int quantityPer = oi.getQuantity();
+                    order = updateItemQuantity(order, oi, (quantityPer * orderItemQuantityDelta));
                 }
             } else {
                 order = updateItemQuantity(order, orderItem, orderItemQuantityDelta);
@@ -293,7 +292,11 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             if (oiQuantity == null) {
                 oiQuantity = 0;
             }
-            oiQuantity += oi.getQuantity();
+            if (((DiscreteOrderItem) oi).getBundleOrderItem() != null) {
+                oiQuantity += ((DiscreteOrderItem) oi).getBundleOrderItem().getQuantity() * oi.getQuantity();
+            } else {
+                oiQuantity += oi.getQuantity();
+            }
             oiQuantityMap.put(oi.getId(), oiQuantity);
         }
         

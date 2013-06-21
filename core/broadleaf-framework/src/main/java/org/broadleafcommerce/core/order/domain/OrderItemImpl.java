@@ -679,7 +679,7 @@ public class OrderItemImpl implements OrderItem, Cloneable {
 
     @Override
     public Money getTotalAdjustmentValue() {
-        Money totalAdjustmentValue = BroadleafCurrencyUtils.getMoney(order.getCurrency());
+        Money totalAdjustmentValue = BroadleafCurrencyUtils.getMoney(getOrder().getCurrency());
         List<OrderItemPriceDetail> priceDetails = getOrderItemPriceDetails();
         if (priceDetails != null) {
             for (OrderItemPriceDetail priceDetail : getOrderItemPriceDetails()) {
