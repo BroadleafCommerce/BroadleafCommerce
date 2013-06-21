@@ -97,7 +97,7 @@ platform is based on Spring MVC, so your Spring knowledge will translate here as
 controllers, and the like.
 
 ### Content Management
-BroadleafCommerce includes a robus content management system for creating and
+BroadleafCommerce includes a robust content management system for creating and
 managing static pages and content. We also include a powerful content targeting feature that allows
 business users to dynamically drive the most appropriate content to users.
 
