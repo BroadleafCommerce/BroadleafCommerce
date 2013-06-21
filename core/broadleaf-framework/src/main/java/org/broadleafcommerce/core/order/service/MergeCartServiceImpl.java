@@ -25,11 +25,16 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.call.ReconstructCartResponse;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
 import javax.annotation.Resource;
 
 /**
@@ -79,12 +84,29 @@ public class MergeCartServiceImpl implements MergeCartService {
         } else if (anonymousCart == null || anonymousCart.getOrderItems().size() == 0) {
             // The anonymous cart is of no use, use the customer cart
             mergeCartResponse.setOrder(customerCart);
+            
+            // The anonymous cart is owned by a different customer, so there is no chance for a single customer to have
+            // multiple IN_PROCESS carts. We can go ahead and clean up this empty cart anyway since it's empty
+            if (anonymousCart != null) {
+                orderService.cancelOrder(anonymousCart);
+            }
+            
         } else if (customerCart == null || customerCart.getOrderItems().size() == 0) {
+            // Delete the saved customer order since it is completely empty anyway. We do not want 2 IN_PROCESS orders
+            // hanging around
+            if (customerCart != null) {
+                orderService.cancelOrder(customerCart);
+            }
+            
             // The customer cart is of no use, use the anonymous cart
             setNewCartOwnership(anonymousCart, customer);
             mergeCartResponse.setOrder(anonymousCart);
         } else {
             // Both carts have some items. The anonymous cart will always be the more recent one by definition
+            // Save off the old customer cart and use the anonymous cart
+            setSavedCartAttributes(customerCart);
+            orderService.save(customerCart, false);
+
             setNewCartOwnership(anonymousCart, customer);
             mergeCartResponse.setOrder(anonymousCart);
         }
@@ -96,7 +118,7 @@ public class MergeCartServiceImpl implements MergeCartService {
         
         return mergeCartResponse;
     }
-
+    
     @Override
     public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder)
             throws PricingException, RemoveFromCartException {
@@ -144,6 +166,14 @@ public class MergeCartServiceImpl implements MergeCartService {
 
         reconstructCartResponse.setOrder(customerCart);
         return reconstructCartResponse;
+    }
+    
+    protected void setSavedCartAttributes(Order cart) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, ''yy");
+        Date cartLastUpdated = cart.getAuditable().getDateUpdated();
+        
+        cart.setName("Previously saved cart - " + sdf.format(cartLastUpdated));
+        cart.setStatus(OrderStatus.NAMED);
     }
 
     protected void setNewCartOwnership(Order cart, Customer customer) {
