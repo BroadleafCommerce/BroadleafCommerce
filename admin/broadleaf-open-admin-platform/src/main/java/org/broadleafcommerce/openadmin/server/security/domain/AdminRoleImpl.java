@@ -83,7 +83,7 @@ public class AdminRoleImpl implements AdminRole, AdminMainEntity {
     @AdminPresentation(friendlyName = "AdminRoleImpl_Name", order = 1, group = "AdminRoleImpl_Role",
             validationConfigurations = { @ValidationConfiguration(
                     validationImplementation = "blRegexPropertyValidator",
-                    configurationItems = { @ConfigurationItem(itemName = "regularExpression", itemValue = "ROLE_[.]+"),
+                    configurationItems = { @ConfigurationItem(itemName = "regularExpression", itemValue = "ROLE_.+"),
                             @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "roleNameError") }
                     ) })
     protected String name;
