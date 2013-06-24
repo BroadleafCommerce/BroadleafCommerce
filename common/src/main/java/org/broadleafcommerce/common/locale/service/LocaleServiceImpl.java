@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.dao.LocaleDao;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -51,6 +52,7 @@ public class LocaleServiceImpl implements LocaleService {
     }
     
     @Override
+    @Transactional("blTransactionManager")
     public Locale save(Locale locale) {
         return localeDao.save(locale);
     }
