@@ -111,7 +111,7 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
             categoryAttributes = new ArrayList<CategoryAttributeWrapper>();
             for (CategoryAttribute attribute : category.getCategoryAttributes()) {
                 CategoryAttributeWrapper wrapper = (CategoryAttributeWrapper) context.getBean(CategoryAttributeWrapper.class.getName());
-                wrapper.wrapDetails(attribute, request);
+                wrapper.wrapSummary(attribute, request);
                 categoryAttributes.add(wrapper);
             }
         }

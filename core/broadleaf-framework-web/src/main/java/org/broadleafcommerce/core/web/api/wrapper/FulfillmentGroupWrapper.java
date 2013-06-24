@@ -90,7 +90,7 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
             List<FulfillmentGroupItemWrapper> fulfillmentGroupItemWrappers = new ArrayList<FulfillmentGroupItemWrapper>();
             for (FulfillmentGroupItem fgi : fgs) {
                 FulfillmentGroupItemWrapper fulfillmentGroupItemWrapper = (FulfillmentGroupItemWrapper) context.getBean(FulfillmentGroupItemWrapper.class.getName());
-                fulfillmentGroupItemWrapper.wrapDetails(fgi, request);
+                fulfillmentGroupItemWrapper.wrapSummary(fgi, request);
                 fulfillmentGroupItemWrappers.add(fulfillmentGroupItemWrapper);
             }
             this.fulfillmentGroupItems = fulfillmentGroupItemWrappers;
