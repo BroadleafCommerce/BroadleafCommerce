@@ -33,12 +33,11 @@ import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 @Service("blCatalogService")
 public class CatalogServiceImpl implements CatalogService {
@@ -231,6 +230,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Deprecated
     public Map<String, List<Long>> getChildCategoryURLMapByCategoryId(Long categoryId) {
         Category category = findCategoryById(categoryId);
         if (category != null) {

@@ -228,23 +228,23 @@ public interface Category extends Serializable {
      * Gets the child category url map. This map is keyed off of the {@link #getGeneratedUrl()} values
      * for this category and all of its child categories. By calling get on this map using the
      * generated url for a given category, you will receive the list of immediate child categories.
-     * This lifecycle for this map is maintained via the {@code HydratedCacheJPAListener}. This listener
-     * keeps this map in a separate cache from the normal Hibernate level 2 cache, but will honor
-     * cache region settings for this entity, resulting in this map being evicted from its cache
-     * when this entity is removed from the Hibernate level 2 cache.
+     * This is inefficient, so its use is highly discouraged.
      *
-     * @see org.broadleafcommerce.common.cache.HydratedSetup
      * @return the child category url map
+     * @deprecated This approach is inherently inefficient and should no longer be used
      */
+    @Deprecated
     @Nonnull
     public Map<String,List<Long>> getChildCategoryURLMap();
 
     /**
-     * Included to support the {@code HydratedCacheJPAListener}
+     * Set the child category url map. This approach is inefficient,
+     * so its use is highly discouraged.
      *
-     * @see org.broadleafcommerce.common.cache.HydratedSetup
      * @param childCategoryURLMap
+     * @deprecated This approach is inherently inefficient and should no longer be used
      */
+    @Deprecated
     public void setChildCategoryURLMap(@Nonnull Map<String, List<Long>> childCategoryURLMap);
 
     /**
@@ -535,6 +535,26 @@ public interface Category extends Serializable {
     @Deprecated
     @Nonnull
     public List<Category> getChildCategories();
+
+    /**
+     * Gets the child category ids. If child categories has not been previously
+     * set, then the list of active only categories will be returned. This method
+     * is optimized with Hydrated cache, which means that the algorithm required
+     * to harvest active child categories will not need to be rebuilt as long
+     * as the parent category (this category) is not evicted from second level cache.
+     *
+     * @return the list of active child category ids
+     */
+    @Nonnull
+    public List<Long> getChildCategoryIds();
+
+    /**
+     * Sets the all child category ids. This should be a list
+     * of active only child categories.
+     *
+     * @param childCategoryIds the list of active child category ids.
+     */
+    public void setChildCategoryIds(@Nonnull List<Long> childCategoryIds);
 
     /**
      * Checks for child categories.
