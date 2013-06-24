@@ -121,6 +121,7 @@ public class StructuredContentImpl implements StructuredContent {
     @Column(name = "PRIORITY", nullable = false)
     @AdminPresentation(friendlyName = "StructuredContentImpl_Priority", order = 3, 
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
+    @Index(name="CONTENT_PRIORITY_INDEX", columnNames={"PRIORITY"})
     protected Integer priority;
 
     @ManyToMany(targetEntity = StructuredContentRuleImpl.class, cascade = {CascadeType.ALL})

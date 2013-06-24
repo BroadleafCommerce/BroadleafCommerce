@@ -168,6 +168,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order = 2000,
             group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
             prominent = true, gridOrder = 2, columnWidth = "300px")
+    @Index(name="CATEGORY_URL_INDEX", columnNames={"URL"})
     protected String url;
 
     @Column(name = "URL_KEY")
