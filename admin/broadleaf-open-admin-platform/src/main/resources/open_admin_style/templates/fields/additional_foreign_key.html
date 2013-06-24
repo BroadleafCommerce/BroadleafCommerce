@@ -1,6 +1,5 @@
 <div th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}">
     <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
-    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
     
     <select class="six" th:field="*{fields['__${field.name}__'].value}" th:if="${! #maps.isEmpty(field.options)}">
         <option value="" th:text="#{Default_Select}" />
@@ -12,6 +11,8 @@
     <span th:if="${#maps.isEmpty(field.options)}" class="indented-form-value" th:inline="text">
         &lt;[[#{No_Records_Found_Enum}]]&gt;
     </span>
+    
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
 </div>
 
@@ -48,5 +49,8 @@
                 <i class="icon-external-link"></i>
            </a>
         </span>
+        
+        <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
     </div>
+    
 </div>
