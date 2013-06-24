@@ -59,11 +59,6 @@
     
     <bean id="blEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo" />
     <bean id="blNullEmailInfo" class="org.broadleafcommerce.common.email.service.info.NullEmailInfo" />
-
-    <aop:config>
-        <aop:pointcut id="blLocaleServiceOperation" expression="execution(* org.broadleafcommerce.common.locale.service.LocaleService.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blLocaleServiceOperation"/>
-    </aop:config>         
     
     <bean id="blWebCommonClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
         <property name="prefix" value="/common_templates/" />
