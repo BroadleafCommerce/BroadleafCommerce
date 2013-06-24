@@ -29,9 +29,8 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,6 +39,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 
 /**
@@ -70,6 +70,7 @@ public class URLHandlerImpl implements URLHandler, Serializable, AdminMainEntity
 
     @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1)
     @Column(name = "INCOMING_URL", nullable = false)
+    @Index(name="INCOMING_URL_INDEX", columnNames={"INCOMING_URL"})
     protected String incomingURL;
 
     @Column(name = "NEW_URL", nullable = false)

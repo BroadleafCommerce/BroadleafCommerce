@@ -72,7 +72,7 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
     protected DimensionWrapper dimension;
     
     @Override
-    public void wrap(Sku model, HttpServletRequest request) {
+    public void wrapDetails(Sku model, HttpServletRequest request) {
         this.id = model.getId();
         this.activeStartDate = model.getActiveStartDate();
         this.activeEndDate = model.getActiveEndDate();
@@ -84,12 +84,17 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
 
         if (model.getWeight() != null){
             weight = (WeightWrapper)context.getBean(WeightWrapper.class.getName());
-            weight.wrap(model.getWeight(), request);
+            weight.wrapDetails(model.getWeight(), request);
         }
 
         if (model.getDimension() != null){
             dimension = (DimensionWrapper)context.getBean(DimensionWrapper.class.getName());
-            dimension.wrap(model.getDimension(), request);
+            dimension.wrapDetails(model.getDimension(), request);
         }
+    }
+
+    @Override
+    public void wrapSummary(Sku model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

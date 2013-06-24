@@ -40,9 +40,14 @@ public class BroadleafEnumerationTypeWrapper extends BaseWrapper implements APIW
     protected String type;
 
     @Override
-    public void wrap(BroadleafEnumerationType model, HttpServletRequest request) {
+    public void wrapDetails(BroadleafEnumerationType model, HttpServletRequest request) {
         if (model == null) return;
-        this.friendlyName = ((BroadleafEnumerationType) model).getFriendlyType();
-        this.type = ((BroadleafEnumerationType) model).getType();
+        this.friendlyName = model.getFriendlyType();
+        this.type = model.getType();
+    }
+
+    @Override
+    public void wrapSummary(BroadleafEnumerationType model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

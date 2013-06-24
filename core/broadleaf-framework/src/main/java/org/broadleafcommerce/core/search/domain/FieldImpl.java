@@ -23,11 +23,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -39,6 +36,9 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -68,6 +68,7 @@ public class FieldImpl implements Field,Serializable {
     // This is a broadleaf enumeration
     @AdminPresentation(friendlyName = "FieldImpl_EntityType", group = "FieldImpl_descrpition", order = 2, prominent = true)
     @Column(name = "ENTITY_TYPE", nullable = false)
+    @Index(name="ENTITY_TYPE_INDEX", columnNames={"ENTITY_TYPE"})
     protected String entityType;
     
     @Column(name = "PROPERTY_NAME", nullable = false)

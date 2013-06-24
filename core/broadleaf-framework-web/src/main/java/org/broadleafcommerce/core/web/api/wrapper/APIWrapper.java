@@ -28,5 +28,9 @@ import javax.servlet.http.HttpServletRequest;
  * @param <T>
  */
 public interface APIWrapper<T> {
-    public void wrap(T model, HttpServletRequest request);
+
+    public void wrapDetails(T model, HttpServletRequest request);
+
+    public void wrapSummary(T model, HttpServletRequest request);
+
 }

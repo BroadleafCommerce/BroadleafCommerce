@@ -62,7 +62,7 @@ public class SearchFacetWrapper extends BaseWrapper implements APIWrapper<Search
     protected List<SearchFacetValueWrapper> values;
 
     @Override
-    public void wrap(SearchFacetDTO model, HttpServletRequest request) {
+    public void wrapDetails(SearchFacetDTO model, HttpServletRequest request) {
         this.fieldName = model.getFacet().getField().getAbbreviation();
         this.active = model.isActive();
 
@@ -70,10 +70,14 @@ public class SearchFacetWrapper extends BaseWrapper implements APIWrapper<Search
             this.values = new ArrayList<SearchFacetValueWrapper>();
             for (SearchFacetResultDTO result : model.getFacetValues()) {
                 SearchFacetValueWrapper wrapper = (SearchFacetValueWrapper) context.getBean(SearchFacetValueWrapper.class.getName());
-                wrapper.wrap(result, request);
+                wrapper.wrapSummary(result, request);
                 this.values.add(wrapper);
             }
         }
     }
 
+    @Override
+    public void wrapSummary(SearchFacetDTO model, HttpServletRequest request) {
+        wrapDetails(model, request);
+    }
 }

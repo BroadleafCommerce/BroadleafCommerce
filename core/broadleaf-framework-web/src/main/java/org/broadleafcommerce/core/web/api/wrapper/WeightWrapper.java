@@ -18,12 +18,13 @@ package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.core.catalog.domain.Weight;
 
+import java.math.BigDecimal;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
 
 /**
  * This is a JAXB wrapper around Weight
@@ -42,10 +43,15 @@ public class WeightWrapper implements APIWrapper<Weight>{
     protected String unitOfMeasure;
 
     @Override
-    public void wrap(Weight model, HttpServletRequest request) {
+    public void wrapDetails(Weight model, HttpServletRequest request) {
         this.weight = model.getWeight();
         if (model.getWeightUnitOfMeasure() != null) {
             this.unitOfMeasure = model.getWeightUnitOfMeasure().getType();
         }
+    }
+
+    @Override
+    public void wrapSummary(Weight model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

@@ -19,14 +19,15 @@ package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is a JAXB wrapper around PaymentResponseItem.
@@ -52,7 +53,7 @@ public class PaymentResponseItemWrapper extends BaseWrapper implements APIWrappe
     protected List<MapElementWrapper> additionalFields;
 
     @Override
-    public void wrap(PaymentResponseItem model, HttpServletRequest request) {
+    public void wrapDetails(PaymentResponseItem model, HttpServletRequest request) {
         this.paymentInfoId = model.getPaymentInfoId();
         this.processorResponseCode = model.getProcessorResponseCode();
         this.transactionSuccess = model.getTransactionSuccess();
@@ -66,5 +67,10 @@ public class PaymentResponseItemWrapper extends BaseWrapper implements APIWrappe
             }
             this.additionalFields = mapElementWrappers;
         }
+    }
+
+    @Override
+    public void wrapSummary(PaymentResponseItem model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

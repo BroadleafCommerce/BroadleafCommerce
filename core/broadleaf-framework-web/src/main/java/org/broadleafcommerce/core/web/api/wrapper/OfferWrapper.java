@@ -46,13 +46,17 @@ public class OfferWrapper extends BaseWrapper implements APIWrapper<Offer> {
     protected BroadleafEnumerationTypeWrapper discountType;;
 
     @Override
-    public void wrap(Offer model, HttpServletRequest request) {
+    public void wrapDetails(Offer model, HttpServletRequest request) {
         this.marketingMessage = model.getMarketingMessage();
         this.offerType = (BroadleafEnumerationTypeWrapper) context.getBean(BroadleafEnumerationTypeWrapper.class.getName());
-        this.offerType.wrap(model.getType(), request);
+        this.offerType.wrapDetails(model.getType(), request);
         this.discountType = (BroadleafEnumerationTypeWrapper) context.getBean(BroadleafEnumerationTypeWrapper.class.getName());
-        this.discountType.wrap(model.getDiscountType(), request);
+        this.discountType.wrapDetails(model.getDiscountType(), request);
         this.offerId = model.getId();
     }
 
+    @Override
+    public void wrapSummary(Offer model, HttpServletRequest request) {
+        wrapDetails(model, request);
+    }
 }

@@ -35,14 +35,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class CategoriesWrapper extends BaseWrapper implements APIWrapper<List<Category>> {
 
     @XmlElement(name = "category")
-    protected List<CategorySummaryWrapper> categories = new ArrayList<CategorySummaryWrapper>();
+    protected List<CategoryWrapper> categories = new ArrayList<CategoryWrapper>();
 
     @Override
-    public void wrap(List<Category> cats, HttpServletRequest request) {
+    public void wrapDetails(List<Category> cats, HttpServletRequest request) {
         for (Category category : cats) {
-            CategorySummaryWrapper wrapper = (CategorySummaryWrapper) context.getBean(CategorySummaryWrapper.class.getName());
-            wrapper.wrap(category, request);
+            CategoryWrapper wrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
+            wrapper.wrapSummary(category, request);
             categories.add(wrapper);
         }
+    }
+
+    @Override
+    public void wrapSummary(List<Category> cats, HttpServletRequest request) {
+        wrapDetails(cats, request);
     }
 }

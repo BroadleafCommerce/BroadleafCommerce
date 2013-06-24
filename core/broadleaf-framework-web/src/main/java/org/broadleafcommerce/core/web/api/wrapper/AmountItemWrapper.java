@@ -22,12 +22,13 @@ import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.service.PaymentInfoService;
 import org.springframework.context.ApplicationContext;
 
+import java.math.BigDecimal;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
 
 /**
  * This is a JAXB wrapper around PaymentInfo.
@@ -61,7 +62,7 @@ public class AmountItemWrapper  extends BaseWrapper implements APIWrapper<Amount
     protected BigDecimal unitPrice;
 
     @Override
-    public void wrap(AmountItem model, HttpServletRequest request) {
+    public void wrapDetails(AmountItem model, HttpServletRequest request) {
         this.id = model.getId();
         this.description = model.getDescription();
 
@@ -73,6 +74,11 @@ public class AmountItemWrapper  extends BaseWrapper implements APIWrapper<Amount
         this.shortDescription = model.getShortDescription();
         this.systemId = model.getSystemId();
         this.unitPrice = model.getUnitPrice();
+    }
+
+    @Override
+    public void wrapSummary(AmountItem model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 
     @Override

@@ -47,10 +47,15 @@ public class ProductAttributeWrapper extends BaseWrapper implements APIWrapper<P
     protected String attributeValue;
 
     @Override
-    public void wrap(ProductAttribute model, HttpServletRequest request) {
+    public void wrapDetails(ProductAttribute model, HttpServletRequest request) {
         this.id = model.getId();
         this.productId = model.getProduct().getId();
         this.attributeName = model.getName();
         this.attributeValue = model.getValue();
+    }
+
+    @Override
+    public void wrapSummary(ProductAttribute model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

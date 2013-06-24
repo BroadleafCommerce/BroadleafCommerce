@@ -25,14 +25,15 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.springframework.context.ApplicationContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is a JAXB wrapper around FulfillmentGroup.
@@ -64,7 +65,7 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
     protected List<FulfillmentGroupItemWrapper> fulfillmentGroupItems;
 
     @Override
-    public void wrap(FulfillmentGroup model, HttpServletRequest request) {
+    public void wrapDetails(FulfillmentGroup model, HttpServletRequest request) {
         this.id = model.getId();
         this.total = model.getTotal();
 
@@ -74,13 +75,13 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
 
         if (model.getAddress() != null) {
             AddressWrapper addressWrapper = (AddressWrapper) context.getBean(AddressWrapper.class.getName());
-            addressWrapper.wrap(model.getAddress(), request);
+            addressWrapper.wrapDetails(model.getAddress(), request);
             this.address = addressWrapper;
         }
 
         if (model.getPhone() != null) {
             PhoneWrapper phoneWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
-            phoneWrapper.wrap(model.getPhone(), request);
+            phoneWrapper.wrapDetails(model.getPhone(), request);
             this.phone = phoneWrapper;
         }
 
@@ -89,12 +90,17 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
             List<FulfillmentGroupItemWrapper> fulfillmentGroupItemWrappers = new ArrayList<FulfillmentGroupItemWrapper>();
             for (FulfillmentGroupItem fgi : fgs) {
                 FulfillmentGroupItemWrapper fulfillmentGroupItemWrapper = (FulfillmentGroupItemWrapper) context.getBean(FulfillmentGroupItemWrapper.class.getName());
-                fulfillmentGroupItemWrapper.wrap(fgi, request);
+                fulfillmentGroupItemWrapper.wrapSummary(fgi, request);
                 fulfillmentGroupItemWrappers.add(fulfillmentGroupItemWrapper);
             }
             this.fulfillmentGroupItems = fulfillmentGroupItemWrappers;
         }
 
+    }
+
+    @Override
+    public void wrapSummary(FulfillmentGroup model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 
     @Override

@@ -50,7 +50,7 @@ public class OrderItemPriceDetailWrapper extends BaseWrapper implements
     protected List<OrderItemPriceDetailAdjustmentWrapper> orderItemPriceDetailAdjustments = new LinkedList<OrderItemPriceDetailAdjustmentWrapper>();
 
     @Override
-    public void wrap(OrderItemPriceDetail model, HttpServletRequest request) {
+    public void wrapDetails(OrderItemPriceDetail model, HttpServletRequest request) {
         this.id = model.getId();
         this.quantity = model.getQuantity();
         if (!model.getOrderItemPriceDetailAdjustments().isEmpty()) {
@@ -58,10 +58,14 @@ public class OrderItemPriceDetailWrapper extends BaseWrapper implements
             for (OrderItemPriceDetailAdjustment orderItemPriceDetail : model.getOrderItemPriceDetailAdjustments()) {
                 OrderItemPriceDetailAdjustmentWrapper orderItemPriceDetailAdjustmentWrapper =
                         (OrderItemPriceDetailAdjustmentWrapper) context.getBean(OrderItemPriceDetailAdjustmentWrapper.class.getName());
-                orderItemPriceDetailAdjustmentWrapper.wrap(orderItemPriceDetail, request);
+                orderItemPriceDetailAdjustmentWrapper.wrapSummary(orderItemPriceDetail, request);
                 this.orderItemPriceDetailAdjustments.add(orderItemPriceDetailAdjustmentWrapper);
             }
         }
     }
     
+    @Override
+    public void wrapSummary(OrderItemPriceDetail model, HttpServletRequest request) {
+        wrapDetails(model, request);
+    }
 }

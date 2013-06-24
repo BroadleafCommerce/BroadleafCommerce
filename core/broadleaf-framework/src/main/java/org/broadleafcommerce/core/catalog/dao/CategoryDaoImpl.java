@@ -191,10 +191,6 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Override
     public void delete(Category category) {
-//        if (!em.contains(category)) {
-//            category = readCategoryById(category.getId());
-//        }
-//        em.remove(category);
         ((Status) category).setArchived('Y');
         em.merge(category);
     }

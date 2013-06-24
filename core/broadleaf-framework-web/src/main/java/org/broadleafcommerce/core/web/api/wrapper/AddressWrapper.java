@@ -83,7 +83,7 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
 
 
     @Override
-    public void wrap(Address model, HttpServletRequest request) {
+    public void wrapDetails(Address model, HttpServletRequest request) {
         this.id = model.getId();
         this.firstName = model.getFirstName();
         this.lastName = model.getLastName();
@@ -92,31 +92,36 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
         this.city = model.getCity();
 
         StateWrapper stateWrapper = (StateWrapper) context.getBean(StateWrapper.class.getName());
-        stateWrapper.wrap(model.getState(), request);
+        stateWrapper.wrapDetails(model.getState(), request);
         this.state = stateWrapper;
 
         CountryWrapper countryWrapper = (CountryWrapper) context.getBean(CountryWrapper.class.getName());
-        countryWrapper.wrap(model.getCountry(), request);
+        countryWrapper.wrapDetails(model.getCountry(), request);
         this.country = countryWrapper;
 
         this.postalCode = model.getPostalCode();
 
         PhoneWrapper primaryWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
-        primaryWrapper.wrap(model.getPhonePrimary(), request);
+        primaryWrapper.wrapDetails(model.getPhonePrimary(), request);
         this.phonePrimary = primaryWrapper;
 
         PhoneWrapper secondaryWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
-        secondaryWrapper.wrap(model.getPhoneSecondary(), request);
+        secondaryWrapper.wrapDetails(model.getPhoneSecondary(), request);
         this.phoneSecondary = secondaryWrapper;
 
         PhoneWrapper faxWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
-        faxWrapper.wrap(model.getPhoneFax(), request);
+        faxWrapper.wrapDetails(model.getPhoneFax(), request);
         this.phoneFax = faxWrapper;
 
         this.companyName = model.getCompanyName();
         this.isBusiness = model.isBusiness();
         this.isDefault = model.isDefault();
 
+    }
+
+    @Override
+    public void wrapSummary(Address model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 
     @Override

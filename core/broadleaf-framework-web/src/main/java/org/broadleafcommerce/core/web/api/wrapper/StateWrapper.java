@@ -43,9 +43,14 @@ public class StateWrapper extends BaseWrapper implements APIWrapper<State>, APIU
     protected String abbreviation;
 
     @Override
-    public void wrap(State model, HttpServletRequest request) {
+    public void wrapDetails(State model, HttpServletRequest request) {
         this.name = model.getName();
         this.abbreviation = model.getAbbreviation();
+    }
+
+    @Override
+    public void wrapSummary(State model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 
     @Override

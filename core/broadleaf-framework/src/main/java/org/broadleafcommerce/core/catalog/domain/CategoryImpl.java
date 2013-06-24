@@ -168,6 +168,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order = 2000,
             group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
             prominent = true, gridOrder = 2, columnWidth = "300px")
+    @Index(name="CATEGORY_URL_INDEX", columnNames={"URL"})
     protected String url;
 
     @Column(name = "URL_KEY")
@@ -391,7 +392,12 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
 
     @Transient
     @Hydrated(factoryMethod = "createChildCategoryURLMap")
-    protected Map<String, List<Long>> childCategoryURLMap;        
+    @Deprecated
+    protected Map<String, List<Long>> childCategoryURLMap;
+
+    @Transient
+    @Hydrated(factoryMethod = "createChildCategoryIds")
+    protected List<Long> childCategoryIds;
 
     @Transient
     protected List<CategoryXref> childCategoryXrefs = new ArrayList<CategoryXref>(50);
@@ -626,6 +632,29 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     }
 
     @Override
+    public List<Long> getChildCategoryIds() {
+        if (childCategoryIds == null) {
+            HydratedSetup.populateFromCache(this);
+        }
+        return childCategoryIds;
+    }
+
+    @Override
+    public void setChildCategoryIds(List<Long> childCategoryIds) {
+        this.childCategoryIds = childCategoryIds;
+    }
+
+    public List<Long> createChildCategoryIds() {
+        childCategoryIds = new ArrayList<Long>();
+        for (CategoryXref category : allChildCategoryXrefs) {
+            if (category.getSubCategory().isActive()) {
+                childCategoryIds.add(category.getSubCategory().getId());
+            }
+        }
+        return childCategoryIds;
+    }
+
+    @Override
     @Deprecated
     public Map<String, String> getCategoryImages() {
         return categoryImages;
@@ -647,6 +676,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     }
 
     @Override
+    @Deprecated
     public Map<String, List<Long>> getChildCategoryURLMap() {
         if (childCategoryURLMap == null) {
             HydratedSetup.populateFromCache(this);
@@ -665,6 +695,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     }
 
     @Override
+    @Deprecated
     public void setChildCategoryURLMap(Map<String, List<Long>> childCategoryURLMap) {
         this.childCategoryURLMap = childCategoryURLMap;
     }

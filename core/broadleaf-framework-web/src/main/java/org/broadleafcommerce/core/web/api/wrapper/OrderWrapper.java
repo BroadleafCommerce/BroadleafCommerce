@@ -88,7 +88,7 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
     protected List<OrderAttributeWrapper> orderAttributes;
 
     @Override
-    public void wrap(Order model, HttpServletRequest request) {
+    public void wrapDetails(Order model, HttpServletRequest request) {
         this.id = model.getId();
         this.status = model.getStatus().getType();
         this.totalTax = model.getTotalTax();
@@ -100,7 +100,7 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
             this.orderItems = new ArrayList<OrderItemWrapper>();
             for (OrderItem orderItem : model.getOrderItems()) {
                 OrderItemWrapper orderItemWrapper = (OrderItemWrapper) context.getBean(OrderItemWrapper.class.getName());
-                orderItemWrapper.wrap(orderItem, request);
+                orderItemWrapper.wrapSummary(orderItem, request);
                 this.orderItems.add(orderItemWrapper);
             }
         }
@@ -109,7 +109,7 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
             this.fulfillmentGroups = new ArrayList<FulfillmentGroupWrapper>();
             for (FulfillmentGroup fulfillmentGroup : model.getFulfillmentGroups()) {
                 FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
-                fulfillmentGroupWrapper.wrap(fulfillmentGroup, request);
+                fulfillmentGroupWrapper.wrapSummary(fulfillmentGroup, request);
                 this.fulfillmentGroups.add(fulfillmentGroupWrapper);
             }
         }
@@ -118,7 +118,7 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
             this.paymentInfos = new ArrayList<PaymentInfoWrapper>();
             for (PaymentInfo paymentInfo : model.getPaymentInfos()) {
                 PaymentInfoWrapper paymentInfoWrapper = (PaymentInfoWrapper) context.getBean(PaymentInfoWrapper.class.getName());
-                paymentInfoWrapper.wrap(paymentInfo, request);
+                paymentInfoWrapper.wrapSummary(paymentInfo, request);
                 this.paymentInfos.add(paymentInfoWrapper);
             }
         }
@@ -127,7 +127,7 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
             this.orderAdjustments = new ArrayList<OrderAdjustmentWrapper>();
             for (OrderAdjustment orderAdjustment : model.getOrderAdjustments()) {
                 OrderAdjustmentWrapper orderItemWrapper = (OrderAdjustmentWrapper) context.getBean(OrderAdjustmentWrapper.class.getName());
-                orderItemWrapper.wrap(orderAdjustment, request);
+                orderItemWrapper.wrapSummary(orderAdjustment, request);
                 this.orderAdjustments.add(orderItemWrapper);
             }
         }
@@ -138,12 +138,17 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
             for (String key : keys) {
                 OrderAttributeWrapper orderAttributeWrapper =
                         (OrderAttributeWrapper) context.getBean(OrderAttributeWrapper.class.getName());
-                orderAttributeWrapper.wrap(itemAttributes.get(key), request);
+                orderAttributeWrapper.wrapSummary(itemAttributes.get(key), request);
                 this.orderAttributes.add(orderAttributeWrapper);
             }
         }
         CustomerWrapper customerWrapper = (CustomerWrapper) context.getBean(CustomerWrapper.class.getName());
-        customerWrapper.wrap(model.getCustomer(), request);
+        customerWrapper.wrapDetails(model.getCustomer(), request);
         this.customer = customerWrapper;
+    }
+
+    @Override
+    public void wrapSummary(Order model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

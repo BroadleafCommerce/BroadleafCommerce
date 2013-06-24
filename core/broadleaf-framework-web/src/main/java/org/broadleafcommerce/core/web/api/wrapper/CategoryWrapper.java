@@ -59,7 +59,16 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category> {
 
     @XmlElement
-    protected CategorySummaryWrapper categorySummary;
+    protected Long id;
+
+    @XmlElement
+    protected String name;
+
+    @XmlElement
+    protected String description;
+
+    @XmlElement
+    protected Boolean active;
 
     @XmlElement
     protected String url;
@@ -77,22 +86,22 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
 
     @XmlElement(name = "category")
     @XmlElementWrapper(name = "subcategories")
-    protected List<CategorySummaryWrapper> subcategories;
+    protected List<CategoryWrapper> subcategories;
 
     @XmlElement(name = "product")
     @XmlElementWrapper(name = "products")
-    protected List<ProductSummaryWrapper> products;
+    protected List<ProductWrapper> products;
 
     @XmlElement(name = "categoryAttribute")
     @XmlElementWrapper(name = "categoryAttributes")
     protected List<CategoryAttributeWrapper> categoryAttributes;
 
     @Override
-    public void wrap(Category category, HttpServletRequest request) {
-
-        this.categorySummary = (CategorySummaryWrapper) context.getBean(CategorySummaryWrapper.class.getName());
-        this.categorySummary.wrap(category, request);
-
+    public void wrapDetails(Category category, HttpServletRequest request) {
+        this.id = category.getId();
+        this.name = category.getName();
+        this.description = category.getDescription();
+        this.active = category.isActive();
         this.activeStartDate = category.getActiveStartDate();
         this.activeEndDate = category.getActiveEndDate();
         this.url = category.getUrl();
@@ -102,7 +111,7 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
             categoryAttributes = new ArrayList<CategoryAttributeWrapper>();
             for (CategoryAttribute attribute : category.getCategoryAttributes()) {
                 CategoryAttributeWrapper wrapper = (CategoryAttributeWrapper) context.getBean(CategoryAttributeWrapper.class.getName());
-                wrapper.wrap(attribute, request);
+                wrapper.wrapSummary(attribute, request);
                 categoryAttributes.add(wrapper);
             }
         }
@@ -131,12 +140,12 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
                 List<Product> productList = result.getProducts();
                 if (productList != null && !productList.isEmpty()) {
                     if (products == null) {
-                        products = new ArrayList<ProductSummaryWrapper>();
+                        products = new ArrayList<ProductWrapper>();
                     }
 
                     for (Product p : productList) {
-                        ProductSummaryWrapper productSummaryWrapper = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
-                        productSummaryWrapper.wrap(p, request);
+                        ProductWrapper productSummaryWrapper = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
+                        productSummaryWrapper.wrapSummary(p, request);
                         products.add(productSummaryWrapper);
                     }
                 }
@@ -151,8 +160,16 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
         }
     }
 
+    @Override
+    public void wrapSummary(Category category, HttpServletRequest request) {
+        this.id = category.getId();
+        this.name = category.getName();
+        this.description = category.getDescription();
+        this.active = category.isActive();
+    }
 
-    protected List<CategorySummaryWrapper> buildSubcategoryTree(List<CategorySummaryWrapper> wrappers, Category root, HttpServletRequest request) {
+
+    protected List<CategoryWrapper> buildSubcategoryTree(List<CategoryWrapper> wrappers, Category root, HttpServletRequest request) {
         CatalogService catalogService = (CatalogService) context.getBean("blCatalogService");
 
         Integer subcategoryLimit = (Integer) request.getAttribute("subcategoryLimit");
@@ -160,12 +177,12 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
 
         List<Category> subcategories = catalogService.findActiveSubCategoriesByCategory(root, subcategoryLimit, subcategoryOffset);
         if (subcategories !=null && !subcategories.isEmpty() && wrappers == null) {
-            wrappers = new ArrayList<CategorySummaryWrapper>();
+            wrappers = new ArrayList<CategoryWrapper>();
         }
 
         for (Category c : subcategories) {
-            CategorySummaryWrapper subcategoryWrapper = (CategorySummaryWrapper) context.getBean(CategorySummaryWrapper.class.getName());
-            subcategoryWrapper.wrap(c, request);
+            CategoryWrapper subcategoryWrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
+            subcategoryWrapper.wrapSummary(c, request);
             wrappers.add(subcategoryWrapper);
         }
 

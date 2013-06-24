@@ -79,7 +79,7 @@ public class ReferencedWrapper extends BaseWrapper implements APIWrapper<Referen
     protected String pin;
 
     @Override
-    public void wrap(Referenced model, HttpServletRequest request) {
+    public void wrapDetails(Referenced model, HttpServletRequest request) {
         this.id = model.getId();
         this.referenceNumber = model.getReferenceNumber();
 
@@ -160,5 +160,10 @@ public class ReferencedWrapper extends BaseWrapper implements APIWrapper<Referen
         }
 
         return null;
+    }
+
+    @Override
+    public void wrapSummary(Referenced model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }
