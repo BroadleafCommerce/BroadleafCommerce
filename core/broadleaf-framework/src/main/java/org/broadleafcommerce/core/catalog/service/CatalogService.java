@@ -150,7 +150,7 @@ public interface CatalogService {
      *
      * @param categoryId the parent category to which the children belong
      * @return hierarchical map of all child categories
-     * @deprecated this approach is inherently inefficient - don't use. Look at findAllPossibleChildCategories(..) instead.
+     * @deprecated this approach is inherently inefficient - don't use.
      */
     @Deprecated
     public Map<String, List<Long>> getChildCategoryURLMapByCategoryId(Long categoryId);
