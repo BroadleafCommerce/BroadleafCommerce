@@ -175,10 +175,7 @@ public class OfferImpl implements Offer, Status {
     protected Date endDate;
 
     @Column(name = "STACKABLE")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable",
-        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-        group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
-    protected Boolean stackable = false;
+    protected Boolean stackable = true;
 
     @Column(name = "TARGET_SYSTEM")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Target_System",
@@ -216,11 +213,10 @@ public class OfferImpl implements Offer, Status {
      * If false, stackable has to be false also
      */
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Combinable", 
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Combinable",
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-        group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Boolean combinableWithOtherOffers = false;
+        group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
+    protected Boolean combinableWithOtherOffers = true;
 
     @Column(name = "OFFER_DELIVERY_TYPE")
     @AdminPresentation(excluded = true)

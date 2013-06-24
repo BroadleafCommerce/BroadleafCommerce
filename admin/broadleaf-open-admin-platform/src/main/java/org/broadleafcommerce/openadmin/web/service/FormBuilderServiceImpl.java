@@ -67,6 +67,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,8 +75,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -181,7 +180,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         String idProperty = "id";
         for (Property property : cmd.getProperties()) {
             if (property.getMetadata() instanceof BasicFieldMetadata &&
-                    SupportedFieldType.ID==((BasicFieldMetadata) property.getMetadata()).getFieldType()) {
+                    SupportedFieldType.ID==((BasicFieldMetadata) property.getMetadata()).getFieldType() &&
+                    //make sure it's a property for this entity - not an association
+                    !property.getName().contains(".")) {
                 idProperty = property.getName();
                 break;
             }
