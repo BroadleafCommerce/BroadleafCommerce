@@ -75,6 +75,7 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable 
     
     @Column(name = "PRIORITY")
     @AdminPresentation(friendlyName = "SearchRedirectImpl_searchPriority", order = 1, group = "SearchRedirectImpl_description", groupOrder = 1, prominent=true)
+    @Index(name="SEARCH_PRIORITY_INDEX", columnNames={"PRIORITY"})
     protected Integer searchPriority;
 
     @AdminPresentation(friendlyName = "SearchRedirectImpl_searchTerm", order = 2, group = "SearchRedirectImpl_description", prominent = true, groupOrder = 1)
