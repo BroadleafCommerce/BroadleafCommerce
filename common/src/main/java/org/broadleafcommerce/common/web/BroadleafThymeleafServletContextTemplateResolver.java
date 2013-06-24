@@ -54,7 +54,7 @@ public class BroadleafThymeleafServletContextTemplateResolver extends ServletCon
         if (prefix != null && ! prefix.trim().equals("")) {
            
             if (themePath != null) {        
-                resourceName.append(prefix).append(themePath).append(templateFolder);
+                resourceName.append(prefix).append(themePath).append('/').append(templateFolder);
             }
         }
         resourceName.append(unaliasedName);
