@@ -52,7 +52,7 @@ public class OfferWrapper extends BaseWrapper implements APIWrapper<Offer> {
         this.offerType.wrap(model.getType(), request);
         this.discountType = (BroadleafEnumerationTypeWrapper) context.getBean(BroadleafEnumerationTypeWrapper.class.getName());
         this.discountType.wrap(model.getDiscountType(), request);
-
+        this.offerId = model.getId();
     }
 
 }
