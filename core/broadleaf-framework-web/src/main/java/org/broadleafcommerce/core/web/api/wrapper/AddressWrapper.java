@@ -52,6 +52,9 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
     protected String addressLine2;
 
     @XmlElement
+    protected String addressLine3;
+
+    @XmlElement
     protected String city;
 
     @XmlElement
@@ -89,6 +92,7 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
         this.lastName = model.getLastName();
         this.addressLine1 = model.getAddressLine1();
         this.addressLine2 = model.getAddressLine2();
+        this.addressLine3 = model.getAddressLine3();
         this.city = model.getCity();
 
         StateWrapper stateWrapper = (StateWrapper) context.getBean(StateWrapper.class.getName());
@@ -134,6 +138,7 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
         address.setLastName(this.lastName);
         address.setAddressLine1(this.addressLine1);
         address.setAddressLine2(this.addressLine2);
+        address.setAddressLine3(this.addressLine3);
         address.setCity(this.city);
 
         if (this.state != null) {
