@@ -138,7 +138,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
 
         categoryUrlMap.put(currentPath, newCategoryList);
         for (CategoryXref currentCategory : category.getChildCategoryXrefs()) {
-            fillInURLMapForCategory(categoryUrlMap, currentCategory.getCategory(), currentPath, newCategoryList);
+            fillInURLMapForCategory(categoryUrlMap, currentCategory.getSubCategory(), currentPath, newCategoryList);
         }
     }
 
