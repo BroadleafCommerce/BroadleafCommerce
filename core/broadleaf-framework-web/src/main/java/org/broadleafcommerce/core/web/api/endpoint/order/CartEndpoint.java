@@ -77,7 +77,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
         Order cart = CartState.getCart();
         if (cart != null) {
             OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-            wrapper.wrap(cart, request);
+            wrapper.wrapDetails(cart, request);
 
             return wrapper;
         }
@@ -105,7 +105,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
         }
 
         OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-        wrapper.wrap(cart, request);
+        wrapper.wrapDetails(cart, request);
 
         return wrapper;
     }
@@ -171,7 +171,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
                 order = orderService.save(order, priceOrder);
 
                 OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                wrapper.wrap(order, request);
+                wrapper.wrapDetails(order, request);
 
                 return wrapper;
             } catch (PricingException e) {
@@ -201,7 +201,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
                 order = orderService.save(order, priceOrder);
 
                 OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                wrapper.wrap(order, request);
+                wrapper.wrapDetails(order, request);
 
                 return wrapper;
             } catch (PricingException e) {
@@ -238,7 +238,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
                 order = orderService.save(order, priceOrder);
 
                 OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                wrapper.wrap(order, request);
+                wrapper.wrapDetails(order, request);
 
                 return wrapper;
             } catch (UpdateCartException e) {
@@ -287,7 +287,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
         try {
             cart = orderService.addOfferCode(cart, offerCode, priceOrder);
             OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-            wrapper.wrap(cart, request);
+            wrapper.wrapDetails(cart, request);
 
             return wrapper;
         } catch (PricingException e) {
@@ -319,7 +319,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
         try {
             cart = orderService.removeOfferCode(cart, offerCode, priceOrder);
             OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-            wrapper.wrap(cart, request);
+            wrapper.wrapDetails(cart, request);
 
             return wrapper;
         } catch (PricingException e) {
@@ -342,7 +342,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
         try {
             cart = orderService.removeAllOfferCodes(cart, priceOrder);
             OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-            wrapper.wrap(cart, request);
+            wrapper.wrapDetails(cart, request);
             return wrapper;
         } catch (PricingException e) {
             throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)

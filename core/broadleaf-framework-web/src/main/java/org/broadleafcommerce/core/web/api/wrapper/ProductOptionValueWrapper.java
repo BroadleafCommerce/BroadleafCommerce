@@ -40,10 +40,14 @@ public class ProductOptionValueWrapper extends BaseWrapper implements
     protected Long productOptionId;
     
     @Override
-    public void wrap(ProductOptionValue model, HttpServletRequest request) {
+    public void wrapDetails(ProductOptionValue model, HttpServletRequest request) {
         this.attributeValue = model.getAttributeValue();
         this.priceAdjustment = model.getPriceAdjustment();
         this.productOptionId = model.getProductOption().getId();
     }
 
+    @Override
+    public void wrapSummary(ProductOptionValue model, HttpServletRequest request) {
+        wrapDetails(model, request);
+    }
 }

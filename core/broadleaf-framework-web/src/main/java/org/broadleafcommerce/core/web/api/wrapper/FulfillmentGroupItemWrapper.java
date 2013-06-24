@@ -58,7 +58,7 @@ public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapp
     protected Money totalItemAmount;
 
     @Override
-    public void wrap(FulfillmentGroupItem model, HttpServletRequest request) {
+    public void wrapDetails(FulfillmentGroupItem model, HttpServletRequest request) {
         this.id = model.getId();
 
         if (model.getFulfillmentGroup() != null) {
@@ -72,6 +72,11 @@ public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapp
         this.totalTax = model.getTotalTax();
         this.quantity = model.getQuantity();
         this.totalItemAmount = model.getTotalItemAmount();
+    }
+
+    @Override
+    public void wrapSummary(FulfillmentGroupItem model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 
     @Override

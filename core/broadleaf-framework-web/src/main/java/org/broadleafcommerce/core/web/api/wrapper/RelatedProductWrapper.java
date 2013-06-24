@@ -44,14 +44,19 @@ public class RelatedProductWrapper extends BaseWrapper implements APIWrapper<Rel
     protected String promotionalMessage;
 
     @XmlElement
-    protected ProductSummaryWrapper product;
+    protected ProductWrapper product;
     
     @Override
-    public void wrap(RelatedProduct model, HttpServletRequest request) {
+    public void wrapDetails(RelatedProduct model, HttpServletRequest request) {
         this.id = model.getId();
         this.sequence = model.getSequence();
         this.promotionalMessage = model.getPromotionMessage();
-        product = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
-        product.wrap(model.getRelatedProduct(), request);
+        product = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
+        product.wrapSummary(model.getRelatedProduct(), request);
+    }
+
+    @Override
+    public void wrapSummary(RelatedProduct model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

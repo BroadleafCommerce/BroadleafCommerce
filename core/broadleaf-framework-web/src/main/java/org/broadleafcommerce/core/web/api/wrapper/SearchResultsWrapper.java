@@ -60,7 +60,7 @@ public class SearchResultsWrapper extends BaseWrapper implements APIWrapper<Prod
      */
     @XmlElementWrapper(name = "products")
     @XmlElement(name = "product")
-    protected List<ProductSummaryWrapper> products;
+    protected List<ProductWrapper> products;
 
     /*
      * List of available facets to be used for searching
@@ -70,7 +70,7 @@ public class SearchResultsWrapper extends BaseWrapper implements APIWrapper<Prod
     protected List<SearchFacetWrapper> searchFacets;
 
     @Override
-    public void wrap(ProductSearchResult model, HttpServletRequest request) {
+    public void wrapDetails(ProductSearchResult model, HttpServletRequest request) {
 
         page = model.getPage();
         pageSize = model.getPageSize();
@@ -78,10 +78,10 @@ public class SearchResultsWrapper extends BaseWrapper implements APIWrapper<Prod
         totalPages = model.getTotalPages();
 
         if (model.getProducts() != null) {
-            products = new ArrayList<ProductSummaryWrapper>();
+            products = new ArrayList<ProductWrapper>();
             for (Product product : model.getProducts()) {
-                ProductSummaryWrapper productSummary = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
-                productSummary.wrap(product, request);
+                ProductWrapper productSummary = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
+                productSummary.wrapSummary(product, request);
                 this.products.add(productSummary);
             }
         }
@@ -90,10 +90,14 @@ public class SearchResultsWrapper extends BaseWrapper implements APIWrapper<Prod
             this.searchFacets = new ArrayList<SearchFacetWrapper>();
             for (SearchFacetDTO facet : model.getFacets()) {
                 SearchFacetWrapper facetWrapper = (SearchFacetWrapper) context.getBean(SearchFacetWrapper.class.getName());
-                facetWrapper.wrap(facet, request);
+                facetWrapper.wrapSummary(facet, request);
                 this.searchFacets.add(facetWrapper);
             }
         }
     }
 
+    @Override
+    public void wrapSummary(ProductSearchResult model, HttpServletRequest request) {
+        wrapDetails(model, request);
+    }
 }

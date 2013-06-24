@@ -56,7 +56,7 @@ public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<Prod
     protected List<ProductOptionValueWrapper> allowedValues;
     
     @Override
-    public void wrap(ProductOption model, HttpServletRequest request) {
+    public void wrapDetails(ProductOption model, HttpServletRequest request) {
         this.attributeName = "productOption." + model.getAttributeName();
         this.label = model.getLabel();
         this.required = model.getRequired();
@@ -69,11 +69,15 @@ public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<Prod
             ArrayList<ProductOptionValueWrapper> allowedValueWrappers = new ArrayList<ProductOptionValueWrapper>();
             for (ProductOptionValue value : optionValues) {
                 ProductOptionValueWrapper optionValueWrapper = (ProductOptionValueWrapper)context.getBean(ProductOptionValueWrapper.class.getName());
-                optionValueWrapper.wrap(value, request);
+                optionValueWrapper.wrapSummary(value, request);
                 allowedValueWrappers.add(optionValueWrapper);
             }
             this.allowedValues = allowedValueWrappers;
         }
     }
 
+    @Override
+    public void wrapSummary(ProductOption model, HttpServletRequest request) {
+        wrapDetails(model, request);
+    }
 }

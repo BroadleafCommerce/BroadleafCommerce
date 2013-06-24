@@ -47,11 +47,15 @@ public class OrderAttributeWrapper extends BaseWrapper implements
     protected Long orderId;
 
     @Override
-    public void wrap(OrderAttribute model, HttpServletRequest request) {
+    public void wrapDetails(OrderAttribute model, HttpServletRequest request) {
         this.id = model.getId();
         this.name = model.getName();
         this.value = model.getValue();
         this.orderId = model.getOrder().getId();
     }
     
+    @Override
+    public void wrapSummary(OrderAttribute model, HttpServletRequest request) {
+        wrapDetails(model, request);
+    }
 }

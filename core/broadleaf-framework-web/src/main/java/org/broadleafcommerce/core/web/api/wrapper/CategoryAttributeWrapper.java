@@ -46,10 +46,15 @@ public class CategoryAttributeWrapper extends BaseWrapper implements APIWrapper<
     protected String attributeValue;
 
     @Override
-    public void wrap(CategoryAttribute model, HttpServletRequest request) {
+    public void wrapDetails(CategoryAttribute model, HttpServletRequest request) {
         this.id = model.getId();
         this.categoryId = model.getCategory().getId();
         this.attributeName = model.getName();
         this.attributeValue = model.getValue();
+    }
+
+    @Override
+    public void wrapSummary(CategoryAttribute model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

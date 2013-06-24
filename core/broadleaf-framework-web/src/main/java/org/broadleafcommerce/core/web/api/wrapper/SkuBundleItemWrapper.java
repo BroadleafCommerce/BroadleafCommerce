@@ -58,8 +58,9 @@ public class SkuBundleItemWrapper extends BaseWrapper implements APIWrapper<SkuB
 
     @XmlElement
     protected String longDescription;
+
     @Override
-    public void wrap(SkuBundleItem model, HttpServletRequest request) {
+    public void wrapDetails(SkuBundleItem model, HttpServletRequest request) {
         this.id = model.getId();
         this.quantity = model.getQuantity();
         this.salePrice = model.getSalePrice();
@@ -74,4 +75,8 @@ public class SkuBundleItemWrapper extends BaseWrapper implements APIWrapper<SkuB
 
     }
 
+    @Override
+    public void wrapSummary(SkuBundleItem model, HttpServletRequest request) {
+        wrapDetails(model, request);
+    }
 }

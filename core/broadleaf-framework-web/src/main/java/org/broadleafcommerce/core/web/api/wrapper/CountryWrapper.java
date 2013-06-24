@@ -43,9 +43,14 @@ public class CountryWrapper extends BaseWrapper implements APIWrapper<Country>, 
     protected String abbreviation;
 
     @Override
-    public void wrap(Country model, HttpServletRequest request) {
+    public void wrapDetails(Country model, HttpServletRequest request) {
         this.name = model.getName();
         this.abbreviation = model.getAbbreviation();
+    }
+
+    @Override
+    public void wrapSummary(Country model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 
     @Override

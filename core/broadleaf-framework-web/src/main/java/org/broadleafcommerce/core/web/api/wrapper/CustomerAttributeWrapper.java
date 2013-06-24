@@ -49,11 +49,16 @@ public class CustomerAttributeWrapper extends BaseWrapper implements
     protected Long customerId;
 
     @Override
-    public void wrap(CustomerAttribute model, HttpServletRequest request) {
+    public void wrapDetails(CustomerAttribute model, HttpServletRequest request) {
         this.id = model.getId();
         this.name = model.getName();
         this.value = model.getValue();
         this.customerId = model.getCustomer().getId();
+    }
+
+    @Override
+    public void wrapSummary(CustomerAttribute model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 
     @Override

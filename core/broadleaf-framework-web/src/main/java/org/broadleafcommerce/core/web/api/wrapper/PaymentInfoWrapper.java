@@ -88,7 +88,7 @@ public class PaymentInfoWrapper extends BaseWrapper implements APIWrapper<Paymen
     protected String referenceNumber;
 
     @Override
-    public void wrap(PaymentInfo model, HttpServletRequest request) {
+    public void wrapDetails(PaymentInfo model, HttpServletRequest request) {
         this.id = model.getId();
 
         if (model.getOrder() != null) {
@@ -101,13 +101,13 @@ public class PaymentInfoWrapper extends BaseWrapper implements APIWrapper<Paymen
 
         if (model.getAddress() != null) {
             AddressWrapper addressWrapper = (AddressWrapper) context.getBean(AddressWrapper.class.getName());
-            addressWrapper.wrap(model.getAddress(), request);
+            addressWrapper.wrapDetails(model.getAddress(), request);
             this.address = addressWrapper;
         }
 
         if (model.getPhone() != null) {
             PhoneWrapper phoneWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
-            phoneWrapper.wrap(model.getPhone(), request);
+            phoneWrapper.wrapDetails(model.getPhone(), request);
             this.phone = phoneWrapper;
         }
 
@@ -131,7 +131,7 @@ public class PaymentInfoWrapper extends BaseWrapper implements APIWrapper<Paymen
             List<AmountItemWrapper> wrappers = new ArrayList<AmountItemWrapper>();
             for (AmountItem amountItem : model.getAmountItems()) {
                 AmountItemWrapper amountItemWrapper = (AmountItemWrapper) context.getBean(AmountItemWrapper.class.getName());
-                amountItemWrapper.wrap(amountItem, request);
+                amountItemWrapper.wrapSummary(amountItem, request);
                 wrappers.add(amountItemWrapper);
             }
             this.amountItems = wrappers;
@@ -139,6 +139,11 @@ public class PaymentInfoWrapper extends BaseWrapper implements APIWrapper<Paymen
 
         this.customerIpAddress = model.getCustomerIpAddress();
         this.referenceNumber = model.getReferenceNumber();
+    }
+
+    @Override
+    public void wrapSummary(PaymentInfo model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 
     @Override

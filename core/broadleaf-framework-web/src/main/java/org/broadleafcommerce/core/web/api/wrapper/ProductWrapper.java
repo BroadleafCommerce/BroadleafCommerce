@@ -18,10 +18,12 @@ package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 
@@ -49,7 +51,44 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
 
     @XmlElement
-    protected ProductSummaryWrapper productSummary;
+    protected Long id;
+
+    @XmlElement
+    protected String name;
+
+    @XmlElement
+    protected String description;
+
+    @XmlElement
+    protected String longDescripion;
+
+    @XmlElement
+    protected Money retailPrice;
+
+    @XmlElement
+    protected Money salePrice;
+
+    @XmlElement
+    protected MediaWrapper primaryMedia;
+
+    @XmlElement
+    protected Boolean active;
+
+    @XmlElement(name = "productOption")
+    @XmlElementWrapper(name = "productOptions")
+    protected List<ProductOptionWrapper> productOptions;
+
+    // For bundles
+    @XmlElement
+    protected Integer priority;
+
+    @XmlElement
+    protected Money bundleItemsRetailPrice;
+
+    @XmlElement
+    protected Money bundleItemsSalePrice;
+
+    //End for bundles
 
     @XmlElement
     @XmlJavaTypeAdapter(ISO8601DateAdapter.class)
@@ -87,24 +126,66 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
     @XmlElementWrapper(name = "mediaItems")
     protected List<MediaWrapper> media;
 
-    //following are bundle properties
-
-
     @XmlElement(name = "skuBundleItem")
     @XmlElementWrapper(name = "skuBundleItems")
     protected List<SkuBundleItemWrapper> skuBundleItems;
 
     @Override
-    public void wrap(Product model, HttpServletRequest request) {
+    public void wrapDetails(Product model, HttpServletRequest request) {
 
-        this.productSummary = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
-        this.productSummary.wrap(model, request);
-
+        this.id = model.getId();
+        this.name = model.getName();
+        this.description = model.getDescription();
+        this.longDescripion = model.getLongDescription();
         this.activeStartDate = model.getActiveStartDate();
         this.activeEndDate = model.getActiveEndDate();
         this.manufacturer = model.getManufacturer();
         this.model = model.getModel();
         this.promoMessage = model.getPromoMessage();
+        this.active = model.isActive();
+
+        if (model instanceof ProductBundle) {
+
+            ProductBundle bundle = (ProductBundle) model;
+            this.priority = bundle.getPriority();
+            this.bundleItemsRetailPrice = bundle.getBundleItemsRetailPrice();
+            this.bundleItemsSalePrice = bundle.getBundleItemsSalePrice();
+
+            if (bundle.getSkuBundleItems() != null) {
+                this.skuBundleItems = new ArrayList<SkuBundleItemWrapper>();
+                List<SkuBundleItem> bundleItems = bundle.getSkuBundleItems();
+                for (SkuBundleItem item : bundleItems) {
+                    SkuBundleItemWrapper skuBundleItemsWrapper = (SkuBundleItemWrapper) context.getBean(SkuBundleItemWrapper.class.getName());
+                    skuBundleItemsWrapper.wrapSummary(item, request);
+                    this.skuBundleItems.add(skuBundleItemsWrapper);
+                }
+            }
+        } else {
+            this.retailPrice = model.getDefaultSku().getRetailPrice();
+            this.salePrice = model.getDefaultSku().getSalePrice();
+        }
+
+        if (model.getProductOptions() != null && !model.getProductOptions().isEmpty()) {
+            this.productOptions = new ArrayList<ProductOptionWrapper>();
+            List<ProductOption> options = model.getProductOptions();
+            for (ProductOption option : options) {
+                ProductOptionWrapper optionWrapper = (ProductOptionWrapper) context.getBean(ProductOptionWrapper.class.getName());
+                optionWrapper.wrapSummary(option, request);
+                this.productOptions.add(optionWrapper);
+            }
+        }
+
+        if (model.getMedia() != null && !model.getMedia().isEmpty()) {
+            Media media = model.getMedia().get("primary");
+            if (media != null) {
+                StaticAssetService staticAssetService = (StaticAssetService) this.context.getBean("blStaticAssetService");
+                primaryMedia = (MediaWrapper) context.getBean(MediaWrapper.class.getName());
+                primaryMedia.wrapDetails(media, request);
+                if (primaryMedia.isAllowOverrideUrl()) {
+                    primaryMedia.setUrl(staticAssetService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
+                }
+            }
+        }
         
         if (model.getDefaultCategory() != null) {
             this.defaultCategoryId = model.getDefaultCategory().getId();
@@ -115,7 +196,7 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
             for (RelatedProduct p : model.getUpSaleProducts()) {
                 RelatedProductWrapper upsaleProductWrapper =
                         (RelatedProductWrapper) context.getBean(RelatedProductWrapper.class.getName());
-                upsaleProductWrapper.wrap(p, request);
+                upsaleProductWrapper.wrapSummary(p, request);
                 upsaleProducts.add(upsaleProductWrapper);
             }
         }
@@ -125,7 +206,7 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
             for (RelatedProduct p : model.getCrossSaleProducts()) {
                 RelatedProductWrapper crossSaleProductWrapper =
                         (RelatedProductWrapper) context.getBean(RelatedProductWrapper.class.getName());
-                crossSaleProductWrapper.wrap(p, request);
+                crossSaleProductWrapper.wrapSummary(p, request);
                 crossSaleProducts.add(crossSaleProductWrapper);
             }
         }
@@ -135,7 +216,7 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
             if (model.getProductAttributes() != null) {
                 for (Map.Entry<String, ProductAttribute> entry : model.getProductAttributes().entrySet()) {
                     ProductAttributeWrapper wrapper = (ProductAttributeWrapper) context.getBean(ProductAttributeWrapper.class.getName());
-                    wrapper.wrap(entry.getValue(), request);
+                    wrapper.wrapSummary(entry.getValue(), request);
                     productAttributes.add(wrapper);
                 }
             }
@@ -147,25 +228,52 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
             StaticAssetService staticAssetService = (StaticAssetService) this.context.getBean("blStaticAssetService");
             for (Media med : mediaMap.values()) {
                 MediaWrapper wrapper = (MediaWrapper) context.getBean(MediaWrapper.class.getName());
-                wrapper.wrap(med, request);
+                wrapper.wrapSummary(med, request);
                 if (wrapper.isAllowOverrideUrl()) {
                     wrapper.setUrl(staticAssetService.convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
                 }
                 media.add(wrapper);
             }
         }
+    }
+
+    @Override
+    public void wrapSummary(Product model, HttpServletRequest request) {
+        this.id = model.getId();
+        this.name = model.getName();
+        this.description = model.getDescription();
+        this.longDescripion = model.getLongDescription();
+        this.active = model.isActive();
 
         if (model instanceof ProductBundle) {
 
             ProductBundle bundle = (ProductBundle) model;
+            this.priority = bundle.getPriority();
+            this.bundleItemsRetailPrice = bundle.getBundleItemsRetailPrice();
+            this.bundleItemsSalePrice = bundle.getBundleItemsSalePrice();
+        } else {
+            this.retailPrice = model.getDefaultSku().getRetailPrice();
+            this.salePrice = model.getDefaultSku().getSalePrice();
+        }
 
-            if (bundle.getSkuBundleItems() != null) {
-                this.skuBundleItems = new ArrayList<SkuBundleItemWrapper>();
-                List<SkuBundleItem> bundleItems = bundle.getSkuBundleItems();
-                for (SkuBundleItem item : bundleItems) {
-                    SkuBundleItemWrapper skuBundleItemsWrapper = (SkuBundleItemWrapper) context.getBean(SkuBundleItemWrapper.class.getName());
-                    skuBundleItemsWrapper.wrap(item, request);
-                    this.skuBundleItems.add(skuBundleItemsWrapper);
+        if (model.getProductOptions() != null && !model.getProductOptions().isEmpty()) {
+            this.productOptions = new ArrayList<ProductOptionWrapper>();
+            List<ProductOption> options = model.getProductOptions();
+            for (ProductOption option : options) {
+                ProductOptionWrapper optionWrapper = (ProductOptionWrapper) context.getBean(ProductOptionWrapper.class.getName());
+                optionWrapper.wrapSummary(option, request);
+                this.productOptions.add(optionWrapper);
+            }
+        }
+
+        if (model.getMedia() != null && !model.getMedia().isEmpty()) {
+            Media media = model.getMedia().get("primary");
+            if (media != null) {
+                StaticAssetService staticAssetService = (StaticAssetService) this.context.getBean("blStaticAssetService");
+                primaryMedia = (MediaWrapper) context.getBean(MediaWrapper.class.getName());
+                primaryMedia.wrapDetails(media, request);
+                if (primaryMedia.isAllowOverrideUrl()) {
+                    primaryMedia.setUrl(staticAssetService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
                 }
             }
         }

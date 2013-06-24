@@ -47,10 +47,15 @@ public class SkuAttributeWrapper extends BaseWrapper implements APIWrapper<SkuAt
     protected String attributeValue;
 
     @Override
-    public void wrap(SkuAttribute model, HttpServletRequest request) {
+    public void wrapDetails(SkuAttribute model, HttpServletRequest request) {
         this.id = model.getId();
         this.skuId = model.getSku().getId();
         this.attributeName = model.getName();
         this.attributeValue = model.getValue();
+    }
+
+    @Override
+    public void wrapSummary(SkuAttribute model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

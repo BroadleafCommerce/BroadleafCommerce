@@ -67,7 +67,7 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
             List<FulfillmentGroupWrapper> fulfillmentGroupWrappers = new ArrayList<FulfillmentGroupWrapper>();
             for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
                 FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
-                fulfillmentGroupWrapper.wrap(fulfillmentGroup, request);
+                fulfillmentGroupWrapper.wrapSummary(fulfillmentGroup, request);
                 fulfillmentGroupWrappers.add(fulfillmentGroupWrapper);
             }
             return fulfillmentGroupWrappers;
@@ -83,7 +83,7 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
             try {
                 fulfillmentGroupService.removeAllFulfillmentGroupsFromOrder(cart, priceOrder);
                 OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                wrapper.wrap(cart, request);
+                wrapper.wrapDetails(cart, request);
                 return wrapper;
             } catch (PricingException e) {
                 throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -107,7 +107,7 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
                     fulfillmentGroupRequest.setOrder(cart);
                     FulfillmentGroup fulfillmentGroup = fulfillmentGroupService.addFulfillmentGroupToOrder(fulfillmentGroupRequest, priceOrder);
                     FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
-                    fulfillmentGroupWrapper.wrap(fulfillmentGroup, request);
+                    fulfillmentGroupWrapper.wrapDetails(fulfillmentGroup, request);
                     return fulfillmentGroupWrapper;
                 } catch (PricingException e) {
                     throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -149,7 +149,7 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
                     try {
                         FulfillmentGroup fg = fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, priceOrder);
                         FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
-                        fulfillmentGroupWrapper.wrap(fg, request);
+                        fulfillmentGroupWrapper.wrapDetails(fg, request);
                         return fulfillmentGroupWrapper;
 
                     } catch (PricingException e) {

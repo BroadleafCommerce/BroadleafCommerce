@@ -55,12 +55,17 @@ public class MediaWrapper extends BaseWrapper implements APIWrapper<Media> {
     protected String tags;
     
     @Override
-    public void wrap(Media media, HttpServletRequest request) {
+    public void wrapDetails(Media media, HttpServletRequest request) {
         this.id = media.getId();
         this.title = media.getTitle();
         this.altText = media.getAltText();
         this.tags = media.getTags();
         this.url = media.getUrl();
+    }
+
+    @Override
+    public void wrapSummary(Media media, HttpServletRequest request) {
+        wrapDetails(media, request);
     }
 
     public boolean isAllowOverrideUrl() {

@@ -88,7 +88,7 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
                 PaymentResponseItem responseItem = compositePaymentResponse.getPaymentResponse().getResponseItems().get(paymentInfo);
 
                 PaymentResponseItemWrapper paymentResponseItemWrapper = context.getBean(PaymentResponseItemWrapper.class);
-                paymentResponseItemWrapper.wrap(responseItem, request);
+                paymentResponseItemWrapper.wrapDetails(responseItem, request);
 
                 return paymentResponseItemWrapper;
 
@@ -126,7 +126,7 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
                     CheckoutResponse response = checkoutService.performCheckout(cart, payments);
                     Order order = response.getOrder();
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                    wrapper.wrap(order, request);
+                    wrapper.wrapDetails(order, request);
                     return wrapper;
                 }
             } catch (CheckoutException e) {

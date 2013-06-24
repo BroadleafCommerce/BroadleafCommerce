@@ -49,11 +49,16 @@ public class PhoneWrapper extends BaseWrapper implements APIWrapper<Phone>, APIU
     protected Boolean isDefault;
 
     @Override
-    public void wrap(Phone model, HttpServletRequest request) {
+    public void wrapDetails(Phone model, HttpServletRequest request) {
         this.id = model.getId();
         this.phoneNumber = model.getPhoneNumber();
         this.isActive = model.isActive();
         this.isDefault = model.isDefault();
+    }
+
+    @Override
+    public void wrapSummary(Phone model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 
     @Override

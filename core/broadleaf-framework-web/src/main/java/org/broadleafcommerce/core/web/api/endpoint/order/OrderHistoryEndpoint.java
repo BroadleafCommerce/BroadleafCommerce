@@ -59,7 +59,7 @@ public abstract class OrderHistoryEndpoint extends BaseEndpoint {
                 List<OrderWrapper> wrappers = new ArrayList<OrderWrapper>();
                 for (Order order : orders) {
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                    wrapper.wrap(order, request);
+                    wrapper.wrapSummary(order, request);
                     wrappers.add(wrapper);
                 }
 

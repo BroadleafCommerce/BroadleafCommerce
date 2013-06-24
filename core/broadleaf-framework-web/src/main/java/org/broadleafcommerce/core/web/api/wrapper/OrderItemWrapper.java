@@ -73,7 +73,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
     //
 
     @XmlElement
-    protected CategorySummaryWrapper category;
+    protected CategoryWrapper category;
 
     @XmlElement
     protected Long orderId;
@@ -99,15 +99,15 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
     //
 
     @Override
-    public void wrap(OrderItem model, HttpServletRequest request) {
+    public void wrapDetails(OrderItem model, HttpServletRequest request) {
         this.id = model.getId();
         this.name = model.getName();
         this.quantity = model.getQuantity();
         this.orderId = model.getOrder().getId();
 
         if (model.getCategory() != null) {
-            CategorySummaryWrapper categoryWrapper = (CategorySummaryWrapper) context.getBean(CategorySummaryWrapper.class.getName());
-            categoryWrapper.wrap(model.getCategory(), request);
+            CategoryWrapper categoryWrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
+            categoryWrapper.wrapSummary(model.getCategory(), request);
             this.category = categoryWrapper;
         }
 
@@ -118,7 +118,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
             for (String key : keys) {
                 OrderItemAttributeWrapper orderItemAttributeWrapper = 
                         (OrderItemAttributeWrapper) context.getBean(OrderItemAttributeWrapper.class.getName());
-                orderItemAttributeWrapper.wrap(itemAttributes.get(key), request);
+                orderItemAttributeWrapper.wrapSummary(itemAttributes.get(key), request);
                 this.orderItemAttributes.add(orderItemAttributeWrapper);
             }
         }
@@ -127,7 +127,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
             for (OrderItemPriceDetail orderItemPriceDetail : model.getOrderItemPriceDetails()) {
                 OrderItemPriceDetailWrapper orderItemPriceDetailWrapper =
                         (OrderItemPriceDetailWrapper) context.getBean(OrderItemPriceDetailWrapper.class.getName());
-                orderItemPriceDetailWrapper.wrap(orderItemPriceDetail, request);
+                orderItemPriceDetailWrapper.wrapSummary(orderItemPriceDetail, request);
                 this.orderItemPriceDetails.add(orderItemPriceDetailWrapper);
             }
         }
@@ -156,7 +156,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
                 this.bundleItems = new ArrayList<OrderItemWrapper>();
                 for (DiscreteOrderItem doi : discreteItems) {
                     OrderItemWrapper doiWrapper = (OrderItemWrapper) context.getBean(OrderItemWrapper.class.getName());
-                    doiWrapper.wrap(doi, request);
+                    doiWrapper.wrapSummary(doi, request);
                     this.bundleItems.add(doiWrapper);
                 }
             }
@@ -165,5 +165,10 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
             //            productWrapper.wrap(boi.getProduct(), request);
             this.productId = boi.getProduct().getId();
         }
+    }
+
+    @Override
+    public void wrapSummary(OrderItem model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

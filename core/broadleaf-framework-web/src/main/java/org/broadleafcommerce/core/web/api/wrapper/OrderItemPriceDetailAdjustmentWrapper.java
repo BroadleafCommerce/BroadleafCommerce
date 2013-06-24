@@ -45,10 +45,14 @@ public class OrderItemPriceDetailAdjustmentWrapper extends BaseWrapper implement
     protected BigDecimal offerValue;
 
     @Override
-    public void wrap(OrderItemPriceDetailAdjustment model, HttpServletRequest request) {
+    public void wrapDetails(OrderItemPriceDetailAdjustment model, HttpServletRequest request) {
         this.id = model.getId();
         this.offerName = model.getOfferName();
         this.offerValue = model.getValue().getAmount();
     }
     
+    @Override
+    public void wrapSummary(OrderItemPriceDetailAdjustment model, HttpServletRequest request) {
+        wrapDetails(model, request);
+    }
 }

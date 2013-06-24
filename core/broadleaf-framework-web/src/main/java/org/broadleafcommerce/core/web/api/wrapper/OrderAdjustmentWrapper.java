@@ -39,13 +39,19 @@ public class OrderAdjustmentWrapper extends BaseWrapper implements APIWrapper<Or
     @XmlElement
     protected String reason;
 
-    public void wrap(OrderAdjustment model, HttpServletRequest request) {
+    @Override
+    public void wrapDetails(OrderAdjustment model, HttpServletRequest request) {
         if (model == null) {
             return;
         }
         this.reason = model.getReason();
         OfferWrapper offerWrapper = (OfferWrapper) context.getBean(OfferWrapper.class.getName());
-        offerWrapper.wrap(model.getOffer(), request);
+        offerWrapper.wrapDetails(model.getOffer(), request);
         this.offer = offerWrapper;
+    }
+
+    @Override
+    public void wrapSummary(OrderAdjustment model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

@@ -58,8 +58,9 @@ public class CustomerWrapper extends BaseWrapper implements APIWrapper<Customer>
     @XmlElement(name = "customerAttribute")
     @XmlElementWrapper(name = "customerAttributes")
     protected List<CustomerAttributeWrapper> customerAttributes;
+
     @Override
-    public void wrap(Customer model, HttpServletRequest request) {
+    public void wrapDetails(Customer model, HttpServletRequest request) {
         this.id = model.getId();
         this.firstName = model.getFirstName();
         this.lastName = model.getLastName();
@@ -71,12 +72,16 @@ public class CustomerWrapper extends BaseWrapper implements APIWrapper<Customer>
             for (String key : keys) {
                 CustomerAttributeWrapper customerAttributeWrapper =
                         (CustomerAttributeWrapper) context.getBean(CustomerAttributeWrapper.class.getName());
-                customerAttributeWrapper.wrap(itemAttributes.get(key), request);
+                customerAttributeWrapper.wrapDetails(itemAttributes.get(key), request);
                 this.customerAttributes.add(customerAttributeWrapper);
             }
         }
     }
 
+    @Override
+    public void wrapSummary(Customer model, HttpServletRequest request) {
+        wrapDetails(model, request);
+    }
 
     @Override
     public Customer unwrap(HttpServletRequest request, ApplicationContext context) {

@@ -107,7 +107,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         if (product != null) {
             ProductWrapper wrapper;
             wrapper = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
-            wrapper.wrap(product, request);
+            wrapper.wrapDetails(product, request);
             return wrapper;
         }
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
@@ -160,7 +160,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             facetService.setActiveFacetResults(result.getFacets(), request);
 
             SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());
-            wrapper.wrap(result, request);
+            wrapper.wrapDetails(result, request);
             return wrapper;
         } catch (ServiceException e) {
             throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -202,7 +202,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             facetService.setActiveFacetResults(result.getFacets(), request);
 
             SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());
-            wrapper.wrap(result, request);
+            wrapper.wrapDetails(result, request);
             return wrapper;
         } catch (ServiceException e) {
             throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -224,7 +224,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             if (skus != null) {
                 for (Sku sku : skus) {
                     SkuWrapper wrapper = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
-                    wrapper.wrap(sku, request);
+                    wrapper.wrapSummary(sku, request);
                     out.add(wrapper);
                 }
                 return out;
@@ -237,7 +237,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         Product product = catalogService.findProductById(id);
         if (product != null && product.getDefaultSku() != null) {
             SkuWrapper wrapper = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
-            wrapper.wrap(product.getDefaultSku(), request);
+            wrapper.wrapDetails(product.getDefaultSku(), request);
             return wrapper;
         }
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
@@ -254,7 +254,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             categories = catalogService.findAllCategories(limit, offset);
         }
         CategoriesWrapper wrapper = (CategoriesWrapper)context.getBean(CategoriesWrapper.class.getName());
-        wrapper.wrap(categories, request);
+        wrapper.wrapDetails(categories, request);
         return wrapper;
     }
 
@@ -272,7 +272,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             } else {
                 categories = catalogService.findAllSubCategories(category, limit, offset);
             }
-            wrapper.wrap(categories, request);
+            wrapper.wrapDetails(categories, request);
             return wrapper;
         }
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
@@ -302,7 +302,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             request.setAttribute("subcategoryOffset", subcategoryOffset);
 
             CategoryWrapper wrapper = (CategoryWrapper)context.getBean(CategoryWrapper.class.getName());
-            wrapper.wrap(cat, request);
+            wrapper.wrapDetails(cat, request);
             return wrapper;
         }
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
@@ -346,7 +346,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             request.setAttribute("subcategoryOffset", subcategoryOffset);
 
             CategoryWrapper wrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
-            wrapper.wrap(cat, request);
+            wrapper.wrapDetails(cat, request);
             return wrapper;
         }
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
@@ -361,7 +361,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             if (category.getCategoryAttributes() != null) {
                 for (CategoryAttribute attribute : category.getCategoryAttributes()) {
                     CategoryAttributeWrapper wrapper = (CategoryAttributeWrapper)context.getBean(CategoryAttributeWrapper.class.getName());
-                    wrapper.wrap(attribute, request);
+                    wrapper.wrapSummary(attribute, request);
                     out.add(wrapper);
                 }
             }
@@ -383,7 +383,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             if (relatedProds != null) {
                 for (RelatedProduct prod : relatedProds) {
                     RelatedProductWrapper wrapper = (RelatedProductWrapper)context.getBean(RelatedProductWrapper.class.getName());
-                    wrapper.wrap(prod,request);
+                    wrapper.wrapSummary(prod, request);
                     out.add(wrapper);
                 }
             }
@@ -405,7 +405,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             if (xSellProds != null) {
                 for (RelatedProduct prod : xSellProds) {
                     RelatedProductWrapper wrapper = (RelatedProductWrapper)context.getBean(RelatedProductWrapper.class.getName());
-                    wrapper.wrap(prod, request);
+                    wrapper.wrapSummary(prod, request);
                     out.add(wrapper);
                 }
             }
@@ -422,7 +422,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             if (product.getProductAttributes() != null) {
                 for (Map.Entry<String, ProductAttribute> entry : product.getProductAttributes().entrySet()) {
                     ProductAttributeWrapper wrapper = (ProductAttributeWrapper)context.getBean(ProductAttributeWrapper.class.getName());
-                    wrapper.wrap(entry.getValue(), request);
+                    wrapper.wrapSummary(entry.getValue(), request);
                     out.add(wrapper);
                 }
             }
@@ -439,7 +439,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             if (sku.getSkuAttributes() != null) {
                 for (Map.Entry<String, SkuAttribute> entry : sku.getSkuAttributes().entrySet()) {
                     SkuAttributeWrapper wrapper = (SkuAttributeWrapper)context.getBean(SkuAttributeWrapper.class.getName());
-                    wrapper.wrap(entry.getValue(), request);
+                    wrapper.wrapSummary(entry.getValue(), request);
                     out.add(wrapper);
                 }
             }
@@ -456,7 +456,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             if (sku.getSkuMedia() != null && ! sku.getSkuMedia().isEmpty()) {
                 for (Media media : sku.getSkuMedia().values()) {
                     MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());
-                    wrapper.wrap(media, request);
+                    wrapper.wrapSummary(media, request);
                     if (wrapper.isAllowOverrideUrl()){
                         wrapper.setUrl(getStaticAssetService().convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
                     }
@@ -473,7 +473,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         Sku sku = catalogService.findSkuById(id);
         if (sku != null) {
             SkuWrapper wrapper = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
-            wrapper.wrap(sku, request);
+            wrapper.wrapDetails(sku, request);
             return wrapper;
         }
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Sku with Id " + id + " could not be found").build());
@@ -488,7 +488,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             if (media != null) {
                 for (Media med : media.values()) {
                     MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());
-                    wrapper.wrap(med, request);
+                    wrapper.wrapSummary(med, request);
                     if (wrapper.isAllowOverrideUrl()){
                         wrapper.setUrl(getStaticAssetService().convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
                     }
@@ -508,7 +508,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             Map<String, Media> media = category.getCategoryMedia();
             for (Media med : media.values()) {
                 MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());
-                wrapper.wrap(med, request);
+                wrapper.wrapSummary(med, request);
                 out.add(wrapper);
             }
             return out;
@@ -525,7 +525,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             for (CategoryProductXref categoryXref : product.getAllParentCategoryXrefs()) {
                 categories.add(categoryXref.getCategory());
             }
-            wrapper.wrap(categories, request);
+            wrapper.wrapDetails(categories, request);
             return wrapper;
         }
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());

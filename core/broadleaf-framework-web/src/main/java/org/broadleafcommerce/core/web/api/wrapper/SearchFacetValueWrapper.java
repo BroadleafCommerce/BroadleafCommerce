@@ -70,7 +70,7 @@ public class SearchFacetValueWrapper extends BaseWrapper implements APIWrapper<S
     protected BigDecimal maxValue;
 
     @Override
-    public void wrap(SearchFacetResultDTO model, HttpServletRequest request) {
+    public void wrapDetails(SearchFacetResultDTO model, HttpServletRequest request) {
         this.active = model.isActive();
         this.valueKey = model.getValueKey();
         this.quantity = model.getQuantity();
@@ -79,4 +79,8 @@ public class SearchFacetValueWrapper extends BaseWrapper implements APIWrapper<S
         this.maxValue = model.getMaxValue();
     }
 
+    @Override
+    public void wrapSummary(SearchFacetResultDTO model, HttpServletRequest request) {
+        wrapDetails(model, request);
+    }
 }
