@@ -79,7 +79,7 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
     @XmlElementWrapper(name = "paymentInfos")
     protected List<PaymentInfoWrapper> paymentInfos;
 
-    @XmlElement(name = "orderAdjustments")
+    @XmlElement(name = "orderAdjustment")
     @XmlElementWrapper(name = "orderAdjustments")
     protected List<AdjustmentWrapper> orderAdjustments;
 

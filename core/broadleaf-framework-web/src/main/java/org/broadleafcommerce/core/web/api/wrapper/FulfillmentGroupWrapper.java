@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -60,6 +61,10 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
     @XmlElement
     protected PhoneWrapper phone;
 
+    @XmlElement(name = "fulfillmentGroupAdjustment")
+    @XmlElementWrapper(name = "fulfillmentGroupAdjustments")
+    protected List<AdjustmentWrapper> fulfillmentGroupAdjustments;
+
     @XmlElement(name = "fulfillmentGroupItem")
     @XmlElementWrapper(name = "fulfillmentGroupItems")
     protected List<FulfillmentGroupItemWrapper> fulfillmentGroupItems;
@@ -94,6 +99,16 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
                 fulfillmentGroupItemWrappers.add(fulfillmentGroupItemWrapper);
             }
             this.fulfillmentGroupItems = fulfillmentGroupItemWrappers;
+        }
+
+        List<FulfillmentGroupAdjustment> adjustments = model.getFulfillmentGroupAdjustments();
+        if (adjustments != null && !adjustments.isEmpty()) {
+            this.fulfillmentGroupAdjustments = new ArrayList<AdjustmentWrapper>();
+            for (FulfillmentGroupAdjustment adj : adjustments) {
+                AdjustmentWrapper adjustmentWrapper = (AdjustmentWrapper) context.getBean(AdjustmentWrapper.class.getName());
+                adjustmentWrapper.wrapSummary(adj, request);
+                this.fulfillmentGroupAdjustments.add(adjustmentWrapper);
+            }
         }
 
     }
