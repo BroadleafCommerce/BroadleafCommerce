@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
@@ -644,7 +645,7 @@ public class OfferImpl implements Offer, Status {
 
     @Override
     public String getMarketingMessage() {
-        return marketingMessage;
+        return DynamicTranslationProvider.getValue(this, "marketingMessage", marketingMessage);
     }
 
     @Override
