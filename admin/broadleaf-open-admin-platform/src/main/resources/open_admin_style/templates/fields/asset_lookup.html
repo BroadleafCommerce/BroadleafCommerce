@@ -11,7 +11,7 @@
         th:src="@{*{fields['__${field.name}__'].value + '?largeAdminThumbnail'}}"
         th:attr="data-fullurl=@{*{fields['__${field.name}__'].value}}" />
         
-    <img class="thumbnail" 
+    <img class="thumbnail placeholder-image" 
         th:src="@{/img/admin/placeholder-60x60.gif}"
         th:unless="*{fields['__${field.name}__'].value != null and fields['__${field.name}__'].value != ''}" />
     
