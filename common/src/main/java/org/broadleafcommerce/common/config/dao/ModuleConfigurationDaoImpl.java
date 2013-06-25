@@ -22,7 +22,7 @@ import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.time.SystemTime;
-import org.hibernate.annotations.QueryHints;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -87,7 +87,8 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
     public List<ModuleConfiguration> readAllByType(ModuleConfigurationType type) {
         Query query = em.createNamedQuery("BC_READ_MODULE_CONFIG_BY_TYPE");
         query.setParameter("configType", type.getType());
-        query.setHint(QueryHints.CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blConfigurationModuleElements");
         return query.getResultList();
     }
 
@@ -101,7 +102,8 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
         myDate = getDateFactoringInDateResolution(myDate);
 
         query.setParameter("currentDate", myDate);
-        query.setHint(QueryHints.CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blConfigurationModuleElements");
         return query.getResultList();
     }
 
@@ -110,7 +112,8 @@ public class ModuleConfigurationDaoImpl implements ModuleConfigurationDao {
     public List<ModuleConfiguration> readByType(Class<? extends ModuleConfiguration> type) {
         //TODO change this to a JPA criteria expression
         Query query = em.createQuery("SELECT config FROM " + type.getName() + " config");
-        query.setHint(QueryHints.CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blConfigurationModuleElements");
         return query.getResultList();
     }
 

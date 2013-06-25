@@ -56,7 +56,7 @@ import javax.persistence.Table;
 @Table(name = "BLC_MODULE_CONFIGURATION")
 @EntityListeners(value = { AuditableListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(excludeFromPolymorphism = true, friendlyName = "AbstractModuleConfiguration")
 public abstract class AbstractModuleConfiguration implements ModuleConfiguration, Status {
 
