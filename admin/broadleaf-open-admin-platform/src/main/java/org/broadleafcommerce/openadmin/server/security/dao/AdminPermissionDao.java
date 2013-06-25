@@ -31,6 +31,7 @@ public interface AdminPermissionDao {
 
     public List<AdminPermission> readAllAdminPermissions();
     public AdminPermission readAdminPermissionById(Long id);
+    public AdminPermission readAdminPermissionByName(String name);
     public AdminPermission saveAdminPermission(AdminPermission permission);
     public void deleteAdminPermission(AdminPermission permission);
     public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName);

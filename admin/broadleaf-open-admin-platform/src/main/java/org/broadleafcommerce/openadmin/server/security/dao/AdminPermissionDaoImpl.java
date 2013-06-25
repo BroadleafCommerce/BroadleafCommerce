@@ -19,17 +19,23 @@ package org.broadleafcommerce.openadmin.server.security.dao;
 import org.apache.commons.lang.ClassUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  * 
@@ -54,6 +60,26 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
 
     public AdminPermission readAdminPermissionById(Long id) {
         return (AdminPermission) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminPermission"), id);
+    }
+    
+    @Override
+    public AdminPermission readAdminPermissionByName(String name) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<AdminPermission> criteria = builder.createQuery(AdminPermission.class);
+        Root<AdminPermissionImpl> adminPerm = criteria.from(AdminPermissionImpl.class);
+        criteria.select(adminPerm);
+
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(builder.equal(adminPerm.get("name"), name));
+
+        // Execute the query with the restrictions
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        List<AdminPermission> results = em.createQuery(criteria).getResultList();
+        if (results == null || results.size() == 0) {
+            return null;
+        } else {
+            return results.get(0);
+        }
     }
 
     public AdminPermission saveAdminPermission(AdminPermission permission) {
