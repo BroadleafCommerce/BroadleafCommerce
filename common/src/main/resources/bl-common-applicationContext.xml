@@ -61,7 +61,7 @@
     <bean id="blNullEmailInfo" class="org.broadleafcommerce.common.email.service.info.NullEmailInfo" />
     
     <bean id="blWebCommonClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
-        <property name="prefix" value="/common_templates/" />
+        <property name="prefix" value="common_templates/" />
         <property name="suffix" value=".html" />
         <property name="templateMode" value="HTML5" />        
         <property name="characterEncoding" value="UTF-8" />
