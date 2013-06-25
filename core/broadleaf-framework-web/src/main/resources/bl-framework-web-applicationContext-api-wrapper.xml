@@ -39,9 +39,8 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.SkuBundleItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SkuBundleItemWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.BroadleafEnumerationTypeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.BroadleafEnumerationTypeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OfferWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OfferWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderAdjustmentWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderAdjustmentWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemPriceDetailWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemPriceDetailWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemPriceDetailAdjustmentWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemPriceDetailAdjustmentWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.AdjustmentWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderAdjustmentWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemPriceDetailWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemPriceDetailWrapper" scope="prototype"/>    
     <bean id="org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.SearchFacetWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SearchFacetWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.SearchFacetValueWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SearchFacetValueWrapper" scope="prototype"/>

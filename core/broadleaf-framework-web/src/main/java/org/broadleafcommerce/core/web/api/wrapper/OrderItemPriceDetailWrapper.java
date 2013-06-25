@@ -45,19 +45,19 @@ public class OrderItemPriceDetailWrapper extends BaseWrapper implements
     
     @XmlElement
     protected Integer quantity;
-    @XmlElement(name = "orderItemPriceDetails")
-    @XmlElementWrapper(name = "orderItemPriceDetailAdjustment")
-    protected List<OrderItemPriceDetailAdjustmentWrapper> orderItemPriceDetailAdjustments = new LinkedList<OrderItemPriceDetailAdjustmentWrapper>();
+    @XmlElement(name = "adjustment")
+    @XmlElementWrapper(name = "adjustments")
+    protected List<AdjustmentWrapper> orderItemPriceDetailAdjustments = new LinkedList<AdjustmentWrapper>();
 
     @Override
     public void wrapDetails(OrderItemPriceDetail model, HttpServletRequest request) {
         this.id = model.getId();
         this.quantity = model.getQuantity();
         if (!model.getOrderItemPriceDetailAdjustments().isEmpty()) {
-            this.orderItemPriceDetailAdjustments = new ArrayList<OrderItemPriceDetailAdjustmentWrapper>();
+            this.orderItemPriceDetailAdjustments = new ArrayList<AdjustmentWrapper>();
             for (OrderItemPriceDetailAdjustment orderItemPriceDetail : model.getOrderItemPriceDetailAdjustments()) {
-                OrderItemPriceDetailAdjustmentWrapper orderItemPriceDetailAdjustmentWrapper =
-                        (OrderItemPriceDetailAdjustmentWrapper) context.getBean(OrderItemPriceDetailAdjustmentWrapper.class.getName());
+                AdjustmentWrapper orderItemPriceDetailAdjustmentWrapper =
+                        (AdjustmentWrapper) context.getBean(AdjustmentWrapper.class.getName());
                 orderItemPriceDetailAdjustmentWrapper.wrapSummary(orderItemPriceDetail, request);
                 this.orderItemPriceDetailAdjustments.add(orderItemPriceDetailAdjustmentWrapper);
             }

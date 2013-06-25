@@ -81,7 +81,7 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
 
     @XmlElement(name = "orderAdjustments")
     @XmlElementWrapper(name = "orderAdjustments")
-    protected List<OrderAdjustmentWrapper> orderAdjustments;
+    protected List<AdjustmentWrapper> orderAdjustments;
 
     @XmlElement(name = "orderAttribute")
     @XmlElementWrapper(name = "orderAttributes")
@@ -124,11 +124,11 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
         }
 
         if (model.getOrderAdjustments() != null && !model.getOrderAdjustments().isEmpty()) {
-            this.orderAdjustments = new ArrayList<OrderAdjustmentWrapper>();
+            this.orderAdjustments = new ArrayList<AdjustmentWrapper>();
             for (OrderAdjustment orderAdjustment : model.getOrderAdjustments()) {
-                OrderAdjustmentWrapper orderItemWrapper = (OrderAdjustmentWrapper) context.getBean(OrderAdjustmentWrapper.class.getName());
-                orderItemWrapper.wrapSummary(orderAdjustment, request);
-                this.orderAdjustments.add(orderItemWrapper);
+                AdjustmentWrapper orderAdjustmentWrapper = (AdjustmentWrapper) context.getBean(AdjustmentWrapper.class.getName());
+                orderAdjustmentWrapper.wrapSummary(orderAdjustment, request);
+                this.orderAdjustments.add(orderAdjustmentWrapper);
             }
         }
         if (model.getOrderAttributes() != null && !model.getOrderAttributes().isEmpty()) {
