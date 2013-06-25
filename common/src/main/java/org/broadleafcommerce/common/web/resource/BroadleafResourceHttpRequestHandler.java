@@ -53,8 +53,8 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
         
         if (handlers != null) {
             for (AbstractGeneratedResourceHandler handler : handlers) {
-                if (handler.getHandledFileName().equals(path)) {
-                    return handler.getResource();
+                if (handler.canHandle(path)) {
+                    return handler.getResource(path, getLocations());
                 }
             }
         }

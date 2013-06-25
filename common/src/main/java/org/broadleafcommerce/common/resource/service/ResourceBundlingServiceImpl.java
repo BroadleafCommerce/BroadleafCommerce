@@ -16,11 +16,14 @@
 
 package org.broadleafcommerce.common.resource.service;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.GeneratedResource;
-import org.broadleafcommerce.common.util.StopWatch;
 import org.broadleafcommerce.common.web.resource.AbstractGeneratedResourceHandler;
 import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +60,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     
     // Map of known bundle names ==> bundle version
     // ex: "global.js" ==> "global12345.js"
-    protected Map<String, String> bundleVersions = new HashMap<String, String>();
+    protected Cache bundleVersionsCache;
     
     // Map of known unversioned bundle names ==> additional files that should be included
     // Configured via XML
@@ -87,22 +90,6 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     
     protected Resource readBundle(String versionedBundleName) {
         return new FileSystemResource(getFilePath(versionedBundleName));
-    }
-    
-    protected void saveBundle(Resource resource) {
-        File file = new File(getFilePath(resource.getDescription()));
-        if (!file.getParentFile().exists()) {
-            if (!file.getParentFile().mkdirs()) {
-                throw new RuntimeException("Unable to create middle directories for file: " + file.getAbsolutePath());
-            }
-        }
-        
-        try {
-            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-            StreamUtils.copy(resource.getInputStream(), out);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
     
     protected String getFilePath(String name) {
@@ -160,9 +147,26 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         return r;
     }
     
+    protected void saveBundle(Resource resource) {
+        File file = new File(getFilePath(resource.getDescription()));
+        if (!file.getParentFile().exists()) {
+            if (!file.getParentFile().mkdirs()) {
+                throw new RuntimeException("Unable to create middle directories for file: " + file.getAbsolutePath());
+            }
+        }
+        
+        try {
+            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+            StreamUtils.copy(resource.getInputStream(), out);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     @Override
     public String getVersionedBundleName(String unversionedBundleName) {
-        return bundleVersions.get(unversionedBundleName);
+        Element e = getBundleVersionsCache().get(unversionedBundleName);
+        return e == null ? null : (String) e.getValue();
     }
     
     @Override
@@ -173,7 +177,6 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     @Override
     public String registerBundle(String bundleName, List<String> files, BroadleafResourceHttpRequestHandler handler) 
             throws IOException {
-        StopWatch s = new StopWatch();
         LinkedHashMap<String, Resource> foundResources = new LinkedHashMap<String, Resource>();
         
         if (additionalBundleFiles.get(bundleName) != null) {
@@ -181,45 +184,70 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         }
         
         for (String file : files) {
-    		for (Resource location : handler.getLocations()) {
-    			try {
-    				Resource resource = location.createRelative(file);
-    				if (resource.exists() && resource.isReadable()) {
-    				    foundResources.put(file, resource);
-    				    break;
-    				}
-    			}
-    			catch (IOException ex) {
-    				LOG.debug("Failed to create relative resource - trying next resource location", ex);
-    			}
-    		}
-    		
-    		// We didn't find the resource in any of the configured locations.
-    		// Check to see if it's a generated resource
+            boolean match = false;
+            
+            // Check to see if there is any registered handler that understands how to generate
+            // this file.
     		if (handler.getHandlers() != null) {
                 for (AbstractGeneratedResourceHandler h : handler.getHandlers()) {
-                    if (h.getHandledFileName().equals(file)) {
-        				foundResources.put(file, h.getResource());
+                    if (h.canHandle(file)) {
+        				foundResources.put(file, h.getResource(file, handler.getLocations()));
+        				match = true;
+        				break;
                     }
                 }
     		}
+    		
+    		// If we didn't find a generator that could handle this file, let's see if we can 
+    		// look it up from our known locations
+    		if (!match) {
+        		for (Resource location : handler.getLocations()) {
+        			try {
+        				Resource resource = location.createRelative(file);
+        				if (resource.exists() && resource.isReadable()) {
+        				    foundResources.put(file, resource);
+        				    match = true;
+        				    break;
+        				}
+        			}
+        			catch (IOException ex) {
+        				LOG.debug("Failed to create relative resource - trying next resource location", ex);
+        			}
+        		}
+    		}
         }
         
-        StringBuilder sb = new StringBuilder();
-        for (Entry<String, Resource> entry : foundResources.entrySet()) {
-            sb.append(entry.getKey()).append(entry.getValue().lastModified()).append("\r\n");
-        }
-        String version = String.valueOf(sb.toString().hashCode());
+        String version = getBundleVersion(foundResources);
+        String versionedName = getBundleName(bundleName, version);
         
+        bundles.put(versionedName, foundResources.values());
+        getBundleVersionsCache().put(new Element(bundleName, versionedName));
+        
+        return versionedName;
+    }
+    
+    protected String getBundleName(String bundleName, String version) {
         String bundleWithoutExtension = bundleName.substring(0, bundleName.lastIndexOf('.'));
         String bundleExtension = bundleName.substring(bundleName.lastIndexOf('.'));
-        
         String versionedName = bundleWithoutExtension + version + bundleExtension;
-        bundles.put(versionedName, foundResources.values());
-        bundleVersions.put(bundleName, versionedName);
-        
-        s.printString("Regitering bundle");
         return versionedName;
+    }
+    
+    protected String getBundleVersion(LinkedHashMap<String, Resource> foundResources) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        for (Entry<String, Resource> entry : foundResources.entrySet()) {
+            sb.append(entry.getKey());
+            
+            if (entry.getValue() instanceof GeneratedResource) {
+                sb.append(((GeneratedResource) entry.getValue()).getHash());
+            } else {
+                sb.append(entry.getValue().lastModified());
+            }
+            
+            sb.append("\r\n");
+        }
+        String version = String.valueOf(sb.toString().hashCode());
+        return version;
     }
     
     @Override
@@ -233,6 +261,13 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     
     public void setAdditionalBundleFiles(Map<String, List<String>> additionalBundleFiles) {
         this.additionalBundleFiles = additionalBundleFiles;
+    }
+    
+    protected Cache getBundleVersionsCache() {
+        if (bundleVersionsCache == null) {
+            bundleVersionsCache = CacheManager.getInstance().getCache("blBundleElements");
+        }
+        return bundleVersionsCache;
     }
 
 }

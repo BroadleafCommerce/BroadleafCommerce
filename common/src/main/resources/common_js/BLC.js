@@ -156,10 +156,6 @@ var BLC = (function($) {
         return document.location.search = params;
     };
     
-    function getThemeVariables() {
-        return //BLC-THEME-VARIABLES
-    }
-    
     addPreAjaxCallbackHandler(function($data) {
         return BLC.redirectIfNecessary($data);
     });
@@ -171,7 +167,6 @@ var BLC = (function($) {
         ajax : ajax,
         defaultErrorHandler : defaultErrorHandler,
         serializeObject : serializeObject,
-        addUrlParam : addUrlParam,
-        getThemeVariables : getThemeVariables
+        addUrlParam : addUrlParam
     }
 })($);

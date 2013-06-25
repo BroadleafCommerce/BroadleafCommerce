@@ -23,6 +23,8 @@ import net.sf.ehcache.Element;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.springframework.core.io.Resource;
 
+import java.util.List;
+
 
 /**
  * An abstract GeneratedResourceHandler that is capable of responding to a single specified filename and generate
@@ -34,40 +36,48 @@ import org.springframework.core.io.Resource;
 public abstract class AbstractGeneratedResourceHandler {
     
     protected Cache generatedResourceCache;
+    
+    /**
+     * @param path
+     * @return booelean determining whether or not this handler is able to handle the given request
+     */
+    public abstract boolean canHandle(String path);
+    
+    /**
+     * @param path
+     * @param locations 
+     * @return the Resource representing this file
+     */
+    public abstract Resource getFileContents(String path, List<Resource> locations);
 
     /**
      * Attempts to retrive the requested resource from cache. If not cached, generates the resource, caches it,
      * and then returns it
      * 
      * @param request
+     * @param location
      * @return the generated resource
      */
-    public Resource getResource() {
-        String filename = getHandledFileName();
+    public Resource getResource(String path, List<Resource> locations) {
+        Element e = getGeneratedResourceCache().get(path);
+        Resource r = null;
         
-        Element e = getGeneratedResourceCache().get(filename);
         if (e == null || e.getObjectValue() == null) {
-            String contents = getFileContents();
-            GeneratedResource r = new GeneratedResource(contents.getBytes(), filename);
-            e = new Element(filename,  r);
-            getGeneratedResourceCache().put(e);
+            r = getFileContents(path, locations);
+            if (!(r instanceof GeneratedResource) || ((GeneratedResource) r).isCacheable()) {
+                e = new Element(path,  r);
+                getGeneratedResourceCache().put(e);
+            }
+        } else {
+            r = (Resource) e.getObjectValue();
         }
         
-        return (Resource) e.getObjectValue();
+        return r;
     }
     
-    /**
-     * For example, if the application is deployed under the "test" context and you want to handle the request 
-     * for http://localhost/test/js/myFile.js, this method should return the String "/js/myFile.js".
-     * 
-     * @return the servlet-context-based file name to handle. 
-     */
-    public abstract String getHandledFileName();
-    
-    /**
-     * @return the String representation of the contents of this generated file
-     */
-    public abstract String getFileContents();
+    protected GeneratedResource createGeneratedResource(String contents, String path, boolean cacheable) {
+        return new GeneratedResource(contents.getBytes(), path, cacheable);
+    }
     
     protected Cache getGeneratedResourceCache() {
         if (generatedResourceCache == null) {

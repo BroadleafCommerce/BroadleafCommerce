@@ -17,9 +17,10 @@
 package org.broadleafcommerce.openadmin.web.rulebuilder.enums;
 
 import org.broadleafcommerce.common.web.resource.AbstractGeneratedResourceHandler;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Generated resource handler for blc-rulebuilder-options.js.
@@ -31,17 +32,17 @@ import javax.annotation.Resource;
 @Component("blRuleBuilderEnumOptionsResourceHandler")
 public class RuleBuilderEnumOptionsResourceHandler extends AbstractGeneratedResourceHandler {
     
-    @Resource(name = "blRuleBuilderEnumOptionsExtensionManager")
+    @javax.annotation.Resource(name = "blRuleBuilderEnumOptionsExtensionManager")
     protected RuleBuilderEnumOptionsExtensionManager ruleBuilderEnumOptions;
     
     @Override
-    public String getHandledFileName() {
-        return "admin/components/ruleBuilder-options.js";
+    public boolean canHandle(String path) {
+        return "admin/components/ruleBuilder-options.js".equals(path);
     }
 
     @Override
-    public String getFileContents() {
-        return ruleBuilderEnumOptions.getOptionValues();
+    public Resource getFileContents(String path, List<Resource> locations) {
+        return createGeneratedResource(ruleBuilderEnumOptions.getOptionValues(), path, true);
     }
 
 }

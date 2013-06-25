@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.common.resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.util.InMemoryResource;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
@@ -30,10 +31,17 @@ import java.io.IOException;
 public class GeneratedResource extends InMemoryResource {
     
     protected long timeGenerated;
+    protected boolean cacheable = true;
+    protected String hashRepresentation;
 
     public GeneratedResource(byte[] source, String description) {
         super(source, description);
         timeGenerated = System.currentTimeMillis();
+    }
+    
+    public GeneratedResource(byte[] source, String description, boolean cacheable) {
+        this(source, description);
+        this.cacheable = cacheable;
     }
     
     @Override
@@ -44,6 +52,26 @@ public class GeneratedResource extends InMemoryResource {
     @Override
 	public long lastModified() throws IOException {
         return timeGenerated;
+    }
+    
+    public String getHash() {
+        return StringUtils.isBlank(getHashRepresentation()) ? String.valueOf(timeGenerated) : getHashRepresentation();
+    }
+    
+    public boolean isCacheable() {
+        return cacheable;
+    }
+    
+    public void setCacheable(boolean cacheable) {
+        this.cacheable = cacheable;
+    }
+
+    public String getHashRepresentation() {
+        return hashRepresentation;
+    }
+
+    public void setHashRepresentation(String hashRepresentation) {
+        this.hashRepresentation = hashRepresentation;
     }
 
 }

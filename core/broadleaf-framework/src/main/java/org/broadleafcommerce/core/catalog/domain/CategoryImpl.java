@@ -138,7 +138,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
 
         categoryUrlMap.put(currentPath, newCategoryList);
         for (CategoryXref currentCategory : category.getChildCategoryXrefs()) {
-            fillInURLMapForCategory(categoryUrlMap, currentCategory.getCategory(), currentPath, newCategoryList);
+            fillInURLMapForCategory(categoryUrlMap, currentCategory.getSubCategory(), currentPath, newCategoryList);
         }
     }
 
@@ -634,7 +634,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @Override
     public List<Long> getChildCategoryIds() {
         if (childCategoryIds == null) {
-            HydratedSetup.populateFromCache(this);
+            HydratedSetup.populateFromCache(this, "childCategoryIds");
         }
         return childCategoryIds;
     }
@@ -679,7 +679,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @Deprecated
     public Map<String, List<Long>> getChildCategoryURLMap() {
         if (childCategoryURLMap == null) {
-            HydratedSetup.populateFromCache(this);
+            HydratedSetup.populateFromCache(this, "childCategoryURLMap");
         }
         return childCategoryURLMap;
     }
