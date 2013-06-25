@@ -87,7 +87,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     protected String label;
 
     @Column(name = "REQUIRED")
-    @AdminPresentation(friendlyName = "productOption_Required")
+    @AdminPresentation(friendlyName = "productOption_Required", prominent = true)
     protected Boolean required;
 
     @Column(name = "USE_IN_SKU_GENERATION")
