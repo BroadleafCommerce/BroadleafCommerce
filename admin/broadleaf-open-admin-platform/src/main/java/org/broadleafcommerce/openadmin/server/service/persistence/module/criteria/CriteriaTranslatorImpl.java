@@ -20,11 +20,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -34,6 +31,9 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -109,7 +109,7 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
                 boolean shouldConvert = true;
                 if (CollectionUtils.isNotEmpty(filterMapping.getFilterValues())) {
                     directValues = filterMapping.getFilterValues();
-                } else if (CollectionUtils.isNotEmpty(filterMapping.getDirectFilterValues())) {
+                } else if (CollectionUtils.isNotEmpty(filterMapping.getDirectFilterValues()) || (filterMapping.getDirectFilterValues() != null && filterMapping.getDirectFilterValues() instanceof EmptyFilterValues)) {
                     directValues = filterMapping.getDirectFilterValues();
                     shouldConvert = false;
                 }

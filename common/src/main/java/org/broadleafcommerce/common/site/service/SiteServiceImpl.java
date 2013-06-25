@@ -21,9 +21,10 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 @Service("blSiteService")
 public class SiteServiceImpl implements SiteService {
@@ -42,6 +43,7 @@ public class SiteServiceImpl implements SiteService {
     }
 
     @Override
+    @Transactional(value = "blTransactionManager", readOnly = true)
     public Site retrieveSiteByDomainName(String domainName) {
         String domainPrefix = null;
         if (domainName != null) {

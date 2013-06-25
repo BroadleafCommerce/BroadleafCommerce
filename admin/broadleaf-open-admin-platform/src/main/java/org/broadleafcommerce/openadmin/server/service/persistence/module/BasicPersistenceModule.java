@@ -69,6 +69,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -91,12 +96,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 
 /**
  * @author jfischer
@@ -963,7 +962,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (isArchivable && !persistencePerspective.getShowArchivedFields()) {
                 FilterMapping filterMapping = new FilterMapping()
                     .withFieldPath(new FieldPath().withTargetProperty("archiveStatus.archived"))
-                    .withFilterValues(new EmptyFilterValues())
+                    .withDirectFilterValues(new EmptyFilterValues())
                     .withRestriction(new Restriction()
                             .withPredicateProvider(new PredicateProvider<Character, Character>() {
                                 @Override

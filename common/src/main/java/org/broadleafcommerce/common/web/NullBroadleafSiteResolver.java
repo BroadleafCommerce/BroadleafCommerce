@@ -17,7 +17,6 @@
 package org.broadleafcommerce.common.web;
 
 import org.broadleafcommerce.common.site.domain.Site;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
@@ -29,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author bpolster
  */
-@Component("blSiteResolver")
 public class NullBroadleafSiteResolver implements BroadleafSiteResolver {
 
     @Override
