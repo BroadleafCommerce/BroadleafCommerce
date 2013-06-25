@@ -133,7 +133,8 @@ public class OfferImpl implements Offer, Status {
     @Column(name = "MARKETING_MESSASGE")
     @Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnNames = { "MARKETING_MESSASGE" })
     @AdminPresentation(friendlyName = "OfferImpl_marketingMessage", order = 6000,
-            group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
+            group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
+            translatable = true)
     protected String marketingMessage;
 
     @Column(name = "OFFER_TYPE", nullable=false)
