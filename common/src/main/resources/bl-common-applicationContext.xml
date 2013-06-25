@@ -70,6 +70,9 @@
         <property name="order" value="500"/> 
     </bean>  
     
+    <bean id="blSiteResolver" class="org.broadleafcommerce.common.web.NullBroadleafSiteResolver" />
+    <bean id="blThemeResolver" class="org.broadleafcommerce.common.web.NullBroadleafThemeResolver" />
+    
 <!--  Message creator for velocity templates.  Now should be defined in client properties file. -->
     <!-- bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.VelocityMessageCreator">
         <constructor-arg ref="blVelocityEngine"/>
