@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +99,10 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
     protected List<OrderItemWrapper> bundleItems;
     //
 
+    @XmlElementWrapper(name = "qualifiers")
+    @XmlElement(name = "qualifier")
+    protected List<OrderItemQualifierWrapper> qualifiers;
+
     @Override
     public void wrapDetails(OrderItem model, HttpServletRequest request) {
         this.id = model.getId();
@@ -164,6 +169,15 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
             //            ProductBundleSummaryWrapper productWrapper = (ProductBundleSummaryWrapper) context.getBean(ProductBundleSummaryWrapper.class.getName());
             //            productWrapper.wrap(boi.getProduct(), request);
             this.productId = boi.getProduct().getId();
+        }
+
+        if (model.getOrderItemQualifiers() != null && !model.getOrderItemQualifiers().isEmpty()) {
+            this.qualifiers = new ArrayList<OrderItemQualifierWrapper>();
+            for (OrderItemQualifier qualifier : model.getOrderItemQualifiers()) {
+                OrderItemQualifierWrapper qualifierWrapper = (OrderItemQualifierWrapper) context.getBean(OrderItemQualifierWrapper.class.getName());
+                qualifierWrapper.wrapSummary(qualifier, request);
+                this.qualifiers.add(qualifierWrapper);
+            }
         }
     }
 

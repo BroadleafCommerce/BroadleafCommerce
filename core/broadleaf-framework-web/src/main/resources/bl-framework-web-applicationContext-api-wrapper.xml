@@ -18,6 +18,7 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.MapElementWrapper" class="org.broadleafcommerce.core.web.api.wrapper.MapElementWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.MediaWrapper" class="org.broadleafcommerce.core.web.api.wrapper.MediaWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemQualifierWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemQualifierWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderAttributeWrapper" scope="prototype"/>
