@@ -164,8 +164,13 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
         }
 
         address.setCompanyName(this.companyName);
-        address.setBusiness(this.isBusiness);
-        address.setDefault(this.isDefault);
+
+        if (this.isBusiness != null) {
+            address.setBusiness(this.isBusiness);
+        }
+        if (this.isDefault != null) {
+            address.setDefault(this.isDefault);
+        }
 
         return address;
     }
