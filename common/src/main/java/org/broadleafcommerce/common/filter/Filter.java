@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.filter;
 
+import java.util.List;
+
 /**
  * @author Jeff Fischer
  */
@@ -24,7 +26,7 @@ public class Filter {
     String name;
     String condition;
     String entityImplementationClassName;
-    String indexColumnName;
+    List<String> indexColumnNames;
 
     public String getCondition() {
         return condition;
@@ -50,11 +52,11 @@ public class Filter {
         this.entityImplementationClassName = entityImplementationClassName;
     }
 
-    public String getIndexColumnName() {
-        return indexColumnName;
+    public List<String> getIndexColumnNames() {
+        return indexColumnNames;
     }
 
-    public void setIndexColumnName(String indexColumnName) {
-        this.indexColumnName = indexColumnName;
+    public void setIndexColumnNames(List<String> indexColumnNames) {
+        this.indexColumnNames = indexColumnNames;
     }
 }
