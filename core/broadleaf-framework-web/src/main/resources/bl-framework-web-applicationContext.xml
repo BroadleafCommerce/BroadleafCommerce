@@ -49,10 +49,8 @@
         </property>     
     </bean> 
     
-
     <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
-    <bean id="blWebCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver">
-    </bean> 
+    <bean id="blWebCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
     
     <bean id="blWebTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
         <property name="prefix" value="/WEB-INF/templates/" />
@@ -75,8 +73,7 @@
     </bean>  
     
     <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
-    <bean id="blEmailCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver">
-    </bean> 
+    <bean id="blEmailCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
     
     <bean id="blEmailTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
         <property name="prefix" value="/WEB-INF/emailTemplates/" />
@@ -99,12 +96,12 @@
     
     <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring3.dialect.SpringStandardDialect" />
     
-    <bean id="blAdminMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
-                
+    <bean id="blMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
+    
     <bean id="blWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
         <property name="messageResolvers">
             <set>
-                <ref bean="blAdminMessageResolver" />
+                <ref bean="blMessageResolver" />
                 <bean class="org.thymeleaf.spring3.messageresolver.SpringMessageResolver" />
             </set>
         </property>
