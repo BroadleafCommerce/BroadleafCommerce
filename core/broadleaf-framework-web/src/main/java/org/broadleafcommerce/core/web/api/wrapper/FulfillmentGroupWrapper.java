@@ -21,6 +21,7 @@ import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.TaxDetail;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
@@ -69,6 +70,10 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
     @XmlElementWrapper(name = "fulfillmentGroupItems")
     protected List<FulfillmentGroupItemWrapper> fulfillmentGroupItems;
 
+    @XmlElement(name = "taxDetail")
+    @XmlElementWrapper(name = "taxDetails")
+    protected List<TaxDetailWrapper> taxDetails;
+
     @Override
     public void wrapDetails(FulfillmentGroup model, HttpServletRequest request) {
         this.id = model.getId();
@@ -111,6 +116,15 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
             }
         }
 
+        List<TaxDetail> taxes = model.getTaxes();
+        if (taxes != null && !taxes.isEmpty()) {
+            this.taxDetails = new ArrayList<TaxDetailWrapper>();
+            for (TaxDetail detail : taxes) {
+                TaxDetailWrapper taxDetailWrapper = (TaxDetailWrapper) context.getBean(TaxDetailWrapper.class.getName());
+                taxDetailWrapper.wrapSummary(detail, request);
+                this.taxDetails.add(taxDetailWrapper);
+            }
+        }
     }
 
     @Override
