@@ -31,17 +31,11 @@ import java.io.IOException;
 public class GeneratedResource extends InMemoryResource {
     
     protected long timeGenerated;
-    protected boolean cacheable = true;
     protected String hashRepresentation;
 
     public GeneratedResource(byte[] source, String description) {
         super(source, description);
         timeGenerated = System.currentTimeMillis();
-    }
-    
-    public GeneratedResource(byte[] source, String description, boolean cacheable) {
-        this(source, description);
-        this.cacheable = cacheable;
     }
     
     @Override
@@ -54,20 +48,8 @@ public class GeneratedResource extends InMemoryResource {
         return timeGenerated;
     }
     
-    public String getHash() {
-        return StringUtils.isBlank(getHashRepresentation()) ? String.valueOf(timeGenerated) : getHashRepresentation();
-    }
-    
-    public boolean isCacheable() {
-        return cacheable;
-    }
-    
-    public void setCacheable(boolean cacheable) {
-        this.cacheable = cacheable;
-    }
-
     public String getHashRepresentation() {
-        return hashRepresentation;
+        return StringUtils.isBlank(hashRepresentation) ? String.valueOf(timeGenerated) : hashRepresentation;
     }
 
     public void setHashRepresentation(String hashRepresentation) {

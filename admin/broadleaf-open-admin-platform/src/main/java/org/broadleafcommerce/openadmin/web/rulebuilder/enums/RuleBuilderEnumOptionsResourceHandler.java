@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.rulebuilder.enums;
 
+import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.web.resource.AbstractGeneratedResourceHandler;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -42,7 +43,12 @@ public class RuleBuilderEnumOptionsResourceHandler extends AbstractGeneratedReso
 
     @Override
     public Resource getFileContents(String path, List<Resource> locations) {
-        return createGeneratedResource(ruleBuilderEnumOptions.getOptionValues(), path, true);
+        return new GeneratedResource(ruleBuilderEnumOptions.getOptionValues().getBytes(), path);
+    }
+
+    @Override
+    public boolean isCachedResourceExpired(GeneratedResource cachedResource, String path, List<Resource> locations) {
+        return false;
     }
 
 }
