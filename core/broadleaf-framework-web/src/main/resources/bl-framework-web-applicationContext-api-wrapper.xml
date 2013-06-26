@@ -45,5 +45,5 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.SearchFacetWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SearchFacetWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.SearchFacetValueWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SearchFacetValueWrapper" scope="prototype"/>
-
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.TaxDetailWrapper" class="org.broadleafcommerce.core.web.api.wrapper.TaxDetailWrapper" scope="prototype"/>
 </beans>
