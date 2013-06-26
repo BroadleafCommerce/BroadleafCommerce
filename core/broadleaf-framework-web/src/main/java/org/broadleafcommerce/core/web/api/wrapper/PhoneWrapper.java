@@ -65,10 +65,16 @@ public class PhoneWrapper extends BaseWrapper implements APIWrapper<Phone>, APIU
     public Phone unwrap(HttpServletRequest request, ApplicationContext appContext) {
         PhoneService phoneService = (PhoneService) appContext.getBean("blPhoneService");
         Phone phone = phoneService.create();
-
-        phone.setActive(this.isActive);
-        phone.setDefault(this.isDefault);
         phone.setId(this.id);
+
+        if (this.isActive != null) {
+            phone.setActive(this.isActive);
+        }
+
+        if (this.isDefault != null) {
+            phone.setDefault(this.isDefault);
+        }
+
         phone.setPhoneNumber(this.phoneNumber);
 
         return phone;
