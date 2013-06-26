@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 
 /**
  * A Thymeleaf processor that will take in a list of resource files to merge.
@@ -42,7 +44,7 @@ import java.util.List;
 @Component("blResourceBundleProcessor")
 public class ResourceBundleProcessor extends AbstractElementProcessor {
     
-    @javax.annotation.Resource(name = "blResourceBundlingService")
+    @Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
     
     @Value("${bundle.enabled}")

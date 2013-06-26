@@ -21,13 +21,14 @@ import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.RatingService;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
-import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the product ratings and reviews to the model
@@ -36,6 +37,9 @@ import org.thymeleaf.standard.expression.StandardExpressionProcessor;
  */
 @Component("blRatingsProcessor")
 public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
+    
+    @Resource(name = "blRatingService")
+    protected RatingService ratingService;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -55,7 +59,6 @@ public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
 
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-        RatingService ratingService = ProcessorUtils.getRatingService(arguments);
         String itemId = String.valueOf(StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("itemId")));
         RatingSummary ratingSummary = ratingService.readRatingSummary(itemId, RatingType.PRODUCT);
         if (ratingSummary != null) {

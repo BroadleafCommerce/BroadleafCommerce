@@ -18,16 +18,17 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * A Thymeleaf processor that processes the given url through the StaticAssetService's
@@ -38,6 +39,9 @@ import java.util.Map;
  */
 @Component("blUrlRewriteProcessor")
 public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor {
+    
+    @Resource(name = "blStaticAssetService")
+    protected StaticAssetService staticAssetService;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -63,7 +67,6 @@ public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor 
     protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
         Map<String, String> attrs = new HashMap<String, String>();
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-        StaticAssetService staticAssetService = ProcessorUtils.getStaticAssetService(arguments);
         
         boolean secureRequest = isRequestSecure(request);
         String assetPath = (String) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
