@@ -239,7 +239,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             sb.append(entry.getKey());
             
             if (entry.getValue() instanceof GeneratedResource) {
-                sb.append(((GeneratedResource) entry.getValue()).getHash());
+                sb.append(((GeneratedResource) entry.getValue()).getHashRepresentation());
             } else {
                 sb.append(entry.getValue().lastModified());
             }

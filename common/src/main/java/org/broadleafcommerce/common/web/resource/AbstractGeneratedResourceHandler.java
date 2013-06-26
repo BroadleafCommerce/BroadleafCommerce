@@ -49,6 +49,14 @@ public abstract class AbstractGeneratedResourceHandler {
      * @return the Resource representing this file
      */
     public abstract Resource getFileContents(String path, List<Resource> locations);
+    
+    /**
+     * @param cachedResource
+     * @param path
+     * @param locations
+     * @return whether or not the given cachedResource needs to be regenerated
+     */
+    public abstract boolean isCachedResourceExpired(GeneratedResource cachedResource, String path, List<Resource> locations);
 
     /**
      * Attempts to retrive the requested resource from cache. If not cached, generates the resource, caches it,
@@ -62,21 +70,23 @@ public abstract class AbstractGeneratedResourceHandler {
         Element e = getGeneratedResourceCache().get(path);
         Resource r = null;
         
+        boolean shouldGenerate = false;
         if (e == null || e.getObjectValue() == null) {
-            r = getFileContents(path, locations);
-            if (!(r instanceof GeneratedResource) || ((GeneratedResource) r).isCacheable()) {
-                e = new Element(path,  r);
-                getGeneratedResourceCache().put(e);
-            }
+            shouldGenerate = true;
+        } else if (e.getObjectValue() instanceof GeneratedResource
+                && isCachedResourceExpired((GeneratedResource) e.getObjectValue(), path, locations)) {
+            shouldGenerate = true;
         } else {
             r = (Resource) e.getObjectValue();
         }
         
+        if (shouldGenerate) {
+            r = getFileContents(path, locations);
+            e = new Element(path,  r);
+            getGeneratedResourceCache().put(e);
+        }
+        
         return r;
-    }
-    
-    protected GeneratedResource createGeneratedResource(String contents, String path, boolean cacheable) {
-        return new GeneratedResource(contents.getBytes(), path, cacheable);
     }
     
     protected Cache getGeneratedResourceCache() {

@@ -28,9 +28,11 @@ import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * A Thymeleaf processor that processes the value attribute on the element it's tied to
@@ -41,6 +43,9 @@ import java.util.Map;
  */
 @Component("blToggleFacetLinkProcessor")
 public class ToggleFacetLinkProcessor extends AbstractAttributeModifierAttrProcessor {
+    
+    @Resource(name = "blSearchFacetDTOService")
+    protected SearchFacetDTOService facetService;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -58,7 +63,6 @@ public class ToggleFacetLinkProcessor extends AbstractAttributeModifierAttrProce
     @SuppressWarnings("unchecked")
     protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
         Map<String, String> attrs = new HashMap<String, String>();
-        SearchFacetDTOService facetService = ProcessorUtils.getSearchFacetDTOService(arguments);
         
         BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
         HttpServletRequest request = blcContext.getRequest();

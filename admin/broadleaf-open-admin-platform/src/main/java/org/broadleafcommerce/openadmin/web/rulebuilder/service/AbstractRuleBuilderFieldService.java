@@ -189,17 +189,18 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
     public void afterPropertiesSet() throws Exception {
         // This bean only is valid when the following bean is active. (admin)
         if (applicationContext.containsBean(DynamicEntityRemoteService.DEFAULTPERSISTENCEMANAGERREF)) {
+            PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(DynamicEntityRemoteService.DEFAULTPERSISTENCEMANAGERREF);
+            persistenceManager.setTargetMode(TargetModeType.SANDBOX);
+            dynamicEntityDao = persistenceManager.getDynamicEntityDao();
+            setFields(new ArrayList<FieldData>());
+            
             // This cannot be null during startup as we do not want to remove the null safety checks in a multi-tenant env.
             if (BroadleafRequestContext.getBroadleafRequestContext() == null) {
                 BroadleafRequestContext brc = new BroadleafRequestContext();
                 brc.setIgnoreSite(true);
                 BroadleafRequestContext.setBroadleafRequestContext(brc);
             }
-
-            PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(DynamicEntityRemoteService.DEFAULTPERSISTENCEMANAGERREF);
-            persistenceManager.setTargetMode(TargetModeType.SANDBOX);
-            dynamicEntityDao = persistenceManager.getDynamicEntityDao();
-            setFields(new ArrayList<FieldData>());
+            
             init();
         }
     }

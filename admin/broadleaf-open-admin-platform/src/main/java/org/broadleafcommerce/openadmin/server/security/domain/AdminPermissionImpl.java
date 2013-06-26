@@ -142,10 +142,12 @@ public class AdminPermissionImpl implements AdminPermission {
         this.description = description;
     }
 
+    @Override
     public Set<AdminRole> getAllRoles() {
         return allRoles;
     }
 
+    @Override
     public void setAllRoles(Set<AdminRole> allRoles) {
         this.allRoles = allRoles;
     }

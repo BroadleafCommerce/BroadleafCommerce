@@ -48,4 +48,7 @@ public interface AdminPermission extends Serializable {
     public void setAllUsers(Set<AdminUser> allUsers);
 
     public AdminPermission clone();
+    
+    public Set<AdminRole> getAllRoles();
+    public void setAllRoles(Set<AdminRole> allRoles);
 }

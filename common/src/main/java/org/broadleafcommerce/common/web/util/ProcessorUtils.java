@@ -25,14 +25,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author apazzolini
- *
- * Utility class for Thymeleaf Processors
+ * Note that the utility methods to return a js or css request handler cannot be replaced with @Resource
+ * annotations due to these beans only existing in a web application context, whereas the callers of these
+ * resources may exist in both web and non-web application contexts.
+ * 
+ * @author Andre Azzolini (apazzolini)
  */
 public class ProcessorUtils {
     
     protected static Map<String, Object> cachedBeans = new HashMap<String, Object>();
     
+    /**
+     * Note: See the class level comment for {@link ProcessorUtils}
+     * 
+     * @param arguments
+     * @return the "blJsResources" bean
+     */
     public static BroadleafResourceHttpRequestHandler getJsRequestHandler(Arguments arguments) {
         String key = "blJsResources";
         BroadleafResourceHttpRequestHandler reqHandler = (BroadleafResourceHttpRequestHandler) cachedBeans.get(key);
@@ -44,6 +52,12 @@ public class ProcessorUtils {
         return reqHandler;
     }
     
+    /**
+     * Note: See the class level comment for {@link ProcessorUtils}
+     * 
+     * @param arguments
+     * @return the "blCssResources" bean
+     */
     public static BroadleafResourceHttpRequestHandler getCssRequestHandler(Arguments arguments) {
         String key = "blCssResources";
         BroadleafResourceHttpRequestHandler reqHandler = (BroadleafResourceHttpRequestHandler) cachedBeans.get(key);

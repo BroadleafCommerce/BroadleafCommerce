@@ -21,13 +21,14 @@ import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierPro
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the desired categories to the model. It does this by
@@ -38,6 +39,9 @@ import java.util.List;
  */
 @Component("blCategoriesProcessor")
 public class CategoriesProcessor extends AbstractModelVariableModifierProcessor {
+    
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -53,8 +57,6 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
 
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-        CatalogService catalogService = ProcessorUtils.getCatalogService(arguments);
-        
         String resultVar = element.getAttributeValue("resultVar");
         String parentCategory = element.getAttributeValue("parentCategory");
         String unparsedMaxResults = element.getAttributeValue("maxResults");
