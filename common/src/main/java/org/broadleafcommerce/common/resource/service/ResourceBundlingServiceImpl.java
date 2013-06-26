@@ -175,8 +175,8 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     }
     
     @Override
-    public String registerBundle(String bundleName, List<String> files, BroadleafResourceHttpRequestHandler handler) 
-            throws IOException {
+    public synchronized String registerBundle(String bundleName, List<String> files, 
+            BroadleafResourceHttpRequestHandler handler) throws IOException {
         LinkedHashMap<String, Resource> foundResources = new LinkedHashMap<String, Resource>();
         
         if (additionalBundleFiles.get(bundleName) != null) {
