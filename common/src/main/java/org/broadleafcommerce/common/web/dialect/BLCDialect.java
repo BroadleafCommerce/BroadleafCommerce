@@ -18,13 +18,25 @@ package org.broadleafcommerce.common.web.dialect;
 
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.processor.IProcessor;
+import org.thymeleaf.standard.StandardDialect;
+import org.thymeleaf.standard.expression.IStandardVariableExpressionEvaluator;
+import org.thymeleaf.standard.expression.StandardExpressionExecutor;
+import org.thymeleaf.standard.expression.StandardExpressionParser;
+import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Resource;
 
 public class BLCDialect extends AbstractDialect {
     
     private Set<IProcessor> processors = new HashSet<IProcessor>();
+    
+    @Resource(name = "blVariableExpressionEvaluator")
+    private IStandardVariableExpressionEvaluator expressionEvaluator;
 
     @Override
     public String getPrefix() {
@@ -43,6 +55,18 @@ public class BLCDialect extends AbstractDialect {
     
     public void setProcessors(Set<IProcessor> processors) {
         this.processors = processors;
+    }
+    
+    @Override
+    public Map<String, Object> getExecutionAttributes() {
+        final StandardExpressionExecutor executor = StandardExpressionProcessor.createStandardExpressionExecutor(expressionEvaluator);
+        final StandardExpressionParser parser = StandardExpressionProcessor.createStandardExpressionParser(executor);
+        
+        final Map<String,Object> executionAttributes = new LinkedHashMap<String, Object>();
+        executionAttributes.put(StandardDialect.EXPRESSION_EVALUATOR_EXECUTION_ATTRIBUTE, expressionEvaluator);
+        executionAttributes.put(StandardExpressionProcessor.STANDARD_EXPRESSION_EXECUTOR_ATTRIBUTE_NAME, executor);
+        executionAttributes.put(StandardExpressionProcessor.STANDARD_EXPRESSION_PARSER_ATTRIBUTE_NAME, parser);
+        return executionAttributes;
     }
 
 }
