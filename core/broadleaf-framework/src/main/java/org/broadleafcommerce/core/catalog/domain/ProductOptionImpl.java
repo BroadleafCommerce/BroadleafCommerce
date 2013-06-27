@@ -104,7 +104,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
 
     @Column(name = "VALIDATION_STRING")
     @AdminPresentation(friendlyName = "productOption_validationSring", group = "productOption_validation")
-    protected String validationSring;
+    protected String validationString;
 
     @Column(name = "ERROR_CODE")
     @AdminPresentation(friendlyName = "productOption_errorCode", group = "productOption_validation")
@@ -227,13 +227,13 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     }
 
     @Override
-    public String getValidationSring() {
-        return validationSring;
+    public String getValidationString() {
+        return validationString;
     }
 
     @Override
-    public void setValidationSring(String validationSring) {
-        this.validationSring = validationSring;
+    public void setValidationString(String validationString) {
+        this.validationString = validationString;
     }
 
     @Override
