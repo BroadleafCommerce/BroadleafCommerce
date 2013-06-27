@@ -222,7 +222,7 @@ License: MIT
 .sp-container {
     border-radius: 0;
     background-color: #ECECEC;
-    border: solid 1px #f0c49B;
+    border: solid 1px #cccccc;
     padding: 0;
 }
 .sp-container, .sp-container button, .sp-container input, .sp-color, .sp-hue
@@ -332,17 +332,19 @@ License: MIT
     margin:0;
     overflow:hidden;
     cursor:pointer;
-    padding: 4px;
+    padding: 5px;
     display:inline-block;
     *zoom: 1;
     *display: inline;
-    border: solid 1px #91765d;
+    border: solid 1px #cccccc;
     background: #eee;
     color: #333;
     vertical-align: middle;
+    margin-top: -3px;
+    border-radius: 3px;
 }
 .sp-replacer:hover, .sp-replacer.sp-active {
-    border-color: #F0C49B;
+    border-color: #cccccc;
     color: #111;
 }
 .sp-replacer.sp-disabled {
