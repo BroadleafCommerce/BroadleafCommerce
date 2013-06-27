@@ -355,6 +355,12 @@ var BLCAdmin = (function($) {
                 }
             });
             
+            $container.find(".color-picker").spectrum({
+                showInput: true,
+                showButtons: false,
+                preferredFormat: "hex6"
+            });
+            
             // Set the blank value for foreign key lookups
             $container.find('.foreign-key-value-container').each(function(index, element) {
                 var $displayValue = $(this).find('span.display-value');
