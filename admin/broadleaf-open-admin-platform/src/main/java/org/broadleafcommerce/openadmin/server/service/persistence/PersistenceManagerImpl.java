@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,24 +16,26 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
-import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
+import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
+import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerFilter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
@@ -46,10 +48,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,6 +56,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 @Component("blPersistenceManager")
 @Scope("prototype")
@@ -78,7 +80,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     protected Map<String, String> targetEntityManagers = new HashMap<String, String>();
 
     @Resource(name="blAdminSecurityRemoteService")
-    protected AdminSecurityServiceRemote adminRemoteSecurityService;
+    protected SecurityVerifier adminRemoteSecurityService;
 
     @Resource(name="blPersistenceModules")
     protected PersistenceModule[] modules;
@@ -107,10 +109,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         return dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingClass);
     }
 
+    @Override
     public Class<?>[] getUpDownInheritance(String testClassname) throws ClassNotFoundException {
         return getUpDownInheritance(Class.forName(testClassname));
     }
 
+    @Override
     public Class<?>[] getUpDownInheritance(Class<?> testClass) {
         Class<?>[] pEntities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(testClass);
         Class<?> topConcreteClass = pEntities[pEntities.length - 1];
@@ -139,12 +143,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     @Override
-    public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
+    public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) {
         return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective);
     }
 
     @Override
-    public ClassMetadata getMergedClassMetadata(final Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) throws ClassNotFoundException, IllegalArgumentException {
+    public ClassMetadata getMergedClassMetadata(final Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) {
         ClassMetadata classMetadata = new ClassMetadata();
         classMetadata.setPolymorphicEntities(dynamicEntityDao.getClassTree(entities));
 
@@ -169,40 +173,41 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         Property[] properties = new Property[propertiesList.size()];
         properties = propertiesList.toArray(properties);
         Arrays.sort(properties, new Comparator<Property>() {
+            @Override
             public int compare(Property o1, Property o2) {
-                Integer order1;
-                Integer order2;
-                String friendlyName1;
-                String friendlyName2;
-                String name1;
-                String name2;
+                Integer tabOrder1 = o1.getMetadata().getTabOrder() == null ? 99999 : o1.getMetadata().getTabOrder();
+                Integer tabOrder2 = o2.getMetadata().getTabOrder() == null ? 99999 : o2.getMetadata().getTabOrder();
+
+                Integer groupOrder1 = null;
+                Integer groupOrder2 = null;
                 if (o1.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata b1 = (BasicFieldMetadata) o1.getMetadata();
-                    order1 = b1.getGroupOrder()==null?99999:b1.getGroupOrder();
-                } else {
-                    order1 = 99999;
+                    groupOrder1 = b1.getGroupOrder();
                 }
+                groupOrder1 = groupOrder1 == null ? 99999 : groupOrder1;
+
                 if (o2.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata b2 = (BasicFieldMetadata) o2.getMetadata();
-                    order2 = b2.getGroupOrder()==null?99999:b2.getGroupOrder();
-                } else {
-                    order2 = 99999;
+                    groupOrder2 = b2.getGroupOrder();
                 }
-                order1 += o1.getMetadata().getOrder() == null?99999:o1.getMetadata().getOrder();
-                order2 += o2.getMetadata().getOrder() == null?99999:o2.getMetadata().getOrder();
-                friendlyName1 = o1.getMetadata().getFriendlyName() == null?"zzzzz":o1.getMetadata().getFriendlyName();
-                friendlyName2 = o2.getMetadata().getFriendlyName() == null?"zzzzz":o2.getMetadata().getFriendlyName();
-                name1 = o1.getName() == null?"zzzzz":o1.getName();
-                name2 = o2.getName() == null?"zzzzz":o2.getName();
+                groupOrder2 = groupOrder2 == null ? 99999 : groupOrder2;
 
-                int c = order1.compareTo(order2);
-                if (c == 0) {
-                    c = friendlyName1.compareTo(friendlyName2);
-                    if (c == 0) {
-                        c = name1.compareTo(name2);
-                    }
-                }
-                return c;
+                Integer fieldOrder1 = o1.getMetadata().getOrder() == null ? 99999 : o1.getMetadata().getOrder();
+                Integer fieldOrder2 = o2.getMetadata().getOrder() == null ? 99999 : o2.getMetadata().getOrder();
+
+                String friendlyName1 = o1.getMetadata().getFriendlyName() == null ? "zzzz" : o1.getMetadata().getFriendlyName();
+                String friendlyName2 = o2.getMetadata().getFriendlyName() == null ? "zzzz" : o2.getMetadata().getFriendlyName();
+
+                String name1 = o1.getName() == null ? "zzzzz" : o1.getName();
+                String name2 = o2.getName() == null ? "zzzzz" : o2.getName();
+
+                return new CompareToBuilder()
+                        .append(tabOrder1, tabOrder2)
+                        .append(groupOrder1, groupOrder2)
+                        .append(fieldOrder1, fieldOrder2)
+                        .append(friendlyName1, friendlyName2)
+                        .append(name1, name2)
+                        .toComparison();
             }
         });
         classMetadata.setProperties(properties);
@@ -247,16 +252,20 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
                 }
                 DynamicResultSet results = handler.fetch(persistencePackage, cto, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
-                return postFetch(results, persistencePackage);
+                return postFetch(results, persistencePackage, cto);
             }
         }
         adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
-        return postFetch(myModule.fetch(persistencePackage, cto), persistencePackage);
+        return postFetch(myModule.fetch(persistencePackage, cto), persistencePackage, cto);
     }
 
-    protected DynamicResultSet postFetch(DynamicResultSet resultSet, PersistencePackage persistencePackage) throws ServiceException {
-        //do nothing
+    protected DynamicResultSet postFetch(DynamicResultSet resultSet, PersistencePackage persistencePackage, 
+            CriteriaTransferObject cto)
+            throws ServiceException {
+        // Expose the start index so that we can utilize when building the UI
+        resultSet.setStartIndex(cto.getFirstResult());
+        resultSet.setPageSize(cto.getMaxResults());
         return resultSet;
     }
 
@@ -289,25 +298,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
             if (handler.canHandleUpdate(persistencePackage)) {
                 if (!handler.willHandleSecurity(persistencePackage)) {
-                    Entity entity = persistencePackage.getEntity();
-                    for (Property p : entity.getProperties()) {
-                        if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
-                            adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.UPDATE);
-                            break;
-                        }
-                    }
+                    adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.UPDATE);
                 }
                 Entity response = handler.update(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
                 return postUpdate(response, persistencePackage);
             }
         }
-        Entity entity = persistencePackage.getEntity();
-        for (Property p : entity.getProperties()) {
-            if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
-                adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.UPDATE);
-                break;
-            }
-        }
+        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.UPDATE);
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
         Entity response = myModule.update(persistencePackage);
         return postUpdate(response, persistencePackage);
@@ -324,29 +321,18 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
             if (handler.canHandleRemove(persistencePackage)) {
                 if (!handler.willHandleSecurity(persistencePackage)) {
-                    Entity entity = persistencePackage.getEntity();
-                    for (Property p : entity.getProperties()) {
-                        if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
-                            adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.REMOVE);
-                            break;
-                        }
-                    }
+                    adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.REMOVE);
                 }
                 handler.remove(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
                 return;
             }
         }
-        Entity entity = persistencePackage.getEntity();
-        for (Property p : entity.getProperties()) {
-            if (p.getName().equals("ceilingEntityFullyQualifiedClassname")) {
-                adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.REMOVE);
-                break;
-            }
-        }
+        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.REMOVE);
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType());
         myModule.remove(persistencePackage);
     }
 
+    @Override
     public PersistenceModule getCompatibleModule(OperationType operationType) {
         PersistenceModule myModule = null;
         for (PersistenceModule module : modules) {
@@ -414,6 +400,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 }
             }
         }
+        Collections.sort(cloned, new Comparator<CustomPersistenceHandler>() {
+            @Override
+            public int compare(CustomPersistenceHandler o1, CustomPersistenceHandler o2) {
+                return new Integer(o1.getOrder()).compareTo(new Integer(o2.getOrder()));
+            }
+        });
         return cloned;
     }
 
@@ -422,7 +414,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         this.customPersistenceHandlers = customPersistenceHandlers;
     }
 
-    public AdminSecurityServiceRemote getAdminRemoteSecurityService() {
+    public SecurityVerifier getAdminRemoteSecurityService() {
         return adminRemoteSecurityService;
     }
 

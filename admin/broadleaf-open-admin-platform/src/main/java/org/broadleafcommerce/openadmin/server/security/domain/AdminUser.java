@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,6 @@ package org.broadleafcommerce.openadmin.server.security.domain;
 
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 
-import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -26,8 +25,9 @@ import java.util.Set;
  * @author jfischer
  *
  */
-public interface AdminUser extends Serializable {
+public interface AdminUser extends AdminSecurityContext {
     public Long getId();
+    public void setId(Long id);
     public String getName();
     public void setName(String name);
     public String getLogin();
@@ -92,4 +92,5 @@ public interface AdminUser extends Serializable {
 
     public Set<AdminPermission> getAllPermissions();
     public void setAllPermissions(Set<AdminPermission> allPermissions);
+    public AdminUser clone();
 }

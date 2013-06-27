@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import net.entropysoft.transmorph.cache.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
@@ -27,8 +26,8 @@ import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.util.LRUMap;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -44,6 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
  * This processor will add the following information to the model, available for consumption by a template:
  * -pricing for a sku based on the product option values selected
@@ -54,9 +55,12 @@ import java.util.Map;
  */
 @Component("blProductOptionsProcessor")
 public class ProductOptionsProcessor extends AbstractModelVariableModifierProcessor {
+    
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
 
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
-    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
+    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(100, 500));
 
     public ProductOptionsProcessor() {
         super("product_options");
@@ -69,7 +73,6 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-        CatalogService catalogService = ProcessorUtils.getCatalogService(arguments);
         Long productId = (Long) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("productId"));
         Product product = catalogService.findProductById(productId);
         if (product != null) {

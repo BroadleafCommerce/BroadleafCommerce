@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,6 +45,7 @@ public abstract class AbstractOrderItemRequest {
     protected Order order;
     protected int quantity;
     protected Money salePriceOverride;
+    protected Money retailPriceOverride;
     protected PersonalMessage personalMessage;
     protected Map<String,String> itemAttributes = new HashMap<String,String>();
     
@@ -104,6 +105,14 @@ public abstract class AbstractOrderItemRequest {
         this.salePriceOverride = salePriceOverride;
     }
 
+    public Money getRetailPriceOverride() {
+        return retailPriceOverride;
+    }
+
+    public void setRetailPriceOverride(Money retailPriceOverride) {
+        this.retailPriceOverride = retailPriceOverride;
+    }
+
     protected void copyProperties(AbstractOrderItemRequest newRequest) {
         newRequest.setCategory(category);
         newRequest.setItemAttributes(itemAttributes);
@@ -113,6 +122,7 @@ public abstract class AbstractOrderItemRequest {
         newRequest.setSku(sku);
         newRequest.setOrder(order);
         newRequest.setSalePriceOverride(salePriceOverride);
+        newRequest.setRetailPriceOverride(retailPriceOverride);
     }
 
     @Override

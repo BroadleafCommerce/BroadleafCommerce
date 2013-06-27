@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.payment.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -32,7 +32,7 @@ public class PaymentInfoType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, PaymentInfoType> TYPES = new HashMap<String, PaymentInfoType>();
+    private static final Map<String, PaymentInfoType> TYPES = new LinkedHashMap<String, PaymentInfoType>();
 
     public static final PaymentInfoType GIFT_CARD = new PaymentInfoType("GIFT_CARD", "Gift Card");
     public static final PaymentInfoType CREDIT_CARD = new PaymentInfoType("CREDIT_CARD", "Credit Card");
@@ -42,7 +42,6 @@ public class PaymentInfoType implements Serializable, BroadleafEnumerationType {
     public static final PaymentInfoType ELECTRONIC_CHECK = new PaymentInfoType("ELECTRONIC_CHECK", "Electronic Check");
     public static final PaymentInfoType WIRE = new PaymentInfoType("WIRE", "Wire Transfer");
     public static final PaymentInfoType MONEY_ORDER = new PaymentInfoType("MONEY_ORDER", "Money Order");
-    public static final PaymentInfoType ACCOUNT_CREDIT = new PaymentInfoType("ACCOUNT_CREDIT", "Account Credit");
     public static final PaymentInfoType CUSTOMER_CREDIT = new PaymentInfoType("CUSTOMER_CREDIT", "Customer Credit");
     public static final PaymentInfoType ACCOUNT = new PaymentInfoType("ACCOUNT", "Account");
 

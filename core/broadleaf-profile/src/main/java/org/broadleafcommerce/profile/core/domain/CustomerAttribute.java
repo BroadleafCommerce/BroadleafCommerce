@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
-import java.io.Serializable;
+import org.broadleafcommerce.common.value.ValueAssignable;
 
 
 /**
@@ -29,7 +29,7 @@ import java.io.Serializable;
  * @author bpolster
  *
  */
-public interface CustomerAttribute extends Serializable {
+public interface CustomerAttribute extends ValueAssignable<String> {
 
     /**
      * Gets the id.
@@ -44,34 +44,6 @@ public interface CustomerAttribute extends Serializable {
      * @param id the new id
      */
     public void setId(Long id);
-    
-    /**
-     * Gets the name.  (e.g. shoeSize)
-     *
-     * @return the name
-     */
-    public String getName();
-
-    /**
-     * Sets the name.
-     *
-     * @param name the new name
-     */
-    public void setName(String name);
-
-    /**
-     * Gets the value.   (e.g. 9.5)
-     *
-     * @return the value
-     */
-    public String getValue();
-
-    /**
-     * Sets the value.
-     *
-     * @param value the new value
-     */
-    public void setValue(String value);   
 
     /**
      * Gets the associated customer.

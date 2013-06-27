@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
@@ -31,26 +30,26 @@ import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.cms.page.service.PageService;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.web.SandBoxContext;
-import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ClassTree;
-import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -58,12 +57,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
  * Created by jfischer
  */
 public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private Log LOG = LogFactory.getLog(PageTemplateCustomPersistenceHandler.class);
+    private final Log LOG = LogFactory.getLog(PageTemplateCustomPersistenceHandler.class);
 
     @Resource(name="blPageService")
     protected PageService pageService;
@@ -150,6 +151,8 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     fieldMetadata.setVisibility(definition.getHiddenFlag()?VisibilityEnum.HIDDEN_ALL:VisibilityEnum.VISIBLE_ALL);
                     fieldMetadata.setGroup(group.getName());
                     fieldMetadata.setGroupOrder(groupCount);
+                    fieldMetadata.setTab("General");
+                    fieldMetadata.setTabOrder(100);
                     fieldMetadata.setGroupCollapsed(group.getInitCollapsedFlag());
                     fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
                     fieldMetadata.setLargeEntry(definition.getTextAreaFlag());
@@ -160,14 +163,15 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     if (definition.getValidationRegEx() != null) {
                         Map<String, String> itemMap = new HashMap<String, String>();
                         itemMap.put("regularExpression", definition.getValidationRegEx());
-                        itemMap.put("errorMessageKey", definition.getValidationErrorMesageKey());
-                        fieldMetadata.getValidationConfigurations().put("com.smartgwt.client.widgets.form.validator.RegExpValidator", itemMap);
+                        itemMap.put(ConfigurationItem.ERROR_MESSAGE, definition.getValidationErrorMesageKey());
+                        fieldMetadata.getValidationConfigurations().put("org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator", itemMap);
                     }
                     propertiesList.add(property);
                 }
                 groupCount++;
                 fieldCount = 0;
             }
+
             Property property = new Property();
             property.setName("id");
             BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
@@ -176,13 +180,13 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             fieldMetadata.setSecondaryType(SupportedFieldType.INTEGER);
             fieldMetadata.setMutable(true);
             fieldMetadata.setInheritedFromType(PageTemplateImpl.class.getName());
-            fieldMetadata.setAvailableToTypes(new String[] {PageTemplateImpl.class.getName()});
+            fieldMetadata.setAvailableToTypes(new String[] { PageTemplateImpl.class.getName() });
             fieldMetadata.setForeignKeyCollection(false);
             fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
             fieldMetadata.setName("id");
-            fieldMetadata.setFriendlyName("PagesCustomPersistenceHandler_ID");
+            fieldMetadata.setFriendlyName("PageTemplateCustomPersistenceHandler_ID");
             fieldMetadata.setSecurityLevel("");
-            fieldMetadata.setVisibility(VisibilityEnum.VISIBLE_ALL);
+            fieldMetadata.setVisibility(VisibilityEnum.HIDDEN_ALL);
             fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
             fieldMetadata.setLargeEntry(false);
             fieldMetadata.setProminent(false);
@@ -194,6 +198,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             Property[] properties = new Property[propertiesList.size()];
             properties = propertiesList.toArray(properties);
             Arrays.sort(properties, new Comparator<Property>() {
+                @Override
                 public int compare(Property o1, Property o2) {
                     /*
                          * First, compare properties based on order fields
@@ -222,7 +227,6 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
 
             return results;
         } catch (Exception e) {
-            LOG.error("Unable to perform inspect for entity: "+ceilingEntityFullyQualifiedClassname, e);
             throw new ServiceException("Unable to perform inspect for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }
@@ -237,13 +241,12 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
 
             return results;
         } catch (Exception e) {
-            LOG.error("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }
 
     protected Entity fetchEntityBasedOnId(String pageId) throws Exception {
-        Page page = (Page) pageService.findPageById(Long.valueOf(pageId));
+        Page page = pageService.findPageById(Long.valueOf(pageId));
         Map<String, PageField> pageFieldMap = page.getPageFields();
         Entity entity = new Entity();
         entity.setType(new String[]{PageTemplateImpl.class.getName()});
@@ -317,7 +320,6 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
 
             return fetchEntityBasedOnId(pageId);
         } catch (Exception e) {
-            LOG.error("Unable to perform update for entity: "+ceilingEntityFullyQualifiedClassname, e);
             throw new ServiceException("Unable to perform update for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,11 +16,12 @@
 
 package org.broadleafcommerce.openadmin.audit;
 
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -34,18 +35,16 @@ public class AdminAuditable implements Serializable {
     @AdminPresentation(friendlyName = "AdminAuditable_Date_Created", group = "AdminAuditable_Audit", readOnly = true)
     protected Date dateCreated;
 
-    @ManyToOne(targetEntity = AdminUserImpl.class)
-    @JoinColumn(name = "CREATED_BY", updatable = false)
-    protected AdminUser createdBy;
+    @Column(name = "CREATED_BY", updatable = false)
+    protected Long createdBy;
 
     @Column(name = "DATE_UPDATED")
     @Temporal(TemporalType.TIMESTAMP)
     @AdminPresentation(friendlyName = "AdminAuditable_Date_Updated", group = "AdminAuditable_Audit", readOnly = true)
     protected Date dateUpdated;
 
-    @ManyToOne(targetEntity = AdminUserImpl.class)
-    @JoinColumn(name = "UPDATED_BY")
-    protected AdminUser updatedBy;
+    @Column(name = "UPDATED_BY")
+    protected Long updatedBy;
 
     public Date getDateCreated() {
         return dateCreated;
@@ -63,19 +62,19 @@ public class AdminAuditable implements Serializable {
         this.dateUpdated = dateUpdated;
     }
 
-    public AdminUser getCreatedBy() {
+    public Long getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(AdminUser createdBy) {
+    public void setCreatedBy(Long createdBy) {
         this.createdBy = createdBy;
     }
 
-    public AdminUser getUpdatedBy() {
+    public Long getUpdatedBy() {
         return updatedBy;
     }
 
-    public void setUpdatedBy(AdminUser updatedBy) {
+    public void setUpdatedBy(Long updatedBy) {
         this.updatedBy = updatedBy;
     }
 }

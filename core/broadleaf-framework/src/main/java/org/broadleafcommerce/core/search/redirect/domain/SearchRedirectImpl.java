@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,20 +28,20 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-
-import java.util.Date;
 
 /**
  * @author priyeshpatel
@@ -60,14 +60,22 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable 
     private static final Log LOG = LogFactory.getLog(SearchRedirectImpl.class);
     
     @Id
-    @GeneratedValue(generator = "SearchRedirectID", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SearchRedirectID", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchRedirectImpl", allocationSize = 50)
+    @GeneratedValue(generator = "SearchRedirectID")
+    @GenericGenerator(
+        name="SearchRedirectID",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="SearchRedirectImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl")
+        }
+    )
     @Column(name = "SEARCH_REDIRECT_ID")
     @AdminPresentation(friendlyName = "SearchRedirectImpl_ID", order = 1, group = "SearchRedirectImpl_description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "PRIORITY")
     @AdminPresentation(friendlyName = "SearchRedirectImpl_searchPriority", order = 1, group = "SearchRedirectImpl_description", groupOrder = 1, prominent=true)
+    @Index(name="SEARCH_PRIORITY_INDEX", columnNames={"PRIORITY"})
     protected Integer searchPriority;
 
     @AdminPresentation(friendlyName = "SearchRedirectImpl_searchTerm", order = 2, group = "SearchRedirectImpl_description", prominent = true, groupOrder = 1)

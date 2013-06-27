@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,33 +16,24 @@
 
 package org.broadleafcommerce.core.order.service;
 
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.profile.core.domain.Customer;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.core.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 
 /**
- * @author Andre Azzolini (apazzolini)
+ * @author Andre Azzolini (apazzolini), bpolster
  */
-public class OrderServiceExtensionManager implements OrderServiceExtensionListener {
-    
-    protected List<OrderServiceExtensionListener> listeners = new ArrayList<OrderServiceExtensionListener>();
+@Service("blOrderServiceExtensionManager")
+public class OrderServiceExtensionManager extends ExtensionManager<OrderServiceExtensionHandler> {
 
-    @Override
-    public void attachAdditionalDataToNewNamedCart(Customer customer, Order cart) {
-        for (OrderServiceExtensionListener listener : listeners) {
-            listener.attachAdditionalDataToNewNamedCart(customer, cart);
-        }
-    }
-    
-    public List<OrderServiceExtensionListener> getListeners() {
-        return listeners;
+    public OrderServiceExtensionManager() {
+        super(OrderServiceExtensionHandler.class);
     }
 
-    public void setListeners(List<OrderServiceExtensionListener> listeners) {
-        this.listeners = listeners;
+    /**
+     * By default,this extension manager will continue on handled allowing multiple handlers to interact with the order.
+     */
+    public boolean continueOnHandled() {
+        return true;
     }
-
 }

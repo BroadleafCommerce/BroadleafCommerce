@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.cms.structure.dao;
 
-import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 
 import java.util.List;
@@ -52,6 +52,12 @@ public interface StructuredContentDao {
      * @return the list of found items
      */
     public List<StructuredContentType> retrieveAllStructuredContentTypes();
+    
+    /**
+     * Finds all content regardless of the {@link Sandbox} they are a member of
+     * @return the list of {@link StructuredContent}, an empty list of none are found
+     */
+    public List<StructuredContent> findAllContentItems();
 
     public Map<String,StructuredContentField> readFieldsForStructuredContentItem(StructuredContent sc);
 
@@ -69,6 +75,11 @@ public interface StructuredContentDao {
      * @param content
      */
     public void delete(StructuredContent content);
+    
+    /**
+     * Saves the given <b>type</b> and returns the merged instance
+     */
+    public StructuredContentType saveStructuredContentType(StructuredContentType type);
 
     /**
      * Pass through function for backwards compatibility to get a list of structured content.

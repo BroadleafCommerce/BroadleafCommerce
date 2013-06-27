@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,8 +20,9 @@ package org.broadleafcommerce.core.catalog.dao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 
-import javax.annotation.Nonnull;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 /**
  * {@code CategoryDao} provides persistence access to {@code Category} instances.
@@ -54,6 +55,11 @@ public interface CategoryDao {
     @Nonnull
     @Deprecated
     public Category readCategoryByName(@Nonnull String categoryName);
+    
+    /**
+     * @return a list of all categories that do not have a defaultParentCategory set
+     */
+    public List<Category> readAllParentCategories();
 
     /**
      * Retrieve a list of {@code Category} instances by name.
@@ -182,23 +188,7 @@ public interface CategoryDao {
     @Nonnull
     public List<Category> readActiveSubCategoriesByCategory(@Nonnull Category category, @Nonnull int limit, @Nonnull int offset);
 
-    /**
-     * Retrieve the value in milliseconds for how long the current data/time is cached when performing
-     * an active category query. By caching the current date/time, the same query can be generated
-     * repeatedly, which allows the query cache to be utilized. The default value is 10000 milliseconds.
-     *
-     * @return the value in milliseconds for how long the current date/time is cached
-     */
     @Nonnull
-    public Long getCurrentDateResolution();
+    public Category findCategoryByURI(String uri);
 
-    /**
-     * Set the value in milliseconds for how long the current date/time is cached when performing
-     * an active category query. The default value is 10000 milliseconds.
-     *
-     * @param currentDateResolution the value in milliseconds for how long the current date/time is cached
-     */
-    public void setCurrentDateResolution(@Nonnull  Long currentDateResolution);
-    @Nonnull
-    Category findCategoryByURI(String uri);
 }

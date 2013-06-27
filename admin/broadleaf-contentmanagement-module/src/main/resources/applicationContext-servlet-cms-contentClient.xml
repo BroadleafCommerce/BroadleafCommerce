@@ -4,14 +4,16 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 
     <!-- Note that this bean must be defined in both the servlet and non-servlet application contexts -->
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer"/>
 
-    <context:component-scan base-package="org.broadleafcommerce.cms"/>
+    <context:component-scan base-package="org.broadleafcommerce.cms">
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.cms.admin.*"/>
+    </context:component-scan>
 
     <aop:config/>
 
@@ -28,11 +30,13 @@
     </bean>
 
     <bean id="blStaticAssetURLHandlerMapping" class="org.broadleafcommerce.cms.web.BroadleafCmsSimpleUrlHandlerMapping">
-        <property name="order" value="0"/>
+        <!--  Before mvc:annotationdriven but after static content / resource filters -->
+        <property name="order" value="-1"/>
         <property name="alwaysUseFullPath" value="true"></property>
         <property name="mappings">
             <map>
                 <entry key="/**/${asset.server.url.prefix.internal}/**" value-ref="blStaticAssetViewController"/>
+                <entry key="/${asset.server.url.prefix.internal}/**" value-ref="blStaticAssetViewController"/>
             </map>
         </property>
     </bean>

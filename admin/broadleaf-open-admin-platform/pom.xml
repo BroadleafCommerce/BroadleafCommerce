@@ -4,7 +4,7 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>2.2.0-GA</version>
+        <version>3.0.0-GA</version>
     </parent>
     <artifactId>broadleaf-open-admin-platform</artifactId>
     <packaging>jar</packaging>
@@ -83,8 +83,16 @@
         </plugins>
         <resources>
             <resource>
+                <directory>src/main/resources/open_admin_style</directory>
+                <filtering>false</filtering>
+                <targetPath>open_admin_style</targetPath>
+            </resource>
+            <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>open_admin_style/**</exclude>
+                </excludes>
             </resource>
             <resource>
                 <directory>src/main/java</directory>
@@ -166,47 +174,6 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-servlet</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gwt-math</groupId>
-            <artifactId>gwt-math</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-user</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-dev</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.smartgwt</groupId>
-            <artifactId>smartgwt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.anasoft.os</groupId>
-            <artifactId>daofusion-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.anasoft.os</groupId>
-            <artifactId>daofusion-core</artifactId>
-            <classifier>sources</classifier>
-        </dependency>
-        <dependency>
-            <groupId>com.gwtincubator</groupId>
-            <artifactId>gwt-incubator-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.gwt-widget</groupId>
-            <artifactId>gwt-sl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.transmorph</groupId>
-            <artifactId>transmorph</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-pool</groupId>
             <artifactId>commons-pool</artifactId>
         </dependency>
@@ -217,6 +184,26 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator-annotation-processor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
     </dependencies>
 </project>

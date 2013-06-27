@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,31 +16,30 @@
 
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CAT_SEARCH_FACET_EXCL_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-public class CategoryExcludedSearchFacetImpl implements
-        CategoryExcludedSearchFacet, Serializable {
+public class CategoryExcludedSearchFacetImpl implements CategoryExcludedSearchFacet, Serializable {
 
     /**
      * 
@@ -48,8 +47,15 @@ public class CategoryExcludedSearchFacetImpl implements
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CategoryExcludedSearchFacetId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CategoryExcludedSearchFacetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CategoryExcludedSearchFacetImpl", allocationSize = 50)
+    @GeneratedValue(generator = "CategoryExcludedSearchFacetId")
+    @GenericGenerator(
+        name="CategoryExcludedSearchFacetId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="CategoryExcludedSearchFacetImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl")
+        }
+    )
     @Column(name = "CAT_EXCL_SEARCH_FACET_ID")
     protected Long id;
 

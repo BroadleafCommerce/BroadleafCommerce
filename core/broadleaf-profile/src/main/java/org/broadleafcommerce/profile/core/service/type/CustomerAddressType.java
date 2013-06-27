@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.profile.core.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 /**
@@ -32,7 +32,7 @@ public class CustomerAddressType implements Serializable, BroadleafEnumerationTy
 
     private static final long serialVersionUID = 1L;
 
-        private static final Map<String, CustomerAddressType> TYPES = new HashMap<String, CustomerAddressType>();
+        private static final Map<String, CustomerAddressType> TYPES = new LinkedHashMap<String, CustomerAddressType>();
 
         public static final CustomerAddressType SHIPPING  = new CustomerAddressType("SHIPPING", "Shipping");
         public static final CustomerAddressType BILLING  = new CustomerAddressType("BILLING", "Billing");

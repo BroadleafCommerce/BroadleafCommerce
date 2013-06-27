@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.payment.service.workflow;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of payment action types.
@@ -32,7 +32,7 @@ public class PaymentActionType implements Serializable, BroadleafEnumerationType
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, PaymentActionType> TYPES = new HashMap<String, PaymentActionType>();
+    private static final Map<String, PaymentActionType> TYPES = new LinkedHashMap<String, PaymentActionType>();
 
     public static final PaymentActionType AUTHORIZE = new PaymentActionType("AUTHORIZE", "Authorize");
     public static final PaymentActionType DEBIT = new PaymentActionType("DEBIT", "Debit");
@@ -41,6 +41,7 @@ public class PaymentActionType implements Serializable, BroadleafEnumerationType
     public static final PaymentActionType VOID = new PaymentActionType("VOID", "Void");
     public static final PaymentActionType BALANCE = new PaymentActionType("BALANCE", "Check Balance");
     public static final PaymentActionType REVERSEAUTHORIZE = new PaymentActionType("REVERSEAUTHORIZE", "Reverse Authorize");
+    public static final PaymentActionType PARTIALPAYMENT = new PaymentActionType("PARTIALPAYMENT", "Partial Payment");
 
     public static PaymentActionType getInstance(final String type) {
         return TYPES.get(type);

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.payment.CreditCardType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.CountryImpl;
+import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.broadleafcommerce.profile.core.domain.StateImpl;
 
 import java.io.Serializable;
@@ -43,6 +44,8 @@ public class CheckoutForm implements Serializable {
     public CheckoutForm() {
         shippingAddress = new AddressImpl();
         billingAddress = new AddressImpl();
+        shippingAddress.setPhonePrimary(new PhoneImpl());
+        billingAddress.setPhonePrimary(new PhoneImpl());
         shippingAddress.setCountry(new CountryImpl());
         billingAddress.setCountry(new CountryImpl());
         shippingAddress.setState(new StateImpl());
@@ -87,7 +90,7 @@ public class CheckoutForm implements Serializable {
     }
 
     public void setBillingAddress(Address billingAddress) {
-        this.billingAddress = billingAddress;
+       this.billingAddress = billingAddress;
     }
 
     public String getCreditCardNumber() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
-import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -31,6 +30,8 @@ import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -55,6 +56,9 @@ import java.util.List;
  */
 @Component("blRelatedProductProcessor")
 public class RelatedProductProcessor extends AbstractModelVariableModifierProcessor {
+    
+    @Resource(name = "blRelatedProductsService")
+    protected RelatedProductsService relatedProductsService;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -73,7 +77,6 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
      * Controller method for the processor that readies the service call and adds the results to the model.
      */
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-        RelatedProductsService relatedProductsService = ProcessorUtils.getRelatedProductsService(arguments);
         List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(buildDTO(arguments, element));
         addToModel(arguments, getRelatedProductsResultVar(element), relatedProducts);
         addToModel(arguments, getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));

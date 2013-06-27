@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.order.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of fulfillment group status types.
@@ -32,12 +32,45 @@ public class FulfillmentGroupStatusType implements Serializable, BroadleafEnumer
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, FulfillmentGroupStatusType> TYPES = new HashMap<String, FulfillmentGroupStatusType>();
-
-    public static final FulfillmentGroupStatusType PROCESSING = new FulfillmentGroupStatusType("PROCESSING", "Processing");
+    private static final Map<String, FulfillmentGroupStatusType> TYPES = new LinkedHashMap<String, FulfillmentGroupStatusType>();
+    
+    /**
+     * Use FULFILLED, PARTIALLY_FULFILLED, DELIVERED, or PARTIALLY_DELIVERED
+     * @deprecated
+     */
+    @Deprecated
     public static final FulfillmentGroupStatusType SHIPPED = new FulfillmentGroupStatusType("SHIPPED", "Shipped");
+    
+    /**
+     * PROCESSING: Used to indicate that the fulfillment group is being processed. For example, during pick or pack processes 
+     * in a warehouse.
+     */
+    public static final FulfillmentGroupStatusType PROCESSING = new FulfillmentGroupStatusType("PROCESSING", "Processing");
+    
+    /**
+     * FULFILLED: Used to indicate that the Fulfillment Group is completely fulfilled (e.g. shipped, downloaded, etc.). For some systems, 
+     * this will be the final status on a fulfillment group. For others that want to differentiate between FULFILLED and DELIVERED, usually 
+     * to differentiate between items that have been shipped vs. items that have been received by the customer.
+     */
+    public static final FulfillmentGroupStatusType FULFILLED = new FulfillmentGroupStatusType("FULFILLED", "Fulfilled");
+    
+    /**
+     * PARTIALLY_FULFILLED: Used to indicate that one or more items has been fulfilled or partially fulfilled, but that there 
+     * are some items in the fulfillment group that are not fulfilled.
+     */
+    public static final FulfillmentGroupStatusType PARTIALLY_FULFILLED = new FulfillmentGroupStatusType("PARTIALLY_FULFILLED", "Partially Fulfilled");
+    
+    /**
+     * DELIVERED: Used to indicate that all items in the fulfillment group have been delivered. This will generally only be used when there is some 
+     * integration with a shipping or fulfillment system to indicate that an item has actually been received by the customer.
+     */
     public static final FulfillmentGroupStatusType DELIVERED = new FulfillmentGroupStatusType("DELIVERED", "Delivered");
-
+    
+    /**
+     * PARTIALLY_DELIVERED: Indicates that an item or a FulfillemntGroup has been partially received by the customer.
+     */
+    public static final FulfillmentGroupStatusType PARTIALLY_DELIVERED = new FulfillmentGroupStatusType("PARTIALLY_DELIVERED", "Partially Delivered");
+    
     public static FulfillmentGroupStatusType getInstance(final String type) {
         return TYPES.get(type);
     }
@@ -54,10 +87,12 @@ public class FulfillmentGroupStatusType implements Serializable, BroadleafEnumer
         setType(type);
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getFriendlyType() {
         return friendlyType;
     }

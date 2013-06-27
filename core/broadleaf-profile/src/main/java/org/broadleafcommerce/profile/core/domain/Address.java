@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,6 +31,10 @@ public interface Address extends Serializable {
     public void setAddressLine2(String addressLine2);
 
     public String getAddressLine2();
+
+    public void setAddressLine3(String addressLine3);
+
+    public String getAddressLine3();
 
     public void setCity(String city);
 
@@ -80,17 +84,59 @@ public interface Address extends Serializable {
 
     public void setLastName(String lastName);
 
+    /**
+     * @deprecated Should use {@link #getPhonePrimary()} instead
+     * @see {@link Phone}
+     */
+    @Deprecated
     public String getPrimaryPhone();
 
+    /**
+     * @deprecated Should use {@link #setPhonePrimary(Phone)} instead
+     * @see {@link Phone}
+     */
+    @Deprecated
     public void setPrimaryPhone(String primaryPhone);
 
+    /**
+     * @deprecated Should use {@link #getPhoneSecondary()} instead
+     * @see {@link Phone}
+     */
+    @Deprecated
     public String getSecondaryPhone();
 
+    /**
+     * @deprecated Should use {@link #setPhoneSecondary(Phone)} instead
+     * @see {@link Phone}
+     */
+    @Deprecated
     public void setSecondaryPhone(String secondaryPhone);
-    
+
+    /**
+     * @deprecated Should use {@link #getPhoneFax()} instead
+     * @see {@link Phone}
+     */
+    @Deprecated
     public String getFax();
-    
+
+    /**
+     * @deprecated Should use {@link #setPhoneFax(Phone)} instead
+     * @see {@link Phone}
+     */
+    @Deprecated
     public void setFax(String fax);
+
+    public Phone getPhonePrimary();
+
+    public void setPhonePrimary(Phone phonePrimary);
+
+    public Phone getPhoneSecondary();
+
+    public void setPhoneSecondary(Phone phoneSecondary);
+    
+    public Phone getPhoneFax();
+
+    public void setPhoneFax(Phone phone);
 
     public String getEmailAddress();
 

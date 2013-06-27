@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,8 +20,11 @@ import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
 import org.hibernate.Criteria;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -30,8 +33,32 @@ public interface StaticAssetService extends SandBoxItemListener {
 
 
     public StaticAsset findStaticAssetById(Long id);
+    
+    public List<StaticAsset> readAllStaticAssets();
 
     public StaticAsset findStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox);
+
+    /**
+     * Used when uploading a file to Broadleaf.    This method will create the corresponding 
+     * asset.   
+     * 
+     * Depending on the the implementation, the actual asset may be saved to the DB or to 
+     * the file system.    The default implementation {@link StaticAssetServiceImpl} has a 
+     * environment properties that determine this behavior <code>asset.use.filesystem.storage</code>, and 
+     * <code>asset.server.file.system.path</code>.
+     * 
+     * The properties allows for implementors to update other Asset properties at the
+     * same time they are uploading a file.  The default implementation uses this for an optional URL to 
+     * be specified.
+     * 
+     * @see StaticAssetServiceImpl
+     * 
+     * @param file - the file being uploaded
+     * @param properties - additional meta-data properties
+     * @return
+     * @throws IOException
+     */
+    public StaticAsset createStaticAssetFromFile(MultipartFile file, Map<String, String> properties);
 
     /**
      * This method is intended to be called from within the CMS

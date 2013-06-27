@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,24 +16,69 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
-import org.broadleafcommerce.core.order.service.manipulation.BundleOrderItemSplitContainer;
-import org.broadleafcommerce.core.order.service.manipulation.OrderItemSplitContainer;
-import org.broadleafcommerce.profile.core.domain.Customer;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
-public interface PromotableOrder {
+public interface PromotableOrder extends Serializable {
+    
+    /**
+     * Sets the order subTotal to the sum of item total prices without
+     * adjustments.     
+     */
+    void setOrderSubTotalToPriceWithoutAdjustments();
 
-    public boolean isNotCombinableOfferAppliedAtAnyLevel();
+    /**
+     * Sets the order subTotal to the sum of item total prices without
+     * adjustments.     
+     */
+    void setOrderSubTotalToPriceWithAdjustments();
 
-    public boolean isNotCombinableOfferApplied();
+    /**
+     * Returns all OrderItems for the order wrapped with PromotableOrderItem
+     * @return
+     */
+    List<PromotableOrderItem> getAllOrderItems();
 
-    public void resetTotalitarianOfferApplied();
+    /**
+     * Returns all OrderItems that can receive discounts.  Sorts the results by SalePrice or RetailPrice 
+     * depending upon the passed in variable.
+     * @param sortBySalePrice
+     * @return
+     */
+    List<PromotableOrderItem> getDiscountableOrderItems(boolean sortBySalePrice);
+
+    /**
+     * Returns all OrderItems that can receive discounts.
+     * @param applyDiscountToSalePrice
+     * @return
+     */
+    List<PromotableOrderItem> getDiscountableOrderItems();
+
+    /**
+     * Returns the fulfillmentGroups associated with the order after converting them to 
+     * promotableFulfillmentGroups.
+     * 
+     * @return
+     */
+    List<PromotableFulfillmentGroup> getFulfillmentGroups();
+
+    /**
+     * Returns true if this promotableOrder has any order adjustments.
+     * @return
+     */
+    boolean isHasOrderAdjustments();
+
+    /**
+     * Returns the list of orderAdjustments being proposed for the order.
+     * This will be converted to actual order adjustments on completion of the offer processing.
+     * @return
+     */
+    List<PromotableOrderAdjustment> getCandidateOrderAdjustments();
 
     /**
      * Adds the adjustment to the order's adjustment list and discounts the
@@ -41,116 +86,107 @@ public interface PromotableOrder {
      * 
      * @param orderAdjustment
      */
-    public void addOrderAdjustments(PromotableOrderAdjustment orderAdjustment);
+    void addCandidateOrderAdjustment(PromotableOrderAdjustment orderAdjustment);
 
     /**
      * Removes all order, order item, and fulfillment adjustments from the order
      * and resets the adjustment price.
      */
-    public void removeAllAdjustments();
+    void removeAllCandidateOfferAdjustments();
 
     /**
      * Removes all order adjustments from the order and resets the adjustment
-     * price. This method does not remove order item or fulfillment adjustments
-     * from the order.
+     * price. 
      */
-    public void removeAllOrderAdjustments();
+    void removeAllCandidateOrderOfferAdjustments();
 
     /**
      * Removes all adjustments from the order's order items and resets the
-     * adjustment price for each item. This method does not remove order or
-     * fulfillment adjustments from the order.
+     * adjustment price for each item. 
      */
-    public void removeAllItemAdjustments();
-
-    public void removeAllFulfillmentAdjustments();
+    void removeAllCandidateItemOfferAdjustments();
 
     /**
-     * Returns the price of the order with the order offers applied (item offers
-     * are not applied).
-     * 
-     * @return the order price with the order offers applied (item offers are
-     *         not applied)
+     * Removes all adjustments from the order's fulfillment items and resets the
+     * adjustment price for each item. 
      */
-    public Money getAdjustmentPrice();
+    void removeAllCandidateFulfillmentOfferAdjustments();
 
-    public void setAdjustmentPrice(Money adjustmentPrice);
+    /**
+     * Adds the underlying order to the rule variable map.
+     */
+    void updateRuleVariables(Map<String, Object> ruleVars);
 
-    public boolean isHasOrderAdjustments();
+    /**
+     * Returns the associated order.
+     */
+    Order getOrder();
 
-    public boolean isTotalitarianOfferApplied();
+    /**
+     * Returns true if a totalitarian offer has been applied.   A totalitarian offer is
+     * an offer that does not allow any other offers to be used at the same time.   As 
+     * opposed to a "non-combinable" offer which can't be used with other offers of the
+     * same type but can be used with other offers of a different type (e.g. a non-combinable order offer
+     * can be used with a non-combinable item offer).         
+     * @return
+     */
+    boolean isTotalitarianOfferApplied();
 
-    public void setTotalitarianOfferApplied(boolean totalitarianOfferApplied);
+    /**
+     * Calculates the total adjustment to be received from the order adjustments.
+     *
+     * @return
+     */
+    Money calculateOrderAdjustmentTotal();
 
-    public void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel);
+    /**
+     * Calculates the total adjustment to be received from the item adjustments.
+     *
+     * @return
+     */
+    Money calculateItemAdjustmentTotal();
 
-    public List<OrderItemSplitContainer> getSplitItems();
+    /**
+     * Returns all of the price detail items for this order.   
+     * @return
+     */
+    List<PromotableOrderItemPriceDetail> getAllPromotableOrderItemPriceDetails();
 
-    public void setSplitItems(List<OrderItemSplitContainer> splitItems);
+    /**
+     * Returns true if this order can apply another order promotion. 
+     * Returns false if a totalitarian or not-combinable offer has already been applied
+     * Returns false if the passed in order is not-combinable or totalitarian and this order already has adjustments
+     */
+    boolean canApplyOrderOffer(PromotableCandidateOrderOffer offer);
 
-    public List<PromotableOrderItem> searchSplitItems(PromotableOrderItem key);
-    
-    public void removeAllCandidateOffers();
+    /**
+     * Returns the {@link BroadleafCurrency} for the current order.
+     * @return
+     */
+    BroadleafCurrency getOrderCurrency();
 
-    public void removeAllCandidateOrderOffers();
-    
-    public void removeAllCandidateFulfillmentGroupOffers();
-    
-    public boolean containsNotStackableOrderOffer();
-    
-    public boolean containsNotStackableFulfillmentGroupOffer();
-    
-    public void removeAllAddedOfferCodes();
-    
-    public void addCandidateOrderOffer(PromotableCandidateOrderOffer candidateOrderOffer);
-    
-    public Order getDelegate();
+    /**
+     * Sets the total fulfillmentCharges the order.
+     * @param totalFulfillmentCharges
+     */
+    void setTotalFufillmentCharges(Money totalFulfillmentCharges);
 
-    public void setDelegate(Order order);
-    
-    public Money calculateOrderItemsCurrentPrice();
-    
-    public Money calculateOrderItemsPriceWithoutAdjustments();
-    
-    public List<PromotableOrderItem> getAllSplitItems();
-    
-    public List<PromotableOrderItem> getDiscountableDiscreteOrderItems();
-    
-    public List<PromotableOrderItem> getDiscountableDiscreteOrderItems(boolean applyDiscountToSalePrice);
-    
-    public void resetFulfillmentGroups();
-    
-    public void resetDiscreteOrderItems();
-    
-    public Money getSubTotal();
-    
-    public List<PromotableFulfillmentGroup> getFulfillmentGroups();
-    
-    public void setTotalShipping(Money totalShipping);
-    
-    public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems);
-    
-    public void setSubTotal(Money subTotal);
-    
-    public void assignOrderItemsFinalPrice();
-    
-    public Customer getCustomer();
-    
-    public List<PromotableOrderItem> getDiscreteOrderItems();
+    /**
+     * Returns the price of the order without adjustments.
+     * @return
+     */
+    Money calculateSubtotalWithoutAdjustments();
 
-    public List<BundleOrderItemSplitContainer> getBundleSplitItems();
+    /**
+     * Returns the price of the order with adjustments.
+     * @return
+     */
+    Money calculateSubtotalWithAdjustments();
 
-    public void setBundleSplitItems(List<BundleOrderItemSplitContainer> bundleSplitItems);
-
-    public List<BundleOrderItem> searchBundleSplitItems(BundleOrderItem key);
-
-    public OrderItem searchSplitItemsForKey(OrderItem orderItem);
-
-    public List<OrderMultishipOption> getMultiShipOptions();
-
-    public void setMultiShipOptions(List<OrderMultishipOption> multiShipOptions);
-
-    public boolean isHasMultiShipOptions();
-
-    public void setHasMultiShipOptions(boolean hasMultiShipOptions);
+    /**
+     * Returns true if this order was created in a way that existing order and item adjustments
+     * were copied over to this item.
+     * @return
+     */
+    boolean isIncludeOrderAndItemAdjustments();
 }

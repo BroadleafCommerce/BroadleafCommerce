@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,19 +16,20 @@
 
 package org.broadleafcommerce.common.email.domain;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author jfischer
@@ -42,8 +43,15 @@ public class EmailTrackingImpl implements EmailTracking {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "EmailTrackingId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "EmailTrackingId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "EmailTrackingImpl", allocationSize = 50)
+    @GeneratedValue(generator = "EmailTrackingId")
+    @GenericGenerator(
+        name="EmailTrackingId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="EmailTrackingImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.common.email.domain.EmailTrackingImpl")
+        }
+    )
     @Column(name = "EMAIL_TRACKING_ID")
     protected Long id;
 
@@ -66,6 +74,7 @@ public class EmailTrackingImpl implements EmailTracking {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTracking#getId()
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -73,6 +82,7 @@ public class EmailTrackingImpl implements EmailTracking {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTracking#setId(java.lang.Long)
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -80,6 +90,7 @@ public class EmailTrackingImpl implements EmailTracking {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTracking#getEmailAddress()
      */
+    @Override
     public String getEmailAddress() {
         return emailAddress;
     }
@@ -87,6 +98,7 @@ public class EmailTrackingImpl implements EmailTracking {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTracking#setEmailAddress(java.lang.String)
      */
+    @Override
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
@@ -94,12 +106,14 @@ public class EmailTrackingImpl implements EmailTracking {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTracking#getDateSent()
      */
+    @Override
     public Date getDateSent() {
         return dateSent;
     }
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTracking#setDateSent(java.util.Date)
      */
+    @Override
     public void setDateSent(Date dateSent) {
         this.dateSent = dateSent;
     }
@@ -107,6 +121,7 @@ public class EmailTrackingImpl implements EmailTracking {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTracking#getType()
      */
+    @Override
     public String getType() {
         return type;
     }
@@ -114,6 +129,7 @@ public class EmailTrackingImpl implements EmailTracking {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTracking#setType(java.lang.String)
      */
+    @Override
     public void setType(String type) {
         this.type = type;
     }

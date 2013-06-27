@@ -1,0 +1,33 @@
+<div>
+    <div th:fragment="messages">
+        <div class="alert-box alert" th:unless="${#strings.isEmpty(param.login_error)}">
+            <div th:unless="${#strings.isEmpty(param.login_error)}" th:text="#{password.invalidCombo}" />
+        </div>
+        <div class="alert-box alert" th:unless="${#strings.isEmpty(param.sessionTimeout)}" th:text="#{password.timeout}" />
+        <div class="alert-box success" th:unless="${#strings.isEmpty(param.messageCode)}">            
+            <div th:if="${param.messageCode[0] == 'usernameSent'}" th:text="#{password.usernameSent}" />
+            <div th:if="${param.messageCode[0] == 'passwordReset'}" th:text="#{password.passwordReset}" />
+        </div>
+    </div>
+
+    <blc:form method="POST" th:fragment="form" th:action="@{/login_admin_post}" action="#">
+
+        <label th:text="#{password.username}" />
+        <input type="text" id="username" name="j_username" autofocus="autofocus" class="twelve" />
+
+        <label th:text="#{password.password}" />
+        <input type="password" id="password" name="j_password" class="twelve" />
+
+        <input type="submit" class="button radius right" value="Sign In"/>
+    </blc:form>
+
+    <div th:fragment="options">
+        <ul class="inline-list">
+            <li><a href="#" th:href="@{forgotUsername}" th:text="#{password.forgotUsername}" /></li>
+            <li class="divider">&nbsp;</li>
+            <li><a href="#" th:href="@{forgotPassword}" th:text="#{password.forgotPassword}" /></li>
+            <li class="divider">&nbsp;</li>
+            <li><a href="#" th:href="@{changePassword}" th:text="#{password.changePassword}" /></li>
+        </ul>
+    </div>
+</div>

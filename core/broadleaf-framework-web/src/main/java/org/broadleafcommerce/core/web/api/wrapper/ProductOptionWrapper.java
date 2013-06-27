@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,9 @@
  */
 
 package org.broadleafcommerce.core.web.api.wrapper;
+
+import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +29,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.broadleafcommerce.core.catalog.domain.ProductOption;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
-
 /**
  * This is a JAXB wrapper around Product.
  *
@@ -38,9 +38,6 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 @XmlRootElement(name = "productOption")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<ProductOption> {
-
-    @XmlElement
-    protected Long id;
     
     @XmlElement
     protected String attributeName;
@@ -59,9 +56,8 @@ public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<Prod
     protected List<ProductOptionValueWrapper> allowedValues;
     
     @Override
-    public void wrap(ProductOption model, HttpServletRequest request) {
-        this.id = model.getId();
-        this.attributeName = model.getAttributeName();
+    public void wrapDetails(ProductOption model, HttpServletRequest request) {
+        this.attributeName = "productOption." + model.getAttributeName();
         this.label = model.getLabel();
         this.required = model.getRequired();
         if (model.getType() != null) {
@@ -73,11 +69,15 @@ public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<Prod
             ArrayList<ProductOptionValueWrapper> allowedValueWrappers = new ArrayList<ProductOptionValueWrapper>();
             for (ProductOptionValue value : optionValues) {
                 ProductOptionValueWrapper optionValueWrapper = (ProductOptionValueWrapper)context.getBean(ProductOptionValueWrapper.class.getName());
-                optionValueWrapper.wrap(value, request);
+                optionValueWrapper.wrapSummary(value, request);
                 allowedValueWrappers.add(optionValueWrapper);
             }
             this.allowedValues = allowedValueWrappers;
         }
     }
 
+    @Override
+    public void wrapSummary(ProductOption model, HttpServletRequest request) {
+        wrapDetails(model, request);
+    }
 }

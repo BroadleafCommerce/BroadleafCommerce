@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,11 @@ import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * @author Jeff Fischer
@@ -54,9 +55,15 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
         }
 
         clearAuthenticationAttributes(request);
-
+        
         // Use the DefaultSavedRequest URL
         String targetUrl = savedRequest.getRedirectUrl();
+        
+        // Remove the sessionTimeout flag if necessary
+        targetUrl = targetUrl.replace("sessionTimeout=true", "");
+        if (targetUrl.charAt(targetUrl.length() - 1) == '?') {
+            targetUrl = targetUrl.substring(0, targetUrl.length() - 1);
+        }
 
         String moduleKey = request.getParameter("moduleKey");
         String pageKey = request.getParameter("pageKey");

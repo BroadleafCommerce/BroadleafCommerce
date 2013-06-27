@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,6 +28,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,9 +40,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_ITEM_OFFER")
@@ -56,11 +56,7 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
         name="CandidateItemOfferId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="CandidateItemOfferImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl")
         }
     )

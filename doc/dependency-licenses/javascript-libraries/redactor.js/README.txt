@@ -1,0 +1,1 @@
+The redactor library has an OEM license with Broadleaf Commerce for use in the Broadleaf Commerce admin.   For any use outside of this purpose (e.g. if the RTE control is desired on the public facing website), you may obtain a license from Imperavi (http://imperavi.com/redactor/).

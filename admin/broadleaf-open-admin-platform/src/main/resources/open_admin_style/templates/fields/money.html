@@ -1,0 +1,3 @@
+<div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+<input type="number" step=".01" class="two" th:field="*{fields['__${field.name}__'].value}" />

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,6 +28,8 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Standalone XML application context, taking the locations of one or more
@@ -59,9 +61,42 @@ public class MergeFileSystemAndClassPathXMLApplicationContext extends AbstractXm
         this(classPathLocations, fileSystemLocations, null);
     }
 
+    public MergeFileSystemAndClassPathXMLApplicationContext(LinkedHashMap<String, ResourceType> locations, ApplicationContext parent) throws BeansException {
+        super(parent);
+
+        ResourceInputStream[] resources = new ResourceInputStream[locations.size()];
+        int j = 0;
+        for (Map.Entry<String, ResourceType> entry : locations.entrySet()) {
+            switch (entry.getValue()) {
+                case CLASSPATH:
+                    resources[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(entry.getKey()), entry.getKey());
+                    break;
+                case FILESYSTEM:
+                    try {
+                        File temp = new File(entry.getKey());
+                        resources[j] = new ResourceInputStream(new BufferedInputStream(new FileInputStream(temp)), entry.getKey());
+                    } catch (FileNotFoundException e) {
+                        throw new FatalBeanException("Unable to merge context files", e);
+                    }
+                    break;
+            }
+            j++;
+        }
+
+        ImportProcessor importProcessor = new ImportProcessor(this);
+        try {
+            resources = importProcessor.extract(resources);
+        } catch (MergeException e) {
+            throw new FatalBeanException("Unable to merge source and patch locations", e);
+        }
+
+        this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(resources, null);
+        refresh();
+    }
+
     public MergeFileSystemAndClassPathXMLApplicationContext(String[] classPathLocations, String[] fileSystemLocations, ApplicationContext parent) throws BeansException {
         super(parent);
-        
+
         ResourceInputStream[] classPathSources;
         ResourceInputStream[] fileSystemSources;
         try {
@@ -69,7 +104,7 @@ public class MergeFileSystemAndClassPathXMLApplicationContext extends AbstractXm
             for (int j=0;j<classPathLocations.length;j++){
                 classPathSources[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(classPathLocations[j]), classPathLocations[j]);
             }
-            
+
             fileSystemSources = new ResourceInputStream[fileSystemLocations.length];
             for (int j=0;j<fileSystemSources.length;j++){
                 File temp = new File(fileSystemLocations[j]);
@@ -91,4 +126,7 @@ public class MergeFileSystemAndClassPathXMLApplicationContext extends AbstractXm
         refresh();
     }
 
+    public enum ResourceType {
+        FILESYSTEM,CLASSPATH
+    }
 }

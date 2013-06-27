@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,13 +16,16 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.core.catalog.domain.Category;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.broadleafcommerce.core.catalog.domain.Category;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * This is a JAXB wrapper class for wrapping a collection of categories.
@@ -34,11 +37,17 @@ public class CategoriesWrapper extends BaseWrapper implements APIWrapper<List<Ca
     @XmlElement(name = "category")
     protected List<CategoryWrapper> categories = new ArrayList<CategoryWrapper>();
 
-    public void wrap(List<Category> cats, HttpServletRequest request) {
+    @Override
+    public void wrapDetails(List<Category> cats, HttpServletRequest request) {
         for (Category category : cats) {
             CategoryWrapper wrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
-            wrapper.wrap(category, request);
+            wrapper.wrapSummary(category, request);
             categories.add(wrapper);
         }
+    }
+
+    @Override
+    public void wrapSummary(List<Category> cats, HttpServletRequest request) {
+        wrapDetails(cats, request);
     }
 }

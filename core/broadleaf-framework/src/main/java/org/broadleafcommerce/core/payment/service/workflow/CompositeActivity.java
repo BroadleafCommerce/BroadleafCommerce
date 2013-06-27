@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,7 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 
-public class CompositeActivity extends BaseActivity {
+public class CompositeActivity extends BaseActivity<SimplePaymentContext> {
 
     private SequenceProcessor workflow;
 
@@ -31,8 +31,9 @@ public class CompositeActivity extends BaseActivity {
      * .workflow.ProcessContext)
      */
 
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        ProcessContext subContext = workflow.doActivities(((SimplePaymentContext) context).getSeedData());
+    @Override
+    public SimplePaymentContext execute(SimplePaymentContext context) throws Exception {
+        ProcessContext subContext = workflow.doActivities(context.getSeedData());
         if (subContext.isStopped()) {
             context.stopProcess();
         }

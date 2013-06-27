@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -64,7 +64,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -212,7 +211,7 @@ public class PricingTest extends BaseTest {
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
         assert (order.getTotal().greaterThan(order.getSubTotal()));
-        assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D))); // Shipping is not taxable
+        assert (order.getTotalTax().equals(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).multiply(0.05D))); // Shipping is not taxable
         //determine the total cost of the fulfillment group fees
         Money fulfillmentGroupFeeTotal = getFulfillmentGroupFeeTotal(order);
         assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping()).add(fulfillmentGroupFeeTotal).subtract(order.getOrderAdjustmentsValue())));
@@ -286,8 +285,6 @@ public class PricingTest extends BaseTest {
         order.setTotal(total);
 
         DiscreteOrderItem item = new DiscreteOrderItemImpl();
-        item.setPrice(new Money(10D));
-        item.setRetailPrice(new Money(15D));
         Sku sku = new SkuImpl();
         sku.setRetailPrice(new Money(15D));
         sku.setDiscountable(true);

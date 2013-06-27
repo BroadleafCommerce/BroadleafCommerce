@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,7 +55,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,20 +67,20 @@ public class CheckoutTest extends BaseTest {
     
     @Resource(name="blEncryptionModule")
     private EncryptionModule encryptionModule;
-    
-    @Resource
+
+    @Resource(name = "blCustomerService")
     private CustomerService customerService;
     
     @Resource(name = "blOrderService")
     private OrderService orderService;
-    
-    @Resource
+
+    @Resource(name = "blCatalogService")
     private CatalogService catalogService;
     
     @Resource(name = "blOrderItemService")
     private OrderItemService orderItemService;
 
-    @Resource
+    @Resource(name = "blSecurePaymentInfoService")
     private SecurePaymentInfoService securePaymentInfoService;
 
     @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
@@ -97,6 +96,8 @@ public class CheckoutTest extends BaseTest {
         order.setTotalShipping(new Money(0D));
         Map<PaymentInfo, Referenced> map = addPaymentToOrder(order, address);
 
+        //execute pricing for this order
+        orderService.save(order, true);
         CheckoutResponse response = checkoutService.performCheckout(order, map);
         //The DummyCreditCardModule changed the reference Number - make sure it's represented
         for(PaymentInfo paymentInfo : response.getInfos().keySet()) {
@@ -304,6 +305,7 @@ public class CheckoutTest extends BaseTest {
 
         };
 
+        order.getPaymentInfos().add(payment);
         Map<PaymentInfo, Referenced> map = new HashMap<PaymentInfo, Referenced>();
         map.put(payment, cc);
         return map;
@@ -312,8 +314,6 @@ public class CheckoutTest extends BaseTest {
     private void addSampleItemToOrder(Order order, FulfillmentGroup group) {
         DiscreteOrderItem item = new DiscreteOrderItemImpl();
         item.setOrder(order);
-        item.setPrice(new Money(14.99D));
-        item.setRetailPrice(new Money(14.99D));
         item.setQuantity(1);
 
         Sku newSku = new SkuImpl();

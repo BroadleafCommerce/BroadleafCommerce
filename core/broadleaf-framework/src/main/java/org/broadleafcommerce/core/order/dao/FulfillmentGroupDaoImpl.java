@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,13 +21,13 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
 import java.util.List;
 
 @Repository("blFulfillmentGroupDao")
@@ -84,4 +84,74 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
         return ((FulfillmentGroupFee) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.FulfillmentGroupFee"));
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<FulfillmentGroup> readUnfulfilledFulfillmentGroups(int start,
+            int maxResults) {
+        Query query = em.createNamedQuery("BC_READ_UNFULFILLED_FULFILLMENT_GROUP_ASC");
+        query.setFirstResult(start);
+        query.setMaxResults(maxResults);
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<FulfillmentGroup> readPartiallyFulfilledFulfillmentGroups(int start,
+            int maxResults) {
+        Query query = em.createNamedQuery("BC_READ_PARTIALLY_FULFILLED_FULFILLMENT_GROUP_ASC");
+        query.setFirstResult(start);
+        query.setMaxResults(maxResults);
+        
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<FulfillmentGroup> readUnprocessedFulfillmentGroups(int start,
+            int maxResults) {
+        Query query = em.createNamedQuery("BC_READ_UNPROCESSED_FULFILLMENT_GROUP_ASC");
+        query.setFirstResult(start);
+        query.setMaxResults(maxResults);
+        
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<FulfillmentGroup> readFulfillmentGroupsByStatus(
+            FulfillmentGroupStatusType status, int start, int maxResults, boolean ascending) {
+        Query query = null;
+        if (ascending) {
+            query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_BY_STATUS_ASC");
+        } else {
+            query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_BY_STATUS_DESC");
+        }
+        query.setParameter("status", status.getType());
+        query.setFirstResult(start);
+        query.setMaxResults(maxResults);
+        
+        return query.getResultList();
+    }
+
+    @Override
+    public List<FulfillmentGroup> readFulfillmentGroupsByStatus(
+            FulfillmentGroupStatusType status, int start, int maxResults) {
+        return readFulfillmentGroupsByStatus(status, start, maxResults, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Integer readNextFulfillmentGroupSequnceForOrder(Order order) {
+        Query query = em.createNamedQuery("BC_READ_MAX_FULFILLMENT_GROUP_SEQUENCE");
+        query.setParameter("orderId", order.getId());
+        List<Integer> max = query.getResultList();
+        if (max != null && !max.isEmpty()) {
+            Integer maxNumber = max.get(0);
+            if (maxNumber == null) {
+                return 1;
+            }
+            return maxNumber + 1;
+        }
+        return 1;
+    }
 }

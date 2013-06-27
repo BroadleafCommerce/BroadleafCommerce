@@ -4,80 +4,102 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
-            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
 
     <aop:config/>
 
     <!-- Scan Broadleaf defined web utility classes -->
     <context:component-scan base-package="org.broadleafcommerce.openadmin.web"/>
 
-    <bean id="multipartResolver"
-          class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadMultipartResolver"/>
-
-    <bean id="blUploadController"
-          class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadAddOrUpdateController">
-        <property name="dynamicEntityRemoteService" ref="blDynamicEntityRemoteService"/>
-        <property name="exploitProtectionService" ref="blExploitProtectionService"/>
-    </bean>
-
-    <bean id="blUploadCompletedView"
-          class="org.broadleafcommerce.openadmin.server.service.artifact.upload.UploadCompletedView"/>
-
     <bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
         <property name="order" value="1"/>
     </bean>
-
-    <bean class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter"/>
-    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
-
-    <bean id="adminUrlMapping" class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredHandler">
-        <property name="mappings">
-            <map>
-                <entry key="/**/security.service" value-ref="blAdminSecurityRemoteService"/>
-                <entry key="/**/dynamic.entity.service" value-ref="blDynamicEntityRemoteService"/>
-                <entry key="/**/upload.progress.service" value-ref="blUploadRemoteService"/>
-                <entry key="/**/utility.service" value-ref="blUtilityRemoteService"/>
-                <entry key="/**/app.configuration.service" value-ref="blAppConfigurationRemoteService"/>
-                <entry key="/**/blc_gwt_logging" value-ref="blLog4JRemoteGwtLoggingService"/>
-            </map>
-        </property>
-        <property name="serviceExporterFactory">
-            <bean class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredRPCServiceExporterFactory"/>
-        </property>
+    
+    <bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">     
+        <property name="maxUploadSize" value="${asset.server.max.uploadable.file.size}"/>
+    </bean>    
+    
+    <mvc:annotation-driven/>
+    
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+        <property name="useSuffixPatternMatch" value="false" />
     </bean>
+
+    <context:component-scan base-package="org.broadleafcommerce.openadmin.web.controller" />
 
     <bean id="blAdminDialect" class="org.broadleafcommerce.common.web.dialect.BLCAdminDialect">
         <property name="processors">
             <set>
                 <ref bean="blAdminUserProcessor"/>
+                <ref bean="blAdminComponentIdProcessor"/>
                 <ref bean="blAdminModuleProcessor"/>
                 <ref bean="blAdminSectionHrefProcessor"/>
+                <ref bean="blAdminFieldBuilderProcessor"/>
+                <ref bean="blErrorsProcessor"/>
             </set>
         </property>
     </bean>
-
-    <bean id="blAdminWebTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
-        <property name="prefix" value="/WEB-INF/templates/" />
-        <property name="suffix" value=".html" />
-        <property name="templateMode" value="HTML5" />
-        <property name="cacheable" value="false"/>
-        <property name="characterEncoding" value="UTF-8" />
+    
+    <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
+    <bean id="blAdminWebCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
+    
+    <bean id="blAdminExceptionResolver" class="org.broadleafcommerce.openadmin.web.handler.AdminMappingExceptionResolver">
+        <property name="showDebugMessage" value="${exception.showDebugMessage}" />
     </bean>
 
+    <bean id="blAdminWebTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+        <property name="prefix" value="/WEB-INF/templates/admin/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />
+        <property name="cacheable" value="${cache.page.templates}"/>
+        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
+        <property name="characterEncoding" value="UTF-8" />
+        <property name="order" value="200"/>         
+    </bean>
+    
+    <bean id="blAdminWebClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+        <property name="prefix" value="open_admin_style/templates/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />        
+        <property name="characterEncoding" value="UTF-8" />
+        <property name="cacheable" value="${cache.page.templates}"/>
+        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
+        <property name="order" value="300"/> 
+    </bean>  
+
+    <bean id="blAdminMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
+                
     <bean id="blAdminWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+        <property name="messageResolvers">
+            <set>
+                <ref bean="blAdminMessageResolver" />
+                <bean class="org.thymeleaf.spring3.messageresolver.SpringMessageResolver" />
+            </set>
+        </property>
         <property name="templateResolvers">
             <set>
+                <ref bean="blAdminWebCustomTemplateResolver" />
                 <ref bean="blAdminWebTemplateResolver" />
+                <ref bean="blAdminWebClasspathTemplateResolver" />
+                <ref bean="blWebCommonClasspathTemplateResolver" />
             </set>
         </property>
         <property name="dialects">
             <set>
                 <ref bean="thymeleafSpringStandardDialect" />
                 <ref bean="blAdminDialect" />
+                <ref bean="blDialect" />
             </set>
         </property>
+        <!--<property name="cacheManager"><null/></property>-->
     </bean>
 
+    <mvc:interceptors>
+      <bean class="org.broadleafcommerce.openadmin.web.compatibility.JSFieldNameCompatibilityInterceptor" />
+    </mvc:interceptors>
 </beans>

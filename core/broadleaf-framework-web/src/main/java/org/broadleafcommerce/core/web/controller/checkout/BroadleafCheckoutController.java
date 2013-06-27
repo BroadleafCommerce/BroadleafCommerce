@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
@@ -30,16 +29,26 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentEstimationResponse;
-import org.broadleafcommerce.core.web.checkout.model.*;
+import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
+import org.broadleafcommerce.core.web.checkout.model.MultiShipInstructionForm;
+import org.broadleafcommerce.core.web.checkout.model.OrderInfoForm;
+import org.broadleafcommerce.core.web.checkout.model.OrderMultishipOptionForm;
+import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
-import org.broadleafcommerce.profile.core.domain.*;
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.AddressImpl;
+import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerAddress;
+import org.broadleafcommerce.profile.core.domain.Phone;
+import org.broadleafcommerce.profile.core.domain.PhoneImpl;
+import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.joda.time.DateTime;
 import org.springframework.ui.Model;
@@ -53,8 +62,13 @@ import java.beans.PropertyEditorSupport;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * In charge of performing the various checkout operations
@@ -180,6 +194,9 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         }
 
         FulfillmentGroup fulfillmentGroup = cart.getFulfillmentGroups().get(0);
+        if (StringUtils.isEmpty(shippingForm.getAddress().getPhonePrimary().getPhoneNumber())) {
+            shippingForm.getAddress().setPhonePrimary(null);
+        }
         fulfillmentGroup.setAddress(shippingForm.getAddress());
         fulfillmentGroup.setPersonalMessage(shippingForm.getPersonalMessage());
         fulfillmentGroup.setDeliveryInstruction(shippingForm.getDeliveryMessage());
@@ -396,12 +413,9 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
             payments.put(ccInfo, ccReference);
 
-            initializeOrderForCheckout(cart);
-
             CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart, payments);
 
             if (!checkoutResponse.getPaymentResponse().getResponseItems().get(ccInfo).getTransactionSuccess()){
-                processFailedOrderCheckout(cart);
                 populateModelWithShippingReferenceData(request, model);
                 result.rejectValue("creditCardNumber", "payment.exception", null, null);
                 return getCheckoutView();
@@ -437,34 +451,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                 billingInfoForm.setAddress(billing);
             }
         }
-    }
-
-    /**
-     * This method initializes the order for checkout by setting
-     * the order number, status, and the submit date.
-     *
-     * @param order
-     */
-    protected void initializeOrderForCheckout(Order order) {
-        order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(SystemTime.asDate()));
-        order.setStatus(OrderStatus.SUBMITTED);
-        order.setSubmitDate(Calendar.getInstance().getTime());
-    }
-
-    /**
-     * This method dictates what actions need to be taken if there is a failure during the checkout process.
-     * Normally called when either the transaction success is false (e.g. payment declined by gateway)
-     * or an unknown error occurs during the Checkout Workflow (e.g. a CheckoutException is thrown)
-     *
-     * The default behavior is to reverse the status of the order and set the submit date and order number to null.
-     *
-     * @param order
-     */
-    protected void processFailedOrderCheckout(Order order) throws PricingException {
-        order.setOrderNumber(null);
-        order.setStatus(OrderStatus.IN_PROCESS);
-        order.setSubmitDate(null);
-        orderService.save(order, false);
     }
 
     /**
@@ -580,6 +566,19 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             public void setAsText(String text) {
                 Country country = countryService.findCountryByAbbreviation(text);
                 setValue(country);
+            }
+        });
+        binder.registerCustomEditor(Phone.class, "address.phonePrimary", new PropertyEditorSupport() {
+
+            @Override
+            public void setAsText(String text) {
+                if (!StringUtils.isBlank(text)) {
+                    Phone phone = new PhoneImpl();
+                    phone.setPhoneNumber(text);
+                    setValue(phone);
+                } else {
+                    setValue(null);
+                }
             }
         });
     }

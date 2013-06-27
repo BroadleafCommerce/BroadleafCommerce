@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,8 +18,18 @@ package org.broadleafcommerce.cms.field.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * Created by jfischer
@@ -33,8 +43,15 @@ public class FieldEnumerationItemImpl implements FieldEnumerationItem {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "FieldEnumerationItemId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FieldEnumerationItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldEnumerationItemImpl", allocationSize = 10)
+    @GeneratedValue(generator = "FieldEnumerationItemId")
+    @GenericGenerator(
+        name="FieldEnumerationItemId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="FieldEnumerationItemImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.field.domain.FieldEnumerationItemImpl")
+        }
+    )
     @Column(name = "FLD_ENUM_ITEM_ID")
     protected Long id;
 

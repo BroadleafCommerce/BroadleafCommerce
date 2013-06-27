@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,6 +49,10 @@ public interface FulfillmentGroup extends Serializable {
 
     public void setOrder(Order order);
     
+    public void setSequence(Integer sequence);
+
+    public Integer getSequence();
+
     public FulfillmentOption getFulfillmentOption();
 
     public void setFulfillmentOption(FulfillmentOption fulfillmentOption);
@@ -81,16 +85,83 @@ public interface FulfillmentGroup extends Serializable {
     @Deprecated
     public void setMethod(String fulfillmentMethod);
 
+    /**
+     * Returns the retail price for this fulfillmentGroup.   The retail and sale concepts used 
+     * for item pricing are not generally used with fulfillmentPricing but supported 
+     * nonetheless.    Typically only a retail price would be set on a fulfillment group.
+     * @return
+     */
+    public Money getRetailFulfillmentPrice();
+
+    /**
+     * Sets the retail price for this fulfillmentGroup.   
+     * @param fulfillmentPrice
+     */
+    public void setRetailFulfillmentPrice(Money fulfillmentPrice);
+
+    /**
+     * Returns the sale price for this fulfillmentGroup.    
+     * Typically this will be null or equal to the retailFulfillmentPrice
+     * @return
+     */
+    public Money getSaleFulfillmentPrice();
+
+    /**
+     * Sets the sale price for this fulfillmentGroup.  Typically not used.
+     * @see #setRetailFulfillmentPrice(Money)
+     * @param fulfillmentPrice
+     */
+    public void setSaleFulfillmentPrice(Money fulfillmentPrice);
+
+    /**
+     * Gets the price to charge for this fulfillmentGroup.   Includes the effects of any adjustments such as those that 
+     * might have been applied by the promotion engine (e.g. free shipping)
+     * @return
+     */
+    public Money getFulfillmentPrice();
+
+    /**
+     * Sets the price to charge for this fulfillmentGroup.  Typically set internally by the Broadleaf pricing and
+     * promotion engines.
+     * @return
+     */
+    public void setFulfillmentPrice(Money fulfillmentPrice);
+
+    /**
+     * @deprecated - use {@link #getRetailFulfillmentPrice()} instead.   Deprecated as the price might be for other
+     * fulfillment types such as PickUpAtStore fees or download fees.
+     * @return
+     */
     public Money getRetailShippingPrice();
 
+    /**
+     * @deprecated - use {@link #setRetailFulfillmentPrice(Money)} instead.
+     * @return
+     */
     public void setRetailShippingPrice(Money retailShippingPrice);
 
+    /**
+     * @deprecated - use {@link #getSaleFulfillmentPrice()} instead.
+     * @return
+     */
     public Money getSaleShippingPrice();
 
+    /**
+     * @deprecated - use {@link #setSaleFulfillmentPrice(Money)} instead.
+     * @param saleShippingPrice
+     */
     public void setSaleShippingPrice(Money saleShippingPrice);
 
+    /**
+     * @deprecated - use {@link #getFulfillmentPrice()} instead.
+     * @return
+     */
     public Money getShippingPrice();
 
+    /**
+     * @deprecated - use {@link #setRetailFulfillmentPrice(Money)} instead.
+     * @param shippingPrice
+     */
     public void setShippingPrice(Money shippingPrice);
 
     public String getReferenceNumber();

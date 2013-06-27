@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,33 +16,15 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import java.io.Serializable;
+import org.broadleafcommerce.common.rule.QuantityBasedRule;
 
 /**
  * 
  * @author jfischer
  *
  */
-public interface OfferItemCriteria extends Serializable {
+public interface OfferItemCriteria extends QuantityBasedRule {
 
-    public Long getId();
-
-    public void setId(Long id);
-
-    public Integer getQuantity();
-
-    public void setQuantity(Integer quantity);
-
-    public String getOrderItemMatchRule();
-
-    public void setOrderItemMatchRule(String orderItemMatchRule);
-
-    public Offer getQualifyingOffer();
-
-    public void setQualifyingOffer(Offer offer);
-
-    public Offer getTargetOffer();
-
-    public void setTargetOffer(Offer targetOffer);
+    //place abstract method definitions here
     
 }

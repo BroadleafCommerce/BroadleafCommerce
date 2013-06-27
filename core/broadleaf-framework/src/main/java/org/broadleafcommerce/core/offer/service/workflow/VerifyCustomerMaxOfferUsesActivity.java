@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,25 +25,26 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
-import org.broadleafcommerce.core.workflow.ProcessContext;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * Checks the offers being used in the order to make sure that the customer
  * has not exceeded the max uses for the offer.
  */
-public class VerifyCustomerMaxOfferUsesActivity extends BaseActivity {
+public class VerifyCustomerMaxOfferUsesActivity extends BaseActivity<CheckoutContext> {
 
     @Resource(name="blOfferAuditDao")
     private OfferAuditDao offerAuditDao;
 
-    public ProcessContext execute(ProcessContext context) throws Exception {
+    @Override
+    public CheckoutContext execute(CheckoutContext context) throws Exception {
         Map<Long,Long> offerIdToAllowedUsesMap = new HashMap<Long,Long>();
-        CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
+        CheckoutSeed seed = context.getSeedData();
         Order order = seed.getOrder();
         if (order != null) {
             addOfferIds(order.getOrderAdjustments(), offerIdToAllowedUsesMap);

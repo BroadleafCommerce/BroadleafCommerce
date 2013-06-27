@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,13 +21,14 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.GenericFilterBean;
 
+import java.io.IOException;
+
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 /**
  * This is a basic filter for finding the customer ID on the request and setting the customer object on the request.  This should come after any security filters.
@@ -58,7 +59,7 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         
         //If someone already set the customer on the request then we don't need to do anything.
-        if (request.getAttribute(CustomerStateFilter.getCustomerRequestAttributeName()) == null){
+        if (request.getAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName()) == null){
     
             //First check to see if someone already put the customerId on the request
             if (request.getAttribute(customerIdAttributeName) != null) {
@@ -80,7 +81,7 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
                 //If we found it, look up the customer and put it on the request.
                 Customer customer = customerService.readCustomerById(Long.valueOf(customerId));
                 if (customer != null) {
-                    servletRequest.setAttribute(CustomerStateFilter.getCustomerRequestAttributeName(), customer);
+                    servletRequest.setAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName(), customer);
                 }
             }
 

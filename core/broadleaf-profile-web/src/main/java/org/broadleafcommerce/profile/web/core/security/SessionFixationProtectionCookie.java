@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,24 +36,19 @@ public class SessionFixationProtectionCookie {
 
     public static final String COOKIE_NAME = "ActiveID";
     
-    public static String readActiveID() {
-        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+    public static String readActiveID(HttpServletRequest request) {
         String cookieData = null;
         
-        try {
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if (cookie.getName().equals(COOKIE_NAME)) {
-                        cookieData = cookie.getValue();
-                        break;
-                    }
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(COOKIE_NAME)) {
+                    cookieData = cookie.getValue();
+                    break;
                 }
             }
-        } catch(Exception e) {
-            // Do nothing -- we'll be returning null
         }
-        
+
         return cookieData;
     }
 

@@ -3,9 +3,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:tx="http://www.springframework.org/schema/tx"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 
     <bean id="blMergedEntityContexts" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -24,9 +24,7 @@
     </bean>
     
     <bean id="blEntityManagerFactorySecureInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
-        </property>
+        <property name="jpaVendorAdapter" ref="blJpaVendorAdapter"/>
         <property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
         <property name="persistenceUnitName" value="blSecurePU"/>
     </bean>
@@ -84,21 +82,6 @@
     <aop:config>
         <aop:pointcut id="blSecurePaymentInfoServiceOperation2" expression="execution(* org.broadleafcommerce.core.payment.service.SecurePaymentInfoService.remove(..))"/>
         <aop:advisor advice-ref="blTxAdviceSecureInfo" pointcut-ref="blSecurePaymentInfoServiceOperation2"/>
-    </aop:config>
-
-    <aop:config>
-        <aop:pointcut id="blTargetContentServiceOperation" expression="execution(* org.broadleafcommerce.core.marketing.service.TargetContentService.remove*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blTargetContentServiceOperation"/>
-    </aop:config>
-
-    <!--<aop:config>
-        <aop:pointcut id="blPricingServiceOperation" expression="execution(* org.broadleafcommerce.core.pricing.service.PricingService.executePricing(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPricingServiceOperation"/>
-    </aop:config>-->
-    
-    <aop:config>
-        <aop:pointcut id="blTargetContentServiceOperation2" expression="execution(* org.broadleafcommerce.core.marketing.service.TargetContentService.update*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blTargetContentServiceOperation2"/>
     </aop:config>
 
     <aop:config>
@@ -164,11 +147,6 @@
     <aop:config>
         <aop:pointcut id="blAvailabilityServiceOperation" expression="execution(* org.broadleafcommerce.core.inventory.service.AvailabilityService.*(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAvailabilityServiceOperation"/>
-    </aop:config>
-
-    <aop:config>
-        <aop:pointcut id="blContentServiceOperation" expression="execution(* org.broadleafcommerce.core.content.service.ContentService.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blContentServiceOperation"/>
     </aop:config>
 
 </beans>

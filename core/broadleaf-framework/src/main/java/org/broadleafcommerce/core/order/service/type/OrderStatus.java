@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,7 @@ import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.core.order.domain.Order;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -39,11 +39,12 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OrderStatus> TYPES = new HashMap<String, OrderStatus>();
+    private static final Map<String, OrderStatus> TYPES = new LinkedHashMap<String, OrderStatus>();
 
     public static final OrderStatus NAMED = new OrderStatus("NAMED", "Named");
     public static final OrderStatus IN_PROCESS = new OrderStatus("IN_PROCESS", "In Process");
     public static final OrderStatus SUBMITTED = new OrderStatus("SUBMITTED", "Submitted");
+    public static final OrderStatus CANCELLED = new OrderStatus("CANCELLED", "Cancelled");
 
     public static OrderStatus getInstance(final String type) {
         return TYPES.get(type);
@@ -61,12 +62,10 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
-    @Override
     public String getType() {
         return type;
     }
 
-    @Override
     public String getFriendlyType() {
         return friendlyType;
     }

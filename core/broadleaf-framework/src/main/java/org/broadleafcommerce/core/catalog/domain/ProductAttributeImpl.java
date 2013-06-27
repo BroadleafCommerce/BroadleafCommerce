@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -54,11 +54,7 @@ public class ProductAttributeImpl implements ProductAttribute {
         name="ProductAttributeId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="ProductAttributeImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl")
         }
     )
@@ -68,7 +64,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @Index(name="PRODUCTATTRIBUTE_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Name", order=1, group = "ProductAttributeImpl_Description", prominent=true)
+    @AdminPresentation(excluded = true)
     protected String name;
 
     /** The value. */
@@ -79,7 +75,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /** The searchable. */
     @Column(name = "SEARCHABLE")
     @AdminPresentation(excluded = true)
-    protected Boolean searchable;
+    protected Boolean searchable = false;
     
     /** The product. */
     @ManyToOne(targetEntity = ProductImpl.class, optional=false)
@@ -90,6 +86,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getId()
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -97,6 +94,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setId(java.lang.Long)
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -104,6 +102,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getValue()
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -111,6 +110,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setValue(java.lang.String)
      */
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
@@ -118,13 +118,19 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getSearchable()
      */
+    @Override
     public Boolean getSearchable() {
-        return searchable;
+        if (searchable == null) {
+            return Boolean.FALSE;
+        } else {
+            return searchable;
+        }
     }
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setSearchable(java.lang.Boolean)
      */
+    @Override
     public void setSearchable(Boolean searchable) {
         this.searchable = searchable;
     }
@@ -132,6 +138,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getName()
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -139,6 +146,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setName(java.lang.String)
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -146,12 +154,14 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return value;
     }
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getProduct()
      */
+    @Override
     public Product getProduct() {
         return product;
     }
@@ -159,6 +169,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setProduct(org.broadleafcommerce.core.catalog.domain.Product)
      */
+    @Override
     public void setProduct(Product product) {
         this.product = product;
     }

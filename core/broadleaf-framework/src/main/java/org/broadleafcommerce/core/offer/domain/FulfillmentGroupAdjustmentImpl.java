@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,13 +17,17 @@
 package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.hibernate.annotations.Cache;
@@ -31,6 +35,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,40 +48,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import java.math.BigDecimal;
-
 @Entity
 @Table(name = "BLC_FG_ADJUSTMENT")
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-@AdminPresentationOverrides(
+@AdminPresentationMergeOverrides(
     {
-        @AdminPresentationOverride(name="offer.id", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.description", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.discountType", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.value", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.priority", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.startDate", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.endDate", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.stackable", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.targetSystem", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.applyToSalePrice", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.appliesToOrderRules", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.appliesToCustomerRules", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.applyDiscountToMarkedItems", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.combinableWithOtherOffers", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.deliveryType", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.maxUses", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.uses", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.offerItemQualifierRuleType", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.offerItemTargetRuleType", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.targetItemCriteria", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.totalitarianOffer", value=@AdminPresentation(excluded = true)),
-        @AdminPresentationOverride(name="offer.treatAsNewFormat", value=@AdminPresentation(excluded = true))
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                                            booleanOverrideValue = true))
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "FulfillmentGroupAdjustmentImpl_baseFulfillmentGroupAdjustment")
-public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustment {
+public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustment, CurrencyCodeIdentifiable {
 
     public static final long serialVersionUID = 1L;
 
@@ -85,11 +70,7 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
         name="FGAdjustmentId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="FulfillmentGroupAdjustmentImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl")
         }
     )
@@ -105,21 +86,31 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     @Index(name="FGADJUSTMENT_OFFER_INDEX", columnNames={"OFFER_ID"})
+    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_Offer", order=1000,
+            prominent = true, gridOrder = 1000)
+    @AdminPresentationToOneLookup()
     protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON", nullable=false)
-    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_FG_Adjustment_Reason", order=1, group = "FulfillmentGroupAdjustmentImpl_Description")
+    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_FG_Adjustment_Reason", order=2000)
     protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_FG_Adjustment_Value", order=2, group = "FulfillmentGroupAdjustmentImpl_Description", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_FG_Adjustment_Value", order=3000,
+            fieldType = SupportedFieldType.MONEY, prominent = true,
+            gridOrder = 2000)
     protected BigDecimal value = Money.ZERO.getAmount();
 
     @Override
     public void init(FulfillmentGroup fulfillmentGroup, Offer offer, String reason){
         this.fulfillmentGroup = fulfillmentGroup;
         this.offer = offer;
-        this.reason = reason;
+
+        if (reason == null) {
+            this.reason = offer.getName();
+        } else {
+            this.reason = reason;
+        }
     }
 
     @Override
@@ -169,6 +160,11 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     @Override
     public void setValue(Money value) {
         this.value = value.getAmount();
+    }
+
+    @Override
+    public String getCurrencyCode() {
+        return ((CurrencyCodeIdentifiable) fulfillmentGroup).getCurrencyCode();
     }
 
     @Override

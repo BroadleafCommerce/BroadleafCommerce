@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,7 +22,6 @@ import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 
 import javax.annotation.Nonnull;
-
 import java.util.Date;
 import java.util.List;
 
@@ -190,7 +189,7 @@ public interface ProductDao {
     
     /**
      * Reads all products from the database that are currently active. That is, reads all products that
-     * are not archived and whose start and end dates surround the currentDate.
+     * are not archived and whose start and end dates surround the currentDate
      * 
      * @param currentDate
      * @return a list of all active products
@@ -220,4 +219,21 @@ public interface ProductDao {
      */
     public Long readCountAllActiveProducts(Date currentDate);
 
+    /**
+     * Returns the number of milliseconds that the current date/time will be cached for queries before refreshing.
+     * This aids in query caching, otherwise every query that utilized current date would be different and caching
+     * would be ineffective.
+     *
+     * @return the milliseconds to cache the current date/time
+     */
+    public Long getCurrentDateResolution();
+
+    /**
+     * Sets the number of milliseconds that the current date/time will be cached for queries before refreshing.
+     * This aids in query caching, otherwise every query that utilized current date would be different and caching
+     * would be ineffective.
+     *
+     * @param currentDateResolution the milliseconds to cache the current date/time
+     */
+    public void setCurrentDateResolution(Long currentDateResolution);
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,11 +16,17 @@
 
 package org.broadleafcommerce.profile.core.service;
 
-import javax.annotation.Resource;
-
+import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
+import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
+import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.profile.core.dao.AddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.service.exception.AddressVerificationException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import javax.annotation.Resource;
 
 @Service("blAddressService")
 public class AddressServiceImpl implements AddressService {
@@ -28,19 +34,62 @@ public class AddressServiceImpl implements AddressService {
     @Resource(name="blAddressDao")
     protected AddressDao addressDao;
 
+    @Resource(name = "blModuleConfigurationService")
+    protected ModuleConfigurationService moduleConfigService;
+
+    @Resource(name = "blAddressVerificationProviders")
+    protected List<AddressVerificationProvider> providers;
+
+    @Override
     public Address saveAddress(Address address) {
         return addressDao.save(address);
     }
 
+    @Override
     public Address readAddressById(Long addressId) {
         return addressDao.readAddressById(addressId);
     }
 
+    @Override
     public Address create() {
         return addressDao.create();
     }
 
+    @Override
     public void delete(Address address) {
         addressDao.delete(address);
     }
+
+    @Override
+    public List<Address> verifyAddress(Address address) throws AddressVerificationException {
+
+        if (providers != null && !providers.isEmpty()) {
+
+            List<ModuleConfiguration> moduleConfigs = moduleConfigService.findActiveConfigurationsByType(ModuleConfigurationType.ADDRESS_VERIFICATION);
+
+            if (moduleConfigs != null && !moduleConfigs.isEmpty()) {
+                //Try to find a default configuration
+                ModuleConfiguration config = null;
+                for (ModuleConfiguration configuration : moduleConfigs) {
+                    if (configuration.getIsDefault()) {
+                        config = configuration;
+                        break;
+                    }
+                }
+
+                if (config == null) {
+                    //if there wasn't a default one, use the first active one...
+                    config = moduleConfigs.get(0);
+                }
+
+                for (AddressVerificationProvider provider : providers) {
+                    if (provider.canRespond(config)) {
+                        return provider.validateAddress(address, config);
+                    }
+                }
+            }
+        }
+        throw new AddressVerificationException("No providers were configured to handle address validation");
+    }
+
 }

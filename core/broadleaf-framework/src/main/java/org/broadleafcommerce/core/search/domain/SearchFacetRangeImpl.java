@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,22 +24,22 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationOverr
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -54,8 +54,15 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "SearchFacetRangeId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SearchFacetRangeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchFacetRangeImpl", allocationSize = 50)
+    @GeneratedValue(generator = "SearchFacetRangeId")
+    @GenericGenerator(
+        name="SearchFacetRangeId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="SearchFacetRangeImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl")
+        }
+    )
     @Column(name = "SEARCH_FACET_RANGE_ID")
     protected Long id;
     

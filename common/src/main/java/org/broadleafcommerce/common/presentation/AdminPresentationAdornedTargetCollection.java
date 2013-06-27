@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -163,10 +163,28 @@ public @interface AdminPresentationAdornedTargetCollection {
      *
      * <p>This is the field in the target entity that represents
      * its primary key</p>
+     * 
+     * <p>Note that this should just be the property name, not the path to the property.
+     * For example, if the target object is CountryImpl, then the value for the 
+     * targetObjectIdProperty should just be "abbreviation".
      *
      * @return primary key field of the target entity
      */
     String targetObjectIdProperty() default "id";
+
+    /**
+     * <p>Optional - only required if there is an entity that is responsible
+     * for modeling the join table for this adorned collection.</p>
+     * 
+     * <p>For example, consider the scenario that a product has many possible 
+     * parent categories. Also consider that you might want to sort the parent
+     * categories in a specific way. The join entity in this case would hold a
+     * link to both a category and a product as well as a sequence field. This
+     * property provides the ability to specify that mapping.</p>
+     * 
+     * @return the join entity class (if any)
+     */
+    String joinEntityClass() default "";
 
     /**
      * <p>Optional - only required if the adorned target has
@@ -211,27 +229,25 @@ public @interface AdminPresentationAdornedTargetCollection {
     int order() default 99999;
 
     /**
-     * <p>Optional - only required if you want the resulting collection grid element to
-     * appear somewhere other than below the main detail form</p>
-     *
-     * <p>Specify a UI element Id to which the collection grid should be added. This is useful
-     * if, for example, you want the resulting collection grid to appear in another tab, or
-     * some other location in the admin tool UI.</p>
-     *
-     * @return UI element Id to which the collection grid should be added
+     * Optional - only required if you want the field to appear under a different tab
+     * 
+     * Specify a GUI tab for this field
+     * 
+     * @return the tab for this field
      */
-    String targetUIElementId() default "";
+    String tab() default "General";
 
     /**
-     * <p>Optional - unique name for the backing datasource. If unspecified, the datasource
-     * name will be the JPA entity field name with "AdvancedCollectionDS" appended to the end.</p>
-     *
-     * <p>The datasource can be retrieved programatically in admin code via
-     * PresenterSequenceSetupManager.getDataSource(..)</p>
-     *
-     * @return unique name for the backing datasource
+     * Optional - only required if you want to order the appearance of the tabs in the UI
+     * 
+     * Specify an order for this tab. Tabs will be sorted int he resulting form in 
+     * ascending order based on this parameter.
+     * 
+     * The default tab will render with an order of 100.
+     * 
+     * @return the order for this tab
      */
-    String dataSourceName() default "";
+    int tabOrder() default 100;
 
     /**
      * <p>Optional - only required if you need to specially handle crud operations for this

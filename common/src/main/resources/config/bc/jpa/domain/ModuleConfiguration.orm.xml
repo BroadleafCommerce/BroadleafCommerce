@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+
+    <named-query name="BC_READ_MODULE_CONFIG_BY_TYPE" >
+        <query>SELECT config FROM org.broadleafcommerce.common.config.domain.ModuleConfiguration config 
+               WHERE config.configType = :configType 
+               ORDER BY config.priority ASC
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_ACTIVE_MODULE_CONFIG_BY_TYPE" >
+        <query>SELECT config FROM org.broadleafcommerce.common.config.domain.ModuleConfiguration config 
+               WHERE config.configType = :configType 
+               AND (config.archiveStatus.archived IS NULL OR config.archiveStatus.archived = 'N')
+               AND (config.activeStartDate IS NOT NULL AND config.activeStartDate &lt; :currentDate)
+               AND (config.activeEndDate IS NULL OR config.activeEndDate &gt; :currentDate)
+               ORDER BY config.priority ASC
+        </query>
+    </named-query>
+    
+    <named-query name="BC_BATCH_UPDATE_MODULE_CONFIG_DEFAULT" >
+        <query>UPDATE org.broadleafcommerce.common.config.domain.ModuleConfiguration config 
+               SET config.isDefault = false
+               WHERE config.configType = :configType
+        </query>
+    </named-query>
+
+</entity-mappings>

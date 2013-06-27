@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,9 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -36,15 +29,22 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
-import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * 
  * @author Phillip Verheyden
  */
-public class ConsolidateFulfillmentFeesActivity extends BaseActivity {
+public class ConsolidateFulfillmentFeesActivity extends BaseActivity<PricingContext> {
     
     @SuppressWarnings("unchecked")
     protected static final Map EXPRESSION_CACHE = Collections.synchronizedMap(new LRUMap(1000));
@@ -53,8 +53,8 @@ public class ConsolidateFulfillmentFeesActivity extends BaseActivity {
     protected FulfillmentGroupService fulfillmentGroupService;
 
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        Order order = ((PricingContext) context).getSeedData();
+    public PricingContext execute(PricingContext context) throws Exception {
+        Order order = context.getSeedData();
         
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             //create and associate all the Fulfillment Fees
@@ -108,6 +108,7 @@ public class ConsolidateFulfillmentFeesActivity extends BaseActivity {
             if (exp == null) {
                 ParserContext mvelContext = new ParserContext();
                 mvelContext.addImport("MVEL", MVEL.class);
+                mvelContext.addImport("MvelHelper", MvelHelper.class);
                 exp = MVEL.compileExpression(feeExpression, mvelContext);
             
                 EXPRESSION_CACHE.put(feeExpression, exp);

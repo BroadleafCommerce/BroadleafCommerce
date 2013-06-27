@@ -1,0 +1,56 @@
+<div th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}">
+    <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+    
+    <select class="six" th:field="*{fields['__${field.name}__'].value}" th:if="${! #maps.isEmpty(field.options)}">
+        <option value="" th:text="#{Default_Select}" />
+        <option th:each="entry : *{fields['__${field.name}__'].options}"
+                th:value="${entry.key}"
+                th:text="${entry.value}" />
+    </select>
+                
+    <span th:if="${#maps.isEmpty(field.options)}" class="indented-form-value" th:inline="text">
+        &lt;[[#{No_Records_Found_Enum}]]&gt;
+    </span>
+    
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+
+</div>
+
+<div th:unless="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}"
+    class="additional-foreign-key-container twelve">
+    <input type="hidden" class="display-value-property" th:value="*{fields['__${field.name}__'].foreignKeyDisplayValueProperty}"  />
+    <input type="hidden" class="value" th:field="*{fields['__${field.name}__'].value}" th:attr="data-onchangetrigger=${field.onChangeTrigger}" />
+    
+    <label th:for="${field.name}" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+    
+    <div class="foreign-key-value-container">
+        <span class="display-value-none-selected" style="display: none;" th:inline="text">&lt;[[#{No_Value_Selected}]]&gt;</span>
+        <span
+            class="display-value read-only"
+            th:text="*{fields['__${field.name}__'].displayValue}" />
+            
+        <button class="clear-foreign-key tiny radius secondary button hover-cursor"
+            type="button" th:inline="text"
+            th:unless="${field.required}"
+            th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
+            <i class="icon-remove"></i>&nbsp;[[#{Clear}]]
+        </button>
+        
+        <button class="to-one-lookup tiny radius secondary button hover-cursor"
+            type="button" th:inline="text"
+            th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}}">
+            <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
+        </button>
+
+        <span class="external-link-container" th:style="${!field.canLinkToExternalEntity or #strings.isEmpty(field.value)}? 'display: none;'">
+           <a th:href="@{${'/' + field.entityViewPath}}" 
+              th:attr="data-foreign-key-link=@{${'/' + field.foreignKeyClass}}"
+              class="modal-view">
+                <i class="icon-external-link"></i>
+           </a>
+        </span>
+        
+        <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+    </div>
+    
+</div>

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,21 +16,24 @@
 
 package org.broadleafcommerce.core.catalog.service;
 
+import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
-import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -53,35 +56,55 @@ public class CatalogTest extends BaseTest {
         category2 = catalogService.saveCategory(category2);
         Category category3 = new CategoryImpl();
         category3.setName("SuperCategory");
-        category3.getAllParentCategories().add(category);
+        category3 = catalogService.saveCategory(category3);
+
+        CategoryXref temp = new CategoryXrefImpl();
+        temp.setCategory(category);
+        temp.setSubCategory(category3);
+        category3.getAllParentCategoryXrefs().add(temp);
         category3 = catalogService.saveCategory(category3);
         
         // Test category hierarchy
         Long cat3Id = category3.getId();
         category3 = null;
         category3 = catalogService.findCategoryById(cat3Id);
-        category3.getAllParentCategories().clear();
-        category3.getAllParentCategories().add(category);
-        category3.getAllParentCategories().add(category2);
+        category3.getAllParentCategoryXrefs().clear();
+        CategoryXref temp2 = new CategoryXrefImpl();
+        temp2.setCategory(category);
+        temp2.setSubCategory(category3);
+        category3.getAllParentCategoryXrefs().add(temp2);
+        CategoryXref temp3 = new CategoryXrefImpl();
+        temp3.setCategory(category2);
+        temp3.setSubCategory(category3);
+        category3.getAllParentCategoryXrefs().add(temp3);
         category3 = catalogService.saveCategory(category3);
-        assert category3.getAllParentCategories().size() == 2;
+        assert category3.getAllParentCategoryXrefs().size() == 2;
         
         Product newProduct = new ProductImpl();
         Sku newDefaultSku = new SkuImpl();
         newDefaultSku = catalogService.saveSku(newDefaultSku);
         newProduct.setDefaultSku(newDefaultSku);
+        newProduct.setName("Lavender Soap");
 
         Calendar activeStartCal = Calendar.getInstance();
         activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
         newProduct.setActiveStartDate(activeStartCal.getTime());
 //        newProduct.setAllParentCategories(allParentCategories);
         newProduct.setDefaultCategory(category);
-        newProduct.getAllParentCategories().clear();
-        newProduct.getAllParentCategories().add(category);
-        newProduct.getAllParentCategories().add(category2);
-        
-        newProduct.setName("Lavender Soap");
+        newProduct.getAllParentCategoryXrefs().clear();
         newProduct = catalogService.saveProduct(newProduct);
+
+        CategoryProductXref categoryXref = new CategoryProductXrefImpl();
+        categoryXref.setProduct(newProduct);
+        categoryXref.setCategory(category);
+        newProduct.getAllParentCategoryXrefs().add(categoryXref);
+
+        CategoryProductXref categoryXref2 = new CategoryProductXrefImpl();
+        categoryXref2.setProduct(newProduct);
+        categoryXref2.setCategory(category2);
+        newProduct.getAllParentCategoryXrefs().add(categoryXref2);
+        newProduct = catalogService.saveProduct(newProduct);
+
         Long newProductId = newProduct.getId();
 
         Product testProduct = catalogService.findProductById(newProductId);
@@ -187,9 +210,8 @@ public class CatalogTest extends BaseTest {
         sku.setTaxable(false);
         assert sku.isTaxable() == false;
 
-        assert sku.isDiscountable() == null;
         sku.setDiscountable(null);
-        assert sku.isDiscountable() == null;
+        assert sku.isDiscountable() == false;
         sku.setDiscountable(true);
         assert sku.isDiscountable() == true;
         sku.setDiscountable(false);

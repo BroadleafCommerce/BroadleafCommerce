@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 package org.broadleafcommerce.core.web.api;
+
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Scope;
+
+import com.sun.jersey.core.impl.provider.entity.XMLListElementProvider;
+import com.sun.jersey.core.impl.provider.entity.XMLRootElementProvider;
+import com.sun.jersey.json.impl.provider.entity.JSONListElementProvider;
+import com.sun.jersey.json.impl.provider.entity.JSONRootElementProvider;
+import com.sun.jersey.spi.inject.Injectable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,17 +54,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLInputFactory;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
-
-import com.sun.jersey.core.impl.provider.entity.XMLListElementProvider;
-import com.sun.jersey.core.impl.provider.entity.XMLRootElementProvider;
-import com.sun.jersey.json.impl.provider.entity.JSONListElementProvider;
-import com.sun.jersey.json.impl.provider.entity.JSONRootElementProvider;
-import com.sun.jersey.spi.inject.Injectable;
-
 /**
  * <p>
  * This custom MessageBodyReaderWriter was written in order to correctly handle
@@ -69,7 +69,8 @@ import com.sun.jersey.spi.inject.Injectable;
  * @see com.sun.jersey.core.impl.provider.entity.XMLListElementProvider
  * 
  */
-@Component
+//This class MUST be a singleton Spring Bean
+@Scope("singleton")
 @Provider
 @Produces(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
         MediaType.TEXT_XML })
@@ -78,6 +79,8 @@ import com.sun.jersey.spi.inject.Injectable;
 public class BroadleafMessageBodyReaderWriter implements
         MessageBodyReader<Object>, MessageBodyWriter<Object>, ContextResolver<JAXBContext>,
         ApplicationContextAware {
+
+    protected static HashMap<String, Class<?>> typeMap = null;
 
     protected ApplicationContext applicationContext;
 
@@ -91,7 +94,6 @@ public class BroadleafMessageBodyReaderWriter implements
     protected Injectable<SAXParserFactory> spf;
     
     protected JAXBContext jaxbContext = null;
-    protected HashMap<String, Class<?>> typeMap = null;
 
     protected XMLListElementProvider.App xmlListProvider;
     protected JSONListElementProvider.App jsonListProvider;
@@ -297,7 +299,7 @@ public class BroadleafMessageBodyReaderWriter implements
                         .newInstance(clz, 0)
                         .getClass();
             } else {
-                return clz.getClass();
+                return clz;
             }
         }
         
@@ -313,10 +315,10 @@ public class BroadleafMessageBodyReaderWriter implements
     /*
      * This is based on the Sun / Oracle implementation of a similar class
      */
-    private class ParameterizedTypeImpl implements ParameterizedType {
+    protected class ParameterizedTypeImpl implements ParameterizedType {
 
-        private Type[] actualTypeArguments;
-        private Class<?> rawType;
+        private final Type[] actualTypeArguments;
+        private final Class<?> rawType;
         private Type ownerType;
 
         public ParameterizedTypeImpl(Type[] actualTypeArguments,
@@ -364,12 +366,14 @@ public class BroadleafMessageBodyReaderWriter implements
     }
     
     protected void initializeTypeMap() {
-        if (this.typeMap == null) {
-            synchronized(this) {
-                this.typeMap = new HashMap<String, Class<?>>();
-                Map<String, Object> apiWrappers = applicationContext.getBeansWithAnnotation(XmlRootElement.class);
-                for (Object obj : apiWrappers.values()) {
-                    this.typeMap.put(obj.getClass().getName(), obj.getClass());
+        if (typeMap == null) {
+            synchronized (this.getClass()) {
+                if (typeMap == null) {
+                    typeMap = new HashMap<String, Class<?>>();
+                    Map<String, Object> apiWrappers = applicationContext.getBeansWithAnnotation(XmlRootElement.class);
+                    for (Object obj : apiWrappers.values()) {
+                        typeMap.put(obj.getClass().getName(), obj.getClass());
+                    }
                 }
             }
         }

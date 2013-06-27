@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package org.broadleafcommerce.profile.web.core.security;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.encryption.EncryptionModule;
 import org.broadleafcommerce.common.security.RandomGenerator;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +34,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
@@ -46,6 +47,9 @@ import java.security.NoSuchAlgorithmException;
  */
 @Component("blSessionFixationProtectionFilter")
 public class SessionFixationProtectionFilter extends GenericFilterBean {
+
+    private static final Log LOG = LogFactory.getLog(SessionFixationProtectionFilter.class);
+
     protected static final String SESSION_ATTR = "SFP-ActiveID";
     
     @Resource(name = "blEncryptionModule")
@@ -65,11 +69,12 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
         
         if (StringUtils.isNotBlank(activeIdSessionValue) && request.isSecure()) {
             // The request is secure and and we've set a session fixation protection cookie
-            String activeIdCookieValue = SessionFixationProtectionCookie.readActiveID();
+            String activeIdCookieValue = SessionFixationProtectionCookie.readActiveID(request);
             String decryptedActiveIdValue = encryptionModule.decrypt(activeIdCookieValue);
             
             if (!activeIdSessionValue.equals(decryptedActiveIdValue)) {
                 abortUser(request, response);
+                LOG.info("Session has been terminated. ActiveID did not match expected value.");
                 return;
             }
         } else if (request.isSecure()) {

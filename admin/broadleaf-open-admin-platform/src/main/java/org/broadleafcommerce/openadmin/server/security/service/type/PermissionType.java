@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,7 @@ package org.broadleafcommerce.openadmin.server.security.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ public class PermissionType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, PermissionType> TYPES = new HashMap<String, PermissionType>();
+    private static final Map<String, PermissionType> TYPES = new LinkedHashMap<String, PermissionType>();
 
     public static final PermissionType READ  = new PermissionType("READ", "Read");
     public static final PermissionType CREATE  = new PermissionType("CREATE", "Create");

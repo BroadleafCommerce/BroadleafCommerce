@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,15 +16,15 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
-import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
-import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
-import org.broadleafcommerce.common.money.Money;
-
-public interface PromotableCandidateItemOffer {
+public interface PromotableCandidateItemOffer extends Serializable {
 
     public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
 
@@ -34,33 +34,43 @@ public interface PromotableCandidateItemOffer {
 
     public void setCandidateTargets(List<PromotableOrderItem> candidateTargets);
 
-    public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings);
-
     public Money getPotentialSavings();
 
-    public CandidateItemOffer getDelegate();
-    
-    public void reset();
-    
-    public Money calculatePotentialSavings();
-    
+    public void setPotentialSavings(Money savings);
+
+    public boolean hasQualifyingItemCriteria();
+
+    /**
+     * Public only for unit testing - not intended to be called
+     */
+    public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings);
+
     public int calculateMaximumNumberOfUses();
     
+    /**
+     * Returns the number of item quantities that qualified as targets for 
+     * this promotion.
+     */
+    public int calculateTargetQuantityForTieredOffer();
+
+    /**
+     * Determines the max number of times this itemCriteria might apply.    This calculation does 
+     * not take into account other promotions.   It is useful only to assist in prioritizing the order to process
+     * the promotions. 
+     * 
+     * @param itemCriteria
+     * @param promotion
+     * @return
+     */
     public int calculateMaxUsesForItemCriteria(OfferItemCriteria itemCriteria, Offer promotion);
-    
-    public void setOrderItem(PromotableOrderItem orderItem);
-    
-    public PromotableCandidateItemOffer clone();
     
     public int getPriority();
     
     public Offer getOffer();
-    
-    public void setOffer(Offer offer);
-    
-    public PromotableOrderItem getOrderItem();
 
     public int getUses();
 
     public void addUse();
+    
+    public boolean isLegacyOffer();
 }

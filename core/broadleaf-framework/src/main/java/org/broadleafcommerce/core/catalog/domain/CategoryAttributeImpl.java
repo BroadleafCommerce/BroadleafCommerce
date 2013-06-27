@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class CategoryAttributeImpl implements CategoryAttribute {
 
     @Column(name = "SEARCHABLE")
     @AdminPresentation(excluded = true)
-    protected Boolean searchable;
+    protected Boolean searchable = false;
     
     @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
     @JoinColumn(name = "CATEGORY_ID")
@@ -101,7 +101,11 @@ public class CategoryAttributeImpl implements CategoryAttribute {
 
     @Override
     public Boolean getSearchable() {
-        return searchable;
+        if (searchable == null) {
+            return Boolean.FALSE;
+        } else {
+            return searchable;
+        }
     }
 
     @Override

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,13 +26,13 @@ import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.ListIterator;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import java.util.List;
-import java.util.ListIterator;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -47,7 +47,7 @@ public class OrderDaoImpl implements OrderDao {
     protected CustomerDao customerDao;
     
     @Resource(name = "blOrderDaoExtensionManager")
-    protected OrderDaoExtensionListener extensionManager;
+    protected OrderDaoExtensionManager extensionManager;
 
     @Override
     public Order readOrderById(final Long orderId) {
@@ -124,7 +124,7 @@ public class OrderDaoImpl implements OrderDao {
         }
 
         if (extensionManager != null) {
-            extensionManager.attachAdditionalDataToNewCart(customer, order);
+            extensionManager.getProxy().attachAdditionalDataToNewCart(customer, order);
         }
         
         order = save(order);
@@ -167,7 +167,7 @@ public class OrderDaoImpl implements OrderDao {
             
         // Apply any additional filters that extension modules have registered
         if (orders != null && !orders.isEmpty() && extensionManager != null) {
-            extensionManager.applyAdditionalOrderLookupFilter(customer, name, orders);
+            extensionManager.getProxy().applyAdditionalOrderLookupFilter(customer, name, orders);
         }
         
         return orders == null || orders.isEmpty() ? null : orders.get(0);

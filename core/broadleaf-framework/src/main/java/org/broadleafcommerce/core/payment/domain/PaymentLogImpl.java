@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,24 +25,24 @@ import org.broadleafcommerce.core.payment.service.type.PaymentLogEventType;
 import org.broadleafcommerce.core.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -52,8 +52,15 @@ public class PaymentLogImpl implements PaymentLog {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "PaymentLogId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PaymentLogId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentLogImpl", allocationSize = 50)
+    @GeneratedValue(generator = "PaymentLogId")
+    @GenericGenerator(
+        name="PaymentLogId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="PaymentLogImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.PaymentLogImpl")
+        }
+    )
     @Column(name = "PAYMENT_LOG_ID")
     protected Long id;
 
@@ -89,7 +96,7 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Column(name = "TRANSACTION_SUCCESS")
     @AdminPresentation(friendlyName = "PaymentLogImpl_Transaction_Successfule", order = 6, group = "PaymentLogImpl_Payment_Log", readOnly = true)
-    protected Boolean transactionSuccess;
+    protected Boolean transactionSuccess = false;
 
     @Column(name = "EXCEPTION_MESSAGE")
     @AdminPresentation(friendlyName = "PaymentLogImpl_Exception_Message", order = 7, group = "PaymentLogImpl_Payment_Log", readOnly = true)
@@ -192,7 +199,11 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Override
     public Boolean getTransactionSuccess() {
-        return transactionSuccess;
+        if (transactionSuccess == null) {
+            return Boolean.FALSE;
+        } else {
+            return transactionSuccess;
+        }
     }
 
     @Override

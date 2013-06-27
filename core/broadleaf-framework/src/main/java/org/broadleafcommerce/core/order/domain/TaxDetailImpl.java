@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration;
+import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
@@ -27,6 +29,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,8 +40,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -54,9 +56,6 @@ public class TaxDetailImpl implements TaxDetail {
         name="TaxDetailId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="TaxDetailImpl"),
             @Parameter(name="increment_size", value="150"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.TaxDetailImpl")
@@ -74,15 +73,34 @@ public class TaxDetailImpl implements TaxDetail {
     protected BigDecimal amount;
     
     @Column(name = "RATE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Rate", order=1, group = "TaxDetailImpl_Tax_Detail")
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Rate", order = 3, group = "TaxDetailImpl_Tax_Detail")
     protected BigDecimal rate;
     
+    @Column(name = "JURISDICTION_NAME")
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Jurisdiction_Name", order = 4, group = "TaxDetailImpl_Tax_Detail")
+    protected String jurisdictionName;
+
+    @Column(name = "TAX_COUNTRY")
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Country", order = 5, group = "TaxDetailImpl_Tax_Detail")
+    protected String country;
+    
+    @Column(name = "TAX_REGION")
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Region", order = 6, group = "TaxDetailImpl_Tax_Detail")
+    protected String region;
+
+    @Column(name = "TAX_NAME")
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Name", order = 7, group = "TaxDetailImpl_Tax_Detail")
+    protected String taxName;
+
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "TaxDetailImpl_Currency_Code", order=1, group = "FixedPriceFulfillmentOptionImpl_Details", prominent=true)
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Currency_Code", order = 1, group = "FixedPriceFulfillmentOptionImpl_Details", prominent = true)
     protected BroadleafCurrency currency;
 
-    
+    @ManyToOne(targetEntity = AbstractModuleConfiguration.class)
+    @JoinColumn(name = "MODULE_CONFIG_ID")
+    protected ModuleConfiguration moduleConfiguation;
+
     public TaxDetailImpl() {
         
     }
@@ -141,6 +159,56 @@ public class TaxDetailImpl implements TaxDetail {
     @Override
     public void setCurrency(BroadleafCurrency currency) {
         this.currency = currency;
+    }
+
+    @Override
+    public ModuleConfiguration getModuleConfiguration() {
+        return this.moduleConfiguation;
+    }
+
+    @Override
+    public void setModuleConfiguration(ModuleConfiguration config) {
+        this.moduleConfiguation = config;
+    }
+
+    @Override
+    public void setJurisdictionName(String jurisdiction) {
+        this.jurisdictionName = jurisdiction;
+    }
+
+    @Override
+    public String getJurisdictionName() {
+        return this.jurisdictionName;
+    }
+
+    @Override
+    public void setTaxName(String taxName) {
+        this.taxName = taxName;
+    }
+
+    @Override
+    public String getTaxName() {
+        return this.taxName;
+    }
+
+    @Override
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    @Override
+    public String getRegion() {
+        return this.region;
+    }
+
+    @Override
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    @Override
+    public String getCountry() {
+        return this.country;
     }
     
 }

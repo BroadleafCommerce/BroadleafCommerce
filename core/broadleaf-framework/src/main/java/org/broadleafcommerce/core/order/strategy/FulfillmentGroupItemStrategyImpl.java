@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -115,7 +114,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                     order.getFulfillmentGroups().add(fulfillmentGroup);
                 }
                 
-                fulfillmentGroup = addItemToFulfillmentGroup(order, doi, fulfillmentGroup);
+                fulfillmentGroup = addItemToFulfillmentGroup(order, doi, doi.getQuantity() * orderItem.getQuantity(), fulfillmentGroup);
                 order = fulfillmentGroup.getOrder();
             }
         } else {
@@ -165,10 +164,14 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     }
     
     protected FulfillmentGroup addItemToFulfillmentGroup(Order order, DiscreteOrderItem orderItem, FulfillmentGroup fulfillmentGroup) throws PricingException {
+        return this.addItemToFulfillmentGroup(order, orderItem, orderItem.getQuantity(), fulfillmentGroup);
+    }
+
+    protected FulfillmentGroup addItemToFulfillmentGroup(Order order, DiscreteOrderItem orderItem, int quantity, FulfillmentGroup fulfillmentGroup) throws PricingException {
         FulfillmentGroupItemRequest fulfillmentGroupItemRequest = new FulfillmentGroupItemRequest();
         fulfillmentGroupItemRequest.setOrder(order);
         fulfillmentGroupItemRequest.setOrderItem(orderItem);
-        fulfillmentGroupItemRequest.setQuantity(orderItem.getQuantity());
+        fulfillmentGroupItemRequest.setQuantity(quantity);
         fulfillmentGroupItemRequest.setFulfillmentGroup(fulfillmentGroup);
         return fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, false);
     }
@@ -186,8 +189,8 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             if (orderItem instanceof BundleOrderItem) {
                 List<OrderItem> itemsToUpdate = new ArrayList<OrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
                 for (OrderItem oi : itemsToUpdate) {
-                    int qtyMultiplier = oi.getQuantity() / orderItem.getQuantity();
-                    order = updateItemQuantity(order, oi, (qtyMultiplier * orderItemQuantityDelta));
+                    int quantityPer = oi.getQuantity();
+                    order = updateItemQuantity(order, oi, (quantityPer * orderItemQuantityDelta));
                 }
             } else {
                 order = updateItemQuantity(order, orderItem, orderItemQuantityDelta);
@@ -289,7 +292,11 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             if (oiQuantity == null) {
                 oiQuantity = 0;
             }
-            oiQuantity += oi.getQuantity();
+            if (((DiscreteOrderItem) oi).getBundleOrderItem() != null) {
+                oiQuantity += ((DiscreteOrderItem) oi).getBundleOrderItem().getQuantity() * oi.getQuantity();
+            } else {
+                oiQuantity += oi.getQuantity();
+            }
             oiQuantityMap.put(oi.getId(), oiQuantity);
         }
         

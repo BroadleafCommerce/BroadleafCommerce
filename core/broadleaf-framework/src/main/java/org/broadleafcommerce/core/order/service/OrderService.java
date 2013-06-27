@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -293,6 +293,12 @@ public interface OrderService {
      *
      * When priceOrder is false, the system will not reprice the order.   This is more performant in
      * cases such as bulk adds where the repricing could be done for the last item only.
+     * 
+     * This method differs from the {@link #addItemWithPriceOverrides(Long, OrderItemRequestDTO, boolean)} in that it
+     * will clear any values set on the {@link OrderItemRequestDTO} for the overrideSalePrice or overrideRetailPrice.
+     * 
+     * This design is intended to ensure that override pricing is not called by mistake.   Implementors should
+     * use this method when no manual price overrides are allowed.
      *
      * @see OrderItemRequestDTO
      * @param orderId
@@ -304,6 +310,34 @@ public interface OrderService {
      */
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException;
     
+    /**
+     * Initiates the addItem workflow that will attempt to add the given quantity of the specified item
+     * to the Order. The item to be added can be determined in a few different ways. For example, the 
+     * SKU can be specified directly or it can be determine based on a Product and potentially some
+     * specified ProductOptions for that given product.
+     *
+     * The minimum required parameters for OrderItemRequest are: productId and quantity or alternatively, skuId and quantity
+     *
+     * When priceOrder is false, the system will not reprice the order.   This is more performant in
+     * cases such as bulk adds where the repricing could be done for the last item only.
+     * 
+     * As opposed to the {@link #addItem(Long, OrderItemRequestDTO, boolean)} method, this method allows
+     * the passed in {@link OrderItemRequestDTO} to contain values for the overrideSale or overrideRetail
+     * price fields.
+     * 
+     * This design is intended to ensure that override pricing is not called by mistake.   Implementors should
+     * use this method when manual price overrides are allowed.
+     *
+     * @see OrderItemRequestDTO
+     * @param orderId
+     * @param orderItemRequest
+     * @param priceOrder
+     * @return the order the item was added to
+     * @throws WorkflowException 
+     * @throws Throwable 
+     */
+    public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException;
+
     /**
      * Initiates the updateItem workflow that will attempt to update the item quantity for the specified
      * OrderItem in the given Order. The new quantity is specified in the OrderItemRequestDTO
@@ -435,6 +469,17 @@ public interface OrderService {
      */
     public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
 
+    /**
+     * Deletes the Payment Info from the order.
+     * Note that this method will also delete any associated Secure Payment Infos if necessary.
+     *
+     * @param order
+     * @param paymentInfo
+     */
+    public void removePaymentFromOrder(Order order, PaymentInfo paymentInfo);
+
     public void deleteOrder(Order cart);
+
+    Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException;
 
 }

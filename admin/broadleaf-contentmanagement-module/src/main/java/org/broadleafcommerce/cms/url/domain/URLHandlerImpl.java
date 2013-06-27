@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@
 package org.broadleafcommerce.cms.url.domain;
 
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -27,16 +28,18 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
+import java.io.Serializable;
 
 
 /**
@@ -47,19 +50,27 @@ import javax.persistence.TableGenerator;
 @Table(name = "BLC_URL_HANDLER")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "URLHandlerImpl_friendyName")
-public class URLHandlerImpl implements URLHandler, java.io.Serializable {
+public class URLHandlerImpl implements URLHandler, Serializable, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "URLHandlerID", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "URLHandlerID", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "URLHandlerImpl", allocationSize = 50)
+    @GeneratedValue(generator = "URLHandlerID")
+    @GenericGenerator(
+        name="URLHandlerID",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="URLHandlerImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.url.domain.URLHandlerImpl")
+        }
+    )
     @Column(name = "URL_HANDLER_ID")
     @AdminPresentation(friendlyName = "URLHandlerImpl_ID", order = 1, group = "URLHandlerImpl_friendyName", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1)
     @Column(name = "INCOMING_URL", nullable = false)
+    @Index(name="INCOMING_URL_INDEX", columnNames={"INCOMING_URL"})
     protected String incomingURL;
 
     @Column(name = "NEW_URL", nullable = false)
@@ -67,7 +78,7 @@ public class URLHandlerImpl implements URLHandler, java.io.Serializable {
     protected String newURL;
 
     @Column(name = "URL_REDIRECT_TYPE")
-    @AdminPresentation(friendlyName = "URLHandlerImpl_redirectType", order = 4, group = "URLHandlerImpl_friendyName", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.cms.url.type.URLRedirectType", groupOrder = 2)
+    @AdminPresentation(friendlyName = "URLHandlerImpl_redirectType", order = 4, group = "URLHandlerImpl_friendyName", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.cms.url.type.URLRedirectType", groupOrder = 2, prominent = true)
     protected String urlRedirectType;
 
 
@@ -127,6 +138,11 @@ public class URLHandlerImpl implements URLHandler, java.io.Serializable {
     @Override
     public void setUrlRedirectType(URLRedirectType redirectType) {
         this.urlRedirectType = redirectType.getType();
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getIncomingURL();
     }
 
 }

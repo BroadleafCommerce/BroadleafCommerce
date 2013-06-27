@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,34 +16,43 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.RequestDTO;
+import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
-import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
+import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.tool.hbm2x.StringUtils;
+import org.joda.time.LocalDateTime;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
+
+import javax.annotation.Resource;
 
 /**
  * 
@@ -54,6 +63,9 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
     private static final Log LOG = LogFactory.getLog(AbstractBaseProcessor.class);
     private static final Map EXPRESSION_CACHE = new LRUMap(1000);
+    
+    @Resource(name = "blOfferTimeZoneProcessor")
+    protected OfferTimeZoneProcessor offerTimeZoneProcessor;
     
     protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
         CandidatePromotionItems candidates = new CandidatePromotionItems();
@@ -71,7 +83,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         if (offer.getType().equals(OfferType.ORDER_ITEM) && offer.getTargetItemCriteria() != null) {
             for (OfferItemCriteria criteria : offer.getTargetItemCriteria()) {
                 checkForItemRequirements(candidates, criteria, promotableOrderItems, false);
-                if (!candidates.isMatchedQualifier()) {
+                if (!candidates.isMatchedTarget()) {
                     break;
                 }
             }
@@ -113,7 +125,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                 // Checking if targets meet subtotal for item offer with no item criteria.
                 Money accumulatedTotal = null;
                 for (PromotableOrderItem orderItem : candidateItem.getCandidateTargets()) {                     
-                    Money itemPrice = orderItem.getCurrentPrice().multiply(orderItem.getQuantity());
+                    Money itemPrice = orderItem.getCurrentBasePrice().multiply(orderItem.getQuantity());
                     accumulatedTotal = accumulatedTotal==null?itemPrice:accumulatedTotal.add(itemPrice);
                     if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
                         if (LOG.isTraceEnabled()) {
@@ -137,7 +149,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                         for (PromotableOrderItem item : promotableItems) {
                             if (!usedItems.contains(item)) {
                                 usedItems.add(item);
-                                Money itemPrice = item.getCurrentPrice().multiply(item.getQuantity());
+                                Money itemPrice = item.getCurrentBasePrice().multiply(item.getQuantity());
                                 accumulatedTotal = accumulatedTotal==null?itemPrice:accumulatedTotal.add(itemPrice);
                                 if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
                                     if (LOG.isTraceEnabled()) {
@@ -185,13 +197,13 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         }
     }
     
-    protected boolean couldOrderItemMeetOfferRequirement(OfferItemCriteria criteria, PromotableOrderItem discreteOrderItem) {
+    protected boolean couldOrderItemMeetOfferRequirement(OfferItemCriteria criteria, PromotableOrderItem orderItem) {
         boolean appliesToItem = false;
 
-        if (criteria.getOrderItemMatchRule() != null && criteria.getOrderItemMatchRule().trim().length() != 0) {
+        if (criteria.getMatchRule() != null && criteria.getMatchRule().trim().length() != 0) {
             HashMap<String, Object> vars = new HashMap<String, Object>();
-            vars.put("discreteOrderItem", discreteOrderItem.getDelegate());
-            Boolean expressionOutcome = executeExpression(criteria.getOrderItemMatchRule(), vars);
+            orderItem.updateRuleVariables(vars);
+            Boolean expressionOutcome = executeExpression(criteria.getMatchRule(), vars);
             if (expressionOutcome != null && expressionOutcome) {
                 appliesToItem = true;
             }
@@ -220,6 +232,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                     context.addImport("OfferType", OfferType.class);
                     context.addImport("FulfillmentType", FulfillmentType.class);
                     context.addImport("MVEL", MVEL.class);
+                    context.addImport("MvelHelper", MvelHelper.class);
                     //            StringBuffer completeExpression = new StringBuffer(functions.toString());
                     //            completeExpression.append(" ").append(expression);
                     exp = MVEL.compileExpression(expression, context);
@@ -234,7 +247,8 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         } catch (Exception e) {
             //Unable to execute the MVEL expression for some reason
             //Return false, but notify about the bad expression through logs
-            LOG.info("Unable to parse and/or execute an mvel expression. Reporting to the logs and returning false for the match expression", e);
+            LOG.warn("Unable to parse and/or execute an mvel expression. Reporting to the logs and returning false " +
+                    "for the match expression:" + expression, e);
             return false;
         }
 
@@ -244,36 +258,143 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * We were not able to meet all of the ItemCriteria for a promotion, but some of the items were
      * marked as qualifiers or targets.  This method removes those items from being used as targets or
      * qualifiers so they are eligible for other promotions.
-     * @param chargeableItems
+     * @param priceDetails
      */
-    protected void clearAllNonFinalizedQuantities(List<PromotableOrderItem> chargeableItems) {
-        for(PromotableOrderItem chargeableItem : chargeableItems) {
-            chargeableItem.clearAllNonFinalizedQuantities();
+    protected void clearAllNonFinalizedQuantities(List<PromotableOrderItemPriceDetail> priceDetails) {
+        for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
+            priceDetail.clearAllNonFinalizedQuantities();
         }
     }
     
-    protected void finalizeQuantities(List<PromotableOrderItem> chargeableItems) {
-        for(PromotableOrderItem chargeableItem : chargeableItems) {
-            chargeableItem.finalizeQuantities();
+    /**
+     * Updates the finalQuanties for the PromotionDiscounts and PromotionQualifiers. 
+     * Called after we have confirmed enough qualifiers and targets for the promotion.
+     * @param priceDetails
+     */
+    protected void finalizeQuantities(List<PromotableOrderItemPriceDetail> priceDetails) {
+        for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
+            priceDetail.finalizeQuantities();
         }
     }
     
-    @Override
-    public void clearOffersandAdjustments(PromotableOrder order) {
-        order.removeAllCandidateOffers();
-        order.removeAllAdjustments();
+    /**
+     * Checks to see if the discountQty matches the detailQty.   If not, splits the 
+     * priceDetail.
+     * 
+     * @param priceDetails
+     */
+    protected void splitDetailsIfNecessary(List<PromotableOrderItemPriceDetail> priceDetails) {
+        for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
+            PromotableOrderItemPriceDetail splitDetail = priceDetail.splitIfNecessary();
+            if (splitDetail != null) {
+                priceDetail.getPromotableOrderItem().getPromotableOrderItemPriceDetails().add(splitDetail);
+            }
+        }
     }
-    
+
     @Override
     public List<Offer> filterOffers(List<Offer> offers, Customer customer) {
         List<Offer> filteredOffers = new ArrayList<Offer>();
         if (offers != null && !offers.isEmpty()) {
             filteredOffers = removeOutOfDateOffers(offers);
+            offers = removeTimePeriodOffers(offers);
+            offers = removeInvalidRequestOffers(offers);
             filteredOffers = removeInvalidCustomerOffers(filteredOffers, customer);
         }
         return filteredOffers;
     }
 
+    protected List<Offer> removeInvalidRequestOffers(List<Offer> offers) {
+        RequestDTO requestDTO = null;
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            requestDTO = BroadleafRequestContext.getBroadleafRequestContext().getRequestDTO();
+        }
+
+        List<Offer> offersToRemove = new ArrayList<Offer>();
+        for (Offer offer : offers) {
+            if (!couldOfferApplyToRequestDTO(offer, requestDTO)) {
+                offersToRemove.add(offer);
+            }
+        }
+        // remove all offers in the offersToRemove list from original offers list
+        for (Offer offer : offersToRemove) {
+            offers.remove(offer);
+        }
+        return offers;
+
+    }
+
+    protected boolean couldOfferApplyToRequestDTO(Offer offer, RequestDTO requestDTO) {
+        boolean appliesToRequestRule = false;
+
+        String rule = null;
+
+        OfferRule customerRule = offer.getOfferMatchRules().get(OfferRuleType.REQUEST.getType());
+        if (customerRule != null) {
+            rule = customerRule.getMatchRule();
+        }
+
+        if (rule != null) {
+            HashMap<String, Object> vars = new HashMap<String, Object>();
+            vars.put("request", requestDTO);
+            Boolean expressionOutcome = executeExpression(rule, vars);
+            if (expressionOutcome != null && expressionOutcome) {
+                appliesToRequestRule = true;
+            }
+        } else {
+            appliesToRequestRule = true;
+        }
+
+        return appliesToRequestRule;
+    }
+    /**
+     * Removes all offers that are not within the timezone and timeperiod of the offer.  
+     * If an offer does not fall within the timezone or timeperiod rule,
+     * that offer will be removed.  
+     *
+     * @param offers
+     * @return List of Offers within the timezone or timeperiod of the offer
+     */
+    protected List<Offer> removeTimePeriodOffers(List<Offer> offers) {
+        List<Offer> offersToRemove = new ArrayList<Offer>();
+
+        for (Offer offer : offers) {
+            if (!couldOfferApplyToTimePeriod(offer)) {
+                offersToRemove.add(offer);
+            }
+        }
+        // remove all offers in the offersToRemove list from original offers list
+        for (Offer offer : offersToRemove) {
+            offers.remove(offer);
+        }
+        return offers;
+    }
+
+    protected boolean couldOfferApplyToTimePeriod(Offer offer) {
+        boolean appliesToTimePeriod = false;
+
+        String rule = null;
+
+        OfferRule timeRule = offer.getOfferMatchRules().get(OfferRuleType.TIME.getType());
+        if (timeRule != null) {
+            rule = timeRule.getMatchRule();
+        }
+        
+        if (rule != null) {
+            TimeZone timeZone = getOfferTimeZoneProcessor().getTimeZone(offer);
+            TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar(timeZone));
+            HashMap<String, Object> vars = new HashMap<String, Object>();
+            vars.put("time", timeDto);
+            Boolean expressionOutcome = executeExpression(rule, vars);
+            if (expressionOutcome != null && expressionOutcome) {
+                appliesToTimePeriod = true;
+            }
+        } else {
+            appliesToTimePeriod = true;
+        }
+
+        return appliesToTimePeriod;
+    }
     /**
      * Removes all out of date offers.  If an offer does not have a start date, or the start
      * date is a later date, that offer will be removed.  Offers without a start date should
@@ -285,12 +406,46 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @return List of Offers with valid dates
      */
     protected List<Offer> removeOutOfDateOffers(List<Offer> offers){
-        Date now = SystemTime.asDate();
         List<Offer> offersToRemove = new ArrayList<Offer>();
         for (Offer offer : offers) {
-            if ((offer.getStartDate() == null) || (offer.getStartDate().after(now))){
+            TimeZone timeZone = getOfferTimeZoneProcessor().getTimeZone(offer);
+
+            Calendar current = new GregorianCalendar(timeZone);
+            Calendar start = null;
+            if (offer.getStartDate() != null) {
+                LocalDateTime startDate = new LocalDateTime(offer.getStartDate());
+                start = new GregorianCalendar(timeZone);
+                start.set(Calendar.YEAR, startDate.getYear());
+                start.set(Calendar.MONTH, startDate.getMonthOfYear() - 1);
+                start.set(Calendar.DAY_OF_MONTH, startDate.getDayOfMonth());
+                start.set(Calendar.HOUR_OF_DAY, startDate.getHourOfDay());
+                start.set(Calendar.MINUTE, startDate.getMinuteOfHour());
+                start.set(Calendar.SECOND, startDate.getSecondOfMinute());
+                start.get(Calendar.HOUR_OF_DAY);//do not delete this line
+                start.get(Calendar.MINUTE);
+                if (LOG.isTraceEnabled()) {
+                    LOG.debug("Offer: " + offer.getName() + " timeZone:" + timeZone + " startTime:" + start.getTime() + " currentTime:" + current.getTime());
+                }
+            }
+            Calendar end = null;
+            if (offer.getEndDate() != null) {
+                LocalDateTime endDate = new LocalDateTime(offer.getEndDate());
+                end = new GregorianCalendar(timeZone);
+                end.set(Calendar.YEAR, endDate.getYear());
+                end.set(Calendar.MONTH, endDate.getMonthOfYear() - 1);
+                end.set(Calendar.DAY_OF_MONTH, endDate.getDayOfMonth());
+                end.set(Calendar.HOUR_OF_DAY, endDate.getHourOfDay());
+                end.set(Calendar.MINUTE, endDate.getMinuteOfHour());
+                end.set(Calendar.SECOND, endDate.getSecondOfMinute());
+                end.get(Calendar.HOUR_OF_DAY);//do not delete this line
+                end.get(Calendar.MINUTE);
+                if (LOG.isTraceEnabled()) {
+                    LOG.debug("Offer: " + offer.getName() + " endTime:" + start.getTime());
+                }
+            }
+            if ((offer.getStartDate() == null) || (start.after(current))) {
                 offersToRemove.add(offer);
-            } else if (offer.getEndDate() != null && offer.getEndDate().before(now)){
+            } else if (offer.getEndDate() != null && end.before(current)) {
                 offersToRemove.add(offer);
             }
         }
@@ -299,6 +454,8 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             offers.remove(offer);
         }
         return offers;
+
+        // return offers;
     }
 
     /**
@@ -357,4 +514,13 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
         return appliesToCustomer;
     }
+
+    public OfferTimeZoneProcessor getOfferTimeZoneProcessor() {
+        return offerTimeZoneProcessor;
+    }
+
+    public void setOfferTimeZoneProcessor(OfferTimeZoneProcessor offerTimeZoneProcessor) {
+        this.offerTimeZoneProcessor = offerTimeZoneProcessor;
+    }
+
 }

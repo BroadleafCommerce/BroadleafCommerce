@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,13 +19,20 @@ package org.broadleafcommerce.core.workflow;
 import java.io.Serializable;
 
 public interface ProcessContext extends Serializable {
+
     /**
      * Activly informs the workflow process to stop processing
-     * no further activities will be exeecuted
-     * @return 
+     * no further activities will be executed
+     *
+     * @return whether or not the stop process call was successful
      */
     public boolean stopProcess();
 
+    /**
+     * Is the process stopped
+     *
+     * @return whether or not the process is stopped
+     */
     public boolean isStopped();
 
     /**

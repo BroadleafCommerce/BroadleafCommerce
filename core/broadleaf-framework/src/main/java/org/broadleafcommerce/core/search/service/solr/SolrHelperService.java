@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,11 +16,15 @@
 
 package org.broadleafcommerce.core.search.service.solr;
 
+import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
+
+import java.util.List;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -73,6 +77,15 @@ public interface SolrHelperService {
      * @return the property name for the facet type of this field
      */
     public String getPropertyNameForFieldFacet(Field field, String prefix);
+    
+    /**
+     * Returns the searchable field types for the given field. If there were none configured, will return
+     * a list with TEXT FieldType.
+     * 
+     * @param field
+     * @return the searchable field types for the given field
+     */
+    public List<FieldType> getSearchableFieldTypes(Field field);
 
     /**
      * Returns the property name for the given field and field type. This will apply the global prefix to the field,
@@ -94,6 +107,12 @@ public interface SolrHelperService {
      * @return the property name for the facet type of this field
      */
     public String getPropertyNameForFieldFacet(Field field);
+    
+    /**
+     * @param product
+     * @return the Solr id of this product
+     */
+    public String getSolrDocumentId(SolrInputDocument document, Product product);
 
     /**
      * @return the name of the field that keeps track what namespace this document belongs to
@@ -104,6 +123,11 @@ public interface SolrHelperService {
      * @return the id field name, with the global prefix as appropriate
      */
     public String getIdFieldName();
+    
+    /**
+     * @return the productId field name
+     */
+    public String getProductIdFieldName();
 
     /**
      * @return the category field name, with the global prefix as appropriate
@@ -114,17 +138,6 @@ public interface SolrHelperService {
      * @return the explicit category field name, with the global prefix as appropriate
      */
     public String getExplicitCategoryFieldName();
-
-    /**
-     * @param prefix
-     * @return the searchable field name, with the global and specific prefix as appropriate
-     */
-    public String getSearchableFieldName(String prefix);
-
-    /**
-     * @return the searchable field name, with the global and locale prefixes as appropriate
-     */
-    public String getSearchableFieldName();
 
     /**
      * @param category
@@ -159,5 +172,6 @@ public interface SolrHelperService {
      * @return the default locale
      */
     public Locale getDefaultLocale();
+
 
 }

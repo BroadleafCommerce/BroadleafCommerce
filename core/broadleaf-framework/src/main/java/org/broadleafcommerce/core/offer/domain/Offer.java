@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -66,8 +66,18 @@ public interface Offer extends Serializable {
 
     public void setEndDate(Date endDate);
 
+    /**
+     * @deprecated
+     * Use isCombinable instead.
+     * @return
+     */
     public boolean isStackable();
 
+    /**
+     * @deprecated
+     * calls {@link #setCombinableWithOtherOffers(boolean)}
+     * @param stackable
+     */
     public void setStackable(boolean stackable);
 
     public String getTargetSystem();
@@ -104,12 +114,50 @@ public interface Offer extends Serializable {
 
     public void setOfferItemTargetRuleType(OfferItemRestrictionRuleType restrictionRuleType);
 
+    /**
+     * Returns false if this offer is not combinable with other offers of the same type.
+     * For example, if this is an Item offer it could be combined with other Order or FG offers
+     * but it cannot be combined with other Item offers.
+     * 
+     * @return
+     */
     public boolean isCombinableWithOtherOffers();
 
     public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers);
 
+    /**
+     * Returns true if the offer system should automatically add this offer for consideration (versus requiring a code or 
+     * other delivery mechanism).    This does not guarantee that the offer will qualify.   All rules associated with this
+     * offer must still pass.   A true value here just means that the offer will be considered.
+     * 
+     * For backwards compatibility, if the underlying property is null, this method will check the 
+     * {@link #getDeliveryType()} method and return true if that value is set to AUTOMATIC.    
+     * 
+     * If still null, this value will return false.
+     * 
+     * @return
+     */
+    public boolean isAutomaticallyAdded();
+
+    /**
+     * Sets whether or not this offer should be automatically considered for consideration (versus requiring a code or 
+     * other delivery mechanism).
+     * @see #isAutomaticallyAdded()
+     */
+    public void setAutomaticallyAdded(boolean automaticallyAdded);
+
+    /**
+     * @deprecated Replaced by isAutomaticallyApplied property.   In prior versions of Broadleaf deliveryType was used to 
+     * differentiate "automatic" orders from those requiring a code.   If the underlying property is null, 
+     * this method will return a delivery type based on the isAutomatic property. 
+     * @return
+     */
     public OfferDeliveryType getDeliveryType();
 
+    /**
+     * @deprecated Replaced by setAutomaticallyApplied(boolean val).
+     * @param deliveryType
+     */
     public void setDeliveryType(OfferDeliveryType deliveryType);
 
     /**
@@ -196,5 +244,9 @@ public interface Offer extends Serializable {
     public Money getQualifyingItemSubTotal();
     
     public void setQualifyingItemSubTotal(Money qualifyingItemSubtotal);
+
+    void setMarketingMessage(String marketingMessage);
+
+    String getMarketingMessage();
 
 }

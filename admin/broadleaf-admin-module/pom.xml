@@ -4,7 +4,7 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>2.2.0-GA</version>
+        <version>3.0.0-GA</version>
     </parent>
     <artifactId>broadleaf-admin-module</artifactId>
     <packaging>jar</packaging>
@@ -66,7 +66,16 @@
         </plugins>
         <resources>
             <resource>
+                <directory>src/main/resources/admin_style</directory>
+                <filtering>false</filtering>
+                <targetPath>admin_style</targetPath>
+            </resource>
+            <resource>
                 <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>open_admin_style/**</exclude>
+                </excludes>
             </resource>
             <resource>
                 <directory>src/main/java</directory>
@@ -116,6 +125,10 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
         </dependency>
     </dependencies>
 </project>

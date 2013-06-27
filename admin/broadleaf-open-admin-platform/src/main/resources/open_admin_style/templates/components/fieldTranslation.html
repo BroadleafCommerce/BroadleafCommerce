@@ -1,0 +1,9 @@
+<div th:if="${field.translatable and hideTranslations != 'true'}" th:remove="tag">
+    <a class="show-translations" 
+       th:href="@{/translation(ceilingEntity=${entityForm.ceilingEntityClassname},
+                               entityId=${entityForm.id},
+                               propertyName=${field.name},
+                               isRte=${field.fieldType == 'HTML' || field.fieldType == 'HTML_BASIC'})}">
+        <i class="icon-globe"></i>
+    </a>
+</div>

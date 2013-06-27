@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,26 +16,27 @@
 
 package org.broadleafcommerce.core.order.service.workflow.add;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
-import org.broadleafcommerce.core.workflow.ProcessContext;
-
-import javax.annotation.Resource;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class ValidateAddRequestActivity extends BaseActivity {
+import javax.annotation.Resource;
+
+public class ValidateAddRequestActivity extends BaseActivity<CartOperationContext> {
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -43,9 +44,12 @@ public class ValidateAddRequestActivity extends BaseActivity {
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
+    @Resource(name = "blProductOptionValidationService")
+    protected ProductOptionValidationService productOptionValidationService;
+
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        CartOperationRequest request = ((CartOperationContext) context).getSeedData();
+    public CartOperationContext execute(CartOperationContext context) throws Exception {
+        CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         
         // Quantity was not specified or was equal to zero. We will not throw an exception,
@@ -95,6 +99,10 @@ public class ValidateAddRequestActivity extends BaseActivity {
             request.getItemRequest().setSkuId(sku.getId());
         }
         
+        if (request.getOrder().getCurrency() != null && sku.getCurrency() != null && !request.getOrder().getCurrency().equals(sku.getCurrency())) {
+            throw new IllegalArgumentException("Cannot have items with differing currencies in one cart");
+        }
+        
         return context;
     }
     
@@ -123,13 +131,20 @@ public class ValidateAddRequestActivity extends BaseActivity {
         if (product != null && product.getProductOptions() != null && product.getProductOptions().size() > 0) {
             for (ProductOption productOption : product.getProductOptions()) {
                 if (productOption.getRequired()) {
-                    if (attributeValues.get(productOption.getAttributeName()) == null) {
-                        throw new RequiredAttributeNotProvidedException("Unable to add to cart. Required attribute was not provided: " + productOption.getAttributeName());
-                    } else {
+                    if (StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
+                        throw new RequiredAttributeNotProvidedException("Unable to add to product ("+ product.getId() +") cart. Required attribute was not provided: " + productOption.getAttributeName());
+                    } else if (productOption.getUseInSkuGeneration()) {
                         attributeValuesForSku.put(productOption.getAttributeName(), attributeValues.get(productOption.getAttributeName()));
                     }
                 }
+                if (!productOption.getRequired() && StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
+                    //if the productoption is not required, and user has not set the optional value, then we dont need to validate
+                } else if (productOption.getProductOptionValidationType() != null) {
+                        productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()));
+                }
+
             }
+            
 
             if (product !=null && product.getSkus() != null) {
                 for (Sku sku : product.getSkus()) {

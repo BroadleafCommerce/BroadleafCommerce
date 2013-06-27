@@ -1,0 +1,60 @@
+<div class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+    
+        <h3 id="myModalLabel" th:inline="text" th:switch="${modalHeaderType}">
+            <span th:case="'viewEntity'" th:remove="tag">
+                [[${entityForm.mainEntityName}]]
+                <small>
+                    <a th:href="@{${entityForm.sectionKey + '/' + entityForm.id}}" target="_blank">(Edit)</a>
+                </small>
+            </span>
+            
+            <span th:case="'addEntity'" th:remove="tag">
+                [[#{modal.title.addNew}]] [[#{${entityFriendlyName}}]]
+            </span>
+            
+            <span th:case="'addCollectionItem'" th:remove="tag">
+                [[#{modal.title.add}]] [[#{${collectionProperty.metadata.friendlyName}}]]
+            </span>
+            
+            <span th:case="'selectCollectionItem'" th:remove="tag">
+                [[#{modal.title.select}]] [[#{${collectionProperty.metadata.friendlyName}}]]
+            </span>
+            
+            <span th:case="'updateCollectionItem'" th:remove="tag">
+                [[#{modal.title.update}]] [[#{${collectionProperty.metadata.friendlyName}}]]
+            </span>
+
+            <span th:case="'viewCollectionItem'" th:remove="tag">
+                [[#{modal.title.view}]] [[#{${collectionProperty.metadata.friendlyName}}]]
+            </span>
+            
+            <span th:case="'translation'" th:remove="tag">
+                [[#{modal.title.fieldTranslations}]]
+            </span>
+            
+            <span th:case="'addTranslation'" th:remove="tag">
+                [[#{modal.title.addTranslation}]]
+            </span>
+            
+            <span th:case="'updateTranslation'" th:remove="tag">
+                [[#{modal.title.editTranslation}]]
+            </span>
+            
+            <span th:case="'selectAsset'" th:remove="tag">
+                [[#{modal.title.selectAsset}]]
+            </span>
+            
+            <span th:case="*" th:remove="tag">
+                [[#{modal.title.default}]]
+            </span>
+        </h3>
+        
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+        <div th:substituteby="${'views/' + viewType}" />
+    </div>
+    
+</div>

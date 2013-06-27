@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,20 +16,20 @@
 
 package org.broadleafcommerce.common.util.sql;
 
-import javax.persistence.spi.PersistenceUnitInfo;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.tools.ant.BuildException;
 import org.broadleafcommerce.common.extensibility.context.MergeFileSystemAndClassPathXMLApplicationContext;
 import org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager;
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.internal.util.ReflectHelper;
 import org.hibernate.tool.ant.ConfigurationTask;
-import org.hibernate.util.ReflectHelper;
 import org.xml.sax.EntityResolver;
+
+import javax.persistence.spi.PersistenceUnitInfo;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * This is a re-worked version from Hibernate tools

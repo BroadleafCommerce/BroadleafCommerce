@@ -3,21 +3,14 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:mo="http://schema.broadleafcommerce.org/mo"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
            http://schema.broadleafcommerce.org/mo
-           http://schema.broadleafcommerce.org/mo/mo-2.2.xsd">
-
-    <bean id="blUtilityRemoteService" class="org.broadleafcommerce.cms.admin.server.CMSUtilityRemoteService"/>
+           http://schema.broadleafcommerce.org/mo/mo-3.0.xsd">
 
     <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.PageTemplateCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.cms.admin.server.handler.PagesCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.cms.admin.server.handler.StaticAssetCustomPersistenceHandler">
-                    <property name="assetServerUrlPrefix" value="${asset.server.url.prefix.internal}"/>
-                </bean>
-                <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentTypeCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.SandBoxItemCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.cms.admin.server.handler.PendingSandBoxItemCustomPersistenceHandler"/>

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,139 +16,139 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class PromotableFulfillmentGroupAdjustmentImpl implements PromotableFulfillmentGroupAdjustment {
-
+public class PromotableFulfillmentGroupAdjustmentImpl extends AbstractPromotionRounding implements PromotableFulfillmentGroupAdjustment, OfferHolder {
+    
     private static final long serialVersionUID = 1L;
-    
-    protected PromotableFulfillmentGroup fulfillmentGroup;
-    protected FulfillmentGroupAdjustment delegate;
-    
-    public PromotableFulfillmentGroupAdjustmentImpl(FulfillmentGroupAdjustment fulfillmentGroupAdjustment, PromotableFulfillmentGroup fulfillmentGroup) {
-        this.delegate = fulfillmentGroupAdjustment;
-        this.fulfillmentGroup = fulfillmentGroup;
-    }
-    
-    public void reset() {
-        delegate = null;
-    }
-    
-    public FulfillmentGroupAdjustment getDelegate() {
-        return delegate;
-    }
-    
-    protected boolean roundOfferValues = true;
-    protected int roundingScale = 2;
-    protected RoundingMode roundingMode = RoundingMode.HALF_EVEN;
-    
-    /**
-     * It is sometimes problematic to offer percentage-off offers with regards to rounding. For example,
-     * consider an item that costs 9.99 and has a 50% promotion. To be precise, the offer value is 4.995,
-     * but this may be a strange value to display to the user depending on the currency being used.
-     */
-    public boolean isRoundOfferValues() {
-        return roundOfferValues;
-    }
 
-    /**
-     * @see #isRoundOfferValues()
-     * 
-     * @param roundingScale
-     */
-    public void setRoundingScale(int roundingScale) {
-        this.roundingScale = roundingScale;
-    }
-    
-    /**
-     * @see #isRoundOfferValues()
-     * 
-     * @param roundingMode
-     */
-    public void setRoundingMode(RoundingMode roundingMode) {
-        this.roundingMode = roundingMode;
-    }
-    
-    /*
-     * Calculates the value of the adjustment
-     */
-    public void computeAdjustmentValue() {
-        if (getOffer() != null && fulfillmentGroup != null) {
-            Money adjustmentPrice = fulfillmentGroup.getAdjustmentPrice(); // get the current price of the item with all adjustments
-            if (adjustmentPrice == null) {
-                if ((getOffer().getApplyDiscountToSalePrice()) && (fulfillmentGroup.getSaleShippingPrice() != null)) {
-                    adjustmentPrice = fulfillmentGroup.getSaleShippingPrice();
-                } else {
-                    adjustmentPrice = fulfillmentGroup.getRetailShippingPrice();
-                }
-            }
-            if (getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF )) {
-                setValue(new Money(delegate.getOffer().getValue(), adjustmentPrice.getCurrency(), 5));
-            }
-            if (getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                BigDecimal offerValue = adjustmentPrice.getAmount().subtract(delegate.getOffer().getValue());
-                setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
-            }
-            if (getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                BigDecimal offerValue = adjustmentPrice.getAmount().multiply(delegate.getOffer().getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
-                if (isRoundOfferValues()) {
-                    offerValue = offerValue.setScale(roundingScale, roundingMode);
-                }
-                setValue(new Money(offerValue, adjustmentPrice.getCurrency(), 5));
-            }
-            if (adjustmentPrice.lessThan(getValue())) {
-                setValue(adjustmentPrice);
-            }
-        }
-    }
-    
-    // FulfillmentGroupAdjustment methods
+    protected PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer;
+    protected PromotableFulfillmentGroup promotableFulfillmentGroup;
+    protected Money saleAdjustmentValue;
+    protected Money retailAdjustmentValue;
+    protected Money adjustmentValue;
+    protected boolean appliedToSalePrice;
 
-    public Long getId() {
-        return delegate.getId();
-    }
-
-    public void setId(Long id) {
-        delegate.setId(id);
+    public PromotableFulfillmentGroupAdjustmentImpl(
+            PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer,
+            PromotableFulfillmentGroup fulfillmentGroup) {
+        this.promotableCandidateFulfillmentGroupOffer = promotableCandidateFulfillmentGroupOffer;
+        this.promotableFulfillmentGroup = fulfillmentGroup;
+        computeAdjustmentValues();
     }
 
     public Offer getOffer() {
-        return delegate.getOffer();
+        return promotableCandidateFulfillmentGroupOffer.getOffer();
     }
 
-    public FulfillmentGroup getFulfillmentGroup() {
-        return delegate.getFulfillmentGroup();
-    }
+    /*
+     * Calculates the value of the adjustment for both retail and sale prices.   
+     * If either adjustment is greater than the item value, it will be set to the
+     * currentItemValue (e.g. no adjustment can cause a negative value). 
+     */
+    protected void computeAdjustmentValues() {
+        saleAdjustmentValue = new Money(getCurrency());
+        retailAdjustmentValue = new Money(getCurrency());
+        Offer offer = promotableCandidateFulfillmentGroupOffer.getOffer();
 
-    public String getReason() {
-        return delegate.getReason();
-    }
+        Money currentPriceDetailSalesValue = promotableFulfillmentGroup.calculatePriceWithAdjustments(true);
+        Money currentPriceDetailRetailValue = promotableFulfillmentGroup.calculatePriceWithAdjustments(false);
 
-    public void setReason(String reason) {
-        delegate.setReason(reason);
-    }
+        retailAdjustmentValue = PromotableOfferUtility.computeAdjustmentValue(currentPriceDetailRetailValue, offer.getValue(), this, this);
 
-    public void init(FulfillmentGroup fulfillmentGroup, Offer offer,
-            String reason) {
-        delegate.init(fulfillmentGroup, offer, reason);
-    }
-
-    public void setValue(Money value) {
-        delegate.setValue(value);
-    }
-
-    public Money getValue() {
-        if (delegate.getValue() == null || delegate.getValue().equals(Money.ZERO)) {
-            computeAdjustmentValue();
+        if (offer.getApplyDiscountToSalePrice() == true) {
+            saleAdjustmentValue = PromotableOfferUtility.computeAdjustmentValue(currentPriceDetailSalesValue, offer.getValue(), this, this);
         }
-        return delegate.getValue();
+    }
+
+    protected Money computeAdjustmentValue(Money currentPriceDetailValue) {
+        Offer offer = promotableCandidateFulfillmentGroupOffer.getOffer();
+        OfferDiscountType discountType = offer.getDiscountType();
+        Money adjustmentValue = new Money(getCurrency());
+
+        if (OfferDiscountType.AMOUNT_OFF.equals(discountType)) {
+            adjustmentValue = new Money(offer.getValue(), getCurrency());
+        }
+
+        if (OfferDiscountType.FIX_PRICE.equals(discountType)) {
+            adjustmentValue = currentPriceDetailValue;
+        }
+
+        if (OfferDiscountType.PERCENT_OFF.equals(discountType)) {
+            BigDecimal offerValue = currentPriceDetailValue.getAmount().multiply(offer.getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
+
+            if (isRoundOfferValues()) {
+                offerValue = offerValue.setScale(roundingScale, roundingMode);
+            }
+            adjustmentValue = new Money(offerValue, getCurrency(), 5);
+        }
+
+        if (currentPriceDetailValue.lessThan(adjustmentValue)) {
+            adjustmentValue = currentPriceDetailValue;
+        }
+        return adjustmentValue;
     }
     
+    @Override
+    public PromotableFulfillmentGroup getPromotableFulfillmentGroup() {
+        return promotableFulfillmentGroup;
+    }
+
+    @Override
+    public PromotableCandidateFulfillmentGroupOffer getPromotableCandidateFulfillmentGroupOffer() {
+        return promotableCandidateFulfillmentGroupOffer;
+    }
+
+    @Override
+    public Money getAdjustmentValue() {
+        return adjustmentValue;
+    }
+
+    public BroadleafCurrency getCurrency() {
+        return promotableFulfillmentGroup.getFulfillmentGroup().getOrder().getCurrency();
+    }
+
+    @Override
+    public boolean isCombinable() {
+        Boolean combinable = getOffer().isCombinableWithOtherOffers();
+        return (combinable != null && combinable);
+    }
+
+    @Override
+    public boolean isTotalitarian() {
+        Boolean totalitarian = getOffer().isTotalitarianOffer();
+        return (totalitarian != null && totalitarian.booleanValue());
+    }
+
+    @Override
+    public Money getSaleAdjustmentValue() {
+        return saleAdjustmentValue;
+    }
+
+    @Override
+    public Money getRetailAdjustmentValue() {
+        return retailAdjustmentValue;
+    }
+
+    @Override
+    public boolean isAppliedToSalePrice() {
+        return appliedToSalePrice;
+    }
+
+    @Override
+    public void finalizeAdjustment(boolean useSalePrice) {
+        appliedToSalePrice = useSalePrice;
+        if (useSalePrice) {
+            adjustmentValue = saleAdjustmentValue;
+        } else {
+            adjustmentValue = retailAdjustmentValue;
+        }
+    }
+
 }

@@ -1,0 +1,42 @@
+<div class="listgrid-container">
+    <div th:include="components/searchFields" th:object="${listGrid}" th:remove="tag" />
+    
+    <div class="category-tree">
+        <div class="listgrid-toolbar">
+        </div>
+        
+        <div style="background-color: #F5F5F5;">
+            <ul class="category-root">
+                <li th:each="category : ${parentCategories}" th:inline="text">
+                    <a th:href="@{${'/' + sectionKey + '/' + category.id}}">
+                        [[${category.name}]]
+                    </a> 
+                    <span th:if="${category.url != null}" th:text="${'(' + category.url + ')'}" />
+                    <ul th:substituteby="views/categoryTree::tree" />
+                </li>
+            </ul>
+        </div>
+        
+        <div th:remove="all">
+            <ul th:fragment="tree" th:unless="${#lists.isEmpty(category.childCategoryXrefs)}">
+                <li th:each="cxref : ${category.childCategoryXrefs}" th:inline="text">
+                    <a th:href="@{${'/' + sectionKey + '/' + cxref.subCategory.id}}">
+                        [[${cxref.subCategory.name}]]
+                    </a> 
+                    <span th:if="${cxref.subCategory.url != null}" th:text="${'(' + cxref.subCategory.url + ')'}" />
+                    <div th:with="category=${cxref.subCategory}" th:remove="tag">
+                        <ul th:substituteby="views/categoryTree::tree" />
+                    </div>
+                </li>
+            </ul>
+        </div>
+        
+        <span class="listgrid-table-footer" th:inline="text">
+        </span>
+    </div>
+    
+    <div class="category-list">
+        <div th:include="components/listGridToolbar" th:object="${listGrid}" th:remove="tag" />
+        <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
+    </div>
+</div>

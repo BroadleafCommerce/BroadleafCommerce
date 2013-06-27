@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -145,6 +145,14 @@ public interface CatalogService {
 
     public Sku findSkuById(Long skuId);
 
+    /**
+     * Get a hierarchical map of all child categories keyed on the url
+     *
+     * @param categoryId the parent category to which the children belong
+     * @return hierarchical map of all child categories
+     * @deprecated this approach is inherently inefficient - don't use.
+     */
+    @Deprecated
     public Map<String, List<Long>> getChildCategoryURLMapByCategoryId(Long categoryId);
 
     public Category createCategory();
@@ -153,6 +161,8 @@ public interface CatalogService {
     
     public Product createProduct(ProductType productType);
 
+    public List<Category> findAllParentCategories();
+    
     public List<Category> findAllSubCategories(Category category);
 
     public List<Category> findAllSubCategories(Category category, int limit, int offset);
@@ -162,6 +172,8 @@ public interface CatalogService {
     public List<Category> findActiveSubCategoriesByCategory(Category category, int limit, int offset);
     
     public List<ProductOption> readAllProductOptions();
+    
+    public ProductOption saveProductOption(ProductOption option);
     
     public ProductOption findProductOptionById(Long productOptionId);
     
@@ -185,7 +197,4 @@ public interface CatalogService {
      */    
     public Product findProductByURI(String uri);
 
-
-
-    
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * Used to represent Sku-specific surcharges when fulfilling this item. For instance there might be a disposal fee

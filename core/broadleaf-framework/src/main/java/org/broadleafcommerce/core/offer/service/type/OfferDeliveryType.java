@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.offer.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of delivery types.
@@ -31,15 +31,15 @@ import org.broadleafcommerce.common.BroadleafEnumerationType;
  * CODE - a offer code must be supplied in order to receive this offer
  *
  */
-public class OfferDeliveryType implements Serializable, BroadleafEnumerationType {
+public class OfferDeliveryType implements Serializable, BroadleafEnumerationType, Comparable<OfferDeliveryType> {
     
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OfferDeliveryType> TYPES = new HashMap<String, OfferDeliveryType>();
+    private static final Map<String, OfferDeliveryType> TYPES = new LinkedHashMap<String, OfferDeliveryType>();
 
-    public static final OfferDeliveryType AUTOMATIC = new OfferDeliveryType("AUTOMATIC", "Automatic");
-    public static final OfferDeliveryType MANUAL = new OfferDeliveryType("MANUAL", "Manual");
-    public static final OfferDeliveryType CODE = new OfferDeliveryType("CODE", "Code");
+    public static final OfferDeliveryType AUTOMATIC = new OfferDeliveryType("AUTOMATIC", "Automatically", 1000);
+    public static final OfferDeliveryType CODE = new OfferDeliveryType("CODE", "Using Shared Code", 2000);
+    public static final OfferDeliveryType MANUAL = new OfferDeliveryType("MANUAL", "Via Application or Shared Code", 3000);
 
     public static OfferDeliveryType getInstance(final String type) {
         return TYPES.get(type);
@@ -47,14 +47,16 @@ public class OfferDeliveryType implements Serializable, BroadleafEnumerationType
 
     private String type;
     private String friendlyType;
+    private int order;
 
     public OfferDeliveryType() {
         //do nothing
     }
 
-    public OfferDeliveryType(final String type, final String friendlyType) {
+    public OfferDeliveryType(final String type, final String friendlyType, int order) {
         this.friendlyType = friendlyType;
         setType(type);
+        setOrder(order);
     }
 
     public void setType(final String type) {
@@ -70,6 +72,14 @@ public class OfferDeliveryType implements Serializable, BroadleafEnumerationType
 
     public String getFriendlyType() {
         return friendlyType;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     @Override
@@ -95,6 +105,11 @@ public class OfferDeliveryType implements Serializable, BroadleafEnumerationType
         } else if (!type.equals(other.type))
             return false;
         return true;
+    }
+
+    @Override
+    public int compareTo(OfferDeliveryType arg0) {
+        return this.order - arg0.order;
     }
 
 }

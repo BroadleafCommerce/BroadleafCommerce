@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.dao.FulfillmentOptionDao;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-
 import java.util.List;
 
 /**
@@ -30,6 +30,7 @@ import java.util.List;
  * @author Phillip Verheyden
  */
 @Service("blFulfillmentOptionService")
+@Transactional("blTransactionManager")
 public class FulfillmentOptionServiceImpl implements FulfillmentOptionService {
 
     @Resource(name = "blFulfillmentOptionDao")
@@ -41,7 +42,6 @@ public class FulfillmentOptionServiceImpl implements FulfillmentOptionService {
     }
 
     @Override
-    @Transactional("blTransactionManager")
     public FulfillmentOption save(FulfillmentOption option) {
         return fulfillmentOptionDao.save(option);
     }
@@ -49,5 +49,10 @@ public class FulfillmentOptionServiceImpl implements FulfillmentOptionService {
     @Override
     public List<FulfillmentOption> readAllFulfillmentOptions() {
         return fulfillmentOptionDao.readAllFulfillmentOptions();
+    }
+
+    @Override
+    public List<FulfillmentOption> readAllFulfillmentOptionsByFulfillmentType(FulfillmentType type) {
+        return fulfillmentOptionDao.readAllFulfillmentOptionsByFulfillmentType(type);
     }
 }

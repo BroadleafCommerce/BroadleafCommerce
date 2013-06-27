@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.core.catalog.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+
+import java.util.List;
 
 /**
  * 
@@ -31,6 +31,8 @@ public interface ProductOptionDao {
     public List<ProductOption> readAllProductOptions();
     
     public ProductOption readProductOptionById(Long id);
+    
+    public ProductOption saveProductOption(ProductOption option);
     
     public ProductOptionValue readProductOptionValueById(Long id);
     

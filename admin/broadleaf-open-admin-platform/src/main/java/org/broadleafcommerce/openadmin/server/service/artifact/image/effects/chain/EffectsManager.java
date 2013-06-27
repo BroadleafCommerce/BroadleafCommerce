@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,13 +20,20 @@ import org.broadleafcommerce.openadmin.server.service.artifact.OperationBuilder;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ConversionManager;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.Parameter;
-import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter.*;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter.AlterHSB;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter.AlterRGB;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter.AutoLevelsRGB;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter.Crop;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter.FilterTypeEnum;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter.GaussianBlur;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter.Resize;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter.Rotate;
+import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter.UnsharpMask;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

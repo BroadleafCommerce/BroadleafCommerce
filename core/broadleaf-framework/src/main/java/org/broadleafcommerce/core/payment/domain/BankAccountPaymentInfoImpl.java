@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,19 +16,19 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
+import org.broadleafcommerce.common.encryption.EncryptionModule;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-
-import org.broadleafcommerce.common.encryption.EncryptionModule;
-import org.hibernate.annotations.Index;
 
 /**
  * 
@@ -51,8 +51,15 @@ public class BankAccountPaymentInfoImpl implements BankAccountPaymentInfo {
     protected EncryptionModule encryptionModule;
 
     @Id
-    @GeneratedValue(generator = "BankPaymentId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "BankPaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "BankAccountPaymentInfoImpl", allocationSize = 50)
+    @GeneratedValue(generator = "BankPaymentId")
+    @GenericGenerator(
+            name="BankPaymentId",
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                @Parameter(name="segment_value", value="BankAccountPaymentInfoImpl"),
+                @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfoImpl")
+            }
+        )
     @Column(name = "PAYMENT_ID")
     protected Long id;
 
@@ -66,42 +73,52 @@ public class BankAccountPaymentInfoImpl implements BankAccountPaymentInfo {
     @Column(name = "ROUTING_NUMBER", nullable=false)
     protected String routingNumber;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getReferenceNumber() {
         return referenceNumber;
     }
 
+    @Override
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
 
+    @Override
     public String getAccountNumber() {
         return encryptionModule.decrypt(accountNumber);
     }
 
+    @Override
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = encryptionModule.encrypt(accountNumber);
     }
 
+    @Override
     public String getRoutingNumber() {
         return encryptionModule.decrypt(routingNumber);
     }
 
+    @Override
     public void setRoutingNumber(String routingNumber) {
         this.routingNumber = encryptionModule.encrypt(routingNumber);
     }
 
+    @Override
     public EncryptionModule getEncryptionModule() {
         return encryptionModule;
     }
 
+    @Override
     public void setEncryptionModule(EncryptionModule encryptionModule) {
         this.encryptionModule = encryptionModule;
     }

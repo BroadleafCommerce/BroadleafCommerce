@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,11 @@ package org.broadleafcommerce.common;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.time.DayOfMonthType;
+import org.broadleafcommerce.common.time.DayOfWeekType;
+import org.broadleafcommerce.common.time.HourOfDayType;
+import org.broadleafcommerce.common.time.MinuteType;
+import org.broadleafcommerce.common.time.MonthType;
 import org.broadleafcommerce.common.time.SystemTime;
 
 import java.util.Calendar;
@@ -61,49 +66,49 @@ public class TimeDTO {
     /**
      * @return  int representing the hour of day as 0 - 23
      */
-    public Integer getHour() {
+    public HourOfDayType getHour() {
         if (hour == null) {
             hour = cal.get(Calendar.HOUR_OF_DAY);
         }
-        return hour;
+        return HourOfDayType.getInstance(hour.toString());
     }
 
     /**
      * @return int representing the day of week using Calendar.DAY_OF_WEEK values.
      * 1 = Sunday, 7 = Saturday
      */
-    public Integer getDayOfWeek() {
+    public DayOfWeekType getDayOfWeek() {
         if (dayOfWeek == null) {
             dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         }
-        return dayOfWeek;
+        return DayOfWeekType.getInstance(dayOfWeek.toString());
     }
 
     /**
      * @return the current day of the month (1-31).
      */
-    public Integer getDayOfMonth() {
+    public DayOfMonthType getDayOfMonth() {
         if (dayOfMonth == null) {
             dayOfMonth =  cal.get(Calendar.DAY_OF_MONTH);
         }
-        return dayOfMonth;
+        return DayOfMonthType.getInstance(dayOfMonth.toString());
     }
 
     /**
      * @return int representing the current month (1-12)
      */
-    public Integer getMonth() {
+    public MonthType getMonth() {
         if (month == null) {
             month = cal.get(Calendar.MONTH);
         }
-        return month;
+        return MonthType.getInstance(month.toString());
     }
 
-    public Integer getMinute() {
+    public MinuteType getMinute() {
         if (minute == null) {
             minute = cal.get(Calendar.MINUTE);
         }
-        return minute;
+        return MinuteType.getInstance(minute.toString());
     }
 
     public Date getDate() {
@@ -117,27 +122,29 @@ public class TimeDTO {
         this.cal = cal;
     }
 
-    public void setHour(Integer hour) {
-        this.hour = hour;
+    public void setHour(HourOfDayType hour) {
+        this.hour = Integer.valueOf(hour.getType());
+        ;
     }
 
-    public void setDayOfWeek(Integer dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
+    public void setDayOfWeek(DayOfWeekType dayOfWeek) {
+        this.dayOfWeek = Integer.valueOf(dayOfWeek.getType());
     }
 
-    public void setMonth(Integer month) {
-        this.month = month;
+    public void setMonth(MonthType month) {
+        this.month = Integer.valueOf(month.getType());
     }
 
-    public void setDayOfMonth(Integer dayOfMonth) {
-        this.dayOfMonth = dayOfMonth;
+    public void setDayOfMonth(DayOfMonthType dayOfMonth) {
+        this.dayOfMonth = Integer.valueOf(dayOfMonth.getType());
     }
 
     public void setDate(Date date) {
         this.date = date;
     }
 
-    public void setMinute(Integer minute) {
-        this.minute = minute;
+    public void setMinute(MinuteType minute) {
+        this.minute = Integer.valueOf(minute.getType());
+        ;
     }
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,6 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
@@ -53,7 +52,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -214,13 +212,13 @@ public class OfferServiceTest extends CommonSetupBaseTest {
         );
         for (Offer offer : offers) {
             offer.setName("testOffer");
-            //reset the offer is the targets and qualifiers, otherwise the reference is incorrect
-            for (OfferItemCriteria criteria : offer.getTargetItemCriteria()) {
-                criteria.setTargetOffer(null);
-            }
-            for (OfferItemCriteria criteria : offer.getQualifyingItemCriteria()) {
-                criteria.setQualifyingOffer(null);
-            }
+//            //reset the offer is the targets and qualifiers, otherwise the reference is incorrect
+//            for (OfferItemCriteria criteria : offer.getTargetItemCriteria()) {
+//                criteria.setTargetOffer(null);
+//            }
+//            for (OfferItemCriteria criteria : offer.getQualifyingItemCriteria()) {
+//                criteria.setQualifyingOffer(null);
+//            }
 
             offerService.save(offer);
         }
@@ -246,7 +244,7 @@ public class OfferServiceTest extends CommonSetupBaseTest {
         }
         order = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(order, true);
 
-        assert order.getOrderItems().size() == 4;
+        assert order.getOrderItems().size() == 3;
         assert order.getTotalTax().equals(new Money("2.00"));
         assert order.getTotalShipping().equals(new Money("8.50"));
         assert order.getSubTotal().equals(new Money("40.00"));
@@ -255,7 +253,7 @@ public class OfferServiceTest extends CommonSetupBaseTest {
         boolean foundGiftItemAndCorrectQuantity = false;
 
         for (OrderItem orderItem : order.getOrderItems()) {
-            if (orderItem instanceof GiftWrapOrderItem && ((GiftWrapOrderItem) orderItem).getWrappedItems().size() == 2) {
+            if (orderItem instanceof GiftWrapOrderItem && ((GiftWrapOrderItem) orderItem).getWrappedItems().size() == 1) {
                 foundGiftItemAndCorrectQuantity = true;
                 break;
             }

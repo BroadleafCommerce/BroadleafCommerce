@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -50,6 +51,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
+import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.springframework.beans.factory.DisposableBean;
 import org.xml.sax.SAXException;
@@ -102,15 +104,20 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     protected SolrIndexService solrIndexService;
 
     @Resource(name = "blSolrSearchServiceExtensionManager")
-    protected SolrSearchServiceExtensionListener extensionManager;
+    protected SolrSearchServiceExtensionManager extensionManager;
 
     public SolrSearchServiceImpl(String solrServer) throws IOException, ParserConfigurationException, SAXException {
         if ("solrhome".equals(solrServer)) {
+
             final String baseTempPath = System.getProperty("java.io.tmpdir");
 
-            File tempDir = new File(baseTempPath + File.separator + "solrhome");
+            File tempDir = new File(baseTempPath + File.separator + System.getProperty("user.name") + File.separator + "solrhome");
+            if (System.getProperty("tmpdir.solrhome") != null) {
+                //allow for an override of tmpdir
+                tempDir = new File(System.getProperty("tmpdir.solrhome"));
+            }
             if (!tempDir.exists()) {
-                tempDir.mkdir();
+                tempDir.mkdirs();
             }
 
             solrServer = tempDir.getAbsolutePath();
@@ -231,8 +238,30 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         query = sanitizeQuery(query);
 
-        query = shs.getSearchableFieldName() + ":(" + query + ")";
+        query = buildQueryString(query);
+
         return findProducts(query, facets, searchCriteria, null);
+    }
+
+    public String buildQueryString(String query) {
+        StringBuilder queryBuilder = new StringBuilder();
+        List<Field> fields = fieldDao.readAllProductFields();
+        for (Field currentField : fields) {
+            if (currentField.getSearchable()) {
+                appendFieldToQuery(queryBuilder, currentField, query);
+            }
+        }
+        return queryBuilder.toString();
+    }
+
+    public void appendFieldToQuery(StringBuilder queryBuilder, Field currentField, String query) {
+        List<FieldType> searchableFieldTypes = shs.getSearchableFieldTypes(currentField);
+        for (FieldType currentType : searchableFieldTypes) {
+            queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, currentType));
+            queryBuilder.append(":(");
+            queryBuilder.append(query);
+            queryBuilder.append(") ");
+        }
     }
 
     @Override
@@ -245,8 +274,18 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         StringBuilder sb = new StringBuilder();
         sb.append(shs.getCategoryFieldName()).append(":").append(category.getId())
                 .append(" AND ")
-                .append(shs.getSearchableFieldName()).append(":(").append(query).append(")");
+                .append(buildQueryString(query));
         return findProducts(sb.toString(), facets, searchCriteria, null);
+    }
+
+    public String getLocalePrefix() {
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+            if (locale != null) {
+                return locale.getLocaleCode() + "_";
+            }
+        }
+        return "";
     }
 
     /**
@@ -266,7 +305,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // Build the basic query
         SolrQuery solrQuery = new SolrQuery()
                 .setQuery(qualifiedSolrQuery)
-                .setFields(shs.getIdFieldName())
+                .setFields(shs.getProductIdFieldName())
                 .setRows(searchCriteria.getPageSize())
                 .setFilterQueries(shs.getNamespaceFieldName() + ":" + shs.getCurrentNamespace())
                 .setStart((searchCriteria.getPage() - 1) * searchCriteria.getPageSize());
@@ -275,6 +314,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         attachSortClause(solrQuery, searchCriteria, defaultSort);
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
         attachFacets(solrQuery, namedFacetMap);
+        
+        extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets,
+                searchCriteria, defaultSort);
 
         if (LOG.isTraceEnabled()) {
             try {
@@ -287,6 +329,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // Query solr
         QueryResponse response;
         try {
+            //solrQuery = new SolrQuery().setQuery("*:*");
+            
             response = SolrContext.getServer().query(solrQuery);
             if (LOG.isTraceEnabled()) {
                 LOG.trace(response.toString());
@@ -421,7 +465,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
 
             if (extensionManager != null) {
-                extensionManager.filterSearchFacetRanges(dto, facetRanges);
+                extensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
             }
 
             if (facetRanges != null && facetRanges.size() > 0) {
@@ -436,7 +480,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     /**
      * Builds out the DTOs for facet results from the search. This will then be used by the view layer to
-     * display which values are avaialble given the current constraints as well as the count of the values.
+     * display which values are available given the current constraints as well as the count of the values.
      * 
      * @param namedFacetMap
      * @param response
@@ -529,7 +573,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         final List<Long> productIds = new ArrayList<Long>();
         SolrDocumentList docs = response.getResults();
         for (SolrDocument doc : docs) {
-            productIds.add((Long) doc.getFieldValue(shs.getIdFieldName()));
+            productIds.add((Long) doc.getFieldValue(shs.getProductIdFieldName()));
         }
 
         List<Product> products = productDao.readProductsByIds(productIds);

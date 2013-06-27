@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:mo="http://schema.broadleafcommerce.org/mo"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:tx="http://www.springframework.org/schema/tx"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-               http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mo="http://schema.broadleafcommerce.org/mo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+               http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
                http://www.springframework.org/schema/context
-               http://www.springframework.org/schema/context/spring-context-3.1.xsd
-               http://www.springframework.org/schema/tx
-               http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
-               http://www.springframework.org/schema/aop
-               http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+               http://www.springframework.org/schema/context/spring-context-3.2.xsd
                http://schema.broadleafcommerce.org/mo
-               http://schema.broadleafcommerce.org/mo/mo-2.2.xsd">
+               http://schema.broadleafcommerce.org/mo/mo-3.0.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.admin"/>
 
@@ -22,10 +16,8 @@
         <property name="sourceList">
             <list>
                 <bean class="org.broadleafcommerce.admin.server.service.handler.CategoryCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.admin.server.service.handler.OfferCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.admin.server.service.handler.OfferItemCriteriaCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.admin.server.service.handler.AdminUserCustomPersistenceHandler"/>
+                <bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>                
+                <bean class="org.broadleafcommerce.openadmin.server.security.handler.AdminUserCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.admin.server.service.handler.CustomerCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.admin.server.service.handler.ChildCategoriesCustomPersistenceHandler"/>
@@ -35,6 +27,17 @@
     </bean>
 
     <mo:override id="blMetadataOverrides">
+        <!-- Add required validation to some default Sku fields. These should not occur on the additionalSkus list, which
+            is why these are marked required in this fashion rather than in @AdminPresentation annotations on SkuImpl -->
+        <mo:overrideItem ceilingEntity="org.broadleafcommerce.core.catalog.domain.Product">
+            <mo:field name="defaultSku.retailPrice">
+                <mo:property name="requiredOverride" value="true" />
+            </mo:field>
+            <mo:field name="defaultSku.name">
+                <mo:property name="requiredOverride" value="true" />
+            </mo:field>
+        </mo:overrideItem>
+    
         <mo:overrideItem configurationKey="promotionOrderItem">
             <mo:field name="category">
                 <mo:property name="excluded" value="false"/>
@@ -57,9 +60,6 @@
                 <mo:property name="excluded" value="true"/>
             </mo:field>
             <mo:field name="lastName">
-                <mo:property name="excluded" value="true"/>
-            </mo:field>
-            <mo:field name="emailAddress">
                 <mo:property name="excluded" value="true"/>
             </mo:field>
             <mo:field name="auditable.dateCreated">
@@ -146,5 +146,77 @@
             </mo:field>
         </mo:overrideItem>
     </mo:override>
+    
+    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>classpath:/messages/CustomerCareMessages</value>
+                <value>classpath:/messages/MerchandisingMessages</value>
+                <value>classpath:/messages/PromotionMessages</value>
+                <value>classpath:/messages/RuleMessages</value>
+                <value>classpath:/messages/AbstractModuleMessages</value>
+            </list>
+        </property>
+    </bean>
 
+    <bean id="blAdminExtendedRuleBuilderFieldServices" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blOrderItemFieldService"/>
+                <ref bean="blCustomerFieldService"/>
+                <ref bean="blTimeFieldService"/>
+                <ref bean="blRequestFieldService"/>
+                <ref bean="blOrderFieldService"/>
+                <ref bean="blFulfillmentGroupFieldService"/>
+                <ref bean="blLocaleFieldService"/>
+                <ref bean="blSkuFieldService"/>
+                <ref bean="blProductFieldService"/>
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminExtendedRuleBuilderFieldServices" />
+        <property name="targetRef" value="blRuleBuilderFieldServices" />
+    </bean>
+    
+    <bean id="blAdminExtendedRuleBuilderOptionsExtensionListeners" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blTimeOptionsExtensionListener" />
+                <ref bean="blInventoryTypeOptionsExtensionListener" />
+                <ref bean="blFulfillmentTypeOptionsExtensionListener" />
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminExtendedRuleBuilderOptionsExtensionListeners" />
+        <property name="targetRef" value="blRuleBuilderEnumOptionsExtensionListeners" />
+    </bean>
+    
+    <bean id="blAdminExtendedTranslationControllerExtensionListeners" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blAdminProductTranslationExtensionListener" />
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminExtendedTranslationControllerExtensionListeners" />
+        <property name="targetRef" value="blAdminTranslationControllerExtensionListeners" />
+    </bean>
+    
+    <bean id="blAdminExtendedPersistenceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blSkuPricingPersistenceProvider"/>
+                <ref bean="blSkuFieldsPersistenceProvider"/>
+                <ref bean="blForeignSkuFieldPersistenceProvider"/>
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminExtendedPersistenceProviders" />
+        <property name="targetRef" value="blPersistenceProviders" />
+    </bean>
+    
 </beans>

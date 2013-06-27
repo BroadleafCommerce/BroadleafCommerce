@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,7 +23,7 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.CustomerPhoneController;
 import org.broadleafcommerce.profile.web.core.controller.dataprovider.CustomerPhoneControllerTestDataProvider;
 import org.broadleafcommerce.profile.web.core.model.PhoneNameForm;
-import org.broadleafcommerce.profile.web.core.security.CustomerStateFilter;
+import org.broadleafcommerce.profile.web.core.security.CustomerStateRequestProcessor;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.Rollback;
@@ -33,7 +33,6 @@ import org.springframework.validation.BindingResult;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,8 +44,8 @@ public class CustomerPhoneControllerTest extends BaseTest {
     private CustomerPhoneService customerPhoneService;
     @Resource
     private CustomerService customerService;
-    private List<Long> createdCustomerPhoneIds = new ArrayList<Long>();
-    private Long userId = 1L;
+    private final List<Long> createdCustomerPhoneIds = new ArrayList<Long>();
+    private final Long userId = 1L;
     private MockHttpServletRequest request;
     private static final String SUCCESS = "customerPhones";
 
@@ -58,7 +57,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
 
         Customer customer = customerService.readCustomerById(userId);
         request = this.getNewServletInstance();
-        request.setAttribute(CustomerStateFilter.getCustomerRequestAttributeName(), customer);
+        request.setAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName(), customer);
 
         String view = customerPhoneController.savePhone(phoneNameForm, errors, request, null, null);
         assert (view.indexOf(SUCCESS) >= 0);
@@ -147,7 +146,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
 
         Customer customer = customerService.readCustomerById(userId);
         request = this.getNewServletInstance();
-        request.setAttribute(CustomerStateFilter.getCustomerRequestAttributeName(), customer);
+        request.setAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName(), customer);
 
         String view = customerPhoneController.viewPhone(phones_1.get(0).getId(), request, pnf, errors);
         assert (view.indexOf(SUCCESS) >= 0);

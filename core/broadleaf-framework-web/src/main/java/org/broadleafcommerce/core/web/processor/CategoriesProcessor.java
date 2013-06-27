@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,16 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the desired categories to the model. It does this by
@@ -36,6 +39,9 @@ import java.util.List;
  */
 @Component("blCategoriesProcessor")
 public class CategoriesProcessor extends AbstractModelVariableModifierProcessor {
+    
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -51,8 +57,6 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
 
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-        CatalogService catalogService = ProcessorUtils.getCatalogService(arguments);
-        
         String resultVar = element.getAttributeValue("resultVar");
         String parentCategory = element.getAttributeValue("parentCategory");
         String unparsedMaxResults = element.getAttributeValue("maxResults");
@@ -62,7 +66,7 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
         List<Category> categories = catalogService.findCategoriesByName(parentCategory);
         if (categories != null && categories.size() > 0) {
             // gets child categories in order ONLY if they are in the xref table and active
-            List<Category> subcategories = categories.get(0).getChildCategories();
+            List<CategoryXref> subcategories = categories.get(0).getChildCategoryXrefs();
             if (subcategories != null && !subcategories.isEmpty()) {
                 if (StringUtils.isNotEmpty(unparsedMaxResults)) {
                     int maxResults = Integer.parseInt(unparsedMaxResults);
@@ -71,8 +75,12 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
                     }
                 }
             }
+            List<Category> results = new ArrayList<Category>(subcategories.size());
+            for (CategoryXref xref : subcategories) {
+                results.add(xref.getSubCategory());
+            }
             
-            addToModel(arguments, resultVar, subcategories);
+            addToModel(arguments, resultVar, results);
         }
     }
 }

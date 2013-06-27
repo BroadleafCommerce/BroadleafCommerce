@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -61,5 +61,14 @@ public @interface AdminPresentationClass {
      * to be displayed to the admin user
      */
     String ceilingDisplayEntity() default "";
+
+    /**
+     * <p>Specify whether or not this class should be excluded from admin detection as a polymorphic type.
+     * This is useful if you have several entities that implement an interface, but you only want the
+     * admin to ignore one of the entities as a valid type for the interface.</p>
+     *
+     * @return Whether or not the admin should ignore this entity as a valid polymorphic type
+     */
+    boolean excludeFromPolymorphism() default false;
 
 }

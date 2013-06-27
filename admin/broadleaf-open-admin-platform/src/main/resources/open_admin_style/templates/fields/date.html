@@ -1,0 +1,7 @@
+<div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+
+<div class="datepicker-container">
+    <input type="text" class="three datepicker" th:field="*{fields['__${field.name}__'].value}" />
+    <i class="icon-calendar"></i>
+</div>

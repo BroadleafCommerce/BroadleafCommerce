@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,18 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderAttribute;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -25,12 +35,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 
 /**
  * This is a JAXB wrapper around Order.
@@ -75,8 +79,16 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
     @XmlElementWrapper(name = "paymentInfos")
     protected List<PaymentInfoWrapper> paymentInfos;
 
+    @XmlElement(name = "orderAdjustment")
+    @XmlElementWrapper(name = "orderAdjustments")
+    protected List<AdjustmentWrapper> orderAdjustments;
+
+    @XmlElement(name = "orderAttribute")
+    @XmlElementWrapper(name = "orderAttributes")
+    protected List<OrderAttributeWrapper> orderAttributes;
+
     @Override
-    public void wrap(Order model, HttpServletRequest request) {
+    public void wrapDetails(Order model, HttpServletRequest request) {
         this.id = model.getId();
         this.status = model.getStatus().getType();
         this.totalTax = model.getTotalTax();
@@ -88,7 +100,7 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
             this.orderItems = new ArrayList<OrderItemWrapper>();
             for (OrderItem orderItem : model.getOrderItems()) {
                 OrderItemWrapper orderItemWrapper = (OrderItemWrapper) context.getBean(OrderItemWrapper.class.getName());
-                orderItemWrapper.wrap(orderItem, request);
+                orderItemWrapper.wrapSummary(orderItem, request);
                 this.orderItems.add(orderItemWrapper);
             }
         }
@@ -97,7 +109,7 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
             this.fulfillmentGroups = new ArrayList<FulfillmentGroupWrapper>();
             for (FulfillmentGroup fulfillmentGroup : model.getFulfillmentGroups()) {
                 FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
-                fulfillmentGroupWrapper.wrap(fulfillmentGroup, request);
+                fulfillmentGroupWrapper.wrapSummary(fulfillmentGroup, request);
                 this.fulfillmentGroups.add(fulfillmentGroupWrapper);
             }
         }
@@ -106,13 +118,37 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
             this.paymentInfos = new ArrayList<PaymentInfoWrapper>();
             for (PaymentInfo paymentInfo : model.getPaymentInfos()) {
                 PaymentInfoWrapper paymentInfoWrapper = (PaymentInfoWrapper) context.getBean(PaymentInfoWrapper.class.getName());
-                paymentInfoWrapper.wrap(paymentInfo, request);
+                paymentInfoWrapper.wrapSummary(paymentInfo, request);
                 this.paymentInfos.add(paymentInfoWrapper);
             }
         }
 
+        if (model.getOrderAdjustments() != null && !model.getOrderAdjustments().isEmpty()) {
+            this.orderAdjustments = new ArrayList<AdjustmentWrapper>();
+            for (OrderAdjustment orderAdjustment : model.getOrderAdjustments()) {
+                AdjustmentWrapper orderAdjustmentWrapper = (AdjustmentWrapper) context.getBean(AdjustmentWrapper.class.getName());
+                orderAdjustmentWrapper.wrapSummary(orderAdjustment, request);
+                this.orderAdjustments.add(orderAdjustmentWrapper);
+            }
+        }
+        if (model.getOrderAttributes() != null && !model.getOrderAttributes().isEmpty()) {
+            Map<String, OrderAttribute> itemAttributes = model.getOrderAttributes();
+            this.orderAttributes = new ArrayList<OrderAttributeWrapper>();
+            Set<String> keys = itemAttributes.keySet();
+            for (String key : keys) {
+                OrderAttributeWrapper orderAttributeWrapper =
+                        (OrderAttributeWrapper) context.getBean(OrderAttributeWrapper.class.getName());
+                orderAttributeWrapper.wrapSummary(itemAttributes.get(key), request);
+                this.orderAttributes.add(orderAttributeWrapper);
+            }
+        }
         CustomerWrapper customerWrapper = (CustomerWrapper) context.getBean(CustomerWrapper.class.getName());
-        customerWrapper.wrap(model.getCustomer(), request);
+        customerWrapper.wrapDetails(model.getCustomer(), request);
         this.customer = customerWrapper;
+    }
+
+    @Override
+    public void wrapSummary(Order model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

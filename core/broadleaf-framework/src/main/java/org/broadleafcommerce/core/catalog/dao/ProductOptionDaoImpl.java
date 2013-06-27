@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,12 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-
-import java.util.List;
 
 @Repository("blProductOptionDao")
 public class ProductOptionDaoImpl implements ProductOptionDao {
@@ -44,15 +44,19 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         TypedQuery<ProductOption> query = em.createNamedQuery("BC_READ_ALL_PRODUCT_OPTIONS", ProductOption.class);
         return query.getResultList();
     }
+    
+    public ProductOption saveProductOption(ProductOption option) {
+        return em.merge(option);
+    }
 
     @Override
     public ProductOption readProductOptionById(Long id) {
-        return (ProductOption) em.find(ProductOptionImpl.class, id);
+        return em.find(ProductOptionImpl.class, id);
     }
 
     @Override
     public ProductOptionValue readProductOptionValueById(Long id) {
-        return (ProductOptionValue) em.find(ProductOptionValueImpl.class, id);
+        return em.find(ProductOptionValueImpl.class, id);
     }
 
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,37 +20,20 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
-import org.broadleafcommerce.core.order.service.manipulation.OrderItemVisitor;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -58,33 +41,53 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_DISCRETE_ORDER_ITEM")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationClass(friendlyName = "DiscreteOrderItemImpl_discreteOrderItem")
-@AdminPresentationOverrides({@AdminPresentationOverride(name="product.defaultSku", value=@AdminPresentation(excluded = true))})
 public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrderItem {
 
     private static final long serialVersionUID = 1L;
     
     @Column(name="BASE_RETAIL_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Base_Retail_Price", order=2, group = "DiscreteOrderItemImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(excluded = true, friendlyName = "DiscreteOrderItemImpl_Base_Retail_Price", order=2,
+            group = "DiscreteOrderItemImpl_Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal baseRetailPrice;
     
     @Column(name="BASE_SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Base_Sale_Price", order=2, group = "DiscreteOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
+    @AdminPresentation(excluded = true, friendlyName = "DiscreteOrderItemImpl_Base_Sale_Price", order=2,
+            group = "DiscreteOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
     
     @ManyToOne(targetEntity = SkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID", nullable = false)
     @Index(name="DISCRETE_SKU_INDEX", columnNames={"SKU_ID"})
+    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
+            group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
+    @AdminPresentationToOneLookup()
     protected Sku sku;
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="DISCRETE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     @NotFound(action = NotFoundAction.IGNORE)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Product", order=Presentation.FieldOrder.PRODUCT,
+            group = OrderItemImpl.Presentation.Group.Name.Catalog, groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
+    @AdminPresentationToOneLookup()
     protected Product product;
 
     @ManyToOne(targetEntity = BundleOrderItemImpl.class)
@@ -96,17 +99,16 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @JoinColumn(name = "SKU_BUNDLE_ITEM_ID")
     @AdminPresentation(excluded = true)
     protected SkuBundleItem skuBundleItem;
-    
-    @CollectionOfElements
-    @JoinTable(name = "BLC_ORDER_ITEM_ADD_ATTR", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
-    @MapKey(columns = { @Column(name = "NAME", nullable = false) })
-    @Column(name = "VALUE")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
+
+    @ElementCollection
+    @MapKeyColumn(name="NAME")
+    @Column(name="VALUE")
+    @CollectionTable(name="BLC_ORDER_ITEM_ADD_ATTR", joinColumns=@JoinColumn(name="ORDER_ITEM_ID"))
     @BatchSize(size = 50)
+    @Deprecated
     protected Map<String, String> additionalAttributes = new HashMap<String, String>();
     
-    @OneToMany(mappedBy = "discreteOrderItem", targetEntity = DiscreteOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL })
-    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @OneToMany(mappedBy = "discreteOrderItem", targetEntity = DiscreteOrderItemFeePriceImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
 
@@ -129,12 +131,8 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     }
 
     @Override
-    public Money getTaxablePrice() {
-        Money taxablePrice = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
-        if (sku.isTaxable() == null || sku.isTaxable()) {
-            taxablePrice = getPrice();
-        }
-        return taxablePrice;
+    public Boolean isTaxable() {
+        return (sku == null || sku.isTaxable() == null || sku.isTaxable());
     }
 
     @Override
@@ -212,9 +210,11 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         return order;
     }
 
-    @Override
-    public boolean updatePrices() {
-        Money skuRetailPrice = getSku().getRetailPrice();
+    private boolean updateSalePrice() {
+        if (isSalePriceOverride()) {
+            return false;
+        }
+
         Money skuSalePrice = (getSku().getSalePrice() == null ? null : getSku().getSalePrice());
 
         // Override retail/sale prices from skuBundle.
@@ -222,7 +222,34 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             if (skuBundleItem.getSalePrice() != null) {
                 skuSalePrice = skuBundleItem.getSalePrice();
             }
+        }
 
+        boolean updated = false;
+        //use the sku prices - the retail and sale prices could be null
+        if (skuSalePrice != null && !skuSalePrice.equals(salePrice)) {
+            baseSalePrice = skuSalePrice.getAmount();
+            salePrice = skuSalePrice.getAmount();
+            updated = true;
+        }
+
+        // Adjust prices by adding in fees if they are attached.
+        if (getDiscreteOrderItemFeePrices() != null) {
+            for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
+                Money returnPrice = convertToMoney(salePrice);
+                salePrice = returnPrice.add(fee.getAmount()).getAmount();
+            }
+        }
+        return updated;
+    }
+
+    private boolean updateRetailPrice() {
+        if (isRetailPriceOverride()) {
+            return false;
+        }
+        Money skuRetailPrice = getSku().getRetailPrice();
+
+        // Override retail/sale prices from skuBundle.
+        if (skuBundleItem != null) {
             if (skuBundleItem.getRetailPrice() != null) {
                 skuRetailPrice = skuBundleItem.getRetailPrice();
             }
@@ -230,25 +257,34 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
         boolean updated = false;
         //use the sku prices - the retail and sale prices could be null
-        if (!skuRetailPrice.equals(getRetailPrice())) {
-            setBaseRetailPrice(skuRetailPrice);
-            setRetailPrice(skuRetailPrice);
-            updated = true;
-        }
-        if (skuSalePrice != null && !skuSalePrice.equals(getSalePrice())) {
-            setBaseSalePrice(skuSalePrice);
-            setSalePrice(skuSalePrice);
+        if (!skuRetailPrice.equals(retailPrice)) {
+            baseRetailPrice = skuRetailPrice.getAmount();
+            retailPrice = skuRetailPrice.getAmount();
             updated = true;
         }
 
         // Adjust prices by adding in fees if they are attached.
         if (getDiscreteOrderItemFeePrices() != null) {
             for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
-                setSalePrice(getSalePrice().add(fee.getAmount()));
-                setRetailPrice(getRetailPrice().add(fee.getAmount()));
+                Money returnPrice = convertToMoney(retailPrice);
+                retailPrice = returnPrice.add(fee.getAmount()).getAmount();
             }
         }
         return updated;
+    }
+
+    @Override
+    public boolean updateSaleAndRetailPrices() {
+        boolean salePriceUpdated = updateSalePrice();
+        boolean retailPriceUpdated = updateRetailPrice();
+        if (!isRetailPriceOverride() && !isSalePriceOverride()) {
+            if (salePrice != null) {
+                price = salePrice;
+            } else {
+                price = retailPrice;
+            }
+        }
+        return salePriceUpdated || retailPriceUpdated;
     }
 
     @Override
@@ -367,10 +403,58 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         result = prime * result + ((sku == null) ? 0 : sku.hashCode());
         return result;
     }
-    
+
     @Override
-    public void accept(OrderItemVisitor visitor) throws PricingException {
-        visitor.visit(this);
+    public boolean isDiscountingAllowed() {
+        if (discountsAllowed == null) {
+            return sku.isDiscountable();
+        } else {
+            return discountsAllowed.booleanValue();
+        }
     }
 
+    @Override
+    public BundleOrderItem findParentItem() {
+        for (OrderItem orderItem : getOrder().getOrderItems()) {
+            if (orderItem instanceof BundleOrderItem) {
+                BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
+                for (OrderItem containedItem : bundleItem.getOrderItems()) {
+                    if (containedItem.equals(this)) {
+                        return bundleItem;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static class Presentation {
+        public static class Tab {
+            public static class Name {
+                public static final String OrderItems = "OrderImpl_Order_Items_Tab";
+            }
+
+            public static class Order {
+                public static final int OrderItems = 2000;
+            }
+        }
+
+        public static class Group {
+            public static class Name {
+            }
+
+            public static class Order {
+            }
+        }
+
+        public static class FieldOrder {
+            public static final int PRODUCT = 2000;
+            public static final int SKU = 3000;
+        }
+    }
+
+    @Override
+    public boolean isSkuActive() {
+        return sku.isActive();
+    }
 }

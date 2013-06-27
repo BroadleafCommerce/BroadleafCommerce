@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,20 +16,38 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.Offer;
 
-public interface PromotableOrderAdjustment {
+import java.io.Serializable;
 
-    public void reset();
+public interface PromotableOrderAdjustment extends Serializable {
 
-    public OrderAdjustment getDelegate();
-
-    /*
-     * Calculates the value of the adjustment
+    /**
+     * Returns the associated promotableOrder
+     * @return
      */
-    public void computeAdjustmentValue();
+    public PromotableOrder getPromotableOrder();
 
-    public Money getValue();
-    
+    /**
+     * Returns the associated promotableCandidateOrderOffer
+     * @return
+     */
+    public Offer getOffer();
+
+    /**
+     * Returns the value of this adjustment
+     * @return
+     */
+    public Money getAdjustmentValue();
+
+    /**
+     * Returns true if this adjustment represents a combinable offer.
+     */
+    boolean isCombinable();
+
+    /**
+     * Returns true if this adjustment represents a totalitarian offer.
+     */
+    boolean isTotalitarian();
 }

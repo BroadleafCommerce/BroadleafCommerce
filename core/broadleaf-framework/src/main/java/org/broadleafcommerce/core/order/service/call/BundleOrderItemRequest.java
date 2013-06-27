@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.order.domain.BundleOrderItemFeePrice;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -31,6 +32,8 @@ public class BundleOrderItemRequest {
     protected Order order;
     protected List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
     protected List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<BundleOrderItemFeePrice>();
+    protected Money salePriceOverride;
+    protected Money retailPriceOverride;
 
     
     public Order getOrder() {
@@ -81,6 +84,22 @@ public class BundleOrderItemRequest {
     public void setBundleOrderItemFeePrices(
             List<BundleOrderItemFeePrice> bundleOrderItemFeePrices) {
         this.bundleOrderItemFeePrices = bundleOrderItemFeePrices;
+    }
+
+    public Money getSalePriceOverride() {
+        return salePriceOverride;
+    }
+
+    public void setSalePriceOverride(Money salePriceOverride) {
+        this.salePriceOverride = salePriceOverride;
+    }
+
+    public Money getRetailPriceOverride() {
+        return retailPriceOverride;
+    }
+
+    public void setRetailPriceOverride(Money retailPriceOverride) {
+        this.retailPriceOverride = retailPriceOverride;
     }
 
     @Override

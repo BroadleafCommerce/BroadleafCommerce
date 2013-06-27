@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,10 +16,11 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
@@ -270,17 +271,17 @@ public interface Sku extends Serializable {
      * Denormalized set of key-value pairs to attach to a Sku. If you are looking for setting up
      * a {@link ProductOption} scenario (like colors, sizes, etc) see {@link getProductOptionValues()}
      * and {@link setProductOptionValues()}
-     * 
+     *
      * @return the attributes for this Sku
      */
-    public List<SkuAttribute> getSkuAttributes();
+    public Map<String, SkuAttribute> getSkuAttributes();
 
     /**
      * Sets the denormalized set of key-value pairs on a Sku
-     * 
+     *
      * @param skuAttributes
      */
-    public void setSkuAttributes(List<SkuAttribute> skuAttributes);
+    public void setSkuAttributes(Map<String, SkuAttribute> skuAttributes);
 
     /**
      * Gets the ProductOptionValues used to map to this Sku. For instance, this Sku could hold specific
@@ -360,16 +361,30 @@ public interface Sku extends Serializable {
      * Whether this Sku can be sorted by a machine
      * 
      * @return <b>true</b> if this Sku can be sorted by a machine
+     * @deprecated use {@link #getIsMachineSortable()} instead since that is the correct bean notation
      */
     public Boolean isMachineSortable();
+
+    /**
+     * Whether this Sku can be sorted by a machine
+     * 
+     */
+    public Boolean getIsMachineSortable();
 
     /**
      * Sets whether or not this Sku can be sorted by a machine
      * 
      * @param isMachineSortable
+     * @deprecated use {@link #setIsMachineSortable(Boolean)} instead since that is the correct bean notation
      */
     public void setMachineSortable(Boolean isMachineSortable);
     
+    /**
+     * Sets whether or not this Sku can be sorted by a machine
+     * @param isMachineSortable
+     */
+    public void setIsMachineSortable(Boolean isMachineSortable);
+
     /**
      * Gets all the extra fees for this particular Sku. If the fee type is FULFILLMENT, these are stored
      * on {@link FulfillmentGroup#getFulfillmentGroupFees()} for an Order
@@ -419,18 +434,6 @@ public interface Sku extends Serializable {
     public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions);
 
     /**
-     * Convenience method to return a given sku attribute by its name
-     * @param name
-     * @return the SkuAttribute
-     */
-    public SkuAttribute getSkuAttributeByName(String name);
-
-    /**
-     * @return a Map of all the sku attributes on this sku keyed by the attribute name
-     */
-    public Map<String, SkuAttribute> getMappedSkuAttributes();
-
-    /**
      * Returns the type of inventory for this sku
      * @return the {@link org.broadleafcommerce.core.inventory.service.type.InventoryType} for this sku
      */
@@ -458,5 +461,40 @@ public interface Sku extends Serializable {
      * Clears any currently stored dynamic pricing
      */
     public void clearDynamicPrices();
+
+    /**
+     * Sets the currency for this Sku
+     * 
+     * Note: Currency is ignored when using dynamic pricing
+     * 
+     * @param currency
+     */
+    public void setCurrency(BroadleafCurrency currency);
+
+    /**
+     * Returns the currency for this sku if there is one set. If there is not, it will return the currency for the
+     * default sku if this is not the default sku. Note that it is possible for this method to return null.
+     * 
+     * <b>Note: When using dynamic pricing, this method is unreliable and should not be called outside of the 
+     * Broadleaf admin</b>
+     * 
+     * @return the currency for this sku
+     */
+    public BroadleafCurrency getCurrency();
+
+    /**
+     * Returns the Tax Code for this particular Entity.
+     * 
+     *  If the current Tax Code on the Sku is null, the Product tax code will be returned.
+     * @return taxCode
+     */
+    public String getTaxCode();
+
+    /**
+     * Sets the tax code for this SKU
+     * 
+     * @param taxCode
+     */
+    public void setTaxCode(String taxCode);
 
 }

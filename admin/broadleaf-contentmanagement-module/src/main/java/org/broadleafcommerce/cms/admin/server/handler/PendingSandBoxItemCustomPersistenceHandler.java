@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,22 +16,25 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
-import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.openadmin.client.dto.*;
-import org.broadleafcommerce.openadmin.server.cto.BaseCtoConverter;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,15 +42,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 8/23/11
- * Time: 1:56 PM
- * To change this template use File | Settings | File Templates.
+ * @author Jeff Fischer
  */
 public class PendingSandBoxItemCustomPersistenceHandler extends SandBoxItemCustomPersistenceHandler {
 
-    private Log LOG = LogFactory.getLog(PendingSandBoxItemCustomPersistenceHandler.class);
+    private final Log LOG = LogFactory.getLog(PendingSandBoxItemCustomPersistenceHandler.class);
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
@@ -71,7 +70,6 @@ public class PendingSandBoxItemCustomPersistenceHandler extends SandBoxItemCusto
         AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
         if (adminUser == null) {
             ServiceException e = new ServiceException("Unable to determine current user logged in status");
-            LOG.error("Unable to determine current user logged in status", e);
             throw e;
         }
         try {
@@ -125,17 +123,17 @@ public class PendingSandBoxItemCustomPersistenceHandler extends SandBoxItemCusto
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(SandBoxItem.class.getName(), persistencePerspective);
             cto.get("originalSandBoxId").setFilterValue(mySandBox.getId().toString());
             cto.get("archivedFlag").setFilterValue(Boolean.FALSE.toString());
-            BaseCtoConverter ctoConverter = helper.getCtoConverter(persistencePerspective, cto, SandBoxItem.class.getName(), originalProps);
-            PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, SandBoxItem.class.getName());
-            List<Serializable> records = dynamicEntityDao.query(queryCriteria, SandBoxItem.class);
+            List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, SandBoxItem.class.getName(), originalProps);
+            List<Serializable> records = helper.getPersistentRecords(SandBoxItem.class.getName(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
             Entity[] results = helper.getRecords(originalProps, records);
-            int totalRecords = helper.getTotalRecords(persistencePackage, cto, ctoConverter);
+            int totalRecords = helper.getTotalRecords(StringUtils.isEmpty(persistencePackage.getFetchTypeFullyQualifiedClassname())?
+                persistencePackage.getCeilingEntityFullyQualifiedClassname():persistencePackage.getFetchTypeFullyQualifiedClassname(),
+                filterMappings);
 
             DynamicResultSet response = new DynamicResultSet(results, totalRecords);
 
             return response;
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to execute persistence activity for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
     }

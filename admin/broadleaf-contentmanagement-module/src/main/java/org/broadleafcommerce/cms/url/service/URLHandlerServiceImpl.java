@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,8 +15,6 @@
  */
 
 package org.broadleafcommerce.cms.url.service;
-
-import javax.annotation.Resource;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -29,6 +27,11 @@ import org.broadleafcommerce.cms.url.domain.NullURLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandler;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -38,7 +41,7 @@ import org.springframework.stereotype.Service;
 public class URLHandlerServiceImpl implements URLHandlerService {
     private static final Log LOG = LogFactory.getLog(URLHandlerServiceImpl.class);
     
-    private NullURLHandler NULL_URL_HANDLER = new NullURLHandler();
+    private final NullURLHandler NULL_URL_HANDLER = new NullURLHandler();
 
     @Resource(name="blURLHandlerDao")
     protected URLHandlerDao urlHandlerDao;
@@ -52,6 +55,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
      * @param uri
      * @return
      */
+    @Override
     public URLHandler findURLHandlerByURI(String uri) {
         URLHandler urlHandler = lookupHandlerFromCache(uri);
         if (urlHandler instanceof NullURLHandler) {
@@ -124,6 +128,17 @@ public class URLHandlerServiceImpl implements URLHandlerService {
         } else {
             return NULL_URL_HANDLER;
         }
+    }
+    
+    @Override
+    public List<URLHandler> findAllURLHandlers() {
+        return urlHandlerDao.findAllURLHandlers();
+    }
+    
+    @Override
+    @Transactional("blTransactionManager")
+    public URLHandler saveURLHandler(URLHandler handler) {
+        return urlHandlerDao.saveURLHandler(handler);
     }
 
 }

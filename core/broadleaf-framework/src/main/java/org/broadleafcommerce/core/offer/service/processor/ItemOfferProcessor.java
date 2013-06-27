@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
+
+import java.util.List;
 
 /**
  * 
@@ -50,9 +50,8 @@ public interface ItemOfferProcessor extends OrderOfferProcessor {
      * OrderItemAdjustment, unless the offer is the same offer as the OrderItemAdjustment offer.
      *
      * @param itemOffers a sorted list of CandidateItemOffer
-     * @return true if an OrderItemOffer was applied, otherwise false 
      */
-    public boolean applyAllItemOffers(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order);
+    public void applyAllItemOffers(List<PromotableCandidateItemOffer> itemOffers, PromotableOrder order);
     
     public void applyAndCompareOrderAndItemOffers(PromotableOrder order, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, List<PromotableCandidateItemOffer> qualifiedItemOffers);
     

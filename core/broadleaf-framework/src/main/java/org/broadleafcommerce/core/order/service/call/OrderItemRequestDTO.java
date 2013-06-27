@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,10 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.service.OrderService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +34,11 @@ import java.util.Map;
  * 
  * When adding a bundle using this DTO, you MUST have the {@link ProductBundle} included in the productId for it to
  * properly instantiate the {@link BundleOrderItem}
+ * 
+ * Important Note:  To protect against misuse, the {@link OrderService}'s addItemToCart method will blank out
+ * any values passed in on this DTO for the overrideSalePrice or overrideRetailPrice.
+ * 
+ * Instead, implementors should call the more explicit addItemWithPriceOverrides.
  *
  */
 public class OrderItemRequestDTO {
@@ -41,6 +48,8 @@ public class OrderItemRequestDTO {
     private Long productId;
     private Long orderItemId;
     private Integer quantity;
+    private Money overrideSalePrice;
+    private Money overrideRetailPrice;
     private Map<String,String> itemAttributes = new HashMap<String,String>();
     
     public OrderItemRequestDTO() {}
@@ -117,4 +126,19 @@ public class OrderItemRequestDTO {
         return this;
     }
 
+    public Money getOverrideSalePrice() {
+        return overrideSalePrice;
+    }
+
+    public void setOverrideSalePrice(Money overrideSalePrice) {
+        this.overrideSalePrice = overrideSalePrice;
+    }
+
+    public Money getOverrideRetailPrice() {
+        return overrideRetailPrice;
+    }
+
+    public void setOverrideRetailPrice(Money overrideRetailPrice) {
+        this.overrideRetailPrice = overrideRetailPrice;
+    }
 }

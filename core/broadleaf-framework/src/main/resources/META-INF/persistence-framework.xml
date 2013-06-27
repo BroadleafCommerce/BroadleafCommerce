@@ -10,7 +10,6 @@
         <mapping-file>config/bc/jpa/domain/ProductOption.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Sku.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Availability.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/TargetContent.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ShippingRate.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/CodeType.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Order.orm.xml</mapping-file>
@@ -23,14 +22,10 @@
         <mapping-file>config/bc/jpa/domain/FulfillmentOption.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Store.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file> 
-        <mapping-file>config/bc/jpa/domain/SearchIntercept.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Rating.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/Content.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/ContentDetails.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/SearchRedirect.orm.xml</mapping-file>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryAttributeImpl</class>
-        <class>org.broadleafcommerce.core.media.domain.MediaImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl</class>
@@ -47,7 +42,6 @@
         <class>org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl</class>
         <class>org.broadleafcommerce.core.util.domain.CodeTypeImpl</class>
         <class>org.broadleafcommerce.core.inventory.domain.SkuAvailabilityImpl</class>
-        <class>org.broadleafcommerce.core.marketing.domain.TargetContentImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl</class>
@@ -60,6 +54,7 @@
         <class>org.broadleafcommerce.core.offer.domain.OfferInfoImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl</class>
         <class>org.broadleafcommerce.core.order.domain.BundleOrderItemImpl</class>
         <class>org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl</class>
         <class>org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItemImpl</class>
@@ -77,6 +72,8 @@
         <class>org.broadleafcommerce.core.order.domain.OrderImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderAttributeImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderItemImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl</class>
         <class>org.broadleafcommerce.core.order.domain.BundleOrderItemFeePriceImpl</class>
@@ -84,6 +81,7 @@
         <class>org.broadleafcommerce.core.order.domain.PersonalMessageImpl</class>
         <class>org.broadleafcommerce.core.order.domain.TaxDetailImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.PaymentInfoImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.PaymentInfoDetailImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.AmountItemImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.PaymentLogImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl</class>
@@ -102,8 +100,6 @@
         <class>org.broadleafcommerce.core.rating.domain.RatingDetailImpl</class>
         <class>org.broadleafcommerce.core.rating.domain.ReviewDetailImpl</class>
         <class>org.broadleafcommerce.core.rating.domain.ReviewFeedbackImpl</class>
-        <class>org.broadleafcommerce.core.content.domain.ContentImpl</class>
-        <class>org.broadleafcommerce.core.content.domain.ContentDetailsImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.CriteriaOfferXref</class>
         <class>org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl</class>
@@ -113,7 +109,7 @@
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.transaction.flush_before_completion" value="false"/>
             <property name="hibernate.connection.autocommit" value="false"/>
-            <property name="hibernate.cache.region.factory_class" value="net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory"/>
+            <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory"/>
             <property name="hibernate.cache.use_second_level_cache" value="true"/>
             <property name="hibernate.cache.use_query_cache" value="true"/>
             <property name="hibernate.generate_statistics" value="false" />

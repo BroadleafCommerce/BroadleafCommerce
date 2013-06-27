@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,14 +21,19 @@ import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,7 +55,19 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
 
     @Override
     public StaticAsset readStaticAssetById(Long id) {
-        return (StaticAsset) em.find(StaticAssetImpl.class, id);
+        return em.find(StaticAssetImpl.class, id);
+    }
+    
+    public List<StaticAsset> readAllStaticAssets() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<StaticAsset> criteria = builder.createQuery(StaticAsset.class);
+        Root<StaticAssetImpl> handler = criteria.from(StaticAssetImpl.class);
+        criteria.select(handler);
+        try {
+            return em.createQuery(criteria).getResultList();
+        } catch (NoResultException e) {
+            return new ArrayList<StaticAsset>();
+        }
     }
 
     @Override
@@ -64,6 +81,7 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
             query.setParameter("targetSandbox", targetSandBox);
             query.setParameter("fullUrl", fullUrl);
         }
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         List<StaticAsset> results = query.getResultList();
         if (CollectionUtils.isEmpty(results)) {
@@ -84,7 +102,7 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
     @Override
     public void delete(StaticAsset asset) {
         if (!em.contains(asset)) {
-            asset = (StaticAsset) readStaticAssetById(asset.getId());
+            asset = readStaticAssetById(asset.getId());
         }
         em.remove(asset);
     }

@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:mo="http://schema.broadleafcommerce.org/mo"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mo="http://schema.broadleafcommerce.org/mo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-3.1.xsd
-           http://www.springframework.org/schema/aop
-           http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+           http://www.springframework.org/schema/context/spring-context-3.2.xsd
+
+
            http://schema.broadleafcommerce.org/mo
-           http://schema.broadleafcommerce.org/mo/mo-2.2.xsd">
+           http://schema.broadleafcommerce.org/mo/mo-3.0.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.openadmin"/>
 
@@ -46,7 +45,6 @@
     <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
-                <bean class="org.broadleafcommerce.openadmin.server.security.handler.AdminRoleCustomPersistenceHandler"/>
                 <bean class="org.broadleafcommerce.openadmin.server.security.handler.AdminPermissionCustomPersistenceHandler"/>
             </list>
         </property>
@@ -60,20 +58,8 @@
     </bean>
 
     <bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>  
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
         <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
-    </bean>
-    
-    <bean id="blSendAdminUsernameEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
-        <property name="fromAddress" value="${adminUserNameEmail.fromAddress}"/>
-        <property name="emailTemplate" value="${adminUserNameEmail.emailTemplate}"/>
-        <property name="subject" value="${adminUserNameEmail.subject}"/>
-    </bean>
-    
-    <bean id="blSendAdminResetPasswordEmail" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
-        <property name="fromAddress" value="${adminResetPassword.fromAddress}"/>
-        <property name="emailTemplate" value="${adminResetPassword.emailTemplate}"/>
-        <property name="subject" value="${adminResetPassword.subject}"/>
     </bean>
 
     <bean id="blEJB3ConfigurationDao" class="org.broadleafcommerce.openadmin.server.dao.EJB3ConfigurationDaoImpl">
@@ -83,5 +69,130 @@
     </bean>
 
     <mo:override id="blMetadataOverrides"/>
+    
+    <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>classpath:/messages/GeneratedMessagesEntityCommon</value>
+                <value>classpath:/messages/GeneratedMessagesEntityFramework</value>
+                <value>classpath:/messages/GeneratedMessagesEntityOpenAdmin</value>
+                <value>classpath:/messages/GeneratedMessagesEntityProfile</value>
+                <value>classpath:/messages/OpenAdminMessages</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blStringLikeRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blStringLikeFilterValueConverter"/>
+        <property name="predicateProvider" ref="blLikePredicateProvider"/>
+    </bean>
+
+    <bean id="blBooleanRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blBooleanFilterValueConverter"/>
+        <property name="predicateProvider" ref="blEqPredicateProvider"/>
+    </bean>
+
+    <bean id="blCharacterRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blCharacterFilterValueConverter"/>
+        <property name="predicateProvider" ref="blEqPredicateProvider"/>
+    </bean>
+
+    <bean id="blBetweenDateRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blNullAwareDateFilterValueConverter"/>
+        <property name="predicateProvider" ref="blBetweenDatePredicateProvider"/>
+    </bean>
+
+    <bean id="blBetweenDecimalRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blDecimalFilterValueConverter"/>
+        <property name="predicateProvider" ref="blBetweenPredicateProvider"/>
+    </bean>
+
+    <bean id="blBetweenLongRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blLongFilterValueConverter"/>
+        <property name="predicateProvider" ref="blBetweenPredicateProvider"/>
+    </bean>
+
+    <bean id="blCollectionSizeEqualRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blIntegerFilterValueConverter"/>
+        <property name="predicateProvider" ref="blCollectionSizeEqualPredicateProvider"/>
+    </bean>
+
+    <bean id="blIsNullLongRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="predicateProvider" ref="blIsNullPredicateProvider"/>
+    </bean>
+
+    <bean id="blStringEqualRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blStringFilterValueConverter"/>
+        <property name="predicateProvider" ref="blEqPredicateProvider"/>
+    </bean>
+
+    <bean id="blLongEqualRestriction" class="org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction">
+        <property name="filterValueConverter" ref="blLongFilterValueConverter"/>
+        <property name="predicateProvider" ref="blEqPredicateProvider"/>
+    </bean>
+
+    <bean id="blRestrictionFactoryMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="STRING_LIKE" value-ref="blStringLikeRestriction"/>
+                <entry key="BOOLEAN" value-ref="blBooleanRestriction"/>
+                <entry key="CHARACTER" value-ref="blCharacterRestriction"/>
+                <entry key="DATE" value-ref="blBetweenDateRestriction"/>
+                <entry key="DECIMAL" value-ref="blBetweenDecimalRestriction"/>
+                <entry key="LONG" value-ref="blBetweenLongRestriction"/>
+                <entry key="COLLECTION_SIZE_EQUAL" value-ref="blCollectionSizeEqualRestriction"/>
+                <entry key="IS_NULL_LONG" value-ref="blIsNullLongRestriction"/>
+                <entry key="STRING_EQUAL" value-ref="blStringEqualRestriction"/>
+                <entry key="LONG_EQUAL" value-ref="blLongEqualRestriction"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="blAdditionalSectionAuthorizations" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <ref bean="blPolymorphicEntityCheckSectionAuthorization"/>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- Global validators, used by EntityValidationService. All entities that pass through the admin will be validated
+     by the beans declared in this list -->
+    <bean id="blGlobalEntityPropertyValidators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blRequiredPropertyValidator"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blPopulateValueRequestValidators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blBasicFieldTypeValidator"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blAdminTranslationControllerExtensionListeners" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blRuleBuilderEnumOptionsExtensionListeners" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blRuleBuilderFieldServices" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
 
 </beans>

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,10 +18,10 @@ package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.core.catalog.domain.Dimension;
 
+import java.math.BigDecimal;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlElement;
-
-import java.math.BigDecimal;
 
 /**
  * JAXB wrapper for Dimension
@@ -53,7 +53,7 @@ public class DimensionWrapper extends BaseWrapper implements APIWrapper<Dimensio
     protected String dimensionUnitOfMeasure;
     
     @Override
-    public void wrap(Dimension model, HttpServletRequest request) {
+    public void wrapDetails(Dimension model, HttpServletRequest request) {
         this.width = model.getWidth();
         this.depth = model.getDepth();
         this.height = model.getHeight();
@@ -70,5 +70,10 @@ public class DimensionWrapper extends BaseWrapper implements APIWrapper<Dimensio
         if (model.getContainer() != null) {
             this.container = model.getContainer().getType();
         }
+    }
+
+    @Override
+    public void wrapSummary(Dimension model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

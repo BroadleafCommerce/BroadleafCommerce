@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractTextChildModifierAttrProcessor;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
-import java.math.BigDecimal;
 import java.text.NumberFormat;
 
 /**
@@ -52,12 +51,14 @@ public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProc
 
     @Override
     protected String getText(Arguments arguments, Element element, String attributeName) {
+        
         Money price;
+        
         try {
             price = (Money) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
         } catch (ClassCastException e) {
-            BigDecimal value = (BigDecimal) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-            price = new Money(value);
+            Number value = (Number) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+            price = new Money(value.doubleValue());
         }
 
         if (price == null) {

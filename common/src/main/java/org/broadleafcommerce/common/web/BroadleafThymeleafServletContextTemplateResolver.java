@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,8 @@ import org.thymeleaf.util.Validate;
  * if it exists.
  */
 public class BroadleafThymeleafServletContextTemplateResolver extends ServletContextTemplateResolver {    
+    
+    protected String templateFolder = "";
 
     @Override
     protected String computeResourceName(final TemplateProcessingParameters templateProcessingParameters) {
@@ -52,7 +54,7 @@ public class BroadleafThymeleafServletContextTemplateResolver extends ServletCon
         if (prefix != null && ! prefix.trim().equals("")) {
            
             if (themePath != null) {        
-                resourceName.append(prefix).append(themePath);
+                resourceName.append(prefix).append(themePath).append('/').append(templateFolder);
             }
         }
         resourceName.append(unaliasedName);
@@ -62,6 +64,14 @@ public class BroadleafThymeleafServletContextTemplateResolver extends ServletCon
         }
 
         return resourceName.toString();
+    }
+    
+    public String getTemplateFolder() {
+        return templateFolder;
+    }
+
+    public void setTemplateFolder(String templateFolder) {
+        this.templateFolder = templateFolder;
     }
     
 }

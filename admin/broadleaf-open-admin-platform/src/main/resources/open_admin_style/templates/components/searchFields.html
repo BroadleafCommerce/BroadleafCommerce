@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="seven columns">
+        <form class="custom-entity-search" th:action="${currentUrl}" method="GET">
+            <div class="row">
+                <div class="six columns">
+                    <input style="height: 28px; width: 100%" type="search" placeholder="Name" />
+                </div>
+                <div class="four columns">
+                    <a href="#" class="button small dark radius" th:inline="text">
+                        <i class="icon-search"></i>&nbsp;[[#{Search}]]
+                    </a>
+                </div>
+                <div class="two columns">&nbsp;</div>
+            </div>
+        </form>
+    </div>
+    <div class="five columns">
+        <div style="float: right;">
+            <button th:each="action : ${mainActions}" 
+                class="button small radius dark right" 
+                th:type="${action.buttonType}"
+                th:attr="data-url=@{${sectionKey + action.urlPostfix}}"
+                th:classappend="${action.buttonClass}"
+                th:inline="text">
+                <div th:unless="${#strings.isEmpty(action.iconClass)}" th:remove="tag">
+                    <i th:class="${action.iconClass}"></i>&nbsp;
+                </div>
+                [[#{${action.displayText}}]]
+                <span th:if="${action.displayText == 'Add'}" th:text="#{${entityFriendlyName}}" th:remove="tag" />
+            </button>
+        </div>
+    </div>
+</div>

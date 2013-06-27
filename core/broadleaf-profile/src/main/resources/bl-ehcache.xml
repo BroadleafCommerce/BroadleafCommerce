@@ -1,4 +1,4 @@
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<ehcache>
 
     <diskStore path="java.io.tmpdir"/>
     
@@ -44,5 +44,27 @@
         eternal="false"
         overflowToDisk="true"
         timeToLiveSeconds="600"/>
+        
+     <cache
+        name="blCustomerElements"
+        maxElementsInMemory="100000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="600"/>
+        
+     <cache
+        name="generatedResourceCache"
+        maxElementsInMemory="100"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="600"/>
+        
+     <!-- This is required by Hibernate to ensure that query caches return 
+          corrrect results. It must contain at least as many entries as there are 
+          DB tables. -->
+     <cache name="org.hibernate.cache.UpdateTimestampsCache" 
+        maxElementsInMemory="5000" 
+        eternal="true" 
+        overflowToDisk="false"/>
         
 </ehcache>

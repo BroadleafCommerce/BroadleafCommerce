@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,13 @@
  */
 
 package org.broadleafcommerce.cms.page.domain;
+
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,13 +34,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
 /**
  * 
@@ -54,11 +54,7 @@ public class PageItemCriteriaImpl implements PageItemCriteria {
         name="PageItemCriteriaId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="PageItemCriteriaImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.PageItemCriteriaImpl")
         }
     )
@@ -72,7 +68,7 @@ public class PageItemCriteriaImpl implements PageItemCriteria {
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @Column(name = "ORDER_ITEM_MATCH_RULE")
+    @Column(name = "ORDER_ITEM_MATCH_RULE", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "PageItemCriteriaImpl_Order_Item_Match_Rule", group = "PageItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected String orderItemMatchRule;
     
@@ -80,34 +76,42 @@ public class PageItemCriteriaImpl implements PageItemCriteria {
     @JoinTable(name = "BLC_QUAL_CRIT_PAGE_XREF", joinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "PAGE_ID"))
     protected Page page;
     
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public Integer getQuantity() {
         return quantity;
     }
 
+    @Override
     public void setQuantity(Integer receiveQuantity) {
         this.quantity = receiveQuantity;
     }
 
-    public String getOrderItemMatchRule() {
+    @Override
+    public String getMatchRule() {
         return orderItemMatchRule;
     }
 
-    public void setOrderItemMatchRule(String orderItemMatchRule) {
-        this.orderItemMatchRule = orderItemMatchRule;
+    @Override
+    public void setMatchRule(String matchRule) {
+        this.orderItemMatchRule = matchRule;
     }
 
+    @Override
     public Page getPage() {
         return page;
     }
 
+    @Override
     public void setPage(Page page) {
         this.page = page;
     }
@@ -149,6 +153,7 @@ public class PageItemCriteriaImpl implements PageItemCriteria {
         return true;
     }
 
+    @Override
     public PageItemCriteria cloneEntity() {
         PageItemCriteriaImpl newField = new PageItemCriteriaImpl();
         newField.quantity = quantity;

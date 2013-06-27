@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,7 +45,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,7 +65,7 @@ public class ProductDaoImpl implements ProductDao {
     protected EntityConfiguration entityConfiguration;
 
     protected Long currentDateResolution = 10000L;
-    private Date currentDate = SystemTime.asDate();
+    protected Date currentDate = SystemTime.asDate();
 
     private String DATE_LOCK = "DATE_LOCK"; // for use in synchronization
 
@@ -77,7 +76,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public Product readProductById(Long productId) {
-        return (Product) em.find(ProductImpl.class, productId);
+        return em.find(ProductImpl.class, productId);
     }
 
     @Override
@@ -94,8 +93,11 @@ public class ProductDaoImpl implements ProductDao {
         
         // We only want results that match the product IDs
         criteria.where(product.get("id").as(Long.class).in(productIds));
+        TypedQuery<Product> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         
-        return (List<Product>) em.createQuery(criteria).getResultList();
+        return query.getResultList();
     }
 
     @Override
@@ -103,6 +105,8 @@ public class ProductDaoImpl implements ProductDao {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_NAME", Product.class);
         query.setParameter("name", searchName + '%');
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
         return query.getResultList();
     }
 
@@ -112,6 +116,8 @@ public class ProductDaoImpl implements ProductDao {
         query.setParameter("name", searchName + '%');
         query.setFirstResult(offset);
         query.setMaxResults(limit);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
         return query.getResultList();
     }
@@ -175,7 +181,11 @@ public class ProductDaoImpl implements ProductDao {
         
         // Execute the query with the restrictions
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        return (List<Product>) em.createQuery(criteria).getResultList();
+        
+        TypedQuery<Product> typedQuery = em.createQuery(criteria);
+        //don't cache - not really practical for open ended search
+        
+        return typedQuery.getResultList();
     }
     
     @Override
@@ -207,7 +217,11 @@ public class ProductDaoImpl implements ProductDao {
         
         // Execute the query with the restrictions
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        return (List<Product>) em.createQuery(criteria).getResultList();
+        
+        TypedQuery<Product> typedQuery = em.createQuery(criteria);
+        //don't cache - not really practical for open ended search
+        
+        return typedQuery.getResultList();
     }
 
     protected void attachActiveRestriction(Date currentDate, Path<? extends Product> product, 
@@ -353,6 +367,8 @@ public class ProductDaoImpl implements ProductDao {
         query.setParameter("currentDate", myDate);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
         return query.getResultList();
     }
@@ -373,16 +389,14 @@ public class ProductDaoImpl implements ProductDao {
         query.setParameter("categoryId", categoryId);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
         return query.getResultList();
     }
 
     @Override
     public void delete(Product product){
-//      if (!em.contains(product)) {
-//          product = readProductById(product.getId());
-//      }
-//        em.remove(product);
         ((Status) product).setArchived('Y');
         em.merge(product);
     }
@@ -399,13 +413,17 @@ public class ProductDaoImpl implements ProductDao {
         query.setParameter("currentDate", myDate);
         query.setParameter("autoBundle", Boolean.TRUE);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+        
         return query.getResultList();
     }       
-    
+
+    @Override
     public Long getCurrentDateResolution() {
         return currentDateResolution;
     }
 
+    @Override
     public void setCurrentDateResolution(Long currentDateResolution) {
         this.currentDateResolution = currentDateResolution;
     }
@@ -419,6 +437,8 @@ public class ProductDaoImpl implements ProductDao {
         query = em.createNamedQuery("BC_READ_PRODUCTS_BY_OUTGOING_URL");
         query.setParameter("url", uri);
         query.setParameter("urlKey", urlKey);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
     
         @SuppressWarnings("unchecked")
         List<Product> results = (List<Product>) query.getResultList();
@@ -429,13 +449,21 @@ public class ProductDaoImpl implements ProductDao {
     public List<Product> readAllActiveProducts(int page, int pageSize, Date currentDate) {
         CriteriaQuery<Product> criteria = getCriteriaForActiveProducts(currentDate);
         int firstResult = page * pageSize;
-        return (List<Product>) em.createQuery(criteria).setFirstResult(firstResult).setMaxResults(pageSize).getResultList();
+        TypedQuery<Product> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.setFirstResult(firstResult).setMaxResults(pageSize).getResultList();
     }
 
     @Override
     public List<Product> readAllActiveProducts(Date currentDate) {
         CriteriaQuery<Product> criteria = getCriteriaForActiveProducts(currentDate);
-        return (List<Product>) em.createQuery(criteria).getResultList();
+        TypedQuery<Product> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
     }
 
     @Override
@@ -459,7 +487,12 @@ public class ProductDaoImpl implements ProductDao {
 
         // Add the restrictions to the criteria query
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        return em.createQuery(criteria).getSingleResult();
+
+        TypedQuery<Long> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getSingleResult();
     }
 
     protected CriteriaQuery<Product> getCriteriaForActiveProducts(Date currentDate) {

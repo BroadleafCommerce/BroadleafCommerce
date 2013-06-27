@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,27 +16,28 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
-public interface PromotableCandidateOrderOffer {
+public interface PromotableCandidateOrderOffer extends Serializable {
 
-    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
+    PromotableOrder getPromotableOrder();
 
-    public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
+    Offer getOffer();
 
-    public void computeDiscountedPriceAndAmount();
+    Money getPotentialSavings();
 
-    public void reset();
+    HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
     
-    public CandidateOrderOffer getDelegate();
-    
-    public PromotableOrder getOrder();
-    
-    public Offer getOffer();
-    
+    boolean isTotalitarian();
+
+    boolean isCombinable();
+
+    int getPriority();
+
 }

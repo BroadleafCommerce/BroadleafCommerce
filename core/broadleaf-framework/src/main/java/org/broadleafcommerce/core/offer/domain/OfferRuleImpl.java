@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -50,11 +50,7 @@ public class OfferRuleImpl implements OfferRule {
         name="OfferRuleId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="OfferRuleImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferRuleImpl")
         }
     )
@@ -63,12 +59,13 @@ public class OfferRuleImpl implements OfferRule {
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @Column(name = "MATCH_RULE")
+    @Column(name = "MATCH_RULE", length = Integer.MAX_VALUE - 1)
     protected String matchRule;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.OfferRule#getId()
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -76,6 +73,7 @@ public class OfferRuleImpl implements OfferRule {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.OfferRule#setId(java.lang.Long)
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -83,6 +81,7 @@ public class OfferRuleImpl implements OfferRule {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.OfferRule#getMatchRule()
      */
+    @Override
     public String getMatchRule() {
         return matchRule;
     }
@@ -90,6 +89,7 @@ public class OfferRuleImpl implements OfferRule {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.OfferRule#setMatchRule(java.lang.String)
      */
+    @Override
     public void setMatchRule(String matchRule) {
         this.matchRule = matchRule;
     }

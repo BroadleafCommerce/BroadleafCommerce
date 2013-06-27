@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,4 +130,32 @@ public interface FulfillmentOption extends Serializable {
      */
     public void setFulfillmentType(FulfillmentType fulfillmentType);
     
+    /**
+     * Sets the taxCode of the particular option
+     * 
+     * @param taxCode
+     */
+    public void setTaxCode(String taxCode);
+
+    /**
+     * Returns taxCode of option
+     * 
+     * @return
+     */
+    public String getTaxCode();
+
+    /**
+     * Returns if option is taxable
+     * 
+     * @return
+     */
+    public Boolean getTaxable();
+
+    /**
+     * Sets taxability of option
+     * 
+     * @param taxable
+     */
+    public void setTaxable(Boolean taxable);
+
 }

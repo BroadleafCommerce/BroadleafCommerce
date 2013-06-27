@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,9 @@
 package org.broadleafcommerce.cms.page.service;
 
 import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.dto.PageDTO;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.cms.page.dto.PageDTO;
 import org.broadleafcommerce.cms.page.message.ArchivedPagePublisher;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -40,7 +40,7 @@ public interface PageService {
      * @param pageId - The id of the page.
      * @return The associated page.
      */
-    Page findPageById(Long pageId);
+    public Page findPageById(Long pageId);
 
     /**
      * Returns the page template with the passed in id.
@@ -48,7 +48,15 @@ public interface PageService {
      * @param id - the id of the page template
      * @return The associated page template.
      */
-    PageTemplate findPageTemplateById(Long id);
+    public PageTemplate findPageTemplateById(Long id);
+    
+    /**
+     * Saves the given {@link PageTemplate}
+     * 
+     * @param template the {@link PageTemplate} to save
+     * @return the database-saved {@link PageTemplate}
+     */
+    public PageTemplate savePageTemplate(PageTemplate template);
 
     /**
      * Returns the page-fields associated with the passed in page-id.
@@ -58,7 +66,7 @@ public interface PageService {
      * @param pageId - The id of the page.
      * @return The associated page.
      */
-    Map<String,PageField> findPageFieldsByPageId(Long pageId);
+    public Map<String,PageField> findPageFieldsByPageId(Long pageId);
 
     /**
      * This method is intended to be called from within the CMS
@@ -68,7 +76,7 @@ public interface PageService {
      *
      * Creates a sandbox/site if one doesn't already exist.
      */
-    Page addPage(Page page, SandBox destinationSandbox);
+    public Page addPage(Page page, SandBox destinationSandbox);
 
     /**
      * This method is intended to be called from within the CMS
@@ -101,8 +109,7 @@ public interface PageService {
      *
      * 4.  If the sandbox is the same then just update the page.
      */
-    Page updatePage(Page page, SandBox sandbox);
-
+    public Page updatePage(Page page, SandBox sandbox);
 
     /**
      * Looks up the page from the backend datastore.   Processes the page's fields to
@@ -116,8 +123,7 @@ public interface PageService {
      * @param secure - set to true if current request is over HTTPS
      * @return
      */
-    PageDTO findPageByURI(SandBox currentSandbox, Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure);
-
+    public PageDTO findPageByURI(SandBox currentSandbox, Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure);
 
     /**
      * If deleting and item where page.originalPageId != null
@@ -130,11 +136,23 @@ public interface PageService {
      * @param destinationSandbox
      * @return
      */
-    void deletePage(Page page, SandBox destinationSandbox);
+    public void deletePage(Page page, SandBox destinationSandbox);
 
-    List<Page> findPages(SandBox sandBox, Criteria criteria);
+    public List<Page> findPages(SandBox sandBox, Criteria criteria);
+    
+    /**
+     * Returns all pages, regardless of any sandbox they are apart of
+     * @return all {@link Page}s configured in the system
+     */
+    public List<Page> readAllPages();
+    
+    /**
+     * Returns all page templates, regardless of any sandbox they are apart of
+     * @return all {@link PageTemplate}s configured in the system
+     */
+    public List<PageTemplate> readAllPageTemplates();
 
-    Long countPages(SandBox sandBox, Criteria criteria);
+    public Long countPages(SandBox sandBox, Criteria criteria);
 
     /**
      * Call to evict both secure and non-secure pages matching
@@ -142,11 +160,11 @@ public interface PageService {
      *
      * @param baseKey
      */
-    void removePageFromCache(String baseKey);
+    public void removePageFromCache(String baseKey);
     
-    List<ArchivedPagePublisher> getArchivedPageListeners();
+    public List<ArchivedPagePublisher> getArchivedPageListeners();
 
-    void setArchivedPageListeners(List<ArchivedPagePublisher> archivedPageListeners);
+    public void setArchivedPageListeners(List<ArchivedPagePublisher> archivedPageListeners);
 
     public boolean isAutomaticallyApproveAndPromotePages();
 

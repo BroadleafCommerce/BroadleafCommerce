@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
     <!-- The following beans are for API Wrappers.  They must be prototype scoped..  Override for extensibility.  Unlike the other Broadleaf classes that are keyed by their interface name,
                these are keyed by their base implementation name. JAXB doesn't like interfaces too much, so we use a base wrapper class that can be extended and overwritten here. -->
@@ -12,13 +12,16 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.CountryWrapper" class="org.broadleafcommerce.core.web.api.wrapper.CountryWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.CustomerWrapper" class="org.broadleafcommerce.core.web.api.wrapper.CustomerWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.CustomerAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.CustomerAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupItemWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupWrapper" class="org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.MapElementWrapper" class="org.broadleafcommerce.core.web.api.wrapper.MapElementWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.MediaWrapper" class="org.broadleafcommerce.core.web.api.wrapper.MediaWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemQualifierWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemQualifierWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.PaymentInfoWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PaymentInfoWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper" scope="prototype" />
     <bean id="org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper" scope="prototype"/>
@@ -35,7 +38,12 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductOptionWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductOptionWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductOptionValueWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductOptionValueWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.SkuBundleItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SkuBundleItemWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductBundleWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductBundleWrapper" scope="prototype"/>
-    
-
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.BroadleafEnumerationTypeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.BroadleafEnumerationTypeWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.OfferWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OfferWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.AdjustmentWrapper" class="org.broadleafcommerce.core.web.api.wrapper.AdjustmentWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemPriceDetailWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemPriceDetailWrapper" scope="prototype"/>    
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.SearchFacetWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SearchFacetWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.SearchFacetValueWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SearchFacetValueWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.TaxDetailWrapper" class="org.broadleafcommerce.core.web.api.wrapper.TaxDetailWrapper" scope="prototype"/>
 </beans>

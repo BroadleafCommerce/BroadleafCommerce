@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,34 +16,48 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
-import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
-import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
-import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
-import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
-import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 
 public interface PromotableItemFactory {
 
-    public PromotableOrder createPromotableOrder(Order order);
+    PromotableOrder createPromotableOrder(Order order, boolean includeOrderAndItemAdjustments);
 
-    public PromotableCandidateOrderOffer createPromotableCandidateOrderOffer(CandidateOrderOffer candidateOrderOffer, PromotableOrder order);
+    PromotableCandidateOrderOffer createPromotableCandidateOrderOffer(PromotableOrder promotableOrder, Offer offer);
 
-    public PromotableOrderAdjustment createPromotableOrderAdjustment(OrderAdjustment orderAdjustment, PromotableOrder order);
+    PromotableCandidateOrderOffer createPromotableCandidateOrderOffer(PromotableOrder promotableOrder,
+            Offer offer, Money potentialSavings);
 
-    public PromotableOrderItem createPromotableOrderItem(DiscreteOrderItem orderItem,PromotableOrder order);
+    PromotableOrderAdjustment createPromotableOrderAdjustment(
+            PromotableCandidateOrderOffer promotableCandidateOrderOffer,
+            PromotableOrder order);
 
-    public PromotableCandidateItemOffer createPromotableCandidateItemOffer(CandidateItemOffer candidateItemOffer);
+    PromotableOrderAdjustment createPromotableOrderAdjustment(
+            PromotableCandidateOrderOffer promotableCandidateOrderOffer,
+            PromotableOrder order, Money value);
 
-    public PromotableOrderItemAdjustment createPromotableOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment,PromotableOrderItem orderItem);
+    PromotableOrderItem createPromotableOrderItem(OrderItem orderItem, PromotableOrder order,
+            boolean includeAdjustments);
 
-    public PromotableFulfillmentGroup createPromotableFulfillmentGroup(FulfillmentGroup fulfillmentGroup, PromotableOrder order);
+    PromotableOrderItemPriceDetail createPromotableOrderItemPriceDetail(PromotableOrderItem promotableOrderItem,
+            int quantity);
 
-    public PromotableCandidateFulfillmentGroupOffer createPromotableCandidateFulfillmentGroupOffer(CandidateFulfillmentGroupOffer candidateFulfillmentGroupOffer, PromotableFulfillmentGroup fulfillmentGroup);
+    PromotableCandidateItemOffer createPromotableCandidateItemOffer(PromotableOrder promotableOrder, Offer offer);
+
+    PromotableOrderItemPriceDetailAdjustment createPromotableOrderItemPriceDetailAdjustment(
+            PromotableCandidateItemOffer promotableCandidateItemOffer,
+            PromotableOrderItemPriceDetail promotableOrderItemPriceDetail);
+
+    PromotableFulfillmentGroup createPromotableFulfillmentGroup(FulfillmentGroup fulfillmentGroup, PromotableOrder order);
+
+    PromotableCandidateFulfillmentGroupOffer createPromotableCandidateFulfillmentGroupOffer(
+            PromotableFulfillmentGroup fulfillmentGroup,
+            Offer offer);
     
-    public PromotableFulfillmentGroupAdjustment createPromotableFulfillmentGroupAdjustment(FulfillmentGroupAdjustment fulfillmentGroupAdjustment, PromotableFulfillmentGroup fulfillmentGroup);
-
+    PromotableFulfillmentGroupAdjustment createPromotableFulfillmentGroupAdjustment(
+            PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer,
+            PromotableFulfillmentGroup fulfillmentGroup);
 }

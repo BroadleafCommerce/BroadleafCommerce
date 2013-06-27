@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,14 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
-import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.element.AbstractElementProcessor;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that adds a CSRF token to forms that are not going to be submitted
@@ -34,6 +35,9 @@ import org.thymeleaf.standard.expression.StandardExpressionProcessor;
  */
 @Component("blFormProcessor")
 public class FormProcessor extends AbstractElementProcessor {
+    
+    @Resource(name = "blExploitProtectionService")
+    protected ExploitProtectionService eps;
     
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -57,8 +61,6 @@ public class FormProcessor extends AbstractElementProcessor {
         // We do this instead of checking for a POST because post is default if nothing is specified
         if (!"GET".equalsIgnoreCase(element.getAttributeValueFromNormalizedName("method"))) {
             try {
-
-                ExploitProtectionService eps = ProcessorUtils.getExploitProtectionService(arguments);
                 String csrfToken = eps.getCSRFToken();
 
                 //detect multipart form

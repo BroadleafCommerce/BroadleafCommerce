@@ -16,18 +16,31 @@
 
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import org.broadleafcommerce.common.email.domain.EmailTrackingImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  *
@@ -44,8 +57,15 @@ public class AdminSectionImpl implements AdminSection {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "AdminSectionId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "AdminSectionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminSectionImpl", allocationSize = 50)
+    @GeneratedValue(generator = "AdminSectionId")
+    @GenericGenerator(
+        name="AdminSectionId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="AdminSectionImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl")
+        }
+    )
     @Column(name = "ADMIN_SECTION_ID")
     @AdminPresentation(friendlyName = "AdminSectionImpl_Admin_Section_ID", group = "AdminSectionImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
@@ -81,6 +101,15 @@ public class AdminSectionImpl implements AdminSection {
     @Column(name = "USE_DEFAULT_HANDLER", nullable=false)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Use_Default_Handler", order=5, group = "AdminSectionImpl_Section")
     protected Boolean useDefaultHandler = Boolean.TRUE;
+
+    @Column(name = "CEILING_ENTITY", nullable = true)
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Ceiling_Entity", order = 6, group = "AdminSectionImpl_Section")
+    protected String ceilingEntity;
+
+    @Column(name = "DISPLAY_ORDER", nullable = true)
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Order", order = 7, group = "AdminSectionImpl_Section",
+            prominent = true)
+    protected Integer displayOrder;
 
     @Override
     public Long getId() {
@@ -159,5 +188,25 @@ public class AdminSectionImpl implements AdminSection {
     @Override
     public void setUseDefaultHandler(Boolean useDefaultHandler) {
         this.useDefaultHandler = useDefaultHandler;
+    }
+
+    @Override
+    public String getCeilingEntity() {
+        return ceilingEntity;
+    }
+
+    @Override
+    public void setCeilingEntity(String ceilingEntity) {
+        this.ceilingEntity = ceilingEntity;
+    }
+
+    @Override
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+
+    @Override
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }

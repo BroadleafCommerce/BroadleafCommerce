@@ -1,0 +1,15 @@
+<section role="main">
+    <div class="four columns centered" th:if="${headerFlash}">
+        <div class="alert-box success" th:inline="text">
+            [[#{${headerFlash}}]]
+            <a href="" class="close">&times;</a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="twelve columns">
+            <div id="sectionKey" th:text="${sectionKey}" style="display: none;" />
+            <div th:substituteby="${'views/' + viewType}" />
+        </div>
+    </div>
+</section>

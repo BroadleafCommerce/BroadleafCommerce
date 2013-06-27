@@ -55,4 +55,12 @@ public interface AdminSection extends Serializable {
     public Boolean getUseDefaultHandler();
 
     public void setUseDefaultHandler(Boolean useDefaultHandler);
+
+    public String getCeilingEntity();
+
+    public void setCeilingEntity(String ceilingEntity);
+
+    public Integer getDisplayOrder();
+
+    public void setDisplayOrder(Integer displayOrder);
 }

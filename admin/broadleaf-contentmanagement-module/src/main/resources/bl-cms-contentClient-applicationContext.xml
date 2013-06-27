@@ -2,10 +2,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-    <context:component-scan base-package="org.broadleafcommerce.cms"/>
+    <context:component-scan base-package="org.broadleafcommerce.cms">
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.cms.admin.*"/>
+    </context:component-scan>
     <context:component-scan base-package="org.broadleafcommerce.common.locale"/>
 
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
@@ -19,9 +21,7 @@
     </bean>
 
     <bean id="blEntityManagerFactoryAssetStorageInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
-        </property>
+        <property name="jpaVendorAdapter" ref="blJpaVendorAdapter"/>
         <property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
         <property name="persistenceUnitName" value="blCMSStorage"/>
     </bean>
@@ -103,11 +103,11 @@
 
     <bean id="blStaticMapNamedOperationComponent" class="org.broadleafcommerce.cms.file.service.operation.StaticMapNamedOperationComponent">
         <property name="namedOperations">
-            <map>
+            <map>                                          
                 <entry key="smallAdminThumbnail">
                     <map>
-                        <entry key="resize-width-amount" value="20"/>
-                        <entry key="resize-height-amount" value="20"/>
+                        <entry key="resize-width-amount" value="30"/>
+                        <entry key="resize-height-amount" value="30"/>
                         <entry key="resize-high-quality" value="false"/>
                         <entry key="resize-maintain-aspect-ratio" value="true"/>
                         <entry key="resize-reduce-only" value="true"/>

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.core.payment.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of payment transaction types.
@@ -32,7 +32,7 @@ public class TransactionType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, TransactionType> TYPES = new HashMap<String, TransactionType>();
+    private static final Map<String, TransactionType> TYPES = new LinkedHashMap<String, TransactionType>();
 
     public static final TransactionType AUTHORIZE = new TransactionType("AUTHORIZE", "Authorize");
     public static final TransactionType DEBIT = new TransactionType("DEBIT", "Debit");
@@ -41,6 +41,7 @@ public class TransactionType implements Serializable, BroadleafEnumerationType {
     public static final TransactionType VOIDPAYMENT = new TransactionType("VOIDPAYMENT", "Void Payment");
     public static final TransactionType BALANCE = new TransactionType("BALANCE", "Balance");
     public static final TransactionType REVERSEAUTHORIZE = new TransactionType("REVERSEAUTHORIZE", "Reverse Authorize");
+    public static final TransactionType PARTIALPAYMENT = new TransactionType("PARTIALPAYMENT", "Partial Payment");
 
     public static TransactionType getInstance(final String type) {
         return TYPES.get(type);

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>2.2.0-GA</version>
+        <version>3.0.0-GA</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-common</artifactId>
@@ -66,7 +66,15 @@
         </plugins>
         <resources>
             <resource>
+                <directory>src/main/resources/common_js</directory>
+                <filtering>false</filtering>
+                <targetPath>common_js</targetPath>
+            </resource>
+            <resource>
                 <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>common_js/**</exclude>
+                </excludes>
             </resource>
             <resource>
                 <directory>src/main/java</directory>
@@ -262,10 +270,6 @@
             <artifactId>geronimo-jms_1.1_spec</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-servlet</artifactId>
-        </dependency>
-        <dependency>
             <groupId>eu.medsea.mimeutil</groupId>
             <artifactId>mime-util</artifactId>
         </dependency>  
@@ -294,12 +298,30 @@
             <artifactId>commons-lang</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
             <groupId>commons-digester</groupId>
             <artifactId>commons-digester</artifactId>
             <exclusions>
                 <exclusion>
                     <artifactId>servlet-api</artifactId>
                     <groupId>javax.servlet</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-ehcache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.yahoo.platform.yui</groupId>
+            <artifactId>yuicompressor</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>js</artifactId>
+                    <groupId>rhino</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

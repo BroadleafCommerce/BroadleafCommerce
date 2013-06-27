@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,8 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +28,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 
 /**
  * This is a JAXB wrapper around PaymentResponseItem.
@@ -53,7 +53,7 @@ public class PaymentResponseItemWrapper extends BaseWrapper implements APIWrappe
     protected List<MapElementWrapper> additionalFields;
 
     @Override
-    public void wrap(PaymentResponseItem model, HttpServletRequest request) {
+    public void wrapDetails(PaymentResponseItem model, HttpServletRequest request) {
         this.paymentInfoId = model.getPaymentInfoId();
         this.processorResponseCode = model.getProcessorResponseCode();
         this.transactionSuccess = model.getTransactionSuccess();
@@ -67,5 +67,10 @@ public class PaymentResponseItemWrapper extends BaseWrapper implements APIWrappe
             }
             this.additionalFields = mapElementWrappers;
         }
+    }
+
+    @Override
+    public void wrapSummary(PaymentResponseItem model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

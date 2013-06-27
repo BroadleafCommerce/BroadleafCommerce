@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -54,7 +54,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,19 +67,19 @@ public class LegacyCheckoutTest extends BaseTest {
     @Resource(name="blEncryptionModule")
     private EncryptionModule encryptionModule;
     
-    @Resource
+    @Resource(name = "blCustomerService")
     private CustomerService customerService;
     
     @Resource(name = "blOrderService")
     private OrderService orderService;
     
-    @Resource
+    @Resource(name = "blCatalogService")
     private CatalogService catalogService;
     
     @Resource(name = "blOrderItemService")
     private OrderItemService orderItemService;
 
-    @Resource
+    @Resource(name = "blSecurePaymentInfoService")
     private SecurePaymentInfoService securePaymentInfoService;
 
     @Test(groups = { "checkoutLegacy" }, dependsOnGroups = { "createCartForCustomerLegacy", "testShippingInsertLegacy" })
@@ -96,6 +95,8 @@ public class LegacyCheckoutTest extends BaseTest {
         order.setTotalShipping(new Money(0D));
         Map<PaymentInfo, Referenced> map = addPaymentToOrder(order, address);
 
+        //execute pricing for this order
+        orderService.save(order, true);
         CheckoutResponse response = checkoutService.performCheckout(order, map);
         //The DummyCreditCardModule changed the reference Number - make sure it's represented
         for(PaymentInfo paymentInfo : response.getInfos().keySet()) {
@@ -221,72 +222,89 @@ public class LegacyCheckoutTest extends BaseTest {
             private static final long serialVersionUID = 1L;
             private String referenceNumber = "1234";
 
+            @Override
             public String getCvvCode() {
                 return "123";
             }
 
+            @Override
             public Integer getExpirationMonth() {
                 return 11;
             }
 
+            @Override
             public Integer getExpirationYear() {
                 return 2011;
             }
 
+            @Override
             public Long getId() {
                 return null;
             }
 
+            @Override
             public String getPan() {
                 return "1111111111111111";
             }
 
+            @Override
             public String getNameOnCard() {
                 return "Cardholder Name";
             }
 
+            @Override
             public void setCvvCode(String cvvCode) {
                 //do nothing
             }
 
+            @Override
             public void setExpirationMonth(Integer expirationMonth) {
                 //do nothing
             }
 
+            @Override
             public void setExpirationYear(Integer expirationYear) {
                 //do nothing
             }
 
+            @Override
             public void setId(Long id) {
                 //do nothing
             }
 
+            @Override
             public void setNameOnCard(String nameOnCard) {
                 //do nothing
             }
 
+            @Override
             public void setPan(String pan) {
                 //do nothing
             }
 
+            @Override
             public EncryptionModule getEncryptionModule() {
                 return encryptionModule;
             }
 
+            @Override
             public String getReferenceNumber() {
                 return referenceNumber;
             }
 
+            @Override
             public void setEncryptionModule(EncryptionModule encryptionModule) {
                 //do nothing
             }
 
+            @Override
             public void setReferenceNumber(String referenceNumber) {
                 this.referenceNumber = referenceNumber;
             }
 
         };
 
+        order.getPaymentInfos().add(payment);
         Map<PaymentInfo, Referenced> map = new HashMap<PaymentInfo, Referenced>();
         map.put(payment, cc);
         return map;
@@ -295,8 +313,6 @@ public class LegacyCheckoutTest extends BaseTest {
     private void addSampleItemToOrder(Order order, FulfillmentGroup group) {
         DiscreteOrderItem item = new DiscreteOrderItemImpl();
         item.setOrder(order);
-        item.setPrice(new Money(14.99D));
-        item.setRetailPrice(new Money(14.99D));
         item.setQuantity(1);
 
         Sku newSku = new SkuImpl();

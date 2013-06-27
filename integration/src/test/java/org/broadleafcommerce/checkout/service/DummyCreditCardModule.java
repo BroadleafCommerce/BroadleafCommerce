@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,9 +16,8 @@
 
 package org.broadleafcommerce.checkout.service;
 
-import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl;
 import org.broadleafcommerce.core.payment.service.PaymentContext;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.service.module.AbstractModule;
@@ -31,49 +30,52 @@ import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 public class DummyCreditCardModule extends AbstractModule {
 
     @Override
-    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
-        return createResponse(paymentContext);
+    public PaymentResponseItem processAuthorize(PaymentContext paymentContext, Money amountToAuthorize, PaymentResponseItem responseItem) throws PaymentException {
+        return createResponse(paymentContext, responseItem);
     }
 
     @Override
-    public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
-        return createResponse(paymentContext);
+    public PaymentResponseItem processAuthorizeAndDebit(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
+        return createResponse(paymentContext, responseItem);
     }
 
     @Override
-    public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
-        return createResponse(paymentContext);
+    public PaymentResponseItem processDebit(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
+        return createResponse(paymentContext, responseItem);
     }
 
     @Override
-    public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
-        return createResponse(paymentContext);
+    public PaymentResponseItem processCredit(PaymentContext paymentContext, Money amountToCredit, PaymentResponseItem responseItem) throws PaymentException {
+        return createResponse(paymentContext, responseItem);
     }
 
     @Override
-    public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
-        return createResponse(paymentContext);
+    public PaymentResponseItem processVoidPayment(PaymentContext paymentContext, Money amountToVoid, PaymentResponseItem responseItem) throws PaymentException {
+        return createResponse(paymentContext, responseItem);
     }
 
     @Override
-    public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
-        return createResponse(paymentContext);
+    public PaymentResponseItem processBalance(PaymentContext paymentContext, PaymentResponseItem responseItem) throws PaymentException {
+        return createResponse(paymentContext, responseItem);
     }
     
     @Override
-    public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
-        return createResponse(paymentContext);
+    public PaymentResponseItem processReverseAuthorize(PaymentContext paymentContext, Money amountToReverseAuthorize, PaymentResponseItem responseItem) throws PaymentException {
+        return createResponse(paymentContext, responseItem);
     }
 
-    private PaymentResponseItem createResponse(PaymentContext paymentContext) {
+    @Override
+    public PaymentResponseItem processPartialPayment(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
+        throw new PaymentException("partial payment not implemented.");
+    }
+
+    private PaymentResponseItem createResponse(PaymentContext paymentContext, PaymentResponseItem responseItem) {
         paymentContext.getPaymentInfo().setReferenceNumber("abc123");
-        PaymentResponseItem responseItem = new PaymentResponseItemImpl();
-        responseItem.setTransactionTimestamp(SystemTime.asDate());
         responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());
         responseItem.setTransactionId(paymentContext.getPaymentInfo().getReferenceNumber());
         responseItem.setTransactionSuccess(true);
-        responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
-        responseItem.setCurrency(paymentContext.getPaymentInfo().getOrder().getCurrency());
+        responseItem.setTransactionAmount(paymentContext.getPaymentInfo().getAmount());
+        responseItem.setCurrency(paymentContext.getPaymentInfo().getCurrency());
         return responseItem;
     }
 

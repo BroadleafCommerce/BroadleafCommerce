@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.catalog.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -30,7 +30,7 @@ public class SkuFeeType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, SkuFeeType> TYPES = new HashMap<String, SkuFeeType>();
+    private static final Map<String, SkuFeeType> TYPES = new LinkedHashMap<String, SkuFeeType>();
 
     public static final SkuFeeType FULFILLMENT  = new SkuFeeType("FULFILLMENT", "Fulfillment");
 

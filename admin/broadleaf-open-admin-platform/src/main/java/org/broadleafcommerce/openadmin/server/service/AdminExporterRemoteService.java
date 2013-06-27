@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,7 @@ package org.broadleafcommerce.openadmin.server.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.openadmin.client.dto.AdminExporterDTO;
-import org.broadleafcommerce.openadmin.client.service.AdminExporterService;
+import org.broadleafcommerce.openadmin.dto.AdminExporterDTO;
 import org.broadleafcommerce.openadmin.server.service.export.AdminExporter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;

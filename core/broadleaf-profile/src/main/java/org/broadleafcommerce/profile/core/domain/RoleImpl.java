@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,19 +16,19 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
-import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
-import org.hibernate.annotations.Index;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -39,8 +39,15 @@ public class RoleImpl implements Role {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "RoleId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "RoleId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "RoleImpl", allocationSize = 50)
+    @GeneratedValue(generator = "RoleId")
+    @GenericGenerator(
+        name="RoleId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="RoleImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.RoleImpl")
+        }
+    )
     @Column(name = "ROLE_ID")
     protected Long id;
 
@@ -48,22 +55,27 @@ public class RoleImpl implements Role {
     @Index(name="ROLE_NAME_INDEX", columnNames={"ROLE_NAME"})
     protected String roleName;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getRoleName() {
         return roleName;
     }
 
+    @Override
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
 
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -71,6 +83,7 @@ public class RoleImpl implements Role {
         return result;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

@@ -1,0 +1,7 @@
+<div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+<div th:substituteby="components/fieldTranslation" />
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+
+<div class="twelve indented-form-value">
+    <textarea class="redactor" name="content" th:field="*{fields['__${field.name}__'].value}"/>
+</div>

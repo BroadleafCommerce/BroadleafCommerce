@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.cms.web.processor;
 
-import com.google.common.primitives.Ints;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
@@ -36,12 +35,17 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.spring3.context.SpringWebContext;
+import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
-import javax.servlet.http.HttpServletRequest;
+import com.google.common.primitives.Ints;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Processor used to display structured content that is maintained with the Broadleaf CMS.
@@ -118,17 +122,14 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         String contentListVar = getAttributeValue(element, "contentListVar", "contentList");
         String contentItemVar = getAttributeValue(element, "contentItemVar", "contentItem");
         String numResultsVar = getAttributeValue(element, "numResultsVar", "numResults");
-        
-        // TODO: Handle product.  Can we pass in a structure?  If not, how do we get access to a Product 
-        // and maintain our loose coupling?
-        
+
         initServices(arguments);
                 
         IWebContext context = (IWebContext) arguments.getContext();     
         HttpServletRequest request = context.getHttpServletRequest();   
         BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
         
-        Map<String, Object> mvelParameters = buildMvelParameters(request);
+        Map<String, Object> mvelParameters = buildMvelParameters(request, arguments, element);
         SandBox currentSandbox = blcContext.getSandbox();
 
         List<StructuredContentDTO> contentItems;
@@ -172,13 +173,30 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
      * @param request
      * @return
      */
-    private Map<String,Object> buildMvelParameters(HttpServletRequest request) {
-        TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar());
+    private Map<String, Object> buildMvelParameters(HttpServletRequest request, Arguments arguments, Element element) {
+        TimeZone timeZone = BroadleafRequestContext.getBroadleafRequestContext().getTimeZone();
+
+        final TimeDTO timeDto;
+        if (timeZone != null) {
+            timeDto = new TimeDTO(SystemTime.asCalendar(timeZone));
+        } else {
+            timeDto = new TimeDTO();
+        }
+
         RequestDTO requestDto = (RequestDTO) request.getAttribute(REQUEST_DTO);
 
         Map<String, Object> mvelParameters = new HashMap<String, Object>();
         mvelParameters.put("time", timeDto);
         mvelParameters.put("request", requestDto);
+
+        String productString = element.getAttributeValue("product");
+
+        if (productString != null) {
+            Object product = StandardExpressionProcessor.processExpression(arguments, productString);
+            if (product != null) {
+                mvelParameters.put("product", product);
+            }
+        }
 
         @SuppressWarnings("unchecked")
         Map<String,Object> blcRuleMap = (Map<String,Object>) request.getAttribute(BLC_RULE_MAP_PARAM);

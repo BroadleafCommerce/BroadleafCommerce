@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.order.service.workflow.add;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -33,12 +31,10 @@ import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemReque
 import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
-import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
-public class AddOrderItemActivity extends BaseActivity {
-    private static Log LOG = LogFactory.getLog(AddOrderItemActivity.class);
+public class AddOrderItemActivity extends BaseActivity<CartOperationContext> {
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -50,8 +46,8 @@ public class AddOrderItemActivity extends BaseActivity {
     protected CatalogService catalogService;
 
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        CartOperationRequest request = ((CartOperationContext) context).getSeedData();
+    public CartOperationContext execute(CartOperationContext context) throws Exception {
+        CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
 
         // Order and sku have been verified in a previous activity -- the values 
@@ -82,6 +78,8 @@ public class AddOrderItemActivity extends BaseActivity {
             itemRequest.setQuantity(orderItemRequestDTO.getQuantity());
             itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
             itemRequest.setOrder(order);
+            itemRequest.setSalePriceOverride(orderItemRequestDTO.getOverrideSalePrice());
+            itemRequest.setRetailPriceOverride(orderItemRequestDTO.getOverrideRetailPrice());
             item = orderItemService.createDiscreteOrderItem(itemRequest);
         } else {
             ProductBundleOrderItemRequest bundleItemRequest = new ProductBundleOrderItemRequest();
@@ -92,6 +90,8 @@ public class AddOrderItemActivity extends BaseActivity {
             bundleItemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
             bundleItemRequest.setName(product.getName());
             bundleItemRequest.setOrder(order);
+            bundleItemRequest.setSalePriceOverride(orderItemRequestDTO.getOverrideSalePrice());
+            bundleItemRequest.setRetailPriceOverride(orderItemRequestDTO.getOverrideRetailPrice());
             item = orderItemService.createBundleOrderItem(bundleItemRequest);
         }
         

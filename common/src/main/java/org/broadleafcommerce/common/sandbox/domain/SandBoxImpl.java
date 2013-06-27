@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.sandbox.domain;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -23,12 +25,15 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.SiteImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.lang.reflect.Method;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -36,7 +41,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -44,11 +48,19 @@ import javax.persistence.TableGenerator;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
 public class SandBoxImpl implements SandBox {
 
+    private static final Log LOG = LogFactory.getLog(SandBoxImpl.class);
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "SandBoxId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SandBoxId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SandBoxImpl", allocationSize = 50)
+    @GeneratedValue(generator = "SandBoxId")
+    @GenericGenerator(
+        name="SandBoxId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="SandBoxImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.common.sandbox.domain.SandBoxImpl")
+        }
+    )
     @Column(name = "SANDBOX_ID")
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
@@ -112,10 +124,12 @@ public class SandBoxImpl implements SandBox {
         }
     }
 
+    @Override
     public Long getAuthor() {
         return author;
     }
 
+    @Override
     public void setAuthor(Long author) {
         this.author = author;
     }
@@ -166,5 +180,37 @@ public class SandBoxImpl implements SandBox {
             return false;
         return true;
     }
-    
+
+    public void checkCloneable(SandBox sandBox) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = sandBox.getClass().getMethod("clone", new Class[]{});
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !sandBox.getClass().getName().startsWith("org.broadleafcommerce")) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
+        }
+    }
+
+    @Override
+    public SandBox clone() {
+        SandBox clone;
+        try {
+            clone = (SandBox) Class.forName(this.getClass().getName()).newInstance();
+            try {
+                checkCloneable(clone);
+            } catch (CloneNotSupportedException e) {
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+            }
+            clone.setId(id);
+            clone.setName(name);
+            clone.setAuthor(author);
+            clone.setSandBoxType(getSandBoxType());
+
+            if (site != null) {
+                clone.setSite(site.clone());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return clone;
+    }
 }

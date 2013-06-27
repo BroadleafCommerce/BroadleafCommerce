@@ -1,0 +1,86 @@
+<comment th:remove="all">
+<!-- This component represents a tabbed entity form with collections -->
+<!-- Additional parameters that can be specified include: -->
+<!--    additionalClasses - any additional CSS classes to apply to the form -->
+<!--    additionalTabClasses - any additional CSS classes to apply to the tabs -->
+<!--    showSingleTab - boolean value determining whether or not to show tabs if there is only one -->
+<!--    hideTranslations - boolean value determining whether or not to hide the translation icon -->
+</comment>
+
+<blc:form th:object="${entityForm}"
+      method="POST"
+      class="twelve columns custom entity-form"
+      th:classappend="${(additionalClasses == null ? '' : additionalClasses + ' ') 
+        + (additionalControllerClasses == null ? '' : additionalControllerClasses)}"
+      th:action="@{${currentUrl}}"
+      th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
+      
+    <input type="hidden" th:field="*{ceilingEntityClassname}" />
+    <input type="hidden" th:field="*{entityType}" />
+    <input type="hidden" th:field="*{id}" />
+    
+    <div class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">
+        <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
+            <b>[[#{__${tab.key}__}]]</b>
+            <span class="fieldError error" th:each="field : ${tab.value.entrySet()}">
+                [[#{__${field.key}__}]]: [[#{__${field.value}__}]]
+            </span>
+            <br />
+        </div>
+    </div>
+    
+    <div class="tabs-container" th:if="${renderTabs}">
+        <dl class="tabs" th:classappend="${additionalTabClasses}">
+            <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'">
+                <a th:href="'#tab' + ${tabStat.count}" th:text="#{${tab.title}}" />
+            </dd>
+        </dl> 
+    </div>
+    
+    <ul class="tabs-content" th:style="${verticalTabs}? 'margin-left: 250px;'">
+        <li th:each="tab : ${entityForm.tabs}" 
+            th:class="'tab' + ${tabStat.count} + 'Tab'" 
+            th:classappend="${tabStat.first}? 'active'"
+            th:inline="text">
+            
+            <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
+                <legend th:text="#{${group.title}}" />
+
+                <div th:each="field : ${group.fields}" 
+                     th:if="${field.name}" 
+                     class="field-box" 
+                     blc_admin:component_id="${field}"
+                     th:classappend="${!field.isVisible}? 'hidden'">
+                    
+                    <div th:if="${field.readOnly}" th:remove="tag">
+                        <div th:substituteby="fields/readonly" />
+                    </div>
+                    <div th:unless="${field.readOnly}" th:remove="tag">
+                        <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
+                    </div>
+                </div>
+            </fieldset>
+            
+            <div th:if="${tabStat.first}" th:each="dynamicForm : *{dynamicForms}">
+                <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
+            </div>
+
+            <div th:each="collectionListGrid : ${tab.listGrids}" class="listgrid-container" th:id="${collectionListGrid.subCollectionFieldName}">
+                <label th:text="#{${collectionListGrid.friendlyName}}" />
+                <div th:include="components/listGridToolbar" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
+                <div th:include="components/listGrid" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
+            </div>
+
+        </li>
+    </ul>
+    
+    <div class="entity-form-actions">
+        <button th:each="action : ${entityForm.actions}" 
+            class="button radius dark" 
+            th:type="${action.buttonType}"
+            th:classappend="${action.buttonClass}">
+            <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+        </button>
+    </div>
+    
+</blc:form>

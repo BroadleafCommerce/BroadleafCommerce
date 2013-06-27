@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,20 +22,20 @@ import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +52,15 @@ public class FieldImpl implements Field,Serializable {
     private static final long serialVersionUID = 2915813511754425605L;
 
     @Id
-    @GeneratedValue(generator = "FieldId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FieldId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldImpl", allocationSize = 50)
+    @GeneratedValue(generator = "FieldId")
+    @GenericGenerator(
+        name="FieldId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="FieldImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.FieldImpl")
+        }
+    )
     @Column(name = "FIELD_ID")
     @AdminPresentation(friendlyName = "FieldImpl_ID", group = "FieldImpl_descrpition",visibility=VisibilityEnum.HIDDEN_ALL)
     protected Long id;
@@ -61,13 +68,14 @@ public class FieldImpl implements Field,Serializable {
     // This is a broadleaf enumeration
     @AdminPresentation(friendlyName = "FieldImpl_EntityType", group = "FieldImpl_descrpition", order = 2, prominent = true)
     @Column(name = "ENTITY_TYPE", nullable = false)
+    @Index(name="ENTITY_TYPE_INDEX", columnNames={"ENTITY_TYPE"})
     protected String entityType;
     
     @Column(name = "PROPERTY_NAME", nullable = false)
     @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition", order = 1, prominent = true)
     protected String propertyName;
     
-    @Column(name = "ABBREVIATION", unique = true)
+    @Column(name = "ABBREVIATION")
     @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_descrpition", order = 3, prominent = true)
     protected String abbreviation;
     
@@ -154,7 +162,7 @@ public class FieldImpl implements Field,Serializable {
 
     @Override
     public void setFacetFieldType(FieldType facetFieldType) {
-        this.facetFieldType = facetFieldType.getType();
+        this.facetFieldType = facetFieldType == null ? null : facetFieldType.getType();
     }
 
     @Override

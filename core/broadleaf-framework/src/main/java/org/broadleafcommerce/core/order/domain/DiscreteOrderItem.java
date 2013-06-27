@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import java.util.List;
 import java.util.Map;
 
-public interface DiscreteOrderItem extends OrderItem, SkuAccessor {
+public interface DiscreteOrderItem extends OrderItem, SkuAccessor, Cloneable {
 
     Sku getSku();
 
@@ -70,8 +70,20 @@ public interface DiscreteOrderItem extends OrderItem, SkuAccessor {
 
     Money getTaxablePrice();
 
+    /**
+     * Arbitrary attributes associated with the order item
+     *
+     * @deprecated use getOrderItemAttributes instead
+     * @return the attributes
+     */
     public Map<String, String> getAdditionalAttributes();
 
+    /**
+     * Arbitrary attributes associated with the order item
+     *
+     * @deprecated use setOrderItemAttributes instead
+     * @param additionalAttributes the map of attributes
+     */
     public void setAdditionalAttributes(Map<String, String> additionalAttributes);
 
     public Money getBaseRetailPrice();
@@ -86,4 +98,17 @@ public interface DiscreteOrderItem extends OrderItem, SkuAccessor {
 
     public void setDiscreteOrderItemFeePrices(List<DiscreteOrderItemFeePrice> orderItemFeePrices);
 
+    /**
+     * For items that are part of a bundle, this method will return the parent bundle item.  Otherwise,
+     * returns null.
+     * 
+     * @return
+     */
+    public BundleOrderItem findParentItem();
+
+    /**
+     * Returns a boolean indicating whether this sku is active.  This is used to determine whether a user
+     * the sku can add the sku to their cart.
+     */
+    public boolean isSkuActive();
 }

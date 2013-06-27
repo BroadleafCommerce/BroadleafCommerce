@@ -2,11 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
     <!-- Scan Broadleaf defined web utility classes -->
     <context:component-scan base-package="org.broadleafcommerce.core.web"/>
@@ -25,6 +24,8 @@
         </aop:aspect>
     </aop:config>
     
+    <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
+    <!-- own dialect and add your processors there. -->
     <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
         <property name="processors">
           <set>
@@ -39,37 +40,89 @@
             <ref bean="blPriceTextDisplayProcessor" />
             <ref bean="blProductOptionValueProcessor" />
             <ref bean="blProductOptionsProcessor" />
+            <ref bean="blProductOptionDisplayProcessor" />
             <ref bean="blRatingsProcessor" />
             <ref bean="blRelatedProductProcessor" />
             <ref bean="blRemoveFacetValuesLinkProcessor" />
             <ref bean="blToggleFacetLinkProcessor" />
             <ref bean="blUrlRewriteProcessor" />
+            <ref bean="blResourceBundleProcessor" />
           </set>
         </property>     
     </bean> 
+    
+    <!-- This list factory bean will accept classes that implment the BroadleafVariableExpression interface. -->
+    <!-- This provides the ability to inject custom expression evaluators into Thymeleaf. -->
+    <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
+            </list>
+        </property>
+    </bean>
+    
+    <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
+    <bean id="blWebCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
     
     <bean id="blWebTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
         <property name="prefix" value="/WEB-INF/templates/" />
         <property name="suffix" value=".html" />
         <property name="templateMode" value="HTML5" />
-        <property name="cacheable" value="false"/>
         <property name="characterEncoding" value="UTF-8" />
-    </bean> 
+        <property name="cacheable" value="${cache.page.templates}"/>
+        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
+        <property name="order" value="200"/>         
+    </bean>  
     
-    <bean id="blEmailTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+    <bean id="blWebClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+        <property name="prefix" value="webTemplates/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />        
+        <property name="characterEncoding" value="UTF-8" />
+        <property name="cacheable" value="${cache.page.templates}"/>
+        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
+        <property name="order" value="300"/> 
+    </bean>  
+    
+    <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
+    <bean id="blEmailCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
+    
+    <bean id="blEmailTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+        <property name="prefix" value="/WEB-INF/emailTemplates/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />
+        <property name="characterEncoding" value="UTF-8" />
+        <property name="cacheable" value="${cache.page.templates}"/>
+        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
+        <property name="order" value="200"/>         
+    </bean>     
+     
+    <bean id="blEmailClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
         <property name="prefix" value="emailTemplates/" />
         <property name="suffix" value=".html" />
         <property name="templateMode" value="HTML5" />
-        <property name="cacheable" value="false"/>
+        <property name="cacheable" value="${cache.page.templates}"/>
+        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
         <property name="characterEncoding" value="UTF-8" />
-    </bean>
+    </bean>  
     
     <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring3.dialect.SpringStandardDialect" />
     
+    <bean id="blMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
+    
     <bean id="blWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+        <property name="messageResolvers">
+            <set>
+                <ref bean="blMessageResolver" />
+                <bean class="org.thymeleaf.spring3.messageresolver.SpringMessageResolver" />
+            </set>
+        </property>
         <property name="templateResolvers">
             <set>
                 <ref bean="blWebTemplateResolver" />
+                <ref bean="blWebClasspathTemplateResolver" />
+                <ref bean="blWebCustomTemplateResolver" />
+                <ref bean="blWebCommonClasspathTemplateResolver" />
             </set>
         </property>
         <property name="dialects">
@@ -84,6 +137,8 @@
         <property name="templateResolvers">
             <set>
                 <ref bean="blEmailTemplateResolver" />
+                <ref bean="blEmailClasspathTemplateResolver" />                
+                <ref bean="blEmailCustomTemplateResolver" />
             </set>
         </property>
         <property name="dialects">
@@ -92,8 +147,5 @@
                 <ref bean="blDialect" />
             </set>
         </property>
-    </bean>
-    
-    <bean id="blUpdateCartServiceExtensionManager" class="org.broadleafcommerce.core.web.service.UpdateCartServiceExtensionManager" />
-    
+    </bean> 
 </beans>

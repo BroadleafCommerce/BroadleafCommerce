@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -100,7 +100,13 @@ public interface StructuredContentService extends SandBoxItemListener {
      * @return
      */
     public List<StructuredContent> findContentItems(SandBox sandbox, Criteria criteria);
-
+    
+    /**
+     * Finds all content items regardless of the {@link Sandbox} they are a member of
+     * @return
+     */
+    public List<StructuredContent> findAllContentItems();
+    
     /**
      * Follows the same rules as {@link #findContentItems(org.broadleafcommerce.common.sandbox.domain.SandBox, org.hibernate.Criteria) findContentItems}.
      *
@@ -151,6 +157,10 @@ public interface StructuredContentService extends SandBoxItemListener {
      */
     public StructuredContent updateStructuredContent(StructuredContent content, SandBox sandbox);
 
+    /**
+     * Saves the given <b>type</b> and returns the merged instance
+     */
+    public StructuredContentType saveStructuredContentType(StructuredContentType type);
 
     /**
      * If deleting and item where content.originalItemId != null

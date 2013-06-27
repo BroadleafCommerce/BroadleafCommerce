@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,11 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.core.payment.domain.*;
+import org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo;
+import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
+import org.broadleafcommerce.core.payment.domain.EmptyReferenced;
+import org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo;
+import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.springframework.context.ApplicationContext;
@@ -47,26 +51,35 @@ public class ReferencedWrapper extends BaseWrapper implements APIWrapper<Referen
     @XmlElement
     protected Long id;
 
+    @XmlElement
     protected String referenceNumber;
 
+    @XmlElement
     protected String type;
 
+    @XmlElement
     protected String pan;
 
+    @XmlElement
     protected String cvvCode;
 
+    @XmlElement
     protected Integer expirationMonth;
 
+    @XmlElement
     protected Integer expirationYear;
 
+    @XmlElement
     protected String accountNumber;
 
+    @XmlElement
     protected String routingNumber;
 
+    @XmlElement
     protected String pin;
 
     @Override
-    public void wrap(Referenced model, HttpServletRequest request) {
+    public void wrapDetails(Referenced model, HttpServletRequest request) {
         this.id = model.getId();
         this.referenceNumber = model.getReferenceNumber();
 
@@ -147,5 +160,10 @@ public class ReferencedWrapper extends BaseWrapper implements APIWrapper<Referen
         }
 
         return null;
+    }
+
+    @Override
+    public void wrapSummary(Referenced model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

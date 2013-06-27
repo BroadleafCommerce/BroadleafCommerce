@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,11 @@
 package org.broadleafcommerce.core.offer.service;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
@@ -75,9 +77,12 @@ public class MVELTest extends BaseTest {
         category.setName("t-shirt");
         DiscreteOrderItemImpl orderItem = new DiscreteOrderItemImpl();
         ProductImpl product = new ProductImpl();
-        ArrayList<Category> categories = new ArrayList<Category>();
-        categories.add(category);
-        product.setAllParentCategories(categories);
+        ArrayList<CategoryProductXref> categories = new ArrayList<CategoryProductXref>();
+        CategoryProductXref categoryXref = new CategoryProductXrefImpl();
+        categoryXref.setProduct(product);
+        categoryXref.setCategory(category);
+        categories.add(categoryXref);
+        product.setAllParentCategoryXrefs(categories);
         orderItem.setProduct(product);
         order.getOrderItems().add(orderItem);
         order.setSubTotal(new Money(110D));
@@ -130,8 +135,10 @@ public class MVELTest extends BaseTest {
     public void testOfferAppliesToSpecificItems() {
 
         DiscreteOrderItemImpl orderItem = new DiscreteOrderItemImpl();
-        orderItem.setSku(new SkuImpl());
-        orderItem.getSku().setId(1234L);
+        Sku sku = new SkuImpl();
+        sku.setRetailPrice(new Money("1"));
+        sku.setId(1234L);
+        orderItem.setSku(sku);
         OfferImpl offer = new OfferImpl();
         offer.setType(OfferType.ORDER_ITEM);
 

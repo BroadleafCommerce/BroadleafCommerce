@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,6 +117,7 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                 BigDecimal flatTotal = BigDecimal.ZERO;
                 
                 BigDecimal weightTotal = BigDecimal.ZERO;
+                boolean foundCandidateForBand = false;
                 for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                     
                     //If this item has a Sku associated with it which also has a flat rate for this fulfillment option, don't add it to the price
@@ -138,9 +139,10 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                     }
                     
                     if (addToTotal) {
-                        BigDecimal price = (fulfillmentGroupItem.getPrice() != null) ? fulfillmentGroupItem.getPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity())) : null;
+                        foundCandidateForBand = true;
+                        BigDecimal price = (fulfillmentGroupItem.getTotalItemAmount() != null) ? fulfillmentGroupItem.getTotalItemAmount().getAmount() : null;
                         if (price == null) {
-                            price = fulfillmentGroupItem.getOrderItem().getPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
+                            price = fulfillmentGroupItem.getOrderItem().getAveragePrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
                         }
                         retailTotal = retailTotal.add(price);
                         
@@ -157,55 +159,58 @@ public class BandedFulfillmentPricingProvider implements FulfillmentPricingProvi
                 //Used to keep track of the amount for the lowest band fulfillment price. Used to compare
                 //if 2 bands are configured for the same minimum amount
                 BigDecimal lowestBandFulfillmentPriceMinimumAmount = BigDecimal.ZERO;
-                for (FulfillmentBand band : bands) {
-                    
-                    BigDecimal bandMinimumAmount = BigDecimal.ZERO;
-                    boolean foundMatch = false;
-                    if (band instanceof FulfillmentPriceBand) {
-                        bandMinimumAmount = ((FulfillmentPriceBand) band).getRetailPriceMinimumAmount();
-                        foundMatch = retailTotal.compareTo(bandMinimumAmount) >= 0;
-                    } else if (band instanceof FulfillmentWeightBand) {
-                        bandMinimumAmount = ((FulfillmentWeightBand) band).getMinimumWeight();
-                        foundMatch = weightTotal.compareTo(bandMinimumAmount) >= 0;
-                    }
-                    
-                    if (foundMatch) {
-                        //So far, we've found a potential match
-                        //Now, determine if this is a percentage or actual amount
-                        FulfillmentBandResultAmountType resultAmountType = band.getResultAmountType();
-                        BigDecimal bandFulfillmentPrice = null;
-                        if (FulfillmentBandResultAmountType.RATE.equals(resultAmountType)) {
-                            bandFulfillmentPrice = band.getResultAmount();
-                        } else if (FulfillmentBandResultAmountType.PERCENTAGE.equals(resultAmountType)) {
-                            //Since this is a percentage, we calculate the result amount based on retailTotal and the band percentage
-                            bandFulfillmentPrice = retailTotal.multiply(band.getResultAmount());
-                        } else {
-                            LOG.warn("Unknown FulfillmentBandResultAmountType: " + resultAmountType.getType() + " Should be RATE or PERCENTAGE. Ignoring.");
+
+                if (foundCandidateForBand) {
+                    for (FulfillmentBand band : bands) {
+
+                        BigDecimal bandMinimumAmount = BigDecimal.ZERO;
+                        boolean foundMatch = false;
+                        if (band instanceof FulfillmentPriceBand) {
+                            bandMinimumAmount = ((FulfillmentPriceBand) band).getRetailPriceMinimumAmount();
+                            foundMatch = retailTotal.compareTo(bandMinimumAmount) >= 0;
+                        } else if (band instanceof FulfillmentWeightBand) {
+                            bandMinimumAmount = ((FulfillmentWeightBand) band).getMinimumWeight();
+                            foundMatch = weightTotal.compareTo(bandMinimumAmount) >= 0;
                         }
                         
-                        if (bandFulfillmentPrice != null) {
-                            
-                            //haven't initialized the lowest price yet so just take on this one
-                            if (lowestBandFulfillmentPrice == null) {
-                                lowestBandFulfillmentPrice = bandFulfillmentPrice;
-                                lowestBandFulfillmentPriceMinimumAmount = bandMinimumAmount;
+                        if (foundMatch) {
+                            //So far, we've found a potential match
+                            //Now, determine if this is a percentage or actual amount
+                            FulfillmentBandResultAmountType resultAmountType = band.getResultAmountType();
+                            BigDecimal bandFulfillmentPrice = null;
+                            if (FulfillmentBandResultAmountType.RATE.equals(resultAmountType)) {
+                                bandFulfillmentPrice = band.getResultAmount();
+                            } else if (FulfillmentBandResultAmountType.PERCENTAGE.equals(resultAmountType)) {
+                                //Since this is a percentage, we calculate the result amount based on retailTotal and the band percentage
+                                bandFulfillmentPrice = retailTotal.multiply(band.getResultAmount());
+                            } else {
+                                LOG.warn("Unknown FulfillmentBandResultAmountType: " + resultAmountType.getType() + " Should be RATE or PERCENTAGE. Ignoring.");
                             }
                             
-                            //If there is a duplicate price band (meaning, 2 price bands are configured with the same miniumum retail price)
-                            //then the lowest fulfillment amount should only be updated if the result of the current band being looked at
-                            //is cheaper
-                            if (lowestBandFulfillmentPriceMinimumAmount.compareTo(bandMinimumAmount) == 0) {
-                                if (bandFulfillmentPrice.compareTo(lowestBandFulfillmentPrice) <= 0) {
+                            if (bandFulfillmentPrice != null) {
+
+                                //haven't initialized the lowest price yet so just take on this one
+                                if (lowestBandFulfillmentPrice == null) {
                                     lowestBandFulfillmentPrice = bandFulfillmentPrice;
                                     lowestBandFulfillmentPriceMinimumAmount = bandMinimumAmount;
                                 }
-                            } else if (bandMinimumAmount.compareTo(lowestBandFulfillmentPriceMinimumAmount) > 0) {
-                                lowestBandFulfillmentPrice = bandFulfillmentPrice;
-                                lowestBandFulfillmentPriceMinimumAmount = bandMinimumAmount;
+
+                                //If there is a duplicate price band (meaning, 2 price bands are configured with the same miniumum retail price)
+                                //then the lowest fulfillment amount should only be updated if the result of the current band being looked at
+                                //is cheaper
+                                if (lowestBandFulfillmentPriceMinimumAmount.compareTo(bandMinimumAmount) == 0) {
+                                    if (bandFulfillmentPrice.compareTo(lowestBandFulfillmentPrice) <= 0) {
+                                        lowestBandFulfillmentPrice = bandFulfillmentPrice;
+                                        lowestBandFulfillmentPriceMinimumAmount = bandMinimumAmount;
+                                    }
+                                } else if (bandMinimumAmount.compareTo(lowestBandFulfillmentPriceMinimumAmount) > 0) {
+                                    lowestBandFulfillmentPrice = bandFulfillmentPrice;
+                                    lowestBandFulfillmentPriceMinimumAmount = bandMinimumAmount;
+                                }
+
+                            } else {
+                                throw new IllegalStateException("Bands must have a non-null fulfillment price");
                             }
-                            
-                        } else {
-                            throw new IllegalStateException("Bands must have a non-null fulfillment price");
                         }
                     }
                 }

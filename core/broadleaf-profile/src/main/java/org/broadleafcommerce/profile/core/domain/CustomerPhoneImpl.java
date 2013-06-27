@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,40 +16,65 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "PHONE_NAME" }))
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true))
+    }
+)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class CustomerPhoneImpl implements CustomerPhone{
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CustomerPhoneId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CustomerPhoneId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CustomerPhoneImpl", allocationSize = 50)
+    @GeneratedValue(generator = "CustomerPhoneId")
+    @GenericGenerator(
+        name="CustomerPhoneId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="CustomerPhoneImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.CustomerPhoneImpl")
+        }
+    )
     @Column(name = "CUSTOMER_PHONE_ID")
     protected Long id;
 
     @Column(name = "PHONE_NAME")
+    @AdminPresentation(friendlyName = "CustomerPhoneImpl_Phone_Name", order=1, group = "CustomerPhoneImpl_Identification",
+            groupOrder = 1, prominent = true, gridOrder = 1)
     protected String phoneName;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
+    @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Customer customer;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = PhoneImpl.class, optional=false)
@@ -57,34 +82,42 @@ public class CustomerPhoneImpl implements CustomerPhone{
     @Index(name="CUSTPHONE_PHONE_INDEX", columnNames={"PHONE_ID"})
     protected Phone phone;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getPhoneName() {
         return phoneName;
     }
 
+    @Override
     public void setPhoneName(String phoneName) {
         this.phoneName = phoneName;
     }
 
+    @Override
     public Customer getCustomer() {
         return customer;
     }
 
+    @Override
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
+    @Override
     public Phone getPhone() {
         return phone;
     }
 
+    @Override
     public void setPhone(Phone phone) {
         this.phone = phone;
     }

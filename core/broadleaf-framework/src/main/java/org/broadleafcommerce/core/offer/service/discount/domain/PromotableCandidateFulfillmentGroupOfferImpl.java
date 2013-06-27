@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,6 @@ package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -32,12 +31,13 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
     private static final long serialVersionUID = 1L;
     
     protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
-    protected CandidateFulfillmentGroupOffer delegate;
+    protected Offer offer;
     protected PromotableFulfillmentGroup promotableFulfillmentGroup;
-    protected Money discountedAmount;
     
-    public PromotableCandidateFulfillmentGroupOfferImpl(CandidateFulfillmentGroupOffer candidateFulfillmentGroupOffer, PromotableFulfillmentGroup promotableFulfillmentGroup) {
-        this.delegate = candidateFulfillmentGroupOffer;
+    public PromotableCandidateFulfillmentGroupOfferImpl(PromotableFulfillmentGroup promotableFulfillmentGroup, Offer offer) {
+        assert(offer != null);
+        assert(promotableFulfillmentGroup != null);
+        this.offer = offer;
         this.promotableFulfillmentGroup = promotableFulfillmentGroup;
     }
     
@@ -51,62 +51,50 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
         this.candidateQualifiersMap = candidateItemsMap;
     }
     
-    @Override
-    public void computeDiscountedPriceAndAmount() {
-        if (delegate.getOffer() != null && delegate.getFulfillmentGroup() != null){
-
-            if (delegate.getFulfillmentGroup().getRetailShippingPrice() != null) {
-                Money priceToUse = delegate.getFulfillmentGroup().getRetailShippingPrice();
-                discountedAmount = new Money(0);
-                if ((delegate.getOffer().getApplyDiscountToSalePrice()) && (delegate.getFulfillmentGroup().getSaleShippingPrice() != null)) {
-                    priceToUse = delegate.getFulfillmentGroup().getSaleShippingPrice();
-                }
-
-                if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                    discountedAmount = BroadleafCurrencyUtils.getMoney(delegate.getOffer().getValue(), delegate.getFulfillmentGroup().getOrder().getCurrency());
-                } else if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                    discountedAmount = priceToUse.subtract(BroadleafCurrencyUtils.getMoney(delegate.getOffer().getValue(), delegate.getFulfillmentGroup().getOrder().getCurrency()));
-                } else if (delegate.getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                    discountedAmount = priceToUse.multiply(delegate.getOffer().getValue().divide(new BigDecimal("100")));
-                }
-                if (discountedAmount.greaterThan(priceToUse)) {
-                    discountedAmount = priceToUse;
-                }
-                priceToUse = priceToUse.subtract(discountedAmount);
-                delegate.setDiscountedPrice(priceToUse);
+    protected Money getBasePrice() {
+        Money priceToUse = null;
+        if (promotableFulfillmentGroup.getFulfillmentGroup().getRetailFulfillmentPrice() != null) {
+            priceToUse = promotableFulfillmentGroup.getFulfillmentGroup().getRetailFulfillmentPrice();
+            if ((offer.getApplyDiscountToSalePrice()) && (promotableFulfillmentGroup.getFulfillmentGroup().getSaleFulfillmentPrice() != null)) {
+                priceToUse = promotableFulfillmentGroup.getFulfillmentGroup().getSaleFulfillmentPrice();
             }
         }
+        return priceToUse;
     }
     
     @Override
-    public void reset() {
-        delegate = null;
-    }
-    
-    @Override
-    public CandidateFulfillmentGroupOffer getDelegate() {
-        return delegate;
+    public Money computeDiscountedAmount() {
+        Money discountedAmount = new Money(0);
+        Money priceToUse = getBasePrice();
+        if (priceToUse != null) {
+            if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
+                discountedAmount = BroadleafCurrencyUtils.getMoney(offer.getValue(), promotableFulfillmentGroup.getFulfillmentGroup().getOrder().getCurrency());
+            } else if (offer.getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
+                discountedAmount = priceToUse.subtract(BroadleafCurrencyUtils.getMoney(offer.getValue(), promotableFulfillmentGroup.getFulfillmentGroup().getOrder().getCurrency()));
+            } else if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
+                discountedAmount = priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")));
+            }
+            if (discountedAmount.greaterThan(priceToUse)) {
+                discountedAmount = priceToUse;
+            }
+        }
+
+        return discountedAmount;
     }
     
     @Override
     public Money getDiscountedPrice() {
-        if (delegate.getDiscountedPrice() == null) {
-            computeDiscountedPriceAndAmount();
-        }
-        return delegate.getDiscountedPrice();
+        return getBasePrice().subtract(computeDiscountedAmount());
     }
 
     @Override
     public Money getDiscountedAmount() {
-        if (delegate.getDiscountedPrice() == null) {
-            computeDiscountedPriceAndAmount();
-        }
-        return discountedAmount;
+        return computeDiscountedAmount();
     }
 
     @Override
     public Offer getOffer() {
-        return delegate.getOffer();
+        return offer;
     }
     
     @Override
@@ -115,6 +103,6 @@ public class PromotableCandidateFulfillmentGroupOfferImpl implements PromotableC
     }
 
     public int getPriority() {
-        return delegate.getPriority();
+        return offer.getPriority();
     }
 }

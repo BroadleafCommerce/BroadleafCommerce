@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 
@@ -167,5 +168,25 @@ public interface ProductOption extends Serializable {
      * @param allowedValues
      */
     public void setAllowedValues(List<ProductOptionValue> allowedValues);
+
+    public Boolean getUseInSkuGeneration();
+
+    public ProductOptionValidationType getProductOptionValidationType();
+
+    public void setProductOptionValidationType(ProductOptionValidationType productOptionValidationType);
+
+    public void setUseInSkuGeneration(Boolean useInSkuGeneration);
+
+    void setErrorMessage(String errorMessage);
+
+    void setErrorCode(String errorCode);
+
+    String getErrorMessage();
+
+    String getValidationString();
+
+    void setValidationString(String validationString);
+
+    String getErrorCode();
 
 }

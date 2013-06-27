@@ -17,9 +17,9 @@
 package org.broadleafcommerce.openadmin.web.processor;
 
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.service.AdminNavigationService;
+import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
@@ -30,8 +30,6 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.spring3.context.SpringWebContext;
-
-import java.util.List;
 
 /**
  * A Thymeleaf processor that will add the appropriate AdminModules to the model. It does this by
@@ -69,8 +67,8 @@ public class AdminModuleProcessor extends AbstractModelVariableModifierProcessor
 
         AdminUser user = getPersistentAdminUser();
         if (user != null) {
-            List<AdminModule> modules =  adminNavigationService.buildMenu(user);
-            addToModel(arguments, resultVar, modules);
+            AdminMenu menu = adminNavigationService.buildMenu(user);
+            addToModel(arguments, resultVar, menu);
         }
 
     }

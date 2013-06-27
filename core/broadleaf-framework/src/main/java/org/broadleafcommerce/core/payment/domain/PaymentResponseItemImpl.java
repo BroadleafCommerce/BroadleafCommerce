@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,30 +24,31 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.core.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -57,8 +58,15 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "PaymentResponseItemId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PaymentResponseItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentResponseItemImpl", allocationSize = 50)
+    @GeneratedValue(generator = "PaymentResponseItemId")
+    @GenericGenerator(
+        name="PaymentResponseItemId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="PaymentResponseItemImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl")
+        }
+    )
     @Column(name = "PAYMENT_RESPONSE_ITEM_ID")
     protected Long id;
 
@@ -69,6 +77,10 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @Column(name = "AMOUNT_PAID", precision=19, scale=5)
     @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Amount", order = 2, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected BigDecimal amountPaid;
+
+    @Column(name = "TRANSACTION_AMOUNT", precision=19, scale=5)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Amount", order = 2, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
+    protected BigDecimal transactionAmount;
 
     @Column(name = "AUTHORIZATION_CODE")
     @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Authorization_Code", order = 3, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
@@ -105,7 +117,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     @Column(name = "TRANSACTION_SUCCESS")
     @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Successful", order = 11, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
-    protected Boolean transactionSuccess;
+    protected Boolean transactionSuccess = false;
 
     @Column(name = "TRANSACTION_TIMESTAMP", nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -132,10 +144,11 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Type", order = 16, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String transactionType;
 
-    @CollectionOfElements
-    @JoinTable(name = "BLC_PAYMENT_ADDITIONAL_FIELDS", joinColumns = @JoinColumn(name = "PAYMENT_RESPONSE_ITEM_ID"))
-    @MapKey(columns = { @Column(name = "FIELD_NAME", length = 150, nullable = false) })
-    @Column(name = "FIELD_VALUE")
+    @ElementCollection
+    @MapKeyColumn(name="FIELD_NAME")
+    @Column(name="FIELD_VALUE")
+    @CollectionTable(name="BLC_PAYMENT_ADDITIONAL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_RESPONSE_ITEM_ID"))
+    @BatchSize(size = 50)
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
     @Column(name = "ORDER_PAYMENT_ID")
@@ -219,18 +232,34 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     }
 
     @Override
+    @Deprecated
     public Money getAmountPaid() {
         return BroadleafCurrencyUtils.getMoney(amountPaid, getCurrency());
     }
 
     @Override
+    @Deprecated
     public void setAmountPaid(Money amountPaid) {
         this.amountPaid = Money.toAmount(amountPaid);
     }
 
     @Override
+    public Money getTransactionAmount() {
+        return BroadleafCurrencyUtils.getMoney(transactionAmount, getCurrency());
+    }
+
+    @Override
+    public void setTransactionAmount(Money transactionAmount) {
+        this.transactionAmount = Money.toAmount(transactionAmount);
+    }
+
+    @Override
     public Boolean getTransactionSuccess() {
-        return transactionSuccess;
+        if (transactionSuccess == null) {
+            return Boolean.FALSE;
+        } else {
+            return transactionSuccess;
+        }
     }
 
     @Override
@@ -388,20 +417,20 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append(PaymentResponseItem.class.getName() + "\n");
-        sb.append("auth code: " + this.getAuthorizationCode() + "\n");
-        sb.append("implementor response code: " + this.getImplementorResponseCode() + "\n");
-        sb.append("implementor response text: " + this.getImplementorResponseText() + "\n");
-        sb.append("middleware response code: " + this.getMiddlewareResponseCode() + "\n");
-        sb.append("middleware response text: " + this.getMiddlewareResponseText() + "\n");
-        sb.append("processor response code: " + this.getProcessorResponseCode() + "\n");
-        sb.append("processor response text: " + this.getProcessorResponseText() + "\n");
-        sb.append("reference number: " + this.getReferenceNumber() + "\n");
-        sb.append("transaction id: " + this.getTransactionId() + "\n");
-        sb.append("avs code: " + this.getAvsCode() + "\n");
+        StringBuilder sb = new StringBuilder();
+        sb.append(PaymentResponseItem.class.getName()).append("\n");
+        sb.append("auth code: ").append(this.getAuthorizationCode()).append("\n");
+        sb.append("implementor response code: ").append(this.getImplementorResponseCode()).append("\n");
+        sb.append("implementor response text: ").append(this.getImplementorResponseText()).append("\n");
+        sb.append("middleware response code: ").append(this.getMiddlewareResponseCode()).append("\n");
+        sb.append("middleware response text: ").append(this.getMiddlewareResponseText()).append("\n");
+        sb.append("processor response code: ").append(this.getProcessorResponseCode()).append("\n");
+        sb.append("processor response text: ").append(this.getProcessorResponseText()).append("\n");
+        sb.append("reference number: ").append(this.getReferenceNumber()).append("\n");
+        sb.append("transaction id: ").append(this.getTransactionId()).append("\n");
+        sb.append("avs code: ").append(this.getAvsCode()).append("\n");
         if (remainingBalance != null) {
-            sb.append("remaining balance: " + this.getRemainingBalance());
+            sb.append("remaining balance: ").append(this.getRemainingBalance());
         }
 
         return sb.toString();

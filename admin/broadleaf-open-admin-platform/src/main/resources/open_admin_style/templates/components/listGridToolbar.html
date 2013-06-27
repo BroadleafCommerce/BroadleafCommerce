@@ -1,0 +1,38 @@
+<comment th:remove="all">
+<!-- This component represents a list grid toolbar -->
+<!-- Additional parameters that can be specified include: -->
+<!--    hideActionButtons - if set to true, will not render the add/update/delete buttons -->
+</comment>
+
+<div class="listgrid-toolbar">
+        
+    <div th:remove="tag"
+        th:if="${(hideActionButtons == null or hideActionButtons == 'false') and 
+                 (listGrid.subCollectionFieldName != null)}">
+        
+        <ul class="inline-list small-spacing">
+            <li th:each="action : ${listGrid.toolbarActions}" th:if="${!listGrid.readOnly}">
+                <button class="tiny radius dark button" 
+                    type="button"
+                    th:classappend="${action.buttonClass}"
+                    th:attr="data-actionurl=@{${listGrid.path + action.urlPostfix}}">
+                    <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+                </button>
+            </li>
+            
+            <li style="color: #8495A5" th:if="${!listGrid.readOnly}">|</li>
+
+            <li th:each="action : ${listGrid.rowActions}" th:if="${listGrid.readOnly==action.forListGridReadOnly}">
+                <button disabled="disabled" 
+                    class="tiny radius dark row-action button" 
+                    type="button"
+                    th:classappend="${action.buttonClass}"
+                    th:attr="data-urlpostfix=${action.urlPostfix}">
+                    <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+                </button>
+            </li>
+
+        </ul>
+        
+    </div>
+</div>

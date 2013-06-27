@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@
  */
 package org.broadleafcommerce.core.catalog.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author Phillip Verheyden
@@ -33,7 +33,7 @@ public class ProductBundlePricingModelType implements Serializable, BroadleafEnu
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ProductBundlePricingModelType> TYPES = new HashMap<String, ProductBundlePricingModelType>();
+    private static final Map<String, ProductBundlePricingModelType> TYPES = new LinkedHashMap<String, ProductBundlePricingModelType>();
 
     public static final ProductBundlePricingModelType ITEM_SUM  = new ProductBundlePricingModelType("ITEM_SUM","Item Sum");
     public static final ProductBundlePricingModelType BUNDLE  = new ProductBundlePricingModelType("BUNDLE","Bundle");

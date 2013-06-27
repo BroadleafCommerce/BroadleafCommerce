@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public interface Customer extends Serializable {
 
@@ -96,17 +97,9 @@ public interface Customer extends Serializable {
 
     public void setCustomerLocale(Locale customerLocale);
     
-    public List<CustomerAttribute> getCustomerAttributes();
-    
-    /**
-     * Looks at all CustomerAttributes for this product and returns the attribute that matches the given name
-     * 
-     * @param name the name of the attribute
-     * @return the matching CustomerAttribute (null if no match)
-     */
-    public CustomerAttribute getCustomerAttributeByName(String name);
+    public Map<String, CustomerAttribute> getCustomerAttributes();
 
-    public void setCustomerAttributes(List<CustomerAttribute> customerAttributes);  
+    public void setCustomerAttributes(Map<String, CustomerAttribute> customerAttributes);
     
     /**
      * Returns true if this user has been deactivated.
@@ -122,5 +115,20 @@ public interface Customer extends Serializable {
      * @param deactivated
      */
     public void setDeactivated(boolean deactivated);
-    
+
+    public List<CustomerAddress> getCustomerAddresses();
+
+    public void setCustomerAddresses(List<CustomerAddress> customerAddresses);
+
+    public List<CustomerPhone> getCustomerPhones();
+
+    public void setCustomerPhones(List<CustomerPhone> customerPhones);
+
+    public List<CustomerPayment> getCustomerPayments();
+
+    public void setCustomerPayments(List<CustomerPayment> customerPayments);
+
+    public String getTaxExemptionCode();
+
+    public void setTaxExemptionCode(String exemption);
 }

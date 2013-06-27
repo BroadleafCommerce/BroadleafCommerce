@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,6 +44,7 @@ import java.util.Map;
  * 
  * @author jfischer, brian polster
  */
+@Deprecated
 public class SimpleTaxModule implements TaxModule {
 
     public static final String MODULENAME = "simpleTaxModule";
@@ -66,6 +67,7 @@ public class SimpleTaxModule implements TaxModule {
 
     protected boolean taxFees;
 
+    @Override
     public Order calculateTaxForOrder(Order order) throws TaxException {
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             
@@ -87,7 +89,7 @@ public class SimpleTaxModule implements TaxModule {
                             fgItem.getTaxes().add(tax);
                         }
                         tax.setRate(new BigDecimal(factor));
-                        tax.setAmount(fgItem.getPrice().multiply(fgItem.getQuantity()).multiply(factor));
+                        tax.setAmount(fgItem.getTotalItemTaxableAmount().multiply(factor));
                     }
                 }
             }
@@ -129,17 +131,19 @@ public class SimpleTaxModule implements TaxModule {
                     fulfillmentGroup.getTaxes().add(tax);
                 }
                 tax.setRate(new BigDecimal(factor));
-                tax.setAmount(fulfillmentGroup.getShippingPrice().multiply(factor));
+                tax.setAmount(fulfillmentGroup.getFulfillmentPrice().multiply(factor));
             }
         }
 
         return order;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -394,6 +398,7 @@ public class SimpleTaxModule implements TaxModule {
      * @deprecated
      * @return
      */
+    @Deprecated
     public Double getFactor() {
         return getDefaultItemTaxRate();
     }
@@ -403,6 +408,7 @@ public class SimpleTaxModule implements TaxModule {
      * @deprecated
      * @return
      */
+    @Deprecated
     public void setFactor(Double factor) {
         setDefaultItemTaxRate(factor);
     }

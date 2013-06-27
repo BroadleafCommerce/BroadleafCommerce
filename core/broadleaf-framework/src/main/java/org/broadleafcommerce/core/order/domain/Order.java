@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,6 +38,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Defines an order in Broadleaf.    There are several key items to be aware of with the BLC Order.
+ * 
+ * 1.  Carts are also Orders that are in a Pending status
+ * 
+ * 2.  Wishlists (and similar) are "NamedOrders"
+ * 
+ * 3.  Orders have several price related methods that are useful when displaying totals on the cart.
+ * 3a.    getSubTotal() :  The total of all order items and their adjustments exclusive of taxes
+ * 3b.    getOrderAdjustmentsValue() :  The total of all order adjustments
+ * 3c.    getTotalTax() :  The total taxes being charged for the order
+ * 3d.    getTotal() : The order total (equivalent of getSubTotal() - getOrderAdjustmentsValue() + getTotalTax())
+ * 
+ * 4.  Order payments are represented with PaymentInfo objects.
+ * 
+ * 5.  Order shipping (e.g. fulfillment) are represented with Fulfillment objects.
+ */
 public interface Order extends Serializable {
 
     public Long getId();
@@ -92,13 +109,11 @@ public interface Order extends Serializable {
     public void assignOrderItemsFinalPrice();
 
     /**
-     * Gets the sum total of all of the {@link OrderItem}s included in this Order while taking into accoun their quantity.
-     * Note that this will include all fees and promotions for each {@link OrderItem}.
+     * Returns the sum of the item totals. 
      * 
-     * @param includeNonTaxableItems - whether or not to use {@link OrderItem#getTaxablePrice()} or {@link OrderItem#getPrice()
      * @return
      */
-    public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems);
+    public Money calculateSubTotal();
 
     /**
      * The grand total of this {@link Order} which includes all shipping costs and taxes, as well as any adjustments from
@@ -124,6 +139,14 @@ public interface Order extends Serializable {
      * @return {@link #getTotal()} minus the {@link PaymentInfo#getAmount()} for each {@link PaymentInfo} on this Order
      */
     public Money getRemainingTotal();
+
+    /**
+     * Convenience method for determining how much of the order total has been captured. This takes the {@link PaymentInfo}s
+     * and checks the {@link org.broadleafcommerce.core.payment.domain.PaymentInfoDetailType} for captured records.
+     *
+     * @return
+     */
+    public Money getCapturedTotal();
 
     /**
      * Gets the {@link Customer} for this {@link Order}.
@@ -230,20 +253,33 @@ public interface Order extends Serializable {
     public void setTotalTax(Money totalTax);
 
     /**
-     * Gets the total shipping that should be charged for this {@link Order}. This value should be equivalent to the
-     * summation of {@link FulfillmentGroup#getTotal()} for each {@link FulfillmentGroup} associated with this {@link Order}
-     * 
-     * @return the total shipping cost of this {@link Order}
+     * @deprected - use {@link #getTotalFulfillmentCharges()} instead.
      */
     public Money getTotalShipping();
 
     /**
-     * Set the total shipping cost of this {@link Order}. Used in the {@link FulfillmentGroupPricingActivity} after the cost
-     * of each {@link FulfillmentGroup} has been calculated.
+     * @deprecated - Use {@link #setTotalFulfillmentCharges(Money)} instead.
      * 
      * @param totalShipping
      */
     public void setTotalShipping(Money totalShipping);
+
+    /**
+     * Gets the total fulfillment costs that should be charged for this {@link Order}. This value should be equivalent to 
+     * the summation of {@link FulfillmentGroup#getTotal()} for each {@link FulfillmentGroup} associated with this 
+     * {@link Order}
+     * 
+     * @return the total fulfillment cost of this {@link Order}
+     */
+    public Money getTotalFulfillmentCharges();
+
+    /**
+     * Set the total fulfillment cost of this {@link Order}. Used in the {@link FulfillmentGroupPricingActivity} after the cost
+     * of each {@link FulfillmentGroup} has been calculated.
+     * 
+     * @param totalShipping
+     */
+    public void setTotalFulfillmentCharges(Money totalFulfillmentCharges);
 
     /**
      * Gets all the {@link PaymentInfo}s associated with this {@link Order}. An {@link Order} can have many
@@ -325,7 +361,7 @@ public interface Order extends Serializable {
     public void setAdditionalOfferInformation(Map<Offer, OfferInfo> additionalOfferInformation);
 
     /**
-     * Returns the discount value of all the applied item offers for this order.  The value is already
+     * Returns the discount value of all the applied item offers for this order.  This value is already
      * deducted from the order subTotal.
      *
      * @return the discount value of all the applied item offers for this order
@@ -358,6 +394,12 @@ public interface Order extends Serializable {
      */
     public boolean updatePrices();
     
+    /**
+     * Updates the averagePriceField for all order items.
+     * @return
+     */
+    public boolean finalizeItemPrices();
+
     public Money getFulfillmentGroupAdjustmentsValue();
     
     public void addOfferCode(OfferCode addedOfferCode);
@@ -406,4 +448,9 @@ public interface Order extends Serializable {
 
     public void setLocale(Locale locale);
 
+    /**
+     * Returns true if this item has order adjustments.
+     * @return
+     */
+    boolean getHasOrderAdjustments();
 }

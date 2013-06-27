@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -145,6 +144,11 @@ public class CatalogServiceImpl implements CatalogService {
     public List<Category> findAllCategories(int limit, int offset) {
         return categoryDao.readAllCategories(limit, offset);
     }
+    
+    @Override
+    public List<Category> findAllParentCategories() {
+        return categoryDao.readAllParentCategories();
+    }
 
     @Override
     public List<Category> findAllSubCategories(Category category) {
@@ -226,6 +230,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Deprecated
     public Map<String, List<Long>> getChildCategoryURLMapByCategoryId(Long categoryId) {
         Category category = findCategoryById(categoryId);
         if (category != null) {
@@ -252,6 +257,11 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public List<ProductOption> readAllProductOptions() {
         return productOptionDao.readAllProductOptions();
+    }
+    
+    @Transactional("blTransactionManager")
+    public ProductOption saveProductOption(ProductOption option) {
+        return productOptionDao.saveProductOption(option);
     }
     
     @Override

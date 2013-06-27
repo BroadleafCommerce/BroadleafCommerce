@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,12 +17,23 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,7 +41,6 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -39,24 +49,33 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP_FEE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
-public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                                            booleanOverrideValue = true))
+    }
+)
+public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCodeIdentifiable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "FulfillmentGroupFeeId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FulfillmentGroupFeeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupFeeImpl", allocationSize = 50)
+    @GeneratedValue(generator = "FulfillmentGroupFeeId")
+    @GenericGenerator(
+        name="FulfillmentGroupFeeId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="FulfillmentGroupFeeImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl")
+        }
+    )
     @Column(name = "FULFILLMENT_GROUP_FEE_ID")
     protected Long id;
 
@@ -65,17 +84,20 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     protected FulfillmentGroup fulfillmentGroup;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Amount", prominent = true, gridOrder = 2000, order = 2000)
     protected BigDecimal amount;
 
     @Column(name = "NAME")
+    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Name", prominent = true, gridOrder = 1000, order = 1000)
     protected String name;
 
     @Column(name = "REPORTING_CODE")
+    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Reporting_Code", order = 3000)
     protected String reportingCode;
     
     @Column(name = "FEE_TAXABLE_FLAG")
-    @AdminPresentation(excluded = true)
-    protected Boolean feeTaxable; 
+    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Taxable", order = 5000)
+    protected Boolean feeTaxable = false; 
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_FG_FEE_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_FEE_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
@@ -84,7 +106,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
     
     @Column(name = "TOTAL_FEE_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Total_Fee_Tax", order=9, group = "FulfillmentGroupFeeImpl_Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Total_Fee_Tax", order=4000, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
     @Override
@@ -168,6 +190,11 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     }
 
     @Override
+    public String getCurrencyCode() {
+        return ((CurrencyCodeIdentifiable) fulfillmentGroup).getCurrencyCode();
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -229,4 +256,5 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
         }
         return true;
     }
+
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -52,6 +52,9 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
     protected String addressLine2;
 
     @XmlElement
+    protected String addressLine3;
+
+    @XmlElement
     protected String city;
 
     @XmlElement
@@ -64,10 +67,13 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
     protected String postalCode;
 
     @XmlElement
-    protected String primaryPhone;
+    protected PhoneWrapper phonePrimary;
 
     @XmlElement
-    protected String secondaryPhone;
+    protected PhoneWrapper phoneSecondary;
+
+    @XmlElement
+    protected PhoneWrapper phoneFax;
 
     @XmlElement
     protected String companyName;
@@ -80,29 +86,53 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
 
 
     @Override
-    public void wrap(Address model, HttpServletRequest request) {
+    public void wrapDetails(Address model, HttpServletRequest request) {
         this.id = model.getId();
         this.firstName = model.getFirstName();
         this.lastName = model.getLastName();
         this.addressLine1 = model.getAddressLine1();
         this.addressLine2 = model.getAddressLine2();
+        this.addressLine3 = model.getAddressLine3();
         this.city = model.getCity();
-
-        StateWrapper stateWrapper = (StateWrapper) context.getBean(StateWrapper.class.getName());
-        stateWrapper.wrap(model.getState(), request);
-        this.state = stateWrapper;
-
-        CountryWrapper countryWrapper = (CountryWrapper) context.getBean(CountryWrapper.class.getName());
-        countryWrapper.wrap(model.getCountry(), request);
-        this.country = countryWrapper;
-
         this.postalCode = model.getPostalCode();
-        this.primaryPhone = model.getPrimaryPhone();
-        this.secondaryPhone = model.getSecondaryPhone();
         this.companyName = model.getCompanyName();
         this.isBusiness = model.isBusiness();
         this.isDefault = model.isDefault();
 
+        if (model.getState() != null) {
+            StateWrapper stateWrapper = (StateWrapper) context.getBean(StateWrapper.class.getName());
+            stateWrapper.wrapDetails(model.getState(), request);
+            this.state = stateWrapper;
+        }
+
+        if (model.getCountry() != null) {
+            CountryWrapper countryWrapper = (CountryWrapper) context.getBean(CountryWrapper.class.getName());
+            countryWrapper.wrapDetails(model.getCountry(), request);
+            this.country = countryWrapper;
+        }
+
+        if (model.getPhonePrimary() != null) {
+            PhoneWrapper primaryWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
+            primaryWrapper.wrapDetails(model.getPhonePrimary(), request);
+            this.phonePrimary = primaryWrapper;
+        }
+
+        if (model.getPhoneSecondary() != null) {
+            PhoneWrapper secondaryWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
+            secondaryWrapper.wrapDetails(model.getPhoneSecondary(), request);
+            this.phoneSecondary = secondaryWrapper;
+        }
+
+        if (model.getPhoneFax() != null) {
+            PhoneWrapper faxWrapper = (PhoneWrapper) context.getBean(PhoneWrapper.class.getName());
+            faxWrapper.wrapDetails(model.getPhoneFax(), request);
+            this.phoneFax = faxWrapper;
+        }
+    }
+
+    @Override
+    public void wrapSummary(Address model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 
     @Override
@@ -115,7 +145,18 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
         address.setLastName(this.lastName);
         address.setAddressLine1(this.addressLine1);
         address.setAddressLine2(this.addressLine2);
+        address.setAddressLine3(this.addressLine3);
         address.setCity(this.city);
+        address.setPostalCode(this.postalCode);
+        address.setCompanyName(this.companyName);
+
+        if (this.isBusiness != null) {
+            address.setBusiness(this.isBusiness);
+        }
+
+        if (this.isDefault != null) {
+            address.setDefault(this.isDefault);
+        }
 
         if (this.state != null) {
             address.setState(this.state.unwrap(request, appContext));
@@ -125,12 +166,17 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
             address.setCountry(this.country.unwrap(request, appContext));
         }
 
-        address.setPostalCode(this.postalCode);
-        address.setPrimaryPhone(this.primaryPhone);
-        address.setSecondaryPhone(this.secondaryPhone);
-        address.setCompanyName(this.companyName);
-        address.setBusiness(this.isBusiness);
-        address.setDefault(this.isDefault);
+        if (this.phonePrimary != null) {
+            address.setPhonePrimary(this.phonePrimary.unwrap(request, appContext));
+        }
+
+        if (this.phoneSecondary != null) {
+            address.setPhoneSecondary(this.phoneSecondary.unwrap(request, appContext));
+        }
+
+        if (this.phoneFax != null) {
+            address.setPhoneFax(this.phoneFax.unwrap(request, appContext));
+        }
 
         return address;
     }

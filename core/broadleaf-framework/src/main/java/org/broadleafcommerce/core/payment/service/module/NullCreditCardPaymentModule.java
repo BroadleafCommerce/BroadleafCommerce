@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,11 +18,9 @@ package org.broadleafcommerce.core.payment.service.module;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.CreditCardValidator;
-import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl;
 import org.broadleafcommerce.core.payment.service.PaymentContext;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoAdditionalFieldType;
@@ -32,121 +30,138 @@ import org.joda.time.DateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The following methods simulates a PaymentModule by overriding the process methods of the PaymentModule.
+ *
+ * This NullCreditCardModule will:
+ *      validate a credit card number against the Apache Commons CreditCardValidator.
+ *      validate the expiration date.
+ *      validate that the cvv != "000" in order to demonstrate a PaymentException.
+ *      set the TransactionSuccess to false on the PaymentResponseItem if any of the conditions above are invalid.
+ *      creates a PaymentInfoDetail logging the transaction and puts it on the PaymentInfo
+ *
+ * This does NOT integrate with any Payment Gateway and should not be used in any production environment.
+ * This class is for demonstration purposes only.
+ *
+ */
 public class NullCreditCardPaymentModule extends AbstractModule {
 
     @Override
-    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
-        throw new PaymentException("authorize not implemented.");
+    public PaymentResponseItem processAuthorize(PaymentContext paymentContext, Money amountToAuthorize, PaymentResponseItem responseItem) throws PaymentException {
+        Map<String, String> additionalFields = validateNullCreditCard(paymentContext);
+        responseItem.setTransactionSuccess(additionalFields != null);
+        if (responseItem.getTransactionSuccess()) {
+            findPaymentInfoFromContext(paymentContext).setAdditionalFields(additionalFields);
+        } else {
+            throw new PaymentException("Problem processing Credit Card.");
+        }
+        return responseItem;
     }
 
     @Override
-    public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
-        throw new PaymentException("reverse authorize not implemented.");
+    public PaymentResponseItem processReverseAuthorize(PaymentContext paymentContext, Money amountToReverseAuthorize, PaymentResponseItem responseItem) throws PaymentException {
+        Map<String, String> additionalFields = validateNullCreditCard(paymentContext);
+        findPaymentInfoFromContext(paymentContext).setAdditionalFields(additionalFields);
+        return responseItem;
     }
 
-    /**
-     * The following method:
-     * validates a credit card number against the Apache Commons CreditCardValidator.
-     * validates the expiration date.
-     * validates that the cvv != "000" in order to demonstrate a PaymentException
-     *
-     * This method will set the TransactionSuccess to false on the PaymentResponseItem
-     * if any of the conditions above are invalid.
-     *
-     * This does NOT integrate with any Payment Gateway and should not be used in any production environment.
-     * This class is for demonstration purposes only.
-     *
-     * @param paymentContext - the payment context injected from the workflow (see: blAuthorizeAndDebitWorkflow in bl-framework-applicationContext-workflow.xml)
-     * @return PaymentResponseItem - the response item
-     */
     @Override
-    public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
-        //Note that you cannot perform operations on paymentContext.getPaymentInfo() directly because that is a copy of the actual payment on the order.
-        //In order to persist custom attributes to the credit card payment info on the order we must look it up first.
-        PaymentInfo paymentInfo = null;
-        for (PaymentInfo pi : paymentContext.getPaymentInfo().getOrder().getPaymentInfos()) {
-            if (PaymentInfoType.CREDIT_CARD.equals(pi.getType())) {
-                paymentInfo = pi;
-            }
+    public PaymentResponseItem processAuthorizeAndDebit(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
+        PaymentResponseItem authorizeResponseItem = authorize(paymentContext);
+        if (authorizeResponseItem.getTransactionSuccess()) {
+            return debit(paymentContext);
+        } else {
+            throw new PaymentException("Problem processing Credit Card.");
         }
+    }
 
-        if (paymentInfo == null) {
-            throw new PaymentException("PaymentInfo of type CREDIT_CARD must be on the order");
+    @Override
+    public PaymentResponseItem processDebit(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
+        responseItem.setTransactionSuccess(true);
+        Map<String, String> additionalFields = validateNullCreditCard(paymentContext);
+        findPaymentInfoFromContext(paymentContext).setAdditionalFields(additionalFields);
+        return responseItem;
+    }
+
+    @Override
+    public PaymentResponseItem processCredit(PaymentContext paymentContext, Money amountToCredit, PaymentResponseItem responseItem) throws PaymentException {
+        responseItem.setTransactionSuccess(true);
+        Map<String, String> additionalFields = validateNullCreditCard(paymentContext);
+        findPaymentInfoFromContext(paymentContext).setAdditionalFields(additionalFields);
+        return responseItem;
+    }
+
+    @Override
+    public PaymentResponseItem processVoidPayment(PaymentContext paymentContext, Money amountToVoid, PaymentResponseItem responseItem) throws PaymentException {
+        if (amountToVoid.greaterThan(Money.ZERO)){
+            return credit(paymentContext);
+        } else {
+            return reverseAuthorize(paymentContext);
         }
+    }
 
+    @Override
+    public PaymentResponseItem processBalance(PaymentContext paymentContext, PaymentResponseItem responseItem) throws PaymentException {
+        throw new PaymentException("balance not implemented.");
+    }
+
+    @Override
+    public PaymentResponseItem processPartialPayment(PaymentContext paymentContext, Money amountToDebit, PaymentResponseItem responseItem) throws PaymentException {
+        throw new PaymentException("partial payment not implemented.");
+    }
+
+    @Override
+    public Boolean isValidCandidate(PaymentInfoType paymentType) {
+        return PaymentInfoType.CREDIT_CARD.equals(paymentType);
+    }
+
+    protected String validateCardType(String ccNumber){
+        CreditCardValidator visaValidator = new CreditCardValidator(CreditCardValidator.VISA);
+        CreditCardValidator amexValidator = new CreditCardValidator(CreditCardValidator.AMEX);
+        CreditCardValidator mcValidator = new CreditCardValidator(CreditCardValidator.MASTERCARD);
+        CreditCardValidator discoverValidator = new CreditCardValidator(CreditCardValidator.DISCOVER);
+
+        if (visaValidator.isValid(ccNumber)){
+            return "VISA";
+        } else if (amexValidator.isValid(ccNumber)) {
+            return "AMEX";
+        } else if (mcValidator.isValid(ccNumber)) {
+            return "MASTERCARD";
+        } else if (discoverValidator.isValid(ccNumber)) {
+            return "DISCOVER";
+        }
+        return "UNKNOWN";
+    }
+
+    protected Map<String, String> validateNullCreditCard(PaymentContext paymentContext){
         CreditCardPaymentInfo ccInfo = (CreditCardPaymentInfo) paymentContext.getReferencedPaymentInfo();
+        if ((ccInfo == null) || (ccInfo.getPan() == null)) {
+            return null;
+        }
         String nameOnCard = ccInfo.getNameOnCard();
         String ccNumber = ccInfo.getPan().replaceAll("[\\s-]+", "");
         Integer expMonth = ccInfo.getExpirationMonth();
         Integer expYear = ccInfo.getExpirationYear();
         String cvv = ccInfo.getCvvCode();
 
-        CreditCardValidator visaValidator = new CreditCardValidator(CreditCardValidator.VISA);
-        CreditCardValidator amexValidator = new CreditCardValidator(CreditCardValidator.AMEX);
-        CreditCardValidator mcValidator = new CreditCardValidator(CreditCardValidator.MASTERCARD);
-        CreditCardValidator discoverValidator = new CreditCardValidator(CreditCardValidator.DISCOVER);
-
-        boolean validCard = false;
-        String cardType = "UNKNOWN";
-        if (visaValidator.isValid(ccNumber)){
-            validCard = true;
-            cardType = "VISA";
-        } else if (amexValidator.isValid(ccNumber)) {
-            validCard = true;
-            cardType = "AMEX";
-        } else if (mcValidator.isValid(ccNumber)) {
-            validCard = true;
-            cardType = "MASTERCARD";
-        } else if (discoverValidator.isValid(ccNumber)) {
-            validCard = true;
-            cardType = "DISCOVER";
-        }
+        String cardType = validateCardType(ccNumber);
+        boolean validCard = !cardType.contains("UNKNOWN");
 
         DateTime expirationDate = new DateTime(expYear, expMonth, 1, 0, 0);
         boolean validDate = expirationDate.isAfterNow();
 
-        boolean validCVV = !cvv.equals("000");
+        boolean validCVV = !"000".equals(cvv);
 
-        PaymentResponseItem responseItem = new PaymentResponseItemImpl();
-        responseItem.setTransactionTimestamp(SystemTime.asDate());
-        responseItem.setTransactionSuccess(validDate && validCard && validCVV);
-        responseItem.setAmountPaid(paymentInfo.getAmount());
-        responseItem.setCurrency(paymentInfo.getOrder().getCurrency());
-        if (responseItem.getTransactionSuccess()) {
+        if (validDate && validCard && validCVV){
             Map<String, String> additionalFields = new HashMap<String, String>();
             additionalFields.put(PaymentInfoAdditionalFieldType.NAME_ON_CARD.getType(), nameOnCard);
             additionalFields.put(PaymentInfoAdditionalFieldType.CARD_TYPE.getType(), cardType);
             additionalFields.put(PaymentInfoAdditionalFieldType.EXP_MONTH.getType(), expMonth+"");
             additionalFields.put(PaymentInfoAdditionalFieldType.EXP_YEAR.getType(), expYear+"");
             additionalFields.put(PaymentInfoAdditionalFieldType.LAST_FOUR.getType(), StringUtils.right(ccNumber, 4));
-            paymentInfo.setAdditionalFields(additionalFields);
+            return additionalFields;
+        } else {
+            return null;
         }
-
-        return responseItem;
-    }
-
-    @Override
-    public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
-        throw new PaymentException("debit not implemented.");
-    }
-
-    @Override
-    public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
-        throw new PaymentException("credit not implemented.");
-    }
-
-    @Override
-    public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
-        throw new PaymentException("voidPayment not implemented.");
-    }
-
-    @Override
-    public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
-        throw new PaymentException("balance not implemented.");
-    }
-
-    @Override
-    public Boolean isValidCandidate(PaymentInfoType paymentType) {
-        return PaymentInfoType.CREDIT_CARD.equals(paymentType);
     }
 }

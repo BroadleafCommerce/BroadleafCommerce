@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,18 +22,18 @@ import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 /**
  * Created by bpolster.
@@ -48,8 +48,15 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "StaticAssetDescriptionId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "StaticAssetDescriptionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StaticAssetDescriptionId", allocationSize = 10)
+    @GeneratedValue(generator = "StaticAssetDescriptionId")
+    @GenericGenerator(
+        name="StaticAssetDescriptionId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="StaticAssetDescriptionImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.file.domain.StaticAssetDescriptionImpl")
+        }
+    )
     @Column(name = "STATIC_ASSET_DESC_ID")
     protected Long id;
 
@@ -104,10 +111,12 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
         return newAssetDescription;
     }
 
+    @Override
     public AdminAuditable getAuditable() {
         return auditable;
     }
 
+    @Override
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
     }

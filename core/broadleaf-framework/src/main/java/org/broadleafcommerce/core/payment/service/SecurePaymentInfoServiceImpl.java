@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.payment.dao.SecurePaymentInfoDao;
 import org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
@@ -26,6 +24,8 @@ import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * Acquisition of Primary Account Number (PAN) and other sensitive information

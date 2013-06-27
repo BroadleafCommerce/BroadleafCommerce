@@ -2,32 +2,33 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
-            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 
-    <bean id="adminUrlMapping" class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredHandler">
-        <property name="mappings">
-            <map>
-                <entry key="/**/security.service" value-ref="blAdminSecurityRemoteService"/>
-                <entry key="/**/dynamic.entity.service" value-ref="blDynamicEntityRemoteService"/>
-                <entry key="/**/upload.progress.service" value-ref="blUploadRemoteService"/>
-                <entry key="/**/utility.service" value-ref="blUtilityRemoteService"/>
-                <entry key="/**/app.configuration.service" value-ref="blAppConfigurationRemoteService"/>
-                <entry key="/**/blc_gwt_logging" value-ref="blLog4JRemoteGwtLoggingService"/>
-                <entry key="/**/admin.catalog.service" value-ref="blAdminCatalogRemoteService"/>
-                <entry key="/**/admin.export.service" value-ref="blAdminExporterRemoteService"/>
-            </map>
-        </property>
-        <property name="serviceExporterFactory">
-            <bean class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredRPCServiceExporterFactory"/>
-        </property>
-    </bean>
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-    <aop:config/>
+    <context:component-scan base-package="org.broadleafcommerce.admin.web.controller" />
 
-    <mvc:annotation-driven/>
+<!--     <bean id="adminUrlMapping" class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredHandler"> -->
+<!--         <property name="mappings"> -->
+<!--             <map> -->
+<!--                 <entry key="/**/security.service" value-ref="blAdminSecurityRemoteService"/> -->
+<!--                 <entry key="/**/dynamic.entity.service" value-ref="blDynamicEntityRemoteService"/> -->
+<!--                 <entry key="/**/upload.progress.service" value-ref="blUploadRemoteService"/> -->
+<!--                 <entry key="/**/utility.service" value-ref="blUtilityRemoteService"/> -->
+<!--                 <entry key="/**/app.configuration.service" value-ref="blAppConfigurationRemoteService"/> -->
+<!--                 <entry key="/**/blc_gwt_logging" value-ref="blLog4JRemoteGwtLoggingService"/> -->
+<!--                 <entry key="/**/admin.catalog.service" value-ref="blAdminCatalogRemoteService"/> -->
+<!--                 <entry key="/**/admin.export.service" value-ref="blAdminExporterRemoteService"/> -->
+<!--             </map> -->
+<!--         </property> -->
+<!--         <property name="serviceExporterFactory"> -->
+<!--             <bean class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredRPCServiceExporterFactory"/> -->
+<!--         </property> -->
+<!--     </bean> -->
+
+<!--     <aop:config/> -->
+
+<!--     <mvc:annotation-driven/> -->
 
 </beans>

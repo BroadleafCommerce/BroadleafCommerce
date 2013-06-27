@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,21 +16,21 @@
 
 package org.broadleafcommerce.core.rating.domain;
 
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -38,8 +38,15 @@ import org.hibernate.annotations.Index;
 public class ReviewFeedbackImpl implements ReviewFeedback {
 
     @Id
-    @GeneratedValue(generator = "ReviewFeedbackId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "ReviewFeedbackId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ReviewFeedbackImpl", allocationSize = 50)
+    @GeneratedValue(generator = "ReviewFeedbackId")
+    @GenericGenerator(
+        name="ReviewFeedbackId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="ReviewFeedbackImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.rating.domain.ReviewFeedbackImpl")
+        }
+    )
     @Column(name = "REVIEW_FEEDBACK_ID")
     protected Long id;
 
@@ -49,41 +56,49 @@ public class ReviewFeedbackImpl implements ReviewFeedback {
     protected Customer customer;
 
     @Column(name = "IS_HELPFUL", nullable = false)
-    protected Boolean isHelpful;
+    protected Boolean isHelpful = false;
 
     @ManyToOne(optional = false, targetEntity = ReviewDetailImpl.class)
     @JoinColumn(name = "REVIEW_DETAIL_ID")
     @Index(name="REVIEWFEED_DETAIL_INDEX", columnNames={"REVIEW_DETAIL_ID"})
     protected ReviewDetail reviewDetail;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public Customer getCustomer() {
         return customer;
     }
 
+    @Override
     public ReviewDetail getReviewDetail() {
         return reviewDetail;
     }
 
+    @Override
     public Boolean getIsHelpful() {
         return isHelpful;
     }
 
+    @Override
     public void setIsHelpful(Boolean isHelpful) {
         this.isHelpful = isHelpful;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
+    @Override
     public void setReviewDetail(ReviewDetail reviewDetail) {
         this.reviewDetail = reviewDetail;
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
     <bean id="org.broadleafcommerce.common.email.domain.EmailTracking" class="org.broadleafcommerce.common.email.domain.EmailTrackingImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl" scope="prototype"/>
@@ -10,5 +10,6 @@
     <bean id="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration" class="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue" class="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.config.domain.SystemProperty" class="org.broadleafcommerce.common.config.domain.SystemPropertyImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.i18n.domain.Translation" class="org.broadleafcommerce.common.i18n.domain.TranslationImpl" scope="prototype" />
 
 </beans>

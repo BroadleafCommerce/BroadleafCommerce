@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,33 +16,34 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.client.dto.Property;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+
+import java.util.Map;
+
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * @author Jeff Fischer
  */
 public class StructuredContentItemCriteriaCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private Log LOG = LogFactory.getLog(StructuredContentItemCriteriaCustomPersistenceHandler.class);
+    private final Log LOG = LogFactory.getLog(StructuredContentItemCriteriaCustomPersistenceHandler.class);
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
@@ -86,7 +87,6 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
 
             return adminEntity;
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
         }
     }
@@ -114,9 +114,9 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
                     checkCriteria: {
                         StructuredContent myContent = scQuery.getSingleResult();
                         for (StructuredContentItemCriteria itemCriteria : myContent.getQualifyingItemCriteria()) {
-                            if (itemCriteria.getOrderItemMatchRule().equals(adminInstance.getOrderItemMatchRule()) && itemCriteria.getQuantity().equals(adminInstance.getQuantity())) {
+                            if (itemCriteria.getMatchRule().equals(adminInstance.getMatchRule()) && itemCriteria.getQuantity().equals(adminInstance.getQuantity())) {
                                 //manually set the values - otherwise unwanted properties will be set
-                                itemCriteria.setOrderItemMatchRule(entity.findProperty("orderItemMatchRule").getValue());
+                                itemCriteria.setMatchRule(entity.findProperty("orderItemMatchRule").getValue());
                                 itemCriteria.setQuantity(Integer.parseInt(entity.findProperty("quantity").getValue()));
                                 adminInstance = itemCriteria;
                                 break checkCriteria;
@@ -135,7 +135,6 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
 
             return adminEntity;
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
         }
     }
@@ -162,7 +161,7 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
                 try {
                     StructuredContent myContent = scQuery.getSingleResult();
                     for (StructuredContentItemCriteria itemCriteria : myContent.getQualifyingItemCriteria()) {
-                        if (itemCriteria.getOrderItemMatchRule().equals(adminInstance.getOrderItemMatchRule()) && itemCriteria.getQuantity().equals(adminInstance.getQuantity())) {
+                        if (itemCriteria.getMatchRule().equals(adminInstance.getMatchRule()) && itemCriteria.getQuantity().equals(adminInstance.getQuantity())) {
                             myContent.getQualifyingItemCriteria().remove(itemCriteria);
                             return;
                         }
@@ -175,7 +174,6 @@ public class StructuredContentItemCriteriaCustomPersistenceHandler extends Custo
 
             dynamicEntityDao.remove(adminInstance);
         } catch (Exception e) {
-            LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
         }
     }

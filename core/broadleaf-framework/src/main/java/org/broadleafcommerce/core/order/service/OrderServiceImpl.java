@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package org.broadleafcommerce.core.order.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
@@ -30,6 +32,7 @@ import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
@@ -52,7 +55,6 @@ import org.hibernate.exception.LockAcquisitionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -60,9 +62,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author apazzolini
@@ -106,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
     protected MergeCartService mergeCartService;
     
     @Resource(name = "blOrderServiceExtensionManager")
-    protected OrderServiceExtensionListener extensionManager;
+    protected OrderServiceExtensionManager extensionManager;
     
     /* Workflows */
     @Resource(name = "blAddItemWorkflow")
@@ -130,7 +134,9 @@ public class OrderServiceImpl implements OrderService {
     /* Fields */
     protected boolean moveNamedOrderItems = true;
     protected boolean deleteEmptyNamedOrders = true;
-    protected boolean automaticallyMergeLikeItems = true;
+
+    @Value("${automatically.merge.like.items}")
+    protected boolean automaticallyMergeLikeItems;
 
     @Override
     @Transactional("blTransactionManager")
@@ -147,7 +153,7 @@ public class OrderServiceImpl implements OrderService {
         namedOrder.setStatus(OrderStatus.NAMED);
         
         if (extensionManager != null) {
-            extensionManager.attachAdditionalDataToNewNamedCart(customer, namedOrder);
+            extensionManager.getProxy().attachAdditionalDataToNewNamedCart(customer, namedOrder);
         }
         
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
@@ -496,6 +502,32 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {AddToCartException.class})
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
+        // Don't allow overrides from this method.
+        orderItemRequestDTO.setOverrideRetailPrice(null);
+        orderItemRequestDTO.setOverrideSalePrice(null);
+        return addItemWithPriceOverrides(orderId, orderItemRequestDTO, priceOrder);
+    }
+
+    @Override
+    @Transactional(value = "blTransactionManager", rollbackFor = { AddToCartException.class })
+    public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
+
+
+        Order order = findOrderById(orderId);
+        if (automaticallyMergeLikeItems) {
+            OrderItem item = findMatchingItem(order, orderItemRequestDTO);
+            if (item != null) {
+                orderItemRequestDTO.setQuantity(item.getQuantity() + orderItemRequestDTO.getQuantity());
+                orderItemRequestDTO.setOrderItemId(item.getId());
+                try {
+                    return updateItemQuantity(orderId, orderItemRequestDTO, priceOrder);
+                } catch (RemoveFromCartException e) {
+                    throw new AddToCartException("Unexpected error - system tried to remove item while adding to cart", e);
+                } catch (UpdateCartException e) {
+                    throw new AddToCartException("Could not update quantity for matched item", e);
+                }
+            }
+        }
         try {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
             CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
@@ -503,6 +535,7 @@ public class OrderServiceImpl implements OrderService {
         } catch (WorkflowException e) {
             throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
         }
+
     }
 
     @Override
@@ -536,15 +569,30 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(value = "blTransactionManager", rollbackFor = { RemoveFromCartException.class })
+    public Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException {
+        Order order = findOrderById(orderId);
+        try {
+
+            for (OrderItem currentItem : new ArrayList<OrderItem>(order.getOrderItems())) {
+                if (!currentItem.isSkuActive()) {
+                    removeItem(orderId, currentItem.getId(), priceOrder);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RemoveFromCartException("Could not remove from cart", e.getCause());
+        }
+        return findOrderById(orderId);
+    }
+
+    @Override
     public boolean getAutomaticallyMergeLikeItems() {
         return automaticallyMergeLikeItems;
     }
 
     @Override
     public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems) {
-        if (!automaticallyMergeLikeItems) {
-            throw new UnsupportedOperationException("At this time, OrderService only supports merging like items in the cart");
-        }
         this.automaticallyMergeLikeItems = automaticallyMergeLikeItems;
     }
     
@@ -594,6 +642,28 @@ public class OrderServiceImpl implements OrderService {
             paymentInfoDao.delete(paymentInfo);
         }
     }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public void removePaymentFromOrder(Order order, PaymentInfo paymentInfo){
+        PaymentInfo paymentInfoToRemove = null;
+        for(PaymentInfo info : order.getPaymentInfos()){
+            if(info.equals(paymentInfo)){
+                paymentInfoToRemove = info;
+            }
+        }
+        if(paymentInfoToRemove != null){
+            try {
+                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfoToRemove.getReferenceNumber(), paymentInfo.getType());
+            } catch (WorkflowException e) {
+                // do nothing--this is an acceptable condition
+                LOG.debug("No secure payment is associated with the PaymentInfo", e);
+            }
+            order.getPaymentInfos().remove(paymentInfoToRemove);
+            paymentInfo = paymentInfoDao.readPaymentInfoById(paymentInfoToRemove.getId());
+            paymentInfoDao.delete(paymentInfo);
+        }
+    }
     
     /**
      * This method will return the exception that is immediately below the deepest 
@@ -617,5 +687,67 @@ public class OrderServiceImpl implements OrderService {
         }
         
         return cause;
+    }
+
+    /**
+     * Returns true if the two items attributes exactly match.
+     * @param item1
+     * @param item2
+     * @return
+     */
+    protected boolean compareAttributes(Map<String, OrderItemAttribute> item1Attributes, OrderItemRequestDTO item2) {
+        int item1AttributeSize = item1Attributes == null ? 0 : item1Attributes.size();
+        int item2AttributeSize = item2.getItemAttributes() == null ? 0 : item2.getItemAttributes().size();
+
+        if (item1AttributeSize != item2AttributeSize) {
+            return false;
+        }
+
+        for (String key : item2.getItemAttributes().keySet()) {
+            String itemOneValue = (item1Attributes.get(key) == null) ? null : item1Attributes.get(key).getValue();
+            String itemTwoValue = item2.getItemAttributes().get(key);
+            if (!itemTwoValue.equals(itemOneValue)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected boolean itemMatches(Sku item1Sku, Product item1Product, Map<String, OrderItemAttribute> item1Attributes,
+            OrderItemRequestDTO item2) {
+        // Must match on SKU and options
+        if (item1Sku != null && item2.getSkuId() != null) {
+            if (item1Sku.getId().equals(item2.getSkuId())) {
+                return true;
+            }
+        } else {
+            if (item1Product != null && item2.getProductId() != null) {
+                if (item1Product.getId().equals(item2.getProductId())) {
+                    return compareAttributes(item1Attributes, item2);
+                }
+            }
+        }
+        return false;
+    }
+
+    protected OrderItem findMatchingItem(Order order, OrderItemRequestDTO itemToFind) {
+        if (order == null) {
+            return null;
+        }
+        for (OrderItem currentItem : order.getOrderItems()) {
+            if (currentItem instanceof DiscreteOrderItem) {
+                DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
+                if (itemMatches(discreteItem.getSku(), discreteItem.getProduct(), discreteItem.getOrderItemAttributes(),
+                        itemToFind)) {
+                    return discreteItem;
+                }
+            } else if (currentItem instanceof BundleOrderItem) {
+                BundleOrderItem bundleItem = (BundleOrderItem) currentItem;
+                if (itemMatches(bundleItem.getSku(), bundleItem.getProduct(), null, itemToFind)) {
+                    return bundleItem;
+                }
+            }
+        }
+        return null;
     }
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.core.payment.service.workflow;
 
-import java.util.Map;
-
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.module.PaymentResponse;
-import org.broadleafcommerce.common.money.Money;
+
+import java.util.Map;
 
 public class CombinedPaymentContextSeed {
 
@@ -29,12 +29,21 @@ public class CombinedPaymentContextSeed {
     private PaymentActionType actionType;
     private Money orderTotal;
     private PaymentResponse paymentResponse;
-
+    private Money transactionAmount;
+    
     public CombinedPaymentContextSeed(Map<PaymentInfo, Referenced> infos, PaymentActionType actionType, Money orderTotal, PaymentResponse paymentResponse) {
         this.infos = infos;
         this.actionType = actionType;
         this.orderTotal = orderTotal;
         this.paymentResponse = paymentResponse;
+    }
+
+    public CombinedPaymentContextSeed(Map<PaymentInfo, Referenced> infos, PaymentActionType actionType, Money orderTotal, PaymentResponse paymentResponse, Money transactionAmount) {
+        this.infos = infos;
+        this.actionType = actionType;
+        this.orderTotal = orderTotal;
+        this.paymentResponse = paymentResponse;
+        this.transactionAmount = transactionAmount;
     }
 
     public Map<PaymentInfo, Referenced> getInfos() {
@@ -51,6 +60,10 @@ public class CombinedPaymentContextSeed {
 
     public PaymentResponse getPaymentResponse() {
         return paymentResponse;
+    }
+
+    public Money getTransactionAmount() {
+        return transactionAmount;
     }
 
 }

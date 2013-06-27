@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,38 +20,57 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BUND_ITEM_FEE_PRICE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+@AdminPresentationMergeOverrides(
+    {
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                                            booleanOverrideValue = true))
+    }
+)
 public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
 
     public static final Log LOG = LogFactory.getLog(BundleOrderItemFeePriceImpl.class);
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "BundleOrderItemFeePriceId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "BundleOrderItemFeePriceId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "BundleOrderItemFeePriceImpl", allocationSize = 50)
+    @GeneratedValue(generator = "BundleOrderItemFeePriceId")
+    @GenericGenerator(
+        name="BundleOrderItemFeePriceId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="BundleOrderItemFeePriceImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.BundleOrderItemFeePriceImpl")
+        }
+    )
     @Column(name = "BUND_ITEM_FEE_PRICE_ID")
     protected Long id;
 
@@ -60,15 +79,19 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
     protected BundleOrderItem bundleOrderItem;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Amount", order=2, prominent=true)
     protected BigDecimal amount;
 
     @Column(name = "NAME")
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Name", order=1, prominent=true)
     private String name;
 
     @Column(name = "REPORTING_CODE")
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Reporting_Code", order=3, prominent=true)
     private String reportingCode;
 
     @Column(name = "IS_TAXABLE")
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Taxable", order=4)
     private Boolean isTaxable = Boolean.FALSE;
 
     @Override

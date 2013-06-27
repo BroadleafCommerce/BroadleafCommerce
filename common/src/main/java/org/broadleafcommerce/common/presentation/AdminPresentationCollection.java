@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -125,27 +125,25 @@ public @interface AdminPresentationCollection {
     int order() default 99999;
 
     /**
-     * <p>Optional - only required if you want the resulting collection grid element to
-     * appear somewhere other than below the main detail form</p>
-     *
-     * <p>Specify a UI element Id to which the collection grid should be added. This is useful
-     * if, for example, you want the resulting collection grid to appear in another tab, or
-     * some other location in the admin tool UI.</p>
-     *
-     * @return UI element Id to which the collection grid should be added
+     * Optional - only required if you want the field to appear under a different tab
+     * 
+     * Specify a GUI tab for this field
+     * 
+     * @return the tab for this field
      */
-    String targetUIElementId() default "";
+    String tab() default "General";
 
     /**
-     * <p>Optional - unique name for the backing datasource. If unspecified, the datasource
-     * name will be the JPA entity field name with "AdvancedCollectionDS" appended to the end.</p>
-     *
-     * <p>The datasource can be retrieved programatically in admin code via
-     * PresenterSequenceSetupManager.getDataSource(..)</p>
-     *
-     * @return unique name for the backing datasource
+     * Optional - only required if you want to order the appearance of the tabs in the UI
+     * 
+     * Specify an order for this tab. Tabs will be sorted int he resulting form in 
+     * ascending order based on this parameter.
+     * 
+     * The default tab will render with an order of 100.
+     * 
+     * @return the order for this tab
      */
-    String dataSourceName() default "";
+    int tabOrder() default 100;
 
     /**
      * <p>Optional - only required if you need to specially handle crud operations for this

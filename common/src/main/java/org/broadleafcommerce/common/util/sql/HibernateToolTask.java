@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,17 +16,7 @@
 
 package org.broadleafcommerce.common.util.sql;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -37,7 +27,17 @@ import org.broadleafcommerce.common.extensibility.context.StandardConfigLocation
 import org.broadleafcommerce.common.extensibility.jpa.ConfigurationOnlyState;
 import org.hibernate.MappingNotFoundException;
 import org.hibernate.tool.ant.ConfigurationTask;
-import org.hibernate.util.StringHelper;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * This is a re-worked version from Hibernate tools
@@ -51,15 +51,14 @@ public class HibernateToolTask extends Task {
         super();
     }
     @SuppressWarnings("rawtypes")
-    private List configurationTasks = new ArrayList();
-    private File destDir;
+    protected List configurationTasks = new ArrayList();
+    protected File destDir;
     @SuppressWarnings("rawtypes")
-    private List generators = new ArrayList();
-    private List<ClassPathApplicationContextTask> classPathApplicationContexts = new ArrayList<ClassPathApplicationContextTask>();
-    private List<FileSystemApplicationContextTask> fileSystemApplicationContexts = new ArrayList<FileSystemApplicationContextTask>();
-    private Path classPath;
-    private boolean combinePersistenceUnits = true;
-    private boolean refineFileNames = true;
+    protected List generators = new ArrayList();
+    protected List<Task> appContexts = new ArrayList<Task>();
+    protected Path classPath;
+    protected boolean combinePersistenceUnits = true;
+    protected boolean refineFileNames = true;
     
     public ExporterTask createHbm2DDL() {
         ExporterTask generator = new Hbm2DDLExporterTask(this);
@@ -69,13 +68,13 @@ public class HibernateToolTask extends Task {
     
     public ClassPathApplicationContextTask createClassPathApplicationContext() {
         ClassPathApplicationContextTask task = new ClassPathApplicationContextTask();
-        classPathApplicationContexts.add(task);
+        appContexts.add(task);
         return task;
     }
     
     public FileSystemApplicationContextTask createFileSystemApplicationContext() {
         FileSystemApplicationContextTask task = new FileSystemApplicationContextTask();
-        fileSystemApplicationContexts.add(task);
+        appContexts.add(task);
         return task;
     }
     
@@ -115,6 +114,7 @@ public class HibernateToolTask extends Task {
         return classPath;
     }
 
+    @Override
     public void execute() {
         AntClassLoader loader;
         MergeFileSystemAndClassPathXMLApplicationContext mergeContext;
@@ -129,17 +129,18 @@ public class HibernateToolTask extends Task {
             loader.setThreadContextLoader();
             // launch the service merge application context to get the entity configuration for the entire framework
             String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
-            String[] otherContexts = new String[classPathApplicationContexts.size()];
-            for (int j=0;j<otherContexts.length;j++) {
-                otherContexts[j] = classPathApplicationContexts.get(j).getPath();
+            LinkedHashMap<String, MergeFileSystemAndClassPathXMLApplicationContext.ResourceType> locations = new LinkedHashMap<String, MergeFileSystemAndClassPathXMLApplicationContext.ResourceType>();
+            for (String context : contexts) {
+                locations.put(context, MergeFileSystemAndClassPathXMLApplicationContext.ResourceType.CLASSPATH);
             }
-            contexts = (String[]) ArrayUtils.addAll(contexts, otherContexts);
-            
-            String[] fileSystemItems = new String[fileSystemApplicationContexts.size()];
-            for (int j=0;j<fileSystemItems.length;j++) {
-                fileSystemItems[j] = fileSystemApplicationContexts.get(j).getPath();
+            for (Task task : appContexts) {
+                if (task instanceof ClassPathApplicationContextTask) {
+                    locations.put(((ClassPathApplicationContextTask) task).getPath(), MergeFileSystemAndClassPathXMLApplicationContext.ResourceType.CLASSPATH);
+                } else if (task instanceof FileSystemApplicationContextTask) {
+                    locations.put(((FileSystemApplicationContextTask) task).getPath(), MergeFileSystemAndClassPathXMLApplicationContext.ResourceType.FILESYSTEM);
+                }
             }
-            mergeContext = new MergeFileSystemAndClassPathXMLApplicationContext(contexts, fileSystemItems);
+            mergeContext = new MergeFileSystemAndClassPathXMLApplicationContext(locations, null);
         } catch (Exception e) {
             throw new BuildException(e, getLocation());
         } finally {
@@ -253,7 +254,7 @@ public class HibernateToolTask extends Task {
                 cause=cause.getCause();
             }
         }
-        if(StringHelper.isNotEmpty(ex)) {
+        if(StringUtils.isNotEmpty(ex)) {
             log(ex, Project.MSG_ERR);
         }
 
@@ -339,6 +340,7 @@ public class HibernateToolTask extends Task {
     
     private class SqlFileFilter implements FilenameFilter {
 
+        @Override
         public boolean accept(File dir, String name) {
             return name.endsWith(".sql");
         }

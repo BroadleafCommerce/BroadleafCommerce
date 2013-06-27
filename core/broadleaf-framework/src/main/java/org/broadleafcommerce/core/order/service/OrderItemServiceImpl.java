@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,7 +42,6 @@ import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -107,12 +106,22 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setBaseSalePrice(itemRequest.getSalePriceOverride()==null?itemRequest.getSku().getSalePrice():itemRequest.getSalePriceOverride());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
+
+        if (itemRequest.getSalePriceOverride() != null) {
+            item.setSalePriceOverride(Boolean.TRUE);
+            item.setSalePrice(itemRequest.getSalePriceOverride());
+            item.setBaseSalePrice(itemRequest.getSalePriceOverride());
+        }
+
+        if (itemRequest.getRetailPriceOverride() != null) {
+            item.setRetailPriceOverride(Boolean.TRUE);
+            item.setRetailPrice(itemRequest.getRetailPriceOverride());
+            item.setBaseRetailPrice(itemRequest.getRetailPriceOverride());
+        }
+
         for (DiscreteOrderItemFeePrice feePrice : item.getDiscreteOrderItemFeePrices()) {
             feePrice.setDiscreteOrderItem(item);
         }
-
-        item.updatePrices();
-        item.assignFinalPrice();
         
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 
@@ -124,7 +133,9 @@ public class OrderItemServiceImpl implements OrderItemService {
         populateDiscreteOrderItem(item, itemRequest);
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
-        item.updatePrices();
+        // item.updatePrices();
+        item.updateSaleAndRetailPrices();
+
         item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 
@@ -142,13 +153,25 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setBaseSalePrice(prices.getSalePrice());
         item.setSalePrice(prices.getSalePrice());
         item.setRetailPrice(prices.getRetailPrice());
+
+        if (itemRequest.getSalePriceOverride() != null) {
+            item.setSalePriceOverride(Boolean.TRUE);
+            item.setSalePrice(itemRequest.getSalePriceOverride());
+            item.setBaseSalePrice(itemRequest.getSalePriceOverride());
+        }
+
+        if (itemRequest.getRetailPriceOverride() != null) {
+            item.setRetailPriceOverride(Boolean.TRUE);
+            item.setRetailPrice(itemRequest.getRetailPriceOverride());
+            item.setBaseRetailPrice(itemRequest.getRetailPriceOverride());
+        }
+
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
         for (DiscreteOrderItemFeePrice fee : itemRequest.getDiscreteOrderItemFeePrices()) {
             item.setSalePrice(item.getSalePrice().add(fee.getAmount()));
             item.setRetailPrice(item.getRetailPrice().add(fee.getAmount()));
         }
 
-        item.assignFinalPrice();
         item.setPersonalMessage(itemRequest.getPersonalMessage());
 
         return item;
@@ -166,7 +189,21 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setBaseSalePrice(itemRequest.getSku().getSalePrice());
         item.setBaseRetailPrice(itemRequest.getSku().getRetailPrice());
         item.setDiscreteOrderItemFeePrices(itemRequest.getDiscreteOrderItemFeePrices());
-        item.updatePrices();
+
+        if (itemRequest.getSalePriceOverride() != null) {
+            item.setSalePriceOverride(Boolean.TRUE);
+            item.setSalePrice(itemRequest.getSalePriceOverride());
+            item.setBaseSalePrice(itemRequest.getSalePriceOverride());
+        }
+
+        if (itemRequest.getRetailPriceOverride() != null) {
+            item.setRetailPriceOverride(Boolean.TRUE);
+            item.setRetailPrice(itemRequest.getRetailPriceOverride());
+            item.setBaseRetailPrice(itemRequest.getRetailPriceOverride());
+        }
+
+        //item.updatePrices();
+        item.updateSaleAndRetailPrices();
         item.assignFinalPrice();
         item.getWrappedItems().addAll(itemRequest.getWrappedItems());
         for (OrderItem orderItem : item.getWrappedItems()) {
@@ -185,6 +222,18 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setBundleOrderItemFeePrices(itemRequest.getBundleOrderItemFeePrices());
         item.setOrder(itemRequest.getOrder());
 
+        if (itemRequest.getSalePriceOverride() != null) {
+            item.setSalePriceOverride(Boolean.TRUE);
+            item.setSalePrice(itemRequest.getSalePriceOverride());
+            item.setBaseSalePrice(itemRequest.getSalePriceOverride());
+        }
+
+        if (itemRequest.getRetailPriceOverride() != null) {
+            item.setRetailPriceOverride(Boolean.TRUE);
+            item.setRetailPrice(itemRequest.getRetailPriceOverride());
+            item.setBaseRetailPrice(itemRequest.getRetailPriceOverride());
+        }
+
         for (DiscreteOrderItemRequest discreteItemRequest : itemRequest.getDiscreteOrderItems()) {
             discreteItemRequest.setBundleOrderItem(item);
             DiscreteOrderItem discreteOrderItem;
@@ -194,7 +243,6 @@ public class OrderItemServiceImpl implements OrderItemService {
                 discreteOrderItem = createDiscreteOrderItem(discreteItemRequest);
             }
             item.getDiscreteOrderItems().add(discreteOrderItem);
-            item.assignFinalPrice();
         }
 
         return item;
@@ -210,6 +258,18 @@ public class OrderItemServiceImpl implements OrderItemService {
         bundleOrderItem.setName(itemRequest.getName());
         bundleOrderItem.setProductBundle(productBundle);
         bundleOrderItem.setOrder(itemRequest.getOrder());
+
+        if (itemRequest.getSalePriceOverride() != null) {
+            bundleOrderItem.setSalePriceOverride(Boolean.TRUE);
+            bundleOrderItem.setSalePrice(itemRequest.getSalePriceOverride());
+            bundleOrderItem.setBaseSalePrice(itemRequest.getSalePriceOverride());
+        }
+
+        if (itemRequest.getRetailPriceOverride() != null) {
+            bundleOrderItem.setRetailPriceOverride(Boolean.TRUE);
+            bundleOrderItem.setRetailPrice(itemRequest.getRetailPriceOverride());
+            bundleOrderItem.setBaseRetailPrice(itemRequest.getRetailPriceOverride());
+        }
 
         for (SkuBundleItem skuBundleItem : productBundle.getSkuBundleItems()) {
             Product bundleProduct = skuBundleItem.getBundle();
@@ -237,9 +297,6 @@ public class OrderItemServiceImpl implements OrderItemService {
             bundleDiscreteItem.setSkuBundleItem(skuBundleItem);
             bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
         }
-
-        bundleOrderItem.updatePrices();
-        bundleOrderItem.assignFinalPrice();
         
         bundleOrderItem = (BundleOrderItem) saveOrderItem(bundleOrderItem);
         return bundleOrderItem;

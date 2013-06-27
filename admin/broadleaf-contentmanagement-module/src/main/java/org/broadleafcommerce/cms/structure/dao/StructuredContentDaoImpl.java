@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,16 +26,22 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * Created by bpolster.
@@ -56,12 +62,12 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
 
     @Override
     public StructuredContent findStructuredContentById(Long contentId) {
-        return (StructuredContent) em.find(StructuredContentImpl.class, contentId);
+        return em.find(StructuredContentImpl.class, contentId);
     }
 
     @Override
     public StructuredContentType findStructuredContentTypeById(Long contentTypeId) {
-        return (StructuredContentType) em.find(StructuredContentTypeImpl.class, contentTypeId);
+        return em.find(StructuredContentTypeImpl.class, contentTypeId);
     }
 
     @Override
@@ -69,13 +75,29 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         Query query = em.createNamedQuery("BC_READ_ALL_STRUCTURED_CONTENT_TYPES");
         return query.getResultList();
     }
+    
+    @Override
+    public List<StructuredContent> findAllContentItems() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<StructuredContent> criteria = builder.createQuery(StructuredContent.class);
+        Root<StructuredContentImpl> sc = criteria.from(StructuredContentImpl.class);
 
+        criteria.select(sc);
+
+        try {
+            return em.createQuery(criteria).getResultList();
+        } catch (NoResultException e) {
+            return new ArrayList<StructuredContent>();
+        }
+    }
+    
     @Override
     public Map<String, StructuredContentField> readFieldsForStructuredContentItem(StructuredContent sc) {
         Query query = em.createNamedQuery("BC_READ_CONTENT_FIELDS_BY_CONTENT_ID");
         query.setParameter("structuredContent", sc);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
-        List<StructuredContentField> fields = (List<StructuredContentField>) query.getResultList();
+        List<StructuredContentField> fields = query.getResultList();
         Map<String, StructuredContentField> fieldMap = new HashMap<String, StructuredContentField>();
         for (StructuredContentField scField : fields) {
             fieldMap.put(scField.getFieldKey(), scField);
@@ -94,6 +116,11 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
             content = findStructuredContentById(content.getId());
         }
         em.remove(content);
+    }
+    
+    @Override
+    public StructuredContentType saveStructuredContentType(StructuredContentType type) {
+        return em.merge(type);
     }
 
     @Override
@@ -122,6 +149,7 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         if (sandBox != null)  {
             query.setParameter("sandboxId", sandBox.getId());
         }
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return query.getResultList();
     }
@@ -152,6 +180,8 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         query.setParameter("contentName", name);
         query.setParameter("fullLocale", fullLocale);
         query.setParameter("languageOnlyLocale", languageOnlyLocale);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+
         return query.getResultList();
     }
 
@@ -181,6 +211,8 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         if (sandBox != null) {
             query.setParameter("sandbox", sandBox);
         }
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+
         return query.getResultList();
     }
 
@@ -188,6 +220,8 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
     public StructuredContentType findStructuredContentTypeByName(String name) {
         Query query = em.createNamedQuery("BC_READ_STRUCTURED_CONTENT_TYPE_BY_NAME");
         query.setParameter("name",name);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+
         List<StructuredContentType> results = query.getResultList();
         if (results.size() > 0) {
             return results.get(0);

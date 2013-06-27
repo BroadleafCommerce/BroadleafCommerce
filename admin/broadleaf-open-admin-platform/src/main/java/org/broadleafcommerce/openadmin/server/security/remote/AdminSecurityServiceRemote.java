@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,16 +16,16 @@
 
 package org.broadleafcommerce.openadmin.server.security.remote;
 
-import com.gwtincubator.security.exception.ApplicationSecurityException;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.operation.EntityOperationType;
-import org.broadleafcommerce.openadmin.client.service.AdminSecurityService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.exception.SecurityServiceException;
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.security.service.ExploitProtectionService;
+import org.broadleafcommerce.common.web.SandBoxContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
-import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.security.service.ExploitProtectionService;
-import org.broadleafcommerce.common.web.SandBoxContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,23 +52,22 @@ import javax.annotation.Resource;
  *
  */
 @Service("blAdminSecurityRemoteService")
-public class AdminSecurityServiceRemote implements AdminSecurityService  {
+public class AdminSecurityServiceRemote implements AdminSecurityService, SecurityVerifier {
     
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
+    private static final Log LOG = LogFactory.getLog(AdminSecurityServiceRemote.class);
     
     @Resource(name="blAdminSecurityService")
     protected org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService securityService;
 
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
-
-    private boolean isEntitySecurityExplicit = false;
     
     @Override
-    public org.broadleafcommerce.openadmin.client.security.AdminUser getAdminUser() throws ServiceException, ApplicationSecurityException {
+    public org.broadleafcommerce.openadmin.server.security.remote.AdminUser getAdminUser() throws ServiceException {
         AdminUser persistentAdminUser = getPersistentAdminUser();
         if (persistentAdminUser != null) {
-            org.broadleafcommerce.openadmin.client.security.AdminUser response = new org.broadleafcommerce.openadmin.client.security.AdminUser();
+            org.broadleafcommerce.openadmin.server.security.remote.AdminUser response = new org.broadleafcommerce.openadmin.server.security.remote.AdminUser();
             for (AdminRole role : persistentAdminUser.getAllRoles()) {
                 response.getRoles().add(role.getName());
                 for (AdminPermission permission : role.getAllPermissions()) {
@@ -90,6 +89,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
         return null;
     }
 
+    @Override
     public AdminUser getPersistentAdminUser() {
         SecurityContext ctx = SecurityContextHolder.getContext();
         if (ctx != null) {
@@ -104,9 +104,10 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
         return null;
     }
     
+    @Override
     public void securityCheck(String ceilingEntityFullyQualifiedName, EntityOperationType operationType) throws ServiceException {
         if (ceilingEntityFullyQualifiedName == null) {
-            throw new ServiceException("Security Check Failed: ceilingEntityFullyQualifiedName not specified");
+            throw new SecurityServiceException("Security Check Failed: ceilingEntityFullyQualifiedName not specified");
         }
         AdminUser persistentAdminUser = getPersistentAdminUser();
         PermissionType permissionType;
@@ -132,18 +133,16 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
         }
         boolean isQualified = securityService.isUserQualifiedForOperationOnCeilingEntity(persistentAdminUser, permissionType, ceilingEntityFullyQualifiedName);
         if (!isQualified){
-            //If explicit security, then this check failed. However, if not explicit security, then check to make sure there is no configured security for this entity before allowing to pass
-            if (isEntitySecurityExplicit() || securityService.doesOperationExistForCeilingEntity(permissionType, ceilingEntityFullyQualifiedName)) {
-                throw new ServiceException("Security Check Failed for entity operation: " + operationType.toString() + " (" + ceilingEntityFullyQualifiedName + ")");
+            SecurityServiceException ex = new SecurityServiceException("Security Check Failed for entity operation: " + operationType.toString() + " (" + ceilingEntityFullyQualifiedName + ")");
+            //check if the requested entity is not configured and warn
+            if (!securityService.doesOperationExistForCeilingEntity(permissionType, ceilingEntityFullyQualifiedName)) {
+                LOG.warn("Detected security request for an unregistered ceiling entity (" + ceilingEntityFullyQualifiedName + "). " +
+                        "As a result, the request failed. Please make sure to configure security for any ceiling entities " +
+                        "referenced via the admin. This is usually accomplished by adding records in the " +
+                        "BLC_ADMIN_PERMISSION_ENTITY table. Note, depending on how the entity in question is used, you " +
+                        "may need to add to BLC_ADMIN_PERMISSION, BLC_ADMIN_ROLE_PERMISSION_XREF and BLC_ADMIN_SEC_PERM_XREF.", ex);
             }
+            throw ex;
         }
-    }
-
-    public boolean isEntitySecurityExplicit() {
-        return isEntitySecurityExplicit;
-    }
-
-    public void setEntitySecurityExplicit(boolean entitySecurityExplicit) {
-        isEntitySecurityExplicit = entitySecurityExplicit;
     }
 }

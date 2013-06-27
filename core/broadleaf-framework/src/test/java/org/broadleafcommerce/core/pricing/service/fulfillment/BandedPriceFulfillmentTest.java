@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.pricing.service.fulfillment;
 
+import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -46,8 +47,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -194,6 +193,8 @@ public class BandedPriceFulfillmentTest extends TestCase {
         for (int i = 0; i < orderItemsToCreate; i++) {
             DiscreteOrderItem orderItem = new DiscreteOrderItemImpl();
             Sku sku = new SkuImpl();
+            //set the sku price to some arbitrary amount - won't matter because the test is based on order item price
+            sku.setRetailPrice(new Money("1"));
             orderItem.setSku(sku);
 
             if (flatRates != null && i < flatRates.length) {

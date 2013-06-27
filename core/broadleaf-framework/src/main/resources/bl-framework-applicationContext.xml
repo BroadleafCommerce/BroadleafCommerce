@@ -3,12 +3,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:task="http://www.springframework.org/schema/task"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
     
     <context:component-scan base-package="org.broadleafcommerce.core">
-<!--          <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.*"/> -->
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.*"/> 
     </context:component-scan>
     
     <task:annotation-driven/>
@@ -96,11 +96,5 @@
                 <bean class="org.broadleafcommerce.openadmin.server.util.LocaleConverter" />
             </set>
         </property>
-    </bean>
-    
-    <bean id="blSolrSearchServiceExtensionManager" class="org.broadleafcommerce.core.search.service.solr.SolrSearchServiceExtensionManager" />
-    <bean id="blOrderServiceExtensionManager" class="org.broadleafcommerce.core.order.service.OrderServiceExtensionManager" />
-    <bean id="blOrderDaoExtensionManager" class="org.broadleafcommerce.core.order.dao.OrderDaoExtensionManager" />
-    <bean id="blOfferServiceExtensionManager" class="org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager" />
-
+    </bean>                    
 </beans>

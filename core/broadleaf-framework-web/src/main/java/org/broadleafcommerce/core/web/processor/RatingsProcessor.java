@@ -1,11 +1,11 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,13 +21,14 @@ import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.RatingService;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
-import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the product ratings and reviews to the model
@@ -36,6 +37,9 @@ import org.thymeleaf.standard.expression.StandardExpressionProcessor;
  */
 @Component("blRatingsProcessor")
 public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
+    
+    @Resource(name = "blRatingService")
+    protected RatingService ratingService;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -55,7 +59,6 @@ public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
 
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-        RatingService ratingService = ProcessorUtils.getRatingService(arguments);
         String itemId = String.valueOf(StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("itemId")));
         RatingSummary ratingSummary = ratingService.readRatingSummary(itemId, RatingType.PRODUCT);
         if (ratingSummary != null) {

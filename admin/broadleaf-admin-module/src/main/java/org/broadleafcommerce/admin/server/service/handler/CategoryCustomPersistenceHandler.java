@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,12 +21,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.openadmin.client.dto.Entity;
-import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
+import org.broadleafcommerce.core.catalog.domain.CategoryXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
@@ -59,15 +61,17 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
             adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
-            if (adminInstance.getDefaultParentCategory() != null && !adminInstance.getAllParentCategories().contains(adminInstance.getDefaultParentCategory())) {
-                adminInstance.getAllParentCategories().add(adminInstance.getDefaultParentCategory());
+            CategoryXref categoryXref = new CategoryXrefImpl();
+            categoryXref.setCategory(adminInstance.getDefaultParentCategory());
+            categoryXref.setSubCategory(adminInstance);
+            if (adminInstance.getDefaultParentCategory() != null && !adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
+                adminInstance.getAllParentCategoryXrefs().add(categoryXref);
             }
 
             adminInstance = (Category) dynamicEntityDao.merge(adminInstance);
 
             return helper.getRecord(adminProperties, adminInstance, null, null);
         } catch (Exception e) {
-            LOG.error("Unable to add entity for " + entity.getType()[0], e);
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
         }
     }

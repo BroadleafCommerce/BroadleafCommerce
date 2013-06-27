@@ -2,18 +2,22 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.common.persistence"/>    
     <context:component-scan base-package="org.broadleafcommerce.openadmin.server.dao"/>
     <context:component-scan base-package="org.broadleafcommerce.openadmin.server.service.artifact">
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.server.service.artifact.upload.*"/>
     </context:component-scan>
+
+    <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
+        <property name="xsrfProtectionEnabled" value="true" />
+        <property name="xssProtectionEnabled" value="true" />
+    </bean>
     
-    <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl"/>
-    
-    <bean id="blPasswordEncoder" class="org.springframework.security.authentication.encoding.PlaintextPasswordEncoder"/>
+    <bean id="blPasswordEncoder" class="${password.site.encoder}"/>
+    <bean id="blAdminPasswordEncoder" class="${password.admin.encoder}"/>
 
     <bean id="blMergedEntityContexts" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -51,9 +55,7 @@
     </bean>
     
     <!--<bean id="blSandBoxEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
-        </property>
+        <property name="jpaVendorAdapter" ref="blJpaVendorAdapter"/>
         <property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
         <property name="persistenceUnitName" value="blSandboxPU"/>
     </bean>
@@ -68,4 +70,40 @@
         </tx:attributes>
     </tx:advice>-->
 
+    <bean id="blSendAdminUsernameEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
+        <property name="fromAddress" value="${adminUserNameEmail.fromAddress}"/>
+        <property name="emailTemplate" value="${adminUserNameEmail.emailTemplate}"/>
+        <property name="subject" value="${adminUserNameEmail.subject}"/>
+    </bean>
+
+    <bean id="blSendAdminResetPasswordEmail" class="org.broadleafcommerce.common.email.service.info.EmailInfo">
+        <property name="fromAddress" value="${adminResetPassword.fromAddress}"/>
+        <property name="emailTemplate" value="${adminResetPassword.emailTemplate}"/>
+        <property name="subject" value="${adminResetPassword.subject}"/>
+    </bean>
+
+    <bean id="blMetadataProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <ref bean="blBasicFieldMetadataProvider"/>
+                <ref bean="blCollectionFieldMetadataProvider"/>
+                <ref bean="blAdornedTargetCollectionFieldMetadataProvider"/>
+                <ref bean="blMapFieldMetadataProvider"/>
+                <ref bean="blMapFieldsFieldMetadataProvider"/>
+                <ref bean="blPasswordFieldMetadataProvider"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blPersistenceProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
+        <property name="sourceList">
+            <list>
+                <ref bean="blBasicFieldPersistenceProvider"/>
+                <ref bean="blRuleFieldPersistenceProvider"/>                
+                <ref bean="blMapFieldPersistenceProvider"/>
+                <ref bean="blMoneyFieldPersistenceProvider"/>
+                <ref bean="blMediaFieldPersistenceProvider"/>                
+            </list>
+        </property>
+    </bean>
 </beans>

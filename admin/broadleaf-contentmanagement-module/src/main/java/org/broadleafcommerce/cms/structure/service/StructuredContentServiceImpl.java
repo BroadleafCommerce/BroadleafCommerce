@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -50,8 +50,6 @@ import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -59,14 +57,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
  * @author bpolster
  */
 @Service("blStructuredContentService")
 public class StructuredContentServiceImpl extends AbstractContentService implements StructuredContentService {
-    private static final Log LOG = LogFactory.getLog(StructuredContentServiceImpl.class);
+    protected static final Log LOG = LogFactory.getLog(StructuredContentServiceImpl.class);
 
-    private static String AND = " && ";
+    protected static String AND = " && ";
 
     @Resource(name="blStructuredContentDao")
     protected StructuredContentDao structuredContentDao;
@@ -121,7 +121,12 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
 
     @Override
     public List<StructuredContent> findContentItems(SandBox sandbox, Criteria c) {
-        return (List<StructuredContent>) findItems(sandbox, c, StructuredContent.class, StructuredContentImpl.class, "originalItemId");
+        return findItems(sandbox, c, StructuredContent.class, StructuredContentImpl.class, "originalItemId");
+    }
+    
+    @Override
+    public List<StructuredContent> findAllContentItems() {
+        return structuredContentDao.findAllContentItems();
     }
 
     @Override
@@ -215,8 +220,16 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
             throw new IllegalArgumentException("Update called when promote or reject was expected.");
         }
     }
+    
+    /**
+     * Saves the given <b>type</b> and returns the merged instance
+     */
+    @Override
+    public StructuredContentType saveStructuredContentType(StructuredContentType type) {
+        return structuredContentDao.saveStructuredContentType(type);
+    }
 
-    private boolean checkForSandboxMatch(SandBox src, SandBox dest) {
+    protected boolean checkForSandboxMatch(SandBox src, SandBox dest) {
         if (src != null) {
             if (dest != null) {
                 return src.getId().equals(dest.getId());
@@ -225,7 +238,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         return (src == null && dest == null);
     }
 
-    private boolean checkForProductionSandbox(SandBox dest) {
+    protected boolean checkForProductionSandbox(SandBox dest) {
         boolean productionSandbox = false;
 
         if (dest == null) {
@@ -245,11 +258,12 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         updateStructuredContent(content, destinationSandbox);
     }
     
-    private String buildRuleExpression(StructuredContent sc) {
+    protected String buildRuleExpression(StructuredContent sc) {
        StringBuffer ruleExpression = null;
        Map<String, StructuredContentRule> ruleMap = sc.getStructuredContentMatchRules();
        if (ruleMap != null) {
            for (String ruleKey : ruleMap.keySet()) {
+                if (ruleMap.get(ruleKey).getMatchRule() == null) continue;
                if (ruleExpression == null) {
                    ruleExpression = new StringBuffer(ruleMap.get(ruleKey).getMatchRule());
                } else {
@@ -265,18 +279,18 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
        }
     }
     
-    private List<ItemCriteriaDTO> buildItemCriteriaDTOList(StructuredContent sc) {
+    protected List<ItemCriteriaDTO> buildItemCriteriaDTOList(StructuredContent sc) {
         List<ItemCriteriaDTO> itemCriteriaDTOList = new ArrayList<ItemCriteriaDTO>();
         for(StructuredContentItemCriteria criteria : sc.getQualifyingItemCriteria()) {
             ItemCriteriaDTO criteriaDTO = new ItemCriteriaDTO();
-            criteriaDTO.setMatchRule(criteria.getOrderItemMatchRule());
+            criteriaDTO.setMatchRule(criteria.getMatchRule());
             criteriaDTO.setQty(criteria.getQuantity());
             itemCriteriaDTOList.add(criteriaDTO);
         }
         return itemCriteriaDTOList;
     }            
     
-    private void buildFieldValues(StructuredContent sc, StructuredContentDTO scDTO, boolean secure) {
+    protected void buildFieldValues(StructuredContent sc, StructuredContentDTO scDTO, boolean secure) {
         String envPrefix = staticAssetService.getStaticAssetEnvironmentUrlPrefix();
         if (envPrefix != null && secure) {
             envPrefix = staticAssetService.getStaticAssetEnvironmentSecureUrlPrefix();
@@ -350,7 +364,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
     }
 
 
-    private List<StructuredContentDTO> mergeContent(List<StructuredContentDTO> productionList, List<StructuredContent> sandboxList, boolean secure) {
+    protected List<StructuredContentDTO> mergeContent(List<StructuredContentDTO> productionList, List<StructuredContent> sandboxList, boolean secure) {
         if (sandboxList == null || sandboxList.size() == 0) {
             return productionList;
         }
@@ -382,7 +396,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         return returnList;
     }
 
-    private List<StructuredContentDTO> evaluateAndPriortizeContent(List<StructuredContentDTO> structuredContentList, int count, Map<String, Object> ruleDTOs) {
+    protected List<StructuredContentDTO> evaluateAndPriortizeContent(List<StructuredContentDTO> structuredContentList, int count, Map<String, Object> ruleDTOs) {
         // some optimization for single item lists which don't require prioritization
         if (structuredContentList.size() == 1) {
             if (processContentRules(structuredContentList.get(0), ruleDTOs)) {
@@ -440,7 +454,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         return returnList;
     }
 
-    private boolean processContentRules(StructuredContentDTO sc, Map<String, Object> ruleDTOs) {
+    protected boolean processContentRules(StructuredContentDTO sc, Map<String, Object> ruleDTOs) {
         if (contentRuleProcessors != null) {
             for (StructuredContentRuleProcessor processor : contentRuleProcessors) {
                 boolean matchFound = processor.checkForMatch(sc, ruleDTOs);
@@ -535,7 +549,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         return evaluateAndPriortizeContent(contentList, count, ruleDTOs);
     }
 
-    private SandBox getProductionSandBox(SandBox currentSandBox) {
+    protected SandBox getProductionSandBox(SandBox currentSandBox) {
         SandBox productionSandBox = null;
         if (currentSandBox == null || SandBoxType.PRODUCTION.equals(currentSandBox.getSandBoxType())) {
             productionSandBox = currentSandBox;
@@ -545,7 +559,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         return productionSandBox;
     }
 
-    private boolean isProductionSandBox(SandBox dest) {
+    protected boolean isProductionSandBox(SandBox dest) {
         if (dest == null) {
             return true;
         } else {
@@ -651,23 +665,23 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         this.contentRuleProcessors = contentRuleProcessors;
     }
 
-    private Cache getStructuredContentCache() {
+    protected Cache getStructuredContentCache() {
         if (structuredContentCache == null) {
             structuredContentCache = CacheManager.getInstance().getCache("cmsStructuredContentCache");
         }
         return structuredContentCache;
     }
     
-    private String buildNameKey(StructuredContent sc) {
+    protected String buildNameKey(StructuredContent sc) {
         return buildNameKey(sc.getSandbox(), sc.getLocale(), sc.getStructuredContentType().getName(), sc.getContentName());    
     }
 
-    private String buildTypeKey(StructuredContent sc) {
+    protected String buildTypeKey(StructuredContent sc) {
         return buildTypeKey(sc.getSandbox(), sc.getLocale(), sc.getStructuredContentType().getName());
     }
 
 
-    private String buildNameKey(SandBox currentSandbox, Locale locale, String contentType, String contentName) {
+    protected String buildNameKey(SandBox currentSandbox, Locale locale, String contentType, String contentName) {
         StringBuffer key = new StringBuffer(contentType).append("-").append(contentName);
         if (locale != null) {
             key.append("-").append(locale.getLocaleCode());
@@ -680,7 +694,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         return key.toString();
     }
     
-    private String buildTypeKey(SandBox currentSandbox, Locale locale, String contentType) {
+    protected String buildTypeKey(SandBox currentSandbox, Locale locale, String contentType) {
         StringBuffer key = new StringBuffer(contentType);
         if (locale != null) {
             key.append("-").append(locale.getLocaleCode());
@@ -694,11 +708,11 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
     }
 
 
-    private void addStructuredContentListToCache(String key, List<StructuredContentDTO> scDTOList) {
+    protected void addStructuredContentListToCache(String key, List<StructuredContentDTO> scDTOList) {
         getStructuredContentCache().put(new Element(key, scDTOList));
     }
 
-    private List<StructuredContentDTO> getStructuredContentListFromCache(String key) {
+    protected List<StructuredContentDTO> getStructuredContentListFromCache(String key) {
         Element scElement =  getStructuredContentCache().get(key);
         if (scElement != null) {
             return (List<StructuredContentDTO>) scElement.getValue();
@@ -722,6 +736,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
      *
      * @param nameKey
      */
+    @Override
     public void removeItemFromCache(String nameKey, String typeKey) {
         // Remove secure and non-secure instances of the structured content.
         // Typically the structured content will be in one or the other if at all.
@@ -740,15 +755,17 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         this.archivedStructuredContentListeners = archivedStructuredContentListeners;
     }
 
+    @Override
     public boolean isAutomaticallyApproveAndPromoteStructuredContent() {
         return automaticallyApproveAndPromoteStructuredContent;
     }
 
+    @Override
     public void setAutomaticallyApproveAndPromoteStructuredContent(boolean automaticallyApproveAndPromoteStructuredContent) {
         this.automaticallyApproveAndPromoteStructuredContent = automaticallyApproveAndPromoteStructuredContent;
     }
 
-    private Locale findLanguageOnlyLocale(Locale locale) {
+    protected Locale findLanguageOnlyLocale(Locale locale) {
         if (locale != null ) {
             Locale languageOnlyLocale = localeService.findLocaleByCode(LocaleUtil.findLanguageCode(locale));
             if (languageOnlyLocale != null) {

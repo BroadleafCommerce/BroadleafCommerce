@@ -1,11 +1,11 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -64,6 +64,14 @@ public @interface AdminPresentation {
      * @return the display order
      */
     int order() default 99999;
+    
+    /**
+     * Optional - required only if you want to order the appearance of this field as it relates to other fields in a
+     * Note that this field will only be relevant if {@link #prominent()} is also set to true.
+     * 
+     * @return
+     */
+    int gridOrder() default 9999;
 
     /**
      * Optional - only required if you want to restrict the visibility of this field in the admin tool
@@ -117,6 +125,27 @@ public @interface AdminPresentation {
      */
     boolean groupCollapsed() default false;
     
+    /**
+     * Optional - only required if you want the field to appear under a different tab
+     * 
+     * Specify a GUI tab for this field
+     * 
+     * @return the tab for this field
+     */
+    String tab() default "General";
+
+    /**
+     * Optional - only required if you want to order the appearance of the tabs in the UI
+     * 
+     * Specify an order for this tab. Tabs will be sorted int he resulting form in 
+     * ascending order based on this parameter.
+     * 
+     * The default tab will render with an order of 100.
+     * 
+     * @return the order for this tab
+     */
+    int tabOrder() default 100;
+
     /**
      * Optional - only required if you want to give the user extra room to enter a value
      * for this field in the UI
@@ -249,12 +278,28 @@ public @interface AdminPresentation {
     String showIfProperty() default "";
     
     /**
-     * Optional - If you have FieldType set to SupportedFieldType.MONEY,      *
+     * Optional - If you have FieldType set to SupportedFieldType.MONEY,
      * then you can specify a money currency property field.
-     * 
      * 
      * @return the currency property field
      */
     String currencyCodeField() default "";
 
+    /**
+     * <p>Optional - only required if the fieldType is SupportedFieldType.RULE_SIMPLE or SupportedFieldType.RULE_COMPLEX</p>
+     *
+     * <p>Identifies the type for which this rule builder is targeted. See <tt>RuleIdentifier</tt> for a list of
+     * identifier types supported out-of-the-box. Note - one of the main uses of this value is to help identify
+     * the proper <tt>RuleBuilderService</tt> instance to generate the correct field value options for this rule builder.</p>
+     *
+     * @return The identifier value that denotes what type of rule builder this is - especially influences the fields that are available in the UI
+     */
+    String ruleIdentifier() default "";
+    
+    /**
+     * <p>Optional - marks this field as being translatable, which will render the translations modal in the admin UI</p>
+     * 
+     * @return whether or not this field is translatable
+     */
+    boolean translatable() default false;
 }

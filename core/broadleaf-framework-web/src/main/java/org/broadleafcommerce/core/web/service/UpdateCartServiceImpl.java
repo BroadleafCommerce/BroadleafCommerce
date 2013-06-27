@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.extension.ExtensionResultHolder;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -32,10 +33,10 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.order.model.AddToCartItem;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * Author: jerryocanas
@@ -51,7 +52,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
     protected OrderService orderService;
     
     @Resource(name = "blUpdateCartServiceExtensionManager")
-    protected UpdateCartServiceExtensionListener extensionManager;
+    protected UpdateCartServiceExtensionManager extensionManager;
 
     @Override
     public boolean currencyHasChanged() {
@@ -154,7 +155,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
         }
         
         if (extensionManager != null) {
-            extensionManager.validateCart(cart);
+            extensionManager.getProxy().validateCart(cart);
         }
     }
 
@@ -167,7 +168,13 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
     protected boolean checkAvailabilityInLocale(DiscreteOrderItem doi, BroadleafCurrency currency) {
         if (doi.getSku() != null && extensionManager != null) {
-            return extensionManager.isAvailable(doi, currency);
+            ExtensionResultHolder erh = new ExtensionResultHolder();
+            extensionManager.getProxy().isAvailable(doi, currency, erh);
+            Object result = erh.getResult();
+            if (result != null && result instanceof Boolean) {
+                return ((Boolean) result).booleanValue();
+            }
+
         }
         
         return false;
