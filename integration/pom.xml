@@ -63,7 +63,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-Xmx512m</argLine>
+                    <argLine>-Xmx1024m -XX:MaxPermSize=512m</argLine>
                 </configuration>
                 <executions>
                     <execution>
@@ -168,7 +168,7 @@
                                 <configuration>
                                     <argLine>
                                         -Dlegacy=true 
-                                        -Xmx512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083 
+                                        -Xmx1024m -XX:MaxPermSize=512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083 
                                         -javaagent:${jrebel.path} -Drebel.log.stdout=true
                                     </argLine>
                                 </configuration>
@@ -177,7 +177,7 @@
                                 <id>non-legacy-test</id>
                                 <configuration>
                                     <argLine>
-                                        -Xmx512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083 
+                                        -Xmx1024m -XX:MaxPermSize=512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083 
                                         -javaagent:${jrebel.path} -Drebel.log.stdout=true
                                     </argLine>
                                 </configuration>
