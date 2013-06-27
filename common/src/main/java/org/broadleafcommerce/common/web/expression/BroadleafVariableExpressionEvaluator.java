@@ -38,6 +38,7 @@ public class BroadleafVariableExpressionEvaluator extends SpelVariableExpression
     @Resource(name = "blVariableExpressions")
     protected List<BroadleafVariableExpression> expressions = new ArrayList<BroadleafVariableExpression>();
     
+    @Override
     protected Map<String,Object> computeAdditionalExpressionObjects(final IProcessingContext processingContext) {
         Map<String, Object> map = new HashMap<String, Object>();
         
