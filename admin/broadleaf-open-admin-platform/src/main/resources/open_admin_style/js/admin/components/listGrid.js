@@ -294,20 +294,20 @@ $(document).ready(function() {
             if (onChangeTrigger) {
                 var trigger = onChangeTrigger.split("-");
                 if (trigger[0] == 'dynamicForm') {
-                    var $fieldSet = $("fieldset[data-dynamicpropertyname='" + trigger[1] + "']");
-                    var url = $fieldSet.data('currenturl') + '?propertyTypeId=' + fields['id'];
+                    var $dynamicContainer = $("div.dynamic-form-container[data-dynamicpropertyname='" + trigger[1] + "']");
+                    var url = $dynamicContainer.data('currenturl') + '?propertyTypeId=' + fields['id'];
                     
                     BLC.ajax({
                         url : url,
                         type : "GET"
                     }, function(data) {
-                        var dynamicPropertyName = data.find('fieldset').data('dynamicpropertyname');
-                        var $oldFieldset = $('fieldset[data-dynamicpropertyname="' + dynamicPropertyName + '"]');
-                        var $newFieldset = data.find('fieldset');
+                        var dynamicPropertyName = data.find('div.dynamic-form-container').data('dynamicpropertyname');
+                        var $oldDynamicContainer = $('div.dynamic-form-container[data-dynamicpropertyname="' + dynamicPropertyName + '"]');
+                        var $newDynamicContainer = data.find('div.dynamic-form-container');
                         
-                        BLCAdmin.initializeFields($newFieldset);
+                        BLCAdmin.initializeFields($newDynamicContainer);
                         
-                        $oldFieldset.replaceWith($newFieldset);
+                        $oldDynamicContainer.replaceWith($newDynamicContainer);
                     });
                 }
             }
