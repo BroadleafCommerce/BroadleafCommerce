@@ -24,6 +24,8 @@
         </aop:aspect>
     </aop:config>
     
+    <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
+    <!-- own dialect and add your processors there. -->
     <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
         <property name="processors">
           <set>
@@ -49,10 +51,18 @@
         </property>     
     </bean> 
     
-
+    <!-- This list factory bean will accept classes that implment the BroadleafVariableExpression interface. -->
+    <!-- This provides the ability to inject custom expression evaluators into Thymeleaf. -->
+    <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
+            </list>
+        </property>
+    </bean>
+    
     <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
-    <bean id="blWebCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver">
-    </bean> 
+    <bean id="blWebCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
     
     <bean id="blWebTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
         <property name="prefix" value="/WEB-INF/templates/" />
@@ -75,8 +85,7 @@
     </bean>  
     
     <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
-    <bean id="blEmailCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver">
-    </bean> 
+    <bean id="blEmailCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
     
     <bean id="blEmailTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
         <property name="prefix" value="/WEB-INF/emailTemplates/" />
@@ -99,12 +108,12 @@
     
     <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring3.dialect.SpringStandardDialect" />
     
-    <bean id="blAdminMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
-                
+    <bean id="blMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
+    
     <bean id="blWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
         <property name="messageResolvers">
             <set>
-                <ref bean="blAdminMessageResolver" />
+                <ref bean="blMessageResolver" />
                 <bean class="org.thymeleaf.spring3.messageresolver.SpringMessageResolver" />
             </set>
         </property>

@@ -4,7 +4,9 @@
         data-currenturl=@{${'/' + sectionKey + '/' + dynamicPropertyName + '/dynamicForm'}}">
     <legend th:text="#{Dynamic_Form_Legend}" />
 
-    <div th:each="field : ${entityForm.dynamicForms['__${dynamicPropertyName}__'].fields}" th:if="${field.value.name}">
+    <div th:each="field : ${entityForm.dynamicForms['__${dynamicPropertyName}__'].fields}" 
+        class="field-box" 
+        th:if="${field.value.name}">
         <span class="error" th:errors="*{fields['__${field.value.name}__'].value}" />
         <div th:include="${'fields/' + #strings.toLowerCase(field.value.fieldType)}" th:remove="tag"
             th:with="field=${field.value}" />
