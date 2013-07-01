@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.workflow.state.test;
+package org.broadleafcommerce.core.workflow;
 
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutContext;
 import org.broadleafcommerce.core.workflow.BaseActivity;
@@ -25,7 +25,7 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class TestPassThroughActivity extends BaseActivity<CheckoutContext> {
+public class PassThroughActivity extends BaseActivity<CheckoutContext> {
 
     @Override
     public CheckoutContext execute(CheckoutContext context) throws Exception {

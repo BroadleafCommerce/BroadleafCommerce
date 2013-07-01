@@ -22,7 +22,7 @@ import org.broadleafcommerce.core.workflow.ModuleActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.state.test.TestExampleModuleActivity;
-import org.broadleafcommerce.core.workflow.state.test.TestPassThroughActivity;
+import org.broadleafcommerce.core.workflow.PassThroughActivity;
 import org.broadleafcommerce.core.workflow.state.test.TestRollbackActivity;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.core.Ordered;
@@ -53,10 +53,10 @@ public class WorkflowTest extends BaseTest {
     
     @Test
     public void testMergedOrderedActivities() {
-        Assert.assertEquals(activities.get(0).getClass(), TestPassThroughActivity.class);
+        Assert.assertEquals(activities.get(0).getClass(), PassThroughActivity.class);
         Assert.assertEquals(activities.get(0).getOrder(), 100);
         
-        Assert.assertEquals(activities.get(4).getClass(), TestPassThroughActivity.class);
+        Assert.assertEquals(activities.get(4).getClass(), PassThroughActivity.class);
         Assert.assertEquals(activities.get(4).getOrder(), 3000);
     }
     
@@ -89,7 +89,7 @@ public class WorkflowTest extends BaseTest {
     
     @Test
     public void testInBetweenActivity() {
-        Assert.assertEquals(activities.get(4).getClass(), TestPassThroughActivity.class);
+        Assert.assertEquals(activities.get(4).getClass(), PassThroughActivity.class);
     }
     
 }

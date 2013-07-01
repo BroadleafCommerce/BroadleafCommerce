@@ -56,21 +56,21 @@
                      by bean definitions in bl-applicationContext-test-module.xml -->
                 <!-- 
                     The final configuration of this workflow should be:
-                    0 100 - TestPassThroughActivity
+                    0 100 - PassThroughActivity
                     1 1000 - framework activity
                     2 2000 - framework activity
                     3 3000 - framework activity
-                    4 3000 - TestPassThroughActivity
+                    4 3000 - PassThroughActivity
                     5 4000 - framework activity
                     6 5000 - TestRollbackActivity
                 -->
-                <bean p:order="100" class="org.broadleafcommerce.core.workflow.state.test.TestPassThroughActivity"/>
+                <bean p:order="100" class="org.broadleafcommerce.core.workflow.PassThroughActivity"/>
                 <bean p:order="5000" class="org.broadleafcommerce.core.workflow.state.test.TestRollbackActivity">
                     <property name="errorHandler">
                         <bean class="org.broadleafcommerce.core.workflow.state.test.TestPassThroughRollbackErrorHandler"/>
                     </property>
                 </bean>
-                <bean p:order="3000" class="org.broadleafcommerce.core.workflow.state.test.TestPassThroughActivity"/>
+                <bean p:order="3000" class="org.broadleafcommerce.core.workflow.PassThroughActivity"/>
             </list>
         </property>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
