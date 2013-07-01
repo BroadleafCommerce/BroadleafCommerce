@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 
@@ -44,6 +45,12 @@ public class OrderItemPriceDetailWrapper extends BaseWrapper implements
     protected Long id;
     
     @XmlElement
+    protected Money totalAdjustmentValue;
+
+    @XmlElement
+    protected Money totalAdjustedPrice;
+
+    @XmlElement
     protected Integer quantity;
     @XmlElement(name = "adjustment")
     @XmlElementWrapper(name = "adjustments")
@@ -53,6 +60,8 @@ public class OrderItemPriceDetailWrapper extends BaseWrapper implements
     public void wrapDetails(OrderItemPriceDetail model, HttpServletRequest request) {
         this.id = model.getId();
         this.quantity = model.getQuantity();
+        this.totalAdjustmentValue = model.getTotalAdjustmentValue();
+        this.totalAdjustedPrice = model.getTotalAdjustedPrice();
         if (!model.getOrderItemPriceDetailAdjustments().isEmpty()) {
             this.orderItemPriceDetailAdjustments = new ArrayList<AdjustmentWrapper>();
             for (OrderItemPriceDetailAdjustment orderItemPriceDetail : model.getOrderItemPriceDetailAdjustments()) {
