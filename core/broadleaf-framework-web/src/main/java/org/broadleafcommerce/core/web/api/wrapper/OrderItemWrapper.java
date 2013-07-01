@@ -57,34 +57,26 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
     @XmlElement
     protected Integer quantity;
 
-    //These will be populated only if this is a DiscreteOrderItem
     @XmlElement
     protected Money retailPrice;
 
     @XmlElement
     protected Money salePrice;
-    //
-
-    //These will be populated only if this is a BundleOrderItem
-    @XmlElement
-    protected Money bundleRetailPrice;
-
-    @XmlElement
-    protected Money bundleSalePrice;
-    //
-
-    @XmlElement
-    protected CategoryWrapper category;
 
     @XmlElement
     protected Long orderId;
 
     @XmlElement
-    protected SkuWrapper sku;
+    protected Long categoryId;
+
+    @XmlElement
+    protected Long skuId;
 
     @XmlElement
     protected Long productId;
     
+    protected Boolean isBundle = Boolean.FALSE;
+
     @XmlElement(name = "orderItemAttribute")
     @XmlElementWrapper(name = "orderItemAttributes")
     protected List<OrderItemAttributeWrapper> orderItemAttributes;
@@ -109,11 +101,11 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
         this.name = model.getName();
         this.quantity = model.getQuantity();
         this.orderId = model.getOrder().getId();
+        this.retailPrice = model.getRetailPrice();
+        this.salePrice = model.getSalePrice();
 
         if (model.getCategory() != null) {
-            CategoryWrapper categoryWrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
-            categoryWrapper.wrapSummary(model.getCategory(), request);
-            this.category = categoryWrapper;
+            this.categoryId = model.getCategory().getId();
         }
 
         if (model.getOrderItemAttributes() != null && !model.getOrderItemAttributes().isEmpty()) {
@@ -138,22 +130,15 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
         }
         
         if (model instanceof DiscreteOrderItem) {
-            this.retailPrice = model.getRetailPrice();
-            this.salePrice = model.getSalePrice();
             DiscreteOrderItem doi = (DiscreteOrderItem) model;
-
-            //            SkuWrapper skuWrapper = (SkuWrapper) context.getBean(SkuWrapper.class.getName());
-            //            skuWrapper.wrap(doi.getSku(), request);
-            //            this.sku = skuWrapper;
-            //            
-            //            ProductSummaryWrapper productWrapper = (ProductSummaryWrapper) context.getBean(ProductSummaryWrapper.class.getName());
-            //            productWrapper.wrap(doi.getProduct(), request);
+            this.skuId = doi.getSku().getId();
             this.productId = doi.getProduct().getId();
+            this.isBundle = false;
         } else if (model instanceof BundleOrderItem) {
             BundleOrderItem boi = (BundleOrderItem) model;
-            this.bundleRetailPrice = boi.getRetailPrice();
-            this.bundleSalePrice = boi.getSalePrice();
-
+            this.skuId = boi.getSku().getId();
+            this.productId = boi.getProduct().getId();
+            this.isBundle = true;
 
             //Wrap up all the discrete order items for this bundle order item
             List<DiscreteOrderItem> discreteItems = boi.getDiscreteOrderItems();
@@ -165,10 +150,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
                     this.bundleItems.add(doiWrapper);
                 }
             }
-
-            //            ProductBundleSummaryWrapper productWrapper = (ProductBundleSummaryWrapper) context.getBean(ProductBundleSummaryWrapper.class.getName());
-            //            productWrapper.wrap(boi.getProduct(), request);
-            this.productId = boi.getProduct().getId();
+            
         }
 
         if (model.getOrderItemQualifiers() != null && !model.getOrderItemQualifiers().isEmpty()) {
