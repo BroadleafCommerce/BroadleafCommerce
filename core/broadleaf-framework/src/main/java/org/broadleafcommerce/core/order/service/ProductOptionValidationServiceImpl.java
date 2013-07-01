@@ -37,9 +37,9 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
     @Override
     public Boolean validate(ProductOption productOption, String value) {
         if (productOption.getProductOptionValidationType() == ProductOptionValidationType.REGEX) {
-            if (!validateRegex(productOption.getValidationSring(), value))
+            if (!validateRegex(productOption.getValidationString(), value))
             {
-                LOG.error(productOption.getErrorMessage() + ". Value [" + value + "] does not match regex string [" + productOption.getValidationSring() + "]");
+                LOG.error(productOption.getErrorMessage() + ". Value [" + value + "] does not match regex string [" + productOption.getValidationString() + "]");
                 throw new ProductOptionValidationException(productOption.getErrorMessage(), productOption.getErrorCode());
             }
         }

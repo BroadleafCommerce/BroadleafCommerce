@@ -1,14 +1,38 @@
 <!-- Required Parameters: -->
 <!--    dynamicPropertyName: the name of the field representing the dynamic form -->
-<fieldset th:attr="data-dynamicpropertyname=${dynamicPropertyName},
-        data-currenturl=@{${'/' + sectionKey + '/' + dynamicPropertyName + '/dynamicForm'}}">
-    <legend th:text="#{Dynamic_Form_Legend}" />
+<div class="dynamic-form-container" 
+    th:with="df=${entityForm.dynamicForms['__${dynamicPropertyName}__']}"
+    th:attr="data-dynamicpropertyname=${dynamicPropertyName},
+             data-currenturl=@{${'/' + sectionKey + '/' + dynamicPropertyName + '/dynamicForm'}}">
+    
+    <fieldset th:each="group : ${df.tabs[0].fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
+        <legend th:text="#{${group.title}}" />
+    
+        <div th:each="field : ${group.fields}" 
+             th:if="${field.name}" 
+             class="field-box" 
+             blc_admin:component_id="${field}"
+             th:classappend="${!field.isVisible}? 'hidden'">
+            
+            <div th:if="${field.readOnly}" th:remove="tag">
+                <div th:substituteby="fields/readonly" />
+            </div>
+            <div th:unless="${field.readOnly}" th:remove="tag">
+                <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
+            </div>
+        </div>
+    </fieldset>
+    
+</div>
 
-    <div th:each="field : ${entityForm.dynamicForms['__${dynamicPropertyName}__'].fields}" 
-        class="field-box" 
-        th:if="${field.value.name}">
-        <span class="error" th:errors="*{fields['__${field.value.name}__'].value}" />
-        <div th:include="${'fields/' + #strings.toLowerCase(field.value.fieldType)}" th:remove="tag"
-            th:with="field=${field.value}" />
-    </div>
-</fieldset>
+<!-- <fieldset th:attr="data-dynamicpropertyname=${dynamicPropertyName}, -->
+<!--     <legend th:text="#{Dynamic_Form_Legend}" /> -->
+
+<!--     <div th:each="field : ${entityForm.dynamicForms['__${dynamicPropertyName}__'].fields}"  -->
+<!--         class="field-box"  -->
+<!--         th:if="${field.value.name}"> -->
+<!--         <span class="error" th:errors="*{fields['__${field.value.name}__'].value}" /> -->
+<!--         <div th:include="${'fields/' + #strings.toLowerCase(field.value.fieldType)}" th:remove="tag" -->
+<!--             th:with="field=${field.value}" /> -->
+<!--     </div> -->
+<!-- </fieldset> -->

@@ -183,9 +183,9 @@ public interface ProductOption extends Serializable {
 
     String getErrorMessage();
 
-    String getValidationSring();
+    String getValidationString();
 
-    void setValidationSring(String validationSring);
+    void setValidationString(String validationString);
 
     String getErrorCode();
 

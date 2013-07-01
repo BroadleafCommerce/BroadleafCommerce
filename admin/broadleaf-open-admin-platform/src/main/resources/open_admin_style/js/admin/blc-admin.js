@@ -355,6 +355,17 @@ var BLCAdmin = (function($) {
                 }
             });
             
+            $container.find(".color-picker").spectrum({
+                showButtons: false,
+                preferredFormat: "hex6",
+                change: function(color) {
+                    $(this).closest('.field-box').find('input.color-picker-value').val(color);
+                },
+                move: function(color) {
+                    $(this).closest('.field-box').find('input.color-picker-value').val(color);
+                }
+            });
+            
             // Set the blank value for foreign key lookups
             $container.find('.foreign-key-value-container').each(function(index, element) {
                 var $displayValue = $(this).find('span.display-value');
@@ -453,3 +464,7 @@ $('body').on('click', '.disabled', function(e) {
     return false;
 });
         
+$('body').on('change', 'input.color-picker-value', function() {
+    var $this = $(this);
+    $this.closest('.field-box').find('input.color-picker').spectrum('set', $this.val());
+});

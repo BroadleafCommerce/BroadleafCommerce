@@ -1,0 +1,6 @@
+<div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+<br />
+
+<input type="text" class="two color-picker-value" style="display: inline-block;" th:required="${field.required}" th:field="*{fields['__${field.name}__'].value}" />
+<input type="text" class="twelve color-picker" th:required="${field.required}" th:value="*{fields['__${field.name}__'].value}" />
