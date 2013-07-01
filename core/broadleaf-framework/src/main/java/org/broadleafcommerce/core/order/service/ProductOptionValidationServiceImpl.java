@@ -47,6 +47,9 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
     }
     
     protected Boolean validateRegex(String regex, String value) {
+        if (value == null) {
+            return false;
+        }
         return Pattern.matches(regex, value);
     }
     
