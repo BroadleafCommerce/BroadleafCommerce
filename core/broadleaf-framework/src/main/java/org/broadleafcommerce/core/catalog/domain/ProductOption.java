@@ -16,6 +16,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
@@ -188,5 +189,9 @@ public interface ProductOption extends Serializable {
     void setValidationString(String validationString);
 
     String getErrorCode();
+
+    void setProductOptionValidationStrategyType(ProductOptionValidationStrategyType productOptionValidationType);
+
+    ProductOptionValidationStrategyType getProductOptionValidationStrategyType();
 
 }

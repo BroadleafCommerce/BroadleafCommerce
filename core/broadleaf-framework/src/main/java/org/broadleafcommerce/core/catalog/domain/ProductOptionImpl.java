@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -97,6 +98,10 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     @Column(name = "DISPLAY_ORDER")
     @AdminPresentation(friendlyName = "productOption_displayOrder")
     protected Integer displayOrder;
+
+    @Column(name = "VALIDATION_STRATEGY_TYPE")
+    @AdminPresentation(friendlyName = "productOption_validationType", group = "productOption_validation", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType")
+    private String productOptionValidationStrategyType;
 
     @Column(name = "VALIDATION_TYPE")
     @AdminPresentation(friendlyName = "productOption_validationType", group = "productOption_validation", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType")
@@ -214,6 +219,16 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     @Override
     public void setUseInSkuGeneration(Boolean useInSkuGeneration) {
         this.useInSkuGeneration = useInSkuGeneration;
+    }
+
+    @Override
+    public ProductOptionValidationStrategyType getProductOptionValidationStrategyType() {
+        return ProductOptionValidationStrategyType.getInstance(productOptionValidationStrategyType);
+    }
+
+    @Override
+    public void setProductOptionValidationStrategyType(ProductOptionValidationStrategyType productOptionValidationStrategyType) {
+        this.productOptionValidationStrategyType = productOptionValidationStrategyType == null ? null : productOptionValidationStrategyType.getType();
     }
 
     @Override

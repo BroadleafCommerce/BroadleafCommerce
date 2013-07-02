@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity;
@@ -453,4 +454,14 @@ public interface Order extends Serializable {
      * @return
      */
     boolean getHasOrderAdjustments();
+
+    /*
+     * transient field to hold order messages
+     */
+    public List<ActivityMessageDTO> getOrderMessages();
+
+    /*
+     * transient field to hold order messages
+     */
+    public void setOrderMessages(List<ActivityMessageDTO> orderMessages);
 }

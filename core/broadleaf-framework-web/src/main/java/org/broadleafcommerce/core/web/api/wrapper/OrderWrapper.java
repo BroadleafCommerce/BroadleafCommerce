@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderAttribute;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 
 import java.util.ArrayList;
@@ -87,6 +88,10 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
     @XmlElementWrapper(name = "orderAttributes")
     protected List<OrderAttributeWrapper> orderAttributes;
 
+    @XmlElement(name = "cartMessages")
+    @XmlElementWrapper(name = "cartMessages")
+    protected List<CartMessageWrapper> cartMessages;
+
     @Override
     public void wrapDetails(Order model, HttpServletRequest request) {
         this.id = model.getId();
@@ -145,10 +150,26 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
         CustomerWrapper customerWrapper = (CustomerWrapper) context.getBean(CustomerWrapper.class.getName());
         customerWrapper.wrapDetails(model.getCustomer(), request);
         this.customer = customerWrapper;
+
+        if (model.getOrderMessages() != null && !model.getOrderMessages().isEmpty()) {
+            for (ActivityMessageDTO dto : model.getOrderMessages()) {
+
+                CartMessageWrapper cartMessageWrapper = (CartMessageWrapper) context.getBean(CartMessageWrapper.class.getName());
+                cartMessageWrapper.wrapSummary(dto, request);
+                if (cartMessages == null) {
+                    cartMessages = new ArrayList<CartMessageWrapper>();
+                }
+                this.cartMessages.add(cartMessageWrapper);
+
+            }
+        }
+
     }
 
     @Override
     public void wrapSummary(Order model, HttpServletRequest request) {
         wrapDetails(model, request);
     }
+
+
 }

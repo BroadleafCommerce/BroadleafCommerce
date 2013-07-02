@@ -49,6 +49,7 @@ import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OfferInfoImpl;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl;
+import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
@@ -89,6 +90,7 @@ import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class })
@@ -262,6 +264,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(excluded = true)
     protected Locale locale;
+
+    @Transient
+    protected List<ActivityMessageDTO> orderMessages = new ArrayList<ActivityMessageDTO>();
 
     @Override
     public Long getId() {
@@ -738,6 +743,16 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
         result = prime * result + ((myDateCreated == null) ? 0 : myDateCreated.hashCode());
         return result;
+    }
+
+    @Override
+    public List<ActivityMessageDTO> getOrderMessages() {
+        return orderMessages;
+    }
+
+    @Override
+    public void setOrderMessages(List<ActivityMessageDTO> orderMessages) {
+        this.orderMessages = orderMessages;
     }
 
     public static class Presentation {

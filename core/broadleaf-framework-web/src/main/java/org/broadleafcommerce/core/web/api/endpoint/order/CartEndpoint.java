@@ -176,14 +176,14 @@ public abstract class CartEndpoint extends BaseEndpoint {
                 return wrapper;
             } catch (PricingException e) {
                 throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the order.").build());
+                        .type(MediaType.TEXT_PLAIN).entity("An error occurred pricing the order.").build());
             } catch (AddToCartException e) {
                 if (e.getCause() != null) {
                     throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                             .type(MediaType.TEXT_PLAIN).entity("" + e.getCause()).build());
                 }
                 throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured adding the item to the cart." + e.getCause()).build());
+                        .type(MediaType.TEXT_PLAIN).entity("An error occurred adding the item to the cart." + e.getCause()).build());
             }
         }
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
@@ -206,14 +206,14 @@ public abstract class CartEndpoint extends BaseEndpoint {
                 return wrapper;
             } catch (PricingException e) {
                 throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
+                        .type(MediaType.TEXT_PLAIN).entity("An error occurred pricing the cart.").build());
             } catch (RemoveFromCartException e) {
                 if (e.getCause() instanceof ItemNotFoundException) {
                     throw new WebApplicationException(e, Response.status(Response.Status.NOT_FOUND)
                             .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
                 } else {
                     throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
+                            .type(MediaType.TEXT_PLAIN).entity("An error occurred removing the item to the cart.").build());
                 }
             }
         }
@@ -236,7 +236,6 @@ public abstract class CartEndpoint extends BaseEndpoint {
                 orderItemRequestDTO.setQuantity(quantity);
                 Order order = orderService.updateItemQuantity(cart.getId(), orderItemRequestDTO, priceOrder);
                 order = orderService.save(order, priceOrder);
-
                 OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
                 wrapper.wrapDetails(order, request);
 
@@ -247,7 +246,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
                             .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
                 } else {
                     throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
+                            .type(MediaType.TEXT_PLAIN).entity("An error occurred removing the item to the cart.").build());
                 }
             } catch (RemoveFromCartException e) {
                 if (e.getCause() instanceof ItemNotFoundException) {
@@ -255,11 +254,11 @@ public abstract class CartEndpoint extends BaseEndpoint {
                             .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
                 } else {
                     throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
+                            .type(MediaType.TEXT_PLAIN).entity("An error occurred removing the item to the cart.").build());
                 }
             } catch (PricingException pe) {
                 throw new WebApplicationException(pe, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
+                        .type(MediaType.TEXT_PLAIN).entity("An error occurred pricing the cart.").build());
             }
         }
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
@@ -292,7 +291,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
             return wrapper;
         } catch (PricingException e) {
             throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
+                    .type(MediaType.TEXT_PLAIN).entity("An error occurred pricing the cart.").build());
         } catch (OfferMaxUseExceededException e) {
             throw new WebApplicationException(e, Response.status(Response.Status.BAD_REQUEST)
                     .type(MediaType.TEXT_PLAIN).entity("The offer (promo) code provided has exceeded its max usages: " + promoCode).build());
@@ -324,7 +323,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
             return wrapper;
         } catch (PricingException e) {
             throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
+                    .type(MediaType.TEXT_PLAIN).entity("An error occurred pricing the cart.").build());
         }
 
     }
@@ -346,7 +345,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
             return wrapper;
         } catch (PricingException e) {
             throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
+                    .type(MediaType.TEXT_PLAIN).entity("An error occurred pricing the cart.").build());
         }
         
     }
