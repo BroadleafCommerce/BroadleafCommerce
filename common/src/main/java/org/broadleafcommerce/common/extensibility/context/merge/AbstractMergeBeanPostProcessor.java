@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.common.extensibility.context.merge;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -68,12 +70,14 @@ import java.util.Set;
  * @author Jeff Fischer
  */
 public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
+    protected static final Log LOG = LogFactory.getLog(AbstractMergeBeanPostProcessor.class);
 
     protected String collectionRef;
     protected String targetRef;
     protected Placement placement = Placement.APPEND;
     protected int position;
     protected ApplicationContext applicationContext;
+    protected MergeBeanStatusProvider statusProvider;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -87,6 +91,15 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        if (statusProvider != null && !statusProvider.isProcessingEnabled(bean, beanName, applicationContext)) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace(String.format("Not performing post-processing on targetRef [%s] because the registered " +
+                		"status provider [%s] returned false", targetRef, statusProvider.getClass().getSimpleName()));
+            }
+            
+            return bean;
+        }
+        
         if (beanName.equals(targetRef)) {
             Object mergeCollection = applicationContext.getBean(collectionRef);
             if (bean instanceof ListFactoryBean || bean instanceof List) {
@@ -269,4 +282,24 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
     public void setPosition(int position) {
         this.position = position;
     }
+
+    /**
+     * Gets the status provider that is configured for this post processor
+     * 
+     * @return the MergeStatusBeanProvider
+     */
+    public MergeBeanStatusProvider getStatusProvider() {
+        return statusProvider;
+    }
+    
+    /**
+     * Sets the MergeBeanStatusProvider, which controls whether or not this post processor is activated.
+     * If no statusProvider is set, then we will always execute.
+     * 
+     * @param statusProvider
+     */
+    public void setStatusProvider(MergeBeanStatusProvider statusProvider) {
+        this.statusProvider = statusProvider;
+    }
+    
 }
