@@ -25,12 +25,12 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
  *
  * @author Jeff Fischer
  */
-public class ThirdPartyInteractionLatencySimulationActivity extends BaseActivity<ProcessContext> {
+public class ThirdPartyInteractionLatencySimulationActivity extends BaseActivity<ProcessContext<Object>> {
 
     private long waitTime = 1000L;
 
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
+    public ProcessContext<Object> execute(ProcessContext<Object> context) throws Exception {
         try {
             Thread.sleep(waitTime);
         } catch (Throwable e) {

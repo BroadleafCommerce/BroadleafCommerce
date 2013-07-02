@@ -17,15 +17,16 @@
 package org.broadleafcommerce.core.pricing.service.workflow;
 
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.workflow.DefaultProcessContextImpl;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.ProcessContextFactory;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 
-public class PricingProcessContextFactory implements ProcessContextFactory<Order> {
+public class PricingProcessContextFactory implements ProcessContextFactory<Order, Order> {
 
     @Override
-    public ProcessContext createContext(Order seedData) throws WorkflowException {
-        PricingContext context = new PricingContext();
+    public ProcessContext<Order> createContext(Order seedData) throws WorkflowException {
+        ProcessContext<Order> context = new DefaultProcessContextImpl<Order>();
         context.setSeedData(seedData);
 
         return context;

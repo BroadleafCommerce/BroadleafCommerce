@@ -20,19 +20,19 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
-import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
-public class ValidateUpdateRequestActivity extends BaseActivity<CartOperationContext> {
+public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
     
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
     
     @Override
-    public CartOperationContext execute(CartOperationContext context) throws Exception {
+    public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         

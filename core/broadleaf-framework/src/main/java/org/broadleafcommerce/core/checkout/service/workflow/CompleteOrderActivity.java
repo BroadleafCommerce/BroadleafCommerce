@@ -19,14 +19,15 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class CompleteOrderActivity extends BaseActivity<CheckoutContext> {
+public class CompleteOrderActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
     @Override
-    public CheckoutContext execute(CheckoutContext context) throws Exception {
+    public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         CheckoutSeed seed = context.getSeedData();
 
         seed.getOrder().setStatus(OrderStatus.SUBMITTED);

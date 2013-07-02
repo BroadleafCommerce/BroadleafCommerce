@@ -19,15 +19,17 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
+
 import javax.annotation.Resource;
 
-public class PricingServiceActivity extends BaseActivity<CheckoutContext> {
+public class PricingServiceActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
     @Resource(name="blPricingService")
     private PricingService pricingService;
 
     @Override
-    public CheckoutContext execute(CheckoutContext context) throws Exception {
+    public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         CheckoutSeed seed = context.getSeedData();
         Order order = pricingService.executePricing(seed.getOrder());
         seed.setOrder(order);

@@ -39,7 +39,7 @@ import java.util.Map;
  * @see {@link BaseProcessor}
  * @see {@link SequenceProcessor}
  */
-public interface Activity<T extends ProcessContext> extends BeanNameAware, Ordered {
+public interface Activity<T extends ProcessContext<? extends Object>> extends BeanNameAware, Ordered {
 
     /**
      * Called by the encompassing processor to activate
@@ -79,7 +79,7 @@ public interface Activity<T extends ProcessContext> extends BeanNameAware, Order
      *
      * @return the handler responsible for reverting state for the activity
      */
-    public RollbackHandler getRollbackHandler();
+    public RollbackHandler<T> getRollbackHandler();
 
     /**
      * Set the RollbackHandler instance that should be called by the ActivityStateManager in the
@@ -88,7 +88,7 @@ public interface Activity<T extends ProcessContext> extends BeanNameAware, Order
      *
      * @param rollbackHandler the handler responsible for reverting state for the activity
      */
-    public void setRollbackHandler(RollbackHandler rollbackHandler);
+    public void setRollbackHandler(RollbackHandler<T> rollbackHandler);
 
     /**
      * Retrieve the optional region label for the RollbackHandler. Setting a region allows

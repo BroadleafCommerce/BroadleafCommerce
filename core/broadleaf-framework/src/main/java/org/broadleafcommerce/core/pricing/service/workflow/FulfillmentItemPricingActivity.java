@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -39,7 +40,7 @@ import java.util.Map;
  * 
  * @author Brian Polster 
  */
-public class FulfillmentItemPricingActivity extends BaseActivity<PricingContext> {
+public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<Order>> {
     
     private static final Log LOG = LogFactory.getLog(FulfillmentItemPricingActivity.class);
 
@@ -71,7 +72,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<PricingContext>
     }
     
     @Override
-    public PricingContext execute(PricingContext context) throws Exception {
+    public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
         Map<OrderItem,List<FulfillmentGroupItem>> partialOrderItemMap = new HashMap<OrderItem,List<FulfillmentGroupItem>>();
 

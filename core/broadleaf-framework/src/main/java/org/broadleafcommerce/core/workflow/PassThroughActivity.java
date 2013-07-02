@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.core.workflow;
 
-import org.broadleafcommerce.core.checkout.service.workflow.CheckoutContext;
-import org.broadleafcommerce.core.workflow.BaseActivity;
 
 
 /**
@@ -25,11 +23,10 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class PassThroughActivity extends BaseActivity<CheckoutContext> {
+public class PassThroughActivity extends BaseActivity<ProcessContext<? extends Object>> {
 
     @Override
-    public CheckoutContext execute(CheckoutContext context) throws Exception {
-        // TODO Auto-generated method stub
+    public ProcessContext<? extends Object> execute(ProcessContext<? extends Object> context) throws Exception {
         return context;
     }
 

@@ -20,15 +20,16 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.TaxService;
 import org.broadleafcommerce.core.pricing.service.module.TaxModule;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
-public class TaxActivity extends BaseActivity<PricingContext> {
+public class TaxActivity extends BaseActivity<ProcessContext<Order>> {
 
     protected TaxModule taxModule;
 
     protected TaxService taxService;
 
     @Override
-    public PricingContext execute(PricingContext context) throws Exception {
+    public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
 
         if (taxService != null) {

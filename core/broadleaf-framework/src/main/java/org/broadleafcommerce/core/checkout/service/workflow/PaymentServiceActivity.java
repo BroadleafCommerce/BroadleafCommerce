@@ -28,10 +28,11 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.Resource;
 import java.util.Map.Entry;
 
-public class PaymentServiceActivity extends BaseActivity<CheckoutContext> {
+import javax.annotation.Resource;
+
+public class PaymentServiceActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
     
     private static final Log LOG = LogFactory.getLog(PaymentServiceActivity.class);
 
@@ -42,7 +43,7 @@ public class PaymentServiceActivity extends BaseActivity<CheckoutContext> {
     protected Boolean stopCheckoutOnSinglePaymentFailure;
 
     @Override
-    public CheckoutContext execute(CheckoutContext context) throws Exception {
+    public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         CheckoutSeed seed = context.getSeedData();
         CompositePaymentResponse response = compositePaymentService.executePayment(seed.getOrder(), seed.getInfos(), seed.getPaymentResponse());
         

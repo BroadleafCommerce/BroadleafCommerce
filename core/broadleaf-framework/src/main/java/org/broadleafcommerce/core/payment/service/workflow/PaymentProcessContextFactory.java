@@ -20,17 +20,19 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
+import org.broadleafcommerce.core.workflow.DefaultProcessContextImpl;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.ProcessContextFactory;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class PaymentProcessContextFactory implements ProcessContextFactory {
+import javax.annotation.Resource;
+
+public class PaymentProcessContextFactory implements ProcessContextFactory<CombinedPaymentContextSeed, PaymentSeed> {
 
     @Resource(name = "blSecurePaymentInfoService")
     protected SecurePaymentInfoService securePaymentInfoService;
@@ -40,7 +42,7 @@ public class PaymentProcessContextFactory implements ProcessContextFactory {
 
     protected PaymentActionType paymentActionType;
 
-    public ProcessContext createContext(Object seedData) throws WorkflowException {
+    public ProcessContext<CombinedPaymentContextSeed> createContext(PaymentSeed seedData) throws WorkflowException {
         if (!(seedData instanceof PaymentSeed)) {
             throw new WorkflowException("Seed data instance is incorrect. " + "Required class is " + PaymentSeed.class.getName() + " " + "but found class: " + seedData.getClass().getName());
         }
@@ -59,7 +61,7 @@ public class PaymentProcessContextFactory implements ProcessContextFactory {
             }
         }
         CombinedPaymentContextSeed combinedSeed = new CombinedPaymentContextSeed(secureMap, paymentActionType, paymentSeed.getOrder().getTotal(), paymentSeed.getPaymentResponse(), paymentSeed.getTransactionAmount());
-        WorkflowPaymentContext response = new WorkflowPaymentContext();
+        ProcessContext<CombinedPaymentContextSeed> response = new DefaultProcessContextImpl<CombinedPaymentContextSeed>();
         response.setSeedData(combinedSeed);
 
         return response;

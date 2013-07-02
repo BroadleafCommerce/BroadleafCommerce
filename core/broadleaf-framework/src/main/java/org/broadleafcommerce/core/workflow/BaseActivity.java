@@ -21,12 +21,12 @@ import org.springframework.core.Ordered;
 
 import java.util.Map;
 
-public abstract class BaseActivity<T extends ProcessContext> implements Activity<T> {
+public abstract class BaseActivity<T extends ProcessContext<? extends Object>> implements Activity<T> {
     
     protected ErrorHandler errorHandler;
     protected String beanName;
 
-    protected RollbackHandler rollbackHandler;
+    protected RollbackHandler<T> rollbackHandler;
     protected String rollbackRegion;
     protected Map<String, Object> stateConfiguration;
     protected boolean automaticallyRegisterRollbackHandler = false;
@@ -58,12 +58,12 @@ public abstract class BaseActivity<T extends ProcessContext> implements Activity
     }
 
     @Override
-    public RollbackHandler getRollbackHandler() {
+    public RollbackHandler<T> getRollbackHandler() {
         return rollbackHandler;
     }
 
     @Override
-    public void setRollbackHandler(RollbackHandler rollbackHandler) {
+    public void setRollbackHandler(RollbackHandler<T> rollbackHandler) {
         this.rollbackHandler = rollbackHandler;
     }
 

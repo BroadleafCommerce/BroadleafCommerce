@@ -22,9 +22,11 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
+
+import java.math.BigDecimal;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 
 /**
  * Called during the pricing workflow to compute all of the fulfillment costs
@@ -34,7 +36,7 @@ import java.math.BigDecimal;
  * @author Phillip Verheyden
  * @see {@link FulfillmentGroup}, {@link Order}
  */
-public class FulfillmentGroupPricingActivity extends BaseActivity<PricingContext> {
+public class FulfillmentGroupPricingActivity extends BaseActivity<ProcessContext<Order>> {
 
     @Resource(name = "blFulfillmentPricingService")
     private FulfillmentPricingService fulfillmentPricingService;
@@ -44,7 +46,7 @@ public class FulfillmentGroupPricingActivity extends BaseActivity<PricingContext
     }
 
     @Override
-    public PricingContext execute(PricingContext context) throws Exception {
+    public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
 
         /*

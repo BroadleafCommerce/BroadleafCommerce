@@ -20,7 +20,7 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 
-public class CompositeActivity extends BaseActivity<SimplePaymentContext> {
+public class CompositeActivity extends BaseActivity<ProcessContext<PaymentSeed>> {
 
     private SequenceProcessor workflow;
 
@@ -32,8 +32,8 @@ public class CompositeActivity extends BaseActivity<SimplePaymentContext> {
      */
 
     @Override
-    public SimplePaymentContext execute(SimplePaymentContext context) throws Exception {
-        ProcessContext subContext = workflow.doActivities(context.getSeedData());
+    public ProcessContext<PaymentSeed> execute(ProcessContext<PaymentSeed> context) throws Exception {
+        ProcessContext<PaymentSeed> subContext = (ProcessContext<PaymentSeed>) workflow.doActivities(context.getSeedData());
         if (subContext.isStopped()) {
             context.stopProcess();
         }

@@ -33,14 +33,16 @@ import org.broadleafcommerce.core.order.service.exception.RemoveFromCartExceptio
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Resource;
 
 /**
  * This pricing workflow step will automatically bundle items in the cart.
@@ -52,7 +54,7 @@ import java.util.Set;
  * This only occurs if the ProductBundle is set to "automatically" bundle.
  *
  */
-public class AutoBundleActivity extends BaseActivity<PricingContext> {
+public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
     @Resource(name="blCatalogService")
     protected CatalogService catalogService;
 
@@ -65,7 +67,7 @@ public class AutoBundleActivity extends BaseActivity<PricingContext> {
     @Resource(name="blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
 
-    public PricingContext execute(PricingContext context) throws Exception {
+    public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
         order = handleAutomaticBundling(order);
         context.setSeedData(order);

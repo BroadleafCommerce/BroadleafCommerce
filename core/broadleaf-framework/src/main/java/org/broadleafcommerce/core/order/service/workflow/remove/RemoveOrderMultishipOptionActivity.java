@@ -20,13 +20,13 @@ import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
-import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
-public class RemoveOrderMultishipOptionActivity extends BaseActivity<CartOperationContext> {
+public class RemoveOrderMultishipOptionActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
     
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
@@ -35,7 +35,7 @@ public class RemoveOrderMultishipOptionActivity extends BaseActivity<CartOperati
     protected OrderItemService orderItemService;
 
     @Override
-    public CartOperationContext execute(CartOperationContext context) throws Exception {
+    public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         Long orderItemId = request.getItemRequest().getOrderItemId();
 

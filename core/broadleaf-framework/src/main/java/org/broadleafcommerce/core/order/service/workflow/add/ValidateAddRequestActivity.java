@@ -26,9 +26,9 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
-import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +36,7 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
-public class ValidateAddRequestActivity extends BaseActivity<CartOperationContext> {
+public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -48,7 +48,7 @@ public class ValidateAddRequestActivity extends BaseActivity<CartOperationContex
     protected ProductOptionValidationService productOptionValidationService;
 
     @Override
-    public CartOperationContext execute(CartOperationContext context) throws Exception {
+    public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         

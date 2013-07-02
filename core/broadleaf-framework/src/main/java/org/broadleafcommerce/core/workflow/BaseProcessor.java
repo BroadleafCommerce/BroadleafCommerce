@@ -51,7 +51,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
 
     protected BeanFactory beanFactory;
     protected String beanName;
-    protected List<Activity<ProcessContext>> activities = new ArrayList<Activity<ProcessContext>>();
+    protected List<Activity<ProcessContext<? extends Object>>> activities = new ArrayList<Activity<ProcessContext<? extends Object>>>();
     protected List<ModuleActivity> moduleActivities = new ArrayList<ModuleActivity>();
     
     protected ErrorHandler defaultErrorHandler;
@@ -147,8 +147,8 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
         OrderComparator.sort(activities);
 
         HashSet<String> moduleNames = new HashSet<String>();
-        for (Iterator<Activity<ProcessContext>> iter = activities.iterator(); iter.hasNext();) {
-            Activity<? extends ProcessContext> activity = iter.next();
+        for (Iterator<Activity<ProcessContext<? extends Object>>> iter = activities.iterator(); iter.hasNext();) {
+            Activity<? extends ProcessContext<? extends Object>> activity = iter.next();
             if ( !supports(activity)) {
                 throw new BeanInitializationException("The workflow processor ["+beanName+"] does " +
                         "not support the activity of type"+activity.getClass().getName());
@@ -198,7 +198,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
      * @param activities ordered collection (List) of activities to be executed by the processor
      */
     @Override
-    public void setActivities(List<Activity<ProcessContext>> activities) {
+    public void setActivities(List<Activity<ProcessContext<? extends Object>>> activities) {
         this.activities = activities;
     }
 
@@ -207,7 +207,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
         this.defaultErrorHandler = defaultErrorHandler;
     }
 
-    public List<Activity<ProcessContext>> getActivities() {
+    public List<Activity<ProcessContext<? extends Object>>> getActivities() {
         return activities;
     }
     

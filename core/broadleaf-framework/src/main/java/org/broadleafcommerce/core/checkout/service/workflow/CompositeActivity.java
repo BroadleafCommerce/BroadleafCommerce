@@ -20,7 +20,7 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 
-public class CompositeActivity extends BaseActivity<CheckoutContext> {
+public class CompositeActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
     private SequenceProcessor workflow;
 
@@ -28,8 +28,8 @@ public class CompositeActivity extends BaseActivity<CheckoutContext> {
      * @see org.broadleafcommerce.core.workflow.Activity#execute(org.broadleafcommerce.core.workflow.ProcessContext)
      */
     @Override
-    public CheckoutContext execute(CheckoutContext context) throws Exception {
-        ProcessContext subContext = workflow.doActivities(context.getSeedData());
+    public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
+        ProcessContext<CheckoutSeed> subContext = (ProcessContext<CheckoutSeed>) workflow.doActivities(context.getSeedData());
         if (subContext.isStopped()) {
             context.stopProcess();
         }

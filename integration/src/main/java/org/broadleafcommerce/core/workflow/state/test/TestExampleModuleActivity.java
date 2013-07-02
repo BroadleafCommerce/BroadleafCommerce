@@ -26,10 +26,10 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class TestExampleModuleActivity extends BaseActivity<ProcessContext> implements ModuleActivity {
+public class TestExampleModuleActivity extends BaseActivity<ProcessContext<? extends Object>> implements ModuleActivity {
 
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
+    public ProcessContext<? extends Object> execute(ProcessContext<? extends Object> context) throws Exception {
         return context;
     }
 

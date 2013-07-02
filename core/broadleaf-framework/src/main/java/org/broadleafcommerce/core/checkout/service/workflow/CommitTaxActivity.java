@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.TaxService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
@@ -29,7 +30,7 @@ import javax.annotation.Resource;
  * @author Kelly Tisdell
  *
  */
-public class CommitTaxActivity extends BaseActivity<CheckoutContext> {
+public class CommitTaxActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
     
     @Resource(name = "blTaxService")
     protected TaxService taxService;
@@ -41,7 +42,7 @@ public class CommitTaxActivity extends BaseActivity<CheckoutContext> {
     }
 
     @Override
-    public CheckoutContext execute(CheckoutContext context) throws Exception {
+    public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         Order order = context.getSeedData().getOrder();
         order = taxService.commitTaxForOrder(order);
         context.getSeedData().setOrder(order);

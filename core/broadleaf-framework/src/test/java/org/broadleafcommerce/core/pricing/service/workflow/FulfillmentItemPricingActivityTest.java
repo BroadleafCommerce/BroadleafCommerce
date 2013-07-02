@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
@@ -27,8 +26,12 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.workflow.DefaultProcessContextImpl;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.math.BigDecimal;
+
+import junit.framework.TestCase;
 
 public class FulfillmentItemPricingActivityTest extends TestCase {
 
@@ -49,7 +52,7 @@ public class FulfillmentItemPricingActivityTest extends TestCase {
 
     public void testZeroOrderSavings() throws Exception {
         Order order = dataProvider.createBasicOrder();
-        PricingContext context = new PricingContext();
+        ProcessContext<Order> context = new DefaultProcessContextImpl<Order>();
         context.setSeedData(order);
 
         fulfillmentItemPricingActivity.execute(context);
@@ -71,7 +74,7 @@ public class FulfillmentItemPricingActivityTest extends TestCase {
         adjustment.setOrder(order);
         order.setSubTotal(subTotal);
 
-        PricingContext context = new PricingContext();
+        ProcessContext<Order> context = new DefaultProcessContextImpl<Order>();
         context.setSeedData(order);
 
         fulfillmentItemPricingActivity.execute(context);
@@ -94,7 +97,7 @@ public class FulfillmentItemPricingActivityTest extends TestCase {
         adjustment.setOrder(order);
         order.getOrderAdjustments().add(adjustment);
 
-        PricingContext context = new PricingContext();
+        ProcessContext<Order> context = new DefaultProcessContextImpl<Order>();
         context.setSeedData(order);
 
         fulfillmentItemPricingActivity.execute(context);
@@ -129,7 +132,7 @@ public class FulfillmentItemPricingActivityTest extends TestCase {
         adjustment.setOrder(order);
         order.getOrderAdjustments().add(adjustment);
 
-        PricingContext context = new PricingContext();
+        ProcessContext<Order> context = new DefaultProcessContextImpl<Order>();
         context.setSeedData(order);
 
         fulfillmentItemPricingActivity.execute(context);
@@ -151,7 +154,7 @@ public class FulfillmentItemPricingActivityTest extends TestCase {
         adjustment.setOrder(order);
         order.getOrderAdjustments().add(adjustment);
 
-        PricingContext context = new PricingContext();
+        ProcessContext<Order> context = new DefaultProcessContextImpl<Order>();
         context.setSeedData(order);
 
         fulfillmentItemPricingActivity.execute(context);
@@ -178,7 +181,7 @@ public class FulfillmentItemPricingActivityTest extends TestCase {
         adjustment.setOrder(order);
         order.getOrderAdjustments().add(adjustment);
 
-        PricingContext context = new PricingContext();
+        ProcessContext<Order> context = new DefaultProcessContextImpl<Order>();
         context.setSeedData(order);
 
         fulfillmentItemPricingActivity.execute(context);

@@ -20,18 +20,19 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.util.List;
 
 import javax.annotation.Resource;
 
-public class OfferActivity extends BaseActivity<PricingContext> {
+public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
 
     @Resource(name="blOfferService")
     private OfferService offerService;
 
     @Override
-    public PricingContext execute(PricingContext context) throws Exception {
+    public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);

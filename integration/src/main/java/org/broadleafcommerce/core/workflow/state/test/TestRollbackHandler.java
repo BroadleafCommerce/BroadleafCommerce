@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.workflow.state.test;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.RollbackFailureException;
@@ -32,14 +33,14 @@ import java.util.Map;
  *
  * @author Jeff Fischer
  */
-public class TestRollbackHandler implements RollbackHandler {
+public class TestRollbackHandler implements RollbackHandler<CheckoutSeed> {
 
     private static final Log LOG = LogFactory.getLog(TestRollbackHandler.class);
 
     @Override
     @Transactional("blTransactionManager")
-    public void rollbackState(Activity<? extends ProcessContext> activity,
-            ProcessContext processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
+    public void rollbackState(Activity<? extends ProcessContext<CheckoutSeed>> activity,
+            ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
         LOG.warn("******************* TestRollbackHandler Engaged *********************");
         LOG.warn("******************* Activity: " + activity.getBeanName() + " *********************");
         RollbackStateLocal rollbackStateLocal = RollbackStateLocal.getRollbackStateLocal();

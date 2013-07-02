@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.workflow;
 
 import java.io.Serializable;
 
-public interface ProcessContext extends Serializable {
+public interface ProcessContext<T> extends Serializable {
 
     /**
      * Activly informs the workflow process to stop processing
@@ -42,6 +42,12 @@ public interface ProcessContext extends Serializable {
      * 
      * @param seedObject - initial seed data for the workflow
      */
-    public void setSeedData(Object seedObject);
+    public void setSeedData(T seedObject);
+
+    /**
+     * Returns the seed information
+     * @return
+     */
+    public T getSeedData();
 
 }

@@ -28,7 +28,7 @@ public class SequenceProcessor extends BaseProcessor {
 
     private static final Log LOG = LogFactory.getLog(SequenceProcessor.class);
 
-    private ProcessContextFactory processContextFactory;
+    private ProcessContextFactory<Object, Object> processContextFactory;
 
     /*
      * (non-Javadoc)
@@ -36,17 +36,17 @@ public class SequenceProcessor extends BaseProcessor {
      * @see org.iocworkflow.BaseProcessor#supports(java.lang.Class)
      */
     @Override
-    public boolean supports(Activity<? extends ProcessContext> activity) {
+    public boolean supports(Activity<? extends ProcessContext<? extends Object>> activity) {
         return (activity instanceof BaseActivity);
     }
 
     @Override
-    public ProcessContext doActivities() throws WorkflowException {
+    public ProcessContext<? extends Object> doActivities() throws WorkflowException {
         return doActivities(null);
     }
 
     @Override
-    public ProcessContext doActivities(Object seedData) throws WorkflowException {
+    public ProcessContext<? extends Object> doActivities(Object seedData) throws WorkflowException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(getBeanName() + " processor is running..");
         }
@@ -54,7 +54,7 @@ public class SequenceProcessor extends BaseProcessor {
         if (activityStateManager == null) {
             throw new IllegalStateException("Unable to find an instance of ActivityStateManager registered under bean id blActivityStateManager");
         }
-        ProcessContext context = null;
+        ProcessContext<? extends Object> context = null;
         RollbackStateLocal rollbackStateLocal = RollbackStateLocal.getRollbackStateLocal();
         if (rollbackStateLocal == null) {
             rollbackStateLocal = new RollbackStateLocal();
@@ -64,12 +64,12 @@ public class SequenceProcessor extends BaseProcessor {
         }
         try {
             //retrieve injected by Spring
-            List<Activity<ProcessContext>> activities = getActivities();
+            List<Activity<ProcessContext<? extends Object>>> activities = getActivities();
 
             //retrieve a new instance of the Workflow ProcessContext
             context = createContext(seedData);
 
-            for (Activity<ProcessContext> activity : activities) {
+            for (Activity<ProcessContext<? extends Object>> activity : activities) {
                 if (activity.shouldExecute(context)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("running activity:" + activity.getBeanName() + " using arguments:" + context);
@@ -126,7 +126,7 @@ public class SequenceProcessor extends BaseProcessor {
      * @param activity
      *            the current activity in the iteration
      */
-    protected boolean processShouldStop(ProcessContext context, Activity<? extends ProcessContext> activity) {
+    protected boolean processShouldStop(ProcessContext<? extends Object> context, Activity<? extends ProcessContext<? extends Object>> activity) {
         if (context != null && context.isStopped()) {
             LOG.info("Interrupted workflow as requested by:" + activity.getBeanName());
             return true;
@@ -134,12 +134,12 @@ public class SequenceProcessor extends BaseProcessor {
         return false;
     }
 
-    protected ProcessContext createContext(Object seedData) throws WorkflowException {
+    protected ProcessContext<Object> createContext(Object seedData) throws WorkflowException {
         return processContextFactory.createContext(seedData);
     }
 
     @Override
-    public void setProcessContextFactory(ProcessContextFactory processContextFactory) {
+    public void setProcessContextFactory(ProcessContextFactory<Object, Object> processContextFactory) {
         this.processContextFactory = processContextFactory;
     }
 

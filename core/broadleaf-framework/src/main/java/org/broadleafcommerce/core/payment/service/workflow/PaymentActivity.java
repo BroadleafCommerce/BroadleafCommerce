@@ -25,12 +25,14 @@ import org.broadleafcommerce.core.payment.service.PaymentService;
 import org.broadleafcommerce.core.payment.service.exception.InsufficientFundsException;
 import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class PaymentActivity extends BaseActivity<WorkflowPaymentContext> {
+public class PaymentActivity extends BaseActivity<ProcessContext<CombinedPaymentContextSeed>> {
 
     public static final String ROLLBACK_PAYMENTCONTEXT = "rollback_paymentcontext";
     public static final String ROLLBACK_RESPONSEITEM = "rollback_responseitem";
@@ -44,7 +46,7 @@ public class PaymentActivity extends BaseActivity<WorkflowPaymentContext> {
          * @see org.broadleafcommerce.core.workflow.Activity#execute(org.broadleafcommerce.core.workflow.ProcessContext)
          */
     @Override
-    public WorkflowPaymentContext execute(WorkflowPaymentContext context) throws Exception {
+    public ProcessContext<CombinedPaymentContextSeed> execute(ProcessContext<CombinedPaymentContextSeed> context) throws Exception {
         CombinedPaymentContextSeed seed = context.getSeedData();
         Map<PaymentInfo, Referenced> infos = seed.getInfos();
 

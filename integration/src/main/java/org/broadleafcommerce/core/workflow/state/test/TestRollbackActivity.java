@@ -24,10 +24,10 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
  *
  * @author Jeff Fischer
  */
-public class TestRollbackActivity extends BaseActivity<ProcessContext> {
+public class TestRollbackActivity extends BaseActivity<ProcessContext<? extends Object>> {
 
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
+    public ProcessContext<? extends Object> execute(ProcessContext<? extends Object> context) throws Exception {
         throw new IllegalArgumentException("TestRollbackActivity Accessed...");
     }
 

@@ -39,7 +39,6 @@ import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
@@ -48,6 +47,7 @@ import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -530,7 +530,7 @@ public class OrderServiceImpl implements OrderService {
         }
         try {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-            CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
+            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(cartOpRequest);
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {
             throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
@@ -547,7 +547,7 @@ public class OrderServiceImpl implements OrderService {
         
         try {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-            CartOperationContext context = (CartOperationContext) updateItemWorkflow.doActivities(cartOpRequest);
+            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) updateItemWorkflow.doActivities(cartOpRequest);
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {
             throw new UpdateCartException("Could not update cart quantity", getCartOperationExceptionRootCause(e));
@@ -561,7 +561,7 @@ public class OrderServiceImpl implements OrderService {
             OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
             orderItemRequestDTO.setOrderItemId(orderItemId);
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-            CartOperationContext context = (CartOperationContext) removeItemWorkflow.doActivities(cartOpRequest);
+            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) removeItemWorkflow.doActivities(cartOpRequest);
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {
             throw new RemoveFromCartException("Could not remove from cart", getCartOperationExceptionRootCause(e));

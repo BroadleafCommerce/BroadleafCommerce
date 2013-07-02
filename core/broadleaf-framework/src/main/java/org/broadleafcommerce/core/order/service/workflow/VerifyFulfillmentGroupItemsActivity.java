@@ -18,16 +18,17 @@ package org.broadleafcommerce.core.order.service.workflow;
 
 import org.broadleafcommerce.core.order.strategy.FulfillmentGroupItemStrategy;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
-public class VerifyFulfillmentGroupItemsActivity extends BaseActivity<CartOperationContext> {
+public class VerifyFulfillmentGroupItemsActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
     
     @Resource(name = "blFulfillmentGroupItemStrategy")
     protected FulfillmentGroupItemStrategy fgItemStrategy;
 
     @Override
-    public CartOperationContext execute(CartOperationContext context) throws Exception {
+    public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         
         request = fgItemStrategy.verify(request);

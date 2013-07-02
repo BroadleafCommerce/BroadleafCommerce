@@ -44,7 +44,7 @@ public class WorkflowTest extends BaseTest {
         getModuleContexts().add("bl-applicationContext-test-module.xml");
     }
     
-    protected List<Activity<ProcessContext>> activities;
+    protected List<Activity<ProcessContext<? extends Object>>> activities;
     
     @BeforeTest
     public void setup() {

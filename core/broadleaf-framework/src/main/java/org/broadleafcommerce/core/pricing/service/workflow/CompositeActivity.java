@@ -16,17 +16,18 @@
 
 package org.broadleafcommerce.core.pricing.service.workflow;
 
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 
-public class CompositeActivity extends BaseActivity<PricingContext> {
+public class CompositeActivity extends BaseActivity<ProcessContext<Order>> {
 
     private SequenceProcessor workflow;
 
     @Override
-    public PricingContext execute(PricingContext context) throws Exception {
-        ProcessContext subContext = workflow.doActivities(context.getSeedData());
+    public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
+        ProcessContext<Order> subContext = (ProcessContext<Order>) workflow.doActivities(context.getSeedData());
         if (subContext.isStopped()) {
             context.stopProcess();
         }

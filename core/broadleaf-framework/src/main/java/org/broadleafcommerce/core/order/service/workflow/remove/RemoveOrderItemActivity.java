@@ -21,9 +21,9 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
-import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
@@ -34,7 +34,7 @@ import javax.annotation.Resource;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class RemoveOrderItemActivity extends BaseActivity<CartOperationContext> {
+public class RemoveOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -43,7 +43,7 @@ public class RemoveOrderItemActivity extends BaseActivity<CartOperationContext> 
     protected OrderItemService orderItemService;
     
     @Override
-    public CartOperationContext execute(CartOperationContext context) throws Exception {
+    public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
 

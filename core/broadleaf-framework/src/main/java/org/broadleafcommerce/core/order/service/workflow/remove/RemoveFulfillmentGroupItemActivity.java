@@ -16,20 +16,20 @@
 
 package org.broadleafcommerce.core.order.service.workflow.remove;
 
-import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.order.strategy.FulfillmentGroupItemStrategy;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
-public class RemoveFulfillmentGroupItemActivity extends BaseActivity<CartOperationContext> {
+public class RemoveFulfillmentGroupItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
     
     @Resource(name = "blFulfillmentGroupItemStrategy")
     protected FulfillmentGroupItemStrategy fgItemStrategy;
 
     @Override
-    public CartOperationContext execute(CartOperationContext context) throws Exception {
+    public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         
         request = fgItemStrategy.onItemRemoved(request);

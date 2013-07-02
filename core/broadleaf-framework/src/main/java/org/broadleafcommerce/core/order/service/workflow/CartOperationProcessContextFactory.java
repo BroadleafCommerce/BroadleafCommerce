@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.service.workflow;
 
+import org.broadleafcommerce.core.workflow.DefaultProcessContextImpl;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.ProcessContextFactory;
 import org.broadleafcommerce.core.workflow.WorkflowException;
@@ -27,20 +28,20 @@ import org.broadleafcommerce.core.workflow.WorkflowException;
  * 
  * @author apazzolini
  */
-public class CartOperationProcessContextFactory implements ProcessContextFactory {
+public class CartOperationProcessContextFactory implements ProcessContextFactory<CartOperationRequest, CartOperationRequest> {
 
     /**
      * Creates the necessary context for cart operations
      */
-    public ProcessContext createContext(Object seedData) throws WorkflowException {
+    public ProcessContext<CartOperationRequest> createContext(CartOperationRequest seedData) throws WorkflowException {
         if (!(seedData instanceof CartOperationRequest)){
             throw new WorkflowException("Seed data instance is incorrect. " +
                     "Required class is " + CartOperationRequest.class.getName() + " " +
                     "but found class: " + seedData.getClass().getName());
         }
         
-        CartOperationContext context = new CartOperationContext();
-        context.setSeedData(seedData);
+        ProcessContext<CartOperationRequest> context = new DefaultProcessContextImpl<CartOperationRequest>();
+        context.setSeedData((CartOperationRequest) seedData);
         return context;
     }
 

@@ -18,7 +18,7 @@ package org.broadleafcommerce.core.pricing.service;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.core.pricing.service.workflow.PricingContext;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class PricingServiceImpl implements PricingService {
 
     public Order executePricing(Order order) throws PricingException {
         try {
-            PricingContext context = (PricingContext) pricingWorkflow.doActivities(order);
+            ProcessContext<Order> context = (ProcessContext<Order>) pricingWorkflow.doActivities(order);
             Order response = context.getSeedData();
 
             return response;

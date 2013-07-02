@@ -17,7 +17,6 @@
 package org.broadleafcommerce.core.offer.service.workflow;
 
 import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.core.checkout.service.workflow.CheckoutContext;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
 import org.broadleafcommerce.core.offer.domain.Adjustment;
@@ -26,6 +25,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import java.util.HashSet;
 import java.util.List;
@@ -37,13 +37,13 @@ import javax.annotation.Resource;
  * Saves an instance of OfferAudit for each offer in the passed in order.
  * Assumes that it is part of a larger transaction context.
  */
-public class RecordOfferUsageActivity extends BaseActivity<CheckoutContext> {
+public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
     @Resource(name="blOfferAuditDao")
     private OfferAuditDao offerAuditDao;
 
     @Override
-    public CheckoutContext execute(CheckoutContext context) throws Exception {
+    public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         Set<Long> appliedOfferIds = new HashSet<Long>();
         CheckoutSeed seed = context.getSeedData();
         Order order = seed.getOrder();

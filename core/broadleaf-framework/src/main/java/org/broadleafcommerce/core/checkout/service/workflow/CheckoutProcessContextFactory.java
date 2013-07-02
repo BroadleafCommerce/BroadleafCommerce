@@ -16,15 +16,16 @@
 
 package org.broadleafcommerce.core.checkout.service.workflow;
 
+import org.broadleafcommerce.core.workflow.DefaultProcessContextImpl;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.ProcessContextFactory;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 
-public class CheckoutProcessContextFactory implements ProcessContextFactory<CheckoutSeed> {
+public class CheckoutProcessContextFactory implements ProcessContextFactory<CheckoutSeed, CheckoutSeed> {
 
     @Override
-    public ProcessContext createContext(CheckoutSeed seedData) throws WorkflowException {
-        CheckoutContext context = new CheckoutContext();
+    public ProcessContext<CheckoutSeed> createContext(CheckoutSeed seedData) throws WorkflowException {
+        ProcessContext<CheckoutSeed> context = new DefaultProcessContextImpl<CheckoutSeed>();
         context.setSeedData(seedData);
 
         return context;
