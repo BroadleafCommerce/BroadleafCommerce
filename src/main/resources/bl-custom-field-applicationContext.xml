@@ -38,5 +38,72 @@
             </list>
         </property>
     </bean>
+    
+    <!--
+        These beans are responsible for contributing functionality to the multitenant module. They are dormant
+        unless the multitenant module is loaded
+     -->
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCustomFieldMultiTenantXFormTemplates"/>
+        <property name="targetRef" value="blMultiTenantXFormTemplates"/>
+        <property name="statusProvider" ref="blMultiTenantMergeBeanStatusProvider"/>
+    </bean>
+
+    <bean id="blCustomFieldMultiTenantXFormTemplates" class="org.springframework.beans.factory.config.MapFactoryBean" lazy-init="true">
+        <property name="sourceMap">
+            <map>
+                <entry key="com.broadleafcommerce.customfield.domain.CustomFieldImpl" value="com.broadleafcommerce.tenant.weave.WeaveSiteDiscriminatorImpl"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCustomFieldMultiTenantFilterDefinitions"/>
+        <property name="targetRef" value="blMultiTenantFilterDefinitions"/>
+        <property name="statusProvider" ref="blMultiTenantMergeBeanStatusProvider"/>
+    </bean>
+
+    <bean id="blCustomFieldMultiTenantFilterDefinitions" class="org.springframework.beans.factory.config.ListFactoryBean" lazy-init="true">
+        <property name="sourceList">
+            <list>
+                <bean class="org.broadleafcommerce.common.filter.FilterDefinition" parent="siteFilterDef">
+                    <property name="entityImplementationClassName" value="com.broadleafcommerce.customfield.domain.CustomFieldImpl" />
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCustomFieldMultiTenantFilters"/>
+        <property name="targetRef" value="blMultiTenantFilters"/>
+        <property name="statusProvider" ref="blMultiTenantMergeBeanStatusProvider"/>
+    </bean>
+
+    <bean id="blCustomFieldMultiTenantFilters" class="org.springframework.beans.factory.config.ListFactoryBean" lazy-init="true">
+        <property name="sourceList">
+            <list>
+                <bean class="org.broadleafcommerce.common.filter.Filter" parent="sitePropertyFilterConfig">
+                    <property name="entityImplementationClassName" value="com.broadleafcommerce.customfield.domain.CustomFieldImpl" />
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCustomFieldSiteConfigProviders"/>
+        <property name="targetRef" value="blMultiTenantSiteConfigProviders"/>
+        <property name="statusProvider" ref="blMultiTenantMergeBeanStatusProvider"/>
+    </bean>
+
+    <bean id="blCustomFieldSiteConfigProviders" class="org.springframework.beans.factory.config.ListFactoryBean" lazy-init="true">
+        <property name="sourceList">
+            <list>
+                <bean id="blCustomFieldSiteConfigProvider" class="com.broadleafcommerce.customfield.service.provider.CustomFieldSiteConfigProvider" />
+            </list>
+        </property>
+    </bean>
+    <!--
+        End of multitenant module support
+    -->
 
 </beans>
