@@ -64,7 +64,6 @@ public class FixedPriceFulfillmentPricingProvider implements FulfillmentPricingP
             if (canCalculateCostForFulfillmentGroup(fulfillmentGroup, option)) {
                 Money price = ((FixedPriceFulfillmentOption)fulfillmentGroup.getFulfillmentOption()).getPrice();
                 shippingPrices.put(option, price);
-                return response;
             }
         }
 
