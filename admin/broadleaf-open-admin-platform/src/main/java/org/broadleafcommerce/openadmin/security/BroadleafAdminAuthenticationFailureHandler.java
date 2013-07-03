@@ -55,7 +55,6 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
             failureUrl = "?sessionTimeout=true";
         }
 
-
         if (failureUrl != null) {
             if (!StringUtils.isEmpty(successUrlParam)) {
                 if (!failureUrl.contains("?")) {

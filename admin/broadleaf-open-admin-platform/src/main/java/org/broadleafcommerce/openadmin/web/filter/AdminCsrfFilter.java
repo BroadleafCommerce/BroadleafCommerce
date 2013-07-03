@@ -3,8 +3,8 @@ package org.broadleafcommerce.openadmin.web.filter;
 
 import org.broadleafcommerce.common.security.handler.CsrfFilter;
 import org.broadleafcommerce.openadmin.security.BroadleafAdminAuthenticationFailureHandler;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
@@ -41,9 +41,7 @@ public class AdminCsrfFilter extends CsrfFilter {
             //if authentication is null and CSRF token is invalid, must be session time out
             if (securityContext.getAuthentication() == null) {
                 baseHttpRequest.setAttribute("sessionTimeout", true);
-                failureHandler.onAuthenticationFailure((HttpServletRequest) baseRequest, (HttpServletResponse) baseResponse, new AuthenticationException("Session Time Out") {
-                    private static final long serialVersionUID = 1L;
-                });
+                failureHandler.onAuthenticationFailure((HttpServletRequest) baseRequest, (HttpServletResponse) baseResponse, new SessionAuthenticationException("Session Time Out"));
             } else {
                 //If session is determined to not be a timeout, redirect to users previous location
                 String previousLocation = baseHttpRequest.getHeader("referer");
