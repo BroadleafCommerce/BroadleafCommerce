@@ -1,13 +1,11 @@
 package org.broadleafcommerce.openadmin.web.filter;
 
 
+import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.handler.CsrfFilter;
 import org.broadleafcommerce.openadmin.security.BroadleafAdminAuthenticationFailureHandler;
-import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
-import org.springframework.security.web.context.HttpRequestResponseHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
 
 import java.io.IOException;
 
@@ -22,6 +20,16 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 
  * @author trevorleffert
+ * 
+ * This class attempts the work flow of the CsrfFilter, but in the event of a Csrf token mismatch 
+ * (Session reset for example) the User will be redirected to login, if not session reset User is sent to previous location.
+ * 
+ * The "blCsrfFilter' from applicationContext-admin-security should reference this class (org.broadleafcommerce.openadmin.web.filter.AdminCsrfFilter)
+ * instead of the CsrfFilter
+ * 
+ *     <bean id="blCsrfFilter" class="org.broadleafcommerce.openadmin.web.filter.AdminCsrfFilter" />
+
+ * 
  *
  */
 
@@ -34,19 +42,20 @@ public class AdminCsrfFilter extends CsrfFilter {
         try {
             super.doFilter(baseRequest, baseResponse, chain);
         } catch (ServletException e) {
-            SecurityContextRepository repo = new HttpSessionSecurityContextRepository();
-            HttpServletRequest baseHttpRequest = (HttpServletRequest) baseRequest;
-            HttpRequestResponseHolder holder = new HttpRequestResponseHolder(baseHttpRequest, (HttpServletResponse) baseResponse);
-            SecurityContext securityContext = repo.loadContext(holder);
-            //if authentication is null and CSRF token is invalid, must be session time out
-            if (securityContext.getAuthentication() == null) {
-                baseHttpRequest.setAttribute("sessionTimeout", true);
-                failureHandler.onAuthenticationFailure((HttpServletRequest) baseRequest, (HttpServletResponse) baseResponse, new SessionAuthenticationException("Session Time Out"));
+            if (e.getCause() instanceof ServiceException) {
+                HttpServletRequest baseHttpRequest = (HttpServletRequest) baseRequest;
+                //if authentication is null and CSRF token is invalid, must be session time out
+                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                    baseHttpRequest.setAttribute("sessionTimeout", true);
+                    failureHandler.onAuthenticationFailure((HttpServletRequest) baseRequest, (HttpServletResponse) baseResponse, new SessionAuthenticationException("Session Time Out"));
+                } else {
+                    //If session is determined to not be a timeout, redirect to users previous location
+                    String previousLocation = baseHttpRequest.getHeader("referer");
+                    HttpServletResponse response = (HttpServletResponse) baseResponse;
+                    response.sendRedirect(previousLocation);
+                }
             } else {
-                //If session is determined to not be a timeout, redirect to users previous location
-                String previousLocation = baseHttpRequest.getHeader("referer");
-                HttpServletResponse response = (HttpServletResponse) baseResponse;
-                response.sendRedirect(previousLocation);
+                throw e;
             }
         }
     }
