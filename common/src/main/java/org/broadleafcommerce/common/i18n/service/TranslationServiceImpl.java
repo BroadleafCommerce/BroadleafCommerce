@@ -126,21 +126,23 @@ public class TranslationServiceImpl implements TranslationService {
         
         // First, we'll try to look up a country language combo (en_GB), utilizing the cache
         String countryCacheKey = getCacheKey(entityType, entityId, property, localeCountryCode);
-        if (getCache().isKeyInCache(countryCacheKey)) {
+        if (getCache().isKeyInCache(countryCacheKey) && getCache().get(countryCacheKey) != null) {
             translation = (Translation) getCache().get(countryCacheKey).getObjectValue();
         } else {
             translation = getTranslation(entityType, entityId, property, localeCountryCode);
-            getCache().put(new Element(countryCacheKey, translation));
+            if(translation != null)
+                getCache().put(new Element(countryCacheKey, translation));
         }
         
         // If we don't find one, let's try just the language (en), again utilizing the cache
         if (translation == null) {
             String nonCountryCacheKey = getCacheKey(entityType, entityId, property, localeCode);
-            if (getCache().isKeyInCache(nonCountryCacheKey)) {
+            if (getCache().isKeyInCache(nonCountryCacheKey) && getCache().get(nonCountryCacheKey) != null) {
                 translation = (Translation) getCache().get(nonCountryCacheKey).getObjectValue();
             } else {
                 translation = getTranslation(entityType, entityId, property, localeCode);
-                getCache().put(new Element(nonCountryCacheKey, translation));
+                if(translation != null)
+                    getCache().put(new Element(nonCountryCacheKey, translation));
             }
         }
         
