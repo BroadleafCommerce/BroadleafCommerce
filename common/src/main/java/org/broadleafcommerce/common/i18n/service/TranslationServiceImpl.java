@@ -137,7 +137,7 @@ public class TranslationServiceImpl implements TranslationService {
         // If we don't find one, let's try just the language (en), again utilizing the cache
         if (translation == null) {
             String nonCountryCacheKey = getCacheKey(entityType, entityId, property, localeCode);
-            if (getCache().isKeyInCache(nonCountryCacheKey) && getCache().get(countryCacheKey) != null) {
+            if (getCache().isKeyInCache(nonCountryCacheKey) && getCache().get(nonCountryCacheKey) != null) {
                 translation = (Translation) getCache().get(nonCountryCacheKey).getObjectValue();
             } else {
                 translation = getTranslation(entityType, entityId, property, localeCode);
