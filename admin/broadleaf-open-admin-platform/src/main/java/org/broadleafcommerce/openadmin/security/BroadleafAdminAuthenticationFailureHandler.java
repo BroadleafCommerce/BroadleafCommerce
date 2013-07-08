@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.security;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.springframework.security.core.AuthenticationException;
@@ -45,9 +46,9 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
         String failureUrlParam = StringUtil.cleanseUrlString(request.getParameter("failureUrl"));
         String successUrlParam = StringUtil.cleanseUrlString(request.getParameter("successUrl"));
         String failureUrl = failureUrlParam==null?null:failureUrlParam.trim();
-        boolean sessionTimeout = (Boolean) request.getAttribute("sessionTimeout");
+        Boolean sessionTimeout = (Boolean) request.getAttribute("sessionTimeout");
 
-        if (StringUtils.isEmpty(failureUrl) && !sessionTimeout) {
+        if (StringUtils.isEmpty(failureUrl) && BooleanUtils.isNotTrue(sessionTimeout)) {
             failureUrl = defaultFailureUrl;
         }
 
