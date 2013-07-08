@@ -17,7 +17,6 @@
 package org.broadleafcommerce.common.util.sql;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -116,17 +115,12 @@ public class HibernateToolTask extends Task {
 
     @Override
     public void execute() {
-        AntClassLoader loader;
         MergeFileSystemAndClassPathXMLApplicationContext mergeContext;
         try {
             ConfigurationOnlyState state = new ConfigurationOnlyState();
             state.setConfigurationOnly(true);
             ConfigurationOnlyState.setState(state);
-
-            loader = getProject().createClassLoader(classPath);
-            ClassLoader classLoader = this.getClass().getClassLoader();
-            loader.setParent(classLoader); // if this is not set, classes from the taskdef cannot be found - which is crucial for e.g. annotations.
-            loader.setThreadContextLoader();
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
             // launch the service merge application context to get the entity configuration for the entire framework
             String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
             LinkedHashMap<String, MergeFileSystemAndClassPathXMLApplicationContext.ResourceType> locations = new LinkedHashMap<String, MergeFileSystemAndClassPathXMLApplicationContext.ResourceType>();
@@ -165,11 +159,6 @@ public class HibernateToolTask extends Task {
             }
         } catch (RuntimeException re) {
             reportException(re, count, generatorTask);
-        } finally {
-            if (loader != null) {
-                loader.resetThreadContextLoader();
-                loader.cleanup();
-            }
         }
         try {
             if (combinePersistenceUnits) {
