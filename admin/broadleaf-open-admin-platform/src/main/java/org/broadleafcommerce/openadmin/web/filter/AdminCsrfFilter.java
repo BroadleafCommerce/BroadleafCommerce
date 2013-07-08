@@ -18,9 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 
- * @author trevorleffert
- * 
  * This class attempts the work flow of the CsrfFilter, but in the event of a Csrf token mismatch 
  * (Session reset for example) the User will be redirected to login, if not session reset User is sent to previous location.
  * 
@@ -28,9 +25,8 @@ import javax.servlet.http.HttpServletResponse;
  * instead of the CsrfFilter
  * 
  *     <bean id="blCsrfFilter" class="org.broadleafcommerce.openadmin.web.filter.AdminCsrfFilter" />
-
- * 
- *
+ *     
+ * @author trevorleffert
  */
 
 public class AdminCsrfFilter extends CsrfFilter {
