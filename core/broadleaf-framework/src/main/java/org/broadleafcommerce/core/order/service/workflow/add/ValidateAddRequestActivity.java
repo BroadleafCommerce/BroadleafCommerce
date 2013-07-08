@@ -154,7 +154,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                     try {
                         productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()));
                     } catch (ProductOptionValidationException e) {
-                        ActivityMessageDTO msg = new ActivityMessageDTO(MessageType.PRODUCT_OPTION, 1, e.getMessage());
+                        ActivityMessageDTO msg = new ActivityMessageDTO(MessageType.PRODUCT_OPTION.getType(), 1, e.getMessage());
                         ((ActivityMessages) messages).getActivityMessages().add(msg);
                     }
                     

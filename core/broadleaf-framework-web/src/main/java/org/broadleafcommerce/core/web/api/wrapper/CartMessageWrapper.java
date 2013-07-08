@@ -13,19 +13,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class CartMessageWrapper extends BaseWrapper implements APIWrapper<ActivityMessageDTO> {
 
     @XmlElement
-    String message;
+    protected String message;
     @XmlElement
-    protected BroadleafEnumerationTypeWrapper messageType;
+    protected String messageType;
     @XmlElement
-    Integer priority;
+    protected Integer priority;
     @Override
     public void wrapDetails(ActivityMessageDTO model, HttpServletRequest request) {
         this.message = model.getMessage();
         this.priority = model.getPriority();
-        if (model.getType() != null) {
-            this.messageType = (BroadleafEnumerationTypeWrapper) context.getBean(BroadleafEnumerationTypeWrapper.class.getName());
-            this.messageType.wrapDetails(model.getType(), request);
-        }
+        this.messageType = model.getType();
     }
 
     @Override

@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.order.service.call;
 
-import org.broadleafcommerce.core.order.service.type.MessageType;
 
 /**
  * ActivityMessageDTO will hold messages that will be  passed between activities/workflows.  As opposed to 
@@ -28,9 +27,10 @@ public class ActivityMessageDTO {
 
     protected String message;
     protected Integer priority;
-    protected MessageType type;
+    protected String type;
     protected String errorCode;
-    public ActivityMessageDTO(MessageType type, Integer priority, String message) {
+
+    public ActivityMessageDTO(String type, Integer priority, String message) {
         this.message = message;
         this.type = type;
         this.priority = priority;
@@ -52,11 +52,11 @@ public class ActivityMessageDTO {
         this.priority = priority;
     }
 
-    public MessageType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(MessageType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
