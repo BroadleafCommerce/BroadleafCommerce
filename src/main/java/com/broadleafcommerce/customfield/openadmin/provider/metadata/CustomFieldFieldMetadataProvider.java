@@ -7,9 +7,9 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.MapFieldsFieldMetadataProvider;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
@@ -22,7 +22,6 @@ import com.broadleafcommerce.customfield.service.CustomFieldInfo;
 import com.broadleafcommerce.customfield.service.CustomFieldService;
 import com.broadleafcommerce.customfield.service.type.CustomFieldType;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
@@ -41,25 +40,22 @@ public class CustomFieldFieldMetadataProvider extends MapFieldsFieldMetadataProv
     @Resource(name="blCustomFieldService")
     protected CustomFieldService customFieldService;
 
-    @Override
-    protected boolean canHandleFieldForConfiguredMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
-        String targetEntityName = addMetadataRequest.getTargetClass().getName();
-        Field field = addMetadataRequest.getRequestedField();
-        return detectField(targetEntityName, field);
-    }
-
-    protected boolean detectField(String targetEntityName, Field field) {
+    protected boolean detectField(String targetEntityName, String fieldName) {
         //see if this is even a legitimate field
         String attributeField = CustomFieldInfo.CUSTOM_FIELD_FIELD_NAMES.get(targetEntityName);
-        return (attributeField != null && field.getName().equals(attributeField));
+        return (attributeField != null && fieldName.equals(attributeField));
     }
 
-    @Override
-    protected boolean canHandleFieldForTypeMetadata(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
+    protected boolean canHandleLateStageField(LateStageAddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         //detect our field, but let the superclass handle metadata alteration
-        String targetEntityName = addMetadataFromFieldTypeRequest.getTargetClass().getName();
-        Field field = addMetadataFromFieldTypeRequest.getRequestedField();
-        return detectField(targetEntityName, field);
+        String targetEntityName = addMetadataRequest.getTargetClass().getName();
+        String fieldName = addMetadataRequest.getFieldName();
+        return detectField(targetEntityName, fieldName);
+    }
+    
+    @Override
+    public FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+        return FieldProviderResponse.NOT_HANDLED;
     }
 
     /**
@@ -70,8 +66,8 @@ public class CustomFieldFieldMetadataProvider extends MapFieldsFieldMetadataProv
      * @return whether or not any metadata changes were applied
      */
     @Override
-    public FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
-        if (!canHandleFieldForConfiguredMetadata(addMetadataRequest, metadata)) {
+    public FieldProviderResponse lateStageAddMetadata(LateStageAddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+        if (!canHandleLateStageField(addMetadataRequest, metadata)) {
             return FieldProviderResponse.NOT_HANDLED;
         }
         //We will check in the database to see if there are any configured custom fields
@@ -96,11 +92,12 @@ public class CustomFieldFieldMetadataProvider extends MapFieldsFieldMetadataProv
             override.setFriendlyName(customField.getFriendlyName());
 
             FieldInfo myInfo = new FieldInfo();
-            myInfo.setName(addMetadataRequest.getRequestedField().getName() + FieldManager.MAPFIELDSEPARATOR + customField.getAttributeName());
+            myInfo.setName(addMetadataRequest.getFieldName() + FieldManager.MAPFIELDSEPARATOR + customField.getAttributeName());
             buildBasicMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, myInfo, override, addMetadataRequest.getDynamicEntityDao());
             setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, myInfo);
             BasicFieldMetadata basicFieldMetadata = (BasicFieldMetadata) metadata.get(myInfo.getName());
             basicFieldMetadata.setSearchable(customField.getSearchable());
+            basicFieldMetadata.setInheritedFromType(addMetadataRequest.getTargetClass().getName());
             basicFieldMetadata.getAdditionalMetadata().put(org.broadleafcommerce.openadmin.web.form.entity.Field.ALTERNATE_ORDERING, true);
         }
         return FieldProviderResponse.HANDLED;
