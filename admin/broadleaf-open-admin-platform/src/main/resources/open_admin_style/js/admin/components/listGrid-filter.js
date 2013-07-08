@@ -206,22 +206,19 @@ $(document).ready(function() {
      * Intercepts the enter keypress from the listgrid criteria input (since it is not apart of a form) and clicks the
      * closest filter button
      */
-    $('body').on('keypress', 'input.listgrid-criteria-input', function(event) {
+    $('body').on('keyup', 'input.listgrid-criteria-input', function(event) {
         if (event.which == 13) {
             $(this).closest('.filter-fields').find('button.listgrid-filter').click();
             return false;
-        }
-    });
-    
-    $('body').on('input', 'input.listgrid-criteria-input', function(event) {
-        $clearFilterButton = $(this).closest('.filter-fields').find('button.listgrid-clear-filter');
-        if ($(this).val()) {
-            $clearFilterButton.removeAttr('disabled');
         } else {
-            $clearFilterButton.attr('disabled', 'disabled');
+            $clearFilterButton = $(this).closest('.filter-fields').find('button.listgrid-clear-filter');
+            if ($(this).val()) {
+                $clearFilterButton.removeAttr('disabled');
+            } else {
+                $clearFilterButton.attr('disabled', 'disabled');
+            }
         }
     });
-
     
     /**
      * Intercepts click events on the 'filter' button for the list grid headers. This will execute an AJAX call after
