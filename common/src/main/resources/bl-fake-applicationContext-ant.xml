@@ -28,4 +28,11 @@
         <property name="repeatInterval" value="999999999999999" />
     </bean>
     
+    <!-- Additional beans that must be declared for the build-sql task -->
+    <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list />
+        </property>
+    </bean>
+    
 </beans>
