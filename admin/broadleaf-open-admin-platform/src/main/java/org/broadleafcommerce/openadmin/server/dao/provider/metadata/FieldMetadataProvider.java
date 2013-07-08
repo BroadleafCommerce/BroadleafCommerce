@@ -20,6 +20,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
@@ -52,6 +53,20 @@ public interface FieldMetadataProvider extends Ordered {
      * @return whether or not this implementation adjusted metadata
      */
     FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata);
+    
+    /**
+     * Contribute to metadata inspection for the {@link java.lang.reflect.Field} instance in the request. Implementations should
+     * add values to the metadata parameter.
+     * 
+     * This method differs from {@link #addMetadata(AddMetadataRequest, Map)} in that it will be invoked after the cacheable
+     * properties are assembled. It is therefore useful in scenarios where you may want to contribute properties to 
+     * metadata that are dynamic and should not be cached normally.
+     *
+     * @param lateStageAddMetadataRequest contains the requested field name and support classes.
+     * @param metadata implementations should add metadata for the requested field here
+     * @return whether or not this implementation adjusted metadata
+     */
+    FieldProviderResponse lateStageAddMetadata(LateStageAddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata);
 
     /**
      * Contribute to metadata inspection for the entity in the request. Implementations should override values

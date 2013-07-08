@@ -37,6 +37,7 @@ import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.FieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
@@ -68,9 +69,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -496,7 +499,31 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
         for (String removeKey : removeKeys) {
             mergedProperties.remove(removeKey);
         }
-
+        
+        // Allow field metadata providers to contribute additional fields here. These latestage handlers take place
+        // after any cached lookups occur, and are ideal for adding in dynamic properties that are not globally cacheable
+        // like properties gleaned from reflection typically are.
+        Set<String> keys = new HashSet<String>(mergedProperties.keySet());
+        for (Class<?> targetClass : entities) {
+            for (String key : keys) {
+                LateStageAddMetadataRequest amr = new LateStageAddMetadataRequest(key, null, targetClass, this, "");
+                
+                boolean foundOneOrMoreHandlers = false;
+                for (FieldMetadataProvider fieldMetadataProvider : fieldMetadataProviders) {
+                    FieldProviderResponse response = fieldMetadataProvider.lateStageAddMetadata(amr, mergedProperties);
+                    if (FieldProviderResponse.NOT_HANDLED != response) {
+                        foundOneOrMoreHandlers = true;
+                    }
+                    if (FieldProviderResponse.HANDLED_BREAK == response) {
+                        break;
+                    }
+                }
+                if (!foundOneOrMoreHandlers) {
+                    defaultFieldMetadataProvider.lateStageAddMetadata(amr, mergedProperties);
+                }
+            }
+        }
+        
         return mergedProperties;
     }
 
