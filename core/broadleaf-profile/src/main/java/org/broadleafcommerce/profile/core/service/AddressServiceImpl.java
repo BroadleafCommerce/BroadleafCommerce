@@ -24,6 +24,7 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.service.exception.AddressVerificationException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -62,6 +63,12 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<Address> verifyAddress(Address address) throws AddressVerificationException {
+        if (address.getStandardized() != null && Boolean.TRUE.equals(address.getStandardized())) {
+            //If this address is already standardized, don't waste a call.
+            ArrayList<Address> out = new ArrayList<Address>();
+            out.add(address);
+            return out;
+        }
 
         if (providers != null && !providers.isEmpty()) {
 
