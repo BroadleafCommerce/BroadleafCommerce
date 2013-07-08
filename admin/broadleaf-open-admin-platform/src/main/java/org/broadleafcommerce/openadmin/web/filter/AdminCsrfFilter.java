@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
  *     
  * @author trevorleffert
  */
-
 public class AdminCsrfFilter extends CsrfFilter {
     
     @Resource(name = "blAdminAuthenticationFailureHandler")

@@ -52,7 +52,7 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
             failureUrl = defaultFailureUrl;
         }
 
-        if (sessionTimeout) {
+        if (BooleanUtils.isTrue(sessionTimeout)) {
             failureUrl = "?sessionTimeout=true";
         }
 
