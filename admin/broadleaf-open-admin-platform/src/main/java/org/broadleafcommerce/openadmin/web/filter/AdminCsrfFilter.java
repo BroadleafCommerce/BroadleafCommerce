@@ -43,16 +43,10 @@ public class AdminCsrfFilter extends CsrfFilter {
                 if (SecurityContextHolder.getContext().getAuthentication() == null) {
                     baseHttpRequest.setAttribute("sessionTimeout", true);
                     failureHandler.onAuthenticationFailure((HttpServletRequest) baseRequest, (HttpServletResponse) baseResponse, new SessionAuthenticationException("Session Time Out"));
-                } else {
-                    //If session is determined to not be a timeout, redirect to users previous location
-                    String previousLocation = baseHttpRequest.getHeader("referer");
-                    HttpServletResponse response = (HttpServletResponse) baseResponse;
-                    response.sendRedirect(previousLocation);
                 }
             } else {
                 throw e;
             }
         }
     }
-
 }
