@@ -32,6 +32,8 @@ import javax.annotation.Resource;
 @Service("blAddressService")
 public class AddressServiceImpl implements AddressService {
 
+    protected boolean mustValidateAddresses = false;
+
     @Resource(name="blAddressDao")
     protected AddressDao addressDao;
 
@@ -96,7 +98,19 @@ public class AddressServiceImpl implements AddressService {
                 }
             }
         }
-        throw new AddressVerificationException("No providers were configured to handle address validation");
+        if (mustValidateAddresses) {
+            throw new AddressVerificationException("No providers were configured to handle address validation");
+        }
+        ArrayList<Address> out = new ArrayList<Address>();
+        out.add(address);
+        return out;
     }
 
+    /**
+     * Default is false. If set to true, the verifyAddress method will throw an exception if there are no providers to handle the request.
+     * @param mustValidateAddresses
+     */
+    public void setMustValidateAddresses(boolean mustValidateAddresses) {
+        this.mustValidateAddresses = mustValidateAddresses;
+    }
 }

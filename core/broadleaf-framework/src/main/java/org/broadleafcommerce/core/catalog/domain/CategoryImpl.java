@@ -188,6 +188,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     protected String description;
 
     @Column(name = "TAX_CODE")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_TaxCode", order = 4000,
+            group = Presentation.Group.Name.Advanced)
     protected String taxCode;
 
     @Column(name = "ACTIVE_START_DATE")

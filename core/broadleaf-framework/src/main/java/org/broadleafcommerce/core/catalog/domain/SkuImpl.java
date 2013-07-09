@@ -27,13 +27,10 @@ import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.OptionFilterParam;
-import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -179,9 +176,8 @@ public class SkuImpl implements Sku {
     protected String longDescription;
 
     @Column(name = "TAX_CODE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_TaxCode", order = 1001,
-            group = ProductImpl.Presentation.Group.Name.Financial, fieldType = SupportedFieldType.DATA_DRIVEN_ENUMERATION)
-    @AdminPresentationDataDrivenEnumeration(optionCanEditValues = false, optionFilterParams = { @OptionFilterParam(param = "type.key", value = "TAX_CODE", paramType = OptionFilterParamType.STRING) })
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_TaxCode", order = 2000,
+            group = ProductImpl.Presentation.Group.Name.Financial)
     protected String taxCode;
 
     @Column(name = "TAXABLE_FLAG")
@@ -897,17 +893,18 @@ public class SkuImpl implements Sku {
 
     @Override
     public String getTaxCode() {
-        if (StringUtils.isEmpty(taxCode) && hasDefaultSku()) {
-            return lookupDefaultSku().getTaxCode();
-        } else if (StringUtils.isEmpty(taxCode)) {
-            return getProduct().getTaxCode();
+        if (StringUtils.isEmpty(this.taxCode)) {
+            if (hasDefaultSku() && !StringUtils.isEmpty(lookupDefaultSku().getTaxCode())) {
+                return lookupDefaultSku().getTaxCode();
+            } else if (getProduct() != null && getProduct().getDefaultCategory() != null) {
+                return getProduct().getDefaultCategory().getTaxCode();
+            }
         }
-        return taxCode;
+        return this.taxCode;
     }
 
     @Override
     public void setTaxCode(String taxCode) {
         this.taxCode = taxCode;
     }
-
 }
