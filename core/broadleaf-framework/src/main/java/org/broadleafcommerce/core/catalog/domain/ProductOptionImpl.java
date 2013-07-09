@@ -100,7 +100,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     protected Integer displayOrder;
 
     @Column(name = "VALIDATION_STRATEGY_TYPE")
-    @AdminPresentation(friendlyName = "productOption_validationType", group = "productOption_validation", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType")
+    @AdminPresentation(friendlyName = "productOption_validationStrategyType", group = "productOption_validation", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType")
     private String productOptionValidationStrategyType;
 
     @Column(name = "VALIDATION_TYPE")
