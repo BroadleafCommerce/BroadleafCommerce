@@ -55,7 +55,8 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
         if (BooleanUtils.isTrue(sessionTimeout)) {
             failureUrl = "?sessionTimeout=true";
         }
-
+        //Grab url the user, was redirected from
+        successUrlParam = request.getHeader("referer");
         if (failureUrl != null) {
             if (!StringUtils.isEmpty(successUrlParam)) {
                 if (!failureUrl.contains("?")) {
