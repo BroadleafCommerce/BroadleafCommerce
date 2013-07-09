@@ -56,7 +56,7 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
     @Resource(name = "blProductOptionValidationService")
     protected ProductOptionValidationService productOptionValidationService;
 
-    protected ProductOptionValidationStrategyType productOptionValidationStrategyType = ProductOptionValidationStrategyType.SUBMIT_ORDER;
+
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         Order order = context.getSeedData().getOrder();
@@ -66,15 +66,15 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
             if (product != null && product.getProductOptions() != null && product.getProductOptions().size() > 0) {
                 for (ProductOption productOption : product.getProductOptions()) {
                     if (productOption.getRequired() && (productOption.getProductOptionValidationStrategyType() == null ||
-                            productOption.getProductOptionValidationStrategyType().getRank() <= productOptionValidationStrategyType.getRank())) {
+                            productOption.getProductOptionValidationStrategyType().getRank() <= getProductOptionValidationStrategyType().getRank())) {
                         if (attributeValues.get(productOption.getAttributeName()) == null || StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()).getValue())) {
                             throw new RequiredAttributeNotProvidedException("Unable to validate cart, product  (" + product.getId() + ") required attribute was not provided: " + productOption.getAttributeName());
                         }
                     }
-                    if (productOption.getProductOptionValidationType() != null && (productOption.getProductOptionValidationStrategyType() == null || productOption.getProductOptionValidationStrategyType().getRank() <= productOptionValidationStrategyType.getRank())) {
+                    if (productOption.getProductOptionValidationType() != null && (productOption.getProductOptionValidationStrategyType() == null || productOption.getProductOptionValidationStrategyType().getRank() <= getProductOptionValidationStrategyType().getRank())) {
                         productOptionValidationService.validate(productOption, attributeValues.get(productOption.getAttributeName()).getValue());
                     }
-                    if ((productOption.getProductOptionValidationStrategyType() != null && productOption.getProductOptionValidationStrategyType().getRank() > productOptionValidationStrategyType.getRank()))
+                    if ((productOption.getProductOptionValidationStrategyType() != null && productOption.getProductOptionValidationStrategyType().getRank() > getProductOptionValidationStrategyType().getRank()))
                     {
                         //we need to validate however, we will not error out since this message is 
                         try {
@@ -93,12 +93,9 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
         return context;
     }
 
-    public String getProductOptionValidationStrategyType() {
-        return productOptionValidationStrategyType.getType();
+    public ProductOptionValidationStrategyType getProductOptionValidationStrategyType() {
+        return ProductOptionValidationStrategyType.SUBMIT_ORDER;
     }
 
-    public void setProductOptionValidationStrategyType(String productOptionValidationStrategyType) {
-        this.productOptionValidationStrategyType = ProductOptionValidationStrategyType.getInstance(productOptionValidationStrategyType);
-    }
 
 }
