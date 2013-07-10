@@ -34,7 +34,9 @@
             // Parse the current url parameters into an object
             var paramObj = {};
             if (urlParams != null) {
-                paramObj = JSON.parse('{"' + decodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+                paramObj = JSON.parse('{"'
+                    + decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\""))) + '"}');
+
             }
             
             if (value == null || value === "") {
@@ -68,7 +70,8 @@
             var urlParams = null;
             if (indexOfQ >= 0) {
                 urlParams = baseUrl.substring(indexOfQ + 1);
-                return JSON.parse('{"' + decodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+                return JSON.parse('{"'
+                    + decodeURI(encodeURI(urlParams.replace(/&/g, "\",\"").replace(/=/g,"\":\""))) + '"}');
             }
             return null;
         },
