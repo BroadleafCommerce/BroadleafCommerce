@@ -41,6 +41,7 @@ public class CustomFieldTargetType implements Serializable, BroadleafEnumeration
     public static final CustomFieldTargetType CUSTOMER = new CustomFieldTargetType("org.broadleafcommerce.profile.core.domain.CustomerImpl", "Customer");
     public static final CustomFieldTargetType SKU = new CustomFieldTargetType("org.broadleafcommerce.core.catalog.domain.SkuImpl", "Sku");
     public static final CustomFieldTargetType PRODUCT = new CustomFieldTargetType("org.broadleafcommerce.core.catalog.domain.ProductImpl", "Product");
+    public static final CustomFieldTargetType CATEGORY = new CustomFieldTargetType("org.broadleafcommerce.core.catalog.domain.CategoryImpl", "Category");
     public static final CustomFieldTargetType ORDERITEM = new CustomFieldTargetType("org.broadleafcommerce.core.order.domain.OrderItemImpl", "Order Item");
     public static final CustomFieldTargetType PRICING_CONTEXT = new CustomFieldTargetType("com.broadleafcommerce.pricelist.domain.PricingContextDto", "Pricing Context");
 

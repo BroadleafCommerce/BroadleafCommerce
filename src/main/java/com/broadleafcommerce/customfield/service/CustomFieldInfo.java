@@ -34,6 +34,7 @@ import java.util.Map;
 public class CustomFieldInfo {
 
     private static final String PRODUCT_ATTRIBUTE_FIELD = "productAttributes";
+    private static final String CATEGORY_ATTRIBUTE_FIELD = "categoryAttributes";
     private static final String SKU_ATTRIBUTE_FIELD = "skuAttributes";
     private static final String ORDER_ITEM_ATTRIBUTE_FIELD = "orderItemAttributeMap";
     private static final String CUSTOMER_ATTRIBUTE_FIELD = "customerAttributes";
@@ -44,11 +45,13 @@ public class CustomFieldInfo {
         CUSTOM_FIELD_FIELD_NAMES.put(CustomFieldTargetType.CUSTOMER.getType(), CUSTOMER_ATTRIBUTE_FIELD);
         CUSTOM_FIELD_FIELD_NAMES.put(CustomFieldTargetType.ORDERITEM.getType(), ORDER_ITEM_ATTRIBUTE_FIELD);
         CUSTOM_FIELD_FIELD_NAMES.put(CustomFieldTargetType.PRODUCT.getType(), PRODUCT_ATTRIBUTE_FIELD);
+        CUSTOM_FIELD_FIELD_NAMES.put(CustomFieldTargetType.CATEGORY.getType(), CATEGORY_ATTRIBUTE_FIELD);
         CUSTOM_FIELD_FIELD_NAMES.put(CustomFieldTargetType.SKU.getType(), SKU_ATTRIBUTE_FIELD);
         CUSTOM_FIELD_FIELD_NAMES.put(CustomFieldTargetType.PRICING_CONTEXT.getType(), PRICING_CONTEXT_DTO_ATTRIBUTE_FIELD);
     }
 
     private static final String PRODUCT_ATTRIBUTE_FIELD_GETTER = "getProductAttributes()";
+    private static final String CATEGORY_ATTRIBUTE_FIELD_GETTER = "getCategoryAttributes()";
     private static final String SKU_ATTRIBUTE_FIELD_GETTER = "getSkuAttributes()";
     private static final String ORDER_ITEM_ATTRIBUTE_FIELD_GETTER = "getOrderItemAttributes()";
     private static final String CUSTOMER_ATTRIBUTE_FIELD_GETTER = "getCustomerAttributes()";
@@ -58,6 +61,7 @@ public class CustomFieldInfo {
         CUSTOM_FIELD_GETTER_NAMES.put(CustomFieldTargetType.CUSTOMER.getType(), CUSTOMER_ATTRIBUTE_FIELD_GETTER);
         CUSTOM_FIELD_GETTER_NAMES.put(CustomFieldTargetType.ORDERITEM.getType(), ORDER_ITEM_ATTRIBUTE_FIELD_GETTER);
         CUSTOM_FIELD_GETTER_NAMES.put(CustomFieldTargetType.PRODUCT.getType(), PRODUCT_ATTRIBUTE_FIELD_GETTER);
+        CUSTOM_FIELD_GETTER_NAMES.put(CustomFieldTargetType.CATEGORY.getType(), CATEGORY_ATTRIBUTE_FIELD_GETTER);
         CUSTOM_FIELD_GETTER_NAMES.put(CustomFieldTargetType.SKU.getType(), SKU_ATTRIBUTE_FIELD_GETTER);
         CUSTOM_FIELD_GETTER_NAMES.put(CustomFieldTargetType.PRICING_CONTEXT.getType(), PRICING_CONTEXT_DTO_ATTRIBUTE_FIELD_GETTER);
     }
@@ -77,6 +81,7 @@ public class CustomFieldInfo {
         CUSTOM_FIELD_RULE_OPERATORS.put(CustomFieldType.MONEY, BLC_OPERATORS_NUMERIC);
         CUSTOM_FIELD_RULE_OPERATORS.put(CustomFieldType.STRING, BLC_OPERATORS_TEXT);
         CUSTOM_FIELD_RULE_OPERATORS.put(CustomFieldType.STRING_LIST, BLC_OPERATORS_TEXT_LIST);
+        CUSTOM_FIELD_RULE_OPERATORS.put(CustomFieldType.HTML, BLC_OPERATORS_TEXT);
     }
 
     public static final Map<String, CustomFieldTargetType[]> RULE_BUILDER_FIELD_SERVICES = new HashMap<String, CustomFieldTargetType[]>();
@@ -84,6 +89,7 @@ public class CustomFieldInfo {
         RULE_BUILDER_FIELD_SERVICES.put(RuleIdentifier.CUSTOMER, new CustomFieldTargetType[]{CustomFieldTargetType.CUSTOMER});
         RULE_BUILDER_FIELD_SERVICES.put(RuleIdentifier.ORDERITEM, new CustomFieldTargetType[]{CustomFieldTargetType.ORDERITEM, CustomFieldTargetType.PRODUCT, CustomFieldTargetType.SKU});
         RULE_BUILDER_FIELD_SERVICES.put(RuleIdentifier.PRODUCT, new CustomFieldTargetType[]{CustomFieldTargetType.PRODUCT});
+        RULE_BUILDER_FIELD_SERVICES.put(RuleIdentifier.CATEGORY, new CustomFieldTargetType[]{CustomFieldTargetType.CATEGORY});
         RULE_BUILDER_FIELD_SERVICES.put(RuleIdentifier.SKU, new CustomFieldTargetType[]{CustomFieldTargetType.SKU});
         RULE_BUILDER_FIELD_SERVICES.put(RuleIdentifier.PRICING_CONTEXT, new CustomFieldTargetType[] { CustomFieldTargetType.PRICING_CONTEXT });
     }
@@ -107,6 +113,10 @@ public class CustomFieldInfo {
         Map<CustomFieldTargetType, String> productMap = new HashMap<CustomFieldTargetType, String>();
         productMap.put(CustomFieldTargetType.PRODUCT, "");
         RULE_BUILDER_TYPE_PREFIXES.put(RuleIdentifier.PRODUCT, productMap);
+        
+        Map<CustomFieldTargetType, String> categoryMap = new HashMap<CustomFieldTargetType, String>();
+        productMap.put(CustomFieldTargetType.CATEGORY, "");
+        RULE_BUILDER_TYPE_PREFIXES.put(RuleIdentifier.CATEGORY, categoryMap);
 
         Map<CustomFieldTargetType, String> skuMap = new HashMap<CustomFieldTargetType, String>();
         skuMap.put(CustomFieldTargetType.SKU, "");
