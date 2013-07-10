@@ -25,12 +25,13 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Implementations of this interface are used to hold data about a Category.  A category is a group of products.
@@ -439,6 +440,17 @@ public interface Category extends Serializable {
      * @return the full hierarchy
      */
     public List<Category> buildFullCategoryHierarchy(List<Category> currentHierarchy);
+
+    /**
+     * Gets the attributes for this {@link Category}. In smaller sites, using these attributes might be preferred to
+     * extending the domain object itself.
+     * 
+     * @return
+     * @see {@link #getMappedCategoryAttributes()}
+     */
+    public Map<String, CategoryAttribute> getCategoryAttributesMap();
+
+    public void setCategoryAttributesMap(Map<String, CategoryAttribute> categoryAttributes);
     
     /**
      * Gets the attributes for this {@link Category}. In smaller sites, using these attributes might be preferred to
@@ -446,6 +458,7 @@ public interface Category extends Serializable {
      * 
      * @return
      * @see {@link #getMappedCategoryAttributes()}
+     * @deprecated This will be replaced with {@link #getCategoryAttributesMap()} in 3.1.0.
      */
     public List<CategoryAttribute> getCategoryAttributes();
 
@@ -454,6 +467,7 @@ public interface Category extends Serializable {
      * extending the domain object and creating a new table to store custom properties.
      * 
      * @return
+     * @deprecated This will be replaced with {@link #setCategoryAttributesMap()} in 3.1.0.
      */
     public void setCategoryAttributes(List<CategoryAttribute> categoryAttributes);
 
@@ -463,6 +477,7 @@ public interface Category extends Serializable {
      * @param name
      * @return
      * @see {@link #getCategoryAttributes()}, {@link #getMappedCategoryAttributes()}
+     * @deprecated This will be removed in 3.1.0
      */
     public CategoryAttribute getCategoryAttributeByName(String name);
 
@@ -471,6 +486,7 @@ public interface Category extends Serializable {
      * form
      * 
      * @return
+     * @deprecated This will be removed in 3.1.0
      */
     public Map<String, CategoryAttribute> getMappedCategoryAttributes();
 
