@@ -726,13 +726,15 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 lg.getToolbarActions().add(0, DefaultListGridActions.ADD);
             }
         }
+        if (CollectionUtils.isEmpty(ef.getActions())) {
+            ef.addAction(DefaultEntityFormActions.SAVE);
+        }
         
-        addEntityFormActions(ef);
+        ef.addAction(DefaultEntityFormActions.DELETE);
+        addAdditionalEntityFormActions(ef);
     }
     
-    protected void addEntityFormActions(EntityForm ef) {
-        ef.addAction(DefaultEntityFormActions.SAVE);
-        ef.addAction(DefaultEntityFormActions.DELETE);
+    protected void addAdditionalEntityFormActions(EntityForm ef) {
         if (extensionManagers != null && !extensionManagers.isEmpty()) {
             for (FormBuilderExtensionManager mgr : extensionManagers) {
                 if (mgr.canHandle(ef)) {
@@ -919,6 +921,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     
     protected EntityForm createStandardEntityForm() {
         EntityForm ef = new EntityForm();
+        ef.addAction(DefaultEntityFormActions.SAVE);
         return ef;
     }
     
