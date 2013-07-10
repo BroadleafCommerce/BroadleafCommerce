@@ -44,6 +44,7 @@ public class CustomFieldType implements Serializable, BroadleafEnumerationType {
     public static final CustomFieldType DECIMAL = new CustomFieldType("DECIMAL", "Decimal");
     public static final CustomFieldType DATE = new CustomFieldType("DATE", "Date");
     public static final CustomFieldType STRING = new CustomFieldType("STRING", "Text");
+    public static final CustomFieldType HTML = new CustomFieldType("HTML", "Rich Text (HTML)");
 
     //advanced usage - not supported for persistence, and therefore cannot be a form field.
     //however, can be used in the context of a rule builder when the data to test is not coming from
