@@ -723,11 +723,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
         
-        if (CollectionUtils.isEmpty(ef.getActions())) {
-            ef.addAction(DefaultEntityFormActions.SAVE);
-        }
-        
+        addEntityFormActions(ef);
+    }
+    
+    protected void addEntityFormActions(EntityForm ef) {
+        ef.addAction(DefaultEntityFormActions.SAVE);
         ef.addAction(DefaultEntityFormActions.DELETE);
+        //TODO: @ktisdell - implement extension manager pattern here for modules to contribute more default actions
     }
     
     @Override
@@ -907,7 +909,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     
     protected EntityForm createStandardEntityForm() {
         EntityForm ef = new EntityForm();
-        ef.addAction(DefaultEntityFormActions.SAVE);
         return ef;
     }
     
