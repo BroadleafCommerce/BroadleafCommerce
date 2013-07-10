@@ -195,4 +195,11 @@
         </property>
     </bean>
 
+    
+    <bean id="blFormBuilderExtensionManagers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
 </beans>
