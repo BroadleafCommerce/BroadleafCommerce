@@ -16,14 +16,14 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.io.Serializable;
+import org.broadleafcommerce.common.value.Searchable;
 
 
 /**
  * 
  * @author Phillip Verheyden
  */
-public interface CategoryAttribute extends Serializable {
+public interface CategoryAttribute extends Searchable<String> {
 
     /**
      * Gets the id.
@@ -52,22 +52,6 @@ public interface CategoryAttribute extends Serializable {
      * @param value the new value
      */
     public void setValue(String value);
-
-    /**
-     * Gets the searchable.
-     * 
-     * @deprecated in favor of Field configuration since 2.0
-     * @return the searchable
-     */
-    public Boolean getSearchable();
-
-    /**
-     * Sets the searchable.
-     * 
-     * @deprecated in favor of Field configuration since 2.0
-     * @param searchable the new searchable
-     */
-    public void setSearchable(Boolean searchable);
 
     /**
      * Gets the {@link Category}.

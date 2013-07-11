@@ -63,7 +63,7 @@ public class CategoryAttributeImpl implements CategoryAttribute {
     
     @Column(name = "NAME", nullable=false)
     @Index(name="CATEGORYATTRIBUTE_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Name", order=1, group = "ProductAttributeImpl_Description", prominent=true)
+    @AdminPresentation(excluded = true)
     protected String name;
 
     @Column(name = "VALUE")

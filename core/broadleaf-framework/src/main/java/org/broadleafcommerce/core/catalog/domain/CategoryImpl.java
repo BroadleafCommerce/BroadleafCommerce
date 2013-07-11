@@ -32,11 +32,9 @@ import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
@@ -82,6 +80,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -364,14 +363,15 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
             gridVisibleFields = {"field", "label", "searchDisplayPriority"})
     protected List<SearchFacet> excludedSearchFacets = new ArrayList<SearchFacet>(10);
     
-    @OneToMany(mappedBy = "category", targetEntity = CategoryAttributeImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
+    @OneToMany(mappedBy = "category", targetEntity = CategoryAttributeImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @MapKey(name="name")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "categoryAttributesTitle",
-            order = 87,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
-    protected List<CategoryAttribute> categoryAttributes  = new ArrayList<CategoryAttribute>();
+    @AdminPresentationMap(friendlyName = "categoryAttributesTitle",
+        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name"
+    )
+    protected Map<String, CategoryAttribute> categoryAttributes = new HashMap<String, CategoryAttribute>();
 
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", order = 2000,
@@ -1001,13 +1001,27 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     }
     
     @Override
-    public List<CategoryAttribute> getCategoryAttributes() {
+    public Map<String, CategoryAttribute> getCategoryAttributesMap() {
         return categoryAttributes;
+    }
+    
+    @Override
+    public void setCategoryAttributesMap(Map<String, CategoryAttribute> categoryAttributes) {
+        this.categoryAttributes = categoryAttributes;
+    }
+
+    @Override
+    public List<CategoryAttribute> getCategoryAttributes() {
+        List<CategoryAttribute> ca = new ArrayList<CategoryAttribute>(categoryAttributes.values());
+        return Collections.unmodifiableList(ca);
     }
 
     @Override
     public void setCategoryAttributes(List<CategoryAttribute> categoryAttributes) {
-        this.categoryAttributes = categoryAttributes;
+        this.categoryAttributes = new HashMap<String, CategoryAttribute>();
+        for (CategoryAttribute categoryAttribute : categoryAttributes) {
+            this.categoryAttributes.put(categoryAttribute.getName(), categoryAttribute);
+        }
     }
     
     @Override
