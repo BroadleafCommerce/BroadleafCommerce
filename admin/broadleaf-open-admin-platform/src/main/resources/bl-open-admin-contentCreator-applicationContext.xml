@@ -209,7 +209,7 @@
                 <value>classpath:/open_admin_style/js/</value>
                 <value>classpath:/admin_style/js/</value>
                 <value>classpath:/common_js/</value>
-                <value>classpath:/extentions/js/</value><!-- To allow a common place for modules or extensions to put js files. -->
+                <value>classpath:/extensions/js/</value><!-- To allow a common place for modules or extensions to put js files. -->
             </list>
         </property>
     </bean>
