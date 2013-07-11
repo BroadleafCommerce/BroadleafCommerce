@@ -194,7 +194,6 @@
             </list>
         </property>
     </bean>
-
     
     <bean id="blFormBuilderExtensionManagers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
@@ -203,44 +202,27 @@
         </property>
     </bean>
     
-    <bean id="blJsLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
-        <property name="sourceList">
-            <list>
-                <value>classpath:/open_admin_style/js/</value>
-                <value>classpath:/admin_style/js/</value>
-                <value>classpath:/common_js/</value>
-                <value>classpath:/extensions/js/</value><!-- To allow a common place for modules or extensions to put js files. -->
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="blCssLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
+    <bean id="blOpenAdminCssLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
                 <value>classpath:/open_admin_style/css/</value>
             </list>
         </property>
     </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blOpenAdminCssLocations" />
+        <property name="targetRef" value="blCssLocations" />
+    </bean>
     
-    <bean id="blJsFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+    <bean id="blOpenAdminJsLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
-                <value>admin/catalog/product.js</value>
-                <value>admin/catalog/offer.js</value>
-                <value>admin/catalog/category.js</value>
+                <value>classpath:/open_admin_style/js/</value>
             </list>
         </property>
     </bean>
-    
-    <bean id="blJsFileMap" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="admin.js" value-ref="blJsFileList"/>
-            </map>
-        </property>  
-    </bean>
-    
-    <bean id="blResourceBundlingService" class="org.broadleafcommerce.common.resource.service.ResourceBundlingServiceImpl">
-        <property name="additionalBundleFiles" ref="blJsFileMap"/>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blOpenAdminJsLocations" />
+        <property name="targetRef" value="blJsLocations" />
     </bean>
 </beans>
