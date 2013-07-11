@@ -76,12 +76,15 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     protected boolean detectBasicType(BasicFieldMetadata metadata, Property property) {
         return (metadata.getFieldType() == SupportedFieldType.BOOLEAN ||
                 metadata.getFieldType() == SupportedFieldType.DATE ||
-                metadata.getFieldType() == SupportedFieldType.DECIMAL ||
                 metadata.getFieldType() == SupportedFieldType.INTEGER ||
+                metadata.getFieldType() == SupportedFieldType.DECIMAL ||
                 metadata.getFieldType() == SupportedFieldType.EMAIL ||
                 metadata.getFieldType() == SupportedFieldType.FOREIGN_KEY ||
                 metadata.getFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY ||
-                metadata.getFieldType() == SupportedFieldType.STRING || 
+                metadata.getFieldType() == SupportedFieldType.STRING ||
+                metadata.getFieldType() == SupportedFieldType.BROADLEAF_ENUMERATION ||
+                metadata.getFieldType() == SupportedFieldType.EXPLICIT_ENUMERATION ||
+                metadata.getFieldType() == SupportedFieldType.DATA_DRIVEN_ENUMERATION ||
                 metadata.getFieldType() == SupportedFieldType.ID) &&
                 (property == null ||
                 !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
