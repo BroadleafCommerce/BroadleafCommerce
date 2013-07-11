@@ -51,7 +51,7 @@ public class CustomFieldInfo {
     }
 
     private static final String PRODUCT_ATTRIBUTE_FIELD_GETTER = "getProductAttributes()";
-    private static final String CATEGORY_ATTRIBUTE_FIELD_GETTER = "getCategoryAttributes()";
+    private static final String CATEGORY_ATTRIBUTE_FIELD_GETTER = "getCategoryAttributesMap()";
     private static final String SKU_ATTRIBUTE_FIELD_GETTER = "getSkuAttributes()";
     private static final String ORDER_ITEM_ATTRIBUTE_FIELD_GETTER = "getOrderItemAttributes()";
     private static final String CUSTOMER_ATTRIBUTE_FIELD_GETTER = "getCustomerAttributes()";
