@@ -219,4 +219,30 @@
         <property name="targetRef" value="blPersistenceProviders" />
     </bean>
     
+    <bean id="blAdminJsLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:/admin_style/js/</value>
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminJsLocations" />
+        <property name="targetRef" value="blJsLocations" />
+    </bean>
+    
+    <bean id="blAdminJsFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>admin/catalog/product.js</value>
+                <value>admin/catalog/offer.js</value>
+                <value>admin/catalog/category.js</value>
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminJsFileList" />
+        <property name="targetRef" value="blJsFileList" />
+    </bean>
+    
 </beans>
