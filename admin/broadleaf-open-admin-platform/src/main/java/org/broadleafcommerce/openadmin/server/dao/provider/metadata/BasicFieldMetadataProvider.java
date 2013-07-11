@@ -572,9 +572,11 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
 
         metadata.setName(field.getName());
         metadata.setTargetClass(targetClass.getName());
-
         metadata.setFieldName(field.getName());
 
+        if (basicFieldMetadata.getFieldType() != null) {
+            metadata.setFieldType(basicFieldMetadata.getFieldType());
+        }
         if (basicFieldMetadata.getFriendlyName() != null) {
             metadata.setFriendlyName(basicFieldMetadata.getFriendlyName());
         }
