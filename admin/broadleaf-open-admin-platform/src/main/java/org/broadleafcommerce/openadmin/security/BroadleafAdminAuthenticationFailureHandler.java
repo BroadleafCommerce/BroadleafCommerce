@@ -16,15 +16,17 @@
 
 package org.broadleafcommerce.openadmin.security;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
+import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
@@ -44,9 +46,17 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
         String failureUrlParam = StringUtil.cleanseUrlString(request.getParameter("failureUrl"));
         String successUrlParam = StringUtil.cleanseUrlString(request.getParameter("successUrl"));
         String failureUrl = failureUrlParam==null?null:failureUrlParam.trim();
-        if (StringUtils.isEmpty(failureUrl)) {
+        Boolean sessionTimeout = (Boolean) request.getAttribute("sessionTimeout");
+
+        if (StringUtils.isEmpty(failureUrl) && BooleanUtils.isNotTrue(sessionTimeout)) {
             failureUrl = defaultFailureUrl;
         }
+
+        if (BooleanUtils.isTrue(sessionTimeout)) {
+            failureUrl = "?sessionTimeout=true";
+        }
+        //Grab url the user, was redirected from
+        successUrlParam = request.getHeader("referer");
         if (failureUrl != null) {
             if (!StringUtils.isEmpty(successUrlParam)) {
                 if (!failureUrl.contains("?")) {
@@ -55,11 +65,7 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
                     failureUrl += "&successUrl=" + successUrlParam;
                 }
             }
-            String moduleKey = request.getParameter("moduleKey");
-            String pageKey = request.getParameter("pageKey");
-            if (moduleKey != null && pageKey != null) {
-                failureUrl += "#" + "moduleKey=" + moduleKey + "&pageKey=" + pageKey;
-            }
+
             saveException(request, exception);
             getRedirectStrategy().sendRedirect(request, response, failureUrl);
         } else {
