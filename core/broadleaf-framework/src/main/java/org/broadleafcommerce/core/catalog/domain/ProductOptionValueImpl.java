@@ -78,6 +78,12 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     @ManyToOne(targetEntity = ProductOptionImpl.class)
     @JoinColumn(name = "PRODUCT_OPTION_ID")
     protected ProductOption productOption;
+    
+    @Column(name = "IMAGE_PATH")
+    @AdminPresentation(friendlyName = "productOptionValue_imagePath", 
+        prominent = true,
+        translatable = true)
+    protected String image;
 
     @Override
     public Long getId() {
@@ -169,5 +175,16 @@ public class ProductOptionValueImpl implements ProductOptionValue {
         }
         return true;
     }
+
+	@Override
+	public void setImage(String imagePath) {
+		this.image = imagePath;
+		
+	}
+
+	@Override
+	public String getImage() {
+		return image;
+	}
 
 }
