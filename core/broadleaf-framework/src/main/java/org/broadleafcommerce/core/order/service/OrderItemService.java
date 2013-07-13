@@ -68,5 +68,6 @@ public interface OrderItemService {
      */
     public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item);
 
+    OrderItem updateDiscreteOrderItem(OrderItem orderItem, DiscreteOrderItemRequest itemRequest);
 
 }

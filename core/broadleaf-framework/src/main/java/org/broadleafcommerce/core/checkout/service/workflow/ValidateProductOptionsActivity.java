@@ -21,6 +21,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -35,6 +36,8 @@ import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -60,9 +63,19 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         Order order = context.getSeedData().getOrder();
+        List<DiscreteOrderItem> orderItems = new ArrayList<DiscreteOrderItem>();
         for (OrderItem i : order.getOrderItems()) {
+            if (i instanceof DiscreteOrderItem) {
+                orderItems.add((DiscreteOrderItem) i);
+            } else if (i instanceof BundleOrderItem) {
+                orderItems.addAll(((BundleOrderItem) i).getDiscreteOrderItems());
+            } else
+                continue;
+        }
+        for (DiscreteOrderItem i : orderItems) {
             Map<String, OrderItemAttribute> attributeValues = i.getOrderItemAttributes();
             Product product = ((DiscreteOrderItem) i).getProduct();
+
             if (product != null && product.getProductOptions() != null && product.getProductOptions().size() > 0) {
                 for (ProductOption productOption : product.getProductOptions()) {
                     if (productOption.getRequired() && (productOption.getProductOptionValidationStrategyType() == null ||

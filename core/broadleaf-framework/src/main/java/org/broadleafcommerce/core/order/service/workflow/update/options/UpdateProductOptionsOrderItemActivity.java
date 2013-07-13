@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.order.service.workflow.update;
+package org.broadleafcommerce.core.order.service.workflow.update.options;
 
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
-import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
-public class UpdateOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
+public class UpdateProductOptionsOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
+
+    @Resource(name = "blOrderItemService")
+    protected OrderItemService orderItemService;
 
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
@@ -38,25 +41,15 @@ public class UpdateOrderItemActivity extends BaseActivity<ProcessContext<CartOpe
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         Order order = request.getOrder();
         
-        OrderItem orderItem = null;
-        for (OrderItem oi : order.getOrderItems()) {
-            if (oi.getId().equals(orderItemRequestDTO.getOrderItemId())) {
-                orderItem = oi;
-            }
+        if (orderItemService.readOrderItemById(Long.valueOf(orderItemRequestDTO.getOrderItemId())) != null) {
+            DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
+            itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
+            orderItemService.updateDiscreteOrderItem(orderItemService.readOrderItemById(Long.valueOf(orderItemRequestDTO.getOrderItemId())), itemRequest);
+
         }
-        
-        if (orderItem == null || !order.getOrderItems().contains(orderItem)) {
-            throw new ItemNotFoundException("Order Item (" + orderItemRequestDTO.getOrderItemId() + ") not found in Order (" + order.getId() + ")");
-        }
-        
-        OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(orderItem));
-        if (orderItemRequestDTO.getQuantity() >= 0) {
-            request.setOrderItemQuantityDelta(orderItemRequestDTO.getQuantity() - itemFromOrder.getQuantity());
-            itemFromOrder.setQuantity(orderItemRequestDTO.getQuantity());
-            order = orderService.save(order, false);
-            request.setAddedOrderItem(itemFromOrder);
-            request.setOrder(order);
-        }
+
+        order = orderService.save(order, false);
+        request.setOrder(order);
 
         return context;
     }

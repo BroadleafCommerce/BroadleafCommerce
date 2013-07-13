@@ -482,4 +482,17 @@ public interface OrderService {
 
     Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException;
 
+    /**
+     * Since required product option can be added after the item is in the cart, we use this method 
+     * to apply product option on an existing item in the cart. No validation will happen at this time, as the validation 
+     * at checkout will take care of any missing product options. 
+     * 
+     * @param orderId
+     * @param orderItemRequestDTO
+     * @param priceOrder
+     * @return Order
+     * @throws UpdateCartException
+     */
+    Order updateProductOptionsForItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException;
+
 }

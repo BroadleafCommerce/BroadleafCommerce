@@ -117,6 +117,9 @@ public class OrderServiceImpl implements OrderService {
     @Resource(name = "blAddItemWorkflow")
     protected SequenceProcessor addItemWorkflow;
     
+    @Resource(name = "blUpdateProductOptionsForItemWorkflow")
+    private SequenceProcessor updateProductOptionsForItemWorkflow;
+
     @Resource(name = "blUpdateItemWorkflow")
     protected SequenceProcessor updateItemWorkflow;
     
@@ -753,5 +756,18 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return null;
+    }
+
+    @Override
+    @Transactional(value = "blTransactionManager", rollbackFor = { UpdateCartException.class })
+    public Order updateProductOptionsForItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException {
+        try {
+            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) updateProductOptionsForItemWorkflow.doActivities(cartOpRequest);
+            context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
+            return context.getSeedData().getOrder();
+        } catch (WorkflowException e) {
+            throw new UpdateCartException("Could not product options", getCartOperationExceptionRootCause(e));
+        }
     }
 }

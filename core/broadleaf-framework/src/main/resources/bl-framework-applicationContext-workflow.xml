@@ -122,6 +122,24 @@
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
     
+    
+    <!-- Update Item Workflow Configuration -->
+    <bean p:order="1000" id="blValidateUpdateProductOptionsRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.update.options.ValidateUpdateProductOptionsRequestActivity"/>
+    <bean p:order="2000" id="blUpdateProductOptionsOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.update.options.UpdateProductOptionsOrderItemActivity"/>
+ 
+    <bean id="blUpdateProductOptionsForItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blValidateUpdateProductOptionsRequestActivity" />
+                <ref bean="blUpdateProductOptionsOrderItemActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+    
     <!-- Remove Item Workflow Configuration -->
     <bean p:order="1000" id="blValidateRemoveRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.ValidateRemoveRequestActivity"/>
     <bean p:order="2000" id="blRemoveOrderMultishipOptionActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderMultishipOptionActivity"/>

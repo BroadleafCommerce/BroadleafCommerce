@@ -167,4 +167,18 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
     public void wrapSummary(OrderItem model, HttpServletRequest request) {
         wrapDetails(model, request);
     }
+
+    public Long getSkuId() {
+        return skuId;
+    }
+
+    public void setSkuId(Long skuId) {
+        this.skuId = skuId;
+
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+
+    }
 }

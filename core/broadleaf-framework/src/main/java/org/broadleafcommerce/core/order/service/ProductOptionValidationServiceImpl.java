@@ -40,7 +40,7 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
             if (!validateRegex(productOption.getValidationString(), value))
             {
                 LOG.error(productOption.getErrorMessage() + ". Value [" + value + "] does not match regex string [" + productOption.getValidationString() + "]");
-                throw new ProductOptionValidationException(productOption.getErrorMessage(), productOption.getErrorCode());
+                throw new ProductOptionValidationException(productOption.getAttributeName() + " " + productOption.getErrorMessage() + ". Value [" + value + "] does not match regex string [" + productOption.getValidationString() + "]", productOption.getErrorCode());
             }
         }
         return true;

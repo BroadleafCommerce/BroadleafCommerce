@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.service;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
@@ -41,10 +42,13 @@ import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemReque
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 @Service("blOrderItemService")
 public class OrderItemServiceImpl implements OrderItemService {
@@ -81,13 +85,19 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setCategory(itemRequest.getCategory());
         item.setProduct(itemRequest.getProduct());
         item.setOrder(itemRequest.getOrder());
+        Map<String, String> attributes = itemRequest.getItemAttributes();
+        populateProductOptionAttributes(item, attributes);
+    }
 
-        if (itemRequest.getItemAttributes() != null && itemRequest.getItemAttributes().size() > 0) {
-            Map<String,OrderItemAttribute> orderItemAttributes = new HashMap<String,OrderItemAttribute>();
-            item.setOrderItemAttributes(orderItemAttributes);
-            
-            for (String key : itemRequest.getItemAttributes().keySet()) {
-                String value = itemRequest.getItemAttributes().get(key);
+    protected void populateProductOptionAttributes(OrderItem item, Map<String, String> attributes) {
+        if (attributes != null && attributes.size() > 0) {
+            Map<String, OrderItemAttribute> orderItemAttributes = item.getOrderItemAttributes();
+            if (item.getOrderItemAttributes() == null) {
+                orderItemAttributes = new HashMap<String, OrderItemAttribute>();
+                item.setOrderItemAttributes(orderItemAttributes);
+            }
+            for (String key : attributes.keySet()) {
+                String value = attributes.get(key);
                 OrderItemAttribute attribute = new OrderItemAttributeImpl();
                 attribute.setName(key);
                 attribute.setValue(value);
@@ -95,6 +105,36 @@ public class OrderItemServiceImpl implements OrderItemService {
                 orderItemAttributes.put(key, attribute);
             }
         }
+    }
+
+    @Override
+    public OrderItem updateDiscreteOrderItem(OrderItem item, final DiscreteOrderItemRequest itemRequest) {
+        List<ProductOption> productOptions = null;
+        if (item instanceof DiscreteOrderItem) {
+            productOptions = ((DiscreteOrderItem) item).getProduct().getProductOptions();
+        } else if (item instanceof BundleOrderItem) {
+            productOptions = ((BundleOrderItem) item).getProduct().getProductOptions();
+        }
+        List<String> removeKeys = new ArrayList<String>();
+        if (productOptions != null && itemRequest.getItemAttributes() != null) {
+            for (String name : itemRequest.getItemAttributes().keySet()) {
+                //we do not let them update all product options. 
+                //Only allow them to update those options that can have validation to take place at later time
+                //if  option.getProductOptionValidationType()  is null then it might change the sku, so we dont allow those
+                for (ProductOption option : productOptions) {
+                    if (option.getAttributeName().equals(name) && option.getProductOptionValidationStrategyType() == null) {
+
+                        removeKeys.add(name);
+                        break;
+                    }
+                }
+            }
+        }
+        for (String name : removeKeys) {
+            itemRequest.getItemAttributes().remove(name);
+        }
+        populateProductOptionAttributes(item, itemRequest.getItemAttributes());
+        return item;
     }
 
     @Override

@@ -50,10 +50,15 @@ public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<Prod
     
     @XmlElement
     protected String productOptionType;
-    
+    @XmlElement
+    protected String productOptionValidationStrategyType;
+    @XmlElement
+    protected String productOptionValidationType;
     @XmlElement(name = "allowedValue")
     @XmlElementWrapper(name = "allowedValues")
     protected List<ProductOptionValueWrapper> allowedValues;
+    @XmlElement
+    protected String validationString;
     
     @Override
     public void wrapDetails(ProductOption model, HttpServletRequest request) {
@@ -63,7 +68,13 @@ public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<Prod
         if (model.getType() != null) {
             this.productOptionType = model.getType().getType();
         }
-        
+        if (model.getProductOptionValidationStrategyType() != null) {
+            this.productOptionValidationStrategyType = model.getProductOptionValidationStrategyType().getType();
+        }
+        if (model.getProductOptionValidationStrategyType() != null) {
+            this.productOptionValidationType = model.getProductOptionValidationType().getType();
+        }
+        this.validationString = model.getValidationString();
         List<ProductOptionValue> optionValues = model.getAllowedValues();
         if (optionValues != null) {
             ArrayList<ProductOptionValueWrapper> allowedValueWrappers = new ArrayList<ProductOptionValueWrapper>();
