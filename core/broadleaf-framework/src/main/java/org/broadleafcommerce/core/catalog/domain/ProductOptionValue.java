@@ -68,6 +68,19 @@ public interface ProductOptionValue extends Serializable {
      * @param order
      */
     public void setDisplayOrder(Long order);
+    
+    /**
+     * Sets the Image Path
+     * @param imagePath
+     */
+    public void setImage(String imagePath);
+    
+    /**
+     * Gets the Image Path
+     * return imagePath
+     */
+    public String getImage();
+
 
     /**
      * Gets the price adjustment associated with this value. For instance,
