@@ -129,7 +129,9 @@ public class TranslationServiceImpl implements TranslationService {
             translation = (Translation) countryValue.getObjectValue();
         } else {
             translation = getTranslation(entityType, entityId, property, localeCountryCode);
-            getCache().put(new Element(countryCacheKey, translation));
+            if (translation != null) {
+                getCache().put(new Element(countryCacheKey, translation));
+            }
         }
         
         // If we don't find one, let's try just the language (en), again utilizing the cache
@@ -140,7 +142,9 @@ public class TranslationServiceImpl implements TranslationService {
                 translation = (Translation) nonCountryValue.getObjectValue();
             } else {
                 translation = getTranslation(entityType, entityId, property, localeCode);
-                getCache().put(new Element(nonCountryCacheKey, translation));
+                if (translation != null) {
+                    getCache().put(new Element(nonCountryCacheKey, translation));
+                }
             }
         }
         
