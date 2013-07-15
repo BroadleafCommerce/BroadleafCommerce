@@ -18,10 +18,16 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.criter
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.exception.NoPossibleResultsException;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -31,9 +37,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -50,20 +53,96 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
     public TypedQuery<Serializable> translateQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults) {
         return constructQuery(dynamicEntityDao, ceilingEntity, filterMappings, false, firstResult, maxResults);
     }
+    
+    /**
+     * Determines the appropriate entity in this current class tree to use as the ceiling entity for the query. Because
+     * we filter with AND instead of OR, we throw an exception if an attempt to utilize properties from mutually exclusive
+     * class trees is made as it would be impossible for such a query to return results.
+     * 
+     * @param dynamicEntityDao
+     * @param ceilingMarker
+     * @param filterMappings
+     * @return the root class
+     * @throws NoPossibleResultsException 
+     */
+    @SuppressWarnings("unchecked")
+    protected Class<Serializable> determineRoot(DynamicEntityDao dynamicEntityDao, Class<Serializable> ceilingMarker, 
+            List<FilterMapping> filterMappings) throws NoPossibleResultsException {
+        Class<?>[] polyEntities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingMarker);
+        ClassTree root = dynamicEntityDao.getClassTree(polyEntities);
+        
+        List<ClassTree> parents = new ArrayList<ClassTree>();
+        for (FilterMapping mapping : filterMappings) {
+            if (mapping.getInheritedFromClass() != null) {
+                root = determineRootInternal(root, parents, mapping.getInheritedFromClass());
+                if (root == null) {
+                    throw new NoPossibleResultsException("AND filter on different class hierarchies produces no results");
+                }
+            }
+        }
+        
+        for (Class<?> clazz : polyEntities) {
+            if (clazz.getName().equals(root.getFullyQualifiedClassname())) {
+                return (Class<Serializable>) clazz;
+            }
+        }
+        
+        throw new IllegalStateException("Class didn't match - this should not occur");
+    }
+    
+    /**
+     * Because of the restriction described in {@link #determineRoot(DynamicEntityDao, Class, List)}, we must check
+     * that a class lies inside of the same tree as the current known root. Consider the following situation:
+     * 
+     * Class C extends Class B, which extends Class A.
+     * Class E extends Class D, which also extends Class A.
+     * 
+     * We can allow filtering on properties that are either all in C/B/A or all in E/D/A. Filtering on properties across
+     * C/B and E/D will always produce no results given an AND style of joining the filtered properties.
+     * 
+     * @param root
+     * @param parents
+     * @param classToCheck
+     * @return the (potentially new) root or null if invalid
+     */
+    protected ClassTree determineRootInternal(ClassTree root, List<ClassTree> parents, Class<?> classToCheck) {
+        // If the class to check is the current root or a parent of this root, we will continue to use the same root
+        if (root.getFullyQualifiedClassname().equals(classToCheck.getName())) {
+            return root;
+        } 
+        for (ClassTree parent : parents) {
+            if (parent.getFullyQualifiedClassname().equals(classToCheck.getName())) {
+                return root;
+            }
+        }
+        
+        parents.add(root);
+        
+        for (ClassTree child : root.getChildren()) {
+            ClassTree result = child.find(classToCheck.getName());
+            if (result != null) {
+                return result;
+            }
+        }
+        
+        return null;
+    }
 
+    @SuppressWarnings("unchecked")
     protected TypedQuery<Serializable> constructQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, boolean isCount, Integer firstResult, Integer maxResults) {
         CriteriaBuilder criteriaBuilder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
+        
         Class<Serializable> ceilingMarker;
         try {
             ceilingMarker = (Class<Serializable>) Class.forName(ceilingEntity);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        Class<?>[] polyEntities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingMarker);
-        Class<Serializable> ceilingClass = (Class<Serializable>) polyEntities[polyEntities.length-1];
 
+        Class<Serializable> ceilingClass = determineRoot(dynamicEntityDao, ceilingMarker, filterMappings);
         CriteriaQuery<Serializable> criteria = criteriaBuilder.createQuery(ceilingMarker);
         Root<Serializable> original = criteria.from(ceilingClass);
+        
         if (isCount) {
             criteria.select(criteriaBuilder.count(original));
         } else {
