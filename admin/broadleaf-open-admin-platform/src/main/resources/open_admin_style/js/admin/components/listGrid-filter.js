@@ -195,7 +195,7 @@ $(document).ready(function() {
         }
         $(this).closest('th').find('.filter-icon').removeClass('icon-filter');
         $(this).attr('disabled', 'disabled');
-        $(this).closest('ul').find('div.filter-fields .listgrid-filter').click();
+        $(this).closest('ul').find('div.filter-fields .listgrid-filter').trigger('click', true);
         
         var $tbody = $(this).closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
         
@@ -215,13 +215,6 @@ $(document).ready(function() {
         if (event.which == 13) {
             $(this).closest('.filter-fields').find('button.listgrid-filter').click();
             return false;
-        } else {
-            $clearFilterButton = $(this).closest('.filter-fields').find('button.listgrid-clear-filter');
-            if ($(this).val()) {
-                $clearFilterButton.removeAttr('disabled');
-            } else {
-                $clearFilterButton.attr('disabled', 'disabled');
-            }
         }
     });
     
@@ -249,8 +242,16 @@ $(document).ready(function() {
      * serializing all of the inputs for all of the list grid header fields so that criteria on multiple fields can
      * be sent to the server
      */
-    $('body').on('click', 'div.filter-fields button.listgrid-filter', function(event) {
+    $('body').on('click', 'div.filter-fields button.listgrid-filter', function(event, indirect) {
         event.preventDefault();
+        
+        var $clearFilterButton = $(this).closest('.filter-fields').find('button.listgrid-clear-filter');
+        var val = $(this).closest('div.filter-fields').find('.listgrid-criteria-input').val();
+        if (val == '' && !indirect) {
+            $clearFilterButton.click();
+            return false;
+        }
+        
         $(this).closest('ul').removeClass('show-dropdown');
         
         var $inputs = $(this).closest('thead').find('div.filter-fields .listgrid-criteria-input');
@@ -305,6 +306,12 @@ $(document).ready(function() {
                 $(input).removeAttr('name');
             });
         });
+        
+        if ($(this).val()) {
+            $clearFilterButton.removeAttr('disabled');
+        } else {
+            $clearFilterButton.attr('disabled', 'disabled');
+        }
         
         return false;
     });
