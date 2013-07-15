@@ -361,6 +361,9 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             case INTEGER:
                 filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.LONG.getType(), addSearchMappingRequest.getPropertyName()));
                 break;
+            case BROADLEAF_ENUMERATION:
+                filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.STRING_EQUAL.getType(), addSearchMappingRequest.getPropertyName()));
+                break;
             default:
                 filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.STRING_LIKE.getType(), addSearchMappingRequest.getPropertyName()));
                 break;
