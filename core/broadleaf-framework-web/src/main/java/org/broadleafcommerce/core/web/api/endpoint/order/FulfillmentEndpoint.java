@@ -18,16 +18,20 @@ package org.broadleafcommerce.core.web.api.endpoint.order;
 
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
+import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupItemWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.FulfillmentOptionWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.order.CartState;
 
@@ -59,6 +63,9 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
     
     @Resource(name="blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
+
+    @Resource(name = "blFulfillmentOptionService")
+    protected FulfillmentOptionService fulfillmentOptionService;
 
     public List<FulfillmentGroupWrapper> findFulfillmentGroupsForOrder(HttpServletRequest request) {
         Order cart = CartState.getCart();
@@ -162,5 +169,71 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
         throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
                 .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
 
+    }
+
+    public FulfillmentGroupWrapper addFulfillmentOptionToFulfillmentGroup(HttpServletRequest request,
+            Long fulfillmentGroupId,
+            Long fulfillmentOptionId,
+            boolean priceOrder) {
+
+        FulfillmentOption option = fulfillmentOptionService.readFulfillmentOptionById(fulfillmentOptionId);
+        if (option == null) {
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Fulfillment option with id " + fulfillmentOptionId + " could not be found").build());
+        }
+
+        Order cart = CartState.getCart();
+        if (cart != null) {
+            boolean found = false;
+            List<FulfillmentGroup> groups = cart.getFulfillmentGroups();
+            if (groups != null && !groups.isEmpty()) {
+                for (FulfillmentGroup group : groups) {
+                    if (group.getId().equals(fulfillmentGroupId)) {
+                        group.setFulfillmentOption(option);
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            try {
+                if (found) {
+                    cart = orderService.save(cart, priceOrder);
+                    for (FulfillmentGroup fg : groups) {
+                        if (fg.getId().equals(fulfillmentGroupId)) {
+                            FulfillmentGroupWrapper fulfillmentGroupWrapper = (FulfillmentGroupWrapper) context.getBean(FulfillmentGroupWrapper.class.getName());
+                            fulfillmentGroupWrapper.wrapDetails(fg, request);
+                            return fulfillmentGroupWrapper;
+                        }
+                    }
+                } else {
+                    throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                            .type(MediaType.TEXT_PLAIN).entity("Could not find a fulfillment group with id " + fulfillmentGroupId).build());
+                }
+            } catch (PricingException e) {
+                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
+            }
+        }
+        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+    }
+
+    public List<FulfillmentOptionWrapper> findFulfillmentOptions(HttpServletRequest request, String fulfillmentType) {
+        ArrayList<FulfillmentOptionWrapper> out = new ArrayList<FulfillmentOptionWrapper>();
+        List<FulfillmentOption> options = null;
+        FulfillmentType type = FulfillmentType.getInstance(fulfillmentType);
+        if (type != null) {
+            options = fulfillmentOptionService.readAllFulfillmentOptionsByFulfillmentType(type);
+        } else {
+            options = fulfillmentOptionService.readAllFulfillmentOptions();
+        }
+        
+        for (FulfillmentOption option : options) {
+            FulfillmentOptionWrapper fulfillmentOptionWrapper = (FulfillmentOptionWrapper) context.getBean(FulfillmentOptionWrapper.class.getName());
+            fulfillmentOptionWrapper.wrapDetails(option, request);
+            out.add(fulfillmentOptionWrapper);
+        }
+        
+        return out;
     }
 }
