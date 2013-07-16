@@ -68,6 +68,7 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
     @SuppressWarnings("unchecked")
     protected Class<Serializable> determineRoot(DynamicEntityDao dynamicEntityDao, Class<Serializable> ceilingMarker, 
             List<FilterMapping> filterMappings) throws NoPossibleResultsException {
+        
         Class<?>[] polyEntities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingMarker);
         ClassTree root = dynamicEntityDao.getClassTree(polyEntities);
         
@@ -114,6 +115,14 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
             if (parent.getFullyQualifiedClassname().equals(classToCheck.getName())) {
                 return root;
             }
+        }
+        try {
+            Class<?> rootClass = Class.forName(root.getFullyQualifiedClassname());
+            if (classToCheck.isAssignableFrom(rootClass)) {
+                return root;
+            }
+        } catch (ClassNotFoundException e) {
+            // Do nothing - we'll continue searching
         }
         
         parents.add(root);
