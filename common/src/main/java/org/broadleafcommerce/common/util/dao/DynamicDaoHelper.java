@@ -39,4 +39,10 @@ public interface DynamicDaoHelper {
     
     public SessionFactory getSessionFactory(HibernateEntityManager entityManager);
 
+    public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, SessionFactory sessionFactory, boolean includeUnqualifiedPolymorphicEntities, boolean useCache);
+
+    public Class<?>[] sortEntities(Class<?> ceilingClass, List<Class<?>> entities);
+
+    public boolean isExcludeClassFromPolymorphism(Class<?> clazz);
+
 }

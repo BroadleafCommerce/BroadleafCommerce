@@ -17,26 +17,29 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.path.PolymorphicSingularAttributePath;
 import org.hibernate.ejb.criteria.CriteriaBuilderImpl;
+import org.hibernate.ejb.criteria.PathSource;
 import org.hibernate.ejb.criteria.path.PluralAttributePath;
 import org.hibernate.ejb.criteria.path.SingularAttributePath;
 import org.hibernate.internal.SessionFactoryImpl;
 
-import javax.persistence.Embeddable;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Embeddable;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+
 /**
  * @author Jeff Fischer
  */
 public class FieldPathBuilder {
-
+    
     public FieldPath getFieldPath(From root, String fullPropertyName) {
         String[] pieces = fullPropertyName.split("\\.");
         List<String> associationPath = new ArrayList<String>();
@@ -66,7 +69,8 @@ public class FieldPathBuilder {
         return getPath(root, getFieldPath(root, fullPropertyName), builder);
     }
 
-    public Path getPath(From root, FieldPath fieldPath, CriteriaBuilder builder) {
+    @SuppressWarnings({"rawtypes", "unchecked", "serial"})
+    public Path getPath(From root, FieldPath fieldPath, final CriteriaBuilder builder) {
         FieldPath myFieldPath = fieldPath;
         if (!StringUtils.isEmpty(fieldPath.getTargetProperty())) {
             myFieldPath = getFieldPath(root, fieldPath.getTargetProperty());
@@ -76,13 +80,22 @@ public class FieldPathBuilder {
             myRoot = myRoot.join(pathElement);
         }
         Path path = myRoot;
-        for (String piece : myFieldPath.getTargetPropertyPieces()) {
+        
+        for (int i = 0; i < myFieldPath.getTargetPropertyPieces().size(); i++) {
+            String piece = myFieldPath.getTargetPropertyPieces().get(i);
+            
             if (path.getJavaType().isAnnotationPresent(Embeddable.class)) {
                 String original = ((SingularAttributePath) path).getAttribute().getDeclaringType().getJavaType().getName() + "." + ((SingularAttributePath) path).getAttribute().getName() + "." + piece;
                 String copy = path.getJavaType().getName() + "." + piece;
                 copyCollectionPersister(original, copy, ((CriteriaBuilderImpl) builder).getEntityManagerFactory().getSessionFactory());
             }
+            
             path = path.get(piece);
+            PolymorphicSingularAttributePath polymorphicPath = new PolymorphicSingularAttributePath(
+                    (CriteriaBuilderImpl) builder, path.getJavaType(), (PathSource) path.getParentPath(), 
+                    ((SingularAttributePath) path).getAttribute());
+            path = polymorphicPath;
+            
             if (path.getParentPath() != null && path.getParentPath().getJavaType().isAnnotationPresent(Embeddable.class) && path instanceof PluralAttributePath) {
                 //TODO this code should work, but there still appear to be bugs in Hibernate's JPA criteria handling for lists
                 //inside Embeddables
@@ -121,4 +134,5 @@ public class FieldPathBuilder {
             throw new RuntimeException(e);
         }
     }
+
 }
