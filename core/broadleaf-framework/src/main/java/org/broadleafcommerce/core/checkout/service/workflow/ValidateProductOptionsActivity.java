@@ -88,7 +88,7 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
                             productOptionValidationService.validate(productOption, (attributeValues.get(productOption.getAttributeName()) != null) ? attributeValues.get(productOption.getAttributeName()).getValue() : null);
                         } catch (ProductOptionValidationException e) {
                             ActivityMessageDTO msg = new ActivityMessageDTO(MessageType.PRODUCT_OPTION.getType(), 1, e.getMessage());
-
+                            msg.setErrorCode(productOption.getErrorCode());
                             ((ActivityMessages) context).getActivityMessages().add(msg);
                         }
 

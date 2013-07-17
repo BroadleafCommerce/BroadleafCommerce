@@ -18,11 +18,14 @@ public class CartMessageWrapper extends BaseWrapper implements APIWrapper<Activi
     protected String messageType;
     @XmlElement
     protected Integer priority;
+    @XmlElement
+    protected String errorCode;
     @Override
     public void wrapDetails(ActivityMessageDTO model, HttpServletRequest request) {
         this.message = model.getMessage();
         this.priority = model.getPriority();
         this.messageType = model.getType();
+        this.errorCode = model.getErrorCode();
     }
 
     @Override
