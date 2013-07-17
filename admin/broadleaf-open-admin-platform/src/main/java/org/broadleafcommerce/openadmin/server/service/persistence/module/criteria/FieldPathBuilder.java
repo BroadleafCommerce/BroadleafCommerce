@@ -110,6 +110,7 @@ public class FieldPathBuilder {
                 // use instead.
         	    EntityManagerFactoryImpl em = ((CriteriaBuilderImpl) builder).getEntityManagerFactory();
         	    Metamodel mm = em.getMetamodel();
+        	    boolean found = false;
         	    
         	    Class<?>[] polyClasses = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(
         	            path.getJavaType(), em.getSessionFactory(), true, true);
@@ -122,6 +123,7 @@ public class FieldPathBuilder {
                 		    Root additionalRoot = criteria.from(clazz);
                 		    restrictions.add(builder.equal(path, additionalRoot));
                 		    path = additionalRoot.get(piece);
+                		    found = true;
                 		    break;
             		    }
             		} catch (IllegalArgumentException e2) {
@@ -129,8 +131,10 @@ public class FieldPathBuilder {
             		}
         	    }
         	    
-        	    // We didn't break out of the catch, which means we weren't able to resolve the attribute.
-        	    throw e;
+        	    if (!found) {
+        	        throw new IllegalArgumentException("Could not resolve requested attribute against path, including" +
+        	        		" known polymorphic versions of the root", e);
+        	    }
             }
             
             if (path.getParentPath() != null && path.getParentPath().getJavaType().isAnnotationPresent(Embeddable.class) && path instanceof PluralAttributePath) {
