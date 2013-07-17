@@ -370,17 +370,13 @@ public abstract class CartEndpoint extends BaseEndpoint {
                 OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
 
                 HashMap<String, String> productOptions = getOptions(uriInfo);
-                if (uriInfo.getQueryParameters().getFirst("bundleOrderItemId") != null) {
-                    //properties for bundle item are being set. 
-                    // orderItemRequestDTO = new OrderItemUpdateRequestDTO();
-                    // ((OrderItemUpdateRequestDTO) orderItemRequestDTO).setBundlerOrderItemId(Long.valueOf(uriInfo.getQueryParameters().getFirst("bundleOrderItemId")));
-                }
                 orderItemRequestDTO.setOrderItemId(itemId);
                 //If we have product options set them on the DTO
                 if (productOptions.size() > 0) {
                     orderItemRequestDTO.setItemAttributes(productOptions);
                 }
                 Order order = orderService.updateProductOptionsForItem(cart.getId(), orderItemRequestDTO, priceOrder);
+
                 order = orderService.save(order, priceOrder);
                 return wrapCart(request, cart);
             } catch (UpdateCartException e) {
