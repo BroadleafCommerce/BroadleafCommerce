@@ -223,6 +223,12 @@ http://www.w3.org/TR/html401/struct/global.html
                 <regexp name="offsiteURL"/>
             </regexp-list>
         </attribute>
+        
+         <attribute name="target">
+            <literal-list>
+                <literal value="_blank"/>
+            </literal-list>
+         </attribute>
 
         <attribute name="name">
             <regexp-list>
@@ -796,6 +802,7 @@ http://www.w3.org/TR/html401/struct/global.html
 
             <!--  onInvalid="filterTag" has been removed as per suggestion at OWASP SJ 2007 - just "name" is valid -->
             <attribute name="href"/>
+            <attribute name="target"/>
             <attribute name="onFocus"/>
             <attribute name="onBlur"/>
             <attribute name="nohref">
