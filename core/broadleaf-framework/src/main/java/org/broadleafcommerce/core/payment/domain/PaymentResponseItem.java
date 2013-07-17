@@ -135,8 +135,12 @@ public interface PaymentResponseItem extends Serializable {
 
     public void setPaymentInfoReferenceNumber(String paymentInfoReferenceNumber);
 
-    void setCurrency(BroadleafCurrency currency);
+    public void setCurrency(BroadleafCurrency currency);
 
-    BroadleafCurrency getCurrency();
+    public BroadleafCurrency getCurrency();
+
+    public void setPaymentInfo(PaymentInfo paymentInfo);
+
+    public PaymentInfo getPaymentInfo();
 
 }

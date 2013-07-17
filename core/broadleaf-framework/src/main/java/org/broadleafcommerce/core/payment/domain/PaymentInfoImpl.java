@@ -184,6 +184,10 @@ public class PaymentInfoImpl implements PaymentInfo, CurrencyCodeIdentifiable {
     @AdminPresentationCollection(friendlyName="PaymentInfoImpl_Details",
             tab = Presentation.Tab.Name.Log, tabOrder = Presentation.Tab.Order.Log)
     protected List<PaymentInfoDetail> details = new ArrayList<PaymentInfoDetail>();
+    
+    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentResponseItemImpl.class)
+    @AdminPresentationCollection(friendlyName="PaymentInfoImpl_Payment_Response_Items")
+    protected List<PaymentResponseItem> paymentResponseItems = new ArrayList<PaymentResponseItem>();
 
     @ManyToOne(targetEntity = CustomerPaymentImpl.class)
     @JoinColumn(name = "CUSTOMER_PAYMENT_ID")
@@ -363,6 +367,16 @@ public class PaymentInfoImpl implements PaymentInfo, CurrencyCodeIdentifiable {
             return getCurrency().getCurrencyCode();
         }
         return null;
+    }
+    
+    @Override
+    public List<PaymentResponseItem> getPaymentResponseItems() {
+        return paymentResponseItems;
+    }
+
+    @Override
+    public void setPaymentResponseItems(List<PaymentResponseItem> paymentResponseItems) {
+        this.paymentResponseItems = paymentResponseItems;
     }
 
     @Override

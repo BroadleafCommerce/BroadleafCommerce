@@ -75,7 +75,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     protected String userName;
 
     @Column(name = "AMOUNT_PAID", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Amount", order = 2, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Amount", order = 2, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true, prominent = true, gridOrder = 200)
     protected BigDecimal amountPaid;
 
     @Column(name = "TRANSACTION_AMOUNT", precision=19, scale=5)
@@ -116,12 +116,12 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     protected String referenceNumber;
 
     @Column(name = "TRANSACTION_SUCCESS")
-    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Successful", order = 11, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Successful", order = 11, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true, prominent = true, gridOrder = 300)
     protected Boolean transactionSuccess = false;
 
     @Column(name = "TRANSACTION_TIMESTAMP", nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
-    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Time", order = 12, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Time", order = 12, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true, prominent = true, gridOrder = 100)
     protected Date transactionTimestamp;
 
     @Column(name = "TRANSACTION_ID")
@@ -141,7 +141,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     @Column(name = "TRANSACTION_TYPE", nullable=false)
     @Index(name="PAYRESPONSE_TRANTYPE_INDEX", columnNames={"TRANSACTION_TYPE"})
-    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Type", order = 16, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Type", order = 16, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true, prominent = true, gridOrder = 400)
     protected String transactionType;
 
     @ElementCollection
@@ -170,6 +170,10 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(friendlyName = "PaymentResponseItemImpl_currency", order = 2, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected BroadleafCurrency currency;
+    
+    @ManyToOne(targetEntity = PaymentInfoImpl.class)
+    @JoinColumn(name = "PAYMENT_INFO_REFERENCE_NUMBER", referencedColumnName = "REFERENCE_NUMBER", insertable = false, updatable = false)
+    protected PaymentInfo paymentInfo;
     
     @Override
     public String getAuthorizationCode() {
@@ -413,6 +417,16 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @Override
     public void setPaymentInfoReferenceNumber(String paymentInfoReferenceNumber) {
         this.paymentInfoReferenceNumber = paymentInfoReferenceNumber;
+    }
+    
+    @Override
+    public PaymentInfo getPaymentInfo() {
+        return paymentInfo;
+    }
+    
+    @Override
+    public void setPaymentInfo(PaymentInfo paymentInfo) {
+        this.paymentInfo = paymentInfo;
     }
 
     @Override
