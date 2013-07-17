@@ -17,9 +17,10 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
 
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.path.PolymorphicSingularAttributePath;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
+import org.hibernate.ejb.EntityManagerFactoryImpl;
 import org.hibernate.ejb.criteria.CriteriaBuilderImpl;
-import org.hibernate.ejb.criteria.PathSource;
 import org.hibernate.ejb.criteria.path.PluralAttributePath;
 import org.hibernate.ejb.criteria.path.SingularAttributePath;
 import org.hibernate.internal.SessionFactoryImpl;
@@ -32,13 +33,24 @@ import java.util.Map;
 
 import javax.persistence.Embeddable;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.ManagedType;
+import javax.persistence.metamodel.Metamodel;
 
 /**
  * @author Jeff Fischer
  */
 public class FieldPathBuilder {
+    
+    protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
+    
+    protected CriteriaQuery criteria;
+    protected List<Predicate> restrictions;
     
     public FieldPath getFieldPath(From root, String fullPropertyName) {
         String[] pieces = fullPropertyName.split("\\.");
@@ -90,11 +102,36 @@ public class FieldPathBuilder {
                 copyCollectionPersister(original, copy, ((CriteriaBuilderImpl) builder).getEntityManagerFactory().getSessionFactory());
             }
             
-            path = path.get(piece);
-            PolymorphicSingularAttributePath polymorphicPath = new PolymorphicSingularAttributePath(
-                    (CriteriaBuilderImpl) builder, path.getJavaType(), (PathSource) path.getParentPath(), 
-                    ((SingularAttributePath) path).getAttribute());
-            path = polymorphicPath;
+            try {
+                path = path.get(piece);
+            } catch (IllegalArgumentException e) {
+                // We weren't able to resolve the requested piece, likely because it's in a polymoprhic version
+                // of the path we're currently on. Let's see if there's any polymoprhic version of our class to
+                // use instead.
+        	    EntityManagerFactoryImpl em = ((CriteriaBuilderImpl) builder).getEntityManagerFactory();
+        	    Metamodel mm = em.getMetamodel();
+        	    
+        	    Class<?>[] polyClasses = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(
+        	            path.getJavaType(), em.getSessionFactory(), true, true);
+        	    
+        	    for (Class<?> clazz : polyClasses) {
+            		ManagedType mt = mm.managedType(clazz);
+            		try {
+            		    Attribute attr = mt.getAttribute(piece);
+            		    if (attr != null) {
+                		    Root additionalRoot = criteria.from(clazz);
+                		    restrictions.add(builder.equal(path, additionalRoot));
+                		    path = additionalRoot.get(piece);
+                		    break;
+            		    }
+            		} catch (IllegalArgumentException e2) {
+            		    // Do nothing - we'll try the next class and see if it has the attribute
+            		}
+        	    }
+        	    
+        	    // We didn't break out of the catch, which means we weren't able to resolve the attribute.
+        	    throw e;
+            }
             
             if (path.getParentPath() != null && path.getParentPath().getJavaType().isAnnotationPresent(Embeddable.class) && path instanceof PluralAttributePath) {
                 //TODO this code should work, but there still appear to be bugs in Hibernate's JPA criteria handling for lists
@@ -134,5 +171,21 @@ public class FieldPathBuilder {
             throw new RuntimeException(e);
         }
     }
+    
+    public CriteriaQuery getCriteria() {
+        return criteria;
+    }
 
+    public void setCriteria(CriteriaQuery criteria) {
+        this.criteria = criteria;
+    }
+
+    public List<Predicate> getRestrictions() {
+        return restrictions;
+    }
+    
+    public void setRestrictions(List<Predicate> restrictions) {
+        this.restrictions = restrictions;
+    }
+    
 }

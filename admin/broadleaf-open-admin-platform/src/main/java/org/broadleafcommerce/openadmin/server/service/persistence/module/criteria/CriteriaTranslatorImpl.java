@@ -160,8 +160,8 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
 
         List<Predicate> restrictions = new ArrayList<Predicate>();
         List<Order> sorts = new ArrayList<Order>();
-        addRestrictions(ceilingEntity, filterMappings, criteriaBuilder, original, restrictions, sorts);
-
+        addRestrictions(ceilingEntity, filterMappings, criteriaBuilder, original, restrictions, sorts, criteria);
+        
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         if (!isCount) {
             criteria.orderBy(sorts.toArray(new Order[sorts.size()]));
@@ -183,9 +183,26 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
             response.setMaxResults(maxResults);
         }
     }
-
+    
+    /**
+     * This method is deprecated in favor of {@link #addRestrictions(String, List, CriteriaBuilder, Root, List, List, CriteriaQuery)}
+     * It will be removed in Broadleaf version 3.1.0.
+     * 
+     * @param ceilingEntity
+     * @param filterMappings
+     * @param criteriaBuilder
+     * @param original
+     * @param restrictions
+     * @param sorts
+     */
+    @Deprecated
     protected void addRestrictions(String ceilingEntity, List<FilterMapping> filterMappings, CriteriaBuilder criteriaBuilder,
                                    Root original, List<Predicate> restrictions, List<Order> sorts) {
+        addRestrictions(ceilingEntity, filterMappings, criteriaBuilder, original, restrictions, sorts, null);
+    }
+    
+    protected void addRestrictions(String ceilingEntity, List<FilterMapping> filterMappings, CriteriaBuilder criteriaBuilder,
+                                   Root original, List<Predicate> restrictions, List<Order> sorts, CriteriaQuery criteria) {
         for (FilterMapping filterMapping : filterMappings) {
             Path explicitPath = null;
             if (filterMapping.getFieldPath() != null) {
@@ -203,8 +220,9 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
                 }
                 
                 if (directValues != null) {
-                    Predicate predicate = filterMapping.getRestriction().buildRestriction(criteriaBuilder, original,
-                            ceilingEntity, filterMapping.getFullPropertyName(), explicitPath, directValues, shouldConvert);
+                    Predicate predicate = filterMapping.getRestriction().buildPolymorphicRestriction(criteriaBuilder, original,
+                            ceilingEntity, filterMapping.getFullPropertyName(), explicitPath, directValues, shouldConvert,
+                            criteria, restrictions);
                     restrictions.add(predicate);
                 }
             }
