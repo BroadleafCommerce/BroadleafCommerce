@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
@@ -75,7 +76,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     protected String userName;
 
     @Column(name = "AMOUNT_PAID", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Amount", order = 2, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true, prominent = true, gridOrder = 200)
+    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Amount", order = 2, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true, prominent = true, gridOrder = 200, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal amountPaid;
 
     @Column(name = "TRANSACTION_AMOUNT", precision=19, scale=5)
