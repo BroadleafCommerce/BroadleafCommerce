@@ -230,6 +230,9 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
             if (filterMapping.getSortDirection() != null) {
                 Path sortPath = explicitPath;
                 if (sortPath == null && !StringUtils.isEmpty(filterMapping.getFullPropertyName())) {
+                    FieldPathBuilder fieldPathBuilder = filterMapping.getRestriction().getFieldPathBuilder();
+                    fieldPathBuilder.setCriteria(criteria);
+                    fieldPathBuilder.setRestrictions(restrictions);
                     sortPath = filterMapping.getRestriction().getFieldPathBuilder().getPath(original, filterMapping.getFullPropertyName(), criteriaBuilder);
                 }
                 if (sortPath != null) {
