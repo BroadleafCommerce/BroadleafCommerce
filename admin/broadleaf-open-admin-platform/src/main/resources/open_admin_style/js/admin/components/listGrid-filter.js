@@ -74,7 +74,12 @@
                 //iterate through the rest of the parameters and fill out the criteria inputs as necessary
                 $.each(params, function(key, value) {
                     var $criteriaInput = $header.find("input[data-name='" + key + "']");
-                    if ($criteriaInput) {
+                    
+                    if (!$criteriaInput || $criteriaInput.length <= 0) {
+                        $criteriaInput = $header.find("select[data-name='" + key + "']");
+                    }
+                    
+                    if ($criteriaInput && $criteriaInput.length > 0) {
                         $criteriaInput.val(value);
                         $criteriaInput.closest('.filter-fields').find('button.listgrid-clear-filter').removeAttr('disabled');
                         //show the active filter icon
@@ -182,7 +187,7 @@ $(document).ready(function() {
     
     $('body').on('click', 'button.listgrid-clear-filter', function(event) {
         event.preventDefault();
-        $(this).closest('.filter-fields').find('input.listgrid-criteria-input').val('');
+        $(this).closest('.filter-fields').find('.listgrid-criteria-input').val('');
         //clear out the foreign key display value
         $foreignKeyDisplay = $(this).closest('.filter-fields').find('div.foreign-key-value-container span.display-value');
         if ($foreignKeyDisplay) {
@@ -190,12 +195,12 @@ $(document).ready(function() {
         }
         $(this).closest('th').find('.filter-icon').removeClass('icon-filter');
         $(this).attr('disabled', 'disabled');
-        $(this).closest('ul').find('div.filter-fields .listgrid-filter').click();
+        $(this).closest('ul').find('div.filter-fields .listgrid-filter').trigger('click', true);
         
         var $tbody = $(this).closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
         
         if ($tbody.data('listgridtype') == 'main') {
-            var name = $(this).closest('.filter-fields').find('input.listgrid-criteria-input').data('name');
+            var name = $(this).closest('.filter-fields').find('.listgrid-criteria-input').data('name');
             BLCAdmin.history.replaceUrlParameter(name, null);
         }
             
@@ -210,14 +215,26 @@ $(document).ready(function() {
         if (event.which == 13) {
             $(this).closest('.filter-fields').find('button.listgrid-filter').click();
             return false;
-        } else {
-            $clearFilterButton = $(this).closest('.filter-fields').find('button.listgrid-clear-filter');
-            if ($(this).val()) {
-                $clearFilterButton.removeAttr('disabled');
-            } else {
-                $clearFilterButton.attr('disabled', 'disabled');
-            }
         }
+    });
+    
+    /**
+     * Intercepts a filter dropdown being chosen
+     */
+    $('body').on('change', 'select.listgrid-criteria-input', function(event) {
+        var $this = $(this);
+        var val = $this.val();
+        
+        $clearFilterButton = $(this).closest('.filter-fields').find('button.listgrid-clear-filter');
+        $filterButton = $(this).closest('.filter-fields').find('button.listgrid-filter');
+        if (val) {
+            $filterButton.click();
+            $clearFilterButton.removeAttr('disabled');
+        } else {
+            $clearFilterButton.click();
+            $clearFilterButton.attr('disabled', 'disabled');
+        }
+        
     });
     
     /**
@@ -225,11 +242,19 @@ $(document).ready(function() {
      * serializing all of the inputs for all of the list grid header fields so that criteria on multiple fields can
      * be sent to the server
      */
-    $('body').on('click', 'div.filter-fields button.listgrid-filter', function(event) {
+    $('body').on('click', 'div.filter-fields button.listgrid-filter', function(event, indirect) {
         event.preventDefault();
+        
+        var $clearFilterButton = $(this).closest('.filter-fields').find('button.listgrid-clear-filter');
+        var val = $(this).closest('div.filter-fields').find('.listgrid-criteria-input').val();
+        if (val == '' && !indirect) {
+            $clearFilterButton.click();
+            return false;
+        }
+        
         $(this).closest('ul').removeClass('show-dropdown');
         
-        var $inputs = $(this).closest('thead').find('div.filter-fields :input.listgrid-criteria-input');
+        var $inputs = $(this).closest('thead').find('div.filter-fields .listgrid-criteria-input');
         
         //also grab the sorts and ensure those inputs are also serialized
         var $sorts = $(this).closest('thead').find('input.sort-direction.active, input.sort-property.active');
@@ -281,6 +306,12 @@ $(document).ready(function() {
                 $(input).removeAttr('name');
             });
         });
+        
+        if ($(this).val()) {
+            $clearFilterButton.removeAttr('disabled');
+        } else {
+            $clearFilterButton.attr('disabled', 'disabled');
+        }
         
         return false;
     });

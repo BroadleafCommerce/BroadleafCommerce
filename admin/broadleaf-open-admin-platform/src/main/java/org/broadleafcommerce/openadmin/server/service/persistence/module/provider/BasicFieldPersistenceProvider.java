@@ -336,6 +336,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         BasicFieldMetadata metadata = (BasicFieldMetadata) addSearchMappingRequest.getMergedProperties().get(addSearchMappingRequest.getPropertyName());
 
         FilterMapping filterMapping = new FilterMapping()
+                .withInheritedFromClass(clazz)
                 .withFullPropertyName(addSearchMappingRequest.getPropertyName())
                 .withFilterValues(addSearchMappingRequest.getRequestedCto().
                         get(addSearchMappingRequest.getPropertyName()).getFilterValues())
@@ -360,6 +361,9 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 break;
             case INTEGER:
                 filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.LONG.getType(), addSearchMappingRequest.getPropertyName()));
+                break;
+            case BROADLEAF_ENUMERATION:
+                filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.STRING_EQUAL.getType(), addSearchMappingRequest.getPropertyName()));
                 break;
             default:
                 filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.STRING_LIKE.getType(), addSearchMappingRequest.getPropertyName()));
