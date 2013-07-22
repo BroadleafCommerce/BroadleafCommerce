@@ -170,7 +170,7 @@ $(document).ready(function() {
         $(this).closest('ul').find('input.sort-property').toggleClass('active', true);
         
         //submit the form just for this particular field since this is the only sort that changed
-        $(this).closest('ul').find('div.filter-fields .listgrid-filter').click();
+        $(this).closest('ul').find('div.filter-fields .listgrid-filter').trigger('click', true);
         
         //enable the clear sort button
         $(this).closest('.sort-fields').find('button.listgrid-clear-sort').removeAttr('disabled');

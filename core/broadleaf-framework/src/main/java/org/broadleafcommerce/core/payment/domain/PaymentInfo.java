@@ -91,4 +91,8 @@ public interface PaymentInfo extends Serializable {
     public CustomerPayment getCustomerPayment();
 
     public void setCustomerPayment(CustomerPayment customerPayment);
+
+    public List<PaymentResponseItem> getPaymentResponseItems();
+
+    public void setPaymentResponseItems(List<PaymentResponseItem> paymentResponseItems);
 }

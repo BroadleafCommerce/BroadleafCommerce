@@ -82,12 +82,16 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 metadata.getFieldType() == SupportedFieldType.FOREIGN_KEY ||
                 metadata.getFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY ||
                 metadata.getFieldType() == SupportedFieldType.STRING ||
-                metadata.getFieldType() == SupportedFieldType.BROADLEAF_ENUMERATION ||
-                metadata.getFieldType() == SupportedFieldType.EXPLICIT_ENUMERATION ||
-                metadata.getFieldType() == SupportedFieldType.DATA_DRIVEN_ENUMERATION ||
                 metadata.getFieldType() == SupportedFieldType.ID) &&
                 (property == null ||
                 !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
+    }
+    
+    protected boolean detectAdditionalSearchTypes(BasicFieldMetadata metadata, Property property) {
+        return (metadata.getFieldType() == SupportedFieldType.BROADLEAF_ENUMERATION ||
+                metadata.getFieldType() == SupportedFieldType.EXPLICIT_ENUMERATION ||
+                metadata.getFieldType() == SupportedFieldType.DATA_DRIVEN_ENUMERATION) &&
+                (property == null || !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
     }
 
     protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
@@ -100,7 +104,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         BasicFieldMetadata metadata = (BasicFieldMetadata) addSearchMappingRequest.getMergedProperties().get(addSearchMappingRequest.getPropertyName());
         Property property = null;
         //don't handle map fields here - we'll get them in a separate provider
-        boolean response = detectBasicType(metadata, property);
+        boolean response = detectBasicType(metadata, property) || detectAdditionalSearchTypes(metadata, property);
         if (!response) {
             //we'll allow this provider to handle money filter mapping for searches
             response = metadata.getFieldType() == SupportedFieldType.MONEY;
