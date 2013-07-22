@@ -33,8 +33,14 @@ public interface DataDrivenEnumeration extends Serializable {
 
     public void setModifiable(Boolean modifiable);
 
+    public List<DataDrivenEnumerationValue> getEnumValues();
+
+    public void setEnumValues(List<DataDrivenEnumerationValue> enumValues);
+
+    @Deprecated
     public List<DataDrivenEnumerationValue> getOrderItems();
 
+    @Deprecated
     public void setOrderItems(List<DataDrivenEnumerationValue> orderItems);
 
 }
