@@ -21,7 +21,6 @@ import org.springframework.security.util.InMemoryResource;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 /**
  * An in memory generated resource. This class also overrides some parent Spring AbstractResource methods to ensure
@@ -29,12 +28,20 @@ import java.io.Serializable;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class GeneratedResource extends InMemoryResource implements Serializable {
-    
-    private static final long serialVersionUID = -8228318278309916478L;
+public class GeneratedResource extends InMemoryResource {
     
     protected long timeGenerated;
     protected String hashRepresentation;
+    
+    /**
+     * <b>Note: This constructor should not be explicitly used</b> 
+     * 
+     * To properly allow for serialization, we must provide this no-arg constructor that will 
+     * create a "dummy" GeneratedResource. The appropriate fields will be set during deserialization.
+     */
+    public GeneratedResource()  {
+        super("");
+    }
 
     public GeneratedResource(byte[] source, String description) {
         super(source, description);
