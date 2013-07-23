@@ -32,6 +32,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.core.CoreContainer;
+import org.apache.solr.core.SolrCore;
+import org.apache.solr.core.SolrResourceLoader;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.util.BLCMapUtils;
@@ -56,6 +58,8 @@ import org.broadleafcommerce.core.search.service.SearchService;
 import org.springframework.beans.factory.DisposableBean;
 import org.xml.sax.SAXException;
 
+import javax.annotation.Resource;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -73,9 +77,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.xml.parsers.ParserConfigurationException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * An implementation of SearchService that uses Solr.
@@ -123,7 +126,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             solrServer = tempDir.getAbsolutePath();
         }
 
-        File solrXml = copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrServer, "solr-default.xml");
+        final String solr = solrServer;
+        final File solrXml = copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrServer, "solr-default.xml");
 
         LOG.debug(String.format("Using [%s] as solrhome", solrServer));
         LOG.debug(String.format("Using [%s] as solr.xml", solrXml.getAbsoluteFile()));
@@ -149,7 +153,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             LOG.trace("Done printing solr.xml");
         }
 
-        CoreContainer coreContainer = new CoreContainer(solrServer, solrXml);
+        CoreContainer coreContainer = CoreContainer.createAndLoad(solr, solrXml);
         EmbeddedSolrServer primaryServer = new EmbeddedSolrServer(coreContainer, SolrContext.PRIMARY);
         EmbeddedSolrServer reindexServer = new EmbeddedSolrServer(coreContainer, SolrContext.REINDEX);
 

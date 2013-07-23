@@ -16,35 +16,38 @@
 
 package org.broadleafcommerce.common.i18n.service;
 
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+
 /**
  * Container for ThreadLocal attributes that relate to Translation.
  * 
  * @author Andre Azzolini (apazzolini)
  */
 public class TranslationConsiderationContext {
-    
-    private static final ThreadLocal<TranslationService> translationService = new ThreadLocal<TranslationService>();
-    private static final ThreadLocal<Boolean> translationConsiderationContext = new ThreadLocal<Boolean>();
+
+    private static final ThreadLocal<TranslationConsiderationContext> translationConsiderationContext = ThreadLocalManager.createThreadLocal(TranslationConsiderationContext.class);
     
     public static boolean hasTranslation() {
         return getTranslationConsiderationContext() != null && getTranslationConsiderationContext() && getTranslationService() != null;
     }
     
     public static Boolean getTranslationConsiderationContext() {
-        Boolean val = TranslationConsiderationContext.translationConsiderationContext.get();
+        Boolean val = TranslationConsiderationContext.translationConsiderationContext.get().enabled;
         return val == null ? false : val;
     }
     
     public static void setTranslationConsiderationContext(Boolean isEnabled) {
-        TranslationConsiderationContext.translationConsiderationContext.set(isEnabled);
+        TranslationConsiderationContext.translationConsiderationContext.get().enabled = isEnabled;
     }
     
     public static TranslationService getTranslationService() {
-        return TranslationConsiderationContext.translationService.get();
+        return TranslationConsiderationContext.translationConsiderationContext.get().service;
     }
     
     public static void setTranslationService(TranslationService translationService) {
-        TranslationConsiderationContext.translationService.set(translationService);
+        TranslationConsiderationContext.translationConsiderationContext.get().service = translationService;
     }
-    
+
+    protected Boolean enabled = false;
+    protected TranslationService service;
 }

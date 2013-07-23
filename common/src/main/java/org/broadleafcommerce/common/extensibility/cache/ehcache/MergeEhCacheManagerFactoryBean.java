@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.common.extensibility.cache.ehcache;
 
+import net.sf.ehcache.CacheManager;
 import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
 import org.springframework.beans.BeansException;
@@ -26,6 +27,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -43,6 +45,28 @@ public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean im
     protected Set<String> mergedCacheConfigLocations;
 
     protected List<Resource> configLocations;
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        try {
+            CacheManager cacheManager = getObject();
+            Field cacheManagerTimer = CacheManager.class.getDeclaredField("cacheManagerTimer");
+            cacheManagerTimer.setAccessible(true);
+            Object failSafeTimer = cacheManagerTimer.get(cacheManager);
+            Field timer = failSafeTimer.getClass().getDeclaredField("timer");
+            timer.setAccessible(true);
+            Object time = timer.get(failSafeTimer);
+            Field thread = time.getClass().getDeclaredField("thread");
+            thread.setAccessible(true);
+            Thread item = (Thread) thread.get(time);
+            item.setContextClassLoader(Thread.currentThread().getContextClassLoader().getParent());
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @PostConstruct
     public void configureMergedItems() {

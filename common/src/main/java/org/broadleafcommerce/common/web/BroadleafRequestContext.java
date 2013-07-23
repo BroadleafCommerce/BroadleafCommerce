@@ -25,17 +25,17 @@ import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Convenient holder class for various objects to be automatically available on thread local without invoking the various
@@ -45,7 +45,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BroadleafRequestContext {
     
-    private static final ThreadLocal<BroadleafRequestContext> BROADLEAF_REQUEST_CONTEXT = new ThreadLocal<BroadleafRequestContext>();   
+    private static final ThreadLocal<BroadleafRequestContext> BROADLEAF_REQUEST_CONTEXT = ThreadLocalManager.createThreadLocal(BroadleafRequestContext.class);
     
     public static BroadleafRequestContext getBroadleafRequestContext() {
         return BROADLEAF_REQUEST_CONTEXT.get();

@@ -23,20 +23,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.StopWatch;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
-import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
-import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
-import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.domain.Field;
@@ -48,6 +44,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -58,8 +55,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -106,10 +101,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
 
         // Populate the reindex core with the necessary information
-        BroadleafRequestContext savedContext = BroadleafRequestContext.getBroadleafRequestContext();
-        HashMap savedPricing = SkuPricingConsiderationContext.getSkuPricingConsiderationContext();
-        DynamicSkuPricingService savedPricingService = SkuPricingConsiderationContext.getSkuPricingService();
-        DynamicSkuActiveDatesService savedActiveDateServcie = SkuActiveDateConsiderationContext.getSkuActiveDatesService();
         try {
             Long numProducts = productDao.readCountAllActiveProducts(SystemTime.asDate());
             if (LOG.isDebugEnabled()) {
@@ -132,10 +123,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             throw e;
         } finally {
             // Restore the current context, regardless of whether an exception happened or not
-            BroadleafRequestContext.setBroadleafRequestContext(savedContext);
-            SkuPricingConsiderationContext.setSkuPricingConsiderationContext(savedPricing);
-            SkuPricingConsiderationContext.setSkuPricingService(savedPricingService);
-            SkuActiveDateConsiderationContext.setSkuActiveDatesService(savedActiveDateServcie);
+            ThreadLocalManager.remove();
         }
 
         // Swap the active and the reindex cores

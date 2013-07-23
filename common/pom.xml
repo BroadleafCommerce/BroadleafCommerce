@@ -116,6 +116,12 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-tools</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -127,11 +133,6 @@
                     <groupId>javassist</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -316,6 +317,10 @@
             <artifactId>hibernate-ehcache</artifactId>
         </dependency>
         <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.yahoo.platform.yui</groupId>
             <artifactId>yuicompressor</artifactId>
             <exclusions>
@@ -324,6 +329,10 @@
                     <groupId>rhino</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>se.jiderhamn</groupId>
+            <artifactId>classloader-leak-prevention</artifactId>
         </dependency>
     </dependencies>
 </project>

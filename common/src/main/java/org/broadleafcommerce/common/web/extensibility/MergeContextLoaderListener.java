@@ -16,7 +16,10 @@
 
 package org.broadleafcommerce.common.web.extensibility;
 
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.springframework.web.context.ContextLoaderListener;
+
+import javax.servlet.ServletContextEvent;
 
 /**
  * Bootstrap listener to start up BroadleafCommerce's rootId {@link MergeWebApplicationContext}.
@@ -38,4 +41,10 @@ public class MergeContextLoaderListener extends ContextLoaderListener {
         return new MergeContextLoader();
     }
 
+
+    @Override
+    public void contextInitialized(ServletContextEvent event) {
+        super.contextInitialized(event);
+        ThreadLocalManager.remove();
+    }
 }

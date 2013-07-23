@@ -16,13 +16,15 @@
 
 package org.broadleafcommerce.common.money;
 
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+
 import java.util.HashMap;
 
 public class CurrencyConversionContext {
     
-    private static final ThreadLocal<CurrencyConversionService> currencyConversionService = new ThreadLocal<CurrencyConversionService>();
+    private static final ThreadLocal<CurrencyConversionService> currencyConversionService = ThreadLocalManager.createThreadLocal(CurrencyConversionService.class);
 
-    private static final ThreadLocal<HashMap> currencyConversionContext = new ThreadLocal<HashMap>();
+    private static final ThreadLocal<HashMap> currencyConversionContext = ThreadLocalManager.createThreadLocal(HashMap.class);
 
     public static HashMap getCurrencyConversionContext() {
         return CurrencyConversionContext.currencyConversionContext.get();
