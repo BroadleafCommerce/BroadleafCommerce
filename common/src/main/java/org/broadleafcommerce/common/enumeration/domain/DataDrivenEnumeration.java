@@ -33,28 +33,8 @@ public interface DataDrivenEnumeration extends Serializable {
 
     public void setModifiable(Boolean modifiable);
 
-    /**
-     * Gets list of values associated with this enumeration.
-     */
-    public List<DataDrivenEnumerationValue> getEnumValues();
-
-    /**
-     * Sets list of values associated with this enumeration. 
-     */
-    public void setEnumValues(List<DataDrivenEnumerationValue> enumValues);
-
-    /**
-     * Incorrectly named, kept purely for API consistency
-     * @deprecated use {@link #getEnumValues()} instead
-     */
-    @Deprecated
     public List<DataDrivenEnumerationValue> getOrderItems();
 
-    /**
-     * Incorrectly named, kept purely for API consistency
-     * @deprecated use {@link #setEnumValues()} instead
-     */
-    @Deprecated
     public void setOrderItems(List<DataDrivenEnumerationValue> orderItems);
 
 }
