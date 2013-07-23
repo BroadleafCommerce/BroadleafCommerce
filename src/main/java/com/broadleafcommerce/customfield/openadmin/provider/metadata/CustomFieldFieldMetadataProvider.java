@@ -48,8 +48,14 @@ public class CustomFieldFieldMetadataProvider extends MapFieldsFieldMetadataProv
 
     protected boolean canHandleLateStageField(LateStageAddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         //detect our field, but let the superclass handle metadata alteration
-        String targetEntityName = addMetadataRequest.getTargetClass().getName();
         String fieldName = addMetadataRequest.getFieldName();
+        FieldMetadata fmd = metadata.get(fieldName);
+        
+        String targetEntityName = fmd.getTargetClass();
+        if (fieldName.contains(".")) {
+            fieldName = fieldName.substring(fieldName.lastIndexOf('.') + 1);
+        }
+        
         return detectField(targetEntityName, fieldName);
     }
     
@@ -71,7 +77,9 @@ public class CustomFieldFieldMetadataProvider extends MapFieldsFieldMetadataProv
             return FieldProviderResponse.NOT_HANDLED;
         }
         //We will check in the database to see if there are any configured custom fields
-        String targetEntityName = addMetadataRequest.getTargetClass().getName();
+        FieldMetadata fmd = metadata.get(addMetadataRequest.getFieldName());
+        String targetEntityName = fmd.getTargetClass();
+        
         List<CustomField> customFields = customFieldService.findByTargetEntityName(targetEntityName);
         if (CollectionUtils.isEmpty(customFields)) {
             return FieldProviderResponse.NOT_HANDLED;
