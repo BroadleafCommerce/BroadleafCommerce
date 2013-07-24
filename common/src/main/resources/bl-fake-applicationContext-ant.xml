@@ -22,10 +22,21 @@
     
     <!-- Overrides the Quartz job for rebuilding the Solr index. Times are intended to be set so that this never actually
         gets kicked off -->
+    <bean id="rebuildIndexJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="blSearchService" />
+        <property name="targetMethod" value="rebuildIndex" />
+    </bean> 
     <bean id="rebuildIndexTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
         <property name="jobDetail" ref="rebuildIndexJobDetail" />
         <property name="startDelay" value="999999999999999" />
         <property name="repeatInterval" value="999999999999999" />
+    </bean>
+    
+    <!-- Additional beans that must be declared for the build-sql task -->
+    <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list />
+        </property>
     </bean>
     
 </beans>

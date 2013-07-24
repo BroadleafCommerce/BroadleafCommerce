@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -37,6 +38,7 @@ import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.FieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
@@ -47,7 +49,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
-import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,9 +69,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -85,14 +88,12 @@ import javax.persistence.EntityManager;
 public class DynamicEntityDaoImpl implements DynamicEntityDao {
     
     private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
-    protected static final Object LOCK_OBJECT = new Object();
+    
     protected static final Map<String,Map<String, FieldMetadata>> METADATA_CACHE = new LRUMap<String, Map<String, FieldMetadata>>(100, 1000);
-    protected static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE = new LRUMap<Class<?>, Class<?>[]>(100, 1000);
     /*
      * This is the same as POLYMORPHIC_ENTITY_CACHE, except that it does not contain classes that are abstract or have been marked for exclusion 
      * from polymorphism
      */
-    protected static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap<Class<?>, Class<?>[]>(100, 1000);
     
     protected EntityManager standardEntityManager;
 
@@ -114,8 +115,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     @Resource(name="blAppConfigurationRemoteService")
     protected AppConfigurationService appConfigurationRemoteService;
 
-    @Resource(name="blDynamicDaoHelperImpl")
-    protected DynamicDaoHelper dynamicDaoHelper;
+    protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
     @Value("${cache.entity.dao.metadata.ttl}")
     protected int cacheEntityMetaDataTtl;
@@ -193,8 +193,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
             if ((System.currentTimeMillis() - lastCacheFlushTime) > cacheEntityMetaDataTtl) {
                 lastCacheFlushTime = System.currentTimeMillis();
                 METADATA_CACHE.clear();
-                POLYMORPHIC_ENTITY_CACHE.clear();
-                POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.clear();
+                DynamicDaoHelperImpl.POLYMORPHIC_ENTITY_CACHE.clear();
+                DynamicDaoHelperImpl.POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.clear();
                 return true; // cache is empty
             } else {
                 return true;
@@ -212,99 +212,12 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
      */
     @Override
     public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, boolean includeUnqualifiedPolymorphicEntities) {
-        Class<?>[] cache = null;
-        synchronized(LOCK_OBJECT) {
-            if (useCache()) {
-                if (includeUnqualifiedPolymorphicEntities) {
-                    cache = POLYMORPHIC_ENTITY_CACHE.get(ceilingClass);
-                } else {
-                    cache = POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.get(ceilingClass);
-                }
-            }
-            if (cache == null) {
-                List<Class<?>> entities = new ArrayList<Class<?>>();
-                for (Object item : getSessionFactory().getAllClassMetadata().values()) {
-                    ClassMetadata metadata = (ClassMetadata) item;
-                    Class<?> mappedClass = metadata.getMappedClass();
-                    if (mappedClass != null && ceilingClass.isAssignableFrom(mappedClass)) {
-                        entities.add(mappedClass);
-                    }
-                }
-                Class<?>[] sortedEntities = sortEntities(ceilingClass, entities);
-
-                List<Class<?>> filteredSortedEntities = new ArrayList<Class<?>>();
-
-                for (int i = 0; i < sortedEntities.length; i++) {
-                    Class<?> item = sortedEntities[i];
-                    if (includeUnqualifiedPolymorphicEntities) {
-                        filteredSortedEntities.add(sortedEntities[i]);
-                    } else {
-                        if (isExcludeClassFromPolymorphism(item)) {
-                            continue;
-                        } else {
-                            filteredSortedEntities.add(sortedEntities[i]);
-                        }
-                    }
-                }
-
-                Class<?>[] filteredEntities = new Class<?>[filteredSortedEntities.size()];
-                filteredEntities = filteredSortedEntities.toArray(filteredEntities);
-                cache = filteredEntities;
-                if (includeUnqualifiedPolymorphicEntities) {
-                    POLYMORPHIC_ENTITY_CACHE.put(ceilingClass, filteredEntities);
-                } else {
-                    POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS.put(ceilingClass, filteredEntities);
-                }
-            }
-        }
-
-        return cache;
+        return dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(ceilingClass, getSessionFactory(), 
+                includeUnqualifiedPolymorphicEntities, useCache());
     }
 
     public Class<?>[] sortEntities(Class<?> ceilingClass, List<Class<?>> entities) {
-        /*
-         * Sort entities with the most derived appearing first
-         */
-        Class<?>[] sortedEntities = new Class<?>[entities.size()];
-        List<Class<?>> stageItems = new ArrayList<Class<?>>();
-        stageItems.add(ceilingClass);
-        int j = 0;
-        while (j < sortedEntities.length) {
-            List<Class<?>> newStageItems = new ArrayList<Class<?>>();
-            boolean topLevelClassFound = false;
-            for (Class<?> stageItem : stageItems) {
-                Iterator<Class<?>> itr = entities.iterator();
-                while(itr.hasNext()) {
-                    Class<?> entity = itr.next();
-                    checkitem: {
-                        if (ArrayUtils.contains(entity.getInterfaces(), stageItem) || entity.equals(stageItem)) {
-                            topLevelClassFound = true;
-                            break checkitem;
-                        }
-
-                        if (topLevelClassFound) {
-                            continue;
-                        }
-
-                        if (entity.getSuperclass().equals(stageItem) && j > 0) {
-                            break checkitem;
-                        }
-
-                        continue;
-                    }
-                    sortedEntities[j] = entity;
-                    itr.remove();
-                    j++;
-                    newStageItems.add(entity);
-                }
-            }
-            if (newStageItems.isEmpty()) {
-                throw new IllegalArgumentException("There was a gap in the inheritance hierarchy for (" + ceilingClass.getName() + ")");
-            }
-            stageItems = newStageItems;
-        }
-        ArrayUtils.reverse(sortedEntities);
-        return sortedEntities;
+        return dynamicDaoHelper.sortEntities(ceilingClass, entities);
     }
 
     protected void addClassToTree(Class<?> clazz, ClassTree tree) {
@@ -496,7 +409,31 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
         for (String removeKey : removeKeys) {
             mergedProperties.remove(removeKey);
         }
-
+        
+        // Allow field metadata providers to contribute additional fields here. These latestage handlers take place
+        // after any cached lookups occur, and are ideal for adding in dynamic properties that are not globally cacheable
+        // like properties gleaned from reflection typically are.
+        Set<String> keys = new HashSet<String>(mergedProperties.keySet());
+        for (Class<?> targetClass : entities) {
+            for (String key : keys) {
+                LateStageAddMetadataRequest amr = new LateStageAddMetadataRequest(key, null, targetClass, this, "");
+                
+                boolean foundOneOrMoreHandlers = false;
+                for (FieldMetadataProvider fieldMetadataProvider : fieldMetadataProviders) {
+                    FieldProviderResponse response = fieldMetadataProvider.lateStageAddMetadata(amr, mergedProperties);
+                    if (FieldProviderResponse.NOT_HANDLED != response) {
+                        foundOneOrMoreHandlers = true;
+                    }
+                    if (FieldProviderResponse.HANDLED_BREAK == response) {
+                        break;
+                    }
+                }
+                if (!foundOneOrMoreHandlers) {
+                    defaultFieldMetadataProvider.lateStageAddMetadata(amr, mergedProperties);
+                }
+            }
+        }
+        
         return mergedProperties;
     }
 
@@ -675,7 +612,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
             String cacheKey = getCacheKey(foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, clazz, configurationKey, isParentExcluded);
 
             Map<String, FieldMetadata> cacheData = null;
-            synchronized(LOCK_OBJECT) {
+            synchronized(DynamicDaoHelperImpl.LOCK_OBJECT) {
                 if (useCache()) {
                     cacheData = METADATA_CACHE.get(cacheKey);
                 }
@@ -1378,18 +1315,16 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     }
 
     protected boolean isExcludeClassFromPolymorphism(Class<?> clazz) {
-        //We filter out abstract classes because they can't be instantiated.
-        if (Modifier.isAbstract(clazz.getModifiers())) {
-            return true;
-        }
-
-        //We filter out classes that are marked to exclude from polymorphism
-        AdminPresentationClass adminPresentationClass = clazz.getAnnotation(AdminPresentationClass.class);
-        if (adminPresentationClass == null) {
-            return false;
-        } else if (adminPresentationClass.excludeFromPolymorphism()) {
-            return true;
-        }
-        return false;
+        return dynamicDaoHelper.isExcludeClassFromPolymorphism(clazz);
     }
+
+    
+    public DynamicDaoHelper getDynamicDaoHelper() {
+        return dynamicDaoHelper;
+    }
+
+    public void setDynamicDaoHelper(DynamicDaoHelper dynamicDaoHelper) {
+        this.dynamicDaoHelper = dynamicDaoHelper;
+    }
+    
 }

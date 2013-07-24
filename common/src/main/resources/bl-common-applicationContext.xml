@@ -107,4 +107,28 @@
             </map>
         </constructor-arg>
     </bean  -->
+    
+    <bean id="blJsLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>classpath:/common_js/</value>
+                <value>classpath:/extensions/js/</value><!-- To allow a common place for modules or extensions to put js files. -->
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blCssLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blJsFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+    
 </beans>

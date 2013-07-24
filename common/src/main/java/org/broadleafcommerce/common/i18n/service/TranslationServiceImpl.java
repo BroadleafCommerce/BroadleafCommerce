@@ -19,7 +19,6 @@ package org.broadleafcommerce.common.i18n.service;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -33,12 +32,11 @@ import org.hibernate.type.Type;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 
 @Service("blTranslationService")
@@ -121,26 +119,32 @@ public class TranslationServiceImpl implements TranslationService {
         if (StringUtils.isNotBlank(locale.getCountry())) {
             localeCountryCode += "_" + locale.getCountry();
         }
-        
-        Translation translation = null;
+
+        Translation translation;
         
         // First, we'll try to look up a country language combo (en_GB), utilizing the cache
         String countryCacheKey = getCacheKey(entityType, entityId, property, localeCountryCode);
-        if (getCache().isKeyInCache(countryCacheKey)) {
-            translation = (Translation) getCache().get(countryCacheKey).getObjectValue();
+        Element countryValue = getCache().get(countryCacheKey);
+        if (countryValue != null) {
+            translation = (Translation) countryValue.getObjectValue();
         } else {
             translation = getTranslation(entityType, entityId, property, localeCountryCode);
-            getCache().put(new Element(countryCacheKey, translation));
+            if (translation != null) {
+                getCache().put(new Element(countryCacheKey, translation));
+            }
         }
         
         // If we don't find one, let's try just the language (en), again utilizing the cache
         if (translation == null) {
             String nonCountryCacheKey = getCacheKey(entityType, entityId, property, localeCode);
-            if (getCache().isKeyInCache(nonCountryCacheKey)) {
-                translation = (Translation) getCache().get(nonCountryCacheKey).getObjectValue();
+            Element nonCountryValue = getCache().get(nonCountryCacheKey);
+            if (nonCountryValue != null) {
+                translation = (Translation) nonCountryValue.getObjectValue();
             } else {
                 translation = getTranslation(entityType, entityId, property, localeCode);
-                getCache().put(new Element(nonCountryCacheKey, translation));
+                if (translation != null) {
+                    getCache().put(new Element(nonCountryCacheKey, translation));
+                }
             }
         }
         

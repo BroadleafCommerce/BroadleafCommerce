@@ -35,6 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private RequestCache requestCache = new HttpSessionRequestCache();
+    
+    private final String successUrlParameter = "successUrl=";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -55,20 +57,22 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
         }
 
         clearAuthenticationAttributes(request);
-        
         // Use the DefaultSavedRequest URL
         String targetUrl = savedRequest.getRedirectUrl();
-        
         // Remove the sessionTimeout flag if necessary
         targetUrl = targetUrl.replace("sessionTimeout=true", "");
         if (targetUrl.charAt(targetUrl.length() - 1) == '?') {
             targetUrl = targetUrl.substring(0, targetUrl.length() - 1);
         }
 
-        String moduleKey = request.getParameter("moduleKey");
-        String pageKey = request.getParameter("pageKey");
-        if (moduleKey != null && pageKey != null) {
-            targetUrl += "#" + "moduleKey=" + moduleKey + "&pageKey=" + pageKey;
+        if (targetUrl.contains(successUrlParameter)) {
+            int successUrlPosistion = targetUrl.indexOf(successUrlParameter) + successUrlParameter.length();
+            int nextParamPosistion = targetUrl.indexOf("&", successUrlPosistion);
+            if (nextParamPosistion == -1) {
+                targetUrl = targetUrl.substring(successUrlPosistion, targetUrl.length());
+            } else {
+                targetUrl = targetUrl.substring(successUrlPosistion, nextParamPosistion);
+            }
         }
 
         logger.debug("Redirecting to DefaultSavedRequest Url: " + targetUrl);

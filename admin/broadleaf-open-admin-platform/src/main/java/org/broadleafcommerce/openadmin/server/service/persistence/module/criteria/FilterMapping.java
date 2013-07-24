@@ -36,6 +36,7 @@ public class FilterMapping {
     protected SortDirection sortDirection;
     protected Restriction restriction;
     protected FieldPath fieldPath;
+    protected Class<?> inheritedFromClass;
 
     public FilterMapping withFullPropertyName(String fullPropertyName) {
         setFullPropertyName(fullPropertyName);
@@ -64,6 +65,11 @@ public class FilterMapping {
 
     public FilterMapping withFieldPath(FieldPath fieldPath) {
         setFieldPath(fieldPath);
+        return this;
+    }
+    
+    public FilterMapping withInheritedFromClass(Class<?> inheritedFromClass) {
+        setInheritedFromClass(inheritedFromClass);
         return this;
     }
 
@@ -124,6 +130,14 @@ public class FilterMapping {
             throw new IllegalArgumentException("Cannot set both filter values and direct filter values");
         }
         this.directFilterValues = directFilterValues;
+    }
+    
+    public Class<?> getInheritedFromClass() {
+        return inheritedFromClass;
+    }
+
+    public void setInheritedFromClass(Class<?> inheritedFromClass) {
+        this.inheritedFromClass = inheritedFromClass;
     }
 
     protected String[] parseFilterValue(String filterValue) {

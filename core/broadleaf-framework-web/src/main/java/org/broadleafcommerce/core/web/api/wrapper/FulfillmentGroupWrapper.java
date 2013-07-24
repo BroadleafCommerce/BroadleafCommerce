@@ -20,8 +20,10 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.TaxDetail;
+import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
@@ -54,6 +56,12 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
     protected Long orderId;
 
     @XmlElement
+    protected BroadleafEnumerationTypeWrapper fulfillmentType;
+
+    @XmlElement
+    protected FulfillmentOptionWrapper fulfillmentOption;
+
+    @XmlElement
     protected Money total;
 
     @XmlElement
@@ -78,6 +86,16 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
     public void wrapDetails(FulfillmentGroup model, HttpServletRequest request) {
         this.id = model.getId();
         this.total = model.getTotal();
+
+        if (model.getType() != null) {
+            this.fulfillmentType = (BroadleafEnumerationTypeWrapper) context.getBean(BroadleafEnumerationTypeWrapper.class.getName());
+            this.fulfillmentType.wrapDetails(model.getType(), request);
+        }
+
+        if (model.getFulfillmentOption() != null) {
+            this.fulfillmentOption = (FulfillmentOptionWrapper) context.getBean(FulfillmentOptionWrapper.class.getName());
+            this.fulfillmentOption.wrapDetails(model.getFulfillmentOption(), request);
+        }
 
         if (model.getOrder() != null) {
             this.orderId = model.getOrder().getId();
@@ -155,6 +173,12 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
 
         if (this.phone != null) {
             fulfillmentGroupRequest.setPhone(this.phone.unwrap(request, appContext));
+        }
+
+        if (this.fulfillmentOption != null && this.fulfillmentOption.getId() != null) {
+            FulfillmentOptionService fulfillmentOptionService = (FulfillmentOptionService) appContext.getBean("blFulfillmentOptionService");
+            FulfillmentOption option = fulfillmentOptionService.readFulfillmentOptionById(this.fulfillmentOption.getId());
+            fulfillmentGroupRequest.setOption(option);
         }
 
         return fulfillmentGroupRequest;

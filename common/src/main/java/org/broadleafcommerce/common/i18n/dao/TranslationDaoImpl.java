@@ -21,9 +21,13 @@ import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -33,8 +37,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.List;
-import java.util.Map;
 
 @Repository("blTranslationDao")
 public class TranslationDaoImpl implements TranslationDao {
@@ -45,8 +47,7 @@ public class TranslationDaoImpl implements TranslationDao {
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Resource(name="blDynamicDaoHelperImpl")
-    protected DynamicDaoHelper dynamicDaoHelper;
+    protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
     
     @Override
     public Translation save(Translation translation) {
@@ -114,6 +115,14 @@ public class TranslationDaoImpl implements TranslationDao {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    public DynamicDaoHelper getDynamicDaoHelper() {
+        return dynamicDaoHelper;
+    }
+
+    public void setDynamicDaoHelper(DynamicDaoHelper dynamicDaoHelper) {
+        this.dynamicDaoHelper = dynamicDaoHelper;
     }
 
 }

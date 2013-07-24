@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -257,7 +258,15 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
         adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.FETCH);
         PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
-        return postFetch(myModule.fetch(persistencePackage, cto), persistencePackage, cto);
+        try {
+            return postFetch(myModule.fetch(persistencePackage, cto), persistencePackage, cto);
+        } catch (ServiceException e) {
+            if (e.getCause() instanceof NoPossibleResultsException) {
+                DynamicResultSet drs = new DynamicResultSet(null, new Entity[] {}, 0);
+                return postFetch(drs, persistencePackage, cto);
+            }
+            throw e;
+        }
     }
 
     protected DynamicResultSet postFetch(DynamicResultSet resultSet, PersistencePackage persistencePackage, 

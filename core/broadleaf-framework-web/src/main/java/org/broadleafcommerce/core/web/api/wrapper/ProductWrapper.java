@@ -60,7 +60,7 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
     protected String description;
 
     @XmlElement
-    protected String longDescripion;
+    protected String longDescription;
 
     @XmlElement
     protected Money retailPrice;
@@ -136,7 +136,7 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
         this.id = model.getId();
         this.name = model.getName();
         this.description = model.getDescription();
-        this.longDescripion = model.getLongDescription();
+        this.longDescription = model.getLongDescription();
         this.activeStartDate = model.getActiveStartDate();
         this.activeEndDate = model.getActiveEndDate();
         this.manufacturer = model.getManufacturer();
@@ -242,7 +242,7 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
         this.id = model.getId();
         this.name = model.getName();
         this.description = model.getDescription();
-        this.longDescripion = model.getLongDescription();
+        this.longDescription = model.getLongDescription();
         this.active = model.isActive();
 
         if (model instanceof ProductBundle) {
