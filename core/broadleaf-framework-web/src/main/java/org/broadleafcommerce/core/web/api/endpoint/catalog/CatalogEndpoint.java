@@ -33,6 +33,7 @@ import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.service.SearchService;
+import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.CategoriesWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper;
@@ -52,8 +53,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -110,7 +109,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(product, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
     /**
@@ -132,24 +132,24 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                 q = StringUtils.trim(q);
                 q = exploitProtectionService.cleanString(q);
             } else {
-                throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                        .type(MediaType.TEXT_PLAIN).entity("Search query was empty. Set parameter 'q' to query for a product. (e.g. q=My Product Name).").build());
+                throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                        .addMessage(BroadleafWebServicesException.SEARCH_QUERY_EMPTY);
             }
         } catch (ServiceException e) {
-            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                    .type(MediaType.TEXT_PLAIN).entity("The search query: " + q + " was incorrect or malformed.").build());
+            throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.SEARCH_QUERY_MALFORMED, q);
         }
 
         if (categoryId == null) {
-            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                    .type(MediaType.TEXT_PLAIN).entity("The categoryId was null.").build());
+            throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.INVALID_CATEGORY_ID, categoryId);
         }
 
         Category category = null;
         category = catalogService.findCategoryById(categoryId);
         if (category == null) {
-            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                    .type(MediaType.TEXT_PLAIN).entity("Category ID, " + categoryId + ", was not associated with a category.").build());
+            throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.INVALID_CATEGORY_ID, categoryId);
         }
 
         List<SearchFacetDTO> availableFacets = searchService.getSearchFacets();
@@ -163,8 +163,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(result, request);
             return wrapper;
         } catch (ServiceException e) {
-            throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .type(MediaType.TEXT_PLAIN).entity("Problem occured executing search.").build());
+            throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
         }
     }
 
@@ -186,12 +185,12 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                 q = StringUtils.trim(q);
                 q = exploitProtectionService.cleanString(q);
             } else {
-                throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                        .type(MediaType.TEXT_PLAIN).entity("Search query was empty. Set parameter 'q' to query for a product. (e.g. q=My Product Name).").build());
+                throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                        .addMessage(BroadleafWebServicesException.SEARCH_QUERY_EMPTY);
             }
         } catch (ServiceException e) {
-            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                    .type(MediaType.TEXT_PLAIN).entity("The search query: " + q + " was incorrect or malformed.").build());
+            throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.SEARCH_QUERY_MALFORMED, q);
         }
 
         List<SearchFacetDTO> availableFacets = searchService.getSearchFacets();
@@ -205,8 +204,9 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(result, request);
             return wrapper;
         } catch (ServiceException e) {
-            throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .type(MediaType.TEXT_PLAIN).entity("Problem occured executing search.").build());
+            throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.SEARCH_ERROR);
+
         }
     }
 
@@ -230,7 +230,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                 return out;
             }
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
     
     public SkuWrapper findDefaultSkuByProductId(HttpServletRequest request, Long id) {
@@ -240,7 +241,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(product.getDefaultSku(), request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
     public CategoriesWrapper findAllCategories(HttpServletRequest request,
@@ -275,7 +277,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(categories, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, id);
 
     }
 
@@ -305,7 +308,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(cat, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, id);
     }
 
     /**
@@ -349,8 +353,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(cat, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                .type(MediaType.TEXT_PLAIN).entity("Category with Id or name of " + searchParameter + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, searchParameter);
     }
 
     public List<CategoryAttributeWrapper> findCategoryAttributesForCategory(HttpServletRequest request,
@@ -367,7 +371,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, id);
     }
 
     public List<RelatedProductWrapper> findUpSaleProductsByProduct(HttpServletRequest request,
@@ -389,7 +394,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
     public List<RelatedProductWrapper> findCrossSaleProductsByProduct(HttpServletRequest request,
@@ -411,7 +417,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
     
     public List<ProductAttributeWrapper> findProductAttributesForProduct(HttpServletRequest request,
@@ -428,7 +435,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
     public List<SkuAttributeWrapper> findSkuAttributesForSku(HttpServletRequest request,
@@ -445,7 +453,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Sku with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND, id);
     }
 
     public List<MediaWrapper> findMediaForSku(HttpServletRequest request,
@@ -465,7 +474,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return medias;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Sku with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND, id);
     }
 
     public SkuWrapper findSkuById(HttpServletRequest request,
@@ -476,7 +486,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(sku, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Sku with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND, id);
     }
 
     public List<MediaWrapper> findMediaForProduct(HttpServletRequest request,
@@ -497,7 +508,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
     public List<MediaWrapper> findMediaForCategory(HttpServletRequest request,
@@ -513,7 +525,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Category with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, id);
     }
 
     public CategoriesWrapper findParentCategoriesForProduct(HttpServletRequest request,
@@ -528,7 +541,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(categories, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity("Product with Id " + id + " could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
     protected StaticAssetService getStaticAssetService() {

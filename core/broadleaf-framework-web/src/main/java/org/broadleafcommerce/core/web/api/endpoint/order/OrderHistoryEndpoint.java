@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web.api.endpoint.order;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -29,8 +30,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -66,12 +65,11 @@ public abstract class OrderHistoryEndpoint extends BaseEndpoint {
                 return wrappers;
             }
 
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+            throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
         }
 
-        throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
-                .type(MediaType.TEXT_PLAIN).entity("Could not find customer associated with request. " +
-                        "Ensure that customer ID is passed in the request as header or request parameter : customerId").build());
+        throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CUSTOMER_NOT_FOUND);
     }
 }

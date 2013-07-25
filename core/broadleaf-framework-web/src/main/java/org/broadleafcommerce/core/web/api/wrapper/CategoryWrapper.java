@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 import org.broadleafcommerce.core.search.service.SearchService;
+import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,8 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -150,8 +149,7 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
                     }
                 }
             } catch (ServiceException e) {
-                throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An unexpected error occured  " + e.getMessage()).build());
+                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e);
             }
         }
 

@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.payment.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.payment.service.workflow.CompositePaymentResponse;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper;
@@ -45,8 +46,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -93,12 +92,11 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
                 return paymentResponseItemWrapper;
 
             } catch (PaymentException e) {
-                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured with payment.").build());
+                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e);
             }
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
 
     }
 
@@ -139,12 +137,11 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
                     LOG.error("An unexpected error occured saving / pricing the cart.", e1);
                 }
 
-                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured during checkout.").build());
+                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e);
             }
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
 
     }
 }
