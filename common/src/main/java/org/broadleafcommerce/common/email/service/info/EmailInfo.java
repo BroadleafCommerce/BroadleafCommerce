@@ -35,6 +35,7 @@ public class EmailInfo implements Serializable {
     private String subject;
     private String fromAddress;
     private String messageBody;
+    private String encoding;
     private List<Attachment> attachments = new ArrayList<Attachment>();
 
     private String sendEmailReliableAsync;
@@ -140,6 +141,14 @@ public class EmailInfo implements Serializable {
         this.attachments = attachments;
     }
 
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
     public synchronized EmailInfo clone() {
         EmailInfo info = new EmailInfo();
         info.setAttachments(attachments);
@@ -150,6 +159,7 @@ public class EmailInfo implements Serializable {
         info.setSendAsyncPriority(sendAsyncPriority);
         info.setSendEmailReliableAsync(sendEmailReliableAsync);
         info.setSubject(subject);
+        info.setEncoding(encoding);
 
         return info;
     }

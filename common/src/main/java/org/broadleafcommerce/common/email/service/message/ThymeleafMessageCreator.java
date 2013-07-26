@@ -22,8 +22,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class ThymeleafMessageCreator extends MessageCreator {
 
@@ -35,7 +35,7 @@ public class ThymeleafMessageCreator extends MessageCreator {
     }
 
     @Override
-    public String buildMessageBody(EmailInfo info, HashMap<String,Object> props) {
+    public String buildMessageBody(EmailInfo info, Map<String,Object> props) {
         BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
         
         final Context thymeleafContext = new Context();

@@ -26,7 +26,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
-import java.util.HashMap;
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author jfischer
@@ -38,15 +39,19 @@ public class JMSEmailServiceProducerImpl implements JMSEmailServiceProducer {
 
     private Destination emailServiceDestination;
 
-    public void send(@SuppressWarnings("rawtypes") final HashMap props) {
-        emailServiceTemplate.send(emailServiceDestination, new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                ObjectMessage message = session.createObjectMessage(props);
-                EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.getType());
-                message.setJMSPriority(Integer.parseInt(info.getSendAsyncPriority()));
-                return message;
-            }
-        });
+    public void send(final Map props) {
+        if (props instanceof Serializable) {
+            final Serializable sProps = (Serializable) props;
+            emailServiceTemplate.send(emailServiceDestination, new MessageCreator() {
+                public Message createMessage(Session session) throws JMSException {
+                    ObjectMessage message = session.createObjectMessage(sProps);
+                    EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.getType());
+                    message.setJMSPriority(Integer.parseInt(info.getSendAsyncPriority()));
+                    return message;
+                }
+            });
+        }
+        throw new IllegalArgumentException("The properties map must be Serializable");
     }
 
     /**

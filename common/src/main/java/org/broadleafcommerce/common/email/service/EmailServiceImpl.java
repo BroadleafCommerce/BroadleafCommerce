@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author jfischer
@@ -50,7 +51,7 @@ public class EmailServiceImpl implements EmailService {
     @Resource(name = "blEmailReportingDao")
     protected EmailReportingDao emailReportingDao;
 
-    public boolean sendTemplateEmail(EmailTarget emailTarget, EmailInfo emailInfo, HashMap<String, Object> props) {
+    public boolean sendTemplateEmail(EmailTarget emailTarget, EmailInfo emailInfo, Map<String, Object> props) {
         if (props == null) {
             props = new HashMap<String, Object>();
         }
@@ -66,7 +67,7 @@ public class EmailServiceImpl implements EmailService {
         return sendBasicEmail(emailInfo, emailTarget, props);
     }
 
-    public boolean sendTemplateEmail(String emailAddress, EmailInfo emailInfo, HashMap<String, Object> props) {
+    public boolean sendTemplateEmail(String emailAddress, EmailInfo emailInfo, Map<String, Object> props) {
         if (!(emailInfo instanceof NullEmailInfo)) {
             EmailTarget emailTarget = emailReportingDao.createTarget();
             emailTarget.setEmailAddress(emailAddress);
@@ -76,7 +77,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, HashMap<String, Object> props) {
+    public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, Map<String, Object> props) {
         if (props == null) {
             props = new HashMap<String, Object>();
         }

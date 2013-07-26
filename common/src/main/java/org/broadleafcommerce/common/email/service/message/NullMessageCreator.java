@@ -22,7 +22,7 @@ import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class NullMessageCreator extends MessageCreator {
     
@@ -33,12 +33,12 @@ public class NullMessageCreator extends MessageCreator {
     }
     
     @Override
-    public String buildMessageBody(EmailInfo info, HashMap<String,Object> props) {
+    public String buildMessageBody(EmailInfo info, Map<String,Object> props) {
         return info.getEmailTemplate();
     }
     
     @Override
-    public void sendMessage(final HashMap<String,Object> props) throws MailException {
+    public void sendMessage(final Map<String,Object> props) throws MailException {
         LOG.warn("NullMessageCreator is defined -- specify a real message creator to send emails");
     }
     

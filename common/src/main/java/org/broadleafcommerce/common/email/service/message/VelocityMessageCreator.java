@@ -29,20 +29,29 @@ public class VelocityMessageCreator extends MessageCreator {
     private VelocityEngine velocityEngine;
     private Map<String, Object> additionalConfigItems;
     
-    public VelocityMessageCreator(VelocityEngine velocityEngine, JavaMailSender mailSender, HashMap<String, Object> additionalConfigItems) {
+    public VelocityMessageCreator(VelocityEngine velocityEngine, JavaMailSender mailSender, Map<String, Object> additionalConfigItems) {
         super(mailSender);
         this.additionalConfigItems = additionalConfigItems;
         this.velocityEngine = velocityEngine;        
     }
 
     @Override
-    public String buildMessageBody(EmailInfo info, HashMap<String,Object> props) {
-        @SuppressWarnings("unchecked")
-        HashMap<String,Object> propsCopy = (HashMap<String, Object>) props.clone();
-        if (additionalConfigItems != null) {
-            propsCopy.putAll(additionalConfigItems);
+    public String buildMessageBody(EmailInfo info, Map<String,Object> props) {
+        if (props == null) {
+            props = new HashMap<String, Object>();
         }
-        return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, info.getEmailTemplate(), propsCopy);
+
+        if (props instanceof HashMap) {
+            HashMap<String, Object> hashProps = (HashMap<String, Object>) props;
+            @SuppressWarnings("unchecked")
+            Map<String,Object> propsCopy = (Map<String, Object>) hashProps.clone();
+            if (additionalConfigItems != null) {
+                propsCopy.putAll(additionalConfigItems);
+            }
+            return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, info.getEmailTemplate(), info.getEncoding(), propsCopy);
+        }
+
+        throw new IllegalArgumentException("Property map must be of type HashMap<String, Object>");
     }
 
     public VelocityEngine getVelocityEngine() {

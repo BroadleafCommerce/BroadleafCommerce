@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.common.email.service.message;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface EmailServiceProducer {
 
-    public void send(@SuppressWarnings("rawtypes") final HashMap props);
+    public void send(final Map props);
     
 }

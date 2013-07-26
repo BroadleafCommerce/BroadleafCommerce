@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.email.service;
 import org.broadleafcommerce.common.email.domain.EmailTarget;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author jfischer
@@ -27,10 +27,10 @@ import java.util.HashMap;
  */
 public interface EmailService {
 
-    public boolean sendTemplateEmail(String emailAddress, EmailInfo emailInfo,  HashMap<String,Object> props);
+    public boolean sendTemplateEmail(String emailAddress, EmailInfo emailInfo,  Map<String,Object> props);
 
-    public boolean sendTemplateEmail(EmailTarget emailTarget, EmailInfo emailInfo, HashMap<String,Object> props);
+    public boolean sendTemplateEmail(EmailTarget emailTarget, EmailInfo emailInfo, Map<String,Object> props);
 
-    public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, HashMap<String,Object> props);
+    public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, Map<String,Object> props);
 
 }

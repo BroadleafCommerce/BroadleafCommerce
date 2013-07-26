@@ -25,7 +25,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import javax.mail.internet.MimeMessage;
 import javax.mail.util.ByteArrayDataSource;
-import java.util.HashMap;
+import java.util.Map;
 
 public abstract class MessageCreator {
 
@@ -35,14 +35,14 @@ public abstract class MessageCreator {
         this.mailSender = mailSender;
     }
 
-    public void sendMessage(final HashMap<String,Object> props) throws MailException {
+    public void sendMessage(final Map<String,Object> props) throws MailException {
         MimeMessagePreparator preparator = buildMimeMessagePreparator(props);
         this.mailSender.send(preparator);
     }
     
-    public abstract String buildMessageBody(EmailInfo info, HashMap<String,Object> props);
+    public abstract String buildMessageBody(EmailInfo info, Map<String,Object> props);
     
-    public MimeMessagePreparator buildMimeMessagePreparator(final HashMap<String,Object> props) {
+    public MimeMessagePreparator buildMimeMessagePreparator(final Map<String,Object> props) {
          MimeMessagePreparator preparator = new MimeMessagePreparator() {
              public void prepare(MimeMessage mimeMessage) throws Exception {
                  EmailTarget emailUser = (EmailTarget) props.get(EmailPropertyType.USER.getType());
