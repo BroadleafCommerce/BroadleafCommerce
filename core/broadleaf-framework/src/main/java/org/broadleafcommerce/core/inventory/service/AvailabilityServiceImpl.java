@@ -16,13 +16,15 @@
 
 package org.broadleafcommerce.core.inventory.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.inventory.dao.AvailabilityDao;
 import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * 
@@ -99,6 +101,9 @@ public class AvailabilityServiceImpl implements AvailabilityService {
      */
     @Override
     public List<SkuAvailability> lookupSKUAvailabilityForLocation(List<Long> skuIds, Long locationId, boolean realTime) {
+        if (CollectionUtils.isEmpty(skuIds)) {
+            return new ArrayList<SkuAvailability>();
+        }
         return availabilityDao.readSKUAvailabilityForLocation(skuIds, locationId, realTime);
     }
     
