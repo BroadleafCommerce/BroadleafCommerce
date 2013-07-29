@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
 
@@ -67,6 +68,8 @@ public interface OrderItemService {
      * @return the OrderItemRequestDTO that mirrors the item
      */
     public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item);
+
+    public OrderItem createOrderItem(OrderItemRequest itemRequest);
 
 
 }

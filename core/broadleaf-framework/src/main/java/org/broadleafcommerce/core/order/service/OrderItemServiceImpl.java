@@ -36,15 +36,18 @@ import org.broadleafcommerce.core.order.service.call.AbstractOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 @Service("blOrderItemService")
 public class OrderItemServiceImpl implements OrderItemService {
@@ -95,6 +98,26 @@ public class OrderItemServiceImpl implements OrderItemService {
                 orderItemAttributes.put(key, attribute);
             }
         }
+    }
+    
+    @Override
+    public OrderItem createOrderItem(final OrderItemRequest itemRequest) {
+        final OrderItem item = orderItemDao.create(OrderItemType.BASIC);
+        item.setName(itemRequest.getItemName());
+        item.setQuantity(itemRequest.getQuantity());
+        item.setOrder(itemRequest.getOrder());
+        
+        if (itemRequest.getSalePriceOverride() != null) {
+            item.setSalePriceOverride(Boolean.TRUE);
+            item.setSalePrice(itemRequest.getSalePriceOverride());
+        }
+
+        if (itemRequest.getRetailPriceOverride() != null) {
+            item.setRetailPriceOverride(Boolean.TRUE);
+            item.setRetailPrice(itemRequest.getRetailPriceOverride());
+        }
+        
+        return item;
     }
 
     @Override
@@ -304,22 +327,37 @@ public class OrderItemServiceImpl implements OrderItemService {
     
     @Override
     public OrderItemRequestDTO buildOrderItemRequestDTOFromOrderItem(OrderItem item) {
-        OrderItemRequestDTO orderItemRequest = new OrderItemRequestDTO()
-            .setQuantity(item.getQuantity())
-            .setSkuId(((DiscreteOrderItem) item).getSku().getId());
-        
-        if (item.getCategory() != null) {
-            orderItemRequest.setCategoryId(item.getCategory().getId());
-        }
-        
-        if (((DiscreteOrderItem) item).getProduct() != null) {
-            orderItemRequest.setProductId(((DiscreteOrderItem) item).getProduct().getId());
-        }
-        
-        if (item.getOrderItemAttributes() != null) {
-            for (Entry<String, OrderItemAttribute> entry : item.getOrderItemAttributes().entrySet()) {
-                orderItemRequest.getItemAttributes().put(entry.getKey(), entry.getValue().getValue());
+        OrderItemRequestDTO orderItemRequest; 
+        if (item instanceof DiscreteOrderItem) {
+            DiscreteOrderItem doi = (DiscreteOrderItem) item;
+            orderItemRequest = new OrderItemRequestDTO();
+            orderItemRequest.setQuantity(doi.getQuantity());
+            
+            if (doi.getCategory() != null) {
+                orderItemRequest.setCategoryId(doi.getCategory().getId());
             }
+            
+            if (doi.getProduct() != null) {
+                orderItemRequest.setProductId(doi.getProduct().getId());
+            }
+            
+            if (doi.getSku() != null) {
+                orderItemRequest.setSkuId(doi.getSku().getId());
+            }
+            
+            if (doi.getOrderItemAttributes() != null) {
+                for (Entry<String, OrderItemAttribute> entry : item.getOrderItemAttributes().entrySet()) {
+                    orderItemRequest.getItemAttributes().put(entry.getKey(), entry.getValue().getValue());
+                }
+            }
+        } else {
+            orderItemRequest = new NonDiscreteOrderItemRequestDTO();
+            NonDiscreteOrderItemRequestDTO ndr = (NonDiscreteOrderItemRequestDTO) orderItemRequest;
+            
+            ndr.setItemName(item.getName());
+            ndr.setQuantity(item.getQuantity());
+            ndr.setOverrideRetailPrice(item.getRetailPrice());
+            ndr.setOverrideSalePrice(item.getSalePrice());
         }
         
         return orderItemRequest;
