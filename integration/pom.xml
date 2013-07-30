@@ -263,5 +263,10 @@
             <groupId>org.easymock</groupId>
             <artifactId>easymockclassextension</artifactId>
         </dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>integration</artifactId>
+			<scope>test</scope>
+		</dependency>
     </dependencies>
 </project>
