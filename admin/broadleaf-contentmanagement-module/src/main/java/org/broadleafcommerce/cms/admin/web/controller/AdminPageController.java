@@ -31,9 +31,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * Handles admin operations for the {@link Page} entity. This entity has fields that are 
@@ -57,6 +58,7 @@ public class AdminPageController extends AdminBasicEntityController {
         return SECTION_KEY;
     }
 
+    @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
@@ -81,6 +83,7 @@ public class AdminPageController extends AdminBasicEntityController {
         return returnPath;
     }
     
+    @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
@@ -94,7 +97,15 @@ public class AdminPageController extends AdminBasicEntityController {
             .withPropertyName("pageTemplate");
         entityForm.putDynamicFormInfo("pageTemplate", info);
         
-        return super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
+        String returnPath = super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
+        if (result.hasErrors()) {
+            info = entityForm.getDynamicFormInfo("pageTemplate");
+            info.setPropertyValue(entityForm.findField("pageTemplate").getValue());
+            EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id);
+            entityForm.putDynamicForm("pageTemplate", dynamicForm);
+        }
+        
+        return returnPath;
     }
     
     @RequestMapping(value = "/{propertyName}/dynamicForm", method = RequestMethod.GET)

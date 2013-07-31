@@ -184,7 +184,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         for (Tab tab : dynamicForm.getTabs()) {
             for (FieldGroup group : tab.getFieldGroups()) {
                 for (Field field : group.getFields()) {
-                    field.setName(info.getPropertyName() + "|" + field.getName());
+                    field.setName(info.getPropertyName() + DynamicEntityFormInfo.FIELD_SEPARATOR + field.getName());
                 }
             }
         }
@@ -225,7 +225,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         for (Tab tab : dynamicForm.getTabs()) {
             for (FieldGroup group : tab.getFieldGroups()) {
                 for (Field field : group.getFields()) {
-                    field.setName(info.getPropertyName() + "|" + field.getName());
+                    field.setName(info.getPropertyName() + DynamicEntityFormInfo.FIELD_SEPARATOR + field.getName());
                 }
             }
         }

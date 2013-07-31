@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.processor;
 
+import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.springframework.stereotype.Component;
@@ -67,16 +68,25 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
             
             Map<String, Map<String, String>> result = new HashMap<String, Map<String, String>>();
             for (FieldError err : bindStatus.getErrors().getFieldErrors()) {
+                //attempt to look up which tab the field error is on. If it can't be found, just use
+                //the default tab for the group
+                String tabName = EntityForm.DEFAULT_TAB_NAME;
                 Tab tab = form.findTabForField(err.getField());
-                //TODO: didn't find a tab for the field, save these to use in the global errors. This will also
-                //make hidden fields work with validation (methinks)
                 if (tab != null) {
-                    Map<String, String> tabErrors = result.get(tab.getTitle());
-                    if (tabErrors == null) {
-                        tabErrors = new HashMap<String, String>();
-                        result.put(tab.getTitle(), tabErrors);
-                    }
-                    
+                    tabName = tab.getTitle();
+                }
+                
+                Map<String, String> tabErrors = result.get(tabName);
+                if (tabErrors == null) {
+                    tabErrors = new HashMap<String, String>();
+                    result.put(tabName, tabErrors);
+                }
+                if (err.getField().contains(DynamicEntityFormInfo.FIELD_SEPARATOR)) {
+                    //at this point the field name actually occurs within some array syntax
+                    String fieldName = err.getField().substring(err.getField().indexOf('[') + 1, err.getField().lastIndexOf(']'));
+                    String[] fieldInfo = fieldName.split("\\" + DynamicEntityFormInfo.FIELD_SEPARATOR);
+                    tabErrors.put(form.getDynamicForm(fieldInfo[0]).getFields().get(fieldName).getFriendlyName(), err.getCode());
+                } else {
                     tabErrors.put(form.findField(err.getField()).getFriendlyName(), err.getCode());
                 }
             }

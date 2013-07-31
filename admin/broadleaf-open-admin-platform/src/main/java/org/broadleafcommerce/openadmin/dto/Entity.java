@@ -200,7 +200,15 @@ public class Entity implements Serializable {
         this.multiPartAvailableOnThread = multiPartAvailableOnThread;
     }
 
+    /**
+     * 
+     * @return if this entity has failed validation. This will also check the {@link #getValidationErrors()} map if this
+     * boolean has not been explicitly set
+     */
     public boolean isValidationFailure() {
+        if (!getValidationErrors().isEmpty()) {
+            isValidationFailure = true;
+        }
         return isValidationFailure;
     }
 

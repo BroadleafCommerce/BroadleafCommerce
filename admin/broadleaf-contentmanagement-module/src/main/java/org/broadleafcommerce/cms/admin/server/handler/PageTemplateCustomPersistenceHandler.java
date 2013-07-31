@@ -16,12 +16,10 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
-import org.broadleafcommerce.cms.field.domain.FieldEnumerationItem;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
@@ -30,18 +28,14 @@ import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.cms.page.service.PageService;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.presentation.ConfigurationItem;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.web.SandBoxContext;
-import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
-import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -51,8 +45,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Inspect
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +63,9 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
 
     @Resource(name="blSandBoxService")
     protected SandBoxService sandBoxService;
+    
+    @Resource(name = "blDynamicFieldPersistenceHandlerHelper")
+    protected DynamicFieldPersistenceHandlerHelper dynamicFieldUtil;
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
@@ -116,112 +111,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             metadata.setCeilingType(PageTemplate.class.getName());
             ClassTree entities = new ClassTree(PageTemplateImpl.class.getName());
             metadata.setPolymorphicEntities(entities);
-            int groupCount = 1;
-            int fieldCount = 0;
-            List<Property> propertiesList = new ArrayList<Property>();
-            List<FieldGroup> groups = template.getFieldGroups();
-            for (FieldGroup group : groups) {
-                List<FieldDefinition> definitions = group.getFieldDefinitions();
-                for (FieldDefinition definition : definitions) {
-                    Property property = new Property();
-                    property.setName(definition.getName());
-                    BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
-                    property.setMetadata(fieldMetadata);
-                    fieldMetadata.setFieldType(definition.getFieldType());
-                    fieldMetadata.setMutable(true);
-                    fieldMetadata.setInheritedFromType(PageTemplateImpl.class.getName());
-                    fieldMetadata.setAvailableToTypes(new String[] {PageTemplateImpl.class.getName()});
-                    fieldMetadata.setForeignKeyCollection(false);
-                    fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
-                    fieldMetadata.setLength(definition.getMaxLength());
-                    if (definition.getFieldEnumeration() != null && !CollectionUtils.isEmpty(definition.getFieldEnumeration().getEnumerationItems())) {
-                        int count = definition.getFieldEnumeration().getEnumerationItems().size();
-                        String[][] enumItems = new String[count][2];
-                        for (int j=0;j<count;j++) {
-                            FieldEnumerationItem item = definition.getFieldEnumeration().getEnumerationItems().get(j);
-                            enumItems[j][0] = item.getName();
-                            enumItems[j][1] = item.getFriendlyName();
-                        }
-                        fieldMetadata.setEnumerationValues(enumItems);
-                    }
-                    fieldMetadata.setName(definition.getName());
-                    fieldMetadata.setFriendlyName(definition.getFriendlyName());
-                    fieldMetadata.setSecurityLevel(definition.getSecurityLevel()==null?"":definition.getSecurityLevel());
-                    fieldMetadata.setOrder(fieldCount++);
-                    fieldMetadata.setVisibility(definition.getHiddenFlag()?VisibilityEnum.HIDDEN_ALL:VisibilityEnum.VISIBLE_ALL);
-                    fieldMetadata.setGroup(group.getName());
-                    fieldMetadata.setGroupOrder(groupCount);
-                    fieldMetadata.setTab("General");
-                    fieldMetadata.setTabOrder(100);
-                    fieldMetadata.setGroupCollapsed(group.getInitCollapsedFlag());
-                    fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-                    fieldMetadata.setLargeEntry(definition.getTextAreaFlag());
-                    fieldMetadata.setProminent(false);
-                    fieldMetadata.setColumnWidth(String.valueOf(definition.getColumnWidth()));
-                    fieldMetadata.setBroadleafEnumeration("");
-                    fieldMetadata.setReadOnly(false);
-                    if (definition.getValidationRegEx() != null) {
-                        Map<String, String> itemMap = new HashMap<String, String>();
-                        itemMap.put("regularExpression", definition.getValidationRegEx());
-                        itemMap.put(ConfigurationItem.ERROR_MESSAGE, definition.getValidationErrorMesageKey());
-                        fieldMetadata.getValidationConfigurations().put("org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator", itemMap);
-                    }
-                    propertiesList.add(property);
-                }
-                groupCount++;
-                fieldCount = 0;
-            }
-
-            Property property = new Property();
-            property.setName("id");
-            BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
-            property.setMetadata(fieldMetadata);
-            fieldMetadata.setFieldType(SupportedFieldType.ID);
-            fieldMetadata.setSecondaryType(SupportedFieldType.INTEGER);
-            fieldMetadata.setMutable(true);
-            fieldMetadata.setInheritedFromType(PageTemplateImpl.class.getName());
-            fieldMetadata.setAvailableToTypes(new String[] { PageTemplateImpl.class.getName() });
-            fieldMetadata.setForeignKeyCollection(false);
-            fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
-            fieldMetadata.setName("id");
-            fieldMetadata.setFriendlyName("PageTemplateCustomPersistenceHandler_ID");
-            fieldMetadata.setSecurityLevel("");
-            fieldMetadata.setVisibility(VisibilityEnum.HIDDEN_ALL);
-            fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-            fieldMetadata.setLargeEntry(false);
-            fieldMetadata.setProminent(false);
-            fieldMetadata.setColumnWidth("*");
-            fieldMetadata.setBroadleafEnumeration("");
-            fieldMetadata.setReadOnly(true);
-            propertiesList.add(property);
-
-            Property[] properties = new Property[propertiesList.size()];
-            properties = propertiesList.toArray(properties);
-            Arrays.sort(properties, new Comparator<Property>() {
-                @Override
-                public int compare(Property o1, Property o2) {
-                    /*
-                         * First, compare properties based on order fields
-                         */
-                    if (o1.getMetadata().getOrder() != null && o2.getMetadata().getOrder() != null) {
-                        return o1.getMetadata().getOrder().compareTo(o2.getMetadata().getOrder());
-                    } else if (o1.getMetadata().getOrder() != null && o2.getMetadata().getOrder() == null) {
-                        /*
-                              * Always favor fields that have an order identified
-                              */
-                        return -1;
-                    } else if (o1.getMetadata().getOrder() == null && o2.getMetadata().getOrder() != null) {
-                        /*
-                              * Always favor fields that have an order identified
-                              */
-                        return 1;
-                    } else if (o1.getMetadata().getFriendlyName() != null && o2.getMetadata().getFriendlyName() != null) {
-                        return o1.getMetadata().getFriendlyName().compareTo(o2.getMetadata().getFriendlyName());
-                    } else {
-                        return o1.getName().compareTo(o2.getName());
-                    }
-                }
-            });
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(template.getFieldGroups(), PageTemplateImpl.class);
             metadata.setProperties(properties);
             DynamicResultSet results = new DynamicResultSet(metadata);
 
@@ -259,10 +149,11 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                 String value = null;
                 if (!MapUtils.isEmpty(pageFieldMap)) {
                     PageField pageField = pageFieldMap.get(definition.getName());
-                    if(pageField==null)
-                        value="";
-                     else
+                    if (pageField == null) {
+                        value = "";
+                    } else {
                         value = pageField.getValue();
+                    }
                 }
                 property.setValue(value);
             }
@@ -283,6 +174,18 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         try {
             String pageId = persistencePackage.getCustomCriteria()[1];
             Page page = pageService.findPageById(Long.valueOf(pageId));
+
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(page.getPageTemplate().getFieldGroups(), PageTemplateImpl.class);
+            Map<String, FieldMetadata> md = new HashMap<String, FieldMetadata>();
+            for (Property property : properties) {
+                md.put(property.getName(), property.getMetadata());
+            }
+            
+            boolean validated = helper.validate(persistencePackage.getEntity(), null, md);
+            if (!validated) {
+                return persistencePackage.getEntity();
+            }
+
             List<String> templateFieldNames = new ArrayList<String>(20);
             for (FieldGroup group : page.getPageTemplate().getFieldGroups()) {
                 for (FieldDefinition definition: group.getFieldDefinitions()) {
