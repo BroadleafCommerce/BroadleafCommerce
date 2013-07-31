@@ -18,10 +18,10 @@ package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.common.SolrInputDocument;
+import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.extension.AbstractExtensionHandler;
-import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;

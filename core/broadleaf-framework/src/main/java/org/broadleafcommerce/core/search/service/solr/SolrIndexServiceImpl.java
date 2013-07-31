@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.time.SystemTime;
@@ -37,7 +38,6 @@ import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesS
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
-import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;

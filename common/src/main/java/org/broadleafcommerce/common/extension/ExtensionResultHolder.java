@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.extension;
+package org.broadleafcommerce.common.extension;
 
 /**
  * If a service extension using the {@link ExtensionManager} pattern expects a result from the extension, it should

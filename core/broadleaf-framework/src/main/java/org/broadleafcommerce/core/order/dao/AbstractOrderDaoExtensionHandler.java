@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.core.order.dao;
 
-import org.broadleafcommerce.core.extension.AbstractExtensionHandler;
-import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
 

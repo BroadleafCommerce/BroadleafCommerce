@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.core.offer.service;
 
-import org.broadleafcommerce.core.extension.ExtensionHandler;
-import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.offer.domain.Offer;
 
 import java.util.List;

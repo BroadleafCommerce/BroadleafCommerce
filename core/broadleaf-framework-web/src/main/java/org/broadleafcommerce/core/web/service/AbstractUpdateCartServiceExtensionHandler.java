@@ -17,9 +17,9 @@
 package org.broadleafcommerce.core.web.service;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.core.extension.AbstractExtensionHandler;
-import org.broadleafcommerce.core.extension.ExtensionResultHolder;
-import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 

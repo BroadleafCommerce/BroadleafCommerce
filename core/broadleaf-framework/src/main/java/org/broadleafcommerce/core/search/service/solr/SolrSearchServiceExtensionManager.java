@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.search.service.solr;
 
-import org.broadleafcommerce.core.extension.ExtensionManager;
+import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.springframework.stereotype.Service;
 
 

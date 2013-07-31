@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service;
 
-import org.broadleafcommerce.core.extension.ExtensionManager;
+import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.springframework.stereotype.Service;
 
 

@@ -17,12 +17,12 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.beans.factory.annotation.Value;

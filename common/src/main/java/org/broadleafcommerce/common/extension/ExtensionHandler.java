@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.extension;
+package org.broadleafcommerce.common.extension;
 
 
 /**
