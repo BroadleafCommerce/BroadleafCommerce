@@ -88,6 +88,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
     
+    @Resource(name = "blMainEntityActionsExtensionManager")
+    protected MainEntityActionsExtensionManager mainEntityActionsExtensionManager;
+    
     // *********************************************************
     // UNBOUND CONTROLLER METHODS (USED BY DIFFERENT SECTIONS) *
     // *********************************************************
