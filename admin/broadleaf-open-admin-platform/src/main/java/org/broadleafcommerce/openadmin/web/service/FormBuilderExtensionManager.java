@@ -16,13 +16,12 @@
 
 package org.broadleafcommerce.openadmin.web.service;
 
-import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.common.extension.ExtensionManager;
 
+public class FormBuilderExtensionManager extends ExtensionManager<FormBuilderExtensionHandler> {
 
-public interface FormBuilderExtensionManager {
-
-    public boolean canHandle(EntityForm ef);
-
-    public void addFormExtensions(EntityForm ef);
+    public FormBuilderExtensionManager() {
+        super(FormBuilderExtensionHandler.class);
+    }
 
 }

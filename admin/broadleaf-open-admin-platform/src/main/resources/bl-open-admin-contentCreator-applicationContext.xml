@@ -147,6 +147,10 @@
             </map>
         </property>
     </bean>
+    
+    <bean id="blFormBuilderExtensionManager" class="org.broadleafcommerce.openadmin.web.service.FormBuilderExtensionManager">
+        <property name="handlers" ref="blFormBuilderExtensionHandlers" />
+    </bean>
 
     <bean id="blAdditionalSectionAuthorizations" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
@@ -195,7 +199,7 @@
         </property>
     </bean>
     
-    <bean id="blFormBuilderExtensionManagers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+    <bean id="blFormBuilderExtensionHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
             </list>

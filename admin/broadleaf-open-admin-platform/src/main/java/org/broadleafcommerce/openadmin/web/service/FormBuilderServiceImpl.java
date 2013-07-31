@@ -92,8 +92,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     @Resource (name = "blAdminNavigationService")
     protected AdminNavigationService navigationService;
     
-    @Resource(name = "blFormBuilderExtensionManagers")
-    protected List<FormBuilderExtensionManager> extensionManagers;
+    @Resource(name = "blFormBuilderExtensionManager")
+    protected FormBuilderExtensionManager extensionManager;
 
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
             VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN 
@@ -737,12 +737,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
     
     protected void addAdditionalEntityFormActions(EntityForm ef) {
-        if (extensionManagers != null && !extensionManagers.isEmpty()) {
-            for (FormBuilderExtensionManager mgr : extensionManagers) {
-                if (mgr.canHandle(ef)) {
-                    mgr.addFormExtensions(ef);
-                }
-            }
+        if (extensionManager != null) {
+            extensionManager.getProxy().addFormExtensions(ef);
         }
     }
     
