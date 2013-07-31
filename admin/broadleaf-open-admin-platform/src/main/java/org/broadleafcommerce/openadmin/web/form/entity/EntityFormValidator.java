@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.form.entity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.JSCompatibilityHelper;
@@ -64,11 +65,19 @@ public class EntityFormValidator {
                      * With this implementation, we avoid all of those additional problems because we are referencing the
                      * field that is being rejected along with providing our own method for getting the rejected value
                      */
-                    if (form.getFields().get(unserializedFieldName) != null) {
+                    Field field = null;
+                    if (StringUtils.contains(unserializedFieldName, DynamicEntityFormInfo.FIELD_SEPARATOR)) {
+                        String[] fieldInfo = unserializedFieldName.split("\\" + DynamicEntityFormInfo.FIELD_SEPARATOR);
+                        field = form.getDynamicForm(fieldInfo[0]).getFields().get(fieldInfo[1]);
+                    } else if (form.getFields().get(unserializedFieldName) != null) {
+                        field = form.getFields().get(unserializedFieldName);
+                    }
+                    
+                    if (field != null) {
                         String[] errorCodes = ((AbstractBindingResult) errors).resolveMessageCodes(errorMessage, serializedFieldName);
                         FieldError fieldError = new FieldError(
                                 "entityForm", String.format("fields[%s].value", serializedFieldName),
-                                form.getFields().get(unserializedFieldName).getValue(), false,
+                                field.getValue(), false,
                                 errorCodes, null, errorMessage);
                         ((AbstractBindingResult) errors).addError(fieldError);
                     }

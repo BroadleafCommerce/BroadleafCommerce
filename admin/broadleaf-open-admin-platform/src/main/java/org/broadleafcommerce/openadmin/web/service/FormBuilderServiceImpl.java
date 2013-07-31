@@ -749,10 +749,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Override
     public void populateEntityFormFields(EntityForm ef, Entity entity, boolean populateType, boolean populateId) {
-        if (populateType) {
+        if (populateId) {
             ef.setId(entity.findProperty(ef.getIdProperty()).getValue());
         }
-        if (populateId) {
+        if (populateType) {
             ef.setEntityType(entity.getType()[0]);
         }
 

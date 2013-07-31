@@ -354,7 +354,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         
         // Find all of the dynamic form fields
         for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
-            if (entry.getKey().contains("|")) { 
+            if (entry.getKey().contains(DynamicEntityFormInfo.FIELD_SEPARATOR)) { 
                 dynamicFields.put(entry.getKey(), entry.getValue());
             }
         }
@@ -366,7 +366,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         
         // Create the entity form for the dynamic form, as it needs to be persisted separately
         for (Entry<String, Field> entry : dynamicFields.entrySet()) {
-            String[] fieldName = entry.getKey().split("\\|");
+            String[] fieldName = entry.getKey().split("\\" + DynamicEntityFormInfo.FIELD_SEPARATOR);
             DynamicEntityFormInfo info = entityForm.getDynamicFormInfo(fieldName[0]);
                     
             EntityForm dynamicForm = entityForm.getDynamicForm(fieldName[0]);
