@@ -96,7 +96,13 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                     manyToField = fieldInfo.getOneToManyMappedBy();
                 }
                 if (manyToField != null) {
-                    populateValueRequest.getFieldManager().setFieldValue(assignableValue, manyToField, instance);
+                    String propertyName = populateValueRequest.getProperty().getName();
+                    Object middleInstance = instance;
+                    if (propertyName.contains(".")) {
+                        propertyName = propertyName.substring(0, propertyName.lastIndexOf("."));
+                        middleInstance = populateValueRequest.getFieldManager().getFieldValue(instance, propertyName);
+                    }
+                    populateValueRequest.getFieldManager().setFieldValue(assignableValue, manyToField, middleInstance);
                 }
                 if (Searchable.class.isAssignableFrom(valueType)) {
                     ((Searchable) assignableValue).setSearchable(populateValueRequest.getMetadata().getSearchable());

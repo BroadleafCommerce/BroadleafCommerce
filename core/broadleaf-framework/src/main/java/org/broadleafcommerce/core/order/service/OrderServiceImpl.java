@@ -515,8 +515,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = { AddToCartException.class })
     public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
-
-
         Order order = findOrderById(orderId);
         if (automaticallyMergeLikeItems) {
             OrderItem item = findMatchingItem(order, orderItemRequestDTO);

@@ -26,6 +26,8 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
@@ -50,10 +52,13 @@ public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperat
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
 
-        // Order and sku have been verified in a previous activity -- the values 
-        // in the request can be trusted
+        // Order has been verified in a previous activity -- the values in the request can be trusted
         Order order = request.getOrder();
-        Sku sku = catalogService.findSkuById(orderItemRequestDTO.getSkuId());
+        
+        Sku sku = null;
+        if (orderItemRequestDTO.getSkuId() != null) {
+            sku = catalogService.findSkuById(orderItemRequestDTO.getSkuId());
+        }
         
         Product product = null;
         if (orderItemRequestDTO.getProductId() != null) {
@@ -70,7 +75,16 @@ public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperat
         }
 
         OrderItem item;
-        if (product == null || !(product instanceof ProductBundle)) {
+        if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO) {
+            NonDiscreteOrderItemRequestDTO ndr = (NonDiscreteOrderItemRequestDTO) orderItemRequestDTO;
+            OrderItemRequest itemRequest = new OrderItemRequest();
+            itemRequest.setQuantity(ndr.getQuantity());
+            itemRequest.setRetailPriceOverride(ndr.getOverrideRetailPrice());
+            itemRequest.setSalePriceOverride(ndr.getOverrideSalePrice());
+            itemRequest.setItemName(ndr.getItemName());
+            itemRequest.setOrder(order);
+            item = orderItemService.createOrderItem(itemRequest);
+        } else if (product == null || !(product instanceof ProductBundle)) {
             DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
             itemRequest.setCategory(category);
             itemRequest.setProduct(product);

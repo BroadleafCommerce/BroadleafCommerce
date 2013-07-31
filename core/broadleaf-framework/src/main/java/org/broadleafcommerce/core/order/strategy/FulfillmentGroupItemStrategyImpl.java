@@ -33,13 +33,14 @@ import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -117,7 +118,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                 fulfillmentGroup = addItemToFulfillmentGroup(order, doi, doi.getQuantity() * orderItem.getQuantity(), fulfillmentGroup);
                 order = fulfillmentGroup.getOrder();
             }
-        } else {
+        } else if (orderItem instanceof DiscreteOrderItem) {
             DiscreteOrderItem doi = (DiscreteOrderItem)orderItem;
             FulfillmentGroup fulfillmentGroup = null;
             FulfillmentType type = resolveFulfillmentType(doi.getSku());
@@ -147,6 +148,17 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             
             fulfillmentGroup = addItemToFulfillmentGroup(order, (DiscreteOrderItem)orderItem, fulfillmentGroup);
             order = fulfillmentGroup.getOrder();
+        } else {
+            FulfillmentGroup fulfillmentGroup = nullFulfillmentTypeGroup;
+            if (fulfillmentGroup == null) {
+                fulfillmentGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
+                fulfillmentGroup.setOrder(order);
+                fulfillmentGroup = fulfillmentGroupService.save(fulfillmentGroup);
+                order.getFulfillmentGroups().add(fulfillmentGroup);
+            }
+            
+            fulfillmentGroup = addItemToFulfillmentGroup(order, orderItem, fulfillmentGroup);
+            order = fulfillmentGroup.getOrder();
         }
         
         request.setOrder(order);
@@ -163,11 +175,11 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         return null;
     }
     
-    protected FulfillmentGroup addItemToFulfillmentGroup(Order order, DiscreteOrderItem orderItem, FulfillmentGroup fulfillmentGroup) throws PricingException {
+    protected FulfillmentGroup addItemToFulfillmentGroup(Order order, OrderItem orderItem, FulfillmentGroup fulfillmentGroup) throws PricingException {
         return this.addItemToFulfillmentGroup(order, orderItem, orderItem.getQuantity(), fulfillmentGroup);
     }
 
-    protected FulfillmentGroup addItemToFulfillmentGroup(Order order, DiscreteOrderItem orderItem, int quantity, FulfillmentGroup fulfillmentGroup) throws PricingException {
+    protected FulfillmentGroup addItemToFulfillmentGroup(Order order, OrderItem orderItem, int quantity, FulfillmentGroup fulfillmentGroup) throws PricingException {
         FulfillmentGroupItemRequest fulfillmentGroupItemRequest = new FulfillmentGroupItemRequest();
         fulfillmentGroupItemRequest.setOrder(order);
         fulfillmentGroupItemRequest.setOrderItem(orderItem);
@@ -287,16 +299,32 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         }
         
         Map<Long, Integer> oiQuantityMap = new HashMap<Long, Integer>();
-        for (OrderItem oi : order.getDiscreteOrderItems()) {
+        List<OrderItem> expandedOrderItems = new ArrayList<OrderItem>();
+        
+        for (OrderItem oi : order.getOrderItems()) {
+            if (oi instanceof BundleOrderItem) {
+                for (DiscreteOrderItem doi : ((BundleOrderItem) oi).getDiscreteOrderItems()) {
+                    expandedOrderItems.add(doi);
+                }
+            } else if (oi instanceof DiscreteOrderItem) {
+                expandedOrderItems.add(oi);
+            } else {
+                expandedOrderItems.add(oi);
+            }
+        }
+        
+        for (OrderItem oi : expandedOrderItems) {
             Integer oiQuantity = oiQuantityMap.get(oi.getId());
             if (oiQuantity == null) {
                 oiQuantity = 0;
             }
-            if (((DiscreteOrderItem) oi).getBundleOrderItem() != null) {
+            
+            if (oi instanceof DiscreteOrderItem && ((DiscreteOrderItem) oi).getBundleOrderItem() != null) {
                 oiQuantity += ((DiscreteOrderItem) oi).getBundleOrderItem().getQuantity() * oi.getQuantity();
             } else {
                 oiQuantity += oi.getQuantity();
             }
+            
             oiQuantityMap.put(oi.getId(), oiQuantity);
         }
         

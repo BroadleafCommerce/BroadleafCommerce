@@ -88,7 +88,6 @@ import javax.persistence.MapKey;
 import javax.persistence.MapKeyClass;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -200,7 +199,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    @OrderBy("id")
     @AdminPresentationCollection(friendlyName="OrderImpl_Fulfillment_Groups",
                 tab = Presentation.Tab.Name.FulfillmentGroups, tabOrder = Presentation.Tab.Order.FulfillmentGroups)
     protected List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
@@ -487,13 +485,13 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
         List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (OrderItem orderItem : orderItems) {
-            if (orderItem instanceof BundleOrderItemImpl) {
+            if (orderItem instanceof BundleOrderItem) {
                 BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
                 for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
                     discreteOrderItems.add(discreteOrderItem);
                 }
-            } else {
-                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
+            } else if (orderItem instanceof DiscreteOrderItem) {
+                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                 discreteOrderItems.add(discreteOrderItem);
             }
         }

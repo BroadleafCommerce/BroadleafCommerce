@@ -63,6 +63,7 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Service;
@@ -605,6 +606,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (json != null && !"".equals(json)) {
             try {
                 ObjectMapper om = new ObjectMapper();
+                om.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 return om.readValue(json, MediaDto.class);
             } catch (Exception e) {
                 LOG.warn("Error parsing json to media " + json, e);

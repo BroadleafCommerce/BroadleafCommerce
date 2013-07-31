@@ -33,7 +33,7 @@ import javax.annotation.Resource;
 public class UpdateAccountValidator implements Validator {
 
     @Resource(name="blCustomerService")
-    CustomerService customerService;
+    protected CustomerService customerService;
 
     public void validate(UpdateAccountForm form, Errors errors) {
 
