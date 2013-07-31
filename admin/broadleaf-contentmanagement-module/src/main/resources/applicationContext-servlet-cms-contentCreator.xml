@@ -8,6 +8,10 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 
+    <!-- Component scan for custom admin controllers that need to occur in the servlet context. All other CMS beans should
+        already be picked up in the global component scan included in the root context (from bl-cms-contentCreator-applicationContext)-->
+    <context:component-scan base-package="org.broadleafcommerce.cms.admin.web" />
+    
     <aop:config/>
 
     <bean id="messageSource" class="org.broadleafcommerce.common.util.BroadleafMergeResourceBundleMessageSource">
