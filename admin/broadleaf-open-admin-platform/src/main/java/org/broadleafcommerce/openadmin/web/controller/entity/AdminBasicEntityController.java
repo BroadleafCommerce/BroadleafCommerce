@@ -138,6 +138,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             mainActions.add(DefaultMainActions.ADD);
         }
         
+        mainEntityActionsExtensionManager.modifyMainActions(cmd, mainActions);
+        
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("listGrid", listGrid);
