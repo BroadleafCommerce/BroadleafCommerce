@@ -31,7 +31,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 /**
  * Created by bpolster.
@@ -86,6 +85,9 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Column (name = "TEXT_AREA_FLAG")
     protected Boolean textAreaFlag = false;
+    
+    @Column(name = "REQUIRED_FLAG")
+    protected Boolean requiredFlag = false;
 
     @ManyToOne (targetEntity = FieldEnumerationImpl.class)
     @JoinColumn(name = "FLD_ENUM_ID")
@@ -189,6 +191,16 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @Override
     public void setTextAreaFlag(Boolean textAreaFlag) {
         this.textAreaFlag = textAreaFlag;
+    }
+    
+    @Override
+    public Boolean getRequiredFlag() {
+        return requiredFlag;
+    }
+
+    @Override
+    public void setRequiredFlag(Boolean requiredFlag) {
+        this.requiredFlag = requiredFlag;
     }
 
     @Override

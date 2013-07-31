@@ -100,6 +100,7 @@ public class DynamicFieldPersistenceHandlerHelper {
                 fieldMetadata.setColumnWidth(String.valueOf(definition.getColumnWidth()));
                 fieldMetadata.setBroadleafEnumeration("");
                 fieldMetadata.setReadOnly(false);
+                fieldMetadata.setRequiredOverride(definition.getRequiredFlag());
                 if (definition.getValidationRegEx() != null) {
                     Map<String, String> itemMap = new HashMap<String, String>();
                     itemMap.put("regularExpression", definition.getValidationRegEx());

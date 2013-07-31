@@ -60,6 +60,10 @@ public interface FieldDefinition extends Serializable {
     public Boolean getTextAreaFlag();
 
     public void setTextAreaFlag(Boolean textAreaFlag);
+    
+    public Boolean getRequiredFlag();
+
+    public void setRequiredFlag(Boolean requiredFlag);
 
     public FieldEnumeration getFieldEnumeration();
 
