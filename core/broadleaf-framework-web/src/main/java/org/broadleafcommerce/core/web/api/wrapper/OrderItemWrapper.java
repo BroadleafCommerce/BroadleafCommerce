@@ -74,7 +74,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
 
     @XmlElement
     protected Long productId;
-    
+    @XmlElement
     protected Boolean isBundle = Boolean.FALSE;
 
     @XmlElement(name = "orderItemAttribute")
@@ -94,6 +94,9 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
     @XmlElementWrapper(name = "qualifiers")
     @XmlElement(name = "qualifier")
     protected List<OrderItemQualifierWrapper> qualifiers;
+
+    @XmlElement
+    protected Boolean isDiscountingAllowed;
 
     @Override
     public void wrapDetails(OrderItem model, HttpServletRequest request) {
@@ -134,12 +137,13 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
             this.skuId = doi.getSku().getId();
             this.productId = doi.getProduct().getId();
             this.isBundle = false;
+            this.isDiscountingAllowed = doi.isDiscountingAllowed();
         } else if (model instanceof BundleOrderItem) {
             BundleOrderItem boi = (BundleOrderItem) model;
             this.skuId = boi.getSku().getId();
             this.productId = boi.getProduct().getId();
             this.isBundle = true;
-
+            this.isDiscountingAllowed = boi.isDiscountingAllowed();
             //Wrap up all the discrete order items for this bundle order item
             List<DiscreteOrderItem> discreteItems = boi.getDiscreteOrderItems();
             if (discreteItems != null && !discreteItems.isEmpty()) {

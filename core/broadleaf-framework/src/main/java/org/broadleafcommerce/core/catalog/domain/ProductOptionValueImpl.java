@@ -63,16 +63,18 @@ public class ProductOptionValueImpl implements ProductOptionValue {
 
     @Column(name = "ATTRIBUTE_VALUE")
     @AdminPresentation(friendlyName = "productOptionValue_attributeValue", 
-        prominent = true,
-        translatable = true)
+            prominent = true, order = Presentation.FieldOrder.ATTRIBUTE_VALUE,
+            translatable = true, gridOrder = Presentation.FieldOrder.ATTRIBUTE_VALUE)
     protected String attributeValue;
 
     @Column(name = "DISPLAY_ORDER")
-    @AdminPresentation(friendlyName = "productOptionValue_displayOrder", prominent = true)
+    @AdminPresentation(friendlyName = "productOptionValue_displayOrder", prominent = true,
+            gridOrder = Presentation.FieldOrder.DISPLAY_ORDER, order = Presentation.FieldOrder.DISPLAY_ORDER)
     protected Long displayOrder;
 
     @Column(name = "PRICE_ADJUSTMENT", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "productOptionValue_adjustment", fieldType = SupportedFieldType.MONEY, prominent = true)
+    @AdminPresentation(friendlyName = "productOptionValue_adjustment", fieldType = SupportedFieldType.MONEY,
+            prominent = true, gridOrder = Presentation.FieldOrder.PRICE_ADJUSTMENT, order = Presentation.FieldOrder.PRICE_ADJUSTMENT)
     protected BigDecimal priceAdjustment;
 
     @ManyToOne(targetEntity = ProductOptionImpl.class)
@@ -168,6 +170,16 @@ public class ProductOptionValueImpl implements ProductOptionValue {
             return false;
         }
         return true;
+    }
+
+    public static class Presentation {
+
+        public static class FieldOrder {
+
+            public static final int ATTRIBUTE_VALUE = 1000;
+            public static final int DISPLAY_ORDER = 3000;
+            public static final int PRICE_ADJUSTMENT = 2000;
+        }
     }
 
 }
