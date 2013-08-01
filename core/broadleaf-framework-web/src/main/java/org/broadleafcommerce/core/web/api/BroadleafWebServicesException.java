@@ -63,8 +63,16 @@ public class BroadleafWebServicesException extends RuntimeException {
         return build(httpStatusCode, null, null, null);
     }
 
+    public static BroadleafWebServicesException build(int httpStatusCode, Throwable t) {
+        return build(httpStatusCode, null, null, t);
+    }
+
     public static BroadleafWebServicesException build(int httpStatusCode, Locale locale) {
         return build(httpStatusCode, locale, null, null);
+    }
+
+    public static BroadleafWebServicesException build(int httpStatusCode, Locale locale, Throwable t) {
+        return build(httpStatusCode, locale, null, t);
     }
 
     public static BroadleafWebServicesException build(int httpStatusCode, Locale locale, Map<String, Object[]> messages) {
