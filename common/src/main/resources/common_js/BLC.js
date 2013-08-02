@@ -3,7 +3,8 @@ var BLC = (function($) {
     
     var redirectUrlDiv = "blc-redirect-url",
         extraDataDiv   = "blc-extra-data",
-        preAjaxCallbackHandlers = [];
+        preAjaxCallbackHandlers = [],
+        servletContext = "//BLC-SERVLET-CONTEXT";
     
     function addPreAjaxCallbackHandler(fn) {
         preAjaxCallbackHandlers.push(fn);
@@ -167,6 +168,7 @@ var BLC = (function($) {
         ajax : ajax,
         defaultErrorHandler : defaultErrorHandler,
         serializeObject : serializeObject,
-        addUrlParam : addUrlParam
+        addUrlParam : addUrlParam,
+        servletContext : servletContext
     }
 })($);

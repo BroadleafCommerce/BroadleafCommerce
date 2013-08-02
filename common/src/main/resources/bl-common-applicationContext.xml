@@ -131,4 +131,19 @@
         </property>
     </bean>
     
+    <bean id="blJsHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blBLCJSResourceHandler" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blCssHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+    
 </beans>
