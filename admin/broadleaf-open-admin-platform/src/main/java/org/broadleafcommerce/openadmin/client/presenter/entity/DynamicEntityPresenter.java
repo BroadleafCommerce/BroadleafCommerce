@@ -206,7 +206,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
             @Override
             public void onClick(ClickEvent event) {
                 if (event.isLeftButtonDown()) {
-                    SC.confirm("Are your sure you want to delete this entity?", new BooleanCallback() {
+                    SC.confirm(BLCMain.getMessageManager().getString("confirmDeleteEntity"), new BooleanCallback() {
                         @Override
                         public void execute(Boolean value) {
                             if (value) {
