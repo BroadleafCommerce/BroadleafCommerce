@@ -153,6 +153,11 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
         return view;
     }
     
+    @Override
+    protected Object getCacheKey(String viewName, Locale locale) {
+        return viewName + "_" + locale + "_" + isAjaxRequest();
+    }
+    
     protected boolean isIFrameRequest() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String iFrameParameter = request.getParameter("blcIFrame");
