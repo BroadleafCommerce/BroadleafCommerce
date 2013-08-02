@@ -817,8 +817,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         List<Property> entityFormProperties = new ArrayList<Property>();
         for (String targetFieldName : adornedMd.getMaintainedAdornedTargetFields()) {
             Property p = collectionMetadata.getPMap().get(targetFieldName);
-            ((BasicFieldMetadata) p.getMetadata()).setVisibility(VisibilityEnum.VISIBLE_ALL);
-            entityFormProperties.add(p);
+            if (p.getMetadata() instanceof BasicFieldMetadata) {
+                ((BasicFieldMetadata) p.getMetadata()).setVisibility(VisibilityEnum.VISIBLE_ALL);
+                entityFormProperties.add(p);
+            }
         }
 
         // Set the maintained fields on the form

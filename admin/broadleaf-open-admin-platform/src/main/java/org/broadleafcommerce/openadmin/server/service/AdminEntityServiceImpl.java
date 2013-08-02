@@ -246,6 +246,14 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex)
             throws ServiceException {
+        return getRecordsForCollection(containingClassMetadata, containingEntity, collectionProperty, fascs, startIndex, 
+                maxIndex, null);
+    }
+    
+    @Override
+    public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
+            Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex,
+            String idValueOverride) throws ServiceException {
         
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata())
                 .withFilterAndSortCriteria(fascs)
@@ -267,7 +275,12 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                     "collection field.", collectionProperty.getName(), containingClassMetadata.getCeilingType()));
         }
 
-        String id = getContextSpecificRelationshipId(containingClassMetadata, containingEntity, collectionProperty.getName());
+        String id;
+        if (idValueOverride == null) {
+            id = getContextSpecificRelationshipId(containingClassMetadata, containingEntity, collectionProperty.getName());
+        } else {
+            id = idValueOverride;
+        }
         fasc.setFilterValue(id);
         ppr.addFilterAndSortCriteria(fasc);
 
