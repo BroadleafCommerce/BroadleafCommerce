@@ -181,7 +181,7 @@ public class SkuImpl implements Sku {
 
     @Column(name = "TAX_CODE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_TaxCode", order = 1001, group = ProductImpl.Presentation.Group.Name.Financial)
-    @AdminPresentationDataDrivenEnumeration(optionFilterParams = { @OptionFilterParam(
+    @AdminPresentationDataDrivenEnumeration(optionCanEditValues = true, optionFilterParams = { @OptionFilterParam(
             param = "type.key", value = "TAX_CODE", paramType = OptionFilterParamType.STRING) })
     protected String taxCode;
 

@@ -192,7 +192,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @Column(name = "TAX_CODE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_TaxCode", order = 4000,
             group = Presentation.Group.Name.Advanced)
-    @AdminPresentationDataDrivenEnumeration(optionFilterParams = { @OptionFilterParam(
+    @AdminPresentationDataDrivenEnumeration(optionCanEditValues = true, optionFilterParams = { @OptionFilterParam(
             param = "type.key", value = "TAX_CODE", paramType = OptionFilterParamType.STRING) })
     protected String taxCode;
 
