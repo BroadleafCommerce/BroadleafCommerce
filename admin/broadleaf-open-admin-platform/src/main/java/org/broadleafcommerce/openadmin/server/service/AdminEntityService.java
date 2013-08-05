@@ -128,6 +128,24 @@ public interface AdminEntityService {
     public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity, 
             Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex)
             throws ServiceException;
+    
+    /**
+     * The same as the other getRecordsForCollection method, except that this one expects allow the caller to explicitly
+     * set the id value that will be used in the fetch instead of delegating to {@link #getContextSpecificRelationshipId()}
+     * 
+     * @param containingClassMetadata
+     * @param containingEntity
+     * @param collectionProperty
+     * @param fascs
+     * @param startIndex
+     * @param maxIndex
+     * @param idValueOverride
+     * @return the DynamicResultSet
+     * @throws ServiceException
+     */
+    public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity, 
+            Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex, 
+            String idValueOverride) throws ServiceException;
     /**
      * Returns all records for all subcollections of the specified request and its primary key
      * 
@@ -208,5 +226,6 @@ public interface AdminEntityService {
      * @throws ServiceException
      */
     public String getIdProperty(ClassMetadata cmd) throws ServiceException;
+
 
 }

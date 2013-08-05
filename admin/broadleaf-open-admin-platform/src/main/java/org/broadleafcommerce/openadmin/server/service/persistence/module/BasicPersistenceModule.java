@@ -108,6 +108,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     private static final Log LOG = LogFactory.getLog(BasicPersistenceModule.class);
 
     public static final String MAIN_ENTITY_NAME_PROPERTY = "MAIN_ENTITY_NAME";
+    public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
 
     protected DecimalFormat decimalFormat;
     protected ApplicationContext applicationContext;
@@ -410,6 +411,25 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             } catch (Exception e) {
                 LOG.debug(String.format("Could not execute the getMainEntityName() method for [%s]", 
                         entity.getClass().getName()), e);
+            }
+            
+            // Try to add the alternate id property if available
+            if (alternateMergedProperties != null) {
+                for (Entry<String, FieldMetadata> entry : alternateMergedProperties.entrySet()) {
+                    if (entry.getValue() instanceof BasicFieldMetadata) {
+                        if (((BasicFieldMetadata) entry.getValue()).getFieldType() == SupportedFieldType.ID) {
+                            Map<String, FieldMetadata> alternateOnEntity = new HashMap<String, FieldMetadata>();
+                            alternateOnEntity.put(entry.getKey(), entry.getValue());
+                            List<Property> props2 = new ArrayList<Property>();
+                            extractPropertiesFromPersistentEntity(alternateOnEntity, recordEntity, props2);
+                            if (props2.size() == 1) {
+                                Property alternateIdProp = props2.get(0);
+                                alternateIdProp.setName(ALTERNATE_ID_PROPERTY);
+                                props.add(alternateIdProp);
+                            }
+                        }
+                    }
+                }
             }
             
             Property[] properties = new Property[props.size()];
