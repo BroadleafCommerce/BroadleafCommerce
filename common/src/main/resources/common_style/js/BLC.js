@@ -141,7 +141,7 @@ var BLC = (function($) {
         // If the "search" string exists, then build params from it
         if (search) {
             // Try to replace an existing instance
-            params = search.replace(new RegExp('[\?]' + key + '[^&]*'), newParam);
+            params = search.replace(new RegExp('[\?]' + key + '[^&]*'), '?' + newParam);
 
             // If nothing was replaced, then check if it exists as a trailing param
             if (params === search) {
