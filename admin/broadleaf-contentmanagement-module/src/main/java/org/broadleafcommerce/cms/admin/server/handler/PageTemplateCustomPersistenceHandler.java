@@ -98,7 +98,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
     }
 
     protected SandBox getSandBox() {
-        return sandBoxService.retrieveSandboxById(SandBoxContext.getSandBoxContext().getSandBoxId());
+        return sandBoxService.retrieveSandBoxById(SandBoxContext.getSandBoxContext().getSandBoxId());
     }
 
     @Override

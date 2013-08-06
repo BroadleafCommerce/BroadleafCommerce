@@ -40,11 +40,11 @@ public class SandBoxDaoImpl implements SandBoxDao {
     protected EntityManager sandBoxEntityManager;
     
     @Resource(name = "blTransactionManager")
-    JpaTransactionManager transactionManager;
+    protected JpaTransactionManager transactionManager;
 
     @Override
     public SandBox retrieve(Long id) {
-        return  sandBoxEntityManager.find(SandBoxImpl.class, id);
+        return sandBoxEntityManager.find(SandBoxImpl.class, id);
     }
 
     @Override

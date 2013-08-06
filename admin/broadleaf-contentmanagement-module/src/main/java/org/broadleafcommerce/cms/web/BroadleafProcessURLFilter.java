@@ -16,9 +16,6 @@
 
 package org.broadleafcommerce.cms.web;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,13 +32,10 @@ import org.broadleafcommerce.common.web.util.StatusExposingServletResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.annotation.Resource;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,6 +50,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * @deprecated In favor of org.broadleafcommerce.common.web.BroadleafRequestFilter.
@@ -321,7 +323,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
                 request.getSession().removeAttribute(SANDBOX_ID_VAR);
             }
             if (sandboxId != null) {
-                currentSandbox = sandBoxService.retrieveSandboxById(sandboxId);
+                currentSandbox = sandBoxService.retrieveSandBoxById(sandboxId);
                 request.setAttribute(SANDBOX_VAR, currentSandbox);
                 if (currentSandbox != null && !SandBoxType.PRODUCTION.equals(currentSandbox.getSandBoxType())) {
                     setContentTime(request);

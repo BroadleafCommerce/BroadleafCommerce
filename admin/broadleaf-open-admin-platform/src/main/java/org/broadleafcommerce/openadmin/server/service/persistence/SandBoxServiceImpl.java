@@ -33,10 +33,11 @@ import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityServ
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 @Service(value = "blSandBoxService")
 public class SandBoxServiceImpl implements SandBoxService {
@@ -56,7 +57,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     protected AdminSecurityService adminSecurityService;
 
     @Override
-    public SandBox retrieveSandboxById(Long sandboxId) {
+    public SandBox retrieveSandBoxById(Long sandboxId) {
         return sandBoxDao.retrieve(sandboxId);
     }
 

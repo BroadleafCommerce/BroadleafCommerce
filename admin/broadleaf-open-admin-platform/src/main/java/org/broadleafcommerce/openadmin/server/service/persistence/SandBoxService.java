@@ -27,7 +27,7 @@ import java.util.List;
 
 public interface SandBoxService {
 
-    public SandBox retrieveSandboxById(Long id);
+    public SandBox retrieveSandBoxById(Long id);
 
     /**
      * Returns the sandbox currently associated with the passed in userId.
