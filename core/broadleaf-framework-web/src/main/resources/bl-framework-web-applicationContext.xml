@@ -57,6 +57,7 @@
         <property name="sourceList">
             <list>
                 <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
+                <bean class="org.broadleafcommerce.common.web.expression.BRCVariableExpression" />
             </list>
         </property>
     </bean>
