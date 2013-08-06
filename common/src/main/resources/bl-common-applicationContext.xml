@@ -61,7 +61,7 @@
     <bean id="blNullEmailInfo" class="org.broadleafcommerce.common.email.service.info.NullEmailInfo" />
     
     <bean id="blWebCommonClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
-        <property name="prefix" value="common_templates/" />
+        <property name="prefix" value="common_style/templates/" />
         <property name="suffix" value=".html" />
         <property name="templateMode" value="HTML5" />        
         <property name="characterEncoding" value="UTF-8" />
@@ -111,7 +111,7 @@
     <bean id="blJsLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
-                <value>classpath:/common_js/</value>
+                <value>classpath:/common_style/js/</value>
                 <value>classpath:/extensions/js/</value><!-- To allow a common place for modules or extensions to put js files. -->
             </list>
         </property>
@@ -120,6 +120,7 @@
     <bean id="blCssLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
+                <value>classpath:/common_style/css/</value>
             </list>
         </property>
     </bean>

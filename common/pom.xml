@@ -66,14 +66,14 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/resources/common_js</directory>
+                <directory>src/main/resources/common_style/js</directory>
                 <filtering>false</filtering>
-                <targetPath>common_js</targetPath>
+                <targetPath>common_style/js</targetPath>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
                 <excludes>
-                    <exclude>common_js/**</exclude>
+                    <exclude>common_style/js/**</exclude>
                 </excludes>
             </resource>
             <resource>
