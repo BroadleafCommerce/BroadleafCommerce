@@ -60,6 +60,11 @@ public class SandBoxServiceImpl implements SandBoxService {
     public SandBox retrieveSandBoxById(Long sandboxId) {
         return sandBoxDao.retrieve(sandboxId);
     }
+    
+    @Override
+    public List<SandBox> retrieveAllSandBoxes() {
+        return sandBoxDao.retrieveAllSandBoxes();
+    }
 
     @Override
     public SandBox retrieveUserSandBox(Site site, AdminUser adminUser) {

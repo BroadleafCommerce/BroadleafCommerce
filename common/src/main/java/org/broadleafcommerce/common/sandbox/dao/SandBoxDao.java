@@ -20,9 +20,13 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Site;
 
+import java.util.List;
+
 public interface SandBoxDao {
 
     public SandBox retrieve(Long id);
+    
+    public List<SandBox> retrieveAllSandBoxes();
 
     public SandBox retrieveSandBoxByType(Site site, SandBoxType sandboxType);
 
@@ -31,5 +35,6 @@ public interface SandBoxDao {
     public SandBox persist(SandBox entity);
 
     public SandBox createSandBox(Site site, String sandBoxName, SandBoxType sandBoxType);
+
 
 }

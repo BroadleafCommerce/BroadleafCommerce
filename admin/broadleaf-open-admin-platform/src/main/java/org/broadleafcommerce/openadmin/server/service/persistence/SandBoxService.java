@@ -28,6 +28,8 @@ import java.util.List;
 public interface SandBoxService {
 
     public SandBox retrieveSandBoxById(Long id);
+    
+    public List<SandBox> retrieveAllSandBoxes();
 
     /**
      * Returns the sandbox currently associated with the passed in userId.

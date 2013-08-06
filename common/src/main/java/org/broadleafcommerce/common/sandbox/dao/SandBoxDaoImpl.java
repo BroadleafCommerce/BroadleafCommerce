@@ -20,11 +20,14 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -45,6 +48,13 @@ public class SandBoxDaoImpl implements SandBoxDao {
     @Override
     public SandBox retrieve(Long id) {
         return sandBoxEntityManager.find(SandBoxImpl.class, id);
+    }
+    
+    @Override
+    public List<SandBox> retrieveAllSandBoxes() {
+        TypedQuery<SandBox> query = new TypedQueryBuilder<SandBox>(SandBox.class, "sandbox")
+                .toQuery(sandBoxEntityManager);
+        return query.getResultList();
     }
 
     @Override
