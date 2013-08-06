@@ -39,7 +39,7 @@
     
     <ul class="tabs-content" th:style="${verticalTabs}? 'margin-left: 250px;'">
         <li th:each="tab : ${entityForm.tabs}" 
-            th:class="'tab' + ${tabStat.count} + 'Tab'" 
+            th:class="'tab' + ${tabStat.count} + 'Tab entityFormTab'" 
             th:classappend="${tabStat.first}? 'active'"
             th:inline="text">
             

@@ -457,6 +457,18 @@ $(document).ready(function() {
             }
         });
     });
+    
+    if (window.location.hash) {
+        var $listGrid = $('div.listgrid-container' + window.location.hash);
+        if ($listGrid.length) {
+            var $tab = $listGrid.closest('li.entityFormTab');
+            var idx = $tab.index() + 1;
+            var $tabLink = $('div.tabs-container dl dd:nth-child(' + idx + ')');
+            $.fn.foundationTabs('set_tab', $tabLink);
+            $(window).scrollTop($(window.location.hash).offset().top);
+        }
+    }
+    
 });
 
 $('body').on('click', '.disabled', function(e) {
