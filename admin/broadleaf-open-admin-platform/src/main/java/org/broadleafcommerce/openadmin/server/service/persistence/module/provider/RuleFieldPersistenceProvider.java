@@ -45,6 +45,7 @@ import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -53,8 +54,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
@@ -81,6 +80,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         if (!canHandlePersistence(populateValueRequest, instance)) {
             return FieldProviderResponse.NOT_HANDLED;
         }
+        boolean dirty = false;
         try {
             switch (populateValueRequest.getMetadata().getFieldType()) {
                 case RULE_WITH_QUANTITY:{
@@ -100,9 +100,11 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         throw new IllegalArgumentException(e);
                     }
                     //AntiSamy HTML encodes the rule JSON - pass the unHTMLEncoded version
-                    populateQuantityBaseRuleCollection(translator, RuleIdentifier.ENTITY_KEY_MAP.get
+                    dirty = populateQuantityBaseRuleCollection(
+                            translator, RuleIdentifier.ENTITY_KEY_MAP.get
                             (populateValueRequest.getMetadata().getRuleIdentifier()),
-                            populateValueRequest.getMetadata().getRuleIdentifier(), populateValueRequest.getProperty().getUnHtmlEncodedValue(), rules, valueType);
+                            populateValueRequest.getMetadata().getRuleIdentifier(),
+                            populateValueRequest.getProperty().getUnHtmlEncodedValue(), rules, valueType);
                     break;
                 }
                 case RULE_SIMPLE:{
@@ -130,6 +132,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         }
                         //This is a simple String field (or String map field)
                         if (String.class.isAssignableFrom(valueType)) {
+                            dirty = checkDirtyState(populateValueRequest, instance, mvel);
                             populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), mvel);
                         }
                         if (SimpleRule.class.isAssignableFrom(valueType)) {
@@ -142,11 +145,14 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                             }
                             if (mvel == null) {
                                 //cause the rule to be deleted
+                                dirty = populateValueRequest.getFieldManager().getFieldValue(instance, populateValueRequest.getProperty().getName()) != null;
                                 populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), null);
                             } else if (rule != null) {
+                                dirty = !rule.getMatchRule().equals(mvel);
                                 rule.setMatchRule(mvel);
                             } else {
                                 //create a new instance, persist and set
+                                dirty = true;
                                 rule = (SimpleRule) valueType.newInstance();
                                 rule.setMatchRule(mvel);
                                 populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(rule);
@@ -160,6 +166,8 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
+        populateValueRequest.getProperty().setIsDirty(dirty);
+
         return FieldProviderResponse.HANDLED;
     }
 
@@ -314,9 +322,10 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         return p;
     }
 
-    protected void populateQuantityBaseRuleCollection(DataDTOToMVELTranslator translator, String entityKey,
+    protected boolean populateQuantityBaseRuleCollection(DataDTOToMVELTranslator translator, String entityKey,
                                                           String fieldService, String jsonPropertyValue,
                                                           Collection<QuantityBasedRule> criteriaList, Class<?> memberType) {
+        boolean dirty = false;
         if (!StringUtils.isEmpty(jsonPropertyValue)) {
             DataWrapper dw = convertJsonToDataWrapper(jsonPropertyValue);
             if (dw != null && StringUtils.isEmpty(dw.getError())) {
@@ -332,12 +341,14 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                                     //don't update if the data has not changed
                                     if (!quantityBasedRule.getQuantity().equals(dto.getQuantity())) {
                                         quantityBasedRule.setQuantity(dto.getQuantity());
+                                        dirty = true;
                                     }
                                     try {
                                         String mvel = translator.createMVEL(entityKey, dto,
                                                     ruleBuilderFieldServiceFactory.createInstance(fieldService));
                                         if (!quantityBasedRule.getMatchRule().equals(mvel)) {
                                             quantityBasedRule.setMatchRule(mvel);
+                                            dirty = true;
                                         }
                                     } catch (MVELTranslationException e) {
                                         throw new RuntimeException(e);
@@ -365,6 +376,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         }
                         criteriaList.add(quantityBasedRule);
                         updatedRules.add(quantityBasedRule);
+                        dirty = true;
                     }
                 }
                 //if an item was not included in the comprehensive submit from the client, we can assume that the
@@ -379,10 +391,12 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                             }
                         }
                         itr.remove();
+                        dirty = true;
                     }
                 }
             }
         }
+        return dirty;
     }
 
     protected DataWrapper convertJsonToDataWrapper(String json) {

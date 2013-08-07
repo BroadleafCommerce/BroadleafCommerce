@@ -35,12 +35,15 @@ public class DefaultFieldPersistenceProvider extends FieldPersistenceProviderAda
 
     @Override
     public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
+        boolean dirty;
         try {
+            dirty = checkDirtyState(populateValueRequest, instance, populateValueRequest.getRequestedValue());
             populateValueRequest.getFieldManager().setFieldValue(instance,
                     populateValueRequest.getProperty().getName(), populateValueRequest.getRequestedValue());
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
+        populateValueRequest.getProperty().setIsDirty(dirty);
         return FieldProviderResponse.HANDLED;
     }
 
