@@ -35,6 +35,7 @@ public class PersistencePackage implements Serializable {
     protected Entity entity;
     protected String csrfToken;
     protected Integer batchId;
+    protected String requestingEntityName;
     
     public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
         this(ceilingEntityFullyQualifiedClassname, null, entity, persistencePerspective, customCriteria, csrfToken);
@@ -152,6 +153,14 @@ public class PersistencePackage implements Serializable {
 
     public void setSectionEntityField(String sectionEntityField) {
         this.sectionEntityField = sectionEntityField;
+    }
+    
+    public String getRequestingEntityName() {
+        return requestingEntityName;
+    }
+    
+    public void setRequestingEntityName(String requestingEntityName) {
+        this.requestingEntityName = requestingEntityName;
     }
 
     @Override

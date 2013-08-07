@@ -81,6 +81,7 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
         pp.setPersistencePerspective(persistencePerspective);
         pp.setCustomCriteria(request.getCustomCriteria());
         pp.setCsrfToken(null);
+        pp.setRequestingEntityName(request.getRequestingEntityName());
 
         if (request.getEntity() != null) {
             pp.setEntity(request.getEntity());

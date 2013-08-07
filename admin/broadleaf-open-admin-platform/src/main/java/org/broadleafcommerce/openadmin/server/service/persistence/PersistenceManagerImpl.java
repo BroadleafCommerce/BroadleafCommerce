@@ -17,9 +17,11 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
@@ -50,9 +52,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,6 +60,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 @Component("blPersistenceManager")
 @Scope("prototype")
@@ -375,6 +378,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     protected PersistenceResponse executePostAddHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
+        setMainEntityName(persistencePackage, persistenceResponse.getEntity());
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
             PersistenceManagerEventHandlerResponse response = handler.postAdd(this, persistenceResponse.getEntity(), persistencePackage);
             if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
@@ -437,6 +441,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     protected PersistenceResponse executePostUpdateHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
+        setMainEntityName(persistencePackage, persistenceResponse.getEntity());
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
             PersistenceManagerEventHandlerResponse response = handler.postUpdate(this, persistenceResponse.getEntity(), persistencePackage);
             if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
@@ -499,6 +504,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     protected PersistenceResponse executePostRemoveHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
+        setMainEntityName(persistencePackage, persistenceResponse.getEntity());
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
             PersistenceManagerEventHandlerResponse response = handler.postRemove(this, persistencePackage);
             if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
@@ -591,6 +597,15 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         });
         return cloned;
+    }
+    
+    protected void setMainEntityName(PersistencePackage pp, Entity entity) {
+        if (StringUtils.isBlank(pp.getRequestingEntityName()) && entity != null) {
+            Property nameProp = entity.getPMap().get(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY);
+            if (nameProp != null) {
+                pp.setRequestingEntityName(nameProp.getValue());
+            }
+        }
     }
 
     @Override

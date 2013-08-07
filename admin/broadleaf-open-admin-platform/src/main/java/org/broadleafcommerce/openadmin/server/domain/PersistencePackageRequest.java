@@ -56,6 +56,7 @@ public class PersistencePackageRequest {
     protected String sectionEntityClassname;
     protected String sectionEntityIdValue;
     protected String sectionEntityField;
+    protected String requestingEntityName;
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -240,6 +241,11 @@ public class PersistencePackageRequest {
         setSectionEntityField(sectionEntityField);
         return this;
     }
+    
+    public PersistencePackageRequest withRequestingEntityName(String requestingEntityName) {
+        setRequestingEntityName(requestingEntityName);
+        return this;
+    }
 
     /* *********** */
     /* ADD METHODS */
@@ -415,4 +421,13 @@ public class PersistencePackageRequest {
     public void setSectionEntityField(String sectionEntityField) {
         this.sectionEntityField = sectionEntityField;
     }
+    
+    public String getRequestingEntityName() {
+        return requestingEntityName;
+    }
+    
+    public void setRequestingEntityName(String requestingEntityName) {
+        this.requestingEntityName = requestingEntityName;
+    }
+    
 }

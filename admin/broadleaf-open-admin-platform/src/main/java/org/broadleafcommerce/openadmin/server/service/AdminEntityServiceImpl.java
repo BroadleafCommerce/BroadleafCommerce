@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -129,9 +130,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         }
 
         PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
-        //add the validation errors from the dynamic forms prior to invoking update. This way, errors will be
-        //caught downstream and will prevent an actual save
+        ppr.setRequestingEntityName(entityForm.getMainEntityName());
+        // Add the validation errors from the dynamic forms prior to invoking update. This way, errors will be
+        // caught downstream and will prevent an actual save
         ppr.getEntity().getValidationErrors().putAll(dynamicFormValidationErrors);
+        
         // After the dynamic forms have had a chance to update (and potentially fail validation), update the main entity
 
         PersistenceResponse response = update(ppr);
@@ -375,6 +378,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             sectionField = sectionField.substring(0, sectionField.lastIndexOf("."));
         }
         ppr.setSectionEntityField(sectionField);
+        
+        Property parentNameProp = parentEntity.getPMap().get(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY);
+        if (parentNameProp != null) {
+            ppr.setRequestingEntityName(parentNameProp.getValue());
+        }
 
         Property[] propArr = new Property[properties.size()];
         properties.toArray(propArr);
@@ -424,6 +432,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             sectionField = sectionField.substring(0, sectionField.lastIndexOf("."));
         }
         ppr.setSectionEntityField(sectionField);
+        
+        Property parentNameProp = parentEntity.getPMap().get(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY);
+        if (parentNameProp != null) {
+            ppr.setRequestingEntityName(parentNameProp.getValue());
+        }
 
         Property p = new Property();
         p.setName(entityForm.getIdProperty());
@@ -508,6 +521,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             sectionField = sectionField.substring(0, sectionField.lastIndexOf("."));
         }
         ppr.setSectionEntityField(sectionField);
+        
+        Property parentNameProp = parentEntity.getPMap().get(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY);
+        if (parentNameProp != null) {
+            ppr.setRequestingEntityName(parentNameProp.getValue());
+        }
 
         Property[] propArr = new Property[properties.size()];
         properties.toArray(propArr);

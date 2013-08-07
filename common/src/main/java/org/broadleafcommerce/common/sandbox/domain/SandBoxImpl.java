@@ -67,6 +67,7 @@ public class SandBoxImpl implements SandBox {
     
     @Column(name = "SANDBOX_NAME")
     @Index(name="SANDBOX_NAME_INDEX", columnNames={"SANDBOX_NAME"})
+    @AdminPresentation(friendlyName = "SandBoxImpl_Name", group = "SandBoxImpl_Description", prominent = true, gridOrder = 1000)
     protected String name;
     
     @Column(name="AUTHOR")
