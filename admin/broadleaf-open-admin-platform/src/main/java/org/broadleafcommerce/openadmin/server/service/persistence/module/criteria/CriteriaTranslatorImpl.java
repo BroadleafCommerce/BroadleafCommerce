@@ -25,10 +25,6 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -37,6 +33,9 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -46,12 +45,17 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
 
     @Override
     public TypedQuery<Serializable> translateCountQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings) {
-        return constructQuery(dynamicEntityDao, ceilingEntity, filterMappings, true, null, null);
+        return constructQuery(dynamicEntityDao, ceilingEntity, filterMappings, true, false, null, null, null);
+    }
+
+    @Override
+    public TypedQuery<Serializable> translateMaxQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, String maxField) {
+        return constructQuery(dynamicEntityDao, ceilingEntity, filterMappings, false, true, null, null, maxField);
     }
 
     @Override
     public TypedQuery<Serializable> translateQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults) {
-        return constructQuery(dynamicEntityDao, ceilingEntity, filterMappings, false, firstResult, maxResults);
+        return constructQuery(dynamicEntityDao, ceilingEntity, filterMappings, false, false, firstResult, maxResults, null);
     }
     
     /**
@@ -138,7 +142,8 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
     }
 
     @SuppressWarnings("unchecked")
-    protected TypedQuery<Serializable> constructQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, boolean isCount, Integer firstResult, Integer maxResults) {
+    protected TypedQuery<Serializable> constructQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, boolean isCount, boolean isMax, Integer firstResult, Integer maxResults, String maxField) {
+
         CriteriaBuilder criteriaBuilder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
         
         Class<Serializable> ceilingMarker;
@@ -154,6 +159,8 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         
         if (isCount) {
             criteria.select(criteriaBuilder.count(original));
+        } else if (isMax) {
+            criteria.select(criteriaBuilder.max((Path<Number>) ((Object) original.get(maxField))));
         } else {
             criteria.select(original);
         }
