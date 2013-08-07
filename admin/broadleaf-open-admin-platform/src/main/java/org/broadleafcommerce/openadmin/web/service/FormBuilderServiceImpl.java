@@ -68,6 +68,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,8 +76,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -173,7 +172,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         FieldMetadata fmd = field.getMetadata();
         // Get the class metadata for this particular field
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(fmd);
-        ClassMetadata cmd = adminEntityService.getClassMetadata(ppr);
+        ClassMetadata cmd = adminEntityService.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
 
         List<Field> headerFields = new ArrayList<Field>();
         ListGrid.Type type = null;
@@ -648,11 +647,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     // Get the records
                     PersistencePackageRequest toOnePpr = PersistencePackageRequest.standard()
                             .withCeilingEntityClassname(fmd.getForeignKeyClass());
-                    Entity[] rows = adminEntityService.getRecords(toOnePpr).getRecords();
+                    Entity[] rows = adminEntityService.getRecords(toOnePpr).getDynamicResultSet().getRecords();
                     
                     // Determine the id field
                     String idProp = null;
-                    ClassMetadata foreignClassMd = adminEntityService.getClassMetadata(toOnePpr);
+                    ClassMetadata foreignClassMd = adminEntityService.getClassMetadata(toOnePpr).getDynamicResultSet().getClassMetaData();
                     for (Property foreignP : foreignClassMd.getProperties()) {
                         if (foreignP.getMetadata() instanceof BasicFieldMetadata) {
                             BasicFieldMetadata foreignFmd = (BasicFieldMetadata) foreignP.getMetadata();
@@ -807,7 +806,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         PersistencePackageRequest request = PersistencePackageRequest.adorned()
                 .withCeilingEntityClassname(adornedMd.getCollectionCeilingEntity())
                 .withAdornedList(adornedList);
-        ClassMetadata collectionMetadata = adminEntityService.getClassMetadata(request);
+        ClassMetadata collectionMetadata = adminEntityService.getClassMetadata(request).getDynamicResultSet().getClassMetaData();
 
         // We want our entity form to only render the maintained adorned target fields
         List<Property> entityFormProperties = new ArrayList<Property>();
@@ -875,7 +874,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                         .withCeilingEntityClassname(mapMd.getMapKeyOptionEntityClass());
 
-                DynamicResultSet drs = adminEntityService.getRecords(ppr);
+                DynamicResultSet drs = adminEntityService.getRecords(ppr).getDynamicResultSet();
     
                 for (Entity entity : drs.getRecords()) {
                     String keyValue = entity.getPMap().get(mapMd.getMapKeyOptionEntityValueField()).getValue();

@@ -24,6 +24,7 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 import java.util.Map;
@@ -40,7 +41,7 @@ public interface AdminEntityService {
      * @return ClassMetadata for the given request
      * @throws ServiceException
      */
-    public ClassMetadata getClassMetadata(PersistencePackageRequest request)
+    public PersistenceResponse getClassMetadata(PersistencePackageRequest request)
             throws ServiceException;
 
     /**
@@ -50,7 +51,7 @@ public interface AdminEntityService {
      * @return DynamicResultSet 
      * @throws ServiceException
      */
-    public DynamicResultSet getRecords(PersistencePackageRequest request)
+    public PersistenceResponse getRecords(PersistencePackageRequest request)
             throws ServiceException;
 
     /**
@@ -63,7 +64,7 @@ public interface AdminEntityService {
      * @return the Entity
      * @throws ServiceException
      */
-    public Entity getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd, boolean isCollectionRequest)
+    public PersistenceResponse getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd, boolean isCollectionRequest)
             throws ServiceException;
 
     /**
@@ -74,7 +75,7 @@ public interface AdminEntityService {
      * @return the persisted Entity
      * @throws ServiceException
      */
-    public Entity addEntity(EntityForm entityForm, String[] customCriteria)
+    public PersistenceResponse addEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException;
 
     /**
@@ -85,7 +86,7 @@ public interface AdminEntityService {
      * @return the persisted Entity
      * @throws ServiceException
      */
-    public Entity updateEntity(EntityForm entityForm, String[] customCriteria)
+    public PersistenceResponse updateEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException;
 
     /**
@@ -95,7 +96,7 @@ public interface AdminEntityService {
      * @param customCriteria
      * @throws ServiceException
      */
-    public void removeEntity(EntityForm entityForm, String[] customCriteria)
+    public PersistenceResponse removeEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException;
 
     /**
@@ -108,7 +109,7 @@ public interface AdminEntityService {
      * @return the Entity
      * @throws ServiceException
      */
-    public Entity getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
+    public PersistenceResponse getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, String collectionItemId)
             throws ServiceException;
 
@@ -125,7 +126,7 @@ public interface AdminEntityService {
      * @return the DynamicResultSet
      * @throws ServiceException
      */
-    public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity, 
+    public PersistenceResponse getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex)
             throws ServiceException;
     
@@ -140,10 +141,10 @@ public interface AdminEntityService {
      * @param startIndex
      * @param maxIndex
      * @param idValueOverride
-     * @return the DynamicResultSet
+     * @return the PersistenceResponse
      * @throws ServiceException
      */
-    public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity, 
+    public PersistenceResponse getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex, 
             String idValueOverride) throws ServiceException;
     /**
@@ -171,7 +172,7 @@ public interface AdminEntityService {
      * @throws ServiceException
      * @throws ClassNotFoundException
      */
-    public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, 
+    public PersistenceResponse addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
             Entity parentEntity)
             throws ServiceException, ClassNotFoundException;
 
@@ -187,7 +188,7 @@ public interface AdminEntityService {
      * @throws ServiceException
      * @throws ClassNotFoundException
      */
-    public Entity updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
+    public PersistenceResponse updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
             Entity parentEntity, String collectionItemId)
             throws ServiceException, ClassNotFoundException;
 
@@ -201,7 +202,7 @@ public interface AdminEntityService {
      * @param priorKey - only needed for Map type collections
      * @throws ServiceException
      */
-    public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity, String itemId,
+    public PersistenceResponse removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity, String itemId,
             String priorKey)
             throws ServiceException;
 

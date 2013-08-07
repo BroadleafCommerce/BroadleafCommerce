@@ -26,11 +26,11 @@ import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.openadmin.dto.BatchDynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.BatchPersistencePackage;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
-import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
 import org.codehaus.jackson.map.util.LRUMap;
 import org.springframework.beans.BeansException;
@@ -39,10 +39,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.lang.reflect.Constructor;
 import java.util.Map;
-
-import javax.annotation.Resource;
 /**
  * @author jfischer
  */
@@ -65,58 +64,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         this.applicationContext = applicationContext;
     }
 
-    /*@Override
-    public BatchDynamicResultSet batchInspect(BatchPersistencePackage batchPersistencePackage) throws ServiceException {
-        try {
-            List<DynamicResultSet> dynamicResultSetList = new ArrayList<DynamicResultSet>(15);
-            List<PersistencePackage> persistencePackageList;
-            boolean containsCache = false;
-            if (METADATA_CACHE.containsKey(batchPersistencePackage)) {
-                containsCache = true;
-                persistencePackageList = new ArrayList<PersistencePackage>();
-                for (PersistencePackage persistencePackage : batchPersistencePackage.getPersistencePackages()) {
-                    if (persistencePackage.getPersistencePerspective().getUseServerSideInspectionCache()) {
-                        checkResultSetList: {
-                            for (DynamicResultSet dynamicResultSet : METADATA_CACHE.get(batchPersistencePackage).getDynamicResultSets()) {
-                                if (dynamicResultSet.getBatchId().equals(persistencePackage.getBatchId())) {
-                                    dynamicResultSetList.add(dynamicResultSet);
-                                    break checkResultSetList;
-                                }
-                            }
-                            throw new IllegalArgumentException("Unable to find a result for batchId(" + persistencePackage.getBatchId() + ") in cached batch result set.");
-                        }
-                    } else {
-                        persistencePackageList.add(persistencePackage);
-                    }
-                }
-            } else {
-                persistencePackageList = Arrays.asList(batchPersistencePackage.getPersistencePackages());
-            }
-            for (PersistencePackage persistencePackage : persistencePackageList) {
-                DynamicResultSet resultSet = inspect(persistencePackage);
-                resultSet.setBatchId(persistencePackage.getBatchId());
-                dynamicResultSetList.add(resultSet);
-            }
-            Collections.sort(dynamicResultSetList, new Comparator<DynamicResultSet>() {
-                @Override
-                public int compare(DynamicResultSet o1, DynamicResultSet o2) {
-                    return o1.getBatchId().compareTo(o2.getBatchId());
-                }
-            });
-            BatchDynamicResultSet batchResults = new BatchDynamicResultSet();
-            batchResults.setDynamicResultSets(dynamicResultSetList.toArray(new DynamicResultSet[dynamicResultSetList.size()]));
-            if (!containsCache) {
-                METADATA_CACHE.put(batchPersistencePackage, batchResults);
-                return METADATA_CACHE.get(batchPersistencePackage);
-            } else {
-                return batchResults;
-            }
-        } catch (IllegalArgumentException e) {
-            LOG.error("Problem performing batch inspect", e);
-            throw new ServiceException("Problem performing batch inspect", e);
-        }
-    }*/
-
     protected ServiceException recreateSpecificServiceException(ServiceException e, String message, Throwable cause) {
         try {
             ServiceException newException;
@@ -135,7 +82,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
     }
 
     @Override
-    public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException {
+    public PersistenceResponse inspect(PersistencePackage persistencePackage) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
@@ -151,7 +98,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
     }
 
     @Override
-    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
+    public PersistenceResponse fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
@@ -188,10 +135,10 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
     }
 
     @Override
-    public Entity add(PersistencePackage persistencePackage) throws ServiceException {
+    public PersistenceResponse add(PersistencePackage persistencePackage) throws ServiceException {
         cleanEntity(persistencePackage.getEntity());
         if (persistencePackage.getEntity().isValidationFailure()) {
-            return persistencePackage.getEntity();
+            return new PersistenceResponse().withEntity(persistencePackage.getEntity());
         }
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
@@ -200,10 +147,10 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         } catch (ServiceException e) {
             if (e instanceof ValidationException) {
                 LOG.warn("Not saving entity as it has failed validation");
-                return ((ValidationException) e).getEntity();
+                return new PersistenceResponse().withEntity(((ValidationException) e).getEntity());
             } else if (e.getCause() instanceof ValidationException) {
                 LOG.warn("Not saving entity as it has failed validation");
-                return ((ValidationException) e.getCause()).getEntity();
+                return new PersistenceResponse().withEntity(((ValidationException) e.getCause()).getEntity());
             }
             
             String message = exploitProtectionService.cleanString(e.getMessage());
@@ -213,10 +160,10 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
     }
 
     @Override
-    public Entity update(PersistencePackage persistencePackage) throws ServiceException {
+    public PersistenceResponse update(PersistencePackage persistencePackage) throws ServiceException {
         cleanEntity(persistencePackage.getEntity());
         if (persistencePackage.getEntity().isValidationFailure()) {
-            return persistencePackage.getEntity();
+            return new PersistenceResponse().withEntity(persistencePackage.getEntity());
         }
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
@@ -225,10 +172,10 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         } catch (ServiceException e) {
             if (e instanceof ValidationException) {
                 LOG.warn("Not saving entity as it has failed validation");
-                return ((ValidationException) e).getEntity();
+                return new PersistenceResponse().withEntity(((ValidationException) e).getEntity());
             } else if (e.getCause() instanceof ValidationException) {
                 LOG.warn("Not saving entity as it has failed validation");
-                return ((ValidationException) e.getCause()).getEntity();
+                return new PersistenceResponse().withEntity(((ValidationException) e.getCause()).getEntity());
             }
             LOG.error("Problem updating " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             String message = exploitProtectionService.cleanString(e.getMessage());
@@ -237,11 +184,11 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
     }
 
     @Override
-    public void remove(PersistencePackage persistencePackage) throws ServiceException {
+    public PersistenceResponse remove(PersistencePackage persistencePackage) throws ServiceException {
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
-            persistenceManager.remove(persistencePackage);
+            return persistenceManager.remove(persistencePackage);
         } catch (ServiceException e) {
             LOG.error("Problem removing " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             String message = exploitProtectionService.cleanString(e.getMessage());

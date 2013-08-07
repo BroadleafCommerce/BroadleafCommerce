@@ -32,10 +32,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * The operations in this controller are actions that do not necessarily depend on a section key being present.
@@ -65,7 +64,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
             @PathVariable(value="collectionField") String collectionField,
             @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams);
-        ClassMetadata mainMetadata = service.getClassMetadata(ppr);
+        ClassMetadata mainMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
@@ -76,7 +75,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         ppr.setMaxIndex(getMaxIndex(requestParams));
         
         if (md instanceof BasicFieldMetadata) {
-            DynamicResultSet drs = service.getRecords(ppr);
+            DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
             ListGrid listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, owningClass);
 
             model.addAttribute("listGrid", listGrid);

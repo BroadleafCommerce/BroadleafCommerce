@@ -19,8 +19,6 @@ package org.broadleafcommerce.openadmin.server.service.persistence;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
-import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
@@ -42,15 +40,15 @@ public interface PersistenceManager {
 
     public abstract ClassMetadata getMergedClassMetadata(Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) throws ClassNotFoundException, IllegalArgumentException;
 
-    public abstract DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException;
+    public abstract PersistenceResponse inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException;
 
-    public abstract DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
+    public abstract PersistenceResponse fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
 
-    public abstract Entity add(PersistencePackage persistencePackage) throws ServiceException;
+    public abstract PersistenceResponse add(PersistencePackage persistencePackage) throws ServiceException;
 
-    public abstract Entity update(PersistencePackage persistencePackage) throws ServiceException;
+    public abstract PersistenceResponse update(PersistencePackage persistencePackage) throws ServiceException;
 
-    public abstract void remove(PersistencePackage persistencePackage) throws ServiceException;
+    public abstract PersistenceResponse remove(PersistencePackage persistencePackage) throws ServiceException;
 
     public abstract DynamicEntityDao getDynamicEntityDao();
 
@@ -71,7 +69,5 @@ public interface PersistenceManager {
     public abstract Class<?>[] getUpDownInheritance(Class<?> testClass);
 
     public abstract Class<?>[] getUpDownInheritance(String testClassname) throws ClassNotFoundException;
-
-    //public abstract void close() throws Exception;
 
 }

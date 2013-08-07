@@ -16,6 +16,13 @@
 
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
 
+    <bean id="blPersistenceManagerEventHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+
     <bean id="blPersistenceModules" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
@@ -25,6 +32,7 @@
             </list>
         </property>
     </bean>
+
     <bean id="blAppConfigurationMap" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
         <property name="sourceMap">
             <map>
@@ -32,6 +40,7 @@
             </map>
         </property>
     </bean>
+
     <bean id="blTargetEntityManagers" class="org.springframework.beans.factory.config.MapFactoryBean" scope="prototype">
         <property name="sourceMap">
             <map>
@@ -198,21 +207,21 @@
             </list>
         </property>
     </bean>
-    
+
     <bean id="blFormBuilderExtensionHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
             </list>
         </property>
     </bean>
-    
+
     <bean id="blMainEntityActionsExtensionListeners" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
             </list>
         </property>
     </bean>
-    
+
     <bean id="blOpenAdminCssLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
@@ -224,7 +233,7 @@
         <property name="collectionRef" value="blOpenAdminCssLocations" />
         <property name="targetRef" value="blCssLocations" />
     </bean>
-    
+
     <bean id="blOpenAdminJsLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>

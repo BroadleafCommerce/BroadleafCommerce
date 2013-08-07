@@ -36,6 +36,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
@@ -43,6 +44,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,9 +53,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -67,20 +67,21 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     protected PersistencePackageFactory persistencePackageFactory;
 
     @Override
-    public ClassMetadata getClassMetadata(PersistencePackageRequest request)
+    public PersistenceResponse getClassMetadata(PersistencePackageRequest request)
             throws ServiceException {
-        ClassMetadata cmd = inspect(request).getClassMetaData();
+        PersistenceResponse response = inspect(request);
+        ClassMetadata cmd = response.getDynamicResultSet().getClassMetaData();
         cmd.setCeilingType(request.getCeilingEntityClassname());
-        return cmd;
+        return response;
     }
 
     @Override
-    public DynamicResultSet getRecords(PersistencePackageRequest request) throws ServiceException {
+    public PersistenceResponse getRecords(PersistencePackageRequest request) throws ServiceException {
         return fetch(request);
     }
 
     @Override
-    public Entity getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd, boolean isCollectionRequest)
+    public PersistenceResponse getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd, boolean isCollectionRequest)
             throws ServiceException {
         String idProperty = getIdProperty(cmd);
         
@@ -88,16 +89,15 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         fasc.setFilterValue(id);
         request.addFilterAndSortCriteria(fasc);
 
-        Entity[] entities = fetch(request).getRecords();
-
+        PersistenceResponse response = fetch(request);
+        Entity[] entities = response.getDynamicResultSet().getRecords();
         Assert.isTrue(entities != null && entities.length == 1, "Entity not found");
 
-        Entity entity = entities[0];
-        return entity;
+        return response;
     }
 
     @Override
-    public Entity addEntity(EntityForm entityForm, String[] customCriteria)
+    public PersistenceResponse addEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException {
         PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
         return add(ppr);
@@ -105,9 +105,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Override
     @Transactional("blTransactionManager")
-    public Entity updateEntity(EntityForm entityForm, String[] customCriteria)
+    public PersistenceResponse updateEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException {
-        
+
         // If the entity form has dynamic forms inside of it, we need to persist those as well.
         // They are typically done in their own custom persistence handlers, which will get triggered
         // based on the criteria specific in the PersistencePackage.
@@ -117,7 +117,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             
             customCriteria = new String[] { info.getCriteriaName(), entityForm.getId() };
             PersistencePackageRequest ppr = getRequestForEntityForm(entry.getValue(), customCriteria);
-            Entity dynamicFormEntity = update(ppr);
+            Entity dynamicFormEntity = update(ppr).getEntity();
             
             //if the dynamic form has failed validation, ensure they are properly added to the main entity validation
             //errors and keyed properly
@@ -133,16 +133,16 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         //caught downstream and will prevent an actual save
         ppr.getEntity().getValidationErrors().putAll(dynamicFormValidationErrors);
         // After the dynamic forms have had a chance to update (and potentially fail validation), update the main entity
-        Entity returnEntity = update(ppr);
-        
-        return returnEntity;
+
+        PersistenceResponse response = update(ppr);
+        return response;
     }
 
     @Override
-    public void removeEntity(EntityForm entityForm, String[] customCriteria)
+    public PersistenceResponse removeEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException {
         PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
-        remove(ppr);
+        return remove(ppr);
     }
     
     protected List<Property> getPropertiesFromEntityForm(EntityForm entityForm) {
@@ -187,7 +187,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
+    public PersistenceResponse getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, String collectionItemId)
             throws ServiceException {
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata());
@@ -196,7 +196,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         String containingEntityId = getContextSpecificRelationshipId(containingClassMetadata, containingEntity, 
                 collectionProperty.getName());
 
-        Entity entity = null;
+        PersistenceResponse response;
 
         if (md instanceof AdornedTargetCollectionMetadata) {
             FilterAndSortCriteria fasc = new FilterAndSortCriteria(ppr.getAdornedList().getCollectionFieldName());
@@ -207,16 +207,17 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             fasc.setFilterValue(collectionItemId);
             ppr.addFilterAndSortCriteria(fasc);
 
-            Entity[] entities = fetch(ppr).getRecords();
+            response = fetch(ppr);
+            Entity[] entities = response.getDynamicResultSet().getRecords();
             Assert.isTrue(entities != null && entities.length == 1, "Entity not found");
-            entity = entities[0];
         } else if (md instanceof MapMetadata) {
             MapMetadata mmd = (MapMetadata) md;
             FilterAndSortCriteria fasc = new FilterAndSortCriteria(ppr.getForeignKey().getManyToField());
             fasc.setFilterValue(containingEntityId);
             ppr.addFilterAndSortCriteria(fasc);
 
-            Entity[] entities = fetch(ppr).getRecords();
+            response = fetch(ppr);
+            Entity[] entities = response.getDynamicResultSet().getRecords();
             for (Entity e : entities) {
                 String idProperty = getIdProperty(containingClassMetadata);
                 if (mmd.isSimpleValue()) {
@@ -224,7 +225,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 }
                 Property p = e.getPMap().get(idProperty);
                 if (p.getValue().equals(collectionItemId)) {
-                    entity = e;
+                    response.setEntity(e);
                     break;
                 }
             }
@@ -233,17 +234,17 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                     "advanced collection field.", collectionProperty.getName(), containingClassMetadata.getCeilingType()));
         }
 
-        if (entity == null) {
+        if (response == null) {
             throw new NoResultException(String.format("Could not find record for class [%s], field [%s], main entity id " +
                     "[%s], collection entity id [%s]", containingClassMetadata.getCeilingType(),
                     collectionProperty.getName(), containingEntityId, collectionItemId));
         }
 
-        return entity;
+        return response;
     }
 
     @Override
-    public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
+    public PersistenceResponse getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex)
             throws ServiceException {
         return getRecordsForCollection(containingClassMetadata, containingEntity, collectionProperty, fascs, startIndex, 
@@ -251,7 +252,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
     
     @Override
-    public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
+    public PersistenceResponse getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex,
             String idValueOverride) throws ServiceException {
         
@@ -292,11 +293,12 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             throws ServiceException {
         Map<String, DynamicResultSet> map = new HashMap<String, DynamicResultSet>();
 
-        ClassMetadata cmd = getClassMetadata(ppr);
+        PersistenceResponse response = getClassMetadata(ppr);
+        ClassMetadata cmd = response.getDynamicResultSet().getClassMetaData();
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof CollectionMetadata) {
-                DynamicResultSet drs = getRecordsForCollection(cmd, containingEntity, p, null, null, null);
-                map.put(p.getName(), drs);
+                PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null);
+                map.put(p.getName(), response2.getDynamicResultSet());
             }
         }
 
@@ -304,7 +306,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, 
+    public PersistenceResponse addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
             Entity parentEntity)
             throws ServiceException, ClassNotFoundException {
         // Assemble the properties from the entity form
@@ -366,6 +368,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         }
 
         ppr.setCeilingEntityClassname(ppr.getEntity().getType()[0]);
+        ppr.setSectionEntityClassname(mainMetadata.getCeilingType());
+        ppr.setSectionEntityIdValue(getContextSpecificRelationshipId(mainMetadata, parentEntity, ""));
+        String sectionField = "";
+        if (sectionField.contains(".")) {
+            sectionField = sectionField.substring(0, sectionField.lastIndexOf("."));
+        }
+        ppr.setSectionEntityField(sectionField);
 
         Property[] propArr = new Property[properties.size()];
         properties.toArray(propArr);
@@ -375,7 +384,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Entity updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
+    public PersistenceResponse updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
             Entity parentEntity, String collectionItemId)
             throws ServiceException, ClassNotFoundException {
         List<Property> properties = getPropertiesFromEntityForm(entityForm);
@@ -408,6 +417,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         }
 
         ppr.setCeilingEntityClassname(ppr.getEntity().getType()[0]);
+        ppr.setSectionEntityClassname(mainMetadata.getCeilingType());
+        ppr.setSectionEntityIdValue(getContextSpecificRelationshipId(mainMetadata, parentEntity, ""));
+        String sectionField = "";
+        if (sectionField.contains(".")) {
+            sectionField = sectionField.substring(0, sectionField.lastIndexOf("."));
+        }
+        ppr.setSectionEntityField(sectionField);
 
         Property p = new Property();
         p.setName(entityForm.getIdProperty());
@@ -422,7 +438,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity, String itemId,
+    public PersistenceResponse removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity, String itemId,
             String priorKey)
             throws ServiceException {
         List<Property> properties = new ArrayList<Property>();
@@ -485,11 +501,19 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             entity.setType(new String[] { fmd.getTargetClass() });
         }
 
+        ppr.setSectionEntityClassname(mainMetadata.getCeilingType());
+        ppr.setSectionEntityIdValue(getContextSpecificRelationshipId(mainMetadata, parentEntity, ""));
+        String sectionField = "";
+        if (sectionField.contains(".")) {
+            sectionField = sectionField.substring(0, sectionField.lastIndexOf("."));
+        }
+        ppr.setSectionEntityField(sectionField);
+
         Property[] propArr = new Property[properties.size()];
         properties.toArray(propArr);
         ppr.getEntity().setProperties(propArr);
 
-        remove(ppr);
+        return remove(ppr);
     }
 
     @Override
@@ -550,31 +574,31 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         throw new ServiceException("Could not determine ID field for " + cmd.getCeilingType());
     }
 
-    protected Entity add(PersistencePackageRequest request)
+    protected PersistenceResponse add(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         return service.add(pkg);
     }
 
-    protected Entity update(PersistencePackageRequest request)
+    protected PersistenceResponse update(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         return service.update(pkg);
     }
 
-    protected DynamicResultSet inspect(PersistencePackageRequest request)
+    protected PersistenceResponse inspect(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         return service.inspect(pkg);
     }
 
-    protected void remove(PersistencePackageRequest request)
+    protected PersistenceResponse remove(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
-        service.remove(pkg);
+        return service.remove(pkg);
     }
 
-    protected DynamicResultSet fetch(PersistencePackageRequest request)
+    protected PersistenceResponse fetch(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
 

@@ -18,9 +18,8 @@ package org.broadleafcommerce.openadmin.server.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
-import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
-import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.springframework.security.access.annotation.Secured;
 
 /**
@@ -31,21 +30,18 @@ import org.springframework.security.access.annotation.Secured;
 public interface DynamicEntityService {
     
     @Secured("PERMISSION_OTHER_DEFAULT")
-    public DynamicResultSet inspect(PersistencePackage persistencePackage) throws ServiceException;
+    public PersistenceResponse inspect(PersistencePackage persistencePackage) throws ServiceException;
 
-    //@Secured("PERMISSION_OTHER_DEFAULT")
-    //public BatchDynamicResultSet batchInspect(BatchPersistencePackage batchPersistencePackage) throws ServiceException;
+    @Secured("PERMISSION_OTHER_DEFAULT")
+    public PersistenceResponse fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
     
     @Secured("PERMISSION_OTHER_DEFAULT")
-    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
+    public PersistenceResponse add(PersistencePackage persistencePackage) throws ServiceException;
     
     @Secured("PERMISSION_OTHER_DEFAULT")
-    public Entity add(PersistencePackage persistencePackage) throws ServiceException;
+    public PersistenceResponse update(PersistencePackage persistencePackage) throws ServiceException;
     
     @Secured("PERMISSION_OTHER_DEFAULT")
-    public Entity update(PersistencePackage persistencePackage) throws ServiceException;
-    
-    @Secured("PERMISSION_OTHER_DEFAULT")
-    public void remove(PersistencePackage persistencePackage) throws ServiceException;
+    public PersistenceResponse remove(PersistencePackage persistencePackage) throws ServiceException;
     
 }

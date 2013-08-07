@@ -42,10 +42,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * Handles admin operations for the {@link Product} entity. Editing a product requires custom criteria in order to properly
@@ -78,14 +77,14 @@ public class AdminProductController extends AdminBasicEntityController {
             String id) throws Exception {
         String collectionField = "additionalSkus";
         String mainClassName = getClassNameForSection(SECTION_KEY);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
         
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md)
                 .withCustomCriteria(new String[] { id });
 
-        ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
+        ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         if (collectionMetadata.getCeilingType().equals(SkuImpl.class.getName())) {
             collectionMetadata.setCeilingType(Sku.class.getName());
         }
@@ -127,18 +126,18 @@ public class AdminProductController extends AdminBasicEntityController {
         
         // Find out metadata for the additionalSkus property
         String mainClassName = getClassNameForSection(SECTION_KEY);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
         
         // Find the metadata and the entity for the selected sku
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
-        ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
+        ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         if (collectionMetadata.getCeilingType().equals(SkuImpl.class.getName())) {
             collectionMetadata.setCeilingType(Sku.class.getName());
         }
         
-        Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true);
+        Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true).getDynamicResultSet().getRecords()[0];
         
         // Find the records for all subcollections of Sku
         Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
