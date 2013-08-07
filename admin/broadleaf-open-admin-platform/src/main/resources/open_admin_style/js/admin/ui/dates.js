@@ -27,7 +27,7 @@
          */
         getDisplayDate : function(serverDate) {
             var display = BLC.dates.getDisplayDate(serverDate, adminFormats);
-            return display == null ? null : display.serverDate + " " + display.displayTime;
+            return display == null ? null : display.displayDate + " " + display.displayTime;
         },
         
         /**
