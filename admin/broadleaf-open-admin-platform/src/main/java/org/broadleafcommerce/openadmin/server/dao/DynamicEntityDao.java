@@ -29,12 +29,11 @@ import org.hibernate.SessionFactory;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
 
+import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-
-import javax.persistence.EntityManager;
 
 /**
  * 
@@ -70,7 +69,9 @@ public interface DynamicEntityDao {
     public void detach(Serializable entity);
     
     public void refresh(Serializable entity);
-    
+
+    public Object find(Class<?> entityClass, Object key);
+
     public EntityManager getStandardEntityManager();
     
     public void setStandardEntityManager(EntityManager entityManager);

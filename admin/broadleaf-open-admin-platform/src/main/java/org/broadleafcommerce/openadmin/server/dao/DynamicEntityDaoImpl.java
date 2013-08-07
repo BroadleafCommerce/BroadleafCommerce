@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -55,6 +54,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -74,9 +75,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
 
 /**
  * 
@@ -133,7 +131,12 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
         standardEntityManager.flush();
         return entity;
     }
-    
+
+    @Override
+    public Object find(Class<?> entityClass, Object key) {
+        return standardEntityManager.find(entityClass, key);
+    }
+
     @Override
     public Serializable merge(Serializable entity) {
         Serializable response = standardEntityManager.merge(entity);
@@ -163,16 +166,10 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     
     @Override
     public void remove(Serializable entity) {
-        boolean isArchivable = Status.class.isAssignableFrom(entity.getClass());
-        if (isArchivable) {
-            ((Status) entity).setArchived('Y');
-            merge(entity);
-        } else {
-            standardEntityManager.remove(entity);
-            standardEntityManager.flush();
-        }
+        standardEntityManager.remove(entity);
+        standardEntityManager.flush();
     }
-    
+
     @Override
     public void clear() {
         standardEntityManager.clear();
