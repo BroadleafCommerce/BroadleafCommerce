@@ -26,9 +26,8 @@ import org.broadleafcommerce.common.email.service.message.EmailPropertyType;
 import org.broadleafcommerce.common.email.service.message.EmailServiceProducer;
 import org.broadleafcommerce.common.email.service.message.MessageCreator;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 import java.util.HashMap;
+import javax.annotation.Resource;
 
 /**
  * @author jfischer
@@ -86,6 +85,12 @@ public class EmailServiceImpl implements EmailService {
 
         props.put(EmailPropertyType.INFO.getType(), emailInfo);
         props.put(EmailPropertyType.USER.getType(), emailTarget);
+        // This is a temporary fix for a bug with Thymeleaf 2.0.17 where it tries to get a RequestContext from a theme variable name
+        Object themes = props.get("themes");
+        if (themes == null) {
+            props.put("themes", "");
+        }
+
 
         if (Boolean.parseBoolean(emailInfo.getSendEmailReliableAsync())) {
             if (emailServiceProducer == null) {
