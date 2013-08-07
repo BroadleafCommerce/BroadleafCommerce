@@ -17,8 +17,9 @@
 package org.broadleafcommerce.openadmin.audit;
 
 import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.common.web.SandBoxContext;
-import org.broadleafcommerce.openadmin.security.AdminSandBoxContext;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.web.filter.BroadleafAdminRequestProcessor;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -77,10 +78,10 @@ public class AdminAuditableListener {
 
     protected void setAuditValueAgent(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
         try {
-            AdminSandBoxContext context = (AdminSandBoxContext) SandBoxContext.getSandBoxContext();
+            BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
             if (context != null) {
                 field.setAccessible(true);
-                field.set(entity, context.getAdminUser().getId());
+                field.set(entity, ((AdminUser) context.getAdditionalProperties().get(BroadleafAdminRequestProcessor.ADMIN_USER_PROPERTY)).getId());
             }
         } catch (IllegalStateException e) {
             //do nothing

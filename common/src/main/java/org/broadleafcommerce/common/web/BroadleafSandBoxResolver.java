@@ -34,6 +34,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface BroadleafSandBoxResolver  {
 
+    public static String SANDBOX_ID_VAR = "blSandboxId";
+
     /**
      * @deprecated use {@link #resolveSandBox(WebRequest, Site)} instead
      */
