@@ -56,8 +56,13 @@ public class FieldDaoImpl implements FieldDao {
         TypedQuery<Field> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-        
-        return query.getSingleResult();
+
+        try {
+            return query.getSingleResult();
+        } catch (javax.persistence.NoResultException e) {
+            //must not be an abbreviation
+            return null;
+        }
     }
     
     @Override

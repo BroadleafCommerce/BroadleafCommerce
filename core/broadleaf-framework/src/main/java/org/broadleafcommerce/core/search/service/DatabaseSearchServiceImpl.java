@@ -154,8 +154,10 @@ public class DatabaseSearchServiceImpl implements SearchService {
         Map<String, String[]> convertedFilterCriteria = new HashMap<String, String[]>();
         for (Entry<String, String[]> entry : criteria.getFilterCriteria().entrySet()) {
             Field field = fieldDao.readFieldByAbbreviation(entry.getKey());
-            String qualifiedFieldName = getDatabaseQualifiedFieldName(field.getQualifiedFieldName());
-            convertedFilterCriteria.put(qualifiedFieldName, entry.getValue());
+            if (field != null) {
+                String qualifiedFieldName = getDatabaseQualifiedFieldName(field.getQualifiedFieldName());
+                convertedFilterCriteria.put(qualifiedFieldName, entry.getValue());
+            }
         }
         criteria.setFilterCriteria(convertedFilterCriteria);
         
