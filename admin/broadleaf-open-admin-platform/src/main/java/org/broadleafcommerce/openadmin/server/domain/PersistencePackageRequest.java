@@ -53,6 +53,9 @@ public class PersistencePackageRequest {
     protected ForeignKey foreignKey;
     protected Integer startIndex;
     protected Integer maxIndex;
+    protected String sectionEntityClassname;
+    protected String sectionEntityIdValue;
+    protected String sectionEntityField;
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -223,6 +226,21 @@ public class PersistencePackageRequest {
         return this;
     }
 
+    public PersistencePackageRequest withSectionEntityClassname(String sectionClassname) {
+        setSectionEntityClassname(sectionClassname);
+        return this;
+    }
+
+    public PersistencePackageRequest withSectionEntityIdValue(String sectionIdValue) {
+        setSectionEntityIdValue(sectionIdValue);
+        return this;
+    }
+
+    public PersistencePackageRequest withSectionEntityField(String sectionEntityField) {
+        setSectionEntityField(sectionEntityField);
+        return this;
+    }
+
     /* *********** */
     /* ADD METHODS */
     /* *********** */
@@ -373,5 +391,28 @@ public class PersistencePackageRequest {
     public void setMaxIndex(Integer maxIndex) {
         this.maxIndex = maxIndex;
     }
-    
+
+    public String getSectionEntityClassname() {
+        return sectionEntityClassname;
+    }
+
+    public void setSectionEntityClassname(String sectionEntityClassname) {
+        this.sectionEntityClassname = sectionEntityClassname;
+    }
+
+    public String getSectionEntityIdValue() {
+        return sectionEntityIdValue;
+    }
+
+    public void setSectionEntityIdValue(String sectionEntityIdValue) {
+        this.sectionEntityIdValue = sectionEntityIdValue;
+    }
+
+    public String getSectionEntityField() {
+        return sectionEntityField;
+    }
+
+    public void setSectionEntityField(String sectionEntityField) {
+        this.sectionEntityField = sectionEntityField;
+    }
 }
