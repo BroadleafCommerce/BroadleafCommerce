@@ -51,7 +51,10 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
     protected Map<String, String> xformTemplates = new HashMap<String, String>();
     
     protected static List<String> transformedMethods = new ArrayList<String>();
-    
+
+    protected Boolean renameMethodOverlaps = false;
+    protected String renameMethodPrefix = "__";
+
     public DirectCopyClassTransformer(String moduleName) {
         this.moduleName = moduleName;
         logger = SupportLogManager.getLogger(moduleName, this.getClass());
@@ -149,7 +152,11 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                                 }
 
                                 logger.debug(String.format("Removing method [%s]", method.getName()));
-                                clazz.removeMethod(originalMethod);
+                                if (renameMethodOverlaps) {
+                                    originalMethod.setName(renameMethodPrefix + method.getName());
+                                } else {
+                                    clazz.removeMethod(originalMethod);
+                                }
                             } catch (NotFoundException e) {
                                 // Do nothing -- we don't need to remove a method because it doesn't exist
                             }
@@ -206,5 +213,20 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
     public void setXformTemplates(Map<String, String> xformTemplates) {
         this.xformTemplates = xformTemplates;
     }
-    
+
+    public Boolean getRenameMethodOverlaps() {
+        return renameMethodOverlaps;
+    }
+
+    public void setRenameMethodOverlaps(Boolean renameMethodOverlaps) {
+        this.renameMethodOverlaps = renameMethodOverlaps;
+    }
+
+    public String getRenameMethodPrefix() {
+        return renameMethodPrefix;
+    }
+
+    public void setRenameMethodPrefix(String renameMethodPrefix) {
+        this.renameMethodPrefix = renameMethodPrefix;
+    }
 }
