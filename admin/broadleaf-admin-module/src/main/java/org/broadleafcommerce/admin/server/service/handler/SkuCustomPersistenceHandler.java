@@ -51,8 +51,8 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.AdornedTargetListPersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
@@ -85,7 +85,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     public static String PRODUCT_OPTION_FIELD_PREFIX = "productOption";
     
     @Resource(name="blAdornedTargetListPersistenceModule")
-    protected AdornedTargetListPersistenceModule adornedPersistenceModule;
+    protected PersistenceModule adornedPersistenceModule;
 
     /**
      * This represents the field that all of the product option values will be stored in. This would be used in the case
