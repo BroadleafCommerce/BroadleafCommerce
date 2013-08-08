@@ -16,6 +16,18 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,18 +51,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -142,7 +142,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     if (date != null) {
                         oldValue = populateValueRequest.getDataFormatProvider().getSimpleDateFormatter().format(date);
                     }
-                    dirty = StringUtils.equals(oldValue, populateValueRequest.getRequestedValue());
+                    dirty = !StringUtils.equals(oldValue, populateValueRequest.getRequestedValue());
                     populateValueRequest.getFieldManager().setFieldValue(instance,
                             populateValueRequest.getProperty().getName(), populateValueRequest.getDataFormatProvider().
                             getSimpleDateFormatter().parse(populateValueRequest.getRequestedValue()));
