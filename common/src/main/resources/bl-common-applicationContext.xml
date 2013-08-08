@@ -41,6 +41,10 @@
         </property>
     </bean>
 
+    <!-- This mail sender will log the html content generated for the email to the console  -->
+    <!-- To enable logging set log level in Log4j to INFO  -->
+    <bean id="blLoggingMailSender" class="org.broadleafcommerce.common.email.service.LoggingMailSender" />
+
     <bean id="blVelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
       <property name="velocityProperties">
          <value>

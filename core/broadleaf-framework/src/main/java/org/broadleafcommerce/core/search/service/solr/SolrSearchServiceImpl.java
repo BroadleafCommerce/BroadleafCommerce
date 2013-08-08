@@ -279,9 +279,17 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     /**
+     * @deprecated in favor of the other findProducts() method
+     */
+    protected ProductSearchResult findProducts(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
+            ProductSearchCriteria searchCriteria, String defaultSort) throws ServiceException {
+        return findProducts(qualifiedSolrQuery, facets, searchCriteria, defaultSort, null);
+    }
+
+    /**
      * Given a qualified solr query string (such as "category:2002"), actually performs a solr search. It will
      * take into considering the search criteria to build out facets / pagination / sorting.
-     * 
+     *
      * @param qualifiedSolrQuery
      * @param facets
      * @param searchCriteria
@@ -297,9 +305,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                 .setQuery(qualifiedSolrQuery)
                 .setFields(shs.getProductIdFieldName())
                 .setRows(searchCriteria.getPageSize())
-                .setFilterQueries(filterQueries)
-                .addFilterQuery(shs.getNamespaceFieldName() + ":" + shs.getCurrentNamespace())
                 .setStart((searchCriteria.getPage() - 1) * searchCriteria.getPageSize());
+        if (filterQueries != null) {
+            solrQuery.setFilterQueries(filterQueries);
+        }
+        solrQuery.addFilterQuery(shs.getNamespaceFieldName() + ":" + shs.getCurrentNamespace());
         solrQuery.set("defType", "edismax");
         solrQuery.set("qf", buildQueryFieldsString());
 
