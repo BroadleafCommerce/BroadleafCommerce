@@ -183,24 +183,31 @@ $(document).ready(function() {
     /**
      * The rowSelected handler for the inline list grid ...
      */
-    function inlineRowSelected(event, link, fields, currentUrl) {
+    function inlineRowSelected(event, link, fields, currentUrl, multi) {
         var $tr = $('tr[data-link="' + link + '"]');
         var currentlySelected = $tr.hasClass('selected');
         var $listGridContainer = $tr.closest('.listgrid-container');
         
-        $tr.closest('tbody').find('tr').removeClass('selected');
+        if (!multi) {
+            $tr.closest('tbody').find('tr').removeClass('selected');
+        }
         
         if (!currentlySelected) {
             $tr.addClass("selected");
+        } else {
+            $tr.removeClass("selected");
         }
         
         BLCAdmin.listGrid.updateToolbarRowActionButtons($listGridContainer);
     }
     $('body').on('listGrid-inline-rowSelected', function(event, link, fields, currentUrl) {
-        inlineRowSelected(event, link, fields, currentUrl);
+        inlineRowSelected(event, link, fields, currentUrl, false);
     });
     $('body').on('listGrid-translation-rowSelected', function(event, link, fields, currentUrl) {
-        inlineRowSelected(event, link, fields, currentUrl);
+        inlineRowSelected(event, link, fields, currentUrl, false);
+    });
+    $('body').on('listGrid-inlinemulti-rowSelected', function(event, link, fields, currentUrl) {
+        inlineRowSelected(event, link, fields, currentUrl, true);
     });
     
     /**

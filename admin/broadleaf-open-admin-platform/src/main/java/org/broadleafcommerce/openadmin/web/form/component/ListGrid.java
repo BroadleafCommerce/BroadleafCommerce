@@ -74,6 +74,7 @@ public class ListGrid {
     public enum Type {
         MAIN,
         INLINE,
+        INLINEMULTI,
         TO_ONE,
         BASIC,
         ADORNED,
