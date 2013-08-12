@@ -20,7 +20,9 @@
                 </button>
             </li>
             
-            <li style="color: #8495A5" th:if="${!listGrid.readOnly}">|</li>
+            <li style="color: #8495A5" 
+                th:if="${!listGrid.readOnly and (#lists.size(listGrid.toolbarActions) > 0 and #lists.size(listGrid.rowActions) > 0)}"
+                th:text="'|'" />
 
             <li th:each="action : ${listGrid.rowActions}" th:if="${listGrid.readOnly==action.forListGridReadOnly}">
                 <button disabled="disabled" 
