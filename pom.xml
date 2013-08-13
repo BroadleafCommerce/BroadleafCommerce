@@ -1053,12 +1053,6 @@
                 <artifactId>antisamy</artifactId>
                 <version>1.4.5</version>
                 <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>xercesImpl</artifactId>
-                        <groupId>xerces</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
