@@ -98,7 +98,7 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
         } catch (SiteNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } finally {
-            SandBoxContext.setSandBoxContext(null);
+            requestProcessor.postProcess(new ServletWebRequest(request, response));
         }
     }
 

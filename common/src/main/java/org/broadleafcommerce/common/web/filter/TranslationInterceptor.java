@@ -39,7 +39,7 @@ public class TranslationInterceptor implements WebRequestInterceptor {
 
     @Override
     public void postHandle(WebRequest request, ModelMap model) throws Exception {
-        // unimplemented
+        translationRequestProcessor.postProcess(request);
     }
 
     @Override

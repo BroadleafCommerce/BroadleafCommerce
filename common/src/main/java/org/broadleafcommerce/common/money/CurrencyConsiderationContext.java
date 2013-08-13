@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.money;
 
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+
 import java.util.HashMap;
 
 /**
@@ -25,9 +27,9 @@ import java.util.HashMap;
  */
 public class CurrencyConsiderationContext {
     
-    private static final ThreadLocal<CurrencyDeterminationService> currencyDeterminationService = new ThreadLocal<CurrencyDeterminationService>();
+    private static final ThreadLocal<CurrencyDeterminationService> currencyDeterminationService = ThreadLocalManager.createThreadLocal(CurrencyDeterminationService.class);
 
-    private static final ThreadLocal<HashMap> currencyConsiderationContext = new ThreadLocal<HashMap>();
+    private static final ThreadLocal<HashMap> currencyConsiderationContext = ThreadLocalManager.createThreadLocal(HashMap.class);
 
     public static HashMap getCurrencyConsiderationContext() {
         return CurrencyConsiderationContext.currencyConsiderationContext.get();

@@ -17,9 +17,11 @@
 package org.broadleafcommerce.common.web;
 
 
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+
 public class SandBoxContext {
     
-    private static final ThreadLocal<SandBoxContext> SANDBOXCONTEXT = new ThreadLocal<SandBoxContext>();
+    private static final ThreadLocal<SandBoxContext> SANDBOXCONTEXT = ThreadLocalManager.createThreadLocal(SandBoxContext.class);
     
     public static SandBoxContext getSandBoxContext() {
         return SANDBOXCONTEXT.get();

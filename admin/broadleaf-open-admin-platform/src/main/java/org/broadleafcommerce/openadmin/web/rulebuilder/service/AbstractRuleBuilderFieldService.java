@@ -195,13 +195,21 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
             setFields(new ArrayList<FieldData>());
             
             // This cannot be null during startup as we do not want to remove the null safety checks in a multi-tenant env.
+            boolean contextWasNull = false;
             if (BroadleafRequestContext.getBroadleafRequestContext() == null) {
                 BroadleafRequestContext brc = new BroadleafRequestContext();
                 brc.setIgnoreSite(true);
                 BroadleafRequestContext.setBroadleafRequestContext(brc);
+                contextWasNull = true;
             }
-            
-            init();
+
+            try {
+                init();
+            } finally {
+                if (contextWasNull) {
+                    BroadleafRequestContext.setBroadleafRequestContext(null);
+                }
+            }
         }
     }
 
