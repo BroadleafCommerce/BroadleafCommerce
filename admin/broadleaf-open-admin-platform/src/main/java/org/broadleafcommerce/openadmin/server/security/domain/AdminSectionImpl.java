@@ -94,6 +94,14 @@ public class AdminSectionImpl implements AdminSection {
     @BatchSize(size = 50)
     protected List<AdminPermission> permissions = new ArrayList<AdminPermission>();
 
+    @Column(name = "DISPLAY_CONTROLLER", nullable=true)
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Controller", order=4, group = "AdminSectionImpl_Section")
+    protected String displayController;
+
+    @Column(name = "USE_DEFAULT_HANDLER", nullable=false)
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Use_Default_Handler", order=5, group = "AdminSectionImpl_Section")
+    protected Boolean useDefaultHandler = Boolean.TRUE;
+
     @Column(name = "CEILING_ENTITY", nullable = true)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Ceiling_Entity", order = 6, group = "AdminSectionImpl_Section")
     protected String ceilingEntity;
@@ -160,6 +168,26 @@ public class AdminSectionImpl implements AdminSection {
     @Override
     public void setPermissions(List<AdminPermission> permissions) {
         this.permissions = permissions;
+    }
+
+    @Override
+    public String getDisplayController() {
+        return displayController;
+    }
+
+    @Override
+    public void setDisplayController(String displayController) {
+        this.displayController = displayController;
+    }
+
+    @Override
+    public Boolean getUseDefaultHandler() {
+        return useDefaultHandler;
+    }
+
+    @Override
+    public void setUseDefaultHandler(Boolean useDefaultHandler) {
+        this.useDefaultHandler = useDefaultHandler;
     }
 
     @Override

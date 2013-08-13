@@ -42,31 +42,29 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
+import org.broadleafcommerce.openadmin.web.handler.AdminNavigationHandlerMapping;
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for the Admin
  *
  * Operations that are shared between all admin controllers belong here.
  *
+ * @see org.broadleafcommerce.openadmin.web.handler.AdminNavigationHandlerMapping
  * @author elbertbautista
  * @author apazzolini
  */
 public abstract class AdminAbstractController extends BroadleafAbstractController {
-    
-    public static final String CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME = "currentAdminModule";
-    public static final String CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME = "currentAdminSection";
 
     // ***********************
     // RESOURCE DECLARATIONS *
@@ -465,8 +463,8 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
         if (section != null) {
             model.addAttribute("sectionKey", sectionKey);
-            model.addAttribute(CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME, section.getModule());
-            model.addAttribute(CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME, section);
+            model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME, section.getModule());
+            model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME, section);
         }
     }
 

@@ -44,9 +44,17 @@ public interface AdminSection extends Serializable {
 
     public void setPermissions(List<AdminPermission> permissions);
 
+    public void setDisplayController(String displayController);
+
+    public String getDisplayController();
+
     public AdminModule getModule();
 
     public void setModule(AdminModule module);
+
+    public Boolean getUseDefaultHandler();
+
+    public void setUseDefaultHandler(Boolean useDefaultHandler);
 
     public String getCeilingEntity();
 
