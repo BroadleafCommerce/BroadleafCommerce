@@ -44,16 +44,36 @@ public interface AdminSection extends Serializable {
 
     public void setPermissions(List<AdminPermission> permissions);
 
+    /**
+     * No longer needed after GWT removal
+     * @param displayController
+     */
+    @Deprecated
     public void setDisplayController(String displayController);
 
+    /**
+     * No longer needed after GWT removal
+     * @param displayController
+     */
+    @Deprecated
     public String getDisplayController();
 
     public AdminModule getModule();
 
     public void setModule(AdminModule module);
 
+    /**
+     * No longer needed after GWT removal
+     * @param displayController
+     */
+    @Deprecated
     public Boolean getUseDefaultHandler();
 
+    /**
+     * No longer needed after GWT removal
+     * @param displayController
+     */
+    @Deprecated
     public void setUseDefaultHandler(Boolean useDefaultHandler);
 
     public String getCeilingEntity();

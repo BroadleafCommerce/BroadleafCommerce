@@ -32,10 +32,12 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author elbertbautista
  * @since 2.1
+ * @deprecated no longer necessary after GWT removal
  */
+@Deprecated
 public class AdminNavigationHandlerMapping extends BLCAbstractHandlerMapping {
 
-    private String controllerName="blAdminModulesController";
+    private final String controllerName="blAdminModulesController";
 
     @Resource(name = "blAdminNavigationService")
     private AdminNavigationService adminNavigationService;

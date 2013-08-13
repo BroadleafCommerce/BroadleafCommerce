@@ -94,10 +94,20 @@ public class AdminSectionImpl implements AdminSection {
     @BatchSize(size = 50)
     protected List<AdminPermission> permissions = new ArrayList<AdminPermission>();
 
+    /**
+     * No longer needed after GWT removal
+     * @param displayController
+     */
+    @Deprecated
     @Column(name = "DISPLAY_CONTROLLER", nullable=true)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Controller", order=4, group = "AdminSectionImpl_Section")
     protected String displayController;
 
+    /**
+     * No longer needed after GWT removal
+     * @param displayController
+     */
+    @Deprecated
     @Column(name = "USE_DEFAULT_HANDLER", nullable=false)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Use_Default_Handler", order=5, group = "AdminSectionImpl_Section")
     protected Boolean useDefaultHandler = Boolean.TRUE;
@@ -170,21 +180,25 @@ public class AdminSectionImpl implements AdminSection {
         this.permissions = permissions;
     }
 
+    @Deprecated
     @Override
     public String getDisplayController() {
         return displayController;
     }
 
+    @Deprecated
     @Override
     public void setDisplayController(String displayController) {
         this.displayController = displayController;
     }
 
+    @Deprecated
     @Override
     public Boolean getUseDefaultHandler() {
         return useDefaultHandler;
     }
 
+    @Deprecated
     @Override
     public void setUseDefaultHandler(Boolean useDefaultHandler) {
         this.useDefaultHandler = useDefaultHandler;
