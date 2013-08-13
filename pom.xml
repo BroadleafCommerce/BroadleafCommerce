@@ -606,14 +606,14 @@
             <dependency>
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.4.0</version>
+                <version>4.0.0</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <artifactId>solr-core</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.4.0</version>
+                <version>4.0.0</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -666,7 +666,7 @@
             <dependency>
                 <groupId>org.mvel</groupId>
                 <artifactId>mvel2</artifactId>
-                <version>2.1.6.Final</version>
+                <version>2.0.19</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -1012,24 +1012,12 @@
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-core-asl</artifactId>
-                <version>1.9.12</version>
+                <version>1.9.2</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.12</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-jaxrs</artifactId>
-                <version>1.9.12</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-xc</artifactId>
                 <version>1.9.12</version>
                 <scope>compile</scope>
             </dependency>
@@ -1091,11 +1079,6 @@
                 <groupId>com.yahoo.platform.yui</groupId>
                 <artifactId>yuicompressor</artifactId>
                 <version>2.4.7</version>
-            </dependency>
-            <dependency>
-                <groupId>se.jiderhamn</groupId>
-                <artifactId>classloader-leak-prevention</artifactId>
-                <version>1.7.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
