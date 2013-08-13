@@ -108,7 +108,7 @@ public class AdminSectionImpl implements AdminSection {
      * @param displayController
      */
     @Deprecated
-    @Column(name = "USE_DEFAULT_HANDLER", nullable=false)
+    @Column(name = "USE_DEFAULT_HANDLER", nullable = true)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Use_Default_Handler", order=5, group = "AdminSectionImpl_Section")
     protected Boolean useDefaultHandler = Boolean.TRUE;
 
