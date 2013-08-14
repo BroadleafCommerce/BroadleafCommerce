@@ -16,6 +16,10 @@
 
 package org.broadleafcommerce.common.util;
 
+import org.apache.commons.collections.Predicate;
+
+import java.lang.reflect.ParameterizedType;
+
 
 /**
  * A class that provides for a typed predicat
@@ -24,8 +28,22 @@ package org.broadleafcommerce.common.util;
  *
  * @param <T> the type of object the predicate uses
  */
-public interface TypedPredicate<T> {
+@SuppressWarnings("unchecked")
+public abstract class TypedPredicate<T> implements Predicate {
     
-    public boolean evaluate(T value);
+    protected Class<T> clazz;
+    
+    public TypedPredicate() {
+        clazz = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+    
+    public boolean evaluate(Object value) {
+        if (clazz.isAssignableFrom(value.getClass())) {
+            return eval((T) value);
+        }
+        return false;
+    }
+    
+    public abstract boolean eval(T value);
 
 }
