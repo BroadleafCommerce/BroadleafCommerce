@@ -476,7 +476,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withRequired(required)
                          .withReadOnly(fmd.getReadOnly())
                          .withTranslatable(fmd.getTranslatable())
-                         .withAlternateOrdering((Boolean) fmd.getAdditionalMetadata().get(Field.ALTERNATE_ORDERING));
+                         .withAlternateOrdering((Boolean) fmd.getAdditionalMetadata().get(Field.ALTERNATE_ORDERING))
+                         .withLargeEntry(fmd.isLargeEntry());
 
                     if (StringUtils.isBlank(f.getFriendlyName())) {
                         f.setFriendlyName(f.getName());
