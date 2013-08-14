@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.workflow.state;
 
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+
 /**
  * Handles the identification of the outermost workflow and the current thread so that the StateManager can
  * operate on the appropriate RollbackHandlers.
@@ -24,7 +26,7 @@ package org.broadleafcommerce.core.workflow.state;
  */
 public class RollbackStateLocal {
 
-    private static final ThreadLocal<RollbackStateLocal> THREAD_LOCAL = new ThreadLocal<RollbackStateLocal>();
+    private static final ThreadLocal<RollbackStateLocal> THREAD_LOCAL = ThreadLocalManager.createThreadLocal(RollbackStateLocal.class, false);
 
     public static RollbackStateLocal getRollbackStateLocal() {
         return THREAD_LOCAL.get();

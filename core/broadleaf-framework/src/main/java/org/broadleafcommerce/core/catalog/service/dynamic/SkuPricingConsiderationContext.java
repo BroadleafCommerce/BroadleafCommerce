@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.catalog.service.dynamic;
 
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 
 import java.util.HashMap;
@@ -31,34 +32,33 @@ import java.util.HashMap;
  * @see {@link org.broadleafcommerce.core.web.catalog.DynamicSkuPricingFilter}
  */
 public class SkuPricingConsiderationContext {
-    
-    private static final ThreadLocal<DynamicSkuPricingService> skuPricingService = new ThreadLocal<DynamicSkuPricingService>();
-    
-    @SuppressWarnings("rawtypes")
-    private static final ThreadLocal<HashMap> skuPricingConsiderationContext = new ThreadLocal<HashMap>();
-    
-    @SuppressWarnings("rawtypes")
+
+    private static final ThreadLocal<SkuPricingConsiderationContext> skuPricingConsiderationContext = ThreadLocalManager.createThreadLocal(SkuPricingConsiderationContext.class);
+
     public static HashMap getSkuPricingConsiderationContext() {
-        return SkuPricingConsiderationContext.skuPricingConsiderationContext.get();
+        return SkuPricingConsiderationContext.skuPricingConsiderationContext.get().considerations;
     }
     
-    public static void setSkuPricingConsiderationContext(@SuppressWarnings("rawtypes") HashMap skuPricingConsiderationContext) {
-        SkuPricingConsiderationContext.skuPricingConsiderationContext.set(skuPricingConsiderationContext);
+    public static void setSkuPricingConsiderationContext(HashMap skuPricingConsiderations) {
+        SkuPricingConsiderationContext.skuPricingConsiderationContext.get().considerations = skuPricingConsiderations;
     }
-    
+
     public static DynamicSkuPricingService getSkuPricingService() {
-        return SkuPricingConsiderationContext.skuPricingService.get();
+        return SkuPricingConsiderationContext.skuPricingConsiderationContext.get().pricingService;
     }
     
     public static void setSkuPricingService(DynamicSkuPricingService skuPricingService) {
-        SkuPricingConsiderationContext.skuPricingService.set(skuPricingService);
+        SkuPricingConsiderationContext.skuPricingConsiderationContext.get().pricingService = skuPricingService;
     }
     
     public static boolean hasDynamicPricing() {
         return (
-                    getSkuPricingConsiderationContext() != null && 
-                getSkuPricingConsiderationContext().size() >= 0 &&
-                    getSkuPricingService() != null
-                   ); 
+            getSkuPricingConsiderationContext() != null &&
+            getSkuPricingConsiderationContext().size() >= 0 &&
+            getSkuPricingService() != null
+        );
     }
+
+    protected DynamicSkuPricingService pricingService;
+    protected HashMap considerations;
 }

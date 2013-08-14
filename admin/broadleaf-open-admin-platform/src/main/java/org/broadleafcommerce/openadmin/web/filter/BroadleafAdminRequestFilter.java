@@ -59,6 +59,8 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
             filterChain.doFilter(request, response);
         } catch (SiteNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } finally {
+            requestProcessor.postProcess(new ServletWebRequest(request, response));
         }
     }
 }

@@ -306,6 +306,12 @@
                 <artifactId>hibernate-ehcache</artifactId>
                 <version>4.1.10.Final</version>
                 <scope>compile</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>ehcache-core</artifactId>
+                        <groupId>net.sf.ehcache</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -692,9 +698,9 @@
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
-                <version>2.4.2</version>
+                <version>2.7.2</version>
                 <scope>compile</scope>
-                <type>pom</type>
+                <type>jar</type>
             </dependency>
 
             <!--Spring Libraries-->
@@ -1006,24 +1012,12 @@
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-core-asl</artifactId>
-                <version>1.9.12</version>
+                <version>1.9.2</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.12</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-jaxrs</artifactId>
-                <version>1.9.12</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-xc</artifactId>
                 <version>1.9.12</version>
                 <scope>compile</scope>
             </dependency>
