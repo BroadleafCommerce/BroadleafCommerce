@@ -48,6 +48,7 @@ public class Field {
     protected Boolean isMainEntityLink;
     protected Boolean isFilterSortDisabled;
     protected Boolean isDerived;
+    protected Boolean isLargeEntry;
     
     /* ************ */
     /* WITH METHODS */
@@ -140,6 +141,11 @@ public class Field {
     
     public Field withDerived(Boolean isDerived) {
         setDerived(isDerived);
+        return this;
+    }
+    
+    public Field withLargeEntry(Boolean isLargeEntry) {
+        setLargeEntry(isLargeEntry);
         return this;
     }
 
@@ -333,6 +339,14 @@ public class Field {
     
     public void setDerived(Boolean isDerived) {
         this.isDerived = isDerived;
+    }
+    
+    public Boolean getIsLargeEntry() {
+        return isLargeEntry == null ? false : isLargeEntry;
+    }
+    
+    public void setLargeEntry(Boolean isLargeEntry) {
+        this.isLargeEntry = isLargeEntry;
     }
 
 }
