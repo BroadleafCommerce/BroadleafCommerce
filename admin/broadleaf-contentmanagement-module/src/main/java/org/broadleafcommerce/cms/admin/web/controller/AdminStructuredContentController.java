@@ -73,7 +73,7 @@ public class AdminStructuredContentController extends AdminBasicEntityController
             .withCriteriaName("constructForm")
             .withPropertyName("structuredContentType")
             .withPropertyValue(ef.findField("structuredContentType").getValue());
-        EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id);
+        EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id, null);
         ef.putDynamicFormInfo("structuredContentType", info);
         ef.putDynamicForm("structuredContentType", dynamicForm);
         
@@ -102,7 +102,11 @@ public class AdminStructuredContentController extends AdminBasicEntityController
         if (result.hasErrors()) {
             info = entityForm.getDynamicFormInfo("structuredContentType");
             info.setPropertyValue(entityForm.findField("structuredContentType").getValue());
-            EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id);
+            
+            //grab back the dynamic form that was actually put in
+            EntityForm inputDynamicForm = entityForm.getDynamicForm("structuredContentType");
+            
+            EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id, inputDynamicForm);
             entityForm.putDynamicForm("structuredContentType", dynamicForm);
         }
         
