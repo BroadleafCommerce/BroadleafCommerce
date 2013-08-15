@@ -82,6 +82,8 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 metadata.getFieldType() == SupportedFieldType.FOREIGN_KEY ||
                 metadata.getFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY ||
                 metadata.getFieldType() == SupportedFieldType.STRING ||
+                metadata.getFieldType() == SupportedFieldType.HTML ||
+                metadata.getFieldType() == SupportedFieldType.HTML_BASIC ||
                 metadata.getFieldType() == SupportedFieldType.ID) &&
                 (property == null ||
                         !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
@@ -140,6 +142,8 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     Date date = (Date) populateValueRequest.getFieldManager().getFieldValue(instance, populateValueRequest.getProperty().getName());
                     String oldValue = null;
                     if (date != null) {
+                        //don't resolve seconds
+                        date.setSeconds(0);
                         oldValue = populateValueRequest.getDataFormatProvider().getSimpleDateFormatter().format(date);
                     }
                     dirty = !StringUtils.equals(oldValue, populateValueRequest.getRequestedValue());
