@@ -355,7 +355,7 @@ var BLCAdmin = (function($) {
                 }
             });
             
-            $('textarea.autosize').autosize();
+            $container.find('textarea.autosize').autosize();
             
             $container.find(".color-picker").spectrum({
                 showButtons: false,
