@@ -44,6 +44,10 @@
             <span th:case="'selectAsset'" th:remove="tag">
                 [[#{modal.title.selectAsset}]]
             </span>
+
+            <span th:case="'custom'" th:remove="tag">
+                [[#{${modalTitle}}]]
+            </span>
             
             <span th:case="*" th:remove="tag">
                 [[#{modal.title.default}]]

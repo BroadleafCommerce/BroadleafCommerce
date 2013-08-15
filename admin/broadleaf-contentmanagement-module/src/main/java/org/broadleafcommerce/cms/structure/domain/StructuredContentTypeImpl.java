@@ -74,7 +74,7 @@ public class StructuredContentTypeImpl implements StructuredContentType, AdminMa
 
     @ManyToOne(targetEntity = StructuredContentFieldTemplateImpl.class)
     @JoinColumn(name="SC_FLD_TMPLT_ID")
-    @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Content_Template", order=2, group = "StructuredContentTypeImpl_Details", requiredOverride = RequiredOverride.REQUIRED, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Content_Template", prominent = true, order=2, group = "StructuredContentTypeImpl_Details", requiredOverride = RequiredOverride.REQUIRED, visibility = VisibilityEnum.HIDDEN_ALL)
     protected StructuredContentFieldTemplate structuredContentFieldTemplate;
 
     @Override
