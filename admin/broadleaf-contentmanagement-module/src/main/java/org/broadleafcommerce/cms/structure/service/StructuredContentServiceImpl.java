@@ -25,6 +25,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.common.AbstractContentService;
+import org.broadleafcommerce.cms.field.domain.FieldDefinition;
+import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.structure.dao.StructuredContentDao;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
@@ -39,9 +41,11 @@ import org.broadleafcommerce.cms.structure.message.ArchivedStructuredContentPubl
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
@@ -50,8 +54,10 @@ import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -290,6 +296,27 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         return itemCriteriaDTOList;
     }            
     
+    /**
+     * Parses the given {@link StructuredContent} into its {@link StructuredContentDTO} representation. This will also
+     * format the values from {@link StructuredContentDTO#getValues()} into their actual data types. For instance, if the
+     * given {@link StructuredContent} has a DATE field, then this method will ensure that the resulting object in the values
+     * map of the DTO is a {@link Date} rather than just a String representing a date.
+     * 
+     * Current support of parsing field types is:
+     *    DATE - {@link Date}
+     *    BOOLEAN - {@link Boolean}
+     *    DECIMAL - {@link BigDecimal}
+     *    INTEGER - {@link Integer}
+     *    MONEY - {@link Money}
+     * 
+     * All other fields are treated as strings. This will also fix URL strings that have the CMS prefix (like images) by
+     * prepending the standard CMS prefix with the particular environment prefix 
+     * 
+     * @param sc
+     * @param scDTO
+     * @param secure
+     * @see {@link StaticAssetService#getStaticAssetEnvironmentUrlPrefix()}
+     */
     protected void buildFieldValues(StructuredContent sc, StructuredContentDTO scDTO, boolean secure) {
         String envPrefix = staticAssetService.getStaticAssetEnvironmentUrlPrefix();
         if (envPrefix != null && secure) {
@@ -307,7 +334,50 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
                 String fldValue = originalValue.replaceAll(cmsPrefix, envPrefix+cmsPrefix);
                 scDTO.getValues().put(fieldKey, fldValue);
             } else {
-                scDTO.getValues().put(fieldKey, originalValue);
+                FieldDefinition definition = null;
+                Iterator<FieldGroup> groupIterator = scf.getStructuredContent().getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups().iterator();
+                while (groupIterator.hasNext() && definition == null) {
+                    FieldGroup group = groupIterator.next();
+                    for (FieldDefinition def : group.getFieldDefinitions()) {
+                        if (def.getName().equals(fieldKey)) {
+                            definition = def;
+                            break;
+                        }
+                    }
+                }
+                
+                if (definition != null) {
+                    Object value = null;
+                    if (originalValue != null) {
+                        switch (definition.getFieldType()) {
+                            case DATE:
+                                try {
+                                    value = FormatUtil.getDateFormat().parse(originalValue);
+                                } catch (Exception e) {
+                                    value = originalValue;
+                                }
+                                break;
+                            case BOOLEAN:
+                                value = new Boolean(originalValue);
+                                break;
+                            case DECIMAL:
+                                value = new BigDecimal(originalValue);
+                                break;
+                            case INTEGER:
+                                value = Integer.parseInt(originalValue);
+                                break;
+                            case MONEY:
+                                value = new Money(originalValue);
+                                break;
+                            default:
+                                value = originalValue;
+                                break;
+                        }
+                    }
+                    scDTO.getValues().put(fieldKey, value);
+                } else {
+                    scDTO.getValues().put(fieldKey,  sc.getStructuredContentFields().get(fieldKey).getValue());
+                }
             }
         }
     }
