@@ -53,6 +53,7 @@ import org.broadleafcommerce.openadmin.server.domain.SandBoxOperationType;
 import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -162,6 +163,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public StructuredContent updateStructuredContent(StructuredContent content, SandBox destSandbox) {
         if (content.getLockedFlag()) {
             throw new IllegalArgumentException("Unable to update a locked record");
@@ -231,6 +233,7 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
      * Saves the given <b>type</b> and returns the merged instance
      */
     @Override
+    @Transactional("blTransactionManager")
     public StructuredContentType saveStructuredContentType(StructuredContentType type) {
         return structuredContentDao.saveStructuredContentType(type);
     }
