@@ -119,7 +119,7 @@ public class StructuredContentImpl implements StructuredContent {
     protected Locale locale;
 
     @Column(name = "PRIORITY", nullable = false)
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Priority", order = 3, 
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Priority", order = 3, prominent = true,
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
     @Index(name="CONTENT_PRIORITY_INDEX", columnNames={"PRIORITY"})
     protected Integer priority;
@@ -200,7 +200,7 @@ public class StructuredContentImpl implements StructuredContent {
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
     @JoinColumn(name="SC_TYPE_ID")
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Type", order = 2, 
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Type", order = 2, prominent = true,
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         requiredOverride = RequiredOverride.REQUIRED)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "name")
