@@ -105,7 +105,7 @@ public class PageImpl implements Page, AdminMainEntity {
     @ManyToOne(targetEntity = PageTemplateImpl.class)
     @JoinColumn(name = "PAGE_TMPLT_ID")
     @AdminPresentation(friendlyName = "PageImpl_Page_Template", order = 2,
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
+        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic, prominent = true,
         requiredOverride = RequiredOverride.REQUIRED)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "templateName")
     protected PageTemplate pageTemplate;
