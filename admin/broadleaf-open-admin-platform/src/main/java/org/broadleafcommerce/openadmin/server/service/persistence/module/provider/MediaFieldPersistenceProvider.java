@@ -13,9 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -32,13 +39,6 @@ import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Brian Polster
@@ -95,14 +95,26 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     persist = true;
                 }
 
-                if (!media.equals(newMedia)) {
+                Map description = BeanUtils.describe(media);
+                for (Object temp : description.keySet()) {
+                    String property = (String) temp;
+                    if (!property.equals("id")) {
+                        String prop1 = String.valueOf(description.get(property));
+                        String prop2 = String.valueOf(BeanUtils.getProperty(newMedia, property));
+                        if (!prop1.equals(prop2)) {
+                            dirty = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (dirty) {
                     updateMediaFields(media, newMedia);
                     if (persist) {
                         populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(media);
                     }
                     populateValueRequest.getFieldManager().setFieldValue(instance,
                             populateValueRequest.getProperty().getName(), media);
-                    dirty = true;
                 }
             } else {
                 throw new UnsupportedOperationException("MediaFields only work with Media types.");
@@ -177,7 +189,6 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     }
 
     protected String convertMediaToJson(Media media) {
-        String json;
         try {
             ObjectMapper om = new ObjectMapper();
             return om.writeValueAsString(media);
