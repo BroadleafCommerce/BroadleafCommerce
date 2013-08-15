@@ -73,7 +73,7 @@ public class AdminPageController extends AdminBasicEntityController {
             .withCriteriaName("constructForm")
             .withPropertyName("pageTemplate")
             .withPropertyValue(ef.findField("pageTemplate").getValue());
-        EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id);
+        EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id, null);
         ef.putDynamicFormInfo("pageTemplate", info);
         ef.putDynamicForm("pageTemplate", dynamicForm);
         
@@ -101,7 +101,11 @@ public class AdminPageController extends AdminBasicEntityController {
         if (result.hasErrors()) {
             info = entityForm.getDynamicFormInfo("pageTemplate");
             info.setPropertyValue(entityForm.findField("pageTemplate").getValue());
-            EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id);
+            
+            //grab back the dynamic form that was actually put in
+            EntityForm inputDynamicForm = entityForm.getDynamicForm("pageTemplate");
+            
+            EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id, inputDynamicForm);
             entityForm.putDynamicForm("pageTemplate", dynamicForm);
         }
         

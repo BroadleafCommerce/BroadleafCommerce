@@ -198,12 +198,16 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * the fields in this dynamic form from the database. This method is invoked when the initial view of a page containing
      * a dynamic form is triggered.
      * 
+     * Optionally, you can pass in a pre-existing dynamic form to this method that already has updated values. Example usage
+     * would be for after validation has failed and you do not want to lookup old values from the database again.
+     * 
      * @param info
      * @param entityId
+     * @param dynamicForm optional dynamic form that already has values to fill out
      * @return the entity form
      * @throws ServiceException
      */
-    protected EntityForm getDynamicFieldTemplateForm(DynamicEntityFormInfo info, String entityId) 
+    protected EntityForm getDynamicFieldTemplateForm(DynamicEntityFormInfo info, String entityId, EntityForm dynamicFormOverride) 
             throws ServiceException {
         // We need to inspect with the second custom criteria set to the id of
         // the desired structured content type
@@ -216,6 +220,15 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         // of this particular structured content entity
         ppr.setCustomCriteria(new String[] { info.getCriteriaName(), entityId });
         Entity entity = service.getRecord(ppr, entityId, cmd, true);
+        
+        // override the results of the entity with the dynamic form passed in
+        if (dynamicFormOverride != null) {
+            dynamicFormOverride.clearFieldsMap();
+            Map<String, Field> fieldOverrides = dynamicFormOverride.getFields();
+            for (Entry<String, Field> override : fieldOverrides.entrySet()) {
+                entity.getPMap().get(override.getKey()).setValue(override.getValue().getValue());
+            }
+        }
         
         // Assemble the dynamic form for structured content type
         EntityForm dynamicForm = formService.createEntityForm(cmd, entity);
