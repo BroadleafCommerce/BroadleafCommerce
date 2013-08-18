@@ -31,7 +31,7 @@ import java.io.Serializable;
  */
 public class GeneratedResource extends InMemoryResource implements Serializable {
     
-    private static final long serialVersionUID = 4138670259146964383L;
+    private static final long serialVersionUID = 1L;
     
     protected long timeGenerated;
     protected String hashRepresentation;
