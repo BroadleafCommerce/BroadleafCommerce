@@ -386,6 +386,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
         
         entityFormValidator.validate(entityForm, entity, result);
         if (result.hasErrors()) {
+            model.addAttribute("headerFlash", "save.unsuccessful");
+            model.addAttribute("headerFlashAlert", true);
+            
             Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
             ClassMetadata cmd = service.getClassMetadata(ppr);
             entityForm.clearFieldsMap();
