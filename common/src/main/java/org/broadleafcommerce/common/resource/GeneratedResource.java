@@ -21,7 +21,6 @@ import org.springframework.security.util.InMemoryResource;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 /**
  * An in memory generated resource. This class also overrides some parent Spring AbstractResource methods to ensure
@@ -29,9 +28,7 @@ import java.io.Serializable;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class GeneratedResource extends InMemoryResource implements Serializable {
-    
-    private static final long serialVersionUID = 1L;
+public class GeneratedResource extends InMemoryResource {
     
     protected long timeGenerated;
     protected String hashRepresentation;
