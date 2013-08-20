@@ -279,6 +279,7 @@ $(document).ready(function() {
             var $valueField = $this.find('input.value');
             $valueField.val(fields['id']);
             $this.find('span.display-value').html(fields[displayValueProp]);
+            $this.find('input.hidden-display-value').val(fields[displayValueProp]);
             
             // Ensure that the clear button shows up after selecting a value
             $this.find('button.clear-foreign-key').show();
