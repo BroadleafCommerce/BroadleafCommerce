@@ -36,6 +36,7 @@ public class ProductOptionType implements Serializable, BroadleafEnumerationType
     public static final ProductOptionType SIZE  = new ProductOptionType("SIZE","Size");
     public static final ProductOptionType DATE  = new ProductOptionType("DATE","Date");
     public static final ProductOptionType TEXT  = new ProductOptionType("TEXT","Text");
+    public static final ProductOptionType TEXTAREA = new ProductOptionType("TEXTAREA", "Textarea");
     public static final ProductOptionType BOOLEAN  = new ProductOptionType("BOOLEAN","Boolean");
     public static final ProductOptionType DECIMAL  = new ProductOptionType("DECIMAL","Decimal");
     public static final ProductOptionType INTEGER  = new ProductOptionType("INTEGER","Integer");
