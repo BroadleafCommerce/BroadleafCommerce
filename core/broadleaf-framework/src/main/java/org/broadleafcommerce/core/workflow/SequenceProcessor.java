@@ -127,7 +127,7 @@ public class SequenceProcessor extends BaseProcessor {
      *            the current activity in the iteration
      */
     protected boolean processShouldStop(ProcessContext<? extends Object> context, Activity<? extends ProcessContext<? extends Object>> activity) {
-        if (context != null && context.isStopped()) {
+        if (context == null || context.isStopped()) {
             LOG.info("Interrupted workflow as requested by:" + activity.getBeanName());
             return true;
         }

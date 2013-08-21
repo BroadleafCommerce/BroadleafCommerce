@@ -62,7 +62,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         // but we will preven the workflow from continuing to execute
         if (orderItemRequestDTO.getQuantity() == null || orderItemRequestDTO.getQuantity() == 0) {
             context.stopProcess();
-            return null;
+            return context;
         }
 
         // Throw an exception if the user tried to add a negative quantity of something
