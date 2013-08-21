@@ -29,6 +29,7 @@ public abstract class TranslatableException extends Exception {
     private static final long serialVersionUID = 1L;
 
     protected int code;
+    protected Object[] messageParams = null;
 
     /**
      * Create a new exception instance
@@ -37,8 +38,20 @@ public abstract class TranslatableException extends Exception {
      * @param message the message that will be posted to stack traces on the console (not necessarily intended for the user)
      */
     public TranslatableException(int code, String message) {
+        this(code, message, null);
+    }
+
+    /**
+     * Creates a new exception instance
+     * 
+     * @param code an integer code that represents this exception state
+     * @param message the message that will be posted to stack traces on the console (not necessarily intended for the user)
+     * @param messageParams An array of objects that may be used to dymanically populate a message
+     */
+    public TranslatableException(int code, String message, Object[] messageParams) {
         super(message);
         this.code = code;
+        this.messageParams = messageParams;
     }
 
     /**
@@ -48,6 +61,22 @@ public abstract class TranslatableException extends Exception {
      */
     public int getCode() {
         return code;
+    }
+
+    /**
+     * Retrieves the message key that the i18n message will be keyed by.
+     * @return
+     */
+    public String getMessageKey() {
+        return getClass().getSimpleName() + "_" + code;
+    }
+
+    /**
+     * Retrieves the message parameters, if any, that will be used to populate any dynamic message parameters.
+     * @return
+     */
+    public Object[] getMessageParameters() {
+        return this.messageParams;
     }
 
     /**
@@ -70,7 +99,7 @@ public abstract class TranslatableException extends Exception {
             String exCode = getMessageKey();
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
             if (context != null && context.getMessageSource() != null) {
-                response = context.getMessageSource().getMessage(exCode, null, context.getJavaLocale());
+                response = context.getMessageSource().getMessage(exCode, this.messageParams, getMessage(), context.getJavaLocale());
                 if (response.equals(exCode)) {
                     response = getMessage();
                 }
@@ -79,10 +108,6 @@ public abstract class TranslatableException extends Exception {
             response = getMessage();
         }
         return response;
-    }
-
-    public String getMessageKey() {
-        return getClass().getSimpleName() + "_" + code;
     }
 
     /**
