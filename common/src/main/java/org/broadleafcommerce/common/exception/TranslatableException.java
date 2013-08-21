@@ -26,6 +26,8 @@ import org.springframework.context.NoSuchMessageException;
  */
 public abstract class TranslatableException extends Exception {
 
+    private static final long serialVersionUID = 1L;
+
     protected int code;
 
     /**
@@ -65,7 +67,7 @@ public abstract class TranslatableException extends Exception {
     public String getLocalizedMessage() {
         String response = getMessage();
         try {
-            String exCode = getClass().getSimpleName() + "_" + code;
+            String exCode = getMessageKey();
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
             if (context != null && context.getMessageSource() != null) {
                 response = context.getMessageSource().getMessage(exCode, null, context.getJavaLocale());
@@ -77,6 +79,10 @@ public abstract class TranslatableException extends Exception {
             response = getMessage();
         }
         return response;
+    }
+
+    public String getMessageKey() {
+        return getClass().getSimpleName() + "_" + code;
     }
 
     /**
