@@ -68,14 +68,14 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
         }
         for (DiscreteOrderItem i : orderItems) {
             Map<String, OrderItemAttribute> attributeValues = i.getOrderItemAttributes();
-            Product product = ((DiscreteOrderItem) i).getProduct();
+            Product product = i.getProduct();
 
             if (product != null && product.getProductOptions() != null && product.getProductOptions().size() > 0) {
                 for (ProductOption productOption : product.getProductOptions()) {
                     if (productOption.getRequired() && (productOption.getProductOptionValidationStrategyType() == null ||
                             productOption.getProductOptionValidationStrategyType().getRank() <= getProductOptionValidationStrategyType().getRank())) {
                         if (attributeValues.get(productOption.getAttributeName()) == null || StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()).getValue())) {
-                            throw new RequiredAttributeNotProvidedException("Unable to validate cart, product  (" + product.getId() + ") required attribute was not provided: " + productOption.getAttributeName());
+                            throw new RequiredAttributeNotProvidedException("Unable to validate cart, product  (" + product.getId() + ") required attribute was not provided: " + productOption.getAttributeName(), productOption.getAttributeName());
                         }
                     }
                     if (productOption.getProductOptionValidationType() != null && (productOption.getProductOptionValidationStrategyType() == null || productOption.getProductOptionValidationStrategyType().getRank() <= getProductOptionValidationStrategyType().getRank())) {

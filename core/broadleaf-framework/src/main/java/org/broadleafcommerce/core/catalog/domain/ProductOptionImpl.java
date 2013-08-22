@@ -116,7 +116,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     protected String errorCode;
 
     @Column(name = "ERROR_MESSAGE")
-    @AdminPresentation(friendlyName = "productOption_errorMessage", group = "productOption_validation")
+    @AdminPresentation(friendlyName = "productOption_errorMessage", group = "productOption_validation", translatable = true)
     protected String errorMessage;
 
     @OneToMany(mappedBy = "productOption", targetEntity = ProductOptionValueImpl.class, cascade = {CascadeType.ALL})
@@ -263,7 +263,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
 
     @Override
     public String getErrorMessage() {
-        return errorMessage;
+        return DynamicTranslationProvider.getValue(this, "errorMessage", errorMessage);
     }
 
     @Override
