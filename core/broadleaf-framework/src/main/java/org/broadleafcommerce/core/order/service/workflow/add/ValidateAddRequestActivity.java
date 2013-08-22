@@ -135,7 +135,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         if (sku == null && product != null) {
             // Set to the default sku
             if (product.getAdditionalSkus() != null && product.getAdditionalSkus().size() > 0 && !product.getCanSellWithoutOptions()) {
-                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku");
+                throw new RequiredAttributeNotProvidedException("Unable to find non-default sku matching given options and cannot sell default sku", null);
             }
             sku = product.getDefaultSku();
         }
