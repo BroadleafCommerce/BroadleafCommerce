@@ -8,6 +8,11 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 
+    <!--
+        By default, Broadleaf defines the Payment Activity to execute an AUTHORIZE AND DEBIT for a CHECKOUT flow.
+        The blPaymentWorkflow is invoked from the blPaymentServiceActivity in the blCheckoutWorkflow.
+    -->
+
     <bean p:order="1000" id="blPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.CompositeActivity">
         <property name="workflow" ref="blAuthorizeAndDebitWorkflow"/>
     </bean>
@@ -23,6 +28,13 @@
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
 
+    <!--
+        Below are the default payment modules registered with Broadleaf.
+        You may override these payment modules with your own implementation class if you would like to integrate with
+        a specific payment provider. Or, if you are using a payment integration module provided by Broadleaf, the module
+        should override the appropriate bean with its implementation (defined in the module applicationContext)
+        during the merge process.
+    -->
     <bean id="blGiftCardModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
     <bean id="blCreditCardModule" class="org.broadleafcommerce.core.payment.service.module.NullCreditCardPaymentModule"/>
     <bean id="blBankAccountModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
@@ -65,6 +77,25 @@
         <property name="paymentModule" ref="blAccountPaymentModule"/>
     </bean>
 
+    <!--
+        The PaymentModule interface defines common transaction methods that can be executed against a PaymentInfo on the order.
+        The PaymentProcessContextFactory determines which of those methods to execute based on the PaymentInfoType defined
+        for that workflow.
+
+        For example:
+        - AUTHORIZE
+        - DEBIT
+        - AUTHORIZEANDDEBIT
+        - CREDIT
+        - VOID
+        - BALANCE
+        - REVERSEAUTHORIZE
+        - PARTIALPAYMENT
+    -->
+
+    <!--
+        Below are predefined beans for an AUTHORIZE payment flow
+    -->
     <bean p:order="1000" id="blAuthorizeGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blGiftCardService"/>
         <property name="userName" value="web"/>
@@ -93,6 +124,9 @@
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
 
+    <!--
+        Below are predefined beans for a DEBIT payment flow
+    -->
     <bean p:order="1000" id="blDebitGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blGiftCardService"/>
         <property name="userName" value="web"/>
@@ -121,7 +155,9 @@
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
 
-
+    <!--
+        Below are predefined beans for an AUTHORIZE AND DEBIT payment flow
+    -->
     <bean p:order="1000" id="blAuthorizeAndDebitAccountCreditActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blAccountCreditPaymentService"/>
         <property name="userName" value="web"/>
@@ -185,6 +221,9 @@
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
 
+    <!--
+        Below are predefined beans for a CREDIT payment flow
+    -->
     <bean p:order="1000" id="blCreditCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCreditCardService"/>
         <property name="userName" value="web"/>
@@ -213,6 +252,9 @@
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
 
+    <!--
+        Below are predefined beans for a VOID payment flow
+    -->
     <bean p:order="1000" id="blVoidCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCreditCardService"/>
         <property name="userName" value="web"/>
@@ -241,6 +283,9 @@
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
 
+    <!--
+        Below are predefined beans for a REVERSEAUTHORIZE payment flow
+    -->
     <bean p:order="1000" id="blReverseAuthCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCreditCardService"/>
         <property name="userName" value="web"/>
@@ -269,6 +314,9 @@
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
 
+    <!--
+        Below are predefined beans for a PARTIALPAYMENT payment flow
+    -->
     <bean p:order="1000" id="blPartialPaymentCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCreditCardService"/>
         <property name="userName" value="web"/>
