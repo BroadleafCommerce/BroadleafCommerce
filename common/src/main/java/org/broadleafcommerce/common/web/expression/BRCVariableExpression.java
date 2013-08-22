@@ -25,7 +25,7 @@ import java.util.Date;
 
 
 /**
- * This Thymeleaf variable expression class serves to expose
+ * This Thymeleaf variable expression class serves to expose elements from the BroadleafRequestContext
  * 
  * @author Andre Azzolini (apazzolini)
  */
