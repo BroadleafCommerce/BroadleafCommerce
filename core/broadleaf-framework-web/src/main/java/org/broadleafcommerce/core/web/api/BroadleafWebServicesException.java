@@ -50,6 +50,8 @@ public class BroadleafWebServicesException extends RuntimeException {
 
     protected Map<String, Object[]> messages;
 
+    protected Map<String, String> translatedMessages;
+
     protected Locale locale;
 
     public BroadleafWebServicesException(int httpStatusCode, Locale locale, Map<String, Object[]> messages, Throwable cause) {
@@ -102,7 +104,32 @@ public class BroadleafWebServicesException extends RuntimeException {
         if (this.messages == null) {
             this.messages = new HashMap<String, Object[]>();
         }
-        return messages;
+        return this.messages;
+    }
+
+    /**
+     * Gets a map of messages that have already been translated. BLC provides a number of translation mechanisms 
+     * for entities in the DB.
+     * 
+     * @return
+     */
+    public Map<String,String> getTranslatedMessages() {
+        if (this.translatedMessages == null) {
+            this.translatedMessages = new HashMap<String, String>();
+        }
+        return this.translatedMessages;
+    }
+
+    /**
+     * Adds a translated message. The assumption is that the message added to this map does not need to be 
+     * translated or internationalized any further. It is already translated according to the user's Locale.
+     * @param key
+     * @param message
+     * @return
+     */
+    public BroadleafWebServicesException addTranslatedMessage(String key, String message) {
+        getTranslatedMessages().put(key, message);
+        return this;
     }
 
     /**
