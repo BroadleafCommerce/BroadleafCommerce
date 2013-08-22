@@ -58,6 +58,7 @@
             <list>
                 <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
                 <bean class="org.broadleafcommerce.common.web.expression.BRCVariableExpression" />
+                <bean class="org.broadleafcommerce.common.web.expression.PropertiesVariableExpression" />
             </list>
         </property>
     </bean>
