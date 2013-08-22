@@ -5,6 +5,7 @@
 <!--    additionalTabClasses - any additional CSS classes to apply to the tabs -->
 <!--    showSingleTab - boolean value determining whether or not to show tabs if there is only one -->
 <!--    hideTranslations - boolean value determining whether or not to hide the translation icon -->
+<!--    hideActions - boolean value determining whether or not to hide the entity form actions -->
 </comment>
 
 <blc:form th:object="${entityForm}"
@@ -74,7 +75,7 @@
         </li>
     </ul>
     
-    <div class="entity-form-actions">
+    <div class="entity-form-actions" th:unless="${hideActions}">
         <button th:each="action : ${entityForm.actions}" 
             class="button radius dark" 
             th:type="${action.buttonType}"

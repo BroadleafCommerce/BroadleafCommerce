@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
@@ -80,7 +81,7 @@ import javax.persistence.Table;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OfferImpl_baseOffer")
 @SQLDelete(sql="UPDATE BLC_OFFER SET ARCHIVED = 'Y' WHERE OFFER_ID = ?")
-public class OfferImpl implements Offer, Status {
+public class OfferImpl implements Offer, Status, AdminMainEntity {
 
     public static final long serialVersionUID = 1L;
 
@@ -753,6 +754,11 @@ public class OfferImpl implements Offer, Status {
     }
 
     @Override
+    public String getMainEntityName() {
+        return getName();
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -846,4 +852,5 @@ public class OfferImpl implements Offer, Status {
             }
         }
     }
+
 }

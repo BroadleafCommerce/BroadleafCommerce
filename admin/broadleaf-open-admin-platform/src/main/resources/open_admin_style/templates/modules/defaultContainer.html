@@ -1,15 +1,44 @@
-<section role="main">
-    <div class="four columns centered" th:if="${headerFlash}">
-        <div class="alert-box" th:classappend="${headerFlashAlert != null and headerFlashAlert ? 'alert' : 'success'}" th:inline="text">
-            [[#{${headerFlash}}]]
-            <a href="" class="close">&times;</a>
+<div class="section-container" role="main">
+    <div class="breadcrumb-container">
+        <ul class="breadcrumbs">
+            <li>
+                <span th:text="#{${currentAdminModule.moduleKey}}" />
+            </li>
+            <li>
+                <a blc_admin:admin_section_href="${currentAdminSection}" th:inline="text">
+                    [[#{${currentAdminSection.sectionKey}}]]
+                </a>
+            </li>
+            <li th:if="${entityForm}">
+                <span th:text="${entityForm.mainEntityName}" />
+            </li>
+        </ul>
+        <div th:if="${entityForm}" class="entity-form-actions">
+            <button th:each="action : ${entityForm.actions}" 
+                class="small button radius dark" 
+                th:type="${action.buttonType}"
+                th:classappend="${action.buttonClass}">
+                <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+            </button>
         </div>
-    </div>
     
-    <div class="row">
-        <div class="twelve columns">
-            <div id="sectionKey" th:text="${sectionKey}" style="display: none;" />
-            <div th:substituteby="${'views/' + viewType}" />
-        </div>
+        <div class="clear"></div>
     </div>
-</section>
+    <div class="fake-breadcrumb-container" style="display: none;" />
+
+    <section class="main">
+        <div class="four columns centered" th:if="${headerFlash}">
+            <div class="alert-box" th:classappend="${headerFlashAlert != null and headerFlashAlert ? 'alert' : 'success'}" th:inline="text">
+                [[#{${headerFlash}}]]
+                <a href="" class="close">&times;</a>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="twelve columns">
+                <div id="sectionKey" th:text="${sectionKey}" style="display: none;" />
+                <div th:substituteby="${'views/' + viewType}" />
+            </div>
+        </div>
+    </section>
+</div>

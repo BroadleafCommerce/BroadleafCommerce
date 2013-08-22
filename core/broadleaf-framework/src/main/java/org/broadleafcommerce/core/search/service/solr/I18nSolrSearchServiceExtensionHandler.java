@@ -83,28 +83,24 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
         if (field.getTranslatable()) {
             result = ExtensionResultStatusType.HANDLED;
 
-            try {
-                for (Locale locale : locales) {
-                    String localeCode = locale.getLocaleCode();
-                    TranslationConsiderationContext.setTranslationConsiderationContext(translationEnabled);
-                    TranslationConsiderationContext.setTranslationService(translationService);
-                    BroadleafRequestContext tempContext = BroadleafRequestContext.getBroadleafRequestContext();
-                    if (tempContext == null) {
-                        tempContext = new BroadleafRequestContext();
-                    }
-                    tempContext.setLocale(locale);
-                    BroadleafRequestContext.setBroadleafRequestContext(tempContext);
-
-                    final Object propertyValue;
-                    if (propertyName.contains(ATTR_MAP)) {
-                        propertyValue = PropertyUtils.getMappedProperty(product, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
-                    } else {
-                        propertyValue = PropertyUtils.getProperty(product, propertyName);
-                    }
-                    values.put(localeCode, propertyValue);
+            for (Locale locale : locales) {
+                String localeCode = locale.getLocaleCode();
+                TranslationConsiderationContext.setTranslationConsiderationContext(translationEnabled);
+                TranslationConsiderationContext.setTranslationService(translationService);
+                BroadleafRequestContext tempContext = BroadleafRequestContext.getBroadleafRequestContext();
+                if (tempContext == null) {
+                    tempContext = new BroadleafRequestContext();
                 }
-            } finally {
-                ThreadLocalManager.remove();
+                tempContext.setLocale(locale);
+                BroadleafRequestContext.setBroadleafRequestContext(tempContext);
+
+                final Object propertyValue;
+                if (propertyName.contains(ATTR_MAP)) {
+                    propertyValue = PropertyUtils.getMappedProperty(product, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
+                } else {
+                    propertyValue = PropertyUtils.getProperty(product, propertyName);
+                }
+                values.put(localeCode, propertyValue);
             }
         }
         return result;

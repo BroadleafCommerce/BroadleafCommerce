@@ -20,6 +20,7 @@
     class="additional-foreign-key-container twelve">
     <input type="hidden" class="display-value-property" th:value="*{fields['__${field.name}__'].foreignKeyDisplayValueProperty}"  />
     <input type="hidden" class="value" th:field="*{fields['__${field.name}__'].value}" th:attr="data-onchangetrigger=${field.onChangeTrigger}" />
+    <input type="hidden" class="hidden-display-value" th:field="*{fields['__${field.name}__'].displayValue}" />
     
     <label th:for="${field.name}" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
     

@@ -96,8 +96,14 @@ public class TQRestriction {
         StringBuilder sb = new StringBuilder("(");
         if (expression != null && operation != null) {
             sb.append(expression).append(" ").append(operation);
+
             if (parameter != null) {
-                sb.append(" :").append(parameterName);
+                sb.append(' ');
+                String pname = ':' + parameterName;
+                if (operation.equals("in")) {
+                    pname = "(" + pname + ")";
+                }
+                sb.append(pname);
                 paramMap.put(parameterName, parameter);
             }
         }
