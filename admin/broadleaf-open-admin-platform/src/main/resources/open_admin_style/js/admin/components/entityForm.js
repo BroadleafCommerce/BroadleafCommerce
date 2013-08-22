@@ -16,6 +16,9 @@ $(document).ready(function() {
 	// form and submit it normally (not via AJAX).
 	$('body').on('click', 'button.delete-button', function(event) {
 		var $form = $(this).closest('form');
+		if (!$form.length) {
+		    $form = $('.entity-edit form');
+		}
 		var currentAction = $form.attr('action');
 		
 		$form.attr('action', currentAction + '/delete');
@@ -30,6 +33,10 @@ $(document).ready(function() {
 	    } else {
 	        $form = $(this).closest('form')
 	    }
+
+		if (!$form.length) {
+		    $form = $('.entity-edit form');
+		}
 	    
 	    $form.submit();
 		event.preventDefault();
