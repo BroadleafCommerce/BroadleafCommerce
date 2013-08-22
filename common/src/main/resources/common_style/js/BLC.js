@@ -4,7 +4,8 @@ var BLC = (function($) {
     var redirectUrlDiv = "blc-redirect-url",
         extraDataDiv   = "blc-extra-data",
         preAjaxCallbackHandlers = [],
-        servletContext = "//BLC-SERVLET-CONTEXT";
+        servletContext = "//BLC-SERVLET-CONTEXT",
+        siteBaseUrl = "//BLC-SITE-BASEURL";
     
     function addPreAjaxCallbackHandler(fn) {
         preAjaxCallbackHandlers.push(fn);
@@ -169,6 +170,7 @@ var BLC = (function($) {
         defaultErrorHandler : defaultErrorHandler,
         serializeObject : serializeObject,
         addUrlParam : addUrlParam,
-        servletContext : servletContext
+        servletContext : servletContext,
+        siteBaseUrl : siteBaseUrl
     }
 })($);

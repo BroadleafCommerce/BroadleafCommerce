@@ -17,7 +17,9 @@
 package org.broadleafcommerce.common.web.resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
 import org.broadleafcommerce.common.resource.GeneratedResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -30,6 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 
 @Component("blBLCJSResourceHandler")
 public class BLCJSResourceHandler extends AbstractGeneratedResourceHandler {
+    
+    @Autowired
+    protected RuntimeEnvironmentPropertiesManager propMgr;
 
     @Override
     public boolean canHandle(String path) {
@@ -50,6 +55,11 @@ public class BLCJSResourceHandler extends AbstractGeneratedResourceHandler {
         if (StringUtils.isNotBlank(contents)) {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 	        newContents = newContents.replace("//BLC-SERVLET-CONTEXT", request.getContextPath());
+
+	        String siteBaseUrl = propMgr.getProperty("site.baseurl");
+	        if (StringUtils.isNotBlank(siteBaseUrl)) {
+	            newContents = newContents.replace("//BLC-SITE-BASEURL", siteBaseUrl);
+	        }
         }
 	    
         GeneratedResource gr = new GeneratedResource(newContents.getBytes(), path);
