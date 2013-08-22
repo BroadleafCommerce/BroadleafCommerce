@@ -397,7 +397,24 @@ var BLCAdmin = (function($) {
     	        modalsCopy[i] = modals[i];
     	    }
     	    return modalsCopy;
+    	},
+ 
+    	getForm : function($element) {
+    	    var $form;
+    	    
+    	    if ($(this).closest('.modal').length > 0) {
+    	        $form = $(this).closest('.modal').find('.modal-body form');
+    	    } else {
+    	        $form = $(this).closest('form')
+    	    }
+    
+    		if (!$form.length) {
+    		    $form = $('.entity-edit form');
+    		}
+    	    
+    		return $form;
     	}
+ 
 	};
 	
 })(jQuery);
@@ -499,9 +516,9 @@ $(window).on('scroll', function() {
         $bcc.width('');
         $fbcc.hide();
     } else {
+        $fbcc.show();
         $bcc.addClass('breadcrumb-fixed');
         $bcc.outerWidth($('section.main').outerWidth());
         $('.fake-breadcrumb-container').outerHeight($bcc.outerHeight());
-        $fbcc.show();
     }
 });
