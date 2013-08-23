@@ -30,7 +30,7 @@
 
     <!--
         Below are the default payment modules registered with Broadleaf.
-        You may override these payment modules with your own implementation class if you would like to integrate with
+        You should override these payment modules with your own implementation class if you would like to integrate with
         a specific payment provider. Or, if you are using a payment integration module provided by Broadleaf, the module
         should override the appropriate bean with its implementation (defined in the module applicationContext)
         during the merge process.
@@ -42,10 +42,8 @@
     <bean id="blElectronicCheckPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
     <bean id="blWirePaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
     <bean id="blMoneyOrderPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
-    <bean id="blAccountCreditPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
     <bean id="blCustomerCreditPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
-    <bean id="blAccountPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
-    
+
     <bean id="blGiftCardService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
         <property name="paymentModule" ref="blGiftCardModule"/>
     </bean>
@@ -67,14 +65,8 @@
     <bean id="blMoneyOrderPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
         <property name="paymentModule" ref="blMoneyOrderPaymentModule"/>
     </bean>
-    <bean id="blAccountCreditPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
-        <property name="paymentModule" ref="blAccountCreditPaymentModule"/>
-    </bean>
     <bean id="blCustomerCreditPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
         <property name="paymentModule" ref="blCustomerCreditPaymentModule"/>
-    </bean>
-    <bean id="blAccountPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
-        <property name="paymentModule" ref="blAccountPaymentModule"/>
     </bean>
 
     <!--
@@ -101,8 +93,8 @@
         <property name="userName" value="web"/>
         <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
     </bean>
-    <bean p:order="2000" id="blAuthorizeAccountPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
-        <property name="paymentService" ref="blAccountPaymentService"/>
+    <bean p:order="2000" id="blAuthorizeCustomerCreditPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCustomerCreditPaymentService"/>
         <property name="userName" value="web"/>
         <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
     </bean>
@@ -120,7 +112,7 @@
         <property name="activities">
             <list>
                 <ref bean="blAuthorizeGiftCardActivity" />
-                <ref bean="blAuthorizeAccountPaymentActivity" />
+                <ref bean="blAuthorizeCustomerCreditPaymentActivity" />
                 <ref bean="blAuthorizeCreditCardActivity" />
             </list>
         </property>
@@ -135,8 +127,8 @@
         <property name="userName" value="web"/>
         <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
     </bean>
-    <bean p:order="2000" id="blDebitAccountPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
-        <property name="paymentService" ref="blAccountPaymentService"/>
+    <bean p:order="2000" id="blDebitCustomerCreditPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCustomerCreditPaymentService"/>
         <property name="userName" value="web"/>
         <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
     </bean>
@@ -154,7 +146,7 @@
         <property name="activities">
             <list>
                 <ref bean="blDebitGiftCardActivity" />
-                <ref bean="blDebitAccountPaymentActivity" />
+                <ref bean="blDebitCustomerCreditPaymentActivity" />
                 <ref bean="blDebitCreditCardActivity" />
             </list>
         </property>
@@ -163,19 +155,10 @@
 
     <!--
         Below are predefined beans for an AUTHORIZE AND DEBIT payment flow
+        Note: leaving ordering the same for legacy users (removal because of AccountCredit and AccountPayment Payment types)
     -->
-    <bean p:order="1000" id="blAuthorizeAndDebitAccountCreditActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
-        <property name="paymentService" ref="blAccountCreditPaymentService"/>
-        <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
-    </bean>
     <bean p:order="2000" id="blAuthorizeAndDebitCustomerCreditActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCustomerCreditPaymentService"/>
-        <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
-    </bean>
-    <bean p:order="3000" id="blAuthorizeAndDebitAccountPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
-        <property name="paymentService" ref="blAccountPaymentService"/>
         <property name="userName" value="web"/>
         <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
     </bean>
@@ -222,9 +205,7 @@
         </property>
         <property name="activities">
             <list>
-                <ref bean="blAuthorizeAndDebitAccountCreditActivity" />
                 <ref bean="blAuthorizeAndDebitCustomerCreditActivity" />
-                <ref bean="blAuthorizeAndDebitAccountPaymentActivity" />
                 <ref bean="blAuthorizeAndDebitGiftCardActivity" />
                 <ref bean="blAuthorizeAndDebitCreditCardActivity" />
                 <ref bean="blAuthorizeAndDebitBankAccountActivity" />
@@ -250,8 +231,8 @@
         <property name="userName" value="web"/>
         <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
     </bean>
-    <bean p:order="3000" id="blCreditAccountPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
-        <property name="paymentService" ref="blAccountPaymentService"/>
+    <bean p:order="3000" id="blCreditCustomerCreditActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCustomerCreditPaymentService"/>
         <property name="userName" value="web"/>
         <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
     </bean>
@@ -265,7 +246,7 @@
             <list>
                 <ref bean="blCreditCreditCardActivity" />
                 <ref bean="blCreditGiftCardActivity" />
-                <ref bean="blCreditAccountPaymentActivity" />
+                <ref bean="blCreditCustomerCreditActivity" />
             </list>
         </property>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
@@ -284,8 +265,8 @@
         <property name="userName" value="web"/>
         <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
     </bean>
-    <bean p:order="3000" id="blVoidAccountPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
-        <property name="paymentService" ref="blAccountPaymentService"/>
+    <bean p:order="3000" id="blVoidCustomerCreditPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCustomerCreditPaymentService"/>
         <property name="userName" value="web"/>
         <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
     </bean>
@@ -299,7 +280,7 @@
             <list>
                 <ref bean="blVoidCreditCardActivity" />
                 <ref bean="blVoidGiftCardActivity" />
-                <ref bean="blVoidAccountPaymentActivity" />
+                <ref bean="blVoidCustomerCreditPaymentActivity" />
             </list>
         </property>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
@@ -318,8 +299,8 @@
         <property name="userName" value="web"/>
         <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
     </bean>
-    <bean p:order="3000" id="blReverseAuthAccountPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
-        <property name="paymentService" ref="blAccountPaymentService"/>
+    <bean p:order="3000" id="blReverseAuthCustomerCreditPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCustomerCreditPaymentService"/>
         <property name="userName" value="web"/>
         <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
     </bean>
@@ -333,7 +314,7 @@
             <list>
                 <ref bean="blReverseAuthCreditCardActivity" />
                 <ref bean="blReverseAuthGiftCardActivity" />
-                <ref bean="blReverseAuthAccountPaymentActivity" />
+                <ref bean="blReverseAuthCustomerCreditPaymentActivity" />
             </list>
         </property>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>

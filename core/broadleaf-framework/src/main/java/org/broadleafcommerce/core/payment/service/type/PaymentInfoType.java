@@ -43,6 +43,7 @@ public class PaymentInfoType implements Serializable, BroadleafEnumerationType {
     public static final PaymentInfoType WIRE = new PaymentInfoType("WIRE", "Wire Transfer");
     public static final PaymentInfoType MONEY_ORDER = new PaymentInfoType("MONEY_ORDER", "Money Order");
     public static final PaymentInfoType CUSTOMER_CREDIT = new PaymentInfoType("CUSTOMER_CREDIT", "Customer Credit");
+    @Deprecated
     public static final PaymentInfoType ACCOUNT = new PaymentInfoType("ACCOUNT", "Account");
 
     public static PaymentInfoType getInstance(final String type) {
