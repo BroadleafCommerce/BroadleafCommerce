@@ -59,6 +59,18 @@ public interface ProductBundle extends Product, Serializable {
     public void setPricingModel(ProductBundlePricingModelType pricingModel);
 
     /**
+     * Returns the retail price for this bundle
+     * @return
+     */
+    public Money getRetailPrice();
+
+    /**
+     * Returns the sale price for this bundle
+     * @return
+     */
+    public Money getSalePrice();
+
+    /**
      * @return the sum of the retail prices of the bundle items
      */
     public Money getBundleItemsRetailPrice();

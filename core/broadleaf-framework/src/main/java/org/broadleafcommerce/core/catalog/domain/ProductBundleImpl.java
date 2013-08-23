@@ -100,6 +100,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
         this.pricingModel = pricingModel == null ? null : pricingModel.getType();
     }
 
+    @Override
     public Money getRetailPrice() {
         if (ProductBundlePricingModelType.ITEM_SUM.equals(getPricingModel())) {
             return getBundleItemsRetailPrice();
@@ -109,6 +110,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
         return null;
     }
     
+    @Override
     public Money getSalePrice() {
         if (ProductBundlePricingModelType.ITEM_SUM.equals(getPricingModel())) {
             return getBundleItemsSalePrice();
