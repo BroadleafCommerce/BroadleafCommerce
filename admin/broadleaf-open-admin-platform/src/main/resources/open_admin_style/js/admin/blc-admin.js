@@ -402,10 +402,10 @@ var BLCAdmin = (function($) {
     	getForm : function($element) {
     	    var $form;
     	    
-    	    if ($(this).closest('.modal').length > 0) {
-    	        $form = $(this).closest('.modal').find('.modal-body form');
+    	    if ($element.closest('.modal').length > 0) {
+    	        $form = $element.closest('.modal').find('.modal-body form');
     	    } else {
-    	        $form = $(this).closest('form')
+    	        $form = $element.closest('form')
     	    }
     
     		if (!$form.length) {
