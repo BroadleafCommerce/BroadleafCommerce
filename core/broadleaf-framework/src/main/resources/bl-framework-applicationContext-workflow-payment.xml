@@ -88,20 +88,24 @@
     <!--
         Below are predefined beans for an AUTHORIZE payment flow
     -->
+    <bean id="blAuthorizeGiftCardRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blAuthorizeCustomerCreditRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blAuthorizeCreditCardRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+
     <bean p:order="1000" id="blAuthorizeGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blGiftCardService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blAuthorizeGiftCardRollbackHandler"/>
     </bean>
     <bean p:order="2000" id="blAuthorizeCustomerCreditPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCustomerCreditPaymentService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blAuthorizeCustomerCreditRollbackHandler"/>
     </bean>
     <bean p:order="3000" id="blAuthorizeCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCreditCardService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blAuthorizeCreditCardRollbackHandler"/>
     </bean>
     <bean id="blAuthorizeWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
@@ -122,20 +126,24 @@
     <!--
         Below are predefined beans for a DEBIT payment flow
     -->
+    <bean id="blDebitGiftCardRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blDebitCustomerCreditRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blDebitCreditCardRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+
     <bean p:order="1000" id="blDebitGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blGiftCardService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blDebitGiftCardRollbackHandler"/>
     </bean>
     <bean p:order="2000" id="blDebitCustomerCreditPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCustomerCreditPaymentService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blDebitCustomerCreditRollbackHandler"/>
     </bean>
     <bean p:order="3000" id="blDebitCreditCardActivity"  class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCreditCardService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blDebitCreditCardRollbackHandler"/>
     </bean>
     <bean id="blDebitWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
@@ -157,45 +165,54 @@
         Below are predefined beans for an AUTHORIZE AND DEBIT payment flow
         Note: leaving ordering the same for legacy users (removal because of AccountCredit and AccountPayment Payment types)
     -->
+    <bean id="blAuthorizeAndDebitCustomerCreditRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blAuthorizeAndDebitGiftCardRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blAuthorizeAndDebitCreditCardRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blAuthorizeAndDebitBankAccountRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blAuthorizeAndDebitCheckRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blAuthorizeAndDebitElectronicCheckRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blAuthorizeAndDebitWireRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blAuthorizeAndDebitMoneyOrderRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+
     <bean p:order="2000" id="blAuthorizeAndDebitCustomerCreditActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCustomerCreditPaymentService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blAuthorizeAndDebitCustomerCreditRollbackHandler"/>
     </bean>
     <bean p:order="4000" id="blAuthorizeAndDebitGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blGiftCardService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blAuthorizeAndDebitGiftCardRollbackHandler"/>
     </bean>
     <bean p:order="5000" id="blAuthorizeAndDebitCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCreditCardService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blAuthorizeAndDebitCreditCardRollbackHandler"/>
     </bean>
     <bean p:order="6000" id="blAuthorizeAndDebitBankAccountActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blBankAccountService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blAuthorizeAndDebitBankAccountRollbackHandler"/>
     </bean>
     <bean p:order="7000" id="blAuthorizeAndDebitCheckActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCheckPaymentService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blAuthorizeAndDebitCheckRollbackHandler"/>
     </bean>
     <bean p:order="8000" id="blAuthorizeAndDebitElectronicCheckActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blElectronicCheckPaymentService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blAuthorizeAndDebitElectronicCheckRollbackHandler"/>
     </bean>
     <bean p:order="9000" id="blAuthorizeAndDebitWireActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blWirePaymentService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blAuthorizeAndDebitWireRollbackHandler"/>
     </bean>
     <bean p:order="10000" id="blAuthorizeAndDebitMoneyOrderActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blMoneyOrderPaymentService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blAuthorizeAndDebitMoneyOrderRollbackHandler"/>
     </bean>
     <bean id="blAuthorizeAndDebitWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
@@ -221,20 +238,24 @@
     <!--
         Below are predefined beans for a CREDIT payment flow
     -->
+    <bean id="blCreditCreditCardRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blCreditGiftCardRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blCreditCustomerCreditRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+
     <bean p:order="1000" id="blCreditCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCreditCardService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blCreditCreditCardRollbackHandler"/>
     </bean>
     <bean p:order="2000" id="blCreditGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blGiftCardService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blCreditGiftCardRollbackHandler"/>
     </bean>
     <bean p:order="3000" id="blCreditCustomerCreditActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCustomerCreditPaymentService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blCreditCustomerCreditRollbackHandler"/>
     </bean>
     <bean id="blCreditWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
@@ -255,20 +276,24 @@
     <!--
         Below are predefined beans for a VOID payment flow
     -->
+    <bean id="blVoidCreditCardRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blVoidGiftCardRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blVoidCustomerCreditRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+
     <bean p:order="1000" id="blVoidCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCreditCardService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blVoidCreditCardRollbackHandler"/>
     </bean>
     <bean p:order="2000" id="blVoidGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blGiftCardService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blVoidGiftCardRollbackHandler"/>
     </bean>
     <bean p:order="3000" id="blVoidCustomerCreditPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCustomerCreditPaymentService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blVoidCustomerCreditRollbackHandler"/>
     </bean>
     <bean id="blVoidWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
@@ -289,20 +314,24 @@
     <!--
         Below are predefined beans for a REVERSEAUTHORIZE payment flow
     -->
+    <bean id="blReverseAuthCreditCardRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blReverseAuthGiftCardRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blReverseAuthCustomerCreditRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+
     <bean p:order="1000" id="blReverseAuthCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCreditCardService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blReverseAuthCreditCardRollbackHandler"/>
     </bean>
     <bean p:order="2000" id="blReverseAuthGiftCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blGiftCardService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blReverseAuthGiftCardRollbackHandler"/>
     </bean>
     <bean p:order="3000" id="blReverseAuthCustomerCreditPaymentActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCustomerCreditPaymentService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blReverseAuthCustomerCreditRollbackHandler"/>
     </bean>
     <bean id="blReverseAuthWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
@@ -323,10 +352,12 @@
     <!--
         Below are predefined beans for a PARTIALPAYMENT payment flow
     -->
+    <bean id="blPartialPaymentCreditCardRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+
     <bean p:order="1000" id="blPartialPaymentCreditCardActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCreditCardService"/>
         <property name="userName" value="web"/>
-        <property name="rollbackHandler" ref="blNullCheckoutRollbackHandler"/>
+        <property name="rollbackHandler" ref="blPartialPaymentCreditCardRollbackHandler"/>
     </bean>
     <bean id="blPartialPaymentWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
