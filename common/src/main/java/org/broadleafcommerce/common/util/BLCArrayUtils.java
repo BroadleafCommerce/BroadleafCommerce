@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.util;
 
+import java.util.ArrayList;
+
 
 
 /**
@@ -42,5 +44,12 @@ public class BLCArrayUtils {
         return false;
     }
     
+    public static <T> ArrayList<T> asList(T[] array) {
+        ArrayList<T> list = new ArrayList<T>(array.length);
+        for (T e : array) {
+            list.add(e);
+        }
+        return list;
+    }
 
 }
