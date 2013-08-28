@@ -111,8 +111,28 @@ public class AdminBasicEntityController extends AdminAbstractController {
         DynamicResultSet drs =  service.getRecords(ppr);
 
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey);
-        
         List<EntityFormAction> mainActions = new ArrayList<EntityFormAction>();
+        addAddActionIfAllowed(sectionClassName, cmd, mainActions);
+        
+        model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
+        model.addAttribute("listGrid", listGrid);
+        model.addAttribute("mainActions", mainActions);
+        model.addAttribute("viewType", "entityList");
+
+        setModelAttributes(model, sectionKey);
+        return "modules/defaultContainer";
+    }
+
+    /**
+     * Adds the "Add" button to the main entity form if the current user has permissions to create new instances
+     * of the entity and all of the fields in the entity aren't marked as read only.
+     * 
+     * @param sectionClassName
+     * @param cmd
+     * @param mainActions
+     */
+    protected void addAddActionIfAllowed(String sectionClassName, ClassMetadata cmd, List<EntityFormAction> mainActions) {
         // If the user does not have create permissions, we will not add the "Add New" button
         boolean canCreate = true;
         try {
@@ -141,15 +161,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
         
         mainEntityActionsExtensionManager.modifyMainActions(cmd, mainActions);
-        
-        model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
-        model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("listGrid", listGrid);
-        model.addAttribute("mainActions", mainActions);
-        model.addAttribute("viewType", "entityList");
-
-        setModelAttributes(model, sectionKey);
-        return "modules/defaultContainer";
     }
 
     /**
