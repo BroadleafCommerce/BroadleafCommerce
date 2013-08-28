@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.security.service.navigation;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -45,6 +46,9 @@ public class PolymorphicEntitySectionAuthorizationImpl implements SectionAuthori
 
     @Override
     public boolean isUserAuthorizedToViewSection(AdminUser adminUser, AdminSection section) {
+        if (StringUtils.isBlank(section.getCeilingEntity())) {
+            return true;
+        }
 
         try {
             //Only display this section if there are 1 or more entities relative to the ceiling 
