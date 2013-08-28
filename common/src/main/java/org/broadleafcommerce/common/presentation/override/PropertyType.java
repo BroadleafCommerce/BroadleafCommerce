@@ -54,6 +54,7 @@ public class PropertyType {
         public static final String USESERVERSIDEINSPECTIONCACHE = "useServerSideInspectionCache";
         public static final String LOOKUPTYPE = "lookupType";
         public static final String CUSTOMCRITERIA = "customCriteria";
+        public static final String FORCEPOPULATECHILDPROPERTIES = "forcePopulateChildProperties";
     }
 
     public static class AdminPresentationDataDrivenEnumeration {

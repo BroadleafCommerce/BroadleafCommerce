@@ -203,7 +203,7 @@ public class StructuredContentImpl implements StructuredContent {
     @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Type", order = 2, prominent = true,
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         requiredOverride = RequiredOverride.REQUIRED)
-    @AdminPresentationToOneLookup(lookupDisplayProperty = "name")
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "name", forcePopulateChildProperties = true)
     protected StructuredContentType structuredContentType;
 
     @ManyToMany(targetEntity = StructuredContentFieldImpl.class, cascade = CascadeType.ALL)
