@@ -42,7 +42,6 @@ import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
-import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
@@ -245,6 +244,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
         String sectionKey = getSectionKey(pathVars);
 
+        extractDynamicFormFields(entityForm);
+
         Entity entity = service.addEntity(entityForm, getSectionCustomCriteria());
         entityFormValidator.validate(entityForm, entity, result);
 
@@ -363,35 +364,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionClassName = getClassNameForSection(sectionKey);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
 
-        Map<String, Field> dynamicFields = new HashMap<String, Field>();
-        
-        // Find all of the dynamic form fields
-        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
-            if (entry.getKey().contains(DynamicEntityFormInfo.FIELD_SEPARATOR)) { 
-                dynamicFields.put(entry.getKey(), entry.getValue());
-            }
-        }
-        
-        // Remove the dynamic form fields from the main entity - they are persisted separately
-        for (Entry<String, Field> entry : dynamicFields.entrySet()) {
-            entityForm.removeField(entry.getKey());
-        }
-        
-        // Create the entity form for the dynamic form, as it needs to be persisted separately
-        for (Entry<String, Field> entry : dynamicFields.entrySet()) {
-            String[] fieldName = entry.getKey().split("\\" + DynamicEntityFormInfo.FIELD_SEPARATOR);
-            DynamicEntityFormInfo info = entityForm.getDynamicFormInfo(fieldName[0]);
-                    
-            EntityForm dynamicForm = entityForm.getDynamicForm(fieldName[0]);
-            if (dynamicForm == null) {
-                dynamicForm = new EntityForm();
-                dynamicForm.setCeilingEntityClassname(info.getCeilingClassName());
-                entityForm.putDynamicForm(fieldName[0], dynamicForm);
-            }
-            
-            entry.getValue().setName(fieldName[1]);
-            dynamicForm.addField(entry.getValue());
-        }
+        extractDynamicFormFields(entityForm);
 
         Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria());
         
