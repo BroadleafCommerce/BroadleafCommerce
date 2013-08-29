@@ -20,7 +20,7 @@ import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This exception is thrown to indicate a problem while trying to rollback
@@ -36,7 +36,7 @@ public class RollbackFailureException extends WorkflowException {
 
     private Activity<? extends ProcessContext<?>> activity;
     private ProcessContext<?> processContext;
-    private HashMap<String, Object> stateItems;
+    private Map<String, Object> stateItems;
 
     public RollbackFailureException() {
     }
@@ -69,11 +69,11 @@ public class RollbackFailureException extends WorkflowException {
         this.processContext = processContext;
     }
 
-    public HashMap<String, Object> getStateItems() {
+    public Map<String, Object> getStateItems() {
         return stateItems;
     }
 
-    public void setStateItems(HashMap<String, Object> stateItems) {
+    public void setStateItems(Map<String, Object> stateItems) {
         this.stateItems = stateItems;
     }
 }
