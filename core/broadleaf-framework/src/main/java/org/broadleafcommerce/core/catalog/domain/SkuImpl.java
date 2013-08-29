@@ -817,6 +817,14 @@ public class SkuImpl implements Sku {
 
     @Override
     public InventoryType getInventoryType() {
+        if (StringUtils.isEmpty(this.inventoryType)) {
+            if (hasDefaultSku() && lookupDefaultSku().getInventoryType() != null) {
+                return lookupDefaultSku().getInventoryType();
+            } else if (getProduct() != null && getProduct().getDefaultCategory() != null) {
+                return getProduct().getDefaultCategory().getInventoryType();
+            }
+            return null;
+        }
         return InventoryType.getInstance(this.inventoryType);
     }
 
