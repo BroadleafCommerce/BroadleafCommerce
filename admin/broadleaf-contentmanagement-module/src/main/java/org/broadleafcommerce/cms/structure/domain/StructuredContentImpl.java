@@ -78,7 +78,9 @@ import javax.persistence.Table;
         @AdminPresentationOverride(name = "auditable.createdBy.name", value = @AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
         @AdminPresentationOverride(name = "auditable.updatedBy.name", value = @AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
         @AdminPresentationOverride(name = "auditable.dateCreated", value = @AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
-        @AdminPresentationOverride(name = "auditable.dateUpdated", value = @AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL))
+        @AdminPresentationOverride(name = "auditable.dateUpdated", value = @AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
+        @AdminPresentationOverride(name = "structuredContentType.name", value = @AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL)),
+        @AdminPresentationOverride(name = "structuredContentType.structuredContentFieldTemplate.name", value = @AdminPresentation(readOnly = true, visibility = VisibilityEnum.HIDDEN_ALL))
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentImpl_baseStructuredContent")
@@ -119,7 +121,7 @@ public class StructuredContentImpl implements StructuredContent {
     protected Locale locale;
 
     @Column(name = "PRIORITY", nullable = false)
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Priority", order = 3, prominent = true,
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Priority", order = 3,
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
     @Index(name="CONTENT_PRIORITY_INDEX", columnNames={"PRIORITY"})
     protected Integer priority;
