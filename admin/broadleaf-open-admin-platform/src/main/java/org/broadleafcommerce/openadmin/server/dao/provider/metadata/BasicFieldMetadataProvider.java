@@ -252,6 +252,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 metadata.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                 metadata.setExplicitFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                 metadata.setLookupDisplayProperty(annot.lookupDisplayProperty());
+                metadata.setForcePopulateChildProperties(annot.forcePopulateChildProperties());
                 if (!StringUtils.isEmpty(annot.lookupDisplayProperty())) {
                     metadata.setForeignKeyDisplayValueProperty(annot.lookupDisplayProperty());
                 }
@@ -439,6 +440,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             } else if (entry.getKey().equals(PropertyType.AdminPresentationToOneLookup.LOOKUPDISPLAYPROPERTY)) {
                 fieldMetadataOverride.setLookupDisplayProperty(stringValue);
                 fieldMetadataOverride.setForeignKeyDisplayValueProperty(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationToOneLookup.FORCEPOPULATECHILDPROPERTIES)) {
+                fieldMetadataOverride.setForcePopulateChildProperties(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
+                                        Boolean.parseBoolean(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentationToOneLookup.USESERVERSIDEINSPECTIONCACHE)) {
                 fieldMetadataOverride.setUseServerSideInspectionCache(StringUtils.isEmpty(stringValue)?
                                         entry.getValue().booleanOverrideValue():Boolean.parseBoolean(stringValue));
@@ -515,6 +519,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 override.setExplicitFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                 override.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                 override.setLookupDisplayProperty(toOneLookup.lookupDisplayProperty());
+                override.setForcePopulateChildProperties(toOneLookup.forcePopulateChildProperties());
                 override.setCustomCriteria(toOneLookup.customCriteria());
                 override.setUseServerSideInspectionCache(toOneLookup.useServerSideInspectionCache());
                 override.setToOneLookupCreatedViaAnnotation(true);
@@ -598,7 +603,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (metadata.getExplicitFieldType()==SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
             //this is a lookup - exclude the fields on this OneToOne or ManyToOne field
             //metadata.setExcluded(true);
-            metadata.setChildrenExcluded(true);
+            if (!basicFieldMetadata.getForcePopulateChildProperties()) {
+                metadata.setChildrenExcluded(true);
+            }
             //metadata.setVisibility(VisibilityEnum.GRID_HIDDEN);
         } else {
             if (basicFieldMetadata.getExcluded()!=null) {
@@ -667,6 +674,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (basicFieldMetadata.getLookupDisplayProperty()!=null) {
             metadata.setLookupDisplayProperty(basicFieldMetadata.getLookupDisplayProperty());
             metadata.setForeignKeyDisplayValueProperty(basicFieldMetadata.getLookupDisplayProperty());
+        }
+        if (basicFieldMetadata.getForcePopulateChildProperties()!=null) {
+            metadata.setForcePopulateChildProperties(basicFieldMetadata.getForcePopulateChildProperties());
         }
         if (basicFieldMetadata.getCustomCriteria() != null) {
             metadata.setCustomCriteria(basicFieldMetadata.getCustomCriteria());

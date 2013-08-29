@@ -75,5 +75,18 @@ public @interface AdminPresentationToOneLookup {
      * @return the item is looked up via a modal or dropdown
      */
     LookupType lookupType() default LookupType.STANDARD;
+    
+    
+    /**
+     * <p>Optional - by setting this value to true, the admin will identify
+     * the properties that are inside the target of this to-one field. </p>
+     * 
+     * <p>Typically, this is done if you want to expose a certain field as an
+     * AdminPresentationToOneLookup but also allow filtering on a property that
+     * resides inside of the target of this lookup.</p>
+     * 
+     * @return whether or not to force population of the child properties
+     */
+    boolean forcePopulateChildProperties() default false;
 
 }

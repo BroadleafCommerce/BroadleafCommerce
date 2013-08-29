@@ -53,6 +53,7 @@ $(document).ready(function() {
     			data: $(this).serialize()
     		}, function(data) {
     			$('.modal .modal-body .tabs-content').replaceWith($(data).find('.modal-body .tabs-content'));
+    			BLCAdmin.initializeFields($('.modal .modal-body .tabs-content'));
     	    });
         }
 		return false;
