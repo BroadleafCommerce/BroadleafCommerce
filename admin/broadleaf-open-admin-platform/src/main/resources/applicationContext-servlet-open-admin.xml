@@ -73,6 +73,17 @@
     </bean>  
 
     <bean id="blAdminMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
+    
+    <bean id="blAdminWebTemplateResolvers" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
+            <set>
+                <ref bean="blAdminWebCustomTemplateResolver" />
+                <ref bean="blAdminWebTemplateResolver" />
+                <ref bean="blAdminWebClasspathTemplateResolver" />
+                <ref bean="blWebCommonClasspathTemplateResolver" />
+            </set>
+        </property>
+    </bean>
                 
     <bean id="blAdminWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
         <property name="messageResolvers">
@@ -81,14 +92,7 @@
                 <bean class="org.thymeleaf.spring3.messageresolver.SpringMessageResolver" />
             </set>
         </property>
-        <property name="templateResolvers">
-            <set>
-                <ref bean="blAdminWebCustomTemplateResolver" />
-                <ref bean="blAdminWebTemplateResolver" />
-                <ref bean="blAdminWebClasspathTemplateResolver" />
-                <ref bean="blWebCommonClasspathTemplateResolver" />
-            </set>
-        </property>
+        <property name="templateResolvers" ref="blAdminWebTemplateResolvers" />
         <property name="dialects">
             <set>
                 <ref bean="thymeleafSpringStandardDialect" />
