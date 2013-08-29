@@ -19,6 +19,8 @@ package org.broadleafcommerce.openadmin.server.service;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
@@ -39,6 +41,7 @@ import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -52,7 +55,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -65,6 +70,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Resource(name = "blPersistencePackageFactory")
     protected PersistencePackageFactory persistencePackageFactory;
+
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
+
+    protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
     @Override
     public ClassMetadata getClassMetadata(PersistencePackageRequest request)
@@ -100,18 +110,33 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     public Entity addEntity(EntityForm entityForm, String[] customCriteria)
             throws ServiceException {
         PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
-        return add(ppr);
+        Entity returnEntity = add(ppr);
+        
+        // Once the entity has been saved, we can utilize its id for the subsequent dynamic forms
+        Class<?> entityClass;
+        try {
+            entityClass = Class.forName(entityForm.getEntityType());
+        } catch (ClassNotFoundException e) {
+            throw new ServiceException(e);
+        }
+        Map<String, Object> idMetadata = dynamicDaoHelper.getIdMetadata(entityClass, (HibernateEntityManager) em);
+        String idProperty = (String) idMetadata.get("name");
+        entityForm.setId(returnEntity.findProperty(idProperty).getValue());
+
+        Map<String, List<String>> dynamicFormValidationErrors = new HashMap<String, List<String>>();
+        persistDynamicForms(entityForm, dynamicFormValidationErrors);
+
+        //add the validation errors from the dynamic forms prior to invoking update. This way, errors will be
+        //caught downstream and will prevent an actual save
+        ppr.getEntity().getValidationErrors().putAll(dynamicFormValidationErrors);
+        // After the dynamic forms have had a chance to update (and potentially fail validation), update the main entity
+        
+        return returnEntity;
     }
 
-    @Override
-    @Transactional("blTransactionManager")
-    public Entity updateEntity(EntityForm entityForm, String[] customCriteria)
-            throws ServiceException {
-        
-        // If the entity form has dynamic forms inside of it, we need to persist those as well.
-        // They are typically done in their own custom persistence handlers, which will get triggered
-        // based on the criteria specific in the PersistencePackage.
-        Map<String, List<String>> dynamicFormValidationErrors = new HashMap<String, List<String>>();
+    protected void persistDynamicForms(EntityForm entityForm, 
+            Map<String, List<String>> dynamicFormValidationErrors) throws ServiceException {
+        String[] customCriteria;
         for (Entry<String, EntityForm> entry : entityForm.getDynamicForms().entrySet()) {
             DynamicEntityFormInfo info = entityForm.getDynamicFormInfo(entry.getKey());
             
@@ -127,13 +152,25 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 }
             }
         }
+    }
 
+    @Override
+    @Transactional("blTransactionManager")
+    public Entity updateEntity(EntityForm entityForm, String[] customCriteria)
+            throws ServiceException {
         PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
+        Entity returnEntity = update(ppr);
+        
+        // If the entity form has dynamic forms inside of it, we need to persist those as well.
+        // They are typically done in their own custom persistence handlers, which will get triggered
+        // based on the criteria specific in the PersistencePackage.
+        Map<String, List<String>> dynamicFormValidationErrors = new HashMap<String, List<String>>();
+        persistDynamicForms(entityForm, dynamicFormValidationErrors);
+
         //add the validation errors from the dynamic forms prior to invoking update. This way, errors will be
         //caught downstream and will prevent an actual save
         ppr.getEntity().getValidationErrors().putAll(dynamicFormValidationErrors);
         // After the dynamic forms have had a chance to update (and potentially fail validation), update the main entity
-        Entity returnEntity = update(ppr);
         
         return returnEntity;
     }
