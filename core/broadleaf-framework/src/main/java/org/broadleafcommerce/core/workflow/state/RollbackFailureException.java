@@ -32,9 +32,11 @@ import java.util.HashMap;
  */
 public class RollbackFailureException extends WorkflowException {
 
-    private Activity<? extends ProcessContext> activity;
-    private ProcessContext processContext;
-    private HashMap<String, ?> stateItems;
+    private static final long serialVersionUID = 1L;
+
+    private Activity<? extends ProcessContext<?>> activity;
+    private ProcessContext<?> processContext;
+    private HashMap<String, Object> stateItems;
 
     public RollbackFailureException() {
     }
@@ -51,27 +53,27 @@ public class RollbackFailureException extends WorkflowException {
         super(message, cause);
     }
 
-    public Activity<? extends ProcessContext> getActivity() {
+    public Activity<? extends ProcessContext<?>> getActivity() {
         return activity;
     }
 
-    public void setActivity(Activity<? extends ProcessContext> activity) {
+    public void setActivity(Activity<? extends ProcessContext<?>> activity) {
         this.activity = activity;
     }
 
-    public ProcessContext getProcessContext() {
+    public ProcessContext<?> getProcessContext() {
         return processContext;
     }
 
-    public void setProcessContext(ProcessContext processContext) {
+    public void setProcessContext(ProcessContext<?> processContext) {
         this.processContext = processContext;
     }
 
-    public HashMap<String, ?> getStateItems() {
+    public HashMap<String, Object> getStateItems() {
         return stateItems;
     }
 
-    public void setStateItems(HashMap<String, ?> stateItems) {
+    public void setStateItems(HashMap<String, Object> stateItems) {
         this.stateItems = stateItems;
     }
 }
