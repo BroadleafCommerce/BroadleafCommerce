@@ -297,8 +297,8 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         List<Offer> filteredOffers = new ArrayList<Offer>();
         if (offers != null && !offers.isEmpty()) {
             filteredOffers = removeOutOfDateOffers(offers);
-            offers = removeTimePeriodOffers(offers);
-            offers = removeInvalidRequestOffers(offers);
+            filteredOffers = removeTimePeriodOffers(filteredOffers);
+            filteredOffers = removeInvalidRequestOffers(filteredOffers);
             filteredOffers = removeInvalidCustomerOffers(filteredOffers, customer);
         }
         return filteredOffers;
