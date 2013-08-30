@@ -213,6 +213,8 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     }
                     break;
                 case STRING:
+                case HTML_BASIC:
+                case HTML:
                 case EMAIL:
                     dirty = checkDirtyState(populateValueRequest, instance, populateValueRequest.getRequestedValue());
                     populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty()
