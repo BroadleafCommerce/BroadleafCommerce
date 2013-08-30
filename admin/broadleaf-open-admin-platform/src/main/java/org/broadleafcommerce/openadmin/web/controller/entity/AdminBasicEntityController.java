@@ -35,6 +35,7 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
@@ -43,7 +44,6 @@ import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
-import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
@@ -62,14 +62,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to 
@@ -245,7 +246,14 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
         String sectionKey = getSectionKey(pathVars);
 
-        Entity entity = service.addEntity(entityForm, getSectionCustomCriteria()).getEntity();
+        extractDynamicFormFields(entityForm);
+        
+        Entity entity;
+        try {
+            entity = service.addEntity(entityForm, getSectionCustomCriteria()).getEntity();
+        } catch (ValidationException e) {
+            entity = e.getEntity();
+        }
         entityFormValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
@@ -363,37 +371,14 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionClassName = getClassNameForSection(sectionKey);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
 
-        Map<String, Field> dynamicFields = new HashMap<String, Field>();
+        extractDynamicFormFields(entityForm);
         
-        // Find all of the dynamic form fields
-        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
-            if (entry.getKey().contains(DynamicEntityFormInfo.FIELD_SEPARATOR)) { 
-                dynamicFields.put(entry.getKey(), entry.getValue());
-            }
+        Entity entity;
+        try {
+            entity = service.updateEntity(entityForm, getSectionCustomCriteria()).getEntity();
+        } catch (ValidationException e) {
+            entity = e.getEntity();
         }
-        
-        // Remove the dynamic form fields from the main entity - they are persisted separately
-        for (Entry<String, Field> entry : dynamicFields.entrySet()) {
-            entityForm.removeField(entry.getKey());
-        }
-        
-        // Create the entity form for the dynamic form, as it needs to be persisted separately
-        for (Entry<String, Field> entry : dynamicFields.entrySet()) {
-            String[] fieldName = entry.getKey().split("\\" + DynamicEntityFormInfo.FIELD_SEPARATOR);
-            DynamicEntityFormInfo info = entityForm.getDynamicFormInfo(fieldName[0]);
-                    
-            EntityForm dynamicForm = entityForm.getDynamicForm(fieldName[0]);
-            if (dynamicForm == null) {
-                dynamicForm = new EntityForm();
-                dynamicForm.setCeilingEntityClassname(info.getCeilingClassName());
-                entityForm.putDynamicForm(fieldName[0], dynamicForm);
-            }
-            
-            entry.getValue().setName(fieldName[1]);
-            dynamicForm.addField(entry.getValue());
-        }
-
-        Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria()).getEntity();
         //The id may have changed to support functionality - check if so
         id = entity.findProperty(entityForm.getIdProperty()).getValue();
         

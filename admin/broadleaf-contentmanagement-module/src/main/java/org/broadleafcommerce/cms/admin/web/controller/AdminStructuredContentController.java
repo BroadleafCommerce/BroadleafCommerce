@@ -21,7 +21,6 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -43,7 +42,6 @@ import javax.servlet.http.HttpServletResponse;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-@Controller("blAdminStructuredContentController")
 @RequestMapping("/" + AdminStructuredContentController.SECTION_KEY)
 public class AdminStructuredContentController extends AdminBasicEntityController {
     

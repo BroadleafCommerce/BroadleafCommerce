@@ -68,8 +68,10 @@ public interface AdminEntityService {
             throws ServiceException;
 
     /**
-     * Persists the given entity
-     * 
+     * Updates the given entity along with all of the dynamic forms associated with this entity. If there is a validation
+     * problem when saving the entity (or any of the dynamic forms), this method will throw a {@link ValidationException}
+     * in order to rollback the transaction.
+     *  
      * @param entityForm
      * @param customCriteria
      * @return the persisted Entity
@@ -79,7 +81,9 @@ public interface AdminEntityService {
             throws ServiceException;
 
     /**
-     * Updates the given entity
+     * Updates the given entity along with all of the dynamic forms associated with this entity. If there is a validation
+     * problem when saving the entity (or any of the dynamic forms), this method will throw a {@link ValidationException}
+     * in order to rollback the transaction.
      * 
      * @param entityForm
      * @param customCriteria

@@ -603,7 +603,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (metadata.getExplicitFieldType()==SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
             //this is a lookup - exclude the fields on this OneToOne or ManyToOne field
             //metadata.setExcluded(true);
-            if (!basicFieldMetadata.getForcePopulateChildProperties()) {
+            if (basicFieldMetadata.getForcePopulateChildProperties() == null || !basicFieldMetadata.getForcePopulateChildProperties()) {
                 metadata.setChildrenExcluded(true);
             }
             //metadata.setVisibility(VisibilityEnum.GRID_HIDDEN);

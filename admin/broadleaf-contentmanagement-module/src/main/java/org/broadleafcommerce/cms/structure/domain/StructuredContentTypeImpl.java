@@ -20,8 +20,6 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -69,12 +67,10 @@ public class StructuredContentTypeImpl implements StructuredContentType, AdminMa
     protected String name;
 
     @Column (name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Description", order=2, group = "StructuredContentTypeImpl_Details",prominent=false)
     protected String description;
 
     @ManyToOne(targetEntity = StructuredContentFieldTemplateImpl.class)
     @JoinColumn(name="SC_FLD_TMPLT_ID")
-    @AdminPresentation(friendlyName = "StructuredContentTypeImpl_Content_Template", prominent = true, order=2, group = "StructuredContentTypeImpl_Details", requiredOverride = RequiredOverride.REQUIRED, visibility = VisibilityEnum.HIDDEN_ALL)
     protected StructuredContentFieldTemplate structuredContentFieldTemplate;
 
     @Override

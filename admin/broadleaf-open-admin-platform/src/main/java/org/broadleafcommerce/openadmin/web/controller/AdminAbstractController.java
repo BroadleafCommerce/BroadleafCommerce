@@ -47,13 +47,15 @@ import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for the Admin
@@ -266,6 +268,45 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     
         return dynamicForm;
     }
+
+    /**
+     * This method will scan the entityForm for all dynamic form fields and pull them out
+     * as appropriate.
+     * 
+     * @param entityForm
+     */
+    protected void extractDynamicFormFields(EntityForm entityForm) {
+        Map<String, Field> dynamicFields = new HashMap<String, Field>();
+        
+        // Find all of the dynamic form fields
+        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
+            if (entry.getKey().contains(DynamicEntityFormInfo.FIELD_SEPARATOR)) { 
+                dynamicFields.put(entry.getKey(), entry.getValue());
+            }
+        }
+        
+        // Remove the dynamic form fields from the main entity - they are persisted separately
+        for (Entry<String, Field> entry : dynamicFields.entrySet()) {
+            entityForm.removeField(entry.getKey());
+        }
+        
+        // Create the entity form for the dynamic form, as it needs to be persisted separately
+        for (Entry<String, Field> entry : dynamicFields.entrySet()) {
+            String[] fieldName = entry.getKey().split("\\" + DynamicEntityFormInfo.FIELD_SEPARATOR);
+            DynamicEntityFormInfo info = entityForm.getDynamicFormInfo(fieldName[0]);
+                    
+            EntityForm dynamicForm = entityForm.getDynamicForm(fieldName[0]);
+            if (dynamicForm == null) {
+                dynamicForm = new EntityForm();
+                dynamicForm.setCeilingEntityClassname(info.getCeilingClassName());
+                entityForm.putDynamicForm(fieldName[0], dynamicForm);
+            }
+            
+            entry.getValue().setName(fieldName[1]);
+            dynamicForm.addField(entry.getValue());
+        }
+    }
+
     
     // ***********************************************
     // HELPER METHODS FOR SECTION-SPECIFIC OVERRIDES *
