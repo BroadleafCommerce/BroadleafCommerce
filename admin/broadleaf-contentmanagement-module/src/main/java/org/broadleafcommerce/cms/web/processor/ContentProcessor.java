@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.cms.web.processor;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
@@ -29,12 +31,12 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.spring3.context.SpringWebContext;
+import org.thymeleaf.standard.expression.Assignation;
+import org.thymeleaf.standard.expression.AssignationSequence;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
 import com.google.common.primitives.Ints;
@@ -45,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -67,6 +70,11 @@ import javax.servlet.http.HttpServletRequest;
  *                          variable "contentItem".   This variable can be used to change the attribute name.</li>
  *     <li>numResultsVar  - variable holding the returns the number of results being returned to through the tag-lib.
  *                          defaults to "numResults".</li>
+ *     <li>fieldFilters   - Thymeleaf key-value pair to filter the resulting StructuredContentDTO by particular field values.
+ *                          For instance, if you had a field in a piece of structured content called 'featured' and you
+ *                          wanted to return all of the featured content items, you could do the following:
+ *                          
+ *                          <blc:content fieldFilters="${featured='true', otherField='someValue'}" />
  * </ul>
  */
 @Component("blContentProcessor")
@@ -76,14 +84,21 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
     public static final String REQUEST_DTO = "blRequestDTO";
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
     
-    private StructuredContentService structuredContentService;
-    private StaticAssetService staticAssetService;        
+    @Resource(name = "blStructuredContentService")
+    protected StructuredContentService structuredContentService;
+    
+    @Resource(name = "blStaticAssetService")
+    protected StaticAssetService staticAssetService;        
     
     /**
      * Sets the name of this processor to be used in Thymeleaf template
      */
     public ContentProcessor() {
         super("content");
+    }
+    
+    public ContentProcessor(String elementName) {
+        super(elementName);
     }
     
     @Override
@@ -97,7 +112,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
      * @param valueName
      * @return
      */
-    private String getAttributeValue(Element element, String valueName, String defaultValue) {
+    protected String getAttributeValue(Element element, String valueName, String defaultValue) {
         String returnValue = element.getAttributeValue(valueName);
         if (returnValue == null) {
             return defaultValue;
@@ -122,9 +137,10 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         String contentListVar = getAttributeValue(element, "contentListVar", "contentList");
         String contentItemVar = getAttributeValue(element, "contentItemVar", "contentItem");
         String numResultsVar = getAttributeValue(element, "numResultsVar", "numResults");
+        
+        String fieldFilters = element.getAttributeValue("fieldFilters");
+        String sortField = element.getAttributeValue("sortField");
 
-        initServices(arguments);
-                
         IWebContext context = (IWebContext) arguments.getContext();     
         HttpServletRequest request = context.getHttpServletRequest();   
         BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
@@ -137,22 +153,29 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 
         Locale locale = blcContext.getLocale();
             
-
-        if (structuredContentType == null) {
-            contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, contentName, locale, maxResults, mvelParameters, isSecure(request));
-        } else {
-            if (contentName == null || "".equals(contentName)) {
-                contentItems = structuredContentService.lookupStructuredContentItemsByType(currentSandbox, structuredContentType, locale, maxResults, mvelParameters, isSecure(request));
-            } else {
-                contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, structuredContentType, contentName, locale, maxResults, mvelParameters, isSecure(request));
-            }
-        }                       
+        contentItems = getContentItems(contentName, maxResults, request, mvelParameters, currentSandbox, structuredContentType, locale, arguments, element);
                             
         if (contentItems.size() > 0) {
             List<Map<String,String>> contentItemFields = new ArrayList<Map<String, String>>();          
             
-            for(StructuredContentDTO item : contentItems) {
-                contentItemFields.add(item.getValues());
+            for (StructuredContentDTO item : contentItems) {
+                if (StringUtils.isNotEmpty(fieldFilters)) {
+                    AssignationSequence assignments = StandardExpressionProcessor.parseAssignationSequence(arguments, fieldFilters, false);
+                    boolean valid = true;
+                    for (Assignation assignment : assignments) {
+                        
+                        if (ObjectUtils.notEqual(StandardExpressionProcessor.executeExpression(arguments, assignment.getRight()),
+                                                item.getValues().get(assignment.getLeft().getValue()))) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (valid) {
+                        contentItemFields.add(item.getValues());
+                    }
+                } else {
+                    contentItemFields.add(item.getValues());
+                }
             }
             addToModel(arguments, contentItemVar, contentItemFields.get(0));
             addToModel(arguments, contentListVar, contentItemFields);
@@ -166,6 +189,39 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
             addToModel(arguments, numResultsVar, 0);
         }       
     }
+
+    /**
+     * @param contentName name of the content to be looked up (can be null)
+     * @param maxResults maximum results to return
+     * @param request servlet request
+     * @param mvelParameters values that should be considered when filtering the content list by rules
+     * @param currentSandbox current sandbox being used
+     * @param structuredContentType the type of content that should be returned
+     * @param locale current locale
+     * @param arguments Thymeleaf Arguments passed into the tag
+     * @param element element context that this Thymeleaf processor is being executed in
+     * @return
+     */
+    protected List<StructuredContentDTO> getContentItems(String contentName, Integer maxResults, HttpServletRequest request,
+                                                        Map<String, Object> mvelParameters,
+                                                        SandBox currentSandbox,
+                                                        StructuredContentType structuredContentType,
+                                                        Locale locale,
+                                                        Arguments arguments,
+                                                        Element element) {
+        List<StructuredContentDTO> contentItems;
+        if (structuredContentType == null) {
+            contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, contentName, locale, maxResults, mvelParameters, isSecure(request));
+        } else {
+            if (contentName == null || "".equals(contentName)) {
+                contentItems = structuredContentService.lookupStructuredContentItemsByType(currentSandbox, structuredContentType, locale, maxResults, mvelParameters, isSecure(request));
+            } else {
+                contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, structuredContentType, contentName, locale, maxResults, mvelParameters, isSecure(request));
+            }
+        }
+        
+        return contentItems;
+    }
     
     /**
      * MVEL is used to process the content targeting rules.
@@ -173,7 +229,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
      * @param request
      * @return
      */
-    private Map<String, Object> buildMvelParameters(HttpServletRequest request, Arguments arguments, Element element) {
+    protected Map<String, Object> buildMvelParameters(HttpServletRequest request, Arguments arguments, Element element) {
         TimeZone timeZone = BroadleafRequestContext.getBroadleafRequestContext().getTimeZone();
 
         final TimeDTO timeDto;
@@ -208,14 +264,6 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 
         return mvelParameters;
     }   
-    
-    protected void initServices(Arguments arguments) {
-        if (structuredContentService == null || staticAssetService == null) {
-            final ApplicationContext applicationContext = ((SpringWebContext) arguments.getContext()).getApplicationContext();            
-            structuredContentService = (StructuredContentService) applicationContext.getBean("blStructuredContentService");
-            staticAssetService = (StaticAssetService) applicationContext.getBean("blStaticAssetService");
-        }
-    }
     
     public boolean isSecure(HttpServletRequest request) {
         boolean secure = false;
