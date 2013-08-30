@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
+import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -106,9 +107,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return entity;
     }
 
+    /**
+     * Since the entity form can have multiple dynamic forms defined within it, it should be saved as an all-or-nothing
+     * approach and roll back when any ServiceExceptions have been thrown in any of the saves.
+     */
     @Override
-    public Entity addEntity(EntityForm entityForm, String[] customCriteria)
-            throws ServiceException {
+    @Transactional(value = "blTransactionManager", rollbackFor = {ServiceException.class})
+    public Entity addEntity(EntityForm entityForm, String[] customCriteria) throws ServiceException {
         PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
         Entity returnEntity = add(ppr);
         
@@ -125,15 +130,50 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         Map<String, List<String>> dynamicFormValidationErrors = new HashMap<String, List<String>>();
         persistDynamicForms(entityForm, dynamicFormValidationErrors);
+        
+        //add all of the validation errors from the dynamic forms to the main entity
+        returnEntity.getValidationErrors().putAll(dynamicFormValidationErrors);
+        
+        if (MapUtils.isNotEmpty(returnEntity.getValidationErrors())) {
+            throw new ValidationException(returnEntity, "Validation Exception");
+        }
+        
+        return returnEntity;
+    }
+    
+    /**
+     * Since the entity form can have multiple dynamic forms defined within it, it should be saved as an all-or-nothing
+     * approach and roll back when any ServiceExceptions have been thrown in any of the saves.
+     */
+    @Override
+    @Transactional(value = "blTransactionManager", rollbackFor = {ServiceException.class})
+    public Entity updateEntity(EntityForm entityForm, String[] customCriteria) throws ServiceException {
+        PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
+        Entity returnEntity = update(ppr);
+        
+        // If the entity form has dynamic forms inside of it, we need to persist those as well.
+        // They are typically done in their own custom persistence handlers, which will get triggered
+        // based on the criteria specific in the PersistencePackage.
+        Map<String, List<String>> dynamicFormValidationErrors = new HashMap<String, List<String>>();
+        persistDynamicForms(entityForm, dynamicFormValidationErrors);
 
-        //add the validation errors from the dynamic forms prior to invoking update. This way, errors will be
-        //caught downstream and will prevent an actual save
-        ppr.getEntity().getValidationErrors().putAll(dynamicFormValidationErrors);
-        // After the dynamic forms have had a chance to update (and potentially fail validation), update the main entity
+        //add all of the validation errors from the dynamic forms to the main entity
+        returnEntity.getValidationErrors().putAll(dynamicFormValidationErrors);
+        
+        //If there are any validation exceptions, throw a validation exception to ensure that the entire transaction is rolled back
+        if (MapUtils.isNotEmpty(returnEntity.getValidationErrors())) {
+            throw new ValidationException(returnEntity, "Validation Exception");
+        }
         
         return returnEntity;
     }
 
+    /**
+     * 
+     * @param entityForm the main form that contains the dynamic forms
+     * @param dynamicFormValidationErrors object to store validation errors that appear on dynamic forms
+     * @throws ServiceException
+     */
     protected void persistDynamicForms(EntityForm entityForm, 
             Map<String, List<String>> dynamicFormValidationErrors) throws ServiceException {
         String[] customCriteria;
@@ -152,27 +192,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 }
             }
         }
-    }
-
-    @Override
-    @Transactional("blTransactionManager")
-    public Entity updateEntity(EntityForm entityForm, String[] customCriteria)
-            throws ServiceException {
-        PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
-        Entity returnEntity = update(ppr);
-        
-        // If the entity form has dynamic forms inside of it, we need to persist those as well.
-        // They are typically done in their own custom persistence handlers, which will get triggered
-        // based on the criteria specific in the PersistencePackage.
-        Map<String, List<String>> dynamicFormValidationErrors = new HashMap<String, List<String>>();
-        persistDynamicForms(entityForm, dynamicFormValidationErrors);
-
-        //add the validation errors from the dynamic forms prior to invoking update. This way, errors will be
-        //caught downstream and will prevent an actual save
-        ppr.getEntity().getValidationErrors().putAll(dynamicFormValidationErrors);
-        // After the dynamic forms have had a chance to update (and potentially fail validation), update the main entity
-        
-        return returnEntity;
     }
 
     @Override

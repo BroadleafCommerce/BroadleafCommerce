@@ -35,6 +35,7 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
@@ -245,8 +246,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
 
         extractDynamicFormFields(entityForm);
-
-        Entity entity = service.addEntity(entityForm, getSectionCustomCriteria());
+        
+        Entity entity;
+        try {
+             entity = service.addEntity(entityForm, getSectionCustomCriteria());
+        } catch (ValidationException e) {
+            entity = e.getEntity();
+        }
         entityFormValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
@@ -365,8 +371,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
 
         extractDynamicFormFields(entityForm);
-
-        Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria());
+        
+        Entity entity;
+        try {
+            entity = service.updateEntity(entityForm, getSectionCustomCriteria());
+        } catch (ValidationException e) {
+            entity = e.getEntity();
+        }
         
         entityFormValidator.validate(entityForm, entity, result);
         if (result.hasErrors()) {
