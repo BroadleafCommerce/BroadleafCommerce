@@ -145,12 +145,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.add(persistencePackage);
         } catch (ServiceException e) {
+            //immediately throw validation exceptions without printing a stack trace
             if (e instanceof ValidationException) {
                 throw e;
             } else if (e.getCause() instanceof ValidationException) {
                 throw (ValidationException) e.getCause();
             }
-            
             String message = exploitProtectionService.cleanString(e.getMessage());
             LOG.error("Problem adding new " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             throw recreateSpecificServiceException(e, message, e.getCause());
@@ -168,6 +168,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             return persistenceManager.update(persistencePackage);
         } catch (ServiceException e) {
+            //immediately throw validation exceptions without printing a stack trace
             if (e instanceof ValidationException) {
                 throw e;
             } else if (e.getCause() instanceof ValidationException) {
