@@ -17,18 +17,37 @@
 package org.broadleafcommerce.core.extension;
 
 
+
 /**
- * An extension handler represents a generic pattern used in BroadleafCommerce when an out-of-box service
- * with complex logic provides implementation hooks.  
+ * <p>An extension handler represents a generic pattern used in BroadleafCommerce when an out-of-box service
+ * with complex logic provides implementation hooks.</p>
  * 
- * The pattern is primarily used internally by Broadleaf as a mechanism to provide extension points for 
- * Broadleaf modules.
+ * <p>The pattern is primarily used internally by Broadleaf as a mechanism to provide extension points for 
+ * Broadleaf modules.</p>
  * 
- * Consumers of BroadleafCommerce framework typically would not need to use this pattern and instead would opt. 
+ * <p>Consumers of BroadleafCommerce framework typically would not need to use this pattern and instead would opt. 
  * for more typical extension patterns including overriding or extending the actual component for which 
- * alternate behavior is desired.
+ * alternate behavior is desired.</p>
  * 
- * ExtensionHandler api methods should always return an instance of {@link ExtensionResultStatusType}.
+ * <p>ExtensionHandler api methods should always return an instance of {@link ExtensionResultStatusType} and will usually
+ * extend from {@link AbstractExtensionHandler}</p>
+ * 
+ * <p>In order to associate an {@link ExtensionHandler) with an {@link ExtensionManager}, each handler should have an @PostConstruct
+ * override and associate itself with the manager:</p>
+ * 
+ * <pre>
+ *  {@code
+ *    {@literal @}Resource(name = "blSomeExtensionManager")
+ *    protected ExtensionManager extensionManager;
+ *
+ *    {@literal @}PostConstruct
+ *    public void init() {
+ *       if (isEnabled()) {
+ *           extensionManager.getHandlers().add(this);
+ *       }
+ *    }
+ *  }
+ * </pre>
  * 
  * @author bpolster
  */
