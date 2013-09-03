@@ -175,7 +175,8 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         // the desired structured content type
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(info.getCeilingClassName())
-                .withCustomCriteria(new String[] { info.getCriteriaName(),  info.getPropertyValue() });
+                .withCustomCriteria(new String[] { info.getCriteriaName(), null, info.getPropertyName(), info.getPropertyValue() });
+
         ClassMetadata cmd = service.getClassMetadata(ppr);
         
         EntityForm dynamicForm = formService.createEntityForm(cmd);
@@ -214,12 +215,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         // the desired structured content type
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(info.getCeilingClassName())
-                .withCustomCriteria(new String[] { info.getCriteriaName(),  info.getPropertyValue() });
+                .withCustomCriteria(new String[] { info.getCriteriaName(), entityId, info.getPropertyName(), info.getPropertyValue() });
+
         ClassMetadata cmd = service.getClassMetadata(ppr);
-        
-        // However, when we fetch, the second custom criteria needs to be the id
-        // of this particular structured content entity
-        ppr.setCustomCriteria(new String[] { info.getCriteriaName(), entityId });
         Entity entity = service.getRecord(ppr, entityId, cmd, true);
         
         // override the results of the entity with the dynamic form passed in

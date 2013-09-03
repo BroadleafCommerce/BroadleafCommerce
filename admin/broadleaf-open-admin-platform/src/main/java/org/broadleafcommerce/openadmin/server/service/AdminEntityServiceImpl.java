@@ -130,7 +130,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         // based on the criteria specific in the PersistencePackage.
         for (Entry<String, EntityForm> entry : entityForm.getDynamicForms().entrySet()) {
             DynamicEntityFormInfo info = entityForm.getDynamicFormInfo(entry.getKey());
-            customCriteria = new String[] { info.getCriteriaName(), entityForm.getId() };
+            
+            String propertyName = info.getPropertyName();
+            String propertyValue = entityForm.getFields().get(propertyName).getValue();
+            customCriteria = new String[] { info.getCriteriaName(), entityForm.getId(), propertyName, propertyValue };
+            
             PersistencePackageRequest subRequest = getRequestForEntityForm(entry.getValue(), customCriteria);
             ppr.addSubRequest(info.getPropertyName(), subRequest);
         }

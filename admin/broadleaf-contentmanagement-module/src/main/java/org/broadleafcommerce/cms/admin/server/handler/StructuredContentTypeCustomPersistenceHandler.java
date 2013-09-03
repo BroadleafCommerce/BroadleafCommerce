@@ -105,7 +105,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            String structuredContentTypeId = persistencePackage.getCustomCriteria()[1];
+            String structuredContentTypeId = persistencePackage.getCustomCriteria()[3];
             StructuredContentType structuredContentType = structuredContentService.findStructuredContentTypeById(Long.valueOf(structuredContentTypeId));
             ClassMetadata metadata = new ClassMetadata();
             metadata.setCeilingType(StructuredContentType.class.getName());
