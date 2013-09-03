@@ -414,7 +414,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     }
                     adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
                     PersistenceModule subModule = getCompatibleModule(subPackage.getValue().getPersistencePerspective().getOperationTypes().getAddType());
-                    subResponse = subModule.add(persistencePackage);
+                    subResponse = subModule.update(persistencePackage);
                     subPackage.getValue().setEntity(subResponse);
                 }
             } catch (ValidationException e) {
