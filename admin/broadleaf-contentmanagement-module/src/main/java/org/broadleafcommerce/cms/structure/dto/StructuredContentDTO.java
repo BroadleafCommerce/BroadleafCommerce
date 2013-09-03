@@ -16,21 +16,13 @@
 
 package org.broadleafcommerce.cms.structure.dto;
 
-import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
-import org.broadleafcommerce.cms.structure.service.StructuredContentServiceImpl;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Scoped as a prototype bean via bl-cms-applicationContext-entity. This bean is used to wrap an {@link StructuredContentImpl}
- * so that modifications and additional properties can be used without worrying about Hibernate's persistence.
- * 
- * @author bpolster.
- * @see {@link StructuredContentServiceImpl#buildStructuredContentDTO};
- * @see {@link StructuredContentServiceImpl#buildFieldValues};
+ * Created by bpolster.
  */
 public class StructuredContentDTO implements Serializable {
 
