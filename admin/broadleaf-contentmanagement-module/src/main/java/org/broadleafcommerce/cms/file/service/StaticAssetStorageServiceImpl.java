@@ -438,11 +438,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     @Override
     public void createStaticAssetStorageFromFile(MultipartFile file, StaticAsset staticAsset) throws IOException {
         if (StorageType.DATABASE.equals(staticAsset.getStorageType())) {
-            StaticAssetStorage storage = staticAssetStorageDao.create();
-            storage.setStaticAssetId(staticAsset.getId());
-            Blob uploadBlob = staticAssetStorageDao.createBlob(file);
-            storage.setFileData(uploadBlob);
-            staticAssetStorageDao.save(storage);
+            persistFileToDatabase(file, staticAsset);
         } else if (StorageType.FILESYSTEM.equals(staticAsset.getStorageType())) {
             InputStream input = file.getInputStream();
             byte[] buffer = new byte[fileBufferSize];
@@ -481,14 +477,14 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             }
         }
     }
-
-    public static void main(String[] args) {
-        System.out.println(DigestUtils.md5Hex("/product/myproductimage.jpg"));
-        System.out.println(DigestUtils.md5Hex("/site-125"));
-
-        System.out.println("/product/myproductimage.jpg".substring("/product/myproductimage.jpg".lastIndexOf('.')));
-
-        System.out.println("/product/myproductimage.jpg".substring(0, "/product/myproductimage.jpg".lastIndexOf("/") + 1) +
-                UUID.randomUUID().toString());
+    
+    @Transactional("blTransactionManager")
+    protected void persistFileToDatabase(MultipartFile file, StaticAsset staticAsset) throws IOException {
+        StaticAssetStorage storage = staticAssetStorageDao.create();
+        storage.setStaticAssetId(staticAsset.getId());
+        Blob uploadBlob = staticAssetStorageDao.createBlob(file);
+        storage.setFileData(uploadBlob);
+        staticAssetStorageDao.save(storage);
     }
+
 }
