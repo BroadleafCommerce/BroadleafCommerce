@@ -55,7 +55,16 @@ import javax.servlet.http.HttpServletRequest;
  *
  * Usage based on the following attributes:<br>
  * <ul>
- *     <li>contentType (required) - specifies the content you are retrieving</li>
+ *     <li>extensionFieldName  (required *) - only required if contentType is not specified.
+ *                                    Specifies the field name in which to pull content for.
+ *                                    The resulting list can be of different content types.
+ *                                    (For example: the AdvancedCMS Module allows lookup by "layoutArea")</li>
+ *     <li>extensionFieldValue  (required *) - only required if contentType is not specified.
+ *                                    Specifies the field value for which the extensionFieldName is specified.
+ *                                    (For example: the AdvancedCMS Module allows lookup by "layoutArea".
+ *                                    The extensionFieldValue would be the specific label for the specified "layoutArea")</li>
+ *     <li>contentType (required *) - only required if extensionFieldName and extensionFieldValue is not specified.
+ *                                    Specifies the content you are retrieving.</li>
  *     <li>contentName - if included will retrieve only content that matches the name.   When no name is specified,
  *                       all matching content items of the passed in type are retrieved.</li>
  *     <li>maxResults - if specified limits the results to a specified number of items.   The content will be returned
@@ -88,7 +97,10 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
     protected StructuredContentService structuredContentService;
     
     @Resource(name = "blStaticAssetService")
-    protected StaticAssetService staticAssetService;        
+    protected StaticAssetService staticAssetService;
+
+    @Resource(name = "blContentProcessorExtensionManager")
+    protected ContentProcessorExtensionManager extensionManager;
     
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -126,6 +138,9 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         String contentType = element.getAttributeValue("contentType");
         String contentName = element.getAttributeValue("contentName");
         String maxResultsStr = element.getAttributeValue("maxResults");
+        String extensionFieldName = element.getAttributeValue("extensionFieldName");
+        String extensionFieldValue = element.getAttributeValue("extensionFieldValue");
+
         Integer maxResults = null;
         if (maxResultsStr != null) {
             maxResults = Ints.tryParse(maxResultsStr);
@@ -153,7 +168,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 
         Locale locale = blcContext.getLocale();
             
-        contentItems = getContentItems(contentName, maxResults, request, mvelParameters, currentSandbox, structuredContentType, locale, arguments, element);
+        contentItems = getContentItems(contentName, maxResults, request, mvelParameters, currentSandbox, structuredContentType, locale, extensionFieldName, extensionFieldValue);
                             
         if (contentItems.size() > 0) {
             List<Map<String,String>> contentItemFields = new ArrayList<Map<String, String>>();          
@@ -198,20 +213,27 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
      * @param currentSandbox current sandbox being used
      * @param structuredContentType the type of content that should be returned
      * @param locale current locale
-     * @param arguments Thymeleaf Arguments passed into the tag
-     * @param element element context that this Thymeleaf processor is being executed in
+     * @param extensionFieldName the field name any registered ExtensionManagers will use to lookup content  (will only be retrieved if structuredContentType is null)
+     * @param extensionFieldValue the field value any registered ExtensionManagers will use to lookup content (will only be retrieved if structuredContentType is null)
      * @return
      */
     protected List<StructuredContentDTO> getContentItems(String contentName, Integer maxResults, HttpServletRequest request,
                                                         Map<String, Object> mvelParameters,
                                                         SandBox currentSandbox,
                                                         StructuredContentType structuredContentType,
-                                                        Locale locale,
-                                                        Arguments arguments,
-                                                        Element element) {
+                                                        Locale locale, String extensionFieldName, String extensionFieldValue) {
         List<StructuredContentDTO> contentItems;
         if (structuredContentType == null) {
-            contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, contentName, locale, maxResults, mvelParameters, isSecure(request));
+            if (extensionFieldName != null && extensionFieldValue != null) {
+                contentItems = new ArrayList<StructuredContentDTO>();
+
+                // allow modules to lookup content by a specific field
+                // e.g. (For the AdvancedCMS module you can lookup by "layoutArea")
+                extensionManager.getProxy().lookupContentByExtensionField(contentItems, extensionFieldName, extensionFieldValue, currentSandbox, locale, maxResults, mvelParameters, isSecure(request));
+
+            }   else {
+                contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, contentName, locale, maxResults, mvelParameters, isSecure(request));
+            }
         } else {
             if (contentName == null || "".equals(contentName)) {
                 contentItems = structuredContentService.lookupStructuredContentItemsByType(currentSandbox, structuredContentType, locale, maxResults, mvelParameters, isSecure(request));
