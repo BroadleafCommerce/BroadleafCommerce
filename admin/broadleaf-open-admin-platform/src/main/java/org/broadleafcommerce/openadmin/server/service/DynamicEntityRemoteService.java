@@ -146,11 +146,9 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             return persistenceManager.add(persistencePackage);
         } catch (ServiceException e) {
             if (e instanceof ValidationException) {
-                LOG.warn("Not saving entity as it has failed validation");
-                return new PersistenceResponse().withEntity(((ValidationException) e).getEntity());
+                throw e;
             } else if (e.getCause() instanceof ValidationException) {
-                LOG.warn("Not saving entity as it has failed validation");
-                return new PersistenceResponse().withEntity(((ValidationException) e.getCause()).getEntity());
+                throw (ValidationException) e.getCause();
             }
             
             String message = exploitProtectionService.cleanString(e.getMessage());
@@ -171,11 +169,9 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
             return persistenceManager.update(persistencePackage);
         } catch (ServiceException e) {
             if (e instanceof ValidationException) {
-                LOG.warn("Not saving entity as it has failed validation");
-                return new PersistenceResponse().withEntity(((ValidationException) e).getEntity());
+                throw e;
             } else if (e.getCause() instanceof ValidationException) {
-                LOG.warn("Not saving entity as it has failed validation");
-                return new PersistenceResponse().withEntity(((ValidationException) e.getCause()).getEntity());
+                throw (ValidationException) e.getCause();
             }
             LOG.error("Problem updating " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             String message = exploitProtectionService.cleanString(e.getMessage());

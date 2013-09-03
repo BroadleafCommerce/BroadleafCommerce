@@ -16,6 +16,16 @@
 
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -61,16 +71,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to 
@@ -248,12 +248,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         extractDynamicFormFields(entityForm);
         
-        Entity entity;
-        try {
-            entity = service.addEntity(entityForm, getSectionCustomCriteria()).getEntity();
-        } catch (ValidationException e) {
-            entity = e.getEntity();
-        }
+        Entity entity = service.addEntity(entityForm, getSectionCustomCriteria());
         entityFormValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
@@ -373,12 +368,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         extractDynamicFormFields(entityForm);
         
-        Entity entity;
-        try {
-            entity = service.updateEntity(entityForm, getSectionCustomCriteria()).getEntity();
-        } catch (ValidationException e) {
-            entity = e.getEntity();
-        }
+        Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria());
         //The id may have changed to support functionality - check if so
         id = entity.findProperty(entityForm.getIdProperty()).getValue();
         

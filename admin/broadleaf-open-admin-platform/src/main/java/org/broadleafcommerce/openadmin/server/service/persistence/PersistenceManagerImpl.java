@@ -40,11 +40,14 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerFilter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
+import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.mapping.PersistentClass;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -361,20 +364,72 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         }
         //check to see if there is a custom handler registered
-        for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
-            if (handler.canHandleAdd(persistencePackage)) {
-                if (!handler.willHandleSecurity(persistencePackage)) {
-                    adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
+        //execute the root PersistencePackage
+        Entity response;
+        checkRoot: {
+            //if there is a validation exception in the root check, let it bubble, as we need a valid, persisted
+            //entity to execute the subPackage code later
+            for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+                if (handler.canHandleAdd(persistencePackage)) {
+                    if (!handler.willHandleSecurity(persistencePackage)) {
+                        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
+                    }
+                    response = handler.add(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                    break checkRoot;
                 }
-                Entity response = handler.add(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
-                return executePostAddHandlers(persistencePackage, new PersistenceResponse().withEntity(response));
+            }
+            adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
+            PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
+            response = myModule.add(persistencePackage);
+        }
+
+        // Once the entity has been saved, we can utilize its id for the subsequent dynamic forms
+        Class<?> entityClass;
+        try {
+            entityClass = Class.forName(response.getType()[0]);
+        } catch (ClassNotFoundException e) {
+            throw new ServiceException(e);
+        }
+        Map<String, Object> idMetadata = getDynamicEntityDao().getIdMetadata(entityClass);
+        String idProperty = (String) idMetadata.get("name");
+        String idVal = response.findProperty(idProperty).getValue();
+
+        Map<String, List<String>> subPackageValidationErrors = new HashMap<String, List<String>>();
+        for (Map.Entry<String,PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
+            Entity subResponse;
+            try {
+                subPackage.getValue().setCustomCriteria(new String[]{subPackage.getValue().getCustomCriteria()[0], idVal});
+                //Run through any subPackages -- add up any validation errors
+                checkHandler: {
+                    for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+                        if (handler.canHandleAdd(subPackage.getValue())) {
+                            if (!handler.willHandleSecurity(subPackage.getValue())) {
+                                adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
+                            }
+                            subResponse = handler.add(subPackage.getValue(), dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                            subPackage.getValue().setEntity(subResponse);
+
+                            break checkHandler;
+                        }
+                    }
+                    adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
+                    PersistenceModule subModule = getCompatibleModule(subPackage.getValue().getPersistencePerspective().getOperationTypes().getAddType());
+                    subResponse = subModule.add(persistencePackage);
+                    subPackage.getValue().setEntity(subResponse);
+                }
+            } catch (ValidationException e) {
+                for (Map.Entry<String, List<String>> error : e.getEntity().getValidationErrors().entrySet()) {
+                    subPackageValidationErrors.put(subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(), error.getValue());
+                }
             }
         }
-        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
-        PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
-        Entity entity = myModule.add(persistencePackage);
+        response.getValidationErrors().putAll(subPackageValidationErrors);
 
-        return executePostAddHandlers(persistencePackage, new PersistenceResponse().withEntity(entity));
+        if (response.isValidationFailure()) {
+            throw new ValidationException(response, "The entity has failed validation");
+        }
+
+        return executePostAddHandlers(persistencePackage, new PersistenceResponse().withEntity(response));
     }
 
     protected PersistenceResponse executePostAddHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
@@ -424,20 +479,60 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         }
         //check to see if there is a custom handler registered
-        for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
-            if (handler.canHandleUpdate(persistencePackage)) {
-                if (!handler.willHandleSecurity(persistencePackage)) {
-                    adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.UPDATE);
+        //execute the root PersistencePackage
+        Entity response;
+        try {
+            checkRoot: {
+                for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+                    if (handler.canHandleUpdate(persistencePackage)) {
+                        if (!handler.willHandleSecurity(persistencePackage)) {
+                            adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.UPDATE);
+                        }
+                        response = handler.update(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                        break checkRoot;
+                    }
                 }
-                Entity response = handler.update(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
-                return executePostUpdateHandlers(persistencePackage, new PersistenceResponse().withEntity(response));
+                adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.UPDATE);
+                PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
+                response = myModule.update(persistencePackage);
+            }
+        } catch (ValidationException e) {
+            response = e.getEntity();
+        }
+
+        Map<String, List<String>> subPackageValidationErrors = new HashMap<String, List<String>>();
+        for (Map.Entry<String,PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
+            try {
+                //Run through any subPackages -- add up any validation errors
+                checkHandler: {
+                    for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+                        if (handler.canHandleUpdate(subPackage.getValue())) {
+                            if (!handler.willHandleSecurity(subPackage.getValue())) {
+                                adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.UPDATE);
+                            }
+                            Entity subResponse = handler.update(subPackage.getValue(), dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                            subPackage.getValue().setEntity(subResponse);
+                            break checkHandler;
+                        }
+                    }
+                    adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.UPDATE);
+                    PersistenceModule subModule = getCompatibleModule(subPackage.getValue().getPersistencePerspective().getOperationTypes().getUpdateType());
+                    Entity subResponse = subModule.update(persistencePackage);
+                    subPackage.getValue().setEntity(subResponse);
+                }
+            } catch (ValidationException e) {
+                for (Map.Entry<String, List<String>> error : e.getEntity().getValidationErrors().entrySet()) {
+                    subPackageValidationErrors.put(subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(), error.getValue());
+                }
             }
         }
-        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.UPDATE);
-        PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
-        Entity entity = myModule.update(persistencePackage);
+        response.getValidationErrors().putAll(subPackageValidationErrors);
 
-        return executePostUpdateHandlers(persistencePackage, new PersistenceResponse().withEntity(entity));
+        if (response.isValidationFailure()) {
+            throw new ValidationException(response, "The entity has failed validation");
+        }
+
+        return executePostUpdateHandlers(persistencePackage, new PersistenceResponse().withEntity(response));
     }
 
     protected PersistenceResponse executePostUpdateHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {

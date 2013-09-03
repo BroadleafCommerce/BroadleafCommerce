@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.openadmin.server.factory;
 
+import java.util.Map;
+
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.dto.OperationTypes;
@@ -85,6 +87,10 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
 
         if (request.getEntity() != null) {
             pp.setEntity(request.getEntity());
+        }
+
+        for (Map.Entry<String, PersistencePackageRequest> subRequest : request.getSubRequests().entrySet()) {
+            pp.getSubPackages().put(subRequest.getKey(), create(subRequest.getValue()));
         }
 
         return pp;
