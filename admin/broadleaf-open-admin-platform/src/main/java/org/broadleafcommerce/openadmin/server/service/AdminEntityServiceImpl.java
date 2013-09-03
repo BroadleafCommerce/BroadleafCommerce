@@ -16,7 +16,19 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
-import org.apache.commons.collections.MapUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -46,19 +58,6 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -108,8 +107,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public PersistenceResponse addEntity(EntityForm entityForm, String[] customCriteria)
-            throws ServiceException {
+    public PersistenceResponse addEntity(EntityForm entityForm, String[] customCriteria) throws ServiceException {
         PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
         // If the entity form has dynamic forms inside of it, we need to persist those as well.
         // They are typically done in their own custom persistence handlers, which will get triggered
@@ -124,9 +122,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public PersistenceResponse updateEntity(EntityForm entityForm, String[] customCriteria)
-            throws ServiceException {
-
+    public PersistenceResponse updateEntity(EntityForm entityForm, String[] customCriteria) throws ServiceException {
         PersistencePackageRequest ppr = getRequestForEntityForm(entityForm, customCriteria);
         // If the entity form has dynamic forms inside of it, we need to persist those as well.
         // They are typically done in their own custom persistence handlers, which will get triggered
@@ -597,7 +593,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         try {
             return service.add(pkg);
         } catch (ValidationException e) {
-            return e.getEntity();
+            return new PersistenceResponse().withEntity(e.getEntity());
         }
     }
 
@@ -607,7 +603,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         try {
             return service.update(pkg);
         } catch (ValidationException e) {
-            return e.getEntity();
+            return new PersistenceResponse().withEntity(e.getEntity());
         }
     }
 
