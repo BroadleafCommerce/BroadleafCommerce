@@ -41,11 +41,11 @@ import java.util.List;
  */
 public abstract class ExtensionManager<T extends ExtensionHandler> implements InvocationHandler {
 
-    private boolean handlersSorted = false;
-    private static String LOCK_OBJECT = new String("EM_LOCK");
+    protected boolean handlersSorted = false;
+    protected static String LOCK_OBJECT = new String("EM_LOCK");
     
-    private T extensionHandler;
-    private List<T> handlers = new ArrayList<T>();
+    protected T extensionHandler;
+    protected List<T> handlers = new ArrayList<T>();
 
     /**
      * Should take in a className that matches the ExtensionHandler interface being managed.
