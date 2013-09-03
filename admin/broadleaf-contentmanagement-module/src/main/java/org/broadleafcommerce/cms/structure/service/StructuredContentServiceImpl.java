@@ -39,8 +39,6 @@ import org.broadleafcommerce.cms.structure.message.ArchivedStructuredContentPubl
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
@@ -87,15 +85,9 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
 
     @Resource(name="blContentRuleProcessors")
     protected List<StructuredContentRuleProcessor> contentRuleProcessors;
-    
-    @Resource(name="blEntityConfiguration")
-    protected EntityConfiguration entityConfiguration;
-    
-    @Resource(name = "blStructuredContentServiceExtensionManager")
-    protected StructuredContentServiceExtensionManager extensionManager;
 
     @Value("${automatically.approve.structured.content}")
-    protected boolean automaticallyApproveAndPromoteStructuredContent = true;
+    protected boolean automaticallyApproveAndPromoteStructuredContent=true;
 
     protected Cache structuredContentCache;
 
@@ -290,13 +282,13 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
     protected List<ItemCriteriaDTO> buildItemCriteriaDTOList(StructuredContent sc) {
         List<ItemCriteriaDTO> itemCriteriaDTOList = new ArrayList<ItemCriteriaDTO>();
         for(StructuredContentItemCriteria criteria : sc.getQualifyingItemCriteria()) {
-            ItemCriteriaDTO criteriaDTO = entityConfiguration.createEntityInstance(ItemCriteriaDTO.class.getName(), ItemCriteriaDTO.class);
+            ItemCriteriaDTO criteriaDTO = new ItemCriteriaDTO();
             criteriaDTO.setMatchRule(criteria.getMatchRule());
             criteriaDTO.setQty(criteria.getQuantity());
             itemCriteriaDTOList.add(criteriaDTO);
         }
         return itemCriteriaDTOList;
-    }
+    }            
     
     protected void buildFieldValues(StructuredContent sc, StructuredContentDTO scDTO, boolean secure) {
         String envPrefix = staticAssetService.getStaticAssetEnvironmentUrlPrefix();
@@ -318,9 +310,6 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
                 scDTO.getValues().put(fieldKey, originalValue);
             }
         }
-        
-        // allow modules to contribute to the fields of the DTO
-        extensionManager.getProxy().populateAdditionalStructuredContentFields(sc, scDTO, secure);
     }
 
     /**
@@ -330,7 +319,6 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
      * @param structuredContentList
      * @param secure
      * @return
-     * @see {@link #buildStructuredContentDTO(StructuredContent, boolean)}
      */
     protected List<StructuredContentDTO> buildStructuredContentDTOList(List<StructuredContent> structuredContentList, boolean secure) {
         List<StructuredContentDTO> dtoList = new ArrayList<StructuredContentDTO>();
@@ -345,17 +333,13 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
 
     /**
      * Converts a StructuredContent into a StructuredContentDTO.   If the item contains fields with
-     * broadleaf cms urls, the urls are converted to utilize the domain.
-     * 
-     * The StructuredContentDTO is built via the {@link EntityConfiguration}. To override the actual type that is returned,
-     * include an override in an applicationContext like any other entity override.
-     * 
+     * broadleaf cms urls, the urls are converted to utilize the domain
      * @param sc
      * @param secure
      * @return
      */
     protected StructuredContentDTO buildStructuredContentDTO(StructuredContent sc, boolean secure) {
-        StructuredContentDTO scDTO = entityConfiguration.createEntityInstance(StructuredContentDTO.class.getName(), StructuredContentDTO.class);
+        StructuredContentDTO scDTO = new StructuredContentDTO();
         scDTO.setContentName(sc.getContentName());
         scDTO.setContentType(sc.getStructuredContentType().getName());
         scDTO.setId(sc.getId());
