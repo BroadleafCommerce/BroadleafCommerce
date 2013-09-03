@@ -16,6 +16,12 @@
 
 package org.broadleafcommerce.openadmin.server.domain;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -33,10 +39,6 @@ import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * A DTO class used to seed a persistence package.
  * 
@@ -53,6 +55,7 @@ public class PersistencePackageRequest {
     protected ForeignKey foreignKey;
     protected Integer startIndex;
     protected Integer maxIndex;
+    protected Map<String, PersistencePackageRequest> subRequests = new LinkedHashMap<String, PersistencePackageRequest>();
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -232,6 +235,11 @@ public class PersistencePackageRequest {
         return this;
     }
 
+    public PersistencePackageRequest addSubRequest(String infoPropertyName, PersistencePackageRequest subRequest) {
+        subRequests.put(infoPropertyName, subRequest);
+        return this;
+    }
+
     public PersistencePackageRequest addCustomCriteria(String customCriteria) {
         if (StringUtils.isNotBlank(customCriteria)) {
             this.customCriteria.add(customCriteria);
@@ -372,6 +380,14 @@ public class PersistencePackageRequest {
 
     public void setMaxIndex(Integer maxIndex) {
         this.maxIndex = maxIndex;
+    }
+
+    public Map<String, PersistencePackageRequest> getSubRequests() {
+        return subRequests;
+    }
+
+    public void setSubRequests(Map<String, PersistencePackageRequest> subRequests) {
+        this.subRequests = subRequests;
     }
     
 }
