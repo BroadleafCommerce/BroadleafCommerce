@@ -326,7 +326,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                             if (!handler.willHandleSecurity(subPackage.getValue())) {
                                 adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
                             }
-                            subResponse = handler.add(subPackage.getValue(), dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                            subResponse = handler.update(subPackage.getValue(), dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
                             subPackage.getValue().setEntity(subResponse);
 
                             break checkHandler;
@@ -334,7 +334,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     }
                     adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
                     PersistenceModule subModule = getCompatibleModule(subPackage.getValue().getPersistencePerspective().getOperationTypes().getAddType());
-                    subResponse = subModule.add(persistencePackage);
+                    subResponse = subModule.update(persistencePackage);
                     subPackage.getValue().setEntity(subResponse);
                 }
             } catch (ValidationException e) {
