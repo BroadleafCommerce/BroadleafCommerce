@@ -164,7 +164,10 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         SandBox currentSandbox = blcContext.getSandbox();
 
         List<StructuredContentDTO> contentItems;
-        StructuredContentType structuredContentType = structuredContentService.findStructuredContentTypeByName(contentType);
+        StructuredContentType structuredContentType = null;
+        if (contentType != null ) {
+            structuredContentType = structuredContentService.findStructuredContentTypeByName(contentType);
+        }
 
         Locale locale = blcContext.getLocale();
             
