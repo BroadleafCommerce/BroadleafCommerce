@@ -259,4 +259,21 @@ public interface StructuredContentService extends SandBoxItemListener {
 
     public void setAutomaticallyApproveAndPromoteStructuredContent(boolean automaticallyApproveAndPromoteStructuredContent);
 
+    public Locale findLanguageOnlyLocale(Locale locale);
+
+    public String buildTypeKey(SandBox currentSandbox, Locale locale, String contentType);
+
+    public SandBox getProductionSandBox(SandBox currentSandBox);
+
+    public boolean isProductionSandBox(SandBox dest);
+
+    public void addStructuredContentListToCache(String key, List<StructuredContentDTO> scDTOList);
+
+    public List<StructuredContentDTO> getStructuredContentListFromCache(String key);
+
+    public List<StructuredContentDTO> buildStructuredContentDTOList(List<StructuredContent> structuredContentList, boolean secure);
+
+    public List<StructuredContentDTO> mergeContent(List<StructuredContentDTO> productionList, List<StructuredContent> sandboxList, boolean secure);
+
+    public List<StructuredContentDTO> evaluateAndPriortizeContent(List<StructuredContentDTO> structuredContentList, int count, Map<String, Object> ruleDTOs);
 }

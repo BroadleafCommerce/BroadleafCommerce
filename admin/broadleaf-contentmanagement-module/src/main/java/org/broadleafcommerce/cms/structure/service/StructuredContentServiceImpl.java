@@ -404,7 +404,8 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
      * @return
      * @see {@link #buildStructuredContentDTO(StructuredContent, boolean)}
      */
-    protected List<StructuredContentDTO> buildStructuredContentDTOList(List<StructuredContent> structuredContentList, boolean secure) {
+    @Override
+    public List<StructuredContentDTO> buildStructuredContentDTOList(List<StructuredContent> structuredContentList, boolean secure) {
         List<StructuredContentDTO> dtoList = new ArrayList<StructuredContentDTO>();
         if (structuredContentList != null) {
             for(StructuredContent sc : structuredContentList) {
@@ -452,7 +453,8 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
     }
 
 
-    protected List<StructuredContentDTO> mergeContent(List<StructuredContentDTO> productionList, List<StructuredContent> sandboxList, boolean secure) {
+    @Override
+    public List<StructuredContentDTO> mergeContent(List<StructuredContentDTO> productionList, List<StructuredContent> sandboxList, boolean secure) {
         if (sandboxList == null || sandboxList.size() == 0) {
             return productionList;
         }
@@ -484,7 +486,8 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         return returnList;
     }
 
-    protected List<StructuredContentDTO> evaluateAndPriortizeContent(List<StructuredContentDTO> structuredContentList, int count, Map<String, Object> ruleDTOs) {
+    @Override
+    public List<StructuredContentDTO> evaluateAndPriortizeContent(List<StructuredContentDTO> structuredContentList, int count, Map<String, Object> ruleDTOs) {
         // some optimization for single item lists which don't require prioritization
         if (structuredContentList.size() == 1) {
             if (processContentRules(structuredContentList.get(0), ruleDTOs)) {
@@ -637,7 +640,8 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         return evaluateAndPriortizeContent(contentList, count, ruleDTOs);
     }
 
-    protected SandBox getProductionSandBox(SandBox currentSandBox) {
+    @Override
+    public SandBox getProductionSandBox(SandBox currentSandBox) {
         SandBox productionSandBox = null;
         if (currentSandBox == null || SandBoxType.PRODUCTION.equals(currentSandBox.getSandBoxType())) {
             productionSandBox = currentSandBox;
@@ -647,7 +651,8 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         return productionSandBox;
     }
 
-    protected boolean isProductionSandBox(SandBox dest) {
+    @Override
+    public boolean isProductionSandBox(SandBox dest) {
         if (dest == null) {
             return true;
         } else {
@@ -781,8 +786,9 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
 
         return key.toString();
     }
-    
-    protected String buildTypeKey(SandBox currentSandbox, Locale locale, String contentType) {
+
+    @Override
+    public String buildTypeKey(SandBox currentSandbox, Locale locale, String contentType) {
         StringBuffer key = new StringBuffer(contentType);
         if (locale != null) {
             key.append("-").append(locale.getLocaleCode());
@@ -796,11 +802,13 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
     }
 
 
-    protected void addStructuredContentListToCache(String key, List<StructuredContentDTO> scDTOList) {
+    @Override
+    public void addStructuredContentListToCache(String key, List<StructuredContentDTO> scDTOList) {
         getStructuredContentCache().put(new Element(key, scDTOList));
     }
 
-    protected List<StructuredContentDTO> getStructuredContentListFromCache(String key) {
+    @Override
+    public List<StructuredContentDTO> getStructuredContentListFromCache(String key) {
         Element scElement =  getStructuredContentCache().get(key);
         if (scElement != null) {
             return (List<StructuredContentDTO>) scElement.getValue();
@@ -853,7 +861,8 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         this.automaticallyApproveAndPromoteStructuredContent = automaticallyApproveAndPromoteStructuredContent;
     }
 
-    protected Locale findLanguageOnlyLocale(Locale locale) {
+    @Override
+    public Locale findLanguageOnlyLocale(Locale locale) {
         if (locale != null ) {
             Locale languageOnlyLocale = localeService.findLocaleByCode(LocaleUtil.findLanguageCode(locale));
             if (languageOnlyLocale != null) {
