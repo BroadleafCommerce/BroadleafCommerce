@@ -44,7 +44,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Inspect
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
-import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.mapping.PersistentClass;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -326,7 +325,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                             if (!handler.willHandleSecurity(subPackage.getValue())) {
                                 adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
                             }
-                            subResponse = handler.update(subPackage.getValue(), dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                            subResponse = handler.add(subPackage.getValue(), dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
                             subPackage.getValue().setEntity(subResponse);
 
                             break checkHandler;
@@ -334,7 +333,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     }
                     adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
                     PersistenceModule subModule = getCompatibleModule(subPackage.getValue().getPersistencePerspective().getOperationTypes().getAddType());
-                    subResponse = subModule.update(persistencePackage);
+                    subResponse = subModule.add(persistencePackage);
                     subPackage.getValue().setEntity(subResponse);
                 }
             } catch (ValidationException e) {

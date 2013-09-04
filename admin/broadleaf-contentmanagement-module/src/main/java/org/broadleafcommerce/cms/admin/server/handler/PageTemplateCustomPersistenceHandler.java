@@ -79,7 +79,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-        return false;
+        return canHandleFetch(persistencePackage);
     }
 
     @Override
@@ -170,6 +170,15 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
 
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        return addOrUpdate(persistencePackage, dynamicEntityDao, helper);
+    }
+
+    @Override
+    public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        return addOrUpdate(persistencePackage, dynamicEntityDao, helper);
+    }
+
+    protected Entity addOrUpdate(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String pageId = persistencePackage.getCustomCriteria()[1];
