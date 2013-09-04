@@ -182,6 +182,15 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                 throws ServiceException {
         return getCollectionListGrid(mainMetadata, entity, collectionProperty, requestParams, sectionKey, null);
     }
+    
+    /**
+     * @see #getBlankDynamicFieldTemplateForm(DynamicEntityFormInfo, EntityForm)
+     * @param info
+     * @throws ServiceException
+     */
+    protected EntityForm getBlankDynamicFieldTemplateForm(DynamicEntityFormInfo info) throws ServiceException {
+        return getBlankDynamicFieldTemplateForm(info, null);
+    }
 
     /**
      * Convenience method for obtaining a blank dynamic field template form. For example, if the main entity form should
@@ -193,7 +202,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @return the entity form
      * @throws ServiceException
      */
-    protected EntityForm getBlankDynamicFieldTemplateForm(DynamicEntityFormInfo info) 
+    protected EntityForm getBlankDynamicFieldTemplateForm(DynamicEntityFormInfo info, EntityForm dynamicFormOverride) 
             throws ServiceException {
         // We need to inspect with the second custom criteria set to the id of
         // the desired structured content type
@@ -203,6 +212,17 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         
         EntityForm dynamicForm = formService.createEntityForm(cmd);
+        dynamicForm.clearFieldsMap();
+
+        if (dynamicFormOverride != null) {
+            dynamicFormOverride.clearFieldsMap();
+            Map<String, Field> fieldOverrides = dynamicFormOverride.getFields();
+            for (Entry<String, Field> override : fieldOverrides.entrySet()) {
+                if (dynamicForm.getFields().containsKey(override.getKey())) {
+                    dynamicForm.getFields().get(override.getKey()).setValue(override.getValue().getValue());
+                }
+            }
+        }
         
         // Set the specialized name for these fields - we need to handle them separately
         dynamicForm.clearFieldsMap();
@@ -213,7 +233,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                 }
             }
         }
-    
+
         return dynamicForm;
     }
     

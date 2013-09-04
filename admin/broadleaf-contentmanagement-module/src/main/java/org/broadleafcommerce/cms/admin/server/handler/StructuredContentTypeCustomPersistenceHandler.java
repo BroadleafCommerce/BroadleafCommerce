@@ -79,7 +79,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-        return false;
+        return canHandleFetch(persistencePackage);
     }
 
     @Override
@@ -172,6 +172,18 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
      */
     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        return addOrUpdate(persistencePackage, dynamicEntityDao, helper);
+    }
+
+    /**
+     * Invoked when {@link StructuredContent} is saved in order to fill out the dynamic form for the structured content type
+     */
+    @Override
+    public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        return addOrUpdate(persistencePackage, dynamicEntityDao, helper);
+    }
+
+    protected Entity addOrUpdate(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String structuredContentId = persistencePackage.getCustomCriteria()[1];
