@@ -105,7 +105,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            String pageTemplateId = persistencePackage.getCustomCriteria()[1];
+            String pageTemplateId = persistencePackage.getCustomCriteria()[3];
             PageTemplate template = pageService.findPageTemplateById(Long.valueOf(pageTemplateId));
             ClassMetadata metadata = new ClassMetadata();
             metadata.setCeilingType(PageTemplate.class.getName());

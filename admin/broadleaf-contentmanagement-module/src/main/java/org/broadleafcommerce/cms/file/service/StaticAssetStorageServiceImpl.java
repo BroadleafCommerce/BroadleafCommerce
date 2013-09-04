@@ -435,10 +435,15 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         return buffer.toString();
     }
 
+    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public void createStaticAssetStorageFromFile(MultipartFile file, StaticAsset staticAsset) throws IOException {
         if (StorageType.DATABASE.equals(staticAsset.getStorageType())) {
-            persistFileToDatabase(file, staticAsset);
+            StaticAssetStorage storage = staticAssetStorageDao.create();
+            storage.setStaticAssetId(staticAsset.getId());
+            Blob uploadBlob = staticAssetStorageDao.createBlob(file);
+            storage.setFileData(uploadBlob);
+            staticAssetStorageDao.save(storage);
         } else if (StorageType.FILESYSTEM.equals(staticAsset.getStorageType())) {
             InputStream input = file.getInputStream();
             byte[] buffer = new byte[fileBufferSize];
@@ -476,15 +481,6 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
                 }
             }
         }
-    }
-    
-    @Transactional("blTransactionManager")
-    protected void persistFileToDatabase(MultipartFile file, StaticAsset staticAsset) throws IOException {
-        StaticAssetStorage storage = staticAssetStorageDao.create();
-        storage.setStaticAssetId(staticAsset.getId());
-        Blob uploadBlob = staticAssetStorageDao.createBlob(file);
-        storage.setFileData(uploadBlob);
-        staticAssetStorageDao.save(storage);
     }
 
 }
