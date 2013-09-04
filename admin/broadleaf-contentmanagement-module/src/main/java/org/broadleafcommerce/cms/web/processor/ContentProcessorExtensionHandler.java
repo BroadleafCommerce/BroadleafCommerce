@@ -21,6 +21,8 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.thymeleaf.Arguments;
+import org.thymeleaf.dom.Element;
 
 import java.util.List;
 import java.util.Map;
@@ -61,6 +63,6 @@ public interface ContentProcessorExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType lookupContentByExtensionField(List<StructuredContentDTO> contentItems,
             String extensionFieldName, String extensionFieldValue, SandBox sandBox, Locale locale,
-            Integer count, Map<String,Object> ruleDTOs, boolean secure);
+            Integer count, Map<String,Object> ruleDTOs, boolean secure, Arguments arguments, Element element);
 
 }

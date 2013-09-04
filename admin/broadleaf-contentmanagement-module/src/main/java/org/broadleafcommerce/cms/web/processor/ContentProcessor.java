@@ -171,7 +171,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 
         Locale locale = blcContext.getLocale();
             
-        contentItems = getContentItems(contentName, maxResults, request, mvelParameters, currentSandbox, structuredContentType, locale, extensionFieldName, extensionFieldValue);
+        contentItems = getContentItems(contentName, maxResults, request, mvelParameters, currentSandbox, structuredContentType, locale, extensionFieldName, extensionFieldValue, arguments, element);
                             
         if (contentItems.size() > 0) {
             List<Map<String,String>> contentItemFields = new ArrayList<Map<String, String>>();          
@@ -218,13 +218,16 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
      * @param locale current locale
      * @param extensionFieldName the field name any registered ExtensionManagers will use to lookup content  (will only be retrieved if structuredContentType is null)
      * @param extensionFieldValue the field value any registered ExtensionManagers will use to lookup content (will only be retrieved if structuredContentType is null)
+     * @param arguments Thymeleaf Arguments passed into the tag
+     * @param element element context that this Thymeleaf processor is being executed in
      * @return
      */
     protected List<StructuredContentDTO> getContentItems(String contentName, Integer maxResults, HttpServletRequest request,
                                                         Map<String, Object> mvelParameters,
                                                         SandBox currentSandbox,
                                                         StructuredContentType structuredContentType,
-                                                        Locale locale, String extensionFieldName, String extensionFieldValue) {
+                                                        Locale locale, String extensionFieldName, String extensionFieldValue,
+                                                        Arguments arguments, Element element) {
         List<StructuredContentDTO> contentItems;
         if (structuredContentType == null) {
             if (extensionFieldName != null && extensionFieldValue != null) {
@@ -232,7 +235,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 
                 // allow modules to lookup content by a specific field
                 // e.g. (For the AdvancedCMS module you can lookup by "layoutArea")
-                extensionManager.getProxy().lookupContentByExtensionField(contentItems, extensionFieldName, extensionFieldValue, currentSandbox, locale, maxResults, mvelParameters, isSecure(request));
+                extensionManager.getProxy().lookupContentByExtensionField(contentItems, extensionFieldName, extensionFieldValue, currentSandbox, locale, maxResults, mvelParameters, isSecure(request), arguments, element);
 
             }   else {
                 contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, contentName, locale, maxResults, mvelParameters, isSecure(request));
