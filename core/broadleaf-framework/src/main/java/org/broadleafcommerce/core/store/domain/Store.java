@@ -20,8 +20,8 @@ import java.io.Serializable;
 
 public interface Store extends Serializable{
 
-    public String getId();
-    public void setId(String id);
+    public Long getId();
+    public void setId(Long id);
 
     public String getName();
     public void setName(String name);
