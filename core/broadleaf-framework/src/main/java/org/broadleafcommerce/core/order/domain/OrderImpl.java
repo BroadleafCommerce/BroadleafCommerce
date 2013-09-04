@@ -264,7 +264,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     protected Locale locale;
 
     @Transient
-    protected List<ActivityMessageDTO> orderMessages = new ArrayList<ActivityMessageDTO>();
+    protected List<ActivityMessageDTO> orderMessages;
 
     @Override
     public Long getId() {
@@ -745,7 +745,10 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @Override
     public List<ActivityMessageDTO> getOrderMessages() {
-        return orderMessages;
+        if (this.orderMessages == null) {
+            this.orderMessages = new ArrayList<ActivityMessageDTO>();
+        }
+        return this.orderMessages;
     }
 
     @Override
