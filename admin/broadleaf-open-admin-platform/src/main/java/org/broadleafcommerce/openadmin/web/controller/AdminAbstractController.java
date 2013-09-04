@@ -22,10 +22,12 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
@@ -211,8 +213,6 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      */
     protected EntityForm getDynamicFieldTemplateForm(DynamicEntityFormInfo info, String entityId, EntityForm dynamicFormOverride) 
             throws ServiceException {
-        // We need to inspect with the second custom criteria set to the id of
-        // the desired structured content type
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(info.getCeilingClassName())
                 .withCustomCriteria(new String[] { info.getCriteriaName(), entityId, info.getPropertyName(), info.getPropertyValue() });
@@ -220,17 +220,33 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         ClassMetadata cmd = service.getClassMetadata(ppr);
         Entity entity = service.getRecord(ppr, entityId, cmd, true);
         
+        List<Field> fieldsToMove = new ArrayList<Field>();
         // override the results of the entity with the dynamic form passed in
         if (dynamicFormOverride != null) {
             dynamicFormOverride.clearFieldsMap();
             Map<String, Field> fieldOverrides = dynamicFormOverride.getFields();
             for (Entry<String, Field> override : fieldOverrides.entrySet()) {
-                entity.getPMap().get(override.getKey()).setValue(override.getValue().getValue());
+                if (entity.getPMap().containsKey(override.getKey())) {
+                    entity.getPMap().get(override.getKey()).setValue(override.getValue().getValue());
+                } else {
+                    fieldsToMove.add(override.getValue());
+                }
             }
         }
         
         // Assemble the dynamic form for structured content type
         EntityForm dynamicForm = formService.createEntityForm(cmd, entity);
+        
+        for (Field field : fieldsToMove) {
+            FieldMetadata fmd = cmd.getPMap().get(field.getName()).getMetadata();
+            if (fmd instanceof BasicFieldMetadata) {
+                BasicFieldMetadata bfmd = (BasicFieldMetadata) fmd;
+                field.setFieldType(bfmd.getFieldType().toString());
+                field.setFriendlyName(bfmd.getFriendlyName());
+                field.setRequired(bfmd.getRequired());
+            }
+            dynamicForm.addField(field);
+        }
         
         // Set the specialized name for these fields - we need to handle them separately
         dynamicForm.clearFieldsMap();
