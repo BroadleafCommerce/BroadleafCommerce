@@ -38,4 +38,11 @@ public abstract class BaseEndpoint implements ApplicationContextAware, MessageSo
         this.messageSource = messageSource;
     }
 
+    public ApplicationContext getApplicationContext() {
+        return this.context;
+    }
+
+    public MessageSource getMessageSource() {
+        return this.messageSource;
+    }
 }
