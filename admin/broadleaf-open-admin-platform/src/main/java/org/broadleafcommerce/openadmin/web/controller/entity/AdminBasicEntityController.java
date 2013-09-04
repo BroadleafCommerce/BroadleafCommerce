@@ -248,7 +248,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         extractDynamicFormFields(entityForm);
         
-        Entity entity = service.addEntity(entityForm, getSectionCustomCriteria());
+        Entity entity = service.addEntity(entityForm, getSectionCustomCriteria()).getEntity();
         entityFormValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
@@ -368,7 +368,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         extractDynamicFormFields(entityForm);
         
-        Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria());
+        Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria()).getEntity();
         //The id may have changed to support functionality - check if so
         id = entity.findProperty(entityForm.getIdProperty()).getValue();
         
