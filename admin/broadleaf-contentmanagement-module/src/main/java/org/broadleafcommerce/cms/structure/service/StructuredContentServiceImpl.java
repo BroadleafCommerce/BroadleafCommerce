@@ -334,6 +334,8 @@ public class StructuredContentServiceImpl extends AbstractContentService impleme
         }
         String cmsPrefix = staticAssetService.getStaticAssetUrlPrefix();
 
+        scDTO.getValues().put("id", sc.getId());
+
         for (String fieldKey : sc.getStructuredContentFields().keySet()) {
             StructuredContentField scf = sc.getStructuredContentFields().get(fieldKey);
             String originalValue = scf.getValue();
