@@ -174,7 +174,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         contentItems = getContentItems(contentName, maxResults, request, mvelParameters, currentSandbox, structuredContentType, locale, extensionFieldName, extensionFieldValue, arguments, element);
                             
         if (contentItems.size() > 0) {
-            List<Map<String,String>> contentItemFields = new ArrayList<Map<String, String>>();          
+            List<Map<String,Object>> contentItemFields = new ArrayList<Map<String, Object>>();
             
             for (StructuredContentDTO item : contentItems) {
                 if (StringUtils.isNotEmpty(fieldFilters)) {
