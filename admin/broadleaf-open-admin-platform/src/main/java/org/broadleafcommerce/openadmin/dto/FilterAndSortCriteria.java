@@ -16,6 +16,10 @@
 
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.broadleafcommerce.common.util.BLCCollectionUtils;
+import org.broadleafcommerce.common.util.TypedPredicate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +32,8 @@ public class FilterAndSortCriteria {
     public static final String SORT_DIRECTION_PARAMETER = "sortDirection";
     public static final String START_INDEX_PARAMETER = "startIndex";
     public static final String MAX_INDEX_PARAMETER = "maxIndex";
+    
+    public static final String IS_NULL_FILTER_VALUE = new String("BLC_SPECIAL_FILTER_VALUE:NULL").intern();
 
     protected String propertyId;
     protected List<String> filterValues = new ArrayList<String>();
@@ -66,7 +72,13 @@ public class FilterAndSortCriteria {
     }
 
     public List<String> getFilterValues() {
-        return filterValues;
+        // We want values that are NOT special
+        return BLCCollectionUtils.selectList(filterValues, getPredicateForSpecialValues(false));
+    }
+
+    public List<String> getSpecialFilterValues() {
+        // We want values that ARE special
+        return BLCCollectionUtils.selectList(filterValues, getPredicateForSpecialValues(true));
     }
 
     public void setFilterValues(List<String> filterValues) {
@@ -87,6 +99,27 @@ public class FilterAndSortCriteria {
 
     public void setSortDirection(SortDirection sortDirection) {
         this.sortDirection = sortDirection;
+    }
+
+    public boolean hasSpecialFilterValue() {
+        // We want values that ARE special
+        return CollectionUtils.exists(filterValues, getPredicateForSpecialValues(true));
+    }
+    
+    protected TypedPredicate<String> getPredicateForSpecialValues(final boolean inclusive) {
+        return new TypedPredicate<String>() {
+            @Override
+            public boolean eval(String value) {
+                // Note that this static String is the result of a call to String.intern(). This means that we are
+                // safe to compare with == while still allowing the user to specify a filter for the actual value of this
+                // string.
+                if (inclusive) {
+                    return IS_NULL_FILTER_VALUE == value;
+                } else {
+                    return IS_NULL_FILTER_VALUE != value;
+                }
+            }
+        };
     }
 
 }

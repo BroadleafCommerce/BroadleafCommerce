@@ -19,7 +19,9 @@ package org.broadleafcommerce.common.util;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -40,6 +42,20 @@ public class BLCCollectionUtils {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <T> Collection<T> collect(Collection inputCollection, TypedTransformer<T> transformer) {
         return CollectionUtils.collect(inputCollection, transformer);
+    }
+
+    /**
+     * Delegates to {@link CollectionUtils#select(Collection, org.apache.commons.collections.Predicate)}, but will
+     * force the return type to be a List<T>.
+     * 
+     * @param inputCollection
+     * @param predicate
+     * @return
+     */
+    public static <T> List<T> selectList(Collection<T> inputCollection, TypedPredicate<T> predicate) {
+        ArrayList<T> answer = new ArrayList<T>(inputCollection.size());
+        CollectionUtils.select(inputCollection, predicate, answer);
+        return answer;
     }
 
 }

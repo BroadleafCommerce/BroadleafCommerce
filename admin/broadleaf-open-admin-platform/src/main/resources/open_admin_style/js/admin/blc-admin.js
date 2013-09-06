@@ -352,7 +352,8 @@ var BLCAdmin = (function($) {
                         title: "Advanced Font List",
                         dropdown: oFontDropdown
                     }
-                }
+                },
+                convertDivs : false
             });
             
             $container.find('textarea.autosize').autosize();
