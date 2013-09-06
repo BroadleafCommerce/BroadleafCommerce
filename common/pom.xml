@@ -3,11 +3,10 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>1.5.0-GA</version>
+        <version>2.3.0-M2-6-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-common</artifactId>
-  <version>2.3.0-M2-6</version>
     <packaging>jar</packaging>
     <name>BroadleafCommerce Common Libraries</name>
     <description>A collection of classes shared by broadleaf profile, cms, admin, and core.</description>
