@@ -16,16 +16,17 @@
 
 package org.broadleafcommerce.core.store.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.broadleafcommerce.core.store.dao.StoreDao;
 import org.broadleafcommerce.core.store.domain.Store;
 import org.broadleafcommerce.core.store.domain.ZipCode;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service("blStoreService")
 public class StoreServiceImpl implements StoreService {
@@ -33,11 +34,16 @@ public class StoreServiceImpl implements StoreService {
     // private final static int MAXIMUM_DISTANCE = Integer.valueOf(25);
     @Resource(name = "blStoreDao")
     private StoreDao storeDao;
+
     @Resource(name = "blZipCodeService")
     private ZipCodeService zipCodeService;
 
-    public Store readStoreByStoreCode(String storeCode) {
-        return storeDao.readStoreByStoreCode(storeCode);
+    public Store readStoreById(Long id) {
+        return storeDao.readStoreById(id);
+    }
+
+    public Store readStoreByStoreName(String storeName) {
+        return storeDao.readStoreByStoreName(storeName);
     }
 
     public List<Store> readAllStores() {

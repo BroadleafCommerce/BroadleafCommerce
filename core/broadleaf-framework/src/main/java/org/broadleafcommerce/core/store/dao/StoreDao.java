@@ -16,13 +16,15 @@
 
 package org.broadleafcommerce.core.store.dao;
 
-import org.broadleafcommerce.core.store.domain.Store;
-
 import java.util.List;
+
+import org.broadleafcommerce.core.store.domain.Store;
 
 public interface StoreDao {
 
-    public Store readStoreByStoreCode(final String storeCode);
+    public Store readStoreById(Long id);
+
+    public Store readStoreByStoreName(final String storeName);
 
     public List<Store> readAllStores();
 

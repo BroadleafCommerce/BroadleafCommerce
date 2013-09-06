@@ -16,15 +16,17 @@
 
 package org.broadleafcommerce.core.store.service;
 
-import org.broadleafcommerce.core.store.domain.Store;
-import org.broadleafcommerce.profile.core.domain.Address;
-
 import java.util.List;
 import java.util.Map;
 
+import org.broadleafcommerce.core.store.domain.Store;
+import org.broadleafcommerce.profile.core.domain.Address;
+
 public interface StoreService {
 
-    public Store readStoreByStoreCode(String storeCode);
+    public Store readStoreById(Long id);
+
+    public Store readStoreByStoreName(String storeName);
 
     public Map<Store,Double> findStoresByAddress(Address searchAddress, double distance);
 

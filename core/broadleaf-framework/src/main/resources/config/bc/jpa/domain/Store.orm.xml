@@ -4,12 +4,12 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
     version="2.0">
 
-    <named-query name="BC_FIND_STORE_BY_STORE_ID" >
+    <named-query name="BC_FIND_STORE_BY_STORE_NAME" >
         <query>SELECT store FROM org.broadleafcommerce.core.store.domain.Store store
-        WHERE store.id = :id</query>
+            WHERE store.name = :storeName</query>
     </named-query>
-    
-        <named-query name="BC_FIND_ALL_STORES" >
+
+    <named-query name="BC_FIND_ALL_STORES" >
         <query>SELECT store FROM org.broadleafcommerce.core.store.domain.Store store </query>
     </named-query>
 
