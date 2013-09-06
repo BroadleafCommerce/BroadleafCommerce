@@ -1148,6 +1148,23 @@ ul.category-root, ul.category-root ul {
 ul.category-root ul {
 }
 
+div.search-results-header {
+	margin-bottom: 20px;
+}
+
+span.search-results-keyword:before,
+span.search-results-keyword:after {
+	content: "\"";
+}
+
+.main-term-false {
+	display: none;
+}
+
+label.inline-radio-label {
+	font-weight: 400;
+}
+
 /* -----------------------------------------
    Magellan toolbar
 ----------------------------------------- */

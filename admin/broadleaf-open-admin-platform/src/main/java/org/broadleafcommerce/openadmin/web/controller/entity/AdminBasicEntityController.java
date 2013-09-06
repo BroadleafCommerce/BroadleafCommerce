@@ -16,16 +16,6 @@
 
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -70,6 +60,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to 
  * super and does not provide any custom-tailored functionality. It is responsible for rendering the admin for every
@@ -112,6 +112,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey);
         List<EntityFormAction> mainActions = new ArrayList<EntityFormAction>();
         addAddActionIfAllowed(sectionClassName, cmd, mainActions);
+        
+        Field firstField = listGrid.getHeaderFields().iterator().next();
+        if (requestParams.containsKey(firstField.getName())) {
+            model.addAttribute("mainSearchTerm", requestParams.get(firstField.getName()).get(0));
+        }
         
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
