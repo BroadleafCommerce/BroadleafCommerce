@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.TypedPredicate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -52,6 +53,11 @@ public class FilterAndSortCriteria {
     public FilterAndSortCriteria(String propertyId, List<String> filterValues) {
         this.propertyId = propertyId;
         setFilterValues(filterValues);
+    }
+    
+    public FilterAndSortCriteria(String propertyId, String[] filterValues) {
+        this.propertyId = propertyId;
+        setFilterValues(Arrays.asList(filterValues));
     }
 
     public String getPropertyId() {
