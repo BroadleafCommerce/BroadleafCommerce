@@ -35,11 +35,3 @@
         </div>
     </div>
 </div>
-
-<div class="row search-results-header-container" th:classappend="${#strings.isEmpty(mainSearchTerm)} ? 'main-term-false' : 'main-term-true'">
-    <div class="twelve columns search-results-header">
-        <span th:text="${listGrid.totalRecords}" class="search-results-count" />
-        <span th:text="#{Search_Results_For}" />
-        <span th:text="${mainSearchTerm}" class="search-results-keyword" />
-    </div>
-</div>

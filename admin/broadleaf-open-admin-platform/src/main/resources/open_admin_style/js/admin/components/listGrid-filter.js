@@ -354,9 +354,6 @@ $(document).ready(function() {
             }
             BLCAdmin.listGrid.replaceRelatedListGrid($(data));
             $input.trigger('input');
-            
-            var $srhc = $(data).find('div.search-results-header-container');
-            $('div.search-results-header-container').replaceWith($srhc);
         });
         return false;
     });
