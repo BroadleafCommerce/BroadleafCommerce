@@ -46,6 +46,10 @@ public class StoreServiceImpl implements StoreService {
         return storeDao.readStoreByStoreName(storeName);
     }
 
+    public Store readStoreByStoreCode(String storeCode) {
+        return storeDao.readStoreByStoreCode(storeCode);
+    }
+
     public List<Store> readAllStores() {
         return storeDao.readAllStores();
     }

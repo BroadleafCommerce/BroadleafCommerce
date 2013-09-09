@@ -47,6 +47,15 @@ public class StoreDaoImpl implements StoreDao {
     }
 
     @SuppressWarnings("unchecked")
+    public Store readStoreByStoreCode(final String storeCode) {
+        Query query = em.createNamedQuery("BC_FIND_STORE_BY_STORE_NAME");
+        query.setParameter("storeName", storeCode.toUpperCase());
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        List result = query.getResultList();
+        return (result.size() > 0) ? (Store) result.get(0) : null;
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Store> readAllStores() {
         Query query = em.createNamedQuery("BC_FIND_ALL_STORES");
         query.setHint(QueryHints.HINT_CACHEABLE, true);

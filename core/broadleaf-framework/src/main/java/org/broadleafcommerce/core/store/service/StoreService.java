@@ -28,6 +28,15 @@ public interface StoreService {
 
     public Store readStoreByStoreName(String storeName);
 
+    /**
+     * @deprecated use {@link #readStoreByStoreName(String)} instead.
+     *
+     * @param storeCode
+     * @return
+     */
+    @Deprecated
+    public Store readStoreByStoreCode(String storeCode);
+
     public Map<Store,Double> findStoresByAddress(Address searchAddress, double distance);
 
     public List<Store> readAllStores();
