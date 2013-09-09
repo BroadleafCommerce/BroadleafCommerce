@@ -147,13 +147,16 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
     @Override
     protected void modifyModelAttributes(final Arguments arguments, Element element) {        
         String contentType = element.getAttributeValue("contentType");
-        if (StringUtils.isEmpty(contentType)) {
-            throw new IllegalArgumentException("The content processor must have non-empty attribute value for 'contentType");
-        }
-        String contentName = element.getAttributeValue("contentName");
-        String maxResultsStr = element.getAttributeValue("maxResults");
         String extensionFieldName = element.getAttributeValue("extensionFieldName");
         String extensionFieldValue = element.getAttributeValue("extensionFieldValue");
+
+        if (StringUtils.isEmpty(contentType) || (StringUtils.isEmpty(extensionFieldName) && StringUtils.isEmpty(extensionFieldValue)) ) {
+            throw new IllegalArgumentException("The content processor must have a non-empty attribute value for either 1) 'contentType' or 2) 'extensionFieldName' and 'extensionFieldValue'");
+        }
+
+        String contentName = element.getAttributeValue("contentName");
+        String maxResultsStr = element.getAttributeValue("maxResults");
+
 
         Integer maxResults = null;
         if (maxResultsStr != null) {
