@@ -11,11 +11,20 @@
     <a th:unless="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}">
         <img class="thumbnail placeholder-image" th:src="@{/img/admin/placeholder-60x60.gif}" />
     </a>
-    
+
     <button class="show-asset-selector tiny radius secondary button hover-cursor"
         type="button" th:inline="text"
+        th:if="${overrideAssetSectionKey}"
+        th:attr="data-select-url=@{${'/'+overrideAssetSectionKey+ '/' + entityForm.id + '/chooseAsset'}}">
+        <i class="icon-camera"></i>&nbsp;[[#{Select_Upload_Image}]]
+    </button>
+
+    <button class="show-asset-selector tiny radius secondary button hover-cursor"
+        type="button" th:inline="text"
+        th:unless="${overrideAssetSectionKey}"
         th:attr="data-select-url=@{${'/'+sectionKey+ '/' + entityForm.id + '/chooseAsset'}}">
         <i class="icon-camera"></i>&nbsp;[[#{Select_Upload_Image}]]
     </button>
+
     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 </div>
