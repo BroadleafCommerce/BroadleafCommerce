@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.structure.dto;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
 import org.broadleafcommerce.cms.structure.service.StructuredContentServiceImpl;
 
@@ -46,6 +47,21 @@ public class StructuredContentDTO implements Serializable {
     protected String ruleExpression;
     protected List<ItemCriteriaDTO> itemCriteriaDTOList;
 
+    /**
+     * Attempts to obtain the given property value from the dynamic property map first, and then an actual bean property
+     * via a getter
+     * 
+     * @param propertyName
+     * @return
+     */
+    public Object getPropertyValue(String propertyName) {
+        try {
+            return getValues().containsKey(propertyName) ? getValues().get(propertyName) : BeanUtils.getProperty(this, propertyName);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
     public Long getId() {
         return id;
     }

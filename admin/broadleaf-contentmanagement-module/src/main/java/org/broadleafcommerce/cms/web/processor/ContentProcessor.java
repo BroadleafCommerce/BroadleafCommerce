@@ -18,6 +18,7 @@ package org.broadleafcommerce.cms.web.processor;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
@@ -42,6 +43,8 @@ import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 import com.google.common.primitives.Ints;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,11 +82,19 @@ import javax.servlet.http.HttpServletRequest;
  *                          variable "contentItem".   This variable can be used to change the attribute name.</li>
  *     <li>numResultsVar  - variable holding the returns the number of results being returned to through the tag-lib.
  *                          defaults to "numResults".</li>
- *     <li>fieldFilters   - Thymeleaf key-value pair to filter the resulting StructuredContentDTO by particular field values.
+ *     <li>fieldFilters  - Thymeleaf key-value pair to filter the resulting StructuredContentDTO by particular field values.
  *                          For instance, if you had a field in a piece of structured content called 'featured' and you
  *                          wanted to return all of the featured content items, you could do the following:
  *                          
- *                          <blc:content fieldFilters="${featured='true', otherField='someValue'}" />
+ *                          <blc:content fieldFilters="featured=${'true'},otherField=${'someValue'}" />
+ *     <li>sorts         - sorts to apply to the resulting list of content. These should be key-value pairs corresponding
+ *                          where the key is the field to sort and the value is the direction of the sort. If unspecified,
+ *                          the default sorting is used (by priority). The sort fields must occur in the dynamic fields
+ *                          for that piece of structured content. For instance:
+ *                          
+ *                          <blc:content sort="dynamicFieldA='DESCENDING',dynamicFieldB='ASCENDING'" />
+ *                          
+ *                          The list will be sorted first by dynamicFieldA descending and then dynamicFieldB ascending
  * </ul>
  */
 @Component("blContentProcessor")
@@ -134,8 +145,11 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
     }   
 
     @Override
-    protected void modifyModelAttributes(Arguments arguments, Element element) {        
+    protected void modifyModelAttributes(final Arguments arguments, Element element) {        
         String contentType = element.getAttributeValue("contentType");
+        if (StringUtils.isEmpty(contentType)) {
+            throw new IllegalArgumentException("The content processor must have non-empty attribute value for 'contentType");
+        }
         String contentName = element.getAttributeValue("contentName");
         String maxResultsStr = element.getAttributeValue("maxResults");
         String extensionFieldName = element.getAttributeValue("extensionFieldName");
@@ -154,7 +168,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         String numResultsVar = getAttributeValue(element, "numResultsVar", "numResults");
         
         String fieldFilters = element.getAttributeValue("fieldFilters");
-        String sortField = element.getAttributeValue("sortField");
+        final String sorts = element.getAttributeValue("sorts");
 
         IWebContext context = (IWebContext) arguments.getContext();     
         HttpServletRequest request = context.getHttpServletRequest();   
@@ -172,9 +186,34 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         Locale locale = blcContext.getLocale();
             
         contentItems = getContentItems(contentName, maxResults, request, mvelParameters, currentSandbox, structuredContentType, locale, extensionFieldName, extensionFieldValue, arguments, element);
-                            
+        
         if (contentItems.size() > 0) {
-            List<Map<String,Object>> contentItemFields = new ArrayList<Map<String, Object>>();
+            
+            // sort the resulting list by the configured property sorts on the tag
+            if (StringUtils.isNotEmpty(sorts)) {
+                Collections.sort(contentItems, new Comparator<StructuredContentDTO>() {
+                    @Override
+                    public int compare(StructuredContentDTO o1, StructuredContentDTO o2) {
+                        AssignationSequence sortAssignments = StandardExpressionProcessor.parseAssignationSequence(arguments, sorts, false);
+                        CompareToBuilder compareBuilder = new CompareToBuilder();
+                        for (Assignation sortAssignment : sortAssignments) {
+                            String property = sortAssignment.getLeft().getStringRepresentation();
+                            
+                            Object val1 = o1.getPropertyValue(property);
+                            Object val2 = o2.getPropertyValue(property);
+                            
+                            if (StandardExpressionProcessor.executeExpression(arguments, sortAssignment.getRight()).equals("ASCENDING")) {
+                                compareBuilder.append(val1, val2);
+                            } else {
+                                compareBuilder.append(val2, val1);
+                            }
+                        }
+                        return compareBuilder.toComparison();
+                    }
+                });
+            }
+            
+            List<Map<String, Object>> contentItemFields = new ArrayList<Map<String, Object>>();          
             
             for (StructuredContentDTO item : contentItems) {
                 if (StringUtils.isNotEmpty(fieldFilters)) {
@@ -184,6 +223,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
                         
                         if (ObjectUtils.notEqual(StandardExpressionProcessor.executeExpression(arguments, assignment.getRight()),
                                                 item.getValues().get(assignment.getLeft().getValue()))) {
+                            LOG.info("Excluding content " + item.getId()  + " based on the property value of " + assignment.getLeft().getValue());
                             valid = false;
                             break;
                         }
@@ -195,6 +235,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
                     contentItemFields.add(item.getValues());
                 }
             }
+            
             addToModel(arguments, contentItemVar, contentItemFields.get(0));
             addToModel(arguments, contentListVar, contentItemFields);
             addToModel(arguments, numResultsVar, contentItems.size());
