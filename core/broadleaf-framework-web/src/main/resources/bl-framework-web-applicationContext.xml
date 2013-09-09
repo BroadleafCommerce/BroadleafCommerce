@@ -47,6 +47,7 @@
             <ref bean="blToggleFacetLinkProcessor" />
             <ref bean="blUrlRewriteProcessor" />
             <ref bean="blResourceBundleProcessor" />
+            <ref bean="blDataDrivenEnumerationProcessor" />
           </set>
         </property>     
     </bean> 
