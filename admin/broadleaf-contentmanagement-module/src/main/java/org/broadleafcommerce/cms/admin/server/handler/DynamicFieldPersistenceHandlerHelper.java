@@ -18,9 +18,9 @@ package org.broadleafcommerce.cms.admin.server.handler;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
-import org.broadleafcommerce.cms.field.domain.FieldEnumerationItem;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -74,13 +74,13 @@ public class DynamicFieldPersistenceHandlerHelper {
                 fieldMetadata.setForeignKeyCollection(false);
                 fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
                 fieldMetadata.setLength(definition.getMaxLength());
-                if (definition.getFieldEnumeration() != null && !CollectionUtils.isEmpty(definition.getFieldEnumeration().getEnumerationItems())) {
-                    int count = definition.getFieldEnumeration().getEnumerationItems().size();
+                if (definition.getDataDrivenEnumeration() != null && !CollectionUtils.isEmpty(definition.getDataDrivenEnumeration().getEnumValues())) {
+                    int count = definition.getDataDrivenEnumeration().getEnumValues().size();
                     String[][] enumItems = new String[count][2];
                     for (int j = 0; j < count; j++) {
-                        FieldEnumerationItem item = definition.getFieldEnumeration().getEnumerationItems().get(j);
-                        enumItems[j][0] = item.getName();
-                        enumItems[j][1] = item.getFriendlyName();
+                        DataDrivenEnumerationValue item = definition.getDataDrivenEnumeration().getEnumValues().get(j);
+                        enumItems[j][0] = item.getKey();
+                        enumItems[j][1] = item.getDisplay();
                     }
                     fieldMetadata.setEnumerationValues(enumItems);
                 }

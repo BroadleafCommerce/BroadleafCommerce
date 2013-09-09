@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -38,11 +39,13 @@ import javax.persistence.Table;
 
 /**
  * Created by jfischer
+ * @deprecated use {@link DataDrivenEnumerationImpl} instead
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FLD_ENUM")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@Deprecated
 public class FieldEnumerationImpl implements FieldEnumeration {
 
     private static final long serialVersionUID = 1L;

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -89,9 +91,9 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @Column(name = "REQUIRED_FLAG")
     protected Boolean requiredFlag = false;
 
-    @ManyToOne (targetEntity = FieldEnumerationImpl.class)
-    @JoinColumn(name = "FLD_ENUM_ID")
-    protected FieldEnumeration fieldEnumeration;
+    @ManyToOne (targetEntity = DataDrivenEnumerationImpl.class)
+    @JoinColumn(name = "ENUM_ID")
+    protected DataDrivenEnumeration dataDrivenEnumeration;
 
     @Column (name = "ALLOW_MULTIPLES")
     protected Boolean allowMultiples = false;
@@ -254,13 +256,13 @@ public class FieldDefinitionImpl implements FieldDefinition {
     }
 
     @Override
-    public FieldEnumeration getFieldEnumeration() {
-        return fieldEnumeration;
+    public DataDrivenEnumeration getDataDrivenEnumeration() {
+        return dataDrivenEnumeration;
     }
 
     @Override
-    public void setFieldEnumeration(FieldEnumeration fieldEnumeration) {
-        this.fieldEnumeration = fieldEnumeration;
+    public void setDataDrivenEnumeration(DataDrivenEnumeration dataDrivenEnumeration) {
+        this.dataDrivenEnumeration = dataDrivenEnumeration;
     }
 }
 

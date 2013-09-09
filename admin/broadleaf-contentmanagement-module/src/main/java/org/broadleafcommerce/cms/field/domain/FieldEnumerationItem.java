@@ -16,11 +16,15 @@
 
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
+
 import java.io.Serializable;
 
 /**
  * Created by jfischer
+ * @deprecated use {@link DataDrivenEnumerationValue} instead
  */
+@Deprecated
 public interface FieldEnumerationItem extends Serializable {
     
     FieldEnumeration getFieldEnumeration();

@@ -16,23 +16,33 @@
 
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
+
 import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by jfischer
+ * @deprecated use {@link DataDrivenEnumeration} instead
  */
+@Deprecated
 public interface FieldEnumeration extends Serializable {
 
+    @Deprecated
     List<FieldEnumerationItem> getEnumerationItems();
 
+    @Deprecated
     void setEnumerationItems(List<FieldEnumerationItem> enumerationItems);
 
+    @Deprecated
     Long getId();
 
+    @Deprecated
     void setId(Long id);
 
+    @Deprecated
     String getName();
 
+    @Deprecated
     void setName(String name);
 }

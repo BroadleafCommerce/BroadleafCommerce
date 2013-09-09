@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -33,7 +34,9 @@ import javax.persistence.Table;
 
 /**
  * Created by jfischer
+ * @deprecated use {@link DataDrivenEnumerationValueImpl} instead
  */
+@Deprecated
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FLD_ENUM_ITEM")

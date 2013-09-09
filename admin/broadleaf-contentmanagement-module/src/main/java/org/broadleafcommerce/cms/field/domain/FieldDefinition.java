@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
 import java.io.Serializable;
@@ -65,9 +66,9 @@ public interface FieldDefinition extends Serializable {
 
     public void setRequiredFlag(Boolean requiredFlag);
 
-    public FieldEnumeration getFieldEnumeration();
-
-    public void setFieldEnumeration(FieldEnumeration fieldEnumeration);
+    public DataDrivenEnumeration getDataDrivenEnumeration();
+    
+    public void setDataDrivenEnumeration(DataDrivenEnumeration dataDrivenEnumeration);
 
     public Boolean getAllowMultiples();
 
