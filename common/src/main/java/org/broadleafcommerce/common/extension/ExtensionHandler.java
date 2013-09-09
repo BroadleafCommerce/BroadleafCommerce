@@ -49,7 +49,9 @@ package org.broadleafcommerce.common.extension;
  *  }
  * </pre>
  * 
+ * 
  * @author bpolster
+ * @see {@link AbstractExtensionHandler}
  */
 public interface ExtensionHandler {
 

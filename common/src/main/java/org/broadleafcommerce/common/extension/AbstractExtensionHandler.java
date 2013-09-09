@@ -26,13 +26,14 @@ package org.broadleafcommerce.common.extension;
  */
 public abstract class AbstractExtensionHandler implements ExtensionHandler {
 
-    private int priority;
-    private boolean enabled = true;
+    protected int priority;
+    protected boolean enabled = true;
 
     /**
      * Determines the priority of this extension handler.
      * @return
      */
+    @Override
     public int getPriority() {
         return priority;
     }
@@ -41,6 +42,7 @@ public abstract class AbstractExtensionHandler implements ExtensionHandler {
         this.priority = priority;
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
