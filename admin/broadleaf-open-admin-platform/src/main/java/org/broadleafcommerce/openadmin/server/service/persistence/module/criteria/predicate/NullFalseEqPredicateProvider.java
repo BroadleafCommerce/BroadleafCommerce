@@ -29,10 +29,14 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 
 /**
- * @author Jeff Fischer
+ * This predicate provider is very similar to the {@link EqPredicateProvider}, except that it will treat
+ * nulls equal to false. This implementation will provide an equality clause for the character 'N' and
+ * {@link Boolean#FALSE}.
+ * 
+ * @author Andre Azzolini (apazzolini)
  */
-@Component("blEqPredicateProvider")
-public class EqPredicateProvider implements PredicateProvider<Serializable, Serializable> {
+@Component("blNullFalseEqPredicateProvider")
+public class NullFalseEqPredicateProvider implements PredicateProvider<Serializable, Serializable> {
 
     @Override
     public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root, String ceilingEntity,
@@ -46,7 +50,27 @@ public class EqPredicateProvider implements PredicateProvider<Serializable, Seri
         
         List<Predicate> predicates = new ArrayList<Predicate>();
         for (Serializable directValue : directValues) {
-            predicates.add(builder.equal(path, directValue));
+            boolean attachNullClause = false;
+            if (directValue instanceof Boolean) {
+                if (((Boolean) directValue).equals(Boolean.FALSE)) {
+                    attachNullClause = true;
+                }
+            } else if (directValue instanceof Character) {
+                if (((Character) directValue).equals('N')) {
+                    attachNullClause = true;
+                }
+            }
+            
+            if (attachNullClause) {
+                predicates.add(
+                    builder.or( 
+                        builder.equal(path, directValue),
+                        builder.isNull(path)
+                    )
+                );
+            } else {
+                predicates.add(builder.equal(path, directValue));
+            }
         }
         
         return builder.or(predicates.toArray(new Predicate[predicates.size()]));

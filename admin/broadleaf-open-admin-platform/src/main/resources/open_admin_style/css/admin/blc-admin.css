@@ -449,51 +449,6 @@ table.table-hover tbody tr.draggable:hover {
 /* -----------------------------------------
   List Grid
 ----------------------------------------- */
-[class^="listgrid-icon-"],
-[class*=" listgrid-icon-"] {
-    display: inline-block;
-    width: 20px;
-    height: 17px;
-    *margin-right: .3em;
-    vertical-align: text-top;
-    background-image: url("../../img/admin/listgrid/listgrid.png");
-    background-position: 14px 14px;
-    background-repeat: no-repeat;
-}
-[class^="listgrid-icon-"]:last-child,
-[class*=" listgrid-icon-"]:last-child {
-    *margin-left: 0;
-}
-
-.listgrid-icon-down{
-    background-position: 0 0;
-    width: 20px;
-    height: 17px;
-}
-
-.listgrid-icon-filter{
-    background-position: 0 -67px;
-    width: 20px;
-    height: 17px;
-}
-
-.listgrid-icon-filter-down{
-    background-position: 0 -134px;
-    width: 20px;
-    height: 17px;
-}
-
-.listgrid-icon-filter-up{
-    background-position: 0 -201px;
-    width: 20px;
-    height: 17px;
-}
-
-.listgrid-icon-up{
-    background-position: 0 -268px;
-    width: 20px;
-    height: 17px;
-}
 
 .listgrid-toolbar, .ui-widget-header {
     margin: 0;
@@ -538,11 +493,28 @@ table.table-hover tbody tr.draggable:hover {
     text-decoration: none;
 }
 
+.listgrid-filter-sort-container {
+	position: absolute;
+	right: 0px;
+	display: inline-block;
+    background: #F5F5F5;
+	padding: 0 5px;
+}
+
+.listgrid-filter-sort-container i {
+	color: #B9B9B9;
+	margin: 0px 0px 0px 4px;
+	cursor: pointer;
+}
+
+.listgrid-filter-sort-container i.active {
+	color: #8EAA2B;
+}
+
 .listgrid-headerBtn:hover, .listgrid-headerBtn:focus {
     color: #222;
     background: transparent;
 }
-
 
 .listgrid-headerBtn.dropdown {
     position: relative;
@@ -617,14 +589,30 @@ table.table-hover tbody tr.draggable:hover {
     box-sizing: content-box;
     display: none;
     position: absolute;
-    background: #fff;
-    background: rgba(255, 255, 255, 0.98);
+    background: #E9E9E9;
     list-style: none;
     margin: 0;
     padding: 0;
     border: 1px solid #cccccc;
+    border-radius: 4px;
     z-index: 40;
     right: 0;
+}
+
+ul.active-foreign-key-filters {
+    margin-top: 10px;
+}
+
+ul.active-foreign-key-filters li {
+	text-align: left;
+	font-weight: normal;
+	line-height: 22px !important;
+}
+
+ul.active-foreign-key-filters li i.remove-to-one-filter {
+	cursor: pointer;
+	color: #8EAA2B;
+	margin-right: 5px;
 }
 
 .listgrid-headerBtn.dropdown > ul li {
@@ -935,6 +923,16 @@ input[type="text"].listgrid-criteria-input {
 
 button.listgrid-filter {
     margin-top:5px;
+}
+
+a.numeric-range-toggle {
+	margin-bottom: 10px;
+	display: inline-block;
+}
+
+.listgrid-criteria-container input.range {
+	width: 40%;
+	display: inline-block;
 }
 
 div.alert-box.list-grid-alert {
