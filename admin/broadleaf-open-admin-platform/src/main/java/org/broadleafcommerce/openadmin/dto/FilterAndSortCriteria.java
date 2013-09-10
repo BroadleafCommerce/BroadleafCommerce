@@ -51,8 +51,14 @@ public class FilterAndSortCriteria {
     }
     
     public FilterAndSortCriteria(String propertyId, List<String> filterValues) {
-        this.propertyId = propertyId;
+        setPropertyId(propertyId);
         setFilterValues(filterValues);
+    }
+    
+    public FilterAndSortCriteria(String propertyId, List<String> filterValues, SortDirection sortDirection) {
+        setPropertyId(propertyId);
+        setFilterValues(filterValues);
+        setSortDirection(sortDirection);
     }
     
     public FilterAndSortCriteria(String propertyId, String[] filterValues) {
