@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -519,57 +520,43 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 }
                 break;
             case ADDITIONAL_FOREIGN_KEY:
-                if (!addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName())
-                        .getFilterValues().isEmpty()) {
-                    int additionalForeignKeyIndexPosition = Arrays.binarySearch(addSearchMappingRequest
-                            .getPersistencePerspective()
-                            .getAdditionalForeignKeys(), new ForeignKey(addSearchMappingRequest.getPropertyName(),
-                            null, null),
-                            new Comparator<ForeignKey>() {
-                                @Override
-                                public int compare(ForeignKey o1, ForeignKey o2) {
-                                    return o1.getManyToField().compareTo(o2.getManyToField());
-                                }
-                            });
-                    ForeignKey foreignKey = null;
-                    if (additionalForeignKeyIndexPosition >= 0) {
-                        foreignKey = addSearchMappingRequest.getPersistencePerspective().getAdditionalForeignKeys()
-                                [additionalForeignKeyIndexPosition];
-                    }
-                    //in the case of a to-one lookup, an explicit ForeignKey is not passed in. The system should then
-                    // default
-                    //to just using a ForeignKeyRestrictionType.ID_EQ
-                    if (metadata.getForeignKeyCollection()) {
-                        if (ForeignKeyRestrictionType.COLLECTION_SIZE_EQ.toString().equals(foreignKey
-                                .getRestrictionType().toString())) {
-                            filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory()
-                                    .getRestriction(RestrictionType.COLLECTION_SIZE_EQUAL.getType(),
-                                            addSearchMappingRequest.getPropertyName()));
-                            filterMapping.setFieldPath(new FieldPath());
-                        } else {
-                            filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory()
-                                    .getRestriction(RestrictionType.LONG.getType(),
-                                            addSearchMappingRequest.getPropertyName()));
-                            filterMapping.setFieldPath(new FieldPath().withTargetProperty(addSearchMappingRequest
-                                    .getPropertyName() + "." + metadata.getForeignKeyProperty()));
+                int additionalForeignKeyIndexPosition = Arrays.binarySearch(addSearchMappingRequest
+                    .getPersistencePerspective()
+                    .getAdditionalForeignKeys(), new ForeignKey(addSearchMappingRequest.getPropertyName(),
+                    null, null),
+                    new Comparator<ForeignKey>() {
+                        @Override
+                        public int compare(ForeignKey o1, ForeignKey o2) {
+                            return o1.getManyToField().compareTo(o2.getManyToField());
                         }
-                    } else if (addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName())
-                            .getFilterValues().get(0) == null || "null".equals(addSearchMappingRequest
-                            .getRequestedCto().get
-                            (addSearchMappingRequest.getPropertyName()).getFilterValues().get(0))) {
-                        filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction
-                                (RestrictionType.IS_NULL_LONG.getType(), addSearchMappingRequest.getPropertyName()));
-                    } else if (metadata.getSecondaryType() == SupportedFieldType.STRING) {
-                        filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction
-                                (RestrictionType.STRING_EQUAL.getType(), addSearchMappingRequest.getPropertyName()));
-                        filterMapping.setFieldPath(new FieldPath().withTargetProperty(addSearchMappingRequest
-                                .getPropertyName() + "." + metadata.getForeignKeyProperty()));
+                    });
+                ForeignKey foreignKey = null;
+                if (additionalForeignKeyIndexPosition >= 0) {
+                    foreignKey = addSearchMappingRequest.getPersistencePerspective().getAdditionalForeignKeys()[additionalForeignKeyIndexPosition];
+                }
+                // in the case of a to-one lookup, an explicit ForeignKey is not passed in. The system should then
+                // default to just using a ForeignKeyRestrictionType.ID_EQ
+                if (metadata.getForeignKeyCollection()) {
+                    if (ForeignKeyRestrictionType.COLLECTION_SIZE_EQ.toString().equals(foreignKey
+                            .getRestrictionType().toString())) {
+                        filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory()
+                                .getRestriction(RestrictionType.COLLECTION_SIZE_EQUAL.getType(),
+                                        addSearchMappingRequest.getPropertyName()));
+                        filterMapping.setFieldPath(new FieldPath());
                     } else {
-                        filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction
-                                (RestrictionType.LONG_EQUAL.getType(), addSearchMappingRequest.getPropertyName()));
-                        filterMapping.setFieldPath(new FieldPath().withTargetProperty(addSearchMappingRequest
-                                .getPropertyName() + "." + metadata.getForeignKeyProperty()));
+                        filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.LONG.getType(), addSearchMappingRequest.getPropertyName()));
+                        filterMapping.setFieldPath(new FieldPath().withTargetProperty(addSearchMappingRequest.getPropertyName() + "." + metadata.getForeignKeyProperty()));
                     }
+                } else if (CollectionUtils.isEmpty(addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName()).getFilterValues()) ||
+                        addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName()) .getFilterValues().get(0) == null || "null".equals(addSearchMappingRequest.getRequestedCto().get
+                        (addSearchMappingRequest.getPropertyName()).getFilterValues().get(0))) {
+                    filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.IS_NULL_LONG.getType(), addSearchMappingRequest.getPropertyName()));
+                } else if (metadata.getSecondaryType() == SupportedFieldType.STRING) {
+                    filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.STRING_EQUAL.getType(), addSearchMappingRequest.getPropertyName()));
+                    filterMapping.setFieldPath(new FieldPath().withTargetProperty(addSearchMappingRequest.getPropertyName() + "." + metadata.getForeignKeyProperty()));
+                } else {
+                    filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.LONG_EQUAL.getType(), addSearchMappingRequest.getPropertyName()));
+                    filterMapping.setFieldPath(new FieldPath().withTargetProperty(addSearchMappingRequest.getPropertyName() + "." + metadata.getForeignKeyProperty()));
                 }
                 break;
             case ID:

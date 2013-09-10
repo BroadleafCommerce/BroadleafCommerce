@@ -69,6 +69,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author apazzolini
  */
 public abstract class AdminAbstractController extends BroadleafAbstractController {
+    
+    public static final String FILTER_VALUE_SEPARATOR = "|";
+    public static final String FILTER_VALUE_SEPARATOR_REGEX = "\\|";
 
     // ***********************
     // RESOURCE DECLARATIONS *
@@ -393,7 +396,20 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         for (Entry<String, List<String>> entry : requestParams.entrySet()) {
             if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER) &&
                     !entry.getKey().equals(FilterAndSortCriteria.SORT_DIRECTION_PARAMETER)) {
-                FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), entry.getValue());
+                List<String> values = entry.getValue();
+                List<String> collapsedValues = new ArrayList<String>();
+                for (String value : values) {
+                    if (value.contains(FILTER_VALUE_SEPARATOR)) {
+                        String[] vs = value.split(FILTER_VALUE_SEPARATOR_REGEX);
+                        for (String v : vs) {
+                            collapsedValues.add(v);
+                        }
+                    } else {
+                        collapsedValues.add(value);
+                    }
+                }
+                
+                FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(entry.getKey(), collapsedValues);
                 result.add(fasCriteria);
             }
         }

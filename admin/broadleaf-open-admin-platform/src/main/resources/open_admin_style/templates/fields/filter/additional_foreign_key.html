@@ -1,10 +1,11 @@
 <div class="additional-foreign-key-container">
     <input type="hidden" class="display-value-property" th:value="${headerField.foreignKeyDisplayValueProperty}"  />
-    <input type="hidden" class="listgrid-criteria-input value"
+    <input type="hidden" class="to-one-new-selection value" />
+    <input type="hidden" class="listgrid-criteria-input to-one-criteria-input"
            th:attr="data-name=${headerField.name}, data-onchangetrigger=${headerField.onChangeTrigger}" />
         
     <div class="foreign-key-value-container">
-        <span
+        <span style="display: none;"
             class="display-value read-only"
             th:attr="data-select-url=@{${listGrid.path + '/' + headerField.owningEntityClass + '/' + headerField.name + '/select'}}"
             th:text="${headerField.displayValue}" />
@@ -12,7 +13,12 @@
         <button class="to-one-lookup tiny radius dark button hover-cursor"
             type="button" th:inline="text"
             th:attr="data-select-url=@{${listGrid.path + '/' + headerField.owningEntityClass + '/' + headerField.name + '/select'}}">
-            <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
+            <i class="icon-search"></i>&nbsp;[[#{Lookup_Key(#{${fieldFriendlyName}})}]]
         </button>
+    </div>
+    
+    <div class="foreign-key-filter-container">
+        <ul class="active-foreign-key-filters">
+        </ul>
     </div>
 </div>

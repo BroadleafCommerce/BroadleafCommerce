@@ -16,16 +16,6 @@
 
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -40,12 +30,12 @@ import org.broadleafcommerce.openadmin.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
-import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
@@ -71,6 +61,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * The default implementation of the {@link #BroadleafAdminAbstractEntityController}. This delegates every call to 
@@ -114,6 +115,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey);
         List<EntityFormAction> mainActions = new ArrayList<EntityFormAction>();
         addAddActionIfAllowed(sectionClassName, cmd, mainActions);
+        
+        Field firstField = listGrid.getHeaderFields().iterator().next();
+        if (requestParams.containsKey(firstField.getName())) {
+            model.addAttribute("mainSearchTerm", requestParams.get(firstField.getName()).get(0));
+        }
         
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -468,6 +474,49 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, owningClass);
         return "modules/modalContainer";
+    }
+
+    @RequestMapping(value = "/{owningClass:.*}/{collectionField:.*}/details", method = RequestMethod.GET)
+    public @ResponseBody Map<String, String> getCollectionValueDetails(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value = "owningClass") String owningClass,
+            @PathVariable(value="collectionField") String collectionField,
+            @RequestParam String ids,
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams);
+        ClassMetadata mainMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        FieldMetadata md = collectionProperty.getMetadata();
+
+        ppr = PersistencePackageRequest.fromMetadata(md);
+        ppr.setStartIndex(getStartIndex(requestParams));
+        ppr.setMaxIndex(getMaxIndex(requestParams));
+        
+        if (md instanceof BasicFieldMetadata) {
+            String idProp = ((BasicFieldMetadata) md).getForeignKeyProperty();
+            String displayProp = ((BasicFieldMetadata) md).getForeignKeyDisplayValueProperty();
+
+            List<String> filterValues = Arrays.asList(ids.split(FILTER_VALUE_SEPARATOR_REGEX));
+            ppr.addFilterAndSortCriteria(new FilterAndSortCriteria(idProp, filterValues));
+            
+            DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
+            Map<String, String> returnMap = new HashMap<String, String>();
+            
+            for (Entity e : drs.getRecords()) {
+                String id = e.getPMap().get(idProp).getValue();
+                String disp = e.getPMap().get(displayProp).getDisplayValue();
+                
+                if (StringUtils.isBlank(disp)) {
+                    disp = e.getPMap().get(displayProp).getValue();
+                }
+                
+                returnMap.put(id,  disp);
+            }
+
+            return returnMap;
+        }
+
+        return null;
     }
     
     /**

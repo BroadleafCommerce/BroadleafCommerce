@@ -320,6 +320,7 @@ $(document).ready(function() {
                 }
             }
             
+            $valueField.trigger('change');
             BLCAdmin.hideCurrentModal();
         });
         

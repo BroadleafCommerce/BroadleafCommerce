@@ -40,4 +40,8 @@ public class PropertiesVariableExpression implements BroadleafVariableExpression
         return propMgr.getProperty(propertyName);
     }
 
+    public int getAsInt(String propertyName) {
+        return Integer.parseInt(propMgr.getProperty(propertyName));
+    }
+
 }

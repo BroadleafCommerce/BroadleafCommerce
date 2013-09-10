@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.converter;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,10 +24,13 @@ import org.springframework.stereotype.Component;
  */
 @Component("blStringLikeFilterValueConverter")
 public class StringLikeFilterValueConverter implements FilterValueConverter<String> {
+    
+    @Value("${admin.search.string.onlyStartsWith}")
+    protected boolean onlyStartsWith;
 
     @Override
     public String convert(String stringValue) {
-        return stringValue.toLowerCase() + "%";
+        return onlyStartsWith ? stringValue.toLowerCase() + "%" : "%" + stringValue.toLowerCase() + "%";
     }
 
 }

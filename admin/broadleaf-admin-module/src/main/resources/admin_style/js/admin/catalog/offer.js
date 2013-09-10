@@ -23,20 +23,26 @@
         
         initializeOfferTypeField : function($form) {
             var $offerType = $form.find('#field-type');
+            var offerTypeValue;
+            if ($offerType.find('select').length > 0) {
+                offerTypeValue = $offerType.find('select').val();
+            } else {
+                offerTypeValue = $offerType.find('input[type="radio"]:checked').val();
+            }
             
             var $fgCriteria = $form.find('#field-offerMatchRules---FULFILLMENT-GROUP');
             var $itemTarget = $form.find('#field-targetItemCriteria');
             var $itemTargetFieldset = $itemTarget.closest('fieldset');
             
-            if ($offerType.find('select').val() == "ORDER") {
+            if (offerTypeValue == "ORDER") {
                 $fgCriteria.addClass('hidden');
                 $itemTarget.addClass('hidden');
                 $itemTargetFieldset.addClass('hidden');
-            } else if ($offerType.find('select').val() == 'ORDER_ITEM') {
+            } else if (offerTypeValue == 'ORDER_ITEM') {
                 $fgCriteria.addClass('hidden');
                 $itemTarget.removeClass('hidden');
                 $itemTargetFieldset.removeClass('hidden');
-            } else if ($offerType.find('select').val() == 'FULFILLMENT_GROUP') {
+            } else if (offerTypeValue == 'FULFILLMENT_GROUP') {
                 $fgCriteria.removeClass('hidden');
                 $itemTarget.addClass('hidden');
                 $itemTargetFieldset.addClass('hidden');
