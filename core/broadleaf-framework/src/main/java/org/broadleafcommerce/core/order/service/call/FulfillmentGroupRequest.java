@@ -18,7 +18,6 @@ package org.broadleafcommerce.core.order.service.call;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Phone;
 
@@ -42,8 +41,6 @@ public class FulfillmentGroupRequest {
     protected FulfillmentOption option;
     
     protected List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
-
-    protected FulfillmentType fulfillmentType;
 
     public Address getAddress() {
         return address;
@@ -83,14 +80,6 @@ public class FulfillmentGroupRequest {
 
     public void setFulfillmentGroupItemRequests(List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests) {
         this.fulfillmentGroupItemRequests = fulfillmentGroupItemRequests;
-    }
-
-    public FulfillmentType getFulfillmentType() {
-        return fulfillmentType;
-    }
-
-    public void setFulfillmentType(FulfillmentType fulfillmentType) {
-        this.fulfillmentType = fulfillmentType;
     }
 
     /**

@@ -30,20 +30,18 @@ import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
-import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 @Service("blFulfillmentGroupService")
 public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
@@ -96,7 +94,6 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         fg.setOrder(fulfillmentGroupRequest.getOrder());
         fg.setPhone(fulfillmentGroupRequest.getPhone());
         fg.setFulfillmentOption(fulfillmentGroupRequest.getOption());
-        fg.setType(fulfillmentGroupRequest.getFulfillmentType());
 
         for (int i = 0; i < fulfillmentGroupRequest.getFulfillmentGroupItemRequests().size(); i++) {
             FulfillmentGroupItemRequest request = fulfillmentGroupRequest.getFulfillmentGroupItemRequests().get(i);
@@ -242,10 +239,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         Map<Long, Integer> fgItemQuantityMap = new HashMap<Long, Integer>();
         Map<String, FulfillmentGroup> multishipGroups = new HashMap<String, FulfillmentGroup>();
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-            if (!isShippable(fg.getType())) {
-                continue;
-            }
-            String key = getKey(fg.getAddress(), fg.getFulfillmentOption(), fg.getType());
+            String key = getKey(fg.getAddress(), fg.getFulfillmentOption());
             multishipGroups.put(key, fg);
             
             for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
@@ -254,7 +248,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         }
         
         for (OrderMultishipOption option : multishipOptions) {
-            String key = getKey(option.getAddress(), option.getFulfillmentOption(), ((DiscreteOrderItem) option.getOrderItem()).getSku().getFulfillmentType());
+            String key = getKey(option.getAddress(), option.getFulfillmentOption());
             FulfillmentGroup fg = multishipGroups.get(key);
             
             // Get or create a fulfillment group that matches this OrderMultishipOption destination
@@ -271,8 +265,6 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
                     fgr.setOption(option.getFulfillmentOption());
                 }
                 
-                fgr.setFulfillmentType(((DiscreteOrderItem) option.getOrderItem()).getSku().getFulfillmentType());
-
                 fg = addFulfillmentGroupToOrder(fgr, false);
                 fg = save(fg);
                 order.getFulfillmentGroups().add(fg);
@@ -358,11 +350,10 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         return orderService.save(order, priceOrder);
     }
     
-    protected String getKey(Address address, FulfillmentOption option, FulfillmentType fulfillmentType) {
+    protected String getKey(Address address, FulfillmentOption option) {
         Long addressKey = (address == null) ? -1 : address.getId();
         Long fulfillmentOptionKey = (option == null) ? -1 : option.getId();
-        String fulfillmentTypeKey = (fulfillmentType == null) ? "-1" : fulfillmentType.getType();
-        return addressKey + ":" + fulfillmentOptionKey + ":" + fulfillmentTypeKey;
+        return addressKey + ":" + fulfillmentOptionKey;
     }
     
     protected FulfillmentGroupItem createFulfillmentGroupItemFromOrderItem(OrderItem orderItem, FulfillmentGroup fulfillmentGroup, int quantity) {
@@ -421,32 +412,6 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     public List<FulfillmentGroup> findFulfillmentGroupsByStatus(
             FulfillmentGroupStatusType status, int start, int maxResults) {
         return fulfillmentGroupDao.readFulfillmentGroupsByStatus(status, start, maxResults);
-    }
-
-    @Override
-    public boolean isShippable(FulfillmentType fulfillmentType) {
-        if (fulfillmentType.GIFT_CARD.equals(fulfillmentType) || fulfillmentType.DIGITAL.equals(fulfillmentType) || fulfillmentType.PHYSICAL_PICKUP.equals(fulfillmentType)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * This method will get the first shippable fulfillment group from an order.
-     *
-     * @param order
-     */
-    @Override
-    public FulfillmentGroup getFirstShippableFulfillmentGroup(Order order) {
-        List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
-        if (fulfillmentGroups != null) {
-            for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
-                if (isShippable(fulfillmentGroup.getType())) {
-                    return fulfillmentGroup;
-                }
-            }
-        }
-        return null;
     }
 
 }

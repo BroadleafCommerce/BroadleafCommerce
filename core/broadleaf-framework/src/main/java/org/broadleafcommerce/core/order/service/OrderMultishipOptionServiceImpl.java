@@ -25,13 +25,12 @@ import org.broadleafcommerce.core.order.service.call.OrderMultishipOptionDTO;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 /**
  * 
@@ -52,9 +51,6 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
     @Resource(name = "blFulfillmentOptionService")
     protected FulfillmentOptionService fulfillmentOptionService;
     
-    @Resource(name = "blFulfillmentGroupService")
-    protected FulfillmentGroupService fulfillmentGroupService;
-
     @Override
     public OrderMultishipOption save(OrderMultishipOption orderMultishipOption) {
         return orderMultishipOptionDao.save(orderMultishipOption);
@@ -198,9 +194,6 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
     
     protected List<OrderMultishipOption> createPopulatedOrderMultishipOption(Order order, DiscreteOrderItem item, Integer quantity) {
         List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
-        if (!fulfillmentGroupService.isShippable(item.getSku().getFulfillmentType())) {
-            return orderMultishipOptions;
-        }
         for (int i = 0; i < quantity; i++) {
             OrderMultishipOption orderMultishipOption = new OrderMultishipOptionImpl();
             orderMultishipOption.setOrder(order);
