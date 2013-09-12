@@ -125,5 +125,9 @@
             </map>
         </property>
     </bean>
+    
+    <bean id="blContentDeepLinkService" class="org.broadleafcommerce.cms.web.deeplink.ContentDeepLinkServiceImpl">
+        <property name="structuredContentAdminPath" value="structured-content/" />
+    </bean>
 
 </beans>

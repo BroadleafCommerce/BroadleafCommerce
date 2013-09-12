@@ -59,5 +59,9 @@ public class BRCVariableExpression implements BroadleafVariableExpression {
         }
         return null;
     }
+    
+    public boolean isAdminMode() {
+        return getSandbox() != null;
+    }
 
 }

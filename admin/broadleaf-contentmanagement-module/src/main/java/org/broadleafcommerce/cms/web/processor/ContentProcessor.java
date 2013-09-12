@@ -25,12 +25,14 @@ import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
+import org.broadleafcommerce.cms.web.deeplink.ContentDeepLinkServiceImpl;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.deeplink.DeepLink;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
@@ -112,6 +114,9 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 
     @Resource(name = "blContentProcessorExtensionManager")
     protected ContentProcessorExtensionManager extensionManager;
+    
+    @Resource(name = "blContentDeepLinkService")
+    protected ContentDeepLinkServiceImpl contentDeepLinkService;
     
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -250,6 +255,14 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
             addToModel(arguments, contentListVar, null);
             addToModel(arguments, numResultsVar, 0);
         }       
+        
+        String deepLinksVar = element.getAttributeValue("deepLinks");
+        if (StringUtils.isNotBlank(deepLinksVar)) {
+            List<DeepLink> links = contentDeepLinkService.getLinks(contentItems.get(0));
+            extensionManager.getProxy().addExtensionFieldDeepLink(links, extensionFieldName, extensionFieldValue);
+            extensionManager.getProxy().postProcessDeepLinks(links);
+            addToModel(arguments, deepLinksVar, links);
+        }
     }
 
     /**

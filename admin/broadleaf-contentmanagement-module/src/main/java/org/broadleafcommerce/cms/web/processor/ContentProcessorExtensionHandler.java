@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.web.deeplink.DeepLink;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
@@ -64,5 +65,24 @@ public interface ContentProcessorExtensionHandler extends ExtensionHandler {
     public ExtensionResultStatusType lookupContentByExtensionField(List<StructuredContentDTO> contentItems,
             String extensionFieldName, String extensionFieldValue, SandBox sandBox, Locale locale,
             Integer count, Map<String,Object> ruleDTOs, boolean secure, Arguments arguments, Element element);
+    
+    /**
+     * Provides a hook point for an extension of content processor to optionally add in deep links
+     * for a content item based on its extension fields
+     * @param links
+     * @param extensionFieldName
+     * @param extensionFieldValue
+     * @return ExtensionResultStatusType
+     */
+    public ExtensionResultStatusType addExtensionFieldDeepLink(List<DeepLink> links, String extensionFieldName, 
+            String extensionFieldValue);
+    
+    /**
+     * Provides a hook point to allow extension handlers to modify the generated deep links.
+     * 
+     * @param links
+     * @return ExtensionResultStatusType
+     */
+    public ExtensionResultStatusType postProcessDeepLinks(List<DeepLink> links);
 
 }
