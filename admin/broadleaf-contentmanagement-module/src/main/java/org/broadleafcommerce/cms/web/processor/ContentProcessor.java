@@ -27,6 +27,7 @@ import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.time.SystemTime;
@@ -58,15 +59,9 @@ import javax.servlet.http.HttpServletRequest;
  *
  * Usage based on the following attributes:<br>
  * <ul>
- *     <li>extensionFieldName  (required *) - only required if contentType is not specified.
- *                                    Specifies the field name in which to pull content for.
- *                                    The resulting list can be of different content types.
- *                                    (For example: the AdvancedCMS Module allows lookup by "layoutArea")</li>
- *     <li>extensionFieldValue  (required *) - only required if contentType is not specified.
- *                                    Specifies the field value for which the extensionFieldName is specified.
- *                                    (For example: the AdvancedCMS Module allows lookup by "layoutArea".
- *                                    The extensionFieldValue would be the specific label for the specified "layoutArea")</li>
- *     <li>contentType (required *) - only required if extensionFieldName and extensionFieldValue is not specified.
+ *     <li>contentType (required *) - only required if an extension manager is not defined to handle content lookup.
+ *                                    If the content type is not found, it will try to retrieve content from any registered
+ *                                    extension handlers.
  *                                    Specifies the content you are retrieving.</li>
  *     <li>contentName - if included will retrieve only content that matches the name.   When no name is specified,
  *                       all matching content items of the passed in type are retrieved.</li>
@@ -147,16 +142,15 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
     @Override
     protected void modifyModelAttributes(final Arguments arguments, Element element) {        
         String contentType = element.getAttributeValue("contentType");
-        String extensionFieldName = element.getAttributeValue("extensionFieldName");
-        String extensionFieldValue = element.getAttributeValue("extensionFieldValue");
-
-        if (StringUtils.isEmpty(contentType) && (StringUtils.isEmpty(extensionFieldName) || StringUtils.isEmpty(extensionFieldValue)) ) {
-            throw new IllegalArgumentException("The content processor must have a non-empty attribute value for either 1) 'contentType' or 2) 'extensionFieldName' and 'extensionFieldValue'");
-        }
-
         String contentName = element.getAttributeValue("contentName");
         String maxResultsStr = element.getAttributeValue("maxResults");
 
+        boolean extensionLookupNotHandled = ExtensionResultStatusType.NOT_HANDLED.equals(extensionManager.getProxy().shouldHandleContentLookup(element));
+
+        if (StringUtils.isEmpty(contentType) && StringUtils.isEmpty(contentName) && extensionLookupNotHandled) {
+            throw new IllegalArgumentException("The content processor must have a non-empty attribute value for 'contentType' or 'contentName' or register an extension manager to handle content lookup");
+
+        }
 
         Integer maxResults = null;
         if (maxResultsStr != null) {
@@ -188,7 +182,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 
         Locale locale = blcContext.getLocale();
             
-        contentItems = getContentItems(contentName, maxResults, request, mvelParameters, currentSandbox, structuredContentType, locale, extensionFieldName, extensionFieldValue, arguments, element);
+        contentItems = getContentItems(contentName, maxResults, request, mvelParameters, currentSandbox, structuredContentType, locale, arguments, element);
         
         if (contentItems.size() > 0) {
             
@@ -260,8 +254,6 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
      * @param currentSandbox current sandbox being used
      * @param structuredContentType the type of content that should be returned
      * @param locale current locale
-     * @param extensionFieldName the field name any registered ExtensionManagers will use to lookup content  (will only be retrieved if structuredContentType is null)
-     * @param extensionFieldValue the field value any registered ExtensionManagers will use to lookup content (will only be retrieved if structuredContentType is null)
      * @param arguments Thymeleaf Arguments passed into the tag
      * @param element element context that this Thymeleaf processor is being executed in
      * @return
@@ -270,16 +262,15 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
                                                         Map<String, Object> mvelParameters,
                                                         SandBox currentSandbox,
                                                         StructuredContentType structuredContentType,
-                                                        Locale locale, String extensionFieldName, String extensionFieldValue,
-                                                        Arguments arguments, Element element) {
+                                                        Locale locale, Arguments arguments, Element element) {
         List<StructuredContentDTO> contentItems;
         if (structuredContentType == null) {
-            if (extensionFieldName != null && extensionFieldValue != null) {
+            if (contentName == null || "".equals(contentName)) {
                 contentItems = new ArrayList<StructuredContentDTO>();
 
                 // allow modules to lookup content by a specific field
                 // e.g. (For the AdvancedCMS module you can lookup by "layoutArea")
-                extensionManager.getProxy().lookupContentByExtensionField(contentItems, extensionFieldName, extensionFieldValue, currentSandbox, locale, maxResults, mvelParameters, isSecure(request), arguments, element);
+                extensionManager.getProxy().lookupContentByElementAttribute(contentItems, currentSandbox, locale, maxResults, mvelParameters, isSecure(request), element);
 
             }   else {
                 contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, contentName, locale, maxResults, mvelParameters, isSecure(request));
@@ -291,6 +282,9 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
                 contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, structuredContentType, contentName, locale, maxResults, mvelParameters, isSecure(request));
             }
         }
+
+        //add additional fields to the model
+        extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
         
         return contentItems;
     }
