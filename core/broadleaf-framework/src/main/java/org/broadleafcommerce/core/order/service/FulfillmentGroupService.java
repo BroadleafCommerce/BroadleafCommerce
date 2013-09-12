@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 
 import java.util.List;
@@ -57,7 +58,7 @@ public interface FulfillmentGroupService {
     public FulfillmentGroupFee createFulfillmentGroupFee();
 
     /**
-     * Associates FulfillmentGroupItems in the given Order such that they match the structure
+     * Associates shippable FulfillmentGroupItems in the given Order such that they match the structure
      * of the OrderMultishipOptions associated with the given Order. 
      * 
      * @see OrderMultishipOption
@@ -69,7 +70,7 @@ public interface FulfillmentGroupService {
     public Order matchFulfillmentGroupsToMultishipOptions(Order order, boolean priceOrder) throws PricingException;
 
     /**
-     * Collapses all of the fulfillment groups in the given order to the first fulfillment group
+     * Collapses all of the shippable fulfillment groups in the given order to the first shippable fulfillment group
      * in the order.
      * 
      * @see #matchFulfillmentGroupsToMultishipOptions(Order, boolean)
@@ -79,7 +80,7 @@ public interface FulfillmentGroupService {
      * @return the saved order
      * @throws PricingException 
      */
-    public Order collapseToOneFulfillmentGroup(Order order, boolean priceOrder) throws PricingException;
+    public Order collapseToOneShippableFulfillmentGroup(Order order, boolean priceOrder) throws PricingException;
 
 
     /**
@@ -128,5 +129,20 @@ public interface FulfillmentGroupService {
      * @return
      */
     public List<FulfillmentGroup> findFulfillmentGroupsByStatus(FulfillmentGroupStatusType status, int start, int maxResults);
+
+    /**
+     * Determines if a fulfillment group is shippable based on its fulfillment type.
+     * 
+     * @param fulfillmentType
+     * @return
+     */
+    public boolean isShippable(FulfillmentType fulfillmentType);
+    
+    /**
+     * Returns the first shippable fulfillment group from an order.
+     *
+     * @param order
+     */
+    public FulfillmentGroup getFirstShippableFulfillmentGroup(Order order);
 
 }
