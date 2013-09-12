@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 
 import java.util.List;
@@ -128,5 +129,20 @@ public interface FulfillmentGroupService {
      * @return
      */
     public List<FulfillmentGroup> findFulfillmentGroupsByStatus(FulfillmentGroupStatusType status, int start, int maxResults);
+
+    /**
+     * Determines if a fulfillment group is shippable based on its fulfillment type.
+     * 
+     * @param fulfillmentType
+     * @return
+     */
+    public boolean isShippable(FulfillmentType fulfillmentType);
+    
+    /**
+     * Returns the first shippable fulfillment group from an order.
+     *
+     * @param order
+     */
+    public FulfillmentGroup getFirstShippableFulfillmentGroup(Order order);
 
 }
