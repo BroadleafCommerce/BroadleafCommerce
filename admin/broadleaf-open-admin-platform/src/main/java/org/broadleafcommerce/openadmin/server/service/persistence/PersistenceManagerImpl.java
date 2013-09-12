@@ -391,38 +391,40 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
         Map<String, Object> idMetadata = getDynamicEntityDao().getIdMetadata(entityClass);
         String idProperty = (String) idMetadata.get("name");
-        String idVal = response.findProperty(idProperty).getValue();
+        if (response.findProperty(idProperty) != null) {
+            String idVal = response.findProperty(idProperty).getValue();
 
-        Map<String, List<String>> subPackageValidationErrors = new HashMap<String, List<String>>();
-        for (Map.Entry<String,PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
-            Entity subResponse;
-            try {
-                subPackage.getValue().setCustomCriteria(new String[]{subPackage.getValue().getCustomCriteria()[0], idVal});
-                //Run through any subPackages -- add up any validation errors
-                checkHandler: {
-                    for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
-                        if (handler.canHandleAdd(subPackage.getValue())) {
-                            if (!handler.willHandleSecurity(subPackage.getValue())) {
-                                adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
+            Map<String, List<String>> subPackageValidationErrors = new HashMap<String, List<String>>();
+            for (Map.Entry<String,PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
+                Entity subResponse;
+                try {
+                    subPackage.getValue().setCustomCriteria(new String[]{subPackage.getValue().getCustomCriteria()[0], idVal});
+                    //Run through any subPackages -- add up any validation errors
+                    checkHandler: {
+                        for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+                            if (handler.canHandleAdd(subPackage.getValue())) {
+                                if (!handler.willHandleSecurity(subPackage.getValue())) {
+                                    adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
+                                }
+                                subResponse = handler.add(subPackage.getValue(), dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                                subPackage.getValue().setEntity(subResponse);
+
+                                break checkHandler;
                             }
-                            subResponse = handler.add(subPackage.getValue(), dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
-                            subPackage.getValue().setEntity(subResponse);
-
-                            break checkHandler;
                         }
+                        adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
+                        PersistenceModule subModule = getCompatibleModule(subPackage.getValue().getPersistencePerspective().getOperationTypes().getAddType());
+                        subResponse = subModule.add(persistencePackage);
+                        subPackage.getValue().setEntity(subResponse);
                     }
-                    adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
-                    PersistenceModule subModule = getCompatibleModule(subPackage.getValue().getPersistencePerspective().getOperationTypes().getAddType());
-                    subResponse = subModule.add(persistencePackage);
-                    subPackage.getValue().setEntity(subResponse);
-                }
-            } catch (ValidationException e) {
-                for (Map.Entry<String, List<String>> error : e.getEntity().getValidationErrors().entrySet()) {
-                    subPackageValidationErrors.put(subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(), error.getValue());
+                } catch (ValidationException e) {
+                    for (Map.Entry<String, List<String>> error : e.getEntity().getValidationErrors().entrySet()) {
+                        subPackageValidationErrors.put(subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(), error.getValue());
+                    }
                 }
             }
+            response.getValidationErrors().putAll(subPackageValidationErrors);
         }
-        response.getValidationErrors().putAll(subPackageValidationErrors);
 
         if (response.isValidationFailure()) {
             throw new ValidationException(response, "The entity has failed validation");
