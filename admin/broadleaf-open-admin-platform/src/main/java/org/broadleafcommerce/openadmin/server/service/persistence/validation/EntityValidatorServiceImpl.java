@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -54,8 +55,15 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
     @Override
     public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata) {
         //validate each individual property according to their validation configuration
-        for (Property property : entity.getProperties()) {
-            FieldMetadata metadata = propertiesMetadata.get(property.getName());
+        for (Entry<String, FieldMetadata> metadataEntry : propertiesMetadata.entrySet()) {
+            FieldMetadata metadata = metadataEntry.getValue();
+            Property property = entity.getPMap().get(metadataEntry.getKey());
+            
+            //for radio buttons, it's possible that the entity property was never populated in the first place from the POST
+            //and so it will be null
+            String propertyName = metadataEntry.getKey();
+            String propertyValue = (property == null) ? null : property.getValue();
+            
             if (metadata instanceof BasicFieldMetadata) {
                 //First execute the global field validators
                 if (CollectionUtils.isNotEmpty(globalEntityValidators)) {
@@ -64,10 +72,10 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                                 instance,
                                 propertiesMetadata,
                                 (BasicFieldMetadata)metadata,
-                                property.getName(),
-                                property.getValue());
+                                propertyName,
+                                propertyValue);
                         if (!result.isValid()) {
-                            entity.addValidationError(property.getName(), result.getErrorMessage());
+                            entity.addValidationError(propertyName, result.getErrorMessage());
                         }
                     }
                 }
@@ -97,7 +105,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                     
                     if (validator == null) {
                         throw new PersistenceException("Could not find validator: " + validationImplementation + 
-                                " for property: " + property.getName());
+                                " for property: " + propertyName);
                     }
                     
                     PropertyValidationResult result = validator.validate(entity,
@@ -105,10 +113,10 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                                                                     propertiesMetadata,
                                                                     configuration,
                                                                     (BasicFieldMetadata)metadata,
-                                                                    property.getName(),
-                                                                    property.getValue());
+                                                                    propertyName,
+                                                                    propertyValue);
                     if (!result.isValid()) {
-                        entity.addValidationError(property.getName(), result.getErrorMessage());
+                        entity.addValidationError(propertyName, result.getErrorMessage());
                     }
                 }
             }
