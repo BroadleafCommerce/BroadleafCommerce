@@ -194,7 +194,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
 
         multishipOptionServiceMock.deleteAllOrderMultishipOptions(EasyMock.isA(Order.class));
         EasyMock.expectLastCall().anyTimes();
-        EasyMock.expect(fgServiceMock.collapseToOneFulfillmentGroup(EasyMock.isA(Order.class), EasyMock.eq(false))).andAnswer(new IAnswer<Order>() {
+        EasyMock.expect(fgServiceMock.collapseToOneShippableFulfillmentGroup(EasyMock.isA(Order.class), EasyMock.eq(false))).andAnswer(new IAnswer<Order>() {
             @Override
             public Order answer() throws Throwable {
                 Order order = (Order) EasyMock.getCurrentArguments()[0];

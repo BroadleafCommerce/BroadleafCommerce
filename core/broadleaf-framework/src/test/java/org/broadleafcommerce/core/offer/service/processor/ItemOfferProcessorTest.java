@@ -138,7 +138,7 @@ public class ItemOfferProcessorTest extends TestCase {
 
         multishipOptionServiceMock.deleteAllOrderMultishipOptions(EasyMock.isA(Order.class));
         EasyMock.expectLastCall().anyTimes();
-        EasyMock.expect(fgServiceMock.collapseToOneFulfillmentGroup(EasyMock.isA(Order.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getSameOrderAnswer()).anyTimes();
+        EasyMock.expect(fgServiceMock.collapseToOneShippableFulfillmentGroup(EasyMock.isA(Order.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getSameOrderAnswer()).anyTimes();
         EasyMock.expect(fgItemDaoMock.create()).andAnswer(OfferDataItemProvider.getCreateFulfillmentGroupItemAnswer()).anyTimes();
         fgItemDaoMock.delete(EasyMock.isA(FulfillmentGroupItem.class));
         EasyMock.expectLastCall().anyTimes();

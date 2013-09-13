@@ -23,10 +23,7 @@ import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.service.BroadleafPaymentInfoTypeService;
-import org.broadleafcommerce.core.payment.service.PaymentInfoFactory;
-import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
-import org.broadleafcommerce.core.web.checkout.validator.BillingInfoFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.MultishipAddAddressFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.OrderInfoFormValidator;
 import org.broadleafcommerce.core.web.checkout.validator.ShippingInfoFormValidator;
@@ -80,15 +77,8 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
 
-    @Resource(name = "blSecurePaymentInfoService")
-    protected SecurePaymentInfoService securePaymentInfoService;
-
     @Resource(name = "blPaymentInfoTypeService")
     protected BroadleafPaymentInfoTypeService paymentInfoTypeService;
-
-    /* Factories */
-    @Resource(name = "blCreditCardPaymentInfoFactory")
-    protected PaymentInfoFactory creditCardPaymentInfoFactory;
 
     /* Validators */
     @Resource(name = "blShippingInfoFormValidator")
@@ -97,10 +87,14 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
     @Resource(name = "blMultishipAddAddressFormValidator")
     protected MultishipAddAddressFormValidator multishipAddAddressFormValidator;
 
-    @Resource(name = "blBillingInfoFormValidator")
-    protected BillingInfoFormValidator billingInfoFormValidator;
-
     @Resource(name = "blOrderInfoFormValidator")
     protected OrderInfoFormValidator orderInfoFormValidator;
+
+    /* Extension Managers */
+    @Resource(name = "blPaymentInfoServiceExtensionManager")
+    protected PaymentInfoServiceExtensionManager paymentInfoServiceExtensionManager;
+
+    @Resource(name = "blCheckoutControllerExtensionManager")
+    protected BroadleafCheckoutControllerExtensionManager checkoutControllerExtensionManager;
 
 }

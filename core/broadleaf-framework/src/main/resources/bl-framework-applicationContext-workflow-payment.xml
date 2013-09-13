@@ -43,6 +43,9 @@
     <bean id="blWirePaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
     <bean id="blMoneyOrderPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
     <bean id="blCustomerCreditPaymentModule" class="org.broadleafcommerce.core.payment.service.module.DefaultModule"/>
+    <bean id="blCODPaymentModule" class="org.broadleafcommerce.core.payment.service.module.AcceptAndPassthroughModule" scope="prototype">
+        <property name="validPaymentInfoType" value="COD"/>
+    </bean>
 
     <bean id="blGiftCardService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
         <property name="paymentModule" ref="blGiftCardModule"/>
@@ -67,6 +70,9 @@
     </bean>
     <bean id="blCustomerCreditPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
         <property name="paymentModule" ref="blCustomerCreditPaymentModule"/>
+    </bean>
+    <bean id="blCODPaymentService" class="org.broadleafcommerce.core.payment.service.PaymentServiceImpl">
+        <property name="paymentModule" ref="blCODPaymentModule"/>
     </bean>
 
     <!--
@@ -173,6 +179,7 @@
     <bean id="blAuthorizeAndDebitElectronicCheckRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
     <bean id="blAuthorizeAndDebitWireRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
     <bean id="blAuthorizeAndDebitMoneyOrderRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
+    <bean id="blAuthorizeAndDebitCODRollbackHandler" class="org.broadleafcommerce.core.workflow.state.NullCheckoutRollbackHandler"/>
 
     <bean p:order="2000" id="blAuthorizeAndDebitCustomerCreditActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
         <property name="paymentService" ref="blCustomerCreditPaymentService"/>
@@ -214,6 +221,11 @@
         <property name="userName" value="web"/>
         <property name="rollbackHandler" ref="blAuthorizeAndDebitMoneyOrderRollbackHandler"/>
     </bean>
+    <bean p:order="11000" id="blAuthorizeAndDebitCODActivity" class="org.broadleafcommerce.core.payment.service.workflow.PaymentActivity">
+        <property name="paymentService" ref="blCODPaymentService"/>
+        <property name="userName" value="web"/>
+        <property name="rollbackHandler" ref="blAuthorizeAndDebitCODRollbackHandler"/>
+    </bean>
     <bean id="blAuthorizeAndDebitWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
             <bean class="org.broadleafcommerce.core.payment.service.workflow.PaymentProcessContextFactory">
@@ -230,6 +242,7 @@
                 <ref bean="blAuthorizeAndDebitElectronicCheckActivity" />
                 <ref bean="blAuthorizeAndDebitWireActivity" />
                 <ref bean="blAuthorizeAndDebitMoneyOrderActivity" />
+                <ref bean="blAuthorizeAndDebitCODActivity" />
             </list>
         </property>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>

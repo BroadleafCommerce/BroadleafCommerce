@@ -29,8 +29,8 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -41,8 +41,6 @@ import org.broadleafcommerce.core.web.checkout.model.OrderInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.OrderMultishipOptionForm;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
@@ -56,8 +54,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyEditorSupport;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
@@ -70,11 +66,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * In charge of performing the various checkout operations
  * 
  * @author Andre Azzolini (apazzolini)
  * @author Elbert Bautista (elbertbautista)
+ * @author Joshua Skorton (jskorton)
  */
 public class BroadleafCheckoutController extends AbstractCheckoutController {
 
@@ -90,7 +90,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     protected static String baseConfirmationView = "ajaxredirect:/confirmation";
     
     /**
-     * Renders the default checkout page.
+     * Renders the default checkout page and allows modules to add properties to the model.
      *
      * @param request
      * @param response
@@ -104,8 +104,9 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
         }
         
-        populateModelWithShippingReferenceData(request, model);
+        populateModelWithReferenceData(request, model);
         
+
         return getCheckoutView();
     }
     
@@ -121,7 +122,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      */
     public String convertToSingleship(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
         Order cart = CartState.getCart();
-        fulfillmentGroupService.collapseToOneFulfillmentGroup(cart, true);
+        fulfillmentGroupService.collapseToOneShippableFulfillmentGroup(cart, true);
         return getCheckoutPageRedirect();
     }
     
@@ -149,7 +150,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                 LOG.error("Error when saving the email address for order confirmation to the cart", pe);
             }
             
-            populateModelWithShippingReferenceData(request, model);
+            populateModelWithReferenceData(request, model);
             return getCheckoutView();
         }
         
@@ -166,7 +167,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     /**
      * Processes the request to save a single shipping address
      *
-     * Note that the default Broadleaf implementation creates an order
+     * Note:  the default Broadleaf implementation creates an order
      * with a single fulfillment group. In the case of shipping to mutiple addresses,
      * the multiship methods should be used.
      *
@@ -184,7 +185,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         shippingInfoFormValidator.validate(shippingForm, result);
         if (result.hasErrors()) {
             putFulfillmentOptionsAndEstimationOnModel(model);
-            populateModelWithShippingReferenceData(request, model);
+            populateModelWithReferenceData(request, model);
             model.addAttribute("states", stateService.findStates());
             model.addAttribute("countries", countryService.findCountries());
             model.addAttribute("expirationMonths", populateExpirationMonths());
@@ -193,19 +194,21 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             return getCheckoutView();
         }
 
-        FulfillmentGroup fulfillmentGroup = cart.getFulfillmentGroups().get(0);
         if (StringUtils.isEmpty(shippingForm.getAddress().getPhonePrimary().getPhoneNumber())) {
             shippingForm.getAddress().setPhonePrimary(null);
         }
-        fulfillmentGroup.setAddress(shippingForm.getAddress());
-        fulfillmentGroup.setPersonalMessage(shippingForm.getPersonalMessage());
-        fulfillmentGroup.setDeliveryInstruction(shippingForm.getDeliveryMessage());
-        FulfillmentOption fulfillmentOption = fulfillmentOptionService.readFulfillmentOptionById(shippingForm.getFulfillmentOptionId());
-        fulfillmentGroup.setFulfillmentOption(fulfillmentOption);
 
-        cart = orderService.save(cart, true);
+        FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
+        if (shippableFulfillmentGroup != null) {
+            shippableFulfillmentGroup.setAddress(shippingForm.getAddress());
+            shippableFulfillmentGroup.setPersonalMessage(shippingForm.getPersonalMessage());
+            shippableFulfillmentGroup.setDeliveryInstruction(shippingForm.getDeliveryMessage());
+            FulfillmentOption fulfillmentOption = fulfillmentOptionService.readFulfillmentOptionById(shippingForm.getFulfillmentOptionId());
+            shippableFulfillmentGroup.setFulfillmentOption(fulfillmentOption);
 
-        CartState.setCart(cart);
+            cart = orderService.save(cart, true);
+            CartState.setCart(cart);
+        }
 
         return isAjaxRequest(request) ? getCheckoutView() : getCheckoutPageRedirect();
     }
@@ -291,11 +294,9 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             return showMultishipAddAddress(request, response, model);
         }
         
-        Address address = addressService.saveAddress(addressForm.getAddress());
-        
         CustomerAddress customerAddress = customerAddressService.create();
         customerAddress.setAddressName(addressForm.getAddressName());
-        customerAddress.setAddress(address);
+        customerAddress.setAddress(addressForm.getAddress());
         customerAddress.setCustomer(CustomerState.getCustomer());
         customerAddressService.saveCustomerAddress(customerAddress);
         
@@ -322,12 +323,18 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
    }
     
     /**
-     * Processes the request to complete checkout
+     * Processes the request to complete checkout.
      * 
-     * If the paymentMethod is undefined or "creditCard" delegates to the "completeSecureCreditCardCheckout"
-     * method. 
+     * An extension manager is used to collect payment methods.  A default
+     * Collect On Delivery(COD) extension handler and a default credit card extension
+     * handler are included in the framework.
      * 
-     * Otherwise, returns an operation not supported.
+     * The paymentInfoTypeList stores the types of payments that should be added to the
+     * payments map.  An extension handler will need to match a type in the paymentInfoTypeList
+     * in order for that extension handler to execute its addAdditionalPaymentInfos method.
+     * An exception to this pattern is the customer credit extension handler.  The customer
+     * credit extension handler will always be run regardless of whether or not CUSTOMER_CREDIT is
+     * in the paymentInfoTypeList.
      *
      * This method assumes that a credit card payment info
      * will be either sent to a third party gateway or saved in a secure schema.
@@ -338,119 +345,50 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * If the transaction is unsuccessful, (e.g. the gateway declines payment)
      * processFailedOrderCheckout() is called and reverses the state of the order.
      *
-     * Note: this method removes any existing payment infos of type CREDIT_CARD
-     * and re-creates it with the information from the BillingInfoForm
+     * Note: this method removes any existing PaymentInfos not of type CUSTOMER_CREDIT or
+     * GIFT_CARD before running the extension manager to add new PaymentInfos.
      *
      * @param request
      * @param response
      * @param model
      * @param billingForm
+     * @param paymentInfoTypeList
      * @return the return path
      * @throws ServiceException 
      */
-    public String completeCheckout(HttpServletRequest request, HttpServletResponse response, Model model,
-            BillingInfoForm billingForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
-        
-        if (billingForm.getPaymentMethod() == null || "credit_card".equals(billingForm.getPaymentMethod())) {
-            return completeSecureCreditCardCheckout(request, response, model, billingForm, result);
-        } else {
-            throw new IllegalArgumentException("Complete checkout called with payment Method " + billingForm.getPaymentMethod() + " which has not been implemented.");
-        }
-    }
-
-    /**
-     * Processes the request to complete checkout using a Credit Card
-     *
-     * This method assumes that a credit card payment info
-     * will be either sent to a third party gateway or saved in a secure schema.
-     * If the transaction is successful, the order will be assigned an order number,
-     * its status change to SUBMITTED, and given a submit date. The method then
-     * returns the default confirmation path "/confirmation/{orderNumber}"
-     *
-     * If the transaction is unsuccessful, (e.g. the gateway declines payment)
-     * processFailedOrderCheckout() is called and reverses the state of the order.
-     *
-     * Note: this method removes any existing payment infos of type CREDIT_CARD
-     * and re-creates it with the information from the BillingInfoForm
-     *
-     * @param request
-     * @param response
-     * @param model
-     * @param billingForm
-     * @return the return path
-     * @throws ServiceException 
-     */
-    public String completeSecureCreditCardCheckout(HttpServletRequest request, HttpServletResponse response, Model model,
-            BillingInfoForm billingForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
-
+    public String completeCheckout(HttpServletRequest request, HttpServletResponse response, Model model, BillingInfoForm billingForm, BindingResult result, List<PaymentInfoType> paymentInfoTypeList) throws CheckoutException, PricingException, ServiceException {
         Order cart = CartState.getCart();
         if (cart != null) {
             Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
-
-            orderService.removePaymentsFromOrder(cart, PaymentInfoType.CREDIT_CARD);
-
-            if (billingForm.isUseShippingAddress()){
-                copyShippingAddressToBillingAddress(cart, billingForm);
+            
+            for(PaymentInfo paymentInfo : cart.getPaymentInfos()) {
+                if (!PaymentInfoType.CUSTOMER_CREDIT.equals(paymentInfo.getType()) && !PaymentInfoType.GIFT_CARD.equals(paymentInfo.getType())) {
+                    orderService.removePaymentFromOrder(cart, paymentInfo);
+                }
             }
 
-            billingInfoFormValidator.validate(billingForm, result);
+            paymentInfoServiceExtensionManager.getProxy().addAdditionalPaymentInfos(payments, paymentInfoTypeList, request, response, model, billingForm, result);
             if (result.hasErrors()) {
-                populateModelWithShippingReferenceData(request, model);
+                populateModelWithReferenceData(request, model);
+                model.addAttribute("transactionError", true);
                 return getCheckoutView();
             }
-
-            PaymentInfo ccInfo = creditCardPaymentInfoFactory.constructPaymentInfo(cart);
-            ccInfo.setAddress(billingForm.getAddress());
-            cart.getPaymentInfos().add(ccInfo);
-
-            CreditCardPaymentInfo ccReference = (CreditCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.CREDIT_CARD);
-            ccReference.setNameOnCard(billingForm.getCreditCardName());
-            ccReference.setReferenceNumber(ccInfo.getReferenceNumber());
-            ccReference.setPan(billingForm.getCreditCardNumber());
-            ccReference.setCvvCode(billingForm.getCreditCardCvvCode());
-            ccReference.setExpirationMonth(Integer.parseInt(billingForm.getCreditCardExpMonth()));
-            ccReference.setExpirationYear(Integer.parseInt(billingForm.getCreditCardExpYear()));
-
-            payments.put(ccInfo, ccReference);
 
             CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart, payments);
 
-            if (!checkoutResponse.getPaymentResponse().getResponseItems().get(ccInfo).getTransactionSuccess()){
-                populateModelWithShippingReferenceData(request, model);
-                result.rejectValue("creditCardNumber", "payment.exception", null, null);
-                return getCheckoutView();
+            Map<PaymentInfo, PaymentResponseItem> paymentResponseItemMap = checkoutResponse.getPaymentResponse().getResponseItems();
+            for(PaymentResponseItem paymentResponseItem : paymentResponseItemMap.values()) {
+                if(!paymentResponseItem.getTransactionSuccess()) {
+                    populateModelWithReferenceData(request, model);
+                    model.addAttribute("transactionError", true);
+                    return getCheckoutView();
+                }
             }
 
             return getConfirmationView(cart.getOrderNumber());
         }
 
         return getCartPageRedirect();
-    }
-
-    /**
-     * This method will copy the shipping address of the first fulfillment group on the order
-     * to the billing address on the BillingInfoForm that is passed in.
-     *
-     * @param billingInfoForm
-     */
-    protected void copyShippingAddressToBillingAddress(Order order, BillingInfoForm billingInfoForm) {
-        if (order.getFulfillmentGroups().get(0) != null) {
-            Address shipping = order.getFulfillmentGroups().get(0).getAddress();
-            if (shipping != null) {
-                Address billing = new AddressImpl();
-                billing.setFirstName(shipping.getFirstName());
-                billing.setLastName(shipping.getLastName());
-                billing.setAddressLine1(shipping.getAddressLine1());
-                billing.setAddressLine2(shipping.getAddressLine2());
-                billing.setCity(shipping.getCity());
-                billing.setState(shipping.getState());
-                billing.setPostalCode(shipping.getPostalCode());
-                billing.setCountry(shipping.getCountry());
-                billing.setPrimaryPhone(shipping.getPrimaryPhone());
-                billing.setEmailAddress(shipping.getEmailAddress());
-                billingInfoForm.setAddress(billing);
-            }
-        }
     }
 
     /**
@@ -463,10 +401,11 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         if (cart.getFulfillmentGroups() == null) {
             return false;
         }
-        
         for (FulfillmentGroup fulfillmentGroup : cart.getFulfillmentGroups()) {
-            if (fulfillmentGroup.getAddress() == null || fulfillmentGroup.getFulfillmentOption() == null) {
-                return false;
+            if (fulfillmentGroupService.isShippable(fulfillmentGroup.getType())) {
+                if (fulfillmentGroup.getAddress() == null || fulfillmentGroup.getFulfillmentOption() == null) {
+                    return false;
+                }
             }
         }
         return true;
@@ -483,20 +422,22 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     }
 
     /**
-     * A helper method to retrieve all fulfillment options for the cart
+     * A helper method to retrieve all fulfillment options for the cart and estimate the cost of applying
+     * fulfillment options on the first shippable fulfillment group.
+     *
      */
     protected void putFulfillmentOptionsAndEstimationOnModel(Model model) {
         List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
         Order cart = CartState.getCart();
-                
+
         if (!(cart instanceof NullOrderImpl) && cart.getFulfillmentGroups().size() > 0 && hasValidShippingAddresses(cart)) {
             Set<FulfillmentOption> options = new HashSet<FulfillmentOption>();
             options.addAll(fulfillmentOptions);
             FulfillmentEstimationResponse estimateResponse = null;
             try {
-                estimateResponse = fulfillmentPricingService.estimateCostForFulfillmentGroup(cart.getFulfillmentGroups().get(0), options);
+                estimateResponse = fulfillmentPricingService.estimateCostForFulfillmentGroup(fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart), options);
             } catch (FulfillmentPriceException e) {
-                
+
             }
             model.addAttribute("estimateResponse", estimateResponse);
         }
@@ -583,31 +524,49 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         });
     }
     
-    protected void populateModelWithShippingReferenceData(HttpServletRequest request, Model model) {
+    protected void populateModelWithReferenceData(HttpServletRequest request, Model model) {
         String editOrderInfo = request.getParameter("edit-order-info");
-        boolean hasValidOrderInfo; 
+        boolean hasValidOrderInfo;
         if (BooleanUtils.toBoolean(editOrderInfo)) {
             hasValidOrderInfo = false;
         } else {
             hasValidOrderInfo = hasValidOrderInfo(CartState.getCart());
         }
         model.addAttribute("validOrderInfo", hasValidOrderInfo);
-        
+
+        boolean hasValidShipping = false;
+
         String editShipping = request.getParameter("edit-shipping");
-        boolean hasValidShipping; 
+
         if (BooleanUtils.toBoolean(editShipping)) {
             hasValidShipping = false;
         } else {
             hasValidShipping = hasValidShippingAddresses(CartState.getCart());
         }
+
+        int numShippableFulfillmentGroups = 0;
+        List<FulfillmentGroup> fulfillmentGroups = CartState.getCart().getFulfillmentGroups();
+        if (fulfillmentGroups != null) {
+            for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+                if (fulfillmentGroupService.isShippable(fulfillmentGroup.getType())) {
+                    numShippableFulfillmentGroups++;
+                }
+            }
+        }
+        if (numShippableFulfillmentGroups == 0) {
+            hasValidShipping = true;
+        }
+        model.addAttribute("numShippableFulfillmentGroups", numShippableFulfillmentGroups);
         model.addAttribute("validShipping", hasValidShipping);
 
         putFulfillmentOptionsAndEstimationOnModel(model);
-        
+
         model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
         model.addAttribute("expirationMonths", populateExpirationMonths());
         model.addAttribute("expirationYears", populateExpirationYears());
+
+        checkoutControllerExtensionManager.getProxy().addAdditionalModelVariables(model);
     }
 
     public String getCartPageRedirect() {
