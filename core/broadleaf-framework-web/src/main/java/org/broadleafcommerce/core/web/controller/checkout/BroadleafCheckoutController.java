@@ -61,6 +61,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -361,28 +362,32 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         if (cart != null) {
             Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
             
-            for(PaymentInfo paymentInfo : cart.getPaymentInfos()) {
+            Iterator<PaymentInfo> paymentInfoItr = cart.getPaymentInfos().iterator();
+            while (paymentInfoItr.hasNext()) {
+                PaymentInfo paymentInfo = paymentInfoItr.next();
                 if (!PaymentInfoType.CUSTOMER_CREDIT.equals(paymentInfo.getType()) && !PaymentInfoType.GIFT_CARD.equals(paymentInfo.getType())) {
+                    paymentInfoItr.remove();
                     orderService.removePaymentFromOrder(cart, paymentInfo);
                 }
             }
 
             paymentInfoServiceExtensionManager.getProxy().addAdditionalPaymentInfos(payments, paymentInfoTypeList, request, response, model, billingForm, result);
+            
+            //Check for validation errors
             if (result.hasErrors()) {
-                populateModelWithReferenceData(request, model);
-                model.addAttribute("transactionError", true);
-                return getCheckoutView();
+                return handleCheckoutError(request, model);
             }
-
-            CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart, payments);
-
-            Map<PaymentInfo, PaymentResponseItem> paymentResponseItemMap = checkoutResponse.getPaymentResponse().getResponseItems();
-            for(PaymentResponseItem paymentResponseItem : paymentResponseItemMap.values()) {
-                if(!paymentResponseItem.getTransactionSuccess()) {
-                    populateModelWithReferenceData(request, model);
-                    model.addAttribute("transactionError", true);
-                    return getCheckoutView();
+            
+            try {
+                CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart, payments);
+                Map<PaymentInfo, PaymentResponseItem> paymentResponseItemMap = checkoutResponse.getPaymentResponse().getResponseItems();
+                for (PaymentResponseItem paymentResponseItem : paymentResponseItemMap.values()) {
+                    if (!paymentResponseItem.getTransactionSuccess()) {
+                        return handleCheckoutError(request, model);
+                    }
                 }
+            } catch (CheckoutException workflowException) {
+                return handleCheckoutError(request, model);
             }
 
             return getConfirmationView(cart.getOrderNumber());
@@ -391,6 +396,12 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         return getCartPageRedirect();
     }
 
+    public String handleCheckoutError(HttpServletRequest request, Model model) {
+        populateModelWithReferenceData(request, model);
+        model.addAttribute("transactionError", true);
+        return getCheckoutView();
+    }
+    
     /**
      * Creates list of PaymentInfos based on payment method in the billingInfoForm.
      * Default behavior looks for only credit card and COD.
