@@ -392,6 +392,23 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     }
 
     /**
+     * Creates list of PaymentInfos based on payment method in the billingInfoForm.
+     * Default behavior looks for only credit card and COD.
+     * 
+     * @param billingForm
+     * @return
+     */
+    protected List<PaymentInfoType> createPaymentInfoTypeList(BillingInfoForm billingForm) {
+        List<PaymentInfoType> paymentInfoTypeList = new ArrayList<PaymentInfoType>();
+        if ("credit_card".equals(billingForm.getPaymentMethod())) {
+            paymentInfoTypeList.add(PaymentInfoType.CREDIT_CARD);
+        } else if ("cod".equals(billingForm.getPaymentMethod())) {
+            paymentInfoTypeList.add(PaymentInfoType.COD);
+        }
+        return paymentInfoTypeList;
+    }
+
+    /**
      * A helper method used to determine the validity of the fulfillment groups
      *
      * @param cart
