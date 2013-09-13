@@ -22,6 +22,8 @@ import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 /**
  * Collect On Delivery(COD) PaymentInfo factory
  * 
@@ -42,7 +44,7 @@ public class CODPaymentInfoFactoryImpl implements PaymentInfoFactory {
         PaymentInfoImpl paymentInfo = new PaymentInfoImpl();
         paymentInfo.setOrder(order);
         paymentInfo.setType(PaymentInfoType.COD);
-        paymentInfo.setReferenceNumber(Long.toString(System.currentTimeMillis()));
+        paymentInfo.setReferenceNumber(UUID.randomUUID().toString());
         paymentInfo.setAmount(order.getRemainingTotal());
 
         return paymentInfo;

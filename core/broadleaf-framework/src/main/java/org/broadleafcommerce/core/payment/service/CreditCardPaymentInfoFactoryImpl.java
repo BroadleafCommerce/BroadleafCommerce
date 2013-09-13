@@ -22,6 +22,7 @@ import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
 
 @Service("blCreditCardPaymentInfoFactory")
 public class CreditCardPaymentInfoFactoryImpl implements PaymentInfoFactory {
@@ -38,7 +39,7 @@ public class CreditCardPaymentInfoFactoryImpl implements PaymentInfoFactory {
         PaymentInfoImpl paymentInfo = new PaymentInfoImpl();
         paymentInfo.setOrder(order);
         paymentInfo.setType(PaymentInfoType.CREDIT_CARD);
-        paymentInfo.setReferenceNumber(Long.toString(System.currentTimeMillis()));
+        paymentInfo.setReferenceNumber(UUID.randomUUID().toString());
         paymentInfo.setAmount(order.getRemainingTotal());
 
         return paymentInfo;
