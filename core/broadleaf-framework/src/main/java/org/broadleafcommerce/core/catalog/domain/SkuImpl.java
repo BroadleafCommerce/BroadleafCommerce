@@ -434,6 +434,11 @@ public class SkuImpl implements Sku {
         return returnPrice;
     }
 
+    @Override
+    public boolean hasSalePrice() {
+        return getRetailPrice() != null;
+    }
+
 
     @Override
     public void setSalePrice(Money salePrice) {
@@ -442,6 +447,18 @@ public class SkuImpl implements Sku {
 
     @Override
     public Money getRetailPrice() {
+        Money tmpRetailPrice = getRetailPriceInternal();
+        if (tmpRetailPrice == null) {
+            throw new IllegalStateException("Retail price on Sku with id " + getId() + " was null");
+        }
+        return tmpRetailPrice;
+    }
+
+    /*
+     * This allows us a way to determine or calculate the retail price. If one is not available this method will return null. 
+     * This allows the call to hasRetailPrice() to determine if there is a retail price without the overhead of an exception. 
+     */
+    protected Money getRetailPriceInternal() {
         Money returnPrice = null;
         Money optionValueAdjustments = null;
 
@@ -466,15 +483,16 @@ public class SkuImpl implements Sku {
             optionValueAdjustments = getProductOptionValueAdjustments();
         }
         
-        if (returnPrice == null) {
-            throw new IllegalStateException("Retail price on Sku with id " + getId() + " was null");
-        }
-        
-        if (optionValueAdjustments != null) {
+        if (returnPrice != null && optionValueAdjustments != null) {
             returnPrice = returnPrice.add(optionValueAdjustments);
         }
-
+        
         return returnPrice;
+    }
+
+    @Override
+    public boolean hasRetailPrice() {
+        return getRetailPriceInternal() != null;
     }
 
     @Override

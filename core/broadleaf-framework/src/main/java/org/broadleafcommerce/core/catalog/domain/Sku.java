@@ -83,11 +83,20 @@ public interface Sku extends Serializable {
     public void setSalePrice(Money salePrice);
 
     /**
+     * Determines if there is a sale price.  In other words, determines whether salePrice is null. Returns true if 
+     * salePrice is not null.  Returns false otherwise.
+     * @return
+     */
+    public boolean hasSalePrice();
+
+    /**
      * Returns the Retail Price of the Sku.  The Retail Price is the MSRP of the sku. If {@link SkuPricingConsiderationContext}
      * is set, this uses the DynamicSkuPricingService to calculate what this should actually be rather than use the property
-     * itself
+     * itself.
      * 
-     * @see SkuPricingConsiderationContext, DynamicSkuPricingService
+     * @throws IllegalStateException if retail price is null. 
+     * 
+     * @see SkuPricingConsiderationContext, DynamicSkuPricingService, Sku.hasRetailPrice()
      */
     public Money getRetailPrice();
 
@@ -98,6 +107,14 @@ public interface Sku extends Serializable {
      * @param retail price for the Sku
      */
     public void setRetailPrice(Money retailPrice);
+
+    /**
+     * Provides a way of determining if a Sku has a retail price without getting an IllegalStateException. Returns true if 
+     * retailPrice is not null.  Returns false otherwise.
+     * @see Sku.getRetailPrice()
+     * @return
+     */
+    public boolean hasRetailPrice();
 
     /**
      * Returns the List Price of the Sku.  The List Price is the MSRP of the sku.
@@ -363,6 +380,7 @@ public interface Sku extends Serializable {
      * @return <b>true</b> if this Sku can be sorted by a machine
      * @deprecated use {@link #getIsMachineSortable()} instead since that is the correct bean notation
      */
+    @Deprecated
     public Boolean isMachineSortable();
 
     /**
@@ -377,6 +395,7 @@ public interface Sku extends Serializable {
      * @param isMachineSortable
      * @deprecated use {@link #setIsMachineSortable(Boolean)} instead since that is the correct bean notation
      */
+    @Deprecated
     public void setMachineSortable(Boolean isMachineSortable);
     
     /**
