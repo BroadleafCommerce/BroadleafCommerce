@@ -23,6 +23,7 @@ import org.broadleafcommerce.profile.core.dao.AddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.service.exception.AddressVerificationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ public class AddressServiceImpl implements AddressService {
     protected List<AddressVerificationProvider> providers;
 
     @Override
+    @Transactional("blTransactionManager")
     public Address saveAddress(Address address) {
         return addressDao.save(address);
     }
