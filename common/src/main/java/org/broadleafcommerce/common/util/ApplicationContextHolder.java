@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.util;
+package org.broadleafcommerce.common.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
+/**
+ * Convenient class to hold the Spring application context. Note that this holds the <i>root</i> application context
+ * as opposed to an individual servlet context.
+ *
+ * @author Phillip Verheyden (phillipuniverse)
+ */
+@Component("blApplicationContextHolder")
 public class ApplicationContextHolder implements ApplicationContextAware {
     
-    private static ApplicationContext context;
+    protected static ApplicationContext context;
     
     public static ApplicationContext getApplicationContext() {
         return context;
     }
 
-    public void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         context = applicationContext;
     }
 
