@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.broadleafcommerce.profile.web.core.CustomerStateRefresher;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -54,7 +55,7 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
 
-    private ApplicationEventPublisher eventPublisher;
+    protected ApplicationEventPublisher eventPublisher;
 
     protected static String customerRequestAttributeName = "customer";
     public static final String ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME = "_blc_anonymousCustomer";
@@ -145,13 +146,7 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
      * Implementors can subclass to change how anonymous customers are created. The intended behavior is as follows:
      * 
      * 1. Look for a {@link Customer} on the session
-     *   - If a customer is found in session:
-     *      Look for a {@link Customer} with the same id in the database
-     *          - If we find one in the database:
-     *              1. Remove the {@link Customer} from the session
-     *              2. Add a session variable for <b>just the customer ID</b>
-     *              3. Return the database-version of the customer
-     *          - If we don't find one in the database, keep using the session-based customer
+     *   - If a customer is found in session, keep using the session-based customer
      *   - If a customer is not found in session
      *       - Look for a customer ID in session
      *            - If a customer ID is found in session:
@@ -167,10 +162,11 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
      */
     public Customer resolveAnonymousCustomer(WebRequest request) {
         Customer customer;
-        customer = (Customer) request.getAttribute(getAnonymousCustomerAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION);
+        customer = (Customer) request.getAttribute(getAnonymousCustomerSessionAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION);
         if (customer == null) {
-            //Customer is not in session, see if we have just a customer ID in session
-            Long customerId = (Long) request.getAttribute(getAnonymousCustomerIdAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION);
+            //Customer is not in session, see if we have just a customer ID in session (the anonymous customer might have
+            //already been persisted)
+            Long customerId = (Long) request.getAttribute(getAnonymousCustomerIdSessionAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION);
             if (customerId != null) {
                 //we have a customer ID in session, look up the customer from the database to ensure we have an up-to-date
                 //customer to store in CustomerState
@@ -181,26 +177,15 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
             //and store the entire customer in session (don't persist to DB just yet)
             if (customer == null) {
                 customer = customerService.createNewCustomer();
-                request.setAttribute(getAnonymousCustomerAttributeName(), customer, WebRequest.SCOPE_GLOBAL_SESSION);
-            }
-        } else {
-            //We found a session-based customer, but it's still possible that there is a 'more up-to-date' version of this
-            //customer in the database. If there is, remove the session object itself and just set the customerId
-            Customer dbCustomer = customerService.readCustomerById(customer.getId());
-            if (dbCustomer != null) {
-                request.removeAttribute(getAnonymousCustomerAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION);
-                request.setAttribute(getAnonymousCustomerIdAttributeName(), customer.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
-                customer = dbCustomer;
+                request.setAttribute(getAnonymousCustomerSessionAttributeName(), customer, WebRequest.SCOPE_GLOBAL_SESSION);
             }
         }
 
-        if (customer != null) {
-            customer.setAnonymous(true);
-        }
+        customer.setAnonymous(true);
 
         return customer;
     }
-
+    
     /**
      * Returns the session attribute to store the anonymous customer.
      * Some implementations may wish to have a different anonymous customer instance (and as a result a different cart). 
@@ -211,7 +196,7 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
      * 
      * @return the session attribute for an anonymous {@link Customer} that has not been persisted to the database yet 
      */
-    public String getAnonymousCustomerAttributeName() {
+    public static String getAnonymousCustomerSessionAttributeName() {
         return ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME;
     }
 
@@ -225,11 +210,13 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
      * 
      * So, once Broadleaf detects that the session-based {@link Customer} has been persisted, it should remove the session-based
      * {@link Customer} and then utilize just the customer ID from session.
+     * 
+     * @see {@link CustomerStateRefresher}
      */
-    public String getAnonymousCustomerIdAttributeName() {
+    public static String getAnonymousCustomerIdSessionAttributeName() {
         return ANONYMOUS_CUSTOMER_ID_SESSION_ATTRIBUTE_NAME;
     }
-
+    
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
