@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.web.core.service;
+package org.broadleafcommerce.profile.web.core.service.login;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;

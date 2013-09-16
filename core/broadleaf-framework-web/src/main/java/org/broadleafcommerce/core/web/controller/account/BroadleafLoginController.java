@@ -23,7 +23,7 @@ import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.validator.ResetPasswordValidator;
-import org.broadleafcommerce.profile.web.core.service.LoginService;
+import org.broadleafcommerce.profile.web.core.service.login.LoginService;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
