@@ -37,8 +37,8 @@ var BLCAdmin = (function($) {
         var sFontFace = oFont[1];
         oFontDropdown[iIndex] = {
             title: "<font face='"+sFontFace+"'>"+sFontName+"</font>",
-            callback: function(obj, e, sFont){
-                obj.execCommand("fontname", sFontFace);
+            callback: function(sFont, e, obj){
+                this.execCommand("fontname", sFontFace);
             }
         }
     });
