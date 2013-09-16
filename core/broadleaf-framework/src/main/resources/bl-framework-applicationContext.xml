@@ -13,8 +13,6 @@
     
     <task:annotation-driven/>
     
-    <bean class="org.broadleafcommerce.core.util.ApplicationContextHolder"/>
-    
     <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
         <property name="autodetect" value="true"/>
         <property name="assembler" ref="blAssembler"/>
