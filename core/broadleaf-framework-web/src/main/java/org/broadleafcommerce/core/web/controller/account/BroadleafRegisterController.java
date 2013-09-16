@@ -25,7 +25,7 @@ import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
-import org.broadleafcommerce.profile.web.core.service.LoginService;
+import org.broadleafcommerce.profile.web.core.service.login.LoginService;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
