@@ -169,7 +169,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * Processes the request to save a single shipping address
      *
      * Note:  the default Broadleaf implementation creates an order
-     * with a single fulfillment group. In the case of shipping to mutiple addresses,
+     * with a single fulfillment group. In the case of shipping to multiple addresses,
      * the multiship methods should be used.
      *
      * @param request
@@ -211,7 +211,16 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             CartState.setCart(cart);
         }
 
-        return isAjaxRequest(request) ? getCheckoutView() : getCheckoutPageRedirect();
+        //Add module specific logic
+        checkoutControllerExtensionManager.getProxy().performAdditionalShippingAction();
+        
+        if (isAjaxRequest(request)) {
+            //Add module specific model variables
+            checkoutControllerExtensionManager.getProxy().addAdditionalModelVariables(model);
+            return getCheckoutView();
+        } else {
+            return getCheckoutPageRedirect();
+        }
     }
 
     public String savePaymentForm(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
@@ -396,14 +405,21 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         return getCartPageRedirect();
     }
 
-    public String handleCheckoutError(HttpServletRequest request, Model model) {
+    /**
+     * A helper method used to handle checkout errors.
+     * 
+     * @param request
+     * @param model
+     * @return
+     */
+    protected String handleCheckoutError(HttpServletRequest request, Model model) {
         populateModelWithReferenceData(request, model);
         model.addAttribute("transactionError", true);
         return getCheckoutView();
     }
     
     /**
-     * Creates list of PaymentInfos based on payment method in the billingInfoForm.
+     * A help method that creates a list of PaymentInfos based on payment method in the billingInfoForm.
      * Default behavior looks for only credit card and COD.
      * 
      * @param billingForm

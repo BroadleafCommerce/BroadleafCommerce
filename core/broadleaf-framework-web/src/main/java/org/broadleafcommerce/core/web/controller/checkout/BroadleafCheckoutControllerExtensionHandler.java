@@ -34,5 +34,12 @@ public interface BroadleafCheckoutControllerExtensionHandler extends ExtensionHa
      * @return
      */
     public ExtensionResultStatusType addAdditionalModelVariables(Model model);
+
+    /**
+     * Allow other modules to execute additional logic in shipping methods
+     * 
+     * @return
+     */
+    public ExtensionResultStatusType performAdditionalShippingAction();
 }
 
