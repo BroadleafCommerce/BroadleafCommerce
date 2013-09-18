@@ -31,6 +31,7 @@ import javax.persistence.PersistenceContext;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
@@ -56,6 +57,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceRes
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -73,6 +75,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
+
+    @Resource(name = "blEntityConfiguration")
+    protected EntityConfiguration entityConfiguration;
 
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
@@ -323,7 +328,23 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
-            ppr.getEntity().setType(new String[] { fmd.getCollectionCeilingEntity() });
+            Class<?> listClass = Class.forName(fmd.getCollectionCeilingEntity());
+            //try to find an override, if available
+            List<Class<?>> testClasses = new ArrayList<Class<?>>();
+            testClasses.add(listClass);
+            if (!listClass.isInterface()) {
+                testClasses.addAll(Arrays.asList(listClass.getInterfaces()));
+            }
+            String overrideClass = listClass.getName();
+            for (Class<?> clazz : testClasses) {
+                try {
+                    overrideClass = entityConfiguration.lookupEntityClass(clazz.getName()).getName();
+                    break;
+                } catch (NoSuchBeanDefinitionException e) {
+                    //no override defined
+                }
+            }
+            ppr.getEntity().setType(new String[] { overrideClass });
             
             // If we're looking up an entity instead of trying to create one on the fly, let's make sure 
             // that we're not changing the target entity at all and only creating the association to the id
