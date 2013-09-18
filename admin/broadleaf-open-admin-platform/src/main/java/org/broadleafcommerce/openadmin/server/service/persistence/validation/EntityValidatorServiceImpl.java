@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -54,11 +55,13 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
 
     @Override
     public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata) {
+        List<String> types = getTypeHierarchy(entity);
         //validate each individual property according to their validation configuration
         for (Entry<String, FieldMetadata> metadataEntry : propertiesMetadata.entrySet()) {
             FieldMetadata metadata = metadataEntry.getValue();
-            //Don't test this field if it was not inherited from our polymorphic type
-            if (metadata.getInheritedFromType().equals(entity.getType()[0])) {
+
+            //Don't test this field if it was not inherited from our polymorphic type (or supertype)
+            if (types.contains(metadata.getInheritedFromType())) {
                 Property property = entity.getPMap().get(metadataEntry.getKey());
 
                 //for radio buttons, it's possible that the entity property was never populated in the first place from the POST
@@ -124,6 +127,27 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                 }
             }
         }
+    }
+
+    protected List<String> getTypeHierarchy(Entity entity) {
+        List<String> types = new ArrayList<String>();
+        Class<?> myType;
+        try {
+            myType = Class.forName(entity.getType()[0]);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        types.add(myType.getName());
+        boolean eof = false;
+        while (!eof) {
+            myType = myType.getSuperclass();
+            if (myType != null && !myType.getName().equals(Object.class.getName())) {
+                types.add(myType.getName());
+            } else {
+                eof = true;
+            }
+        }
+        return types;
     }
 
     @Override
