@@ -91,7 +91,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     protected static String baseConfirmationView = "ajaxredirect:/confirmation";
     
     /**
-     * Renders the default checkout page and allows modules to add properties to the model.
+     * Renders the default checkout page and allows modules to add variables to the model.
      *
      * @param request
      * @param response
@@ -100,20 +100,16 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      */
     public String checkout(HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes) {
         Order cart = CartState.getCart();
-        
         if (!(cart instanceof NullOrderImpl)) {
             model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
         }
-        
         populateModelWithReferenceData(request, model);
-        
-
         return getCheckoutView();
     }
     
     /**
-     * Converts the order to singleship by collapsing all of the fulfillment groups into the 
-     * default one
+     * Converts the order to single ship by collapsing all of the shippable fulfillment groups into the default (first)
+     * shippable fulfillment group.  Allows modules to add module specific shipping logic.
      * 
      * @param request
      * @param response
@@ -124,6 +120,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     public String convertToSingleship(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
         Order cart = CartState.getCart();
         fulfillmentGroupService.collapseToOneShippableFulfillmentGroup(cart, true);
+
+        //Add module specific logic
+        checkoutControllerExtensionManager.getProxy().performAdditionalShippingAction();
+
         return getCheckoutPageRedirect();
     }
     
@@ -166,7 +166,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     }
 
     /**
-     * Processes the request to save a single shipping address
+     * Processes the request to save a single shipping address.  Allows modules to add module specific shipping logic.
      *
      * Note:  the default Broadleaf implementation creates an order
      * with a single fulfillment group. In the case of shipping to multiple addresses,
@@ -192,6 +192,8 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             model.addAttribute("expirationMonths", populateExpirationMonths());
             model.addAttribute("expirationYears", populateExpirationYears());
             model.addAttribute("validShipping", false);
+            //Add module specific model variables
+            checkoutControllerExtensionManager.getProxy().addAdditionalModelVariables(model);
             return getCheckoutView();
         }
 
@@ -225,7 +227,12 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
     public String savePaymentForm(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
         //TODO: Implement
-        return isAjaxRequest(request) ? getCheckoutView() : getCheckoutPageRedirect();
+        if (isAjaxRequest(request)) {
+            populateModelWithReferenceData(request, model);
+            return getCheckoutView();
+        } else {
+            return getCheckoutPageRedirect();
+        }
     }
 
     /**
@@ -251,7 +258,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     
     /**
      * Processes the given options for multiship. Validates that all options are
-     * selected before performing any actions.
+     * selected before performing any actions.  Allows modules to add module specific shipping logic.
      * 
      * @see #showMultiship(HttpServletRequest, HttpServletResponse, Model)
      * 
@@ -268,6 +275,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         Order cart = CartState.getCart();
         orderMultishipOptionService.saveOrderMultishipOptions(cart, orderMultishipOptionForm.getOptions());
         cart = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(cart, true);
+
+        //Add module specific logic
+        checkoutControllerExtensionManager.getProxy().performAdditionalShippingAction();
+
         return getMultishipSuccessView();
     }
 
@@ -610,6 +621,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         model.addAttribute("expirationMonths", populateExpirationMonths());
         model.addAttribute("expirationYears", populateExpirationYears());
 
+        //Add module specific model variables
         checkoutControllerExtensionManager.getProxy().addAdditionalModelVariables(model);
     }
 
