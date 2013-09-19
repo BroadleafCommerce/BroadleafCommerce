@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
@@ -53,6 +54,13 @@ public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<Checko
             if (order.getOrderItems() != null) {
                 for (OrderItem item : order.getOrderItems()) {
                     addOfferIds(item.getOrderItemAdjustments(), appliedOfferIds);
+                    
+                    //record usage for price details on the item as well
+                    if (item.getOrderItemPriceDetails() != null) {
+                        for (OrderItemPriceDetail detail : item.getOrderItemPriceDetails()) {
+                            addOfferIds(detail.getOrderItemPriceDetailAdjustments(), appliedOfferIds);
+                        }
+                    }
                 }
             }
 
@@ -67,7 +75,7 @@ public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<Checko
         return context;
     }
     
-    private void saveOfferIds(Set<Long> offerIds, Order order) {
+    protected void saveOfferIds(Set<Long> offerIds, Order order) {
         for (Long offerId : offerIds) {
             OfferAudit audit = offerAuditDao.create();
             if (order.getCustomer() != null) {
@@ -80,9 +88,9 @@ public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<Checko
         }
     }
         
-    private void addOfferIds(List<? extends Adjustment> adjustments, Set<Long> offerIds) {
+    protected void addOfferIds(List<? extends Adjustment> adjustments, Set<Long> offerIds) {
         if (adjustments != null) {
-            for(Adjustment adjustment : adjustments) {
+            for (Adjustment adjustment : adjustments) {
                 if (adjustment.getOffer() != null) {
                     offerIds.add(adjustment.getOffer().getId());
                 }

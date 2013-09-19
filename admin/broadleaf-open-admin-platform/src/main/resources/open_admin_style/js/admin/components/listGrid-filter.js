@@ -203,8 +203,8 @@
         setTimeout(function () {
             dropdown.toggleClass('show-dropdown');
             BLCAdmin.listGrid.filter.closeDropdowns(dropdown);
-            
         }, 0);
+        
     });
 
     // close all dropdowns and deactivate all buttons
@@ -423,6 +423,9 @@ $(document).ready(function() {
             
         });
         
+        $(this).closest('.listgrid-container').find('.mCSB_container').css('top', '0px');
+        $(this).closest('.listgrid-container').find('.listgrid-body-wrapper').mCustomScrollbar('update');
+        
         var $tbody = $(this).closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
         BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);
         BLC.ajax({
@@ -430,7 +433,6 @@ $(document).ready(function() {
             type: "GET",
             data: $(nonBlankInputs).serialize()
         }, function(data) {
-            
             if ($tbody.data('listgridtype') == 'main') {
                 
                 $(nonBlankInputs).each(function(index, input) {
@@ -438,13 +440,13 @@ $(document).ready(function() {
                 });
             }
             BLCAdmin.listGrid.hideLoadingSpinner($tbody);
-            BLCAdmin.listGrid.replaceRelatedListGrid($(data).find('div.listgrid-header-wrapper'));
+            BLCAdmin.listGrid.replaceRelatedListGrid($(data).find('div.listgrid-header-wrapper'), null, { isRefresh : false });
             $inputs.each(function(index, input) {
                 $(input).removeAttr('name');
             });
         });
         
-        if ($(this).val()) {
+        if (val != undefined && val != '') {
             $clearFilterButton.removeAttr('disabled');
         } else {
             $clearFilterButton.attr('disabled', 'disabled');
@@ -489,7 +491,7 @@ $(document).ready(function() {
             for (key in submitData) {
                 BLCAdmin.history.replaceUrlParameter(key, submitData[key]);
             }
-            BLCAdmin.listGrid.replaceRelatedListGrid($(data));
+            BLCAdmin.listGrid.replaceRelatedListGrid($(data), null, { isRefresh : false});
             $input.trigger('input');
         });
         return false;

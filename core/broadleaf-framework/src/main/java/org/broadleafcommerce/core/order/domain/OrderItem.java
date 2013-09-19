@@ -140,6 +140,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
+    @Deprecated
     Money getAdjustmentValue();
 
     /**
@@ -148,6 +149,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
+    @Deprecated
     Money getPrice();
 
     /**
@@ -164,6 +166,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @param price
      */
+    @Deprecated
     void setPrice(Money price);
 
 
@@ -211,6 +214,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * this concept with OrderItemPriceDetail adjustments.
      * @return a List of OrderItemAdjustment
      */
+    @Deprecated
     List<OrderItemAdjustment> getOrderItemAdjustments();
 
     /**
@@ -219,6 +223,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * prevent unnecessary item splitting of OrderItems when evaluating promotions 
      * in the pricing engine.
      */
+    @Deprecated
     void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments);
 
     /**    
@@ -261,6 +266,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @return
      */
+    @Deprecated
     Money getTaxablePrice();
 
     /**

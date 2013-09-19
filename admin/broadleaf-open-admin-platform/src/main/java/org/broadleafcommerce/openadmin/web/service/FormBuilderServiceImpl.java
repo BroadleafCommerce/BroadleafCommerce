@@ -325,6 +325,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             listGrid.getRowActions().add(DefaultListGridActions.VIEW);
         }
         if (sortable) {
+            listGrid.setCanFilterAndSort(false);
             listGrid.getToolbarActions().add(DefaultListGridActions.REORDER);
         }
         listGrid.getRowActions().add(DefaultListGridActions.REMOVE);

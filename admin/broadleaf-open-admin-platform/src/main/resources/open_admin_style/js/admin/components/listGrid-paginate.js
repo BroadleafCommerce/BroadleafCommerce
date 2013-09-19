@@ -371,6 +371,11 @@
                 var url = BLCAdmin.history.getUrlWithParameter('startIndex', startIndex, null, baseUrl);
                 url = BLCAdmin.history.getUrlWithParameter('maxIndex', maxIndex, null, url);
                 
+                var params = $tbody.closest('.listgrid-container').find('.listgrid-header-wrapper table').data('currentparams');
+                for (var param in params) {
+                    url = BLCAdmin.history.getUrlWithParameter(param, params[param], null, url);
+                }
+                
                 //console.log('Loading more records -- ' + url);
                 
                 BLC.ajax({ url: url, type: 'GET' }, function(data) {
