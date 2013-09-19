@@ -16,6 +16,14 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -27,12 +35,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -53,68 +55,101 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
 
     @Override
     public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata) {
+        List<String> types = getTypeHierarchy(entity);
         //validate each individual property according to their validation configuration
-        for (Property property : entity.getProperties()) {
-            FieldMetadata metadata = propertiesMetadata.get(property.getName());
-            if (metadata instanceof BasicFieldMetadata) {
-                //First execute the global field validators
-                if (CollectionUtils.isNotEmpty(globalEntityValidators)) {
-                    for (GlobalPropertyValidator validator : globalEntityValidators) {
-                        PropertyValidationResult result = validator.validate(entity,
-                                instance,
-                                propertiesMetadata,
-                                (BasicFieldMetadata)metadata,
-                                property.getName(),
-                                property.getValue());
-                        if (!result.isValid()) {
-                            entity.addValidationError(property.getName(), result.getErrorMessage());
-                        }
-                    }
-                }
-                
-                //Now execute the validators configured for this particular field
-                Map<String, Map<String, String>> validations =
-                        ((BasicFieldMetadata) metadata).getValidationConfigurations();
-                for (Map.Entry<String, Map<String, String>> validation : validations.entrySet()) {
-                    String validationImplementation = validation.getKey();
-                    Map<String, String> configuration = validation.getValue();
+        for (Entry<String, FieldMetadata> metadataEntry : propertiesMetadata.entrySet()) {
+            FieldMetadata metadata = metadataEntry.getValue();
 
-                    PropertyValidator validator = null;
-                    
-                    //attempt bean resolution to find the validator
-                    if (applicationContext.containsBean(validationImplementation)) {
-                        validator = applicationContext.getBean(validationImplementation, PropertyValidator.class);
-                    } 
-                    
-                    //not a bean, attempt to instantiate the class
-                    if (validator == null) {
-                        try {
-                            validator = (PropertyValidator) Class.forName(validationImplementation).newInstance();
-                        } catch (Exception e) {
-                            //do nothing
+            //Don't test this field if it was not inherited from our polymorphic type (or supertype)
+            if (types.contains(metadata.getInheritedFromType())) {
+                Property property = entity.getPMap().get(metadataEntry.getKey());
+
+                //for radio buttons, it's possible that the entity property was never populated in the first place from the POST
+                //and so it will be null
+                String propertyName = metadataEntry.getKey();
+                String propertyValue = (property == null) ? null : property.getValue();
+
+                if (metadata instanceof BasicFieldMetadata) {
+                    //First execute the global field validators
+                    if (CollectionUtils.isNotEmpty(globalEntityValidators)) {
+                        for (GlobalPropertyValidator validator : globalEntityValidators) {
+                            PropertyValidationResult result = validator.validate(entity,
+                                    instance,
+                                    propertiesMetadata,
+                                    (BasicFieldMetadata)metadata,
+                                    propertyName,
+                                    propertyValue);
+                            if (!result.isValid()) {
+                                entity.addValidationError(propertyName, result.getErrorMessage());
+                            }
                         }
                     }
-                    
-                    if (validator == null) {
-                        throw new PersistenceException("Could not find validator: " + validationImplementation + 
-                                " for property: " + property.getName());
-                    }
-                    
-                    PropertyValidationResult result = validator.validate(entity,
-                                                                    instance,
-                                                                    propertiesMetadata,
-                                                                    configuration,
-                                                                    (BasicFieldMetadata)metadata,
-                                                                    property.getName(),
-                                                                    property.getValue());
-                    if (!result.isValid()) {
-                        entity.addValidationError(property.getName(), result.getErrorMessage());
+
+                    //Now execute the validators configured for this particular field
+                    Map<String, Map<String, String>> validations =
+                            ((BasicFieldMetadata) metadata).getValidationConfigurations();
+                    for (Map.Entry<String, Map<String, String>> validation : validations.entrySet()) {
+                        String validationImplementation = validation.getKey();
+                        Map<String, String> configuration = validation.getValue();
+
+                        PropertyValidator validator = null;
+
+                        //attempt bean resolution to find the validator
+                        if (applicationContext.containsBean(validationImplementation)) {
+                            validator = applicationContext.getBean(validationImplementation, PropertyValidator.class);
+                        }
+
+                        //not a bean, attempt to instantiate the class
+                        if (validator == null) {
+                            try {
+                                validator = (PropertyValidator) Class.forName(validationImplementation).newInstance();
+                            } catch (Exception e) {
+                                //do nothing
+                            }
+                        }
+
+                        if (validator == null) {
+                            throw new PersistenceException("Could not find validator: " + validationImplementation +
+                                    " for property: " + propertyName);
+                        }
+
+                        PropertyValidationResult result = validator.validate(entity,
+                                                                        instance,
+                                                                        propertiesMetadata,
+                                                                        configuration,
+                                                                        (BasicFieldMetadata)metadata,
+                                                                        propertyName,
+                                                                        propertyValue);
+                        if (!result.isValid()) {
+                            entity.addValidationError(propertyName, result.getErrorMessage());
+                        }
                     }
                 }
             }
         }
     }
-    
+
+    protected List<String> getTypeHierarchy(Entity entity) {
+        List<String> types = new ArrayList<String>();
+        Class<?> myType;
+        try {
+            myType = Class.forName(entity.getType()[0]);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        types.add(myType.getName());
+        boolean eof = false;
+        while (!eof) {
+            myType = myType.getSuperclass();
+            if (myType != null && !myType.getName().equals(Object.class.getName())) {
+                types.add(myType.getName());
+            } else {
+                eof = true;
+            }
+        }
+        return types;
+    }
+
     @Override
     public List<GlobalPropertyValidator> getGlobalEntityValidators() {
         return globalEntityValidators;
