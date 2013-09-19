@@ -373,11 +373,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @param response
      * @param model
      * @param billingForm
-     * @param paymentInfoTypeList
      * @return the return path
      * @throws ServiceException 
      */
-    public String completeCheckout(HttpServletRequest request, HttpServletResponse response, Model model, BillingInfoForm billingForm, BindingResult result, List<PaymentInfoType> paymentInfoTypeList) throws CheckoutException, PricingException, ServiceException {
+    public String completeCheckout(HttpServletRequest request, HttpServletResponse response, Model model, BillingInfoForm billingForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
         Order cart = CartState.getCart();
         if (cart != null) {
             Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
@@ -391,7 +390,11 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                 }
             }
 
-            paymentInfoServiceExtensionManager.getProxy().addAdditionalPaymentInfos(payments, paymentInfoTypeList, request, response, model, billingForm, result);
+            //Create list of PaymentInfoTypes that will determine which extension handler will run
+            List<PaymentInfoType> paymentInfoTypes = createPaymentInfoTypeList(billingForm);
+
+            //Extension handlers add PaymentInfos to the payments map and the order
+            paymentInfoServiceExtensionManager.getProxy().addAdditionalPaymentInfos(payments, paymentInfoTypes, request, response, model, billingForm, result);
             
             //Check for validation errors
             if (result.hasErrors()) {
@@ -437,13 +440,13 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @return
      */
     protected List<PaymentInfoType> createPaymentInfoTypeList(BillingInfoForm billingForm) {
-        List<PaymentInfoType> paymentInfoTypeList = new ArrayList<PaymentInfoType>();
+        List<PaymentInfoType> paymentInfoTypes = new ArrayList<PaymentInfoType>();
         if ("credit_card".equals(billingForm.getPaymentMethod())) {
-            paymentInfoTypeList.add(PaymentInfoType.CREDIT_CARD);
+            paymentInfoTypes.add(PaymentInfoType.CREDIT_CARD);
         } else if ("cod".equals(billingForm.getPaymentMethod())) {
-            paymentInfoTypeList.add(PaymentInfoType.COD);
+            paymentInfoTypes.add(PaymentInfoType.COD);
         }
-        return paymentInfoTypeList;
+        return paymentInfoTypes;
     }
 
     /**
