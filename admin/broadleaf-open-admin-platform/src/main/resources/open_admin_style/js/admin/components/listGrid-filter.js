@@ -54,7 +54,18 @@
             
             //fill out the criteria and sorts based on the current URL parameters
             var $header = $('#listGrid-main-header');
+            if ($header.length == 0) {
+                $header = context.find('.listgrid-header-wrapper table');
+            }
+
             var params = BLCAdmin.history.getUrlParameters();
+            if (!params) {
+                params = context.find('.listgrid-header-wrapper table').data('currentparams');
+                for (key in params) {
+                    params[key] = params[key].join('|');
+                }
+            }
+
             if (params) {
                 $('i.filter-icon').removeClass('active');
                 var sortProperty = params['sortProperty'];

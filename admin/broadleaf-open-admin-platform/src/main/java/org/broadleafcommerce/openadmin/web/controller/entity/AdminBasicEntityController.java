@@ -477,15 +477,16 @@ public class AdminBasicEntityController extends AdminAbstractController {
         return "modules/modalContainer";
     }
 
-    @RequestMapping(value = "/{owningClass:.*}/{collectionField:.*}/details", method = RequestMethod.GET)
+    @RequestMapping(value = "/{collectionField:.*}/details", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> getCollectionValueDetails(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
-            @PathVariable(value = "owningClass") String owningClass,
             @PathVariable(value="collectionField") String collectionField,
             @RequestParam String ids,
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams);
-        ClassMetadata mainMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+        String sectionKey = getSectionKey(pathVars);
+        String sectionClassName = getClassNameForSection(sectionKey);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, requestParams);
+        ClassMetadata mainMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();;
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
