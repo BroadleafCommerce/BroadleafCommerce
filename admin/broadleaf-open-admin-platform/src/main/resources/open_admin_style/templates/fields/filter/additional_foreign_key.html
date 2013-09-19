@@ -7,12 +7,12 @@
     <div class="foreign-key-value-container">
         <span style="display: none;"
             class="display-value read-only"
-            th:attr="data-select-url=@{${listGrid.path + '/' + headerField.owningEntityClass + '/' + headerField.name + '/select'}}"
+            th:attr="data-select-url=@{${'/' + headerField.owningEntityClass + '/' + headerField.name + '/select'}}"
             th:text="${headerField.displayValue}" />
         
         <button class="to-one-lookup tiny radius dark button hover-cursor"
             type="button" th:inline="text"
-            th:attr="data-select-url=@{${listGrid.path + '/' + headerField.owningEntityClass + '/' + headerField.name + '/select'}}">
+            th:attr="data-select-url=@{${'/' + headerField.owningEntityClass + '/' + headerField.name + '/select'}}">
             <i class="icon-search"></i>&nbsp;[[#{Lookup_Key(#{${fieldFriendlyName}})}]]
         </button>
     </div>

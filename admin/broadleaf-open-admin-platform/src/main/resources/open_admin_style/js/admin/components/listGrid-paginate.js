@@ -527,10 +527,10 @@
         
         updateUrlFromScroll : function($tbody) {
             var topIndex = this.getTopVisibleIndex($tbody);
-            if (topIndex == 0) {
-                BLCAdmin.history.replaceUrlParameter('startIndex');
-            } else {
+            if (topIndex > 0) {
                 BLCAdmin.history.replaceUrlParameter('startIndex', topIndex);
+            } else {
+                BLCAdmin.history.replaceUrlParameter('startIndex');
             }
         },
         
