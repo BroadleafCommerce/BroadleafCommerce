@@ -7,7 +7,8 @@
            th:classappend="${listGrid.listGridType != 'inline'}? 'table-hover'"
            th:attr="data-listgridtype=${listGrid.listGridType},
                     data-currenturl=${currentUrl},
-                    data-path=@{${listGrid.path}}"
+                    data-path=@{${listGrid.path}},
+                    data-currentparams=${currentParams}"
            blc_admin:component_id="${listGrid}">
         <thead>
             <tr>

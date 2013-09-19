@@ -46,6 +46,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -578,6 +579,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, requestParams, sectionKey);
         model.addAttribute("listGrid", listGrid);
 
+        model.addAttribute("currentParams", new ObjectMapper().writeValueAsString(requestParams));
+
         // We return the new list grid so that it can replace the currently visible one
         setModelAttributes(model, sectionKey);
         return "views/standaloneListGrid";
@@ -641,6 +644,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 .withFilterAndSortCriteria(getCriteria(requestParams))
                 .withStartIndex(getStartIndex(requestParams))
                 .withMaxIndex(getMaxIndex(requestParams));
+        
+        model.addAttribute("currentParams", new ObjectMapper().writeValueAsString(requestParams));
 
         return buildAddCollectionItemModel(request, response, model, id, collectionField, sectionKey, collectionProperty, md, ppr, null, null);
     }

@@ -161,7 +161,7 @@ var BLCAdmin = (function($) {
     	runValidationSubmitHandlers : function($form) {
     	    var pass = true;
             for (var i = 0; i < validationFormSubmitHandlers.length; i++) {
-                var pass = validationFormSubmitHandlers[i]($form);
+                pass = pass && validationFormSubmitHandlers[i]($form);
             }
             return pass;
         },

@@ -2,7 +2,7 @@
     
     // Add utility functions for list grids to the BLCAdmin object
     BLCAdmin.listGrid = {
-        replaceRelatedListGrid : function($headerWrapper, alert) {
+        replaceRelatedListGrid : function($headerWrapper, alert, opts) {
             var $table = $headerWrapper.find('table');
             var tableId = $table.attr('id');
             var $oldTable = null;
@@ -22,27 +22,53 @@
             if ($oldTable == null || $oldTable.length == 0) {
                $oldTable = $('#' + tableId);
             }
-            
-            var currentIndex = BLCAdmin.listGrid.paginate.getTopVisibleIndex($oldTable.find('tbody'));
-            
-            var $oldBodyWrapper = $oldTable.closest('.listgrid-body-wrapper');
-            var $oldHeaderWrapper = $oldBodyWrapper.prev();
-            
-            $oldHeaderWrapper.find('thead').after($table.find('tbody'));
-            $oldBodyWrapper.remove();
-            
-            var $listGridContainer = $oldHeaderWrapper.closest('.listgrid-container');
-            
-            this.initialize($listGridContainer);
-            
-            BLCAdmin.listGrid.paginate.scrollToIndex($listGridContainer.find('tbody'), currentIndex);
-            $listGridContainer.find('.listgrid-body-wrapper').mCustomScrollbar('update');
-            
-            BLCAdmin.listGrid.paginate.updateTableFooter($listGridContainer.find('tbody'));
-            
-            if (alert) {
-                this.showAlert($listGridContainer, alert.message, alert);
+
+            var oldParams = $oldTable.closest('.listgrid-container').find('.listgrid-header-wrapper table').data('currentparams');
+            var newParams = $table.data('currentparams');
+            var secondaryFetch = new $.Deferred();
+
+            if (oldParams != undefined && oldParams != newParams && (opts == undefined || opts.isRefresh)) {
+                var url = $table.data('path');
+                for (var param in oldParams) {
+                    url = BLCAdmin.history.getUrlWithParameter(param, oldParams[param], null, url);
+                }
+                
+                BLC.ajax({
+                    url: url,
+                    type: "GET"
+                }, function(data) {
+                    $table = $(data).find('table');
+                    secondaryFetch.resolve("retrieved");
+                })
+            } else {
+                secondaryFetch.resolve("skipping");
             }
+            
+            $.when(secondaryFetch.promise()).then(function(status) {
+                var currentIndex = BLCAdmin.listGrid.paginate.getTopVisibleIndex($oldTable.find('tbody'));
+                
+                var $oldBodyWrapper = $oldTable.closest('.listgrid-body-wrapper');
+                var $oldHeaderWrapper = $oldBodyWrapper.prev();
+                
+                $oldHeaderWrapper.find('thead').after($table.find('tbody'));
+                $oldBodyWrapper.remove();
+                
+                var $listGridContainer = $oldHeaderWrapper.closest('.listgrid-container');
+    
+                // We'll update the current params with what we were returned in this request
+                $listGridContainer.find('.listgrid-header-wrapper table').data('currentparams', $table.data('currentparams'));
+    
+                BLCAdmin.listGrid.initialize($listGridContainer);
+                
+                BLCAdmin.listGrid.paginate.scrollToIndex($listGridContainer.find('tbody'), currentIndex);
+                $listGridContainer.find('.listgrid-body-wrapper').mCustomScrollbar('update');
+                
+                BLCAdmin.listGrid.paginate.updateTableFooter($listGridContainer.find('tbody'));
+                
+                if (alert) {
+                    BLCAdmin.listGrid.showAlert($listGridContainer, alert.message, alert);
+                }
+            });
         },
         
         getButtonLink : function($button) {

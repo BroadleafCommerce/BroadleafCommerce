@@ -25,6 +25,7 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid.Type;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -77,11 +78,14 @@ public class AdminAssetUploadController extends AdminAbstractController {
         assetController.viewEntityList(request, response, model, pathVars, requestParams);
         
         ListGrid listGrid = (ListGrid) model.asMap().get("listGrid");
+        listGrid.setPathOverride("/" + sectionKey + "/" + id + "/chooseAsset");
         listGrid.setListGridType(Type.ASSET);
         
         model.addAttribute("viewType", "modal/selectAsset");
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", "selectAsset");
+
+        model.addAttribute("currentParams", new ObjectMapper().writeValueAsString(requestParams));
         
         // We need these attributes to be set appropriately here
         model.addAttribute("entityId", id);
