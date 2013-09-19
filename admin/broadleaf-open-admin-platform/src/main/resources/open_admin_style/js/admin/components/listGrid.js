@@ -68,6 +68,8 @@
                 if (alert) {
                     BLCAdmin.listGrid.showAlert($listGridContainer, alert.message, alert);
                 }
+                
+                $listGridContainer.trigger('replaced');
             });
         },
         
