@@ -62,18 +62,55 @@ public abstract class ExtensionManager<T extends ExtensionHandler> implements In
         return extensionHandler;
     }
 
+    /**
+     * If you are attempting to register a handler with this manager and are invoking this outside of an {@link ExtensionManager}
+     * subclass, consider using {@link #registerHandler(ExtensionHandler)} instead.
+     * 
+     * While the sorting of the handlers prior to their return is thread safe, adding directly to this list is not.
+     * 
+     * @return a list of handlers sorted by their priority
+     * @see {@link #registerHandler(ExtensionHandler)}
+     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public List<T> getHandlers() {
-        if (!handlersSorted) {
-            synchronized (LOCK_OBJECT) {
+        synchronized (LOCK_OBJECT) {
+            if (!handlersSorted) {
                 if (!handlersSorted) {
                     Comparator fieldCompare = new BeanComparator("priority");
                     Collections.sort(handlers, fieldCompare);
                     handlersSorted = true;
                 }
             }
+            return handlers;
         }
-        return handlers;
+    }
+    
+    /**
+     * Intended to be invoked from the extension handlers themselves. This will add the given handler to this manager's list of
+     * handlers. This also checks to ensure that the handler has not been already registered with this {@link ExtensionManager}
+     * by checking the class names of the already-added handlers.
+     * 
+     * This method is thread safe.
+     * 
+     * @param handler the handler to register with this extension manager
+     * @return true if the handler was successfully registered, false if this handler was already contained in the list of
+     * handlers for this manager
+     */
+    public boolean registerHandler(T handler) {
+        synchronized (LOCK_OBJECT) {
+            boolean add = true;
+            for (T item : this.handlers) {
+                if (item.getClass().equals(handler.getClass())) {
+                    add = false;
+                }
+            }
+            if (add) {
+                this.handlers.add(handler);
+                handlersSorted = false;
+            }
+            
+            return add;
+        }
     }
 
     public void setHandlers(List<T> handlers) {
