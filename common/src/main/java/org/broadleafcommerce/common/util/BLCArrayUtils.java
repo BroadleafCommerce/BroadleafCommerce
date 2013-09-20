@@ -49,10 +49,11 @@ public class BLCArrayUtils {
      * Given an input array, will return an ArrayList representation of the array.
      * 
      * @param array
-     * @return the ArrayList corresponding to the input array
+     * @return the ArrayList corresponding to the input array. If the input is null, this also returns null. If it is empty
+     * then this will return an empty list
      */
     public static <T> ArrayList<T> asList(T[] array) {
-        if (array == null || array.length == 0) {
+        if (array == null) {
             return null;
         }
         ArrayList<T> list = new ArrayList<T>(array.length);
