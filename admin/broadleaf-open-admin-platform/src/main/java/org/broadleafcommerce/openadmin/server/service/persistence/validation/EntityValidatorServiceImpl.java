@@ -60,21 +60,25 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
     @Override
     public void validate(Entity submittedEntity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata,
                          RecordHelper recordHelper) {
-        String idField = (String) ((BasicPersistenceModule) recordHelper.getCompatibleModule(OperationType.BASIC)).
+        Object idValue = null;
+        if (instance != null) {
+            String idField = (String) ((BasicPersistenceModule) recordHelper.getCompatibleModule(OperationType.BASIC)).
                 getPersistenceManager().getDynamicEntityDao().getIdMetadata(instance.getClass()).get("name");
-        Entity entity;
-        try {
-            if (instance == null || recordHelper.getFieldManager().getFieldValue(instance, idField) == null) {
-                //This is for an add, or if the instance variable is null (e.g. PageTemplateCustomPersistenceHandler)
-                entity = submittedEntity;
-            } else {
-                //This is for an update, as the submittedEntity instance will likely only contain the dirty properties
-                entity = recordHelper.getRecord(propertiesMetadata, instance, null, null);
+            try {
+                idValue = recordHelper.getFieldManager().getFieldValue(instance, idField);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (FieldNotAvailableException e) {
+                throw new RuntimeException(e);
             }
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (FieldNotAvailableException e) {
-            throw new RuntimeException(e);
+        }
+        Entity entity;
+        if (idValue == null) {
+            //This is for an add, or if the instance variable is null (e.g. PageTemplateCustomPersistenceHandler)
+            entity = submittedEntity;
+        } else {
+            //This is for an update, as the submittedEntity instance will likely only contain the dirty properties
+            entity = recordHelper.getRecord(propertiesMetadata, instance, null, null);
         }
         List<String> types = getTypeHierarchy(entity);
         //validate each individual property according to their validation configuration
