@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
 import java.io.Serializable;
 import java.util.List;
@@ -46,7 +47,7 @@ public interface EntityValidatorService {
      * @throws IllegalAccessException
      * @throws ClassNotFoundException
      */
-    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata);
+    public void validate(Entity submittedEntity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata, RecordHelper recordHelper);
 
     /**
      * @return the global validators that will be executed for every {@link Entity}

@@ -26,11 +26,15 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -54,7 +58,24 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
     protected ApplicationContext applicationContext;
 
     @Override
-    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata) {
+    public void validate(Entity submittedEntity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata,
+                         RecordHelper recordHelper) {
+        String idField = (String) ((BasicPersistenceModule) recordHelper.getCompatibleModule(OperationType.BASIC)).
+                getPersistenceManager().getDynamicEntityDao().getIdMetadata(instance.getClass()).get("name");
+        Entity entity;
+        try {
+            if (instance == null || recordHelper.getFieldManager().getFieldValue(instance, idField) == null) {
+                //This is for an add, or if the instance variable is null (e.g. PageTemplateCustomPersistenceHandler)
+                entity = submittedEntity;
+            } else {
+                //This is for an update, as the submittedEntity instance will likely only contain the dirty properties
+                entity = recordHelper.getRecord(propertiesMetadata, instance, null, null);
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (FieldNotAvailableException e) {
+            throw new RuntimeException(e);
+        }
         List<String> types = getTypeHierarchy(entity);
         //validate each individual property according to their validation configuration
         for (Entry<String, FieldMetadata> metadataEntry : propertiesMetadata.entrySet()) {

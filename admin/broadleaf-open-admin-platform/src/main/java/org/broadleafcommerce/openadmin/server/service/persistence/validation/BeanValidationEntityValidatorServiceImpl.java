@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintViolation;
@@ -69,10 +70,10 @@ public class BeanValidationEntityValidatorServiceImpl extends EntityValidatorSer
     protected boolean useDefaultEntityValidations = true;
     
     @Override
-    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> mergedProperties) {
+    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> mergedProperties, RecordHelper recordHelper) {
         
         if (isUseDefaultEntityValidations()) {
-            super.validate(entity, instance, mergedProperties);
+            super.validate(entity, instance, mergedProperties, recordHelper);
         }
 
         Set<ConstraintViolation<Serializable>> violations = getValidator().validate(instance);
