@@ -329,4 +329,9 @@ public class BroadleafRequestContext {
     public void setRequestDTO(RequestDTO requestDTO) {
         this.requestDTO = requestDTO;
     }
+
+    public boolean isAdminMode() {
+        return getSandbox() != null;
+    }
+    
 }

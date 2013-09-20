@@ -61,7 +61,12 @@ public class BRCVariableExpression implements BroadleafVariableExpression {
     }
     
     public boolean isAdminMode() {
-        return getSandbox() != null;
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc == null) {
+            return false;
+        } else {
+            return brc.isAdminMode();
+        }
     }
 
 }
