@@ -16,41 +16,32 @@
 
 package org.broadleafcommerce.openadmin.web.controller;
 
-import org.broadleafcommerce.openadmin.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
 
 
 /**
- * Extension manager for 
+ * Extension manager to modify the actions that are added by default when viewing a ceiling entity for a particular
+ * section (for instance, a list of Products in the 'Product' section). Assuming that the user has proper permissions,
+ * the mainActions list would have {@link DefaultMainActions#ADD}
  *
  * @author Phillip Verheyden (phillipuniverse)
+ * @see 
  */
 @Component("blMainEntityActionsExtensionManager")
-public class MainEntityActionsExtensionManager implements MainEntityActionsExtensionListener {
+public class MainEntityActionsExtensionManager extends ExtensionManager<MainEntityActionsExtensionHandler> {
 
-    @Resource(name = "blMainEntityActionsExtensionListeners")
-    protected List<MainEntityActionsExtensionListener> listeners = new ArrayList<MainEntityActionsExtensionListener>();
-    
+    /**
+     * @param _clazz
+     */
+    public MainEntityActionsExtensionManager() {
+        super(MainEntityActionsExtensionHandler.class);
+    }
+
     @Override
-    public void modifyMainActions(ClassMetadata cmd, List<EntityFormAction> mainActions) {
-        for (MainEntityActionsExtensionListener listener : listeners) {
-            listener.modifyMainActions(cmd, mainActions);
-        }
-    }
-    
-    public List<MainEntityActionsExtensionListener> getListeners() {
-        return listeners;
-    }
-
-    
-    public void setListeners(List<MainEntityActionsExtensionListener> listeners) {
-        this.listeners = listeners;
+    public boolean continueOnHandled() {
+        return true;
     }
 
 }

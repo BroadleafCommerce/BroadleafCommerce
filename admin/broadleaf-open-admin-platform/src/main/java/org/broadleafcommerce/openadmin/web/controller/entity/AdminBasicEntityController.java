@@ -168,7 +168,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             mainActions.add(DefaultMainActions.ADD);
         }
         
-        mainEntityActionsExtensionManager.modifyMainActions(cmd, mainActions);
+        mainEntityActionsExtensionManager.getProxy().modifyMainActions(cmd, mainActions);
     }
 
     /**

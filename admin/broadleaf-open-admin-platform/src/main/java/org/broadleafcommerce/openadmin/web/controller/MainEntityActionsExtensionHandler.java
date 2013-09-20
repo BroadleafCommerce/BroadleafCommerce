@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.web.controller;
 
+import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
@@ -28,7 +29,7 @@ import java.util.List;
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
-public interface MainEntityActionsExtensionListener {
+public interface MainEntityActionsExtensionHandler extends ExtensionHandler {
 
     /**
      * Extension point to override the actions that are added by default when viewing a ceiling entity for a particular
