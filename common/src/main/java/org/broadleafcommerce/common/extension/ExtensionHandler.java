@@ -43,7 +43,7 @@ package org.broadleafcommerce.common.extension;
  *    {@literal @}PostConstruct
  *    public void init() {
  *       if (isEnabled()) {
- *           extensionManager.getHandlers().add(this);
+ *           extensionManager.registerHandler(this);
  *       }
  *    }
  *  }
