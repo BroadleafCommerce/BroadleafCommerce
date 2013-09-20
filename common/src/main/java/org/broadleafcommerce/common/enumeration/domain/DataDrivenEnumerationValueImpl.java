@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.common.enumeration.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -41,7 +41,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_DATA_DRVN_ENUM_VAL")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "DataDrivenEnumerationImpl_friendyName")
+@AdminPresentationClass(friendlyName = "DataDrivenEnumerationValueImpl_friendyName")
 public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValue {
 
     private static final long serialVersionUID = 1L;
@@ -65,13 +65,16 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
 
     @Column(name = "ENUM_KEY")
     @Index(name = "ENUM_VAL_KEY_INDEX", columnNames = {"ENUM_KEY"})
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationValueImpl_Key", order = 1, gridOrder = 1, prominent = true)
     protected String key;
 
     @Column(name = "DISPLAY")
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationValueImpl_Display", order = 2, gridOrder = 2, prominent = true)
     protected String display;
 
     @Column(name = "HIDDEN")
     @Index(name = "HIDDEN_INDEX", columnNames = {"HIDDEN"})
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationValueImpl_Hidden", order = 3, gridOrder = 3, prominent = true)
     protected Boolean hidden = false;
 
     @Override

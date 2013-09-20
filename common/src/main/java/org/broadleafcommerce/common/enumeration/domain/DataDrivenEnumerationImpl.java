@@ -16,13 +16,19 @@
 
 package org.broadleafcommerce.common.enumeration.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,8 +39,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -60,14 +64,17 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
     
     @Column(name = "ENUM_KEY")
     @Index(name = "ENUM_KEY_INDEX", columnNames = {"KEY"})
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationImpl_Key", order = 1, gridOrder = 1, prominent = true)
     protected String key;
     
     @Column(name = "MODIFIABLE")
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationImpl_Modifiable", order = 2, gridOrder = 2, prominent = true)
     protected Boolean modifiable = false;
 
     @OneToMany(mappedBy = "type", targetEntity = DataDrivenEnumerationValueImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    protected List<DataDrivenEnumerationValue> orderItems = new ArrayList<DataDrivenEnumerationValue>();
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "DataDrivenEnumerationImpl_Enum_Values", order = 3)
+    protected List<DataDrivenEnumerationValue> enumValues = new ArrayList<DataDrivenEnumerationValue>();
     
     @Override
     public Long getId() {
@@ -104,12 +111,24 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
     }
 
     @Override
-    public List<DataDrivenEnumerationValue> getOrderItems() {
-        return orderItems;
+    public List<DataDrivenEnumerationValue> getEnumValues() {
+        return enumValues;
     }
 
     @Override
+    public void setEnumValues(List<DataDrivenEnumerationValue> enumValues) {
+        this.enumValues = enumValues;
+    }
+
+    @Override
+    @Deprecated
+    public List<DataDrivenEnumerationValue> getOrderItems() {
+        return enumValues;
+    }
+
+    @Override
+    @Deprecated
     public void setOrderItems(List<DataDrivenEnumerationValue> orderItems) {
-        this.orderItems = orderItems;
+        this.enumValues = orderItems;
     }
 }

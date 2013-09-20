@@ -131,7 +131,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
                 try {
                     Set mergeSet = (Set) mergeCollection;
                     Set sourceSet;
-                    if (bean instanceof Set) {
+                    if (bean instanceof SetFactoryBean) {
                         Field field = SetFactoryBean.class.getDeclaredField("sourceSet");
                         field.setAccessible(true);
                         sourceSet = (Set) field.get(bean);

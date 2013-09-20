@@ -20,16 +20,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
 import org.springframework.util.PatternMatchUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 import org.thymeleaf.spring3.view.AbstractThymeleafView;
 import org.thymeleaf.spring3.view.ThymeleafViewResolver;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class extends the default ThymeleafViewResolver to facilitate rendering
@@ -150,21 +153,20 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
         return view;
     }
     
+    @Override
+    protected Object getCacheKey(String viewName, Locale locale) {
+        return viewName + "_" + locale + "_" + isAjaxRequest();
+    }
+    
     protected boolean isIFrameRequest() {
-        if (BroadleafRequestContext.getBroadleafRequestContext() != null && BroadleafRequestContext.getBroadleafRequestContext().getRequest() != null) {
-            HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-            String iFrameParameter = request.getParameter("blcIFrame");
-            return  (iFrameParameter != null && "true".equals(iFrameParameter));
-        }
-        return false;
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String iFrameParameter = request.getParameter("blcIFrame");
+        return (iFrameParameter != null && "true".equals(iFrameParameter));
     }
     
     protected boolean isAjaxRequest() {
-        if (BroadleafRequestContext.getBroadleafRequestContext() != null && BroadleafRequestContext.getBroadleafRequestContext().getRequest() != null) {
-            HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-            return BroadleafControllerUtility.isAjaxRequest(request);
-        }
-        return false;
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest(); 
+        return BroadleafControllerUtility.isAjaxRequest(request);
     }
 
     /**

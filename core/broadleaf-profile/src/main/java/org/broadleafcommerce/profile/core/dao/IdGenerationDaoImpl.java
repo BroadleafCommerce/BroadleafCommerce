@@ -44,7 +44,13 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @Override
     public IdGeneration findNextId(String idType) throws OptimisticLockException, Exception {
+        return findNextId(idType, null);
+    }
+
+    @Override
+    public IdGeneration findNextId(String idType, Long batchSize) throws OptimisticLockException, Exception {
         IdGeneration response;
         Query query = em.createNamedQuery("BC_FIND_NEXT_ID");
         query.setParameter("idType", idType);
@@ -86,7 +92,7 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
             response.setBegin(null);
             response.setEnd(null);
             response.setBatchStart(getDefaultBatchStart());
-            response.setBatchSize(getDefaultBatchSize());
+            response.setBatchSize(batchSize==null?getDefaultBatchSize():batchSize);
             try {
                 em.persist(response);
                 em.flush();
@@ -94,8 +100,8 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("Error inserting row id generation for idType " + idType + ".  Requerying table.");
                 }
-                return findNextId(idType);
             }
+            return findNextId(idType);
         }
         
         return response;

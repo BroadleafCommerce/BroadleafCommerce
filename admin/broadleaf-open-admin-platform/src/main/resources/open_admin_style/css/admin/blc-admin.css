@@ -16,10 +16,10 @@ html {
 
 [role="main"] {
     background: #fff;
-    border-left: 3px solid #ccc;
+    border-left: 2px solid #ccc;
     border-top: 2px solid #ccc;
-    border-bottom: 1px solid #ddd;
-    border-right: 1px solid #ddd;
+    border-bottom: 2px solid #ccc;
+    border-right: 2px solid #ccc;
     padding-top: 15px;
 }
 
@@ -171,12 +171,61 @@ div.field-label.inline {
 }
 
 .modal .entity-form-actions {
+	text-align: right;
 	margin-top: 0;
 }
 
-.entity-form-actions {
-	text-align: right;
-	margin-top: 20px;
+.breadcrumb-container .entity-form-actions {
+	position: absolute;
+	line-height: 37px;
+	right: 10px;
+}
+
+.breadcrumb-container ul.breadcrumbs {
+	float: left;
+	margin: 0;
+	background: none;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.breadcrumb-container ul.breadcrumbs li a, ul.breadcrumbs li span {
+	font-size: 1.2rem;
+	color: rgba(0, 0, 0, 0.74902);
+}
+
+.breadcrumb-container ul.breadcrumbs li {
+	float: none;
+	display: inline;
+}
+
+.section-container section.main {
+	padding: 15px 15px 0 15px;
+}
+
+.section-container {
+	padding: 0;
+}
+
+.breadcrumb-container {
+	width: 100%;
+    background: #f1f1f1;
+    background: -moz-linear-gradient(top,  #f1f1f1 0%, #e2e2e2 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f1f1f1), color-stop(100%,#e2e2e2));
+    background: -webkit-linear-gradient(top,  #f1f1f1 0%,#e2e2e2 100%);
+    background: -o-linear-gradient(top,  #f1f1f1 0%,#e2e2e2 100%);
+    background: -ms-linear-gradient(top,  #f1f1f1 0%,#e2e2e2 100%);
+    background: linear-gradient(to bottom,  #f1f1f1 0%,#e2e2e2 100%);
+    padding: 5px 10px;
+	border-bottom: 2px solid #8EAA2B;
+}
+
+.breadcrumb-container.breadcrumb-fixed {
+    position: fixed;
+	top: 0;
+	width: 1020px;
+	z-index: 298302;
 }
 
 .tabs-container {
@@ -1097,6 +1146,23 @@ ul.category-root, ul.category-root ul {
 }
 
 ul.category-root ul {
+}
+
+div.search-results-header {
+	margin-bottom: 20px;
+}
+
+span.search-results-keyword:before,
+span.search-results-keyword:after {
+	content: "\"";
+}
+
+.main-term-false {
+	display: none;
+}
+
+label.inline-radio-label {
+	font-weight: 400;
 }
 
 /* -----------------------------------------

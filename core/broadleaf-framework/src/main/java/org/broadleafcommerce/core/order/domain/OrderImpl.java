@@ -480,13 +480,13 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
         List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (OrderItem orderItem : orderItems) {
-            if (orderItem instanceof BundleOrderItemImpl) {
+            if (orderItem instanceof BundleOrderItem) {
                 BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
                 for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
                     discreteOrderItems.add(discreteOrderItem);
                 }
-            } else {
-                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
+            } else if (orderItem instanceof DiscreteOrderItem) {
+                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                 discreteOrderItems.add(discreteOrderItem);
             }
         }

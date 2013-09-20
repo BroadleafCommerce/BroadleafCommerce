@@ -108,6 +108,7 @@ public class FieldMetadataOverride {
     private String helpText;
     private String hint;
     private String lookupDisplayProperty;
+    private Boolean forcePopulateChildProperties;
     private String optionListEntity;
     private String optionValueFieldName;
     private String optionDisplayFieldName;
@@ -419,6 +420,14 @@ public class FieldMetadataOverride {
 
     public void setLookupDisplayProperty(String lookupDisplayProperty) {
         this.lookupDisplayProperty = lookupDisplayProperty;
+    }
+    
+    public Boolean getForcePopulateChildProperties() {
+        return forcePopulateChildProperties;
+    }
+    
+    public void setForcePopulateChildProperties(Boolean forcePopulateChildProperties) {
+        this.forcePopulateChildProperties = forcePopulateChildProperties;
     }
 
     public Boolean getOptionCanEditValues() {

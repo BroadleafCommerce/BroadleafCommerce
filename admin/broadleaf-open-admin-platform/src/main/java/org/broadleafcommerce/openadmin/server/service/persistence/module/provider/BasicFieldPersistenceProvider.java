@@ -25,14 +25,18 @@ import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionTyp
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionType;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.IsNullPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
@@ -337,18 +341,28 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         if (field != null) {
             targetType = field.getType();
         }
-        BasicFieldMetadata metadata = (BasicFieldMetadata) addSearchMappingRequest.getMergedProperties().get(addSearchMappingRequest.getPropertyName());
+        BasicFieldMetadata metadata = (BasicFieldMetadata) addSearchMappingRequest.getMergedProperties().get
+                (addSearchMappingRequest.getPropertyName());
+        
+        FilterAndSortCriteria fasc = addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName());
 
         FilterMapping filterMapping = new FilterMapping()
                 .withInheritedFromClass(clazz)
                 .withFullPropertyName(addSearchMappingRequest.getPropertyName())
-                .withFilterValues(addSearchMappingRequest.getRequestedCto().
-                        get(addSearchMappingRequest.getPropertyName()).getFilterValues())
-                .withSortDirection(addSearchMappingRequest.getRequestedCto().
-                        get(addSearchMappingRequest.getPropertyName()).getSortDirection());
+                .withFilterValues(fasc.getFilterValues())
+                .withSortDirection(fasc.getSortDirection());
         filterMappings.add(filterMapping);
-
-        switch (metadata.getFieldType()) {
+        
+        if (fasc.hasSpecialFilterValue()) {
+            filterMapping.setDirectFilterValues(new EmptyFilterValues());
+            
+            // Handle special values on a case by case basis
+            List<String> specialValues = fasc.getSpecialFilterValues();
+            if (specialValues.contains(FilterAndSortCriteria.IS_NULL_FILTER_VALUE)) {
+                filterMapping.setRestriction(new Restriction().withPredicateProvider(new IsNullPredicateProvider()));
+            }
+        } else {
+            switch (metadata.getFieldType()) {
             case BOOLEAN:
                 if (targetType == null || targetType.equals(Boolean.class) || targetType.equals(boolean.class)) {
                     filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.BOOLEAN.getType(), addSearchMappingRequest.getPropertyName()));
@@ -452,6 +466,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         break;
                 }
                 break;
+            }
         }
         return FieldProviderResponse.HANDLED;
     }

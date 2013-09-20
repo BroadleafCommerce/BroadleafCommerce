@@ -69,11 +69,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -97,6 +92,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
+import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+
 /**
  * @author jfischer
  */
@@ -107,6 +108,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     private static final Log LOG = LogFactory.getLog(BasicPersistenceModule.class);
 
     public static final String MAIN_ENTITY_NAME_PROPERTY = "MAIN_ENTITY_NAME";
+    public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
 
     protected DecimalFormat decimalFormat;
     protected ApplicationContext applicationContext;
@@ -411,6 +413,25 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         entity.getClass().getName()), e);
             }
             
+            // Try to add the alternate id property if available
+            if (alternateMergedProperties != null) {
+                for (Entry<String, FieldMetadata> entry : alternateMergedProperties.entrySet()) {
+                    if (entry.getValue() instanceof BasicFieldMetadata) {
+                        if (((BasicFieldMetadata) entry.getValue()).getFieldType() == SupportedFieldType.ID) {
+                            Map<String, FieldMetadata> alternateOnEntity = new HashMap<String, FieldMetadata>();
+                            alternateOnEntity.put(entry.getKey(), entry.getValue());
+                            List<Property> props2 = new ArrayList<Property>();
+                            extractPropertiesFromPersistentEntity(alternateOnEntity, recordEntity, props2);
+                            if (props2.size() == 1) {
+                                Property alternateIdProp = props2.get(0);
+                                alternateIdProp.setName(ALTERNATE_ID_PROPERTY);
+                                props.add(alternateIdProp);
+                            }
+                        }
+                    }
+                }
+            }
+            
             Property[] properties = new Property[props.size()];
             properties = props.toArray(properties);
             entityItem.setProperties(properties);
@@ -665,7 +686,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (property.getName().equals(idPropertyName)) {
                 switch(metaData.getSecondaryType()) {
                 case INTEGER:
-                    primaryKey = Long.valueOf(property.getValue());
+                    primaryKey = (property.getValue() == null) ? null : Long.valueOf(property.getValue());
                     break;
                 case STRING:
                     primaryKey = property.getValue();

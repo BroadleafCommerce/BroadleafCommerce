@@ -49,8 +49,15 @@ public class PromotableOrderItemPriceDetailAdjustmentImpl extends AbstractPromot
             PromotableOrderItemPriceDetail orderItemPriceDetail) {
         assert (orderItemPriceDetail != null);
         adjustmentValue = itemAdjustment.getValue();
-        saleAdjustmentValue = itemAdjustment.getSalesPriceValue();
-        retailAdjustmentValue = itemAdjustment.getRetailPriceValue();
+        if (itemAdjustment.isAppliedToSalePrice()) {
+            saleAdjustmentValue = itemAdjustment.getValue();
+            // This will just set to a Money value of zero in the correct currency.
+            retailAdjustmentValue = itemAdjustment.getRetailPriceValue();
+        } else {
+            retailAdjustmentValue = itemAdjustment.getValue();
+            // This will just set to a Money value of zero in the correct currency.
+            saleAdjustmentValue = itemAdjustment.getSalesPriceValue();
+        }
         appliedToSalePrice = itemAdjustment.isAppliedToSalePrice();
         promotableOrderItemPriceDetail = orderItemPriceDetail;
         offer = itemAdjustment.getOffer();

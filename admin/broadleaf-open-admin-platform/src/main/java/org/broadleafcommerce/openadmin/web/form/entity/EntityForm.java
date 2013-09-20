@@ -19,6 +19,8 @@ package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
@@ -35,6 +37,8 @@ import java.util.TreeSet;
 
 public class EntityForm {
 
+    protected static final Log LOG = LogFactory.getLog(EntityForm.class);
+    
     public static final String HIDDEN_GROUP = "hiddenGroup";
     public static final String MAP_KEY_GROUP = "keyGroup";
     public static final String DEFAULT_GROUP_NAME = "Default";
@@ -74,7 +78,14 @@ public class EntityForm {
 
     /**
      * @return a flattened, field name keyed representation of all of 
-     * the fields in all of the groups for this form
+     * the fields in all of the groups for this form. This set will also includes all of the dynamic form
+     * fields.
+     * 
+     * Note that if there collisions between the dynamic form fields and the fields on this form (meaning that they
+     * have the same name), then the dynamic form field will be excluded from the map and the preference will be given
+     * to first-level entities
+     * 
+     * @see {@link #getFields(boolean)}
      */
     public Map<String, Field> getFields() {
         if (fields == null) {
@@ -91,7 +102,14 @@ public class EntityForm {
         
         for (Entry<String, EntityForm> entry : dynamicForms.entrySet()) {
             Map<String, Field> dynamicFormFields = entry.getValue().getFields();
-            fields.putAll(dynamicFormFields);
+            for (Entry<String, Field> dynamicField : dynamicFormFields.entrySet()) {
+                if (fields.containsKey(dynamicField.getKey())) {
+                    LOG.info("Excluding dynamic field " + dynamicField.getKey() + " as there is already an occurrance in" +
+                    		" this entityForm");
+                } else {
+                    fields.put(dynamicField.getKey(), dynamicField.getValue());
+                }
+            }
         }
 
         return fields;

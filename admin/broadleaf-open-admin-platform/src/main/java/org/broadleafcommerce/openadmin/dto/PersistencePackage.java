@@ -18,6 +18,8 @@ package org.broadleafcommerce.openadmin.dto;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class PersistencePackage implements Serializable {
 
@@ -30,6 +32,7 @@ public class PersistencePackage implements Serializable {
     protected Entity entity;
     protected String csrfToken;
     protected Integer batchId;
+    protected Map<String, PersistencePackage> subPackages = new LinkedHashMap<String, PersistencePackage>();
     
     public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
         this(ceilingEntityFullyQualifiedClassname, null, entity, persistencePerspective, customCriteria, csrfToken);
@@ -104,6 +107,14 @@ public class PersistencePackage implements Serializable {
 
     public void setBatchId(Integer batchId) {
         this.batchId = batchId;
+    }
+
+    public Map<String, PersistencePackage> getSubPackages() {
+        return subPackages;
+    }
+
+    public void setSubPackages(Map<String, PersistencePackage> subPackages) {
+        this.subPackages = subPackages;
     }
 
     @Override

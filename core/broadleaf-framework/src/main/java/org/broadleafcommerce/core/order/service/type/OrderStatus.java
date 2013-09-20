@@ -42,6 +42,7 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
     private static final Map<String, OrderStatus> TYPES = new LinkedHashMap<String, OrderStatus>();
 
     public static final OrderStatus NAMED = new OrderStatus("NAMED", "Named");
+    public static final OrderStatus QUOTE = new OrderStatus("QUOTE", "Quote");
     public static final OrderStatus IN_PROCESS = new OrderStatus("IN_PROCESS", "In Process");
     public static final OrderStatus SUBMITTED = new OrderStatus("SUBMITTED", "Submitted");
     public static final OrderStatus CANCELLED = new OrderStatus("CANCELLED", "Cancelled");

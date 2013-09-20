@@ -330,13 +330,15 @@ $(document).ready(function() {
      * which there is only 1 on the page) and replace the criteria value for that field with whatever was typed into the
      * search box.
      */
-    $('body').on('click', '.custom-entity-search a', function(event) {
+    $('body').on('click', '.custom-entity-search a.search-button', function(event) {
         //this takes place on the main list grid screen so there should be a single list grid
-        var search = $('body').find('input').val();
+        var search = $(this).closest('form').find('input').val();
         var $firstHeader = $('body').find('#listGrid-main-header th:first-child');
         var $input = $firstHeader.find('input.listgrid-criteria-input');
         
         $input.val(search);
+
+        $(this).closest('form').find('input').val('');
         
         var submitData = {};
         submitData[$input.data('name')] =  $input.val();

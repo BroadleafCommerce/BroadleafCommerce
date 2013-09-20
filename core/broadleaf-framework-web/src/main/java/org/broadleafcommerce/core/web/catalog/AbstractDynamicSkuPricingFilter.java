@@ -39,13 +39,7 @@ public abstract class AbstractDynamicSkuPricingFilter implements DynamicSkuPrici
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         SkuPricingConsiderationContext.setSkuPricingConsiderationContext(getPricingConsiderations(request));
         SkuPricingConsiderationContext.setSkuPricingService(getDynamicSkuPricingService(request));
-        try {
-            filterChain.doFilter(request, response);
-        } finally {
-            SkuPricingConsiderationContext.setSkuPricingConsiderationContext(null);
-            SkuPricingConsiderationContext.setSkuPricingService(null);
-        }
-        
+        filterChain.doFilter(request, response);
     }
 
     public void init(FilterConfig config) throws ServletException {

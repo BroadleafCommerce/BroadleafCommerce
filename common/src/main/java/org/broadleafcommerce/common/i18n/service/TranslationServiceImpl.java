@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.i18n.dao.TranslationDao;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
+import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
@@ -129,27 +130,29 @@ public class TranslationServiceImpl implements TranslationService {
             translation = (Translation) countryValue.getObjectValue();
         } else {
             translation = getTranslation(entityType, entityId, property, localeCountryCode);
-            if (translation != null) {
-                getCache().put(new Element(countryCacheKey, translation));
+            if (translation == null) {
+                translation = new TranslationImpl();
             }
+            getCache().put(new Element(countryCacheKey, translation));
         }
         
         // If we don't find one, let's try just the language (en), again utilizing the cache
-        if (translation == null) {
+        if (translation.getTranslatedValue()==null) {
             String nonCountryCacheKey = getCacheKey(entityType, entityId, property, localeCode);
             Element nonCountryValue = getCache().get(nonCountryCacheKey);
             if (nonCountryValue != null) {
                 translation = (Translation) nonCountryValue.getObjectValue();
             } else {
                 translation = getTranslation(entityType, entityId, property, localeCode);
-                if (translation != null) {
-                    getCache().put(new Element(nonCountryCacheKey, translation));
+                if (translation == null) {
+                    translation = new TranslationImpl();
                 }
+                getCache().put(new Element(nonCountryCacheKey, translation));
             }
         }
         
         // If we have a match on a translation, use that instead of what we found on the entity.
-        if (translation != null && StringUtils.isNotBlank(translation.getTranslatedValue())) {
+        if (StringUtils.isNotBlank(translation.getTranslatedValue())) {
             return translation.getTranslatedValue();
         }
         

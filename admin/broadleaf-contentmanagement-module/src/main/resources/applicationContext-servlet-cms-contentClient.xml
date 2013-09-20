@@ -11,10 +11,6 @@
     <!-- Note that this bean must be defined in both the servlet and non-servlet application contexts -->
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer"/>
 
-    <context:component-scan base-package="org.broadleafcommerce.cms">
-        <context:exclude-filter type="regex" expression="org.broadleafcommerce.cms.admin.*"/>
-    </context:component-scan>
-
     <aop:config/>
 
     <!-- This resolver locates the "blStaticAssetView" ViewResolver using its bean name. -->

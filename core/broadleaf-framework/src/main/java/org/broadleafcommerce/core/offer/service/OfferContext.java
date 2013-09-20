@@ -17,9 +17,11 @@
 package org.broadleafcommerce.core.offer.service;
 
 
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+
 public class OfferContext {
     
-    private static final ThreadLocal<OfferContext> OFFERCONTEXT = new ThreadLocal<OfferContext>();
+    private static final ThreadLocal<OfferContext> OFFERCONTEXT = ThreadLocalManager.createThreadLocal(OfferContext.class);
     
     public static OfferContext getOfferContext() {
         return OFFERCONTEXT.get();

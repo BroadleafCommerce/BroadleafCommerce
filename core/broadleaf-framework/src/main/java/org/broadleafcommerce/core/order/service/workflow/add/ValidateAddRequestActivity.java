@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
+import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
@@ -81,8 +82,8 @@ public class ValidateAddRequestActivity extends BaseActivity<CartOperationContex
         Sku sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes());
         
         // If we couldn't find a sku, then we're unable to add to cart.
-        if (sku == null) {
-
+        
+        if (sku == null && !(orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO)) {
             StringBuilder sb = new StringBuilder();
             for (Entry<String, String> entry : orderItemRequestDTO.getItemAttributes().entrySet()) {
                 sb.append(entry.toString());
@@ -91,6 +92,15 @@ public class ValidateAddRequestActivity extends BaseActivity<CartOperationContex
                     " productId: " + (product == null ? "null" : product.getId()) + 
                     " skuId: " + orderItemRequestDTO.getSkuId() + 
                     " attributes: " + sb.toString());
+        } else if (sku == null) {
+            NonDiscreteOrderItemRequestDTO ndr = (NonDiscreteOrderItemRequestDTO) orderItemRequestDTO;
+            if (StringUtils.isBlank(ndr.getItemName())) {
+                throw new IllegalArgumentException("Item name is required for non discrete order item add requests");
+            }
+            
+            if (ndr.getOverrideRetailPrice() == null && ndr.getOverrideSalePrice() == null) {
+                throw new IllegalArgumentException("At least one override price is required for non discrete order item add requests");
+            }
         } else if (!sku.isActive()) {
             throw new IllegalArgumentException("The requested skuId of " + sku.getId() + " is no longer active");
         } else {
@@ -99,7 +109,10 @@ public class ValidateAddRequestActivity extends BaseActivity<CartOperationContex
             request.getItemRequest().setSkuId(sku.getId());
         }
         
-        if (request.getOrder().getCurrency() != null && sku.getCurrency() != null && !request.getOrder().getCurrency().equals(sku.getCurrency())) {
+        if (!(orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO) &&
+                request.getOrder().getCurrency() != null && 
+                sku.getCurrency() != null && 
+                !request.getOrder().getCurrency().equals(sku.getCurrency())) {
             throw new IllegalArgumentException("Cannot have items with differing currencies in one cart");
         }
         

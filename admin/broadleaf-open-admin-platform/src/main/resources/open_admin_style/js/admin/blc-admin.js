@@ -352,8 +352,11 @@ var BLCAdmin = (function($) {
                         title: "Advanced Font List",
                         dropdown: oFontDropdown
                     }
-                }
+                },
+                convertDivs : false
             });
+            
+            $container.find('textarea.autosize').autosize();
             
             $container.find(".color-picker").spectrum({
                 showButtons: false,
@@ -395,7 +398,24 @@ var BLCAdmin = (function($) {
     	        modalsCopy[i] = modals[i];
     	    }
     	    return modalsCopy;
+    	},
+ 
+    	getForm : function($element) {
+    	    var $form;
+    	    
+    	    if ($element.closest('.modal').length > 0) {
+    	        $form = $element.closest('.modal').find('.modal-body form');
+    	    } else {
+    	        $form = $element.closest('form')
+    	    }
+    
+    		if (!$form.length) {
+    		    $form = $('.entity-edit form');
+    		}
+    	    
+    		return $form;
     	}
+ 
 	};
 	
 })(jQuery);
@@ -457,6 +477,21 @@ $(document).ready(function() {
             }
         });
     });
+    
+    if (window.location.hash) {
+        var $listGrid = $('div.listgrid-container' + window.location.hash);
+        if ($listGrid.length) {
+            var $tab = $listGrid.closest('li.entityFormTab');
+            var idx = $tab.index() + 1;
+            var $tabLink = $('div.tabs-container dl dd:nth-child(' + idx + ')');
+            $.fn.foundationTabs('set_tab', $tabLink);
+            $(window).scrollTop($(window.location.hash).offset().top);
+        }
+    }
+
+    // Ensure that the breadcrumb will render behind the entity form actions
+    var $bcc = $('.breadcrumb-container');
+    $bcc.find('ul.breadcrumbs').outerWidth($bcc.outerWidth() - $bcc.find('.entity-form-actions').outerWidth() - 30);
 });
 
 $('body').on('click', '.disabled', function(e) {
@@ -467,4 +502,23 @@ $('body').on('click', '.disabled', function(e) {
 $('body').on('change', 'input.color-picker-value', function() {
     var $this = $(this);
     $this.closest('.field-box').find('input.color-picker').spectrum('set', $this.val());
+});
+
+/**
+ * Make the breadcrumb bar lock at the top of the window when it's scrolled off the page
+ */
+$(window).on('scroll', function() {
+    var $bcc = $('.breadcrumb-container');
+    var $fbcc = $('.fake-breadcrumb-container');
+    
+    if ($(window).scrollTop() - 4 < $bcc.outerHeight()) {
+        $bcc.removeClass('breadcrumb-fixed');
+        $bcc.width('');
+        $fbcc.hide();
+    } else {
+        $fbcc.show();
+        $bcc.addClass('breadcrumb-fixed');
+        $bcc.outerWidth($('section.main').outerWidth());
+        $('.fake-breadcrumb-container').outerHeight($bcc.outerHeight());
+    }
 });

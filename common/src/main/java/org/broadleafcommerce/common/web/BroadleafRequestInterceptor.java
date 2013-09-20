@@ -45,7 +45,7 @@ public class BroadleafRequestInterceptor implements WebRequestInterceptor {
 
     @Override
     public void postHandle(WebRequest request, ModelMap model) throws Exception {
-        // unimplemented
+        requestProcessor.postProcess(request);
     }
 
     @Override

@@ -31,14 +31,14 @@
         },
         
         selectButtonClickedRedactor : function(obj, event, key) {
-            currentRedactor = obj;
-            currentRedactor.saveSelection();
-            var $redactor = obj.$el;
+            currentRedactor = this;
+            currentRedactor.selectionSave();
+            var $redactor = this.$element;
             
             $redactor.on('assetInfoSelected', function(event, fields) {
-                currentRedactor.restoreSelection();
+                currentRedactor.selectionRestore();
                 var $img = $('<img>', { 'src' : fields['assetUrl'] });
-                $(this).insertHtml($img.outerHTML());
+                currentRedactor.insertHtml($img.outerHTML());
                 BLCAdmin.hideCurrentModal();
             });
         	

@@ -32,7 +32,7 @@ public class OfferTimeZoneProcessorImpl implements OfferTimeZoneProcessor {
     private static final Log LOG = LogFactory.getLog(OfferTimeZoneProcessorImpl.class);
 
     public TimeZone getTimeZone(Offer offer) {
-        TimeZone appTimeZone = BroadleafRequestContext.getBroadleafRequestContext().getTimeZone();
-        return appTimeZone;
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        return (brc != null) ? brc.getTimeZone() : TimeZone.getDefault();
     }
 }

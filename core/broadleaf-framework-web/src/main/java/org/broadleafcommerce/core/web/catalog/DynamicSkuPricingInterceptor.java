@@ -59,11 +59,6 @@ public abstract class DynamicSkuPricingInterceptor implements WebRequestIntercep
     public abstract HashMap getPricingConsiderations(WebRequest request);
 
     @Override
-    public void postHandle(WebRequest request, ModelMap model) throws Exception {
-        // unimplemented
-    }
-
-    @Override
     public void afterCompletion(WebRequest request, Exception ex) throws Exception {
         // unimplemented
     }

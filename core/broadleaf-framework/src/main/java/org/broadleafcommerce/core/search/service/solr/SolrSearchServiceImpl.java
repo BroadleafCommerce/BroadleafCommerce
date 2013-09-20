@@ -220,7 +220,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
         String query = shs.getExplicitCategoryFieldName() + ":" + category.getId();
-        return findProducts(query, facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc");
+        return findProducts("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
     @Override
@@ -228,40 +228,15 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
         String query = shs.getCategoryFieldName() + ":" + category.getId();
-        return findProducts(query, facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc");
+        return findProducts("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
     @Override
     public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria)
             throws ServiceException {
         List<SearchFacetDTO> facets = getSearchFacets();
-
-        query = sanitizeQuery(query);
-
-        query = buildQueryString(query);
-
+        query = "(" + sanitizeQuery(query) + ")";
         return findProducts(query, facets, searchCriteria, null);
-    }
-
-    public String buildQueryString(String query) {
-        StringBuilder queryBuilder = new StringBuilder();
-        List<Field> fields = fieldDao.readAllProductFields();
-        for (Field currentField : fields) {
-            if (currentField.getSearchable()) {
-                appendFieldToQuery(queryBuilder, currentField, query);
-            }
-        }
-        return queryBuilder.toString();
-    }
-
-    public void appendFieldToQuery(StringBuilder queryBuilder, Field currentField, String query) {
-        List<FieldType> searchableFieldTypes = shs.getSearchableFieldTypes(currentField);
-        for (FieldType currentType : searchableFieldTypes) {
-            queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, currentType));
-            queryBuilder.append(":(");
-            queryBuilder.append(query);
-            queryBuilder.append(") ");
-        }
     }
 
     @Override
@@ -269,13 +244,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             ProductSearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getSearchFacets();
 
-        query = sanitizeQuery(query);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(shs.getCategoryFieldName()).append(":").append(category.getId())
-                .append(" AND ")
-                .append(buildQueryString(query));
-        return findProducts(sb.toString(), facets, searchCriteria, null);
+        String catFq = shs.getCategoryFieldName() + ":" + category.getId();
+        query = "(" + sanitizeQuery(query) + ")";
+        
+        return findProducts(query, facets, searchCriteria, null, catFq);
     }
 
     public String getLocalePrefix() {
@@ -288,10 +260,36 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         return "";
     }
 
+    protected String buildQueryFieldsString() {
+        StringBuilder queryBuilder = new StringBuilder();
+        List<Field> fields = fieldDao.readAllProductFields();
+        for (Field currentField : fields) {
+            if (currentField.getSearchable()) {
+                appendFieldToQuery(queryBuilder, currentField);
+            }
+        }
+        return queryBuilder.toString();
+    }
+
+    protected void appendFieldToQuery(StringBuilder queryBuilder, Field currentField) {
+        List<FieldType> searchableFieldTypes = shs.getSearchableFieldTypes(currentField);
+        for (FieldType currentType : searchableFieldTypes) {
+            queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, currentType)).append(" ");
+        }
+    }
+
+    /**
+     * @deprecated in favor of the other findProducts() method
+     */
+    protected ProductSearchResult findProducts(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
+            ProductSearchCriteria searchCriteria, String defaultSort) throws ServiceException {
+        return findProducts(qualifiedSolrQuery, facets, searchCriteria, defaultSort, null);
+    }
+
     /**
      * Given a qualified solr query string (such as "category:2002"), actually performs a solr search. It will
      * take into considering the search criteria to build out facets / pagination / sorting.
-     * 
+     *
      * @param qualifiedSolrQuery
      * @param facets
      * @param searchCriteria
@@ -299,7 +297,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @throws ServiceException
      */
     protected ProductSearchResult findProducts(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
-            ProductSearchCriteria searchCriteria, String defaultSort) throws ServiceException {
+            ProductSearchCriteria searchCriteria, String defaultSort, String... filterQueries) throws ServiceException {
         Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 
         // Build the basic query
@@ -307,8 +305,13 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                 .setQuery(qualifiedSolrQuery)
                 .setFields(shs.getProductIdFieldName())
                 .setRows(searchCriteria.getPageSize())
-                .setFilterQueries(shs.getNamespaceFieldName() + ":" + shs.getCurrentNamespace())
                 .setStart((searchCriteria.getPage() - 1) * searchCriteria.getPageSize());
+        if (filterQueries != null) {
+            solrQuery.setFilterQueries(filterQueries);
+        }
+        solrQuery.addFilterQuery(shs.getNamespaceFieldName() + ":" + shs.getCurrentNamespace());
+        solrQuery.set("defType", "edismax");
+        solrQuery.set("qf", buildQueryFieldsString());
 
         // Attach additional restrictions
         attachSortClause(solrQuery, searchCriteria, defaultSort);

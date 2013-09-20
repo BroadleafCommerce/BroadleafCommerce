@@ -19,6 +19,8 @@ package org.broadleafcommerce.openadmin.web.form.entity;
 
 public class DynamicEntityFormInfo {
 
+    public static final String FIELD_SEPARATOR = "|";
+    
     protected String criteriaName;
     protected String propertyName;
     protected String propertyValue;

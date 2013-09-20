@@ -63,6 +63,7 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Service;
@@ -476,7 +477,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withRequired(required)
                          .withReadOnly(fmd.getReadOnly())
                          .withTranslatable(fmd.getTranslatable())
-                         .withAlternateOrdering((Boolean) fmd.getAdditionalMetadata().get(Field.ALTERNATE_ORDERING));
+                         .withAlternateOrdering((Boolean) fmd.getAdditionalMetadata().get(Field.ALTERNATE_ORDERING))
+                         .withLargeEntry(fmd.isLargeEntry());
 
                     if (StringUtils.isBlank(f.getFriendlyName())) {
                         f.setFriendlyName(f.getName());
@@ -605,6 +607,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (json != null && !"".equals(json)) {
             try {
                 ObjectMapper om = new ObjectMapper();
+                om.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 return om.readValue(json, MediaDto.class);
             } catch (Exception e) {
                 LOG.warn("Error parsing json to media " + json, e);
@@ -751,10 +754,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Override
     public void populateEntityFormFields(EntityForm ef, Entity entity, boolean populateType, boolean populateId) {
-        if (populateType) {
+        if (populateId) {
             ef.setId(entity.findProperty(ef.getIdProperty()).getValue());
         }
-        if (populateId) {
+        if (populateType) {
             ef.setEntityType(entity.getType()[0]);
         }
 
@@ -815,8 +818,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         List<Property> entityFormProperties = new ArrayList<Property>();
         for (String targetFieldName : adornedMd.getMaintainedAdornedTargetFields()) {
             Property p = collectionMetadata.getPMap().get(targetFieldName);
-            ((BasicFieldMetadata) p.getMetadata()).setVisibility(VisibilityEnum.VISIBLE_ALL);
-            entityFormProperties.add(p);
+            if (p.getMetadata() instanceof BasicFieldMetadata) {
+                ((BasicFieldMetadata) p.getMetadata()).setVisibility(VisibilityEnum.VISIBLE_ALL);
+                entityFormProperties.add(p);
+            }
         }
 
         // Set the maintained fields on the form

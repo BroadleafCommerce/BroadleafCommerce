@@ -35,12 +35,13 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
+import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
-import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
@@ -109,8 +110,33 @@ public class AdminBasicEntityController extends AdminAbstractController {
         DynamicResultSet drs =  service.getRecords(ppr);
 
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey);
-        
         List<EntityFormAction> mainActions = new ArrayList<EntityFormAction>();
+        addAddActionIfAllowed(sectionClassName, cmd, mainActions);
+        
+        Field firstField = listGrid.getHeaderFields().iterator().next();
+        if (requestParams.containsKey(firstField.getName())) {
+            model.addAttribute("mainSearchTerm", requestParams.get(firstField.getName()).get(0));
+        }
+        
+        model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
+        model.addAttribute("listGrid", listGrid);
+        model.addAttribute("mainActions", mainActions);
+        model.addAttribute("viewType", "entityList");
+
+        setModelAttributes(model, sectionKey);
+        return "modules/defaultContainer";
+    }
+
+    /**
+     * Adds the "Add" button to the main entity form if the current user has permissions to create new instances
+     * of the entity and all of the fields in the entity aren't marked as read only.
+     * 
+     * @param sectionClassName
+     * @param cmd
+     * @param mainActions
+     */
+    protected void addAddActionIfAllowed(String sectionClassName, ClassMetadata cmd, List<EntityFormAction> mainActions) {
         // If the user does not have create permissions, we will not add the "Add New" button
         boolean canCreate = true;
         try {
@@ -138,14 +164,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             mainActions.add(DefaultMainActions.ADD);
         }
         
-        model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
-        model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("listGrid", listGrid);
-        model.addAttribute("mainActions", mainActions);
-        model.addAttribute("viewType", "entityList");
-
-        setModelAttributes(model, sectionKey);
-        return "modules/defaultContainer";
+        mainEntityActionsExtensionManager.modifyMainActions(cmd, mainActions);
     }
 
     /**
@@ -230,6 +249,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
         String sectionKey = getSectionKey(pathVars);
 
+        extractDynamicFormFields(entityForm);
+        
         Entity entity = service.addEntity(entityForm, getSectionCustomCriteria());
         entityFormValidator.validate(entityForm, entity, result);
 
@@ -348,40 +369,15 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionClassName = getClassNameForSection(sectionKey);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName);
 
-        Map<String, Field> dynamicFields = new HashMap<String, Field>();
+        extractDynamicFormFields(entityForm);
         
-        // Find all of the dynamic form fields
-        for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
-            if (entry.getKey().contains("|")) { 
-                dynamicFields.put(entry.getKey(), entry.getValue());
-            }
-        }
-        
-        // Remove the dynamic form fields from the main entity - they are persisted separately
-        for (Entry<String, Field> entry : dynamicFields.entrySet()) {
-            entityForm.removeField(entry.getKey());
-        }
-        
-        // Create the entity form for the dynamic form, as it needs to be persisted separately
-        for (Entry<String, Field> entry : dynamicFields.entrySet()) {
-            String[] fieldName = entry.getKey().split("\\|");
-            DynamicEntityFormInfo info = entityForm.getDynamicFormInfo(fieldName[0]);
-                    
-            EntityForm dynamicForm = entityForm.getDynamicForm(fieldName[0]);
-            if (dynamicForm == null) {
-                dynamicForm = new EntityForm();
-                dynamicForm.setCeilingEntityClassname(info.getCeilingClassName());
-                entityForm.putDynamicForm(fieldName[0], dynamicForm);
-            }
-            
-            entry.getValue().setName(fieldName[1]);
-            dynamicForm.addField(entry.getValue());
-        }
-
         Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria());
         
         entityFormValidator.validate(entityForm, entity, result);
         if (result.hasErrors()) {
+            model.addAttribute("headerFlash", "save.unsuccessful");
+            model.addAttribute("headerFlashAlert", true);
+            
             Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
             ClassMetadata cmd = service.getClassMetadata(ppr);
             entityForm.clearFieldsMap();
@@ -727,10 +723,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm);
             }
             
-            if (fmd.getMaintainedAdornedTargetFields().length > 0) {
-                listGrid.setListGridType(ListGrid.Type.ADORNED_WITH_FORM);
-            } else {
-                listGrid.setListGridType(ListGrid.Type.ADORNED);
+            listGrid.setListGridType(ListGrid.Type.ADORNED);
+            for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
+                if (entry.getValue().getIsVisible()) {
+                    listGrid.setListGridType(ListGrid.Type.ADORNED_WITH_FORM);
+                    break;
+                }
             }
 
             model.addAttribute("listGrid", listGrid);
@@ -885,8 +883,36 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 populateTypeAndId = false;
             }
 
+            ClassMetadata cmd = service.getClassMetadata(ppr);
+            for (String field : fmd.getMaintainedAdornedTargetFields()) {
+                Property p = cmd.getPMap().get(field);
+                if (p != null && p.getMetadata() instanceof AdornedTargetCollectionMetadata) {
+                    // Because we're dealing with a nested adorned target collection, this particular request must act
+                    // directly on the first adorned target collection. Because of this, we need the actual id property
+                    // from the entity that models the adorned target relationship, and not the id of the target object.
+                    Property alternateIdProperty = entity.getPMap().get(BasicPersistenceModule.ALTERNATE_ID_PROPERTY);
+                    DynamicResultSet drs = service.getRecordsForCollection(cmd, entity, p, null, null, null, alternateIdProperty.getValue());
+                    
+                    ListGrid listGrid = formService.buildCollectionListGrid(alternateIdProperty.getValue(), drs, p, ppr.getAdornedList().getAdornedTargetEntityClassname());
+                    listGrid.setListGridType(ListGrid.Type.INLINE);
+                    listGrid.getToolbarActions().add(DefaultListGridActions.ADD);
+                    entityForm.addListGrid(listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER);
+                }
+            }
+            
             formService.populateEntityFormFields(entityForm, entity, populateTypeAndId, populateTypeAndId);
             formService.populateAdornedEntityFormFields(entityForm, entity, ppr.getAdornedList());
+            
+            boolean atLeastOneBasicField = false;
+            for (Entry<String, Field> entry : entityForm.getFields().entrySet()) {
+                if (entry.getValue().getIsVisible()) {
+                    atLeastOneBasicField = true;
+                    break;
+                }
+            }
+            if (!atLeastOneBasicField) {
+                entityForm.removeAction(DefaultEntityFormActions.SAVE);
+            }
 
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/adornedEditEntity");

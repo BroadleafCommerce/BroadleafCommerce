@@ -3,11 +3,15 @@
         <form class="custom-entity-search" th:action="${currentUrl}" method="GET">
             <div class="row">
                 <div class="six columns">
-                    <input style="height: 28px; width: 100%" type="search" placeholder="Name" />
+                    <input style="height: 28px; width: 100%" type="search" 
+                        th:placeholder="#{Search_Placeholder(#{${listGrid.headerFields[0].friendlyName}}, #{${entityFriendlyName}})}" />
                 </div>
-                <div class="four columns">
-                    <a href="#" class="button small dark radius" th:inline="text">
+                <div class="six columns">
+                    <a href="#" class="button small dark radius search-button" th:inline="text">
                         <i class="icon-search"></i>&nbsp;[[#{Search}]]
+                    </a>
+                    <a th:href="@{${'/' + sectionKey}}" class="button small dark radius" th:inline="text">
+                        <i class="icon-remove"></i>&nbsp;[[#{Clear_Search}]]
                     </a>
                 </div>
                 <div class="two columns">&nbsp;</div>

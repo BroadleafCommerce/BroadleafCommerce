@@ -435,6 +435,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         return buffer.toString();
     }
 
+    @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public void createStaticAssetStorageFromFile(MultipartFile file, StaticAsset staticAsset) throws IOException {
         if (StorageType.DATABASE.equals(staticAsset.getStorageType())) {
@@ -482,13 +483,4 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(DigestUtils.md5Hex("/product/myproductimage.jpg"));
-        System.out.println(DigestUtils.md5Hex("/site-125"));
-
-        System.out.println("/product/myproductimage.jpg".substring("/product/myproductimage.jpg".lastIndexOf('.')));
-
-        System.out.println("/product/myproductimage.jpg".substring(0, "/product/myproductimage.jpg".lastIndexOf("/") + 1) +
-                UUID.randomUUID().toString());
-    }
 }

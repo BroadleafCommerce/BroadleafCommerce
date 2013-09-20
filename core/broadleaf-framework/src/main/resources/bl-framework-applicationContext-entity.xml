@@ -19,6 +19,7 @@
     <bean id="org.broadleafcommerce.core.order.domain.Order" class="org.broadleafcommerce.core.order.domain.OrderImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.OrderMultishipOption" class="org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItem" class="org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItemImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.order.domain.OrderItem" class="org.broadleafcommerce.core.order.domain.OrderItemImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.DiscreteOrderItem" class="org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.BundleOrderItem" class="org.broadleafcommerce.core.order.domain.BundleOrderItemImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.GiftWrapOrderItem" class="org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl" scope="prototype"/>

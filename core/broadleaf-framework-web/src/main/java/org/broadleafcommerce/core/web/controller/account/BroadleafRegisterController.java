@@ -49,7 +49,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BroadleafRegisterController extends BroadleafAbstractController {
         
-    private boolean useEmailForLogin = true;
+    protected boolean useEmailForLogin = true;
     protected static String registerSuccessView = "ajaxredirect:/";
     protected static String registerView = "authentication/register";
     

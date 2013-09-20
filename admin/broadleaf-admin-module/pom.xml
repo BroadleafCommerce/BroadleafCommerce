@@ -4,7 +4,7 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>3.0.1-GA</version>
+        <version>3.0.2-GA</version>
     </parent>
     <artifactId>broadleaf-admin-module</artifactId>
     <packaging>jar</packaging>
@@ -129,6 +129,10 @@
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
         </dependency>
     </dependencies>
 </project>

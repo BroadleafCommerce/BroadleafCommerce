@@ -155,6 +155,7 @@
                 <value>classpath:/messages/PromotionMessages</value>
                 <value>classpath:/messages/RuleMessages</value>
                 <value>classpath:/messages/AbstractModuleMessages</value>
+                <value>classpath:/messages/UtilityMessages</value>
             </list>
         </property>
     </bean>

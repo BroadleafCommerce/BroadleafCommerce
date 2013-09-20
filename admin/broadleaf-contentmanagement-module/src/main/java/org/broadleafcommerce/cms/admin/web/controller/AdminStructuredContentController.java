@@ -21,7 +21,6 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,9 +30,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * Handles admin operations for the {@link StructuredContent} entity. This entity has fields that are 
@@ -42,7 +42,6 @@ import java.util.Map;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-@Controller("blAdminStructuredContentController")
 @RequestMapping("/" + AdminStructuredContentController.SECTION_KEY)
 public class AdminStructuredContentController extends AdminBasicEntityController {
     
@@ -57,6 +56,7 @@ public class AdminStructuredContentController extends AdminBasicEntityController
         return SECTION_KEY;
     }
 
+    @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
@@ -71,7 +71,7 @@ public class AdminStructuredContentController extends AdminBasicEntityController
             .withCriteriaName("constructForm")
             .withPropertyName("structuredContentType")
             .withPropertyValue(ef.findField("structuredContentType").getValue());
-        EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id);
+        EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id, null);
         ef.putDynamicFormInfo("structuredContentType", info);
         ef.putDynamicForm("structuredContentType", dynamicForm);
         
@@ -81,6 +81,7 @@ public class AdminStructuredContentController extends AdminBasicEntityController
         return returnPath;
     }
     
+    @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
@@ -94,7 +95,20 @@ public class AdminStructuredContentController extends AdminBasicEntityController
             .withPropertyName("structuredContentType");
         entityForm.putDynamicFormInfo("structuredContentType", info);
         
-        return super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
+        String returnPath = super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
+        
+        if (result.hasErrors()) {
+            info = entityForm.getDynamicFormInfo("structuredContentType");
+            info.setPropertyValue(entityForm.findField("structuredContentType").getValue());
+            
+            //grab back the dynamic form that was actually put in
+            EntityForm inputDynamicForm = entityForm.getDynamicForm("structuredContentType");
+            
+            EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id, inputDynamicForm);
+            entityForm.putDynamicForm("structuredContentType", dynamicForm);
+        }
+        
+        return returnPath;
     }
     
     @RequestMapping(value = "/{propertyName}/dynamicForm", method = RequestMethod.GET)
