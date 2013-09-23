@@ -71,7 +71,7 @@ public class DefaultCreditCardExtensionHandler extends AbstractExtensionHandler 
     @PostConstruct
     public void init() {
         if (isEnabled()) {
-            extensionManager.getHandlers().add(this);
+            extensionManager.registerHandler(this);
         }
     }
 

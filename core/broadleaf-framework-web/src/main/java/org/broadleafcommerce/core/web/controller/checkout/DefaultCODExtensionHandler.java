@@ -55,7 +55,7 @@ public class DefaultCODExtensionHandler extends AbstractExtensionHandler impleme
     @PostConstruct
     public void init() {
         if (isEnabled()) {
-            extensionManager.getHandlers().add(this);
+            extensionManager.registerHandler(this);
         }
     }
 
