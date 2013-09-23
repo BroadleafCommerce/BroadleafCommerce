@@ -24,18 +24,18 @@ import org.broadleafcommerce.cms.web.BroadleafProcessURLFilter;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyTagSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.BodyTagSupport;
 
 /**
  * Tag used to display structured content that is maintained with the Broadleaf CMS.
@@ -136,7 +136,6 @@ public class DisplayContentTag extends BodyTagSupport {
     public int doStartTag() throws JspException {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         Map<String, Object> mvelParameters = buildMvelParameters(request);
-        SandBox currentSandbox = (SandBox) request.getAttribute(BroadleafProcessURLFilter.SANDBOX_VAR);
         initServices();
 
         List<StructuredContentDTO> contentItems;
@@ -150,12 +149,12 @@ public class DisplayContentTag extends BodyTagSupport {
         int cnt = (count == null) ? Integer.MAX_VALUE : count;
 
         if (structuredContentType == null) {
-            contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, contentName, locale, cnt, mvelParameters, isSecure(request));
+            contentItems = structuredContentService.lookupStructuredContentItemsByName(contentName, locale, cnt, mvelParameters, isSecure(request));
         } else {
             if (contentName == null || "".equals(contentName)) {
-                contentItems = structuredContentService.lookupStructuredContentItemsByType(currentSandbox, structuredContentType, locale, cnt, mvelParameters, isSecure(request));
+                contentItems = structuredContentService.lookupStructuredContentItemsByType(structuredContentType, locale, cnt, mvelParameters, isSecure(request));
             } else {
-                contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, structuredContentType, contentName, locale, cnt, mvelParameters, isSecure(request));
+                contentItems = structuredContentService.lookupStructuredContentItemsByName(structuredContentType, contentName, locale, cnt, mvelParameters, isSecure(request));
             }
         }
                 

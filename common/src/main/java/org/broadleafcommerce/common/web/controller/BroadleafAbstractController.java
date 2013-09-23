@@ -17,6 +17,12 @@
 package org.broadleafcommerce.common.web.controller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.deeplink.DeepLink;
+import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -67,6 +73,18 @@ public abstract class BroadleafAbstractController {
             return ctxPath;
         }
         
+    }
+    
+    protected <T> void addDeepLink(ModelAndView model, DeepLinkService<T> service, T item) {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc.isAdminMode()) {
+            List<DeepLink> links = service.getLinks(item);
+            if (links.size() == 1) {
+                model.addObject("adminDeepLink", links.get(0));
+            } else {
+                model.addObject("adminDeepLink", links);
+            }
+        }
     }
 
 }

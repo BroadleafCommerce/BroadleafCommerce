@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -30,8 +31,6 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
@@ -84,7 +83,7 @@ import javax.persistence.Table;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StructuredContentImpl_baseStructuredContent")
-public class StructuredContentImpl implements StructuredContent {
+public class StructuredContentImpl implements StructuredContent, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -181,25 +180,6 @@ public class StructuredContentImpl implements StructuredContent {
         ruleIdentifier = RuleIdentifier.ORDERITEM)
     protected Set<StructuredContentItemCriteria> qualifyingItemCriteria = new HashSet<StructuredContentItemCriteria>();
 
-    @Column(name = "ORIG_ITEM_ID")
-    @Index(name="SC_ORIG_ITEM_ID_INDEX", columnNames={"ORIG_ITEM_ID"})
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Original_Item_Id", order = 1, 
-        group = Presentation.Group.Name.Internal, groupOrder = Presentation.Group.Order.Internal,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Long originalItemId;
-
-    @ManyToOne (targetEntity = SandBoxImpl.class)
-    @JoinColumn(name="SANDBOX_ID")
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Content_SandBox", order = 1, 
-        group = Presentation.Group.Name.Internal, groupOrder = Presentation.Group.Order.Internal,
-        excluded = true)
-    protected SandBox sandbox;
-
-    @ManyToOne(targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "ORIG_SANDBOX_ID")
-    @AdminPresentation(excluded = true)
-    protected SandBox originalSandBox;
-
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
     @JoinColumn(name="SC_TYPE_ID")
     @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Type", order = 2, prominent = true,
@@ -215,31 +195,11 @@ public class StructuredContentImpl implements StructuredContent {
     @BatchSize(size = 20)
     protected Map<String,StructuredContentField> structuredContentFields = new HashMap<String,StructuredContentField>();
 
-    @Column(name = "DELETED_FLAG")
-    @Index(name="SC_DLTD_FLG_INDX", columnNames={"DELETED_FLAG"})
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Deleted", order = 2, 
-        group = Presentation.Group.Name.Internal, groupOrder = Presentation.Group.Order.Internal,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Boolean deletedFlag = false;
-
-    @Column(name = "ARCHIVED_FLAG")
-    @Index(name="SC_ARCHVD_FLG_INDX", columnNames={"ARCHIVED_FLAG"})
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Archived", order = 3, 
-        group = Presentation.Group.Name.Internal, groupOrder = Presentation.Group.Order.Internal,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Boolean archivedFlag = false;
-
     @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order = 4, 
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
     @Column(name = "OFFLINE_FLAG")
     @Index(name="SC_OFFLN_FLG_INDX", columnNames={"OFFLINE_FLAG"})
     protected Boolean offlineFlag = false;
-
-    @Column (name = "LOCKED_FLAG")
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Is_Locked", 
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="SC_LCKD_FLG_INDX", columnNames={"LOCKED_FLAG"})
-    protected Boolean lockedFlag = false;
 
     @Override
     public Long getId() {
@@ -272,16 +232,6 @@ public class StructuredContentImpl implements StructuredContent {
     }
 
     @Override
-    public SandBox getSandbox() {
-        return sandbox;
-    }
-
-    @Override
-    public void setSandbox(SandBox sandbox) {
-        this.sandbox = sandbox;
-    }
-
-    @Override
     public StructuredContentType getStructuredContentType() {
         return structuredContentType;
     }
@@ -299,20 +249,6 @@ public class StructuredContentImpl implements StructuredContent {
     @Override
     public void setStructuredContentFields(Map<String, StructuredContentField> structuredContentFields) {
         this.structuredContentFields = structuredContentFields;
-    }
-
-    @Override
-    public Boolean getDeletedFlag() {
-        if (deletedFlag == null) {
-            return Boolean.FALSE;
-        } else {
-            return deletedFlag;
-        }
-    }
-
-    @Override
-    public void setDeletedFlag(Boolean deletedFlag) {
-        this.deletedFlag = deletedFlag;
     }
 
     @Override
@@ -340,30 +276,6 @@ public class StructuredContentImpl implements StructuredContent {
     }
 
     @Override
-    public Long getOriginalItemId() {
-        return originalItemId;
-    }
-
-    @Override
-    public void setOriginalItemId(Long originalItemId) {
-        this.originalItemId = originalItemId;
-    }
-
-    @Override
-    public Boolean getArchivedFlag() {
-        if (archivedFlag == null) {
-            return Boolean.FALSE;
-        } else {
-            return archivedFlag;
-        }
-    }
-
-    @Override
-    public void setArchivedFlag(Boolean archivedFlag) {
-        this.archivedFlag = archivedFlag;
-    }
-
-    @Override
     public AdminAuditable getAuditable() {
         return auditable;
     }
@@ -371,30 +283,6 @@ public class StructuredContentImpl implements StructuredContent {
     @Override
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
-    }
-
-    @Override
-    public Boolean getLockedFlag() {
-        if (lockedFlag == null) {
-            return Boolean.FALSE;
-        } else {
-            return lockedFlag;
-        }
-    }
-
-    @Override
-    public void setLockedFlag(Boolean lockedFlag) {
-        this.lockedFlag = lockedFlag;
-    }
-
-    @Override
-    public SandBox getOriginalSandBox() {
-        return originalSandBox;
-    }
-
-    @Override
-    public void setOriginalSandBox(SandBox originalSandBox) {
-        this.originalSandBox = originalSandBox;
     }
 
     @Override
@@ -419,38 +307,6 @@ public class StructuredContentImpl implements StructuredContent {
     
     public String getMainEntityName() {
         return getContentName();
-    }
-
-    @Override
-    public StructuredContent cloneEntity() {
-        StructuredContentImpl newContent = new StructuredContentImpl();
-        newContent.archivedFlag = archivedFlag;
-        newContent.contentName = contentName;
-        newContent.deletedFlag = deletedFlag;
-        newContent.locale = locale;
-        newContent.offlineFlag = offlineFlag;
-        newContent.originalItemId = originalItemId;
-        newContent.priority = priority;
-        newContent.structuredContentType = structuredContentType;
-
-        Map<String, StructuredContentRule> ruleMap = newContent.getStructuredContentMatchRules();
-        for (String key : structuredContentMatchRules.keySet()) {
-            StructuredContentRule newField = structuredContentMatchRules.get(key).cloneEntity();
-            ruleMap.put(key, newField);
-        }
-
-        Set<StructuredContentItemCriteria> criteriaList = newContent.getQualifyingItemCriteria();
-        for (StructuredContentItemCriteria structuredContentItemCriteria : qualifyingItemCriteria) {
-            StructuredContentItemCriteria newField = structuredContentItemCriteria.cloneEntity();
-            criteriaList.add(newField);
-        }
-
-        Map<String, StructuredContentField> fieldMap = newContent.getStructuredContentFields();
-        for (StructuredContentField field : structuredContentFields.values()) {
-            StructuredContentField newField = field.cloneEntity();
-            fieldMap.put(newField.getFieldKey(), newField);
-        }
-        return newContent;
     }
     
     public static class Presentation {

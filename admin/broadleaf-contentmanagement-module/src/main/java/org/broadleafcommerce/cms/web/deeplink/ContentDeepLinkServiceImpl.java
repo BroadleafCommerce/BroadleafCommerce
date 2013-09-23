@@ -34,7 +34,7 @@ public class ContentDeepLinkServiceImpl extends DeepLinkService<StructuredConten
     protected String structuredContentAdminPath;
 
     @Override
-    public List<DeepLink> getLinks(StructuredContentDTO item) {
+    protected List<DeepLink> getLinksInternal(StructuredContentDTO item) {
         List<DeepLink> links = new ArrayList<DeepLink>();
 
         links.add(new DeepLink()

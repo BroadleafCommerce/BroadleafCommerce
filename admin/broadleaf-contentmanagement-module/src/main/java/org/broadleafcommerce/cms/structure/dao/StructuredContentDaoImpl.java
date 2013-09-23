@@ -17,7 +17,6 @@
 package org.broadleafcommerce.cms.structure.dao;
 
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
@@ -25,14 +24,11 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -90,20 +86,6 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
             return new ArrayList<StructuredContent>();
         }
     }
-    
-    @Override
-    public Map<String, StructuredContentField> readFieldsForStructuredContentItem(StructuredContent sc) {
-        Query query = em.createNamedQuery("BC_READ_CONTENT_FIELDS_BY_CONTENT_ID");
-        query.setParameter("structuredContent", sc);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-
-        List<StructuredContentField> fields = query.getResultList();
-        Map<String, StructuredContentField> fieldMap = new HashMap<String, StructuredContentField>();
-        for (StructuredContentField scField : fields) {
-            fieldMap.put(scField.getFieldKey(), scField);
-        }
-        return fieldMap;
-    }
 
     @Override
     public StructuredContent addOrUpdateContentItem(StructuredContent content) {
@@ -124,94 +106,61 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
     }
 
     @Override
-    public List<StructuredContent> findActiveStructuredContentByType(SandBox sandBox, StructuredContentType type, Locale locale) {
-        return findActiveStructuredContentByType(sandBox, type, locale, null);
+    public List<StructuredContent> findActiveStructuredContentByType(StructuredContentType type, Locale locale) {
+        return findActiveStructuredContentByType(type, locale, null);
     }
 
     @Override
-    public List<StructuredContent> findActiveStructuredContentByType(SandBox sandBox, StructuredContentType type, Locale fullLocale, Locale languageOnlyLocale) {
-        String queryName = null;
+    public List<StructuredContent> findActiveStructuredContentByType(StructuredContentType type, Locale fullLocale, Locale languageOnlyLocale) {
+        String queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE";
         if (languageOnlyLocale == null)  {
             languageOnlyLocale = fullLocale;
-        }
-        if (sandBox == null) {
-            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE";
-        } else if (SandBoxType.PRODUCTION.equals(sandBox)) {
-            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_PRODUCTION_SANDBOX";
-        } else {
-            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_USER_SANDBOX";
         }
 
         Query query = em.createNamedQuery(queryName);
         query.setParameter("contentType", type);
         query.setParameter("fullLocale", fullLocale);
         query.setParameter("languageOnlyLocale", languageOnlyLocale);
-        if (sandBox != null)  {
-            query.setParameter("sandboxId", sandBox.getId());
-        }
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return query.getResultList();
     }
 
     @Override
-    public List<StructuredContent> findActiveStructuredContentByNameAndType(SandBox sandBox, StructuredContentType type, String name, Locale locale) {
-        return findActiveStructuredContentByNameAndType(sandBox, type, name, locale, null);
+    public List<StructuredContent> findActiveStructuredContentByNameAndType(StructuredContentType type, String name, Locale locale) {
+        return findActiveStructuredContentByNameAndType(type, name, locale, null);
     }
 
     @Override
-    public List<StructuredContent> findActiveStructuredContentByNameAndType(SandBox sandBox, StructuredContentType type, String name, Locale fullLocale, Locale languageOnlyLocale) {
-        String queryName = null;
+    public List<StructuredContent> findActiveStructuredContentByNameAndType(StructuredContentType type, String name, Locale fullLocale, Locale languageOnlyLocale) {
         if (languageOnlyLocale == null)  {
             languageOnlyLocale = fullLocale;
         }
-        final Query query;
-        if (sandBox == null) {
-            query = em.createNamedQuery("BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME");
-        } else if (SandBoxType.PRODUCTION.equals(sandBox)) {
-            query = em.createNamedQuery("BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME_AND_PRODUCTION_SANDBOX");
-            query.setParameter("sandbox", sandBox);
-        } else {
-            query = em.createNamedQuery("BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME_AND_USER_SANDBOX");
-            query.setParameter("sandboxId", sandBox.getId());
-        }
-
+        final Query query = em.createNamedQuery("BC_ACTIVE_STRUCTURED_CONTENT_BY_TYPE_AND_NAME");
         query.setParameter("contentType", type);
         query.setParameter("contentName", name);
         query.setParameter("fullLocale", fullLocale);
         query.setParameter("languageOnlyLocale", languageOnlyLocale);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return query.getResultList();
     }
 
     @Override
-    public List<StructuredContent> findActiveStructuredContentByName(SandBox sandBox, String name, Locale locale) {
-        return findActiveStructuredContentByName(sandBox, name, locale, null);
+    public List<StructuredContent> findActiveStructuredContentByName(String name, Locale locale) {
+        return findActiveStructuredContentByName(name, locale, null);
     }
 
     @Override
-    public List<StructuredContent> findActiveStructuredContentByName(SandBox sandBox, String name, Locale fullLocale, Locale languageOnlyLocale) {
-        String queryName = null;
+    public List<StructuredContent> findActiveStructuredContentByName(String name, Locale fullLocale, Locale languageOnlyLocale) {
+        String queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_NAME";
         if (languageOnlyLocale == null)  {
             languageOnlyLocale = fullLocale;
-        }
-        if (sandBox == null) {
-            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_NAME";
-        } else if (SandBoxType.PRODUCTION.equals(sandBox)) {
-            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_NAME_AND_PRODUCTION_SANDBOX";
-        } else {
-            queryName = "BC_ACTIVE_STRUCTURED_CONTENT_BY_NAME_AND_USER_SANDBOX";
         }
 
         Query query = em.createNamedQuery(queryName);
         query.setParameter("contentName", name);
         query.setParameter("fullLocale", fullLocale);
         query.setParameter("languageOnlyLocale", languageOnlyLocale);
-        if (sandBox != null) {
-            query.setParameter("sandbox", sandBox);
-        }
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        //query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return query.getResultList();
     }

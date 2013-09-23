@@ -233,7 +233,6 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                     structuredContentField.setStructuredContent(null);
                 }
             }
-            structuredContentService.updateStructuredContent(structuredContent, getSandBox());
 
             return fetchEntityBasedOnId(structuredContentId);
         } catch (Exception e) {

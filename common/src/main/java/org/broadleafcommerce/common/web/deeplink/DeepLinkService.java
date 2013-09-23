@@ -38,6 +38,10 @@ public abstract class DeepLinkService<T> {
         return propMgr.getProperty(ADMIN_BASE_URL_PROP);
     }
 
-    public abstract List<DeepLink> getLinks(T item);
+    public final List<DeepLink> getLinks(T item) {
+        return getLinksInternal(item);
+    }
+
+    protected abstract List<DeepLink> getLinksInternal(T item);
 
 }

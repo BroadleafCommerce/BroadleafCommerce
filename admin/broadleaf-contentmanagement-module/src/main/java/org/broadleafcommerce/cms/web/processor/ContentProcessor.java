@@ -272,10 +272,10 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
      * @return
      */
     protected List<StructuredContentDTO> getContentItems(String contentName, Integer maxResults, HttpServletRequest request,
-                                                        Map<String, Object> mvelParameters,
-                                                        SandBox currentSandbox,
-                                                        StructuredContentType structuredContentType,
-                                                        Locale locale, Arguments arguments, Element element) {
+            Map<String, Object> mvelParameters,
+            SandBox currentSandbox,
+            StructuredContentType structuredContentType,
+            Locale locale, Arguments arguments, Element element) {
         List<StructuredContentDTO> contentItems;
         if (structuredContentType == null) {
             if (contentName == null || "".equals(contentName)) {
@@ -285,20 +285,20 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
                 // e.g. (For the AdvancedCMS module you can lookup by "layoutArea")
                 extensionManager.getProxy().lookupContentByElementAttribute(contentItems, currentSandbox, locale, maxResults, mvelParameters, isSecure(request), element);
 
-            }   else {
-                contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, contentName, locale, maxResults, mvelParameters, isSecure(request));
+            } else {
+                contentItems = structuredContentService.lookupStructuredContentItemsByName(contentName, locale, maxResults, mvelParameters, isSecure(request));
             }
         } else {
             if (contentName == null || "".equals(contentName)) {
-                contentItems = structuredContentService.lookupStructuredContentItemsByType(currentSandbox, structuredContentType, locale, maxResults, mvelParameters, isSecure(request));
+                contentItems = structuredContentService.lookupStructuredContentItemsByType(structuredContentType, locale, maxResults, mvelParameters, isSecure(request));
             } else {
-                contentItems = structuredContentService.lookupStructuredContentItemsByName(currentSandbox, structuredContentType, contentName, locale, maxResults, mvelParameters, isSecure(request));
+                contentItems = structuredContentService.lookupStructuredContentItemsByName(structuredContentType, contentName, locale, maxResults, mvelParameters, isSecure(request));
             }
         }
 
         //add additional fields to the model
         extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
-        
+
         return contentItems;
     }
     
