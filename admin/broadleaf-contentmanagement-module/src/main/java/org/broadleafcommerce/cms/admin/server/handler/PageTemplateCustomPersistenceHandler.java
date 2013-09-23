@@ -228,7 +228,6 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     pageField.setPage(null);
                 }
             }
-            pageService.updatePage(page, getSandBox());
 
             return fetchEntityBasedOnId(pageId);
         } catch (Exception e) {

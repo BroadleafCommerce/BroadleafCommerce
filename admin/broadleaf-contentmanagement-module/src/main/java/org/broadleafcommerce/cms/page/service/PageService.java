@@ -16,14 +16,13 @@
 
 package org.broadleafcommerce.cms.page.service;
 
+import net.sf.ehcache.Cache;
+
 import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.dto.PageDTO;
-import org.broadleafcommerce.cms.page.message.ArchivedPagePublisher;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.hibernate.Criteria;
 
 import java.util.List;
 import java.util.Map;
@@ -59,59 +58,6 @@ public interface PageService {
     public PageTemplate savePageTemplate(PageTemplate template);
 
     /**
-     * Returns the page-fields associated with the passed in page-id.
-     * This is preferred over the direct access from Page so that the
-     * two items can be cached distinctly
-     *
-     * @param pageId - The id of the page.
-     * @return The associated page.
-     */
-    public Map<String,PageField> findPageFieldsByPageId(Long pageId);
-
-    /**
-     * This method is intended to be called from within the CMS
-     * admin only.
-     *
-     * Adds the passed in page to the DB.
-     *
-     * Creates a sandbox/site if one doesn't already exist.
-     */
-    public Page addPage(Page page, SandBox destinationSandbox);
-
-    /**
-     * This method is intended to be called from within the CMS
-     * admin only.
-     *
-     * Updates the page according to the following rules:
-     *
-     * 1.  If sandbox has changed from null to a value
-     * This means that the user is editing an item in production and
-     * the edit is taking place in a sandbox.
-     *
-     * Clone the page and add it to the new sandbox and set the cloned
-     * page's originalPageId to the id of the page being updated.
-     *
-     * 2.  If the sandbox has changed from one value to another
-     * This means that the user is moving the item from one sandbox
-     * to another.
-     *
-     * Update the siteId for the page to the one associated with the
-     * new sandbox
-     *
-     * 3.  If the sandbox has changed from a value to null
-     * This means that the item is moving from the sandbox to production.
-     *
-     * If the page has an originalPageId, then update that page by
-     * setting it's archived flag to true.
-     *
-     * Then, update the siteId of the page being updated to be the
-     * siteId of the original page.
-     *
-     * 4.  If the sandbox is the same then just update the page.
-     */
-    public Page updatePage(Page page, SandBox sandbox);
-
-    /**
      * Looks up the page from the backend datastore.   Processes the page's fields to
      * fix the URL if the site has overridden the URL for images.   If secure is true
      * and images are being overridden, the system will use https.
@@ -123,22 +69,7 @@ public interface PageService {
      * @param secure - set to true if current request is over HTTPS
      * @return
      */
-    public PageDTO findPageByURI(SandBox currentSandbox, Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure);
-
-    /**
-     * If deleting and item where page.originalPageId != null
-     * then the item is deleted from the database.
-     *
-     * If the originalPageId is null, then this method marks
-     * the items as deleted within the passed in sandbox.
-     *
-     * @param page
-     * @param destinationSandbox
-     * @return
-     */
-    public void deletePage(Page page, SandBox destinationSandbox);
-
-    public List<Page> findPages(SandBox sandBox, Criteria criteria);
+    public PageDTO findPageByURI(Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure);
     
     /**
      * Returns all pages, regardless of any sandbox they are apart of
@@ -152,8 +83,6 @@ public interface PageService {
      */
     public List<PageTemplate> readAllPageTemplates();
 
-    public Long countPages(SandBox sandBox, Criteria criteria);
-
     /**
      * Call to evict both secure and non-secure pages matching
      * the passed in key.
@@ -161,12 +90,15 @@ public interface PageService {
      * @param baseKey
      */
     public void removePageFromCache(String baseKey);
-    
-    public List<ArchivedPagePublisher> getArchivedPageListeners();
 
-    public void setArchivedPageListeners(List<ArchivedPagePublisher> archivedPageListeners);
+    /**
+     * Call to evict a page for a sandbox
+     *
+     * @param sandBox The sandbox in which the page resides
+     * @param p The page instance to evict from cache
+     */
+    public void removePageFromCache(SandBox sandBox, Page p);
 
-    public boolean isAutomaticallyApproveAndPromotePages();
+    Cache getPageCache();
 
-    public void setAutomaticallyApproveAndPromotePages(boolean automaticallyApproveAndPromotePages);
 }

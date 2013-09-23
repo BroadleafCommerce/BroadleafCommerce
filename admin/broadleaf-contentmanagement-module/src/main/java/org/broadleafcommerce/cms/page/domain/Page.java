@@ -16,13 +16,13 @@
 
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by bpolster.
@@ -48,30 +48,6 @@ public interface Page extends Serializable {
     public Map<String, PageField> getPageFields();
 
     public void setPageFields(Map<String, PageField> pageFields);
-
-    public Boolean getDeletedFlag();
-
-    public void setDeletedFlag(Boolean deletedFlag);
-
-    public Boolean getArchivedFlag();
-
-    public void setArchivedFlag(Boolean archivedFlag);
-
-    public SandBox getSandbox();
-
-    public void setSandbox(SandBox sandbox);
-
-    public Boolean getLockedFlag();
-
-    public void setLockedFlag(Boolean lockedFlag);
-
-    public Long getOriginalPageId();
-
-    public void setOriginalPageId(Long originalPageId);
-
-    public SandBox getOriginalSandBox();
-
-    public void setOriginalSandBox(SandBox originalSandBox);
 
     public AdminAuditable getAuditable();
 
@@ -143,8 +119,5 @@ public interface Page extends Serializable {
      * @param qualifyingItemCriteria
      */
     public void setQualifyingItemCriteria(@Nullable Set<PageItemCriteria> qualifyingItemCriteria);
-    
-    
 
-    public Page cloneEntity();
 }

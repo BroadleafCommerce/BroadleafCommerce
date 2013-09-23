@@ -17,7 +17,6 @@
 package org.broadleafcommerce.cms.page.dao;
 
 import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageImpl;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
@@ -25,14 +24,10 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
-import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -77,20 +72,6 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public Map<String, PageField> readPageFieldsByPage(Page page) {
-        Query query = em.createNamedQuery("BC_READ_PAGE_FIELDS_BY_PAGE_ID");
-        query.setParameter("page", page);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-
-        List<PageField> pageFields = query.getResultList();
-        Map<String, PageField> pageFieldMap = new HashMap<String, PageField>();
-        for (PageField pageField : pageFields) {
-            pageFieldMap.put(pageField.getFieldKey(), pageField);
-        }
-        return pageFieldMap;
-    }
-
-    @Override
     public Page updatePage(Page page) {
         return em.merge(page);
     }
@@ -109,24 +90,13 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public List<Page> findPageByURI(SandBox sandBox, Locale fullLocale, Locale languageOnlyLocale, String uri) {
+    public List<Page> findPageByURI(Locale fullLocale, Locale languageOnlyLocale, String uri) {
         Query query;
 
         if (languageOnlyLocale == null)  {
             languageOnlyLocale = fullLocale;
         }
-
-        // locale
-        if (sandBox == null) {
-            query = em.createNamedQuery("BC_READ_PAGE_BY_URI");
-        } else if (SandBoxType.PRODUCTION.equals(sandBox.getSandBoxType())) {
-            query = em.createNamedQuery("BC_READ_PAGE_BY_URI_AND_PRODUCTION_SANDBOX");
-            query.setParameter("sandbox", sandBox);
-        } else {
-            query = em.createNamedQuery("BC_READ_PAGE_BY_URI_AND_USER_SANDBOX");
-            query.setParameter("sandboxId", sandBox.getId());
-        }
-
+        query = em.createNamedQuery("BC_READ_PAGE_BY_URI");
         query.setParameter("fullLocale", fullLocale);
         query.setParameter("languageOnlyLocale", languageOnlyLocale);
         query.setParameter("uri", uri);
@@ -165,8 +135,8 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public List<Page> findPageByURI(SandBox sandBox, Locale locale, String uri) {
-        return findPageByURI(sandBox, locale, null, uri);
+    public List<Page> findPageByURI(Locale locale, String uri) {
+        return findPageByURI(locale, null, uri);
     }
 
     @Override

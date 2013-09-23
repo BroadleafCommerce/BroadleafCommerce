@@ -17,13 +17,10 @@
 package org.broadleafcommerce.cms.page.dao;
 
 import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -41,8 +38,6 @@ public interface PageDao {
      * @return the database-saved {@link PageTemplate}
      */
     public PageTemplate savePageTemplate(PageTemplate template);
-
-    public Map<String, PageField> readPageFieldsByPage(Page page);
 
     public Page updatePage(Page page);
 
@@ -62,9 +57,9 @@ public interface PageDao {
      */
     public List<PageTemplate> readAllPageTemplates();
     
-    public List<Page> findPageByURI(SandBox sandBox, Locale fullLocale, Locale languageOnlyLocale, String uri);
+    public List<Page> findPageByURI(Locale fullLocale, Locale languageOnlyLocale, String uri);
 
-    public List<Page> findPageByURI(SandBox sandBox, Locale locale, String uri);
+    public List<Page> findPageByURI(Locale locale, String uri);
 
     public void detachPage(Page page);
 }

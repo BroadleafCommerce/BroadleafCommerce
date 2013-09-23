@@ -26,10 +26,11 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This handler mapping works with the Page entity to determine if a page has been configured for
@@ -61,7 +62,7 @@ public class PageHandlerMapping extends BLCAbstractHandlerMapping {
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getRequestURIWithoutContext() != null) {
-            PageDTO page = pageService.findPageByURI(context.getSandbox(), context.getLocale(), context.getRequestURIWithoutContext(), buildMvelParameters(request), context.isSecure());
+            PageDTO page = pageService.findPageByURI(context.getLocale(), context.getRequestURIWithoutContext(), buildMvelParameters(request), context.isSecure());
 
             if (page != null && ! (page instanceof NullPageDTO)) {
                 context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, page);

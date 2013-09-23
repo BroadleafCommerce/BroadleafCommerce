@@ -18,8 +18,6 @@ package org.broadleafcommerce.cms.admin.server.handler;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.domain.PageImpl;
 import org.broadleafcommerce.cms.page.domain.PageItemCriteria;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -32,11 +30,6 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
 import java.util.Map;
-
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 /**
  * @author Jeff Fischer
@@ -79,9 +72,6 @@ public class PageItemCriteriaCustomPersistenceHandler extends CustomPersistenceH
             PageItemCriteria adminInstance = (PageItemCriteria) Class.forName(entity.getType()[0]).newInstance();
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageItemCriteria.class.getName(), persistencePerspective);
             adminInstance = (PageItemCriteria) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            if (adminInstance.getPage().getLockedFlag()) {
-                throw new IllegalArgumentException("Unable to update a locked record");
-            }
             adminInstance = (PageItemCriteria) dynamicEntityDao.merge(adminInstance);
             Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
@@ -100,36 +90,7 @@ public class PageItemCriteriaCustomPersistenceHandler extends CustomPersistenceH
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageItemCriteria.class.getName(), persistencePerspective);
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             PageItemCriteria adminInstance = (PageItemCriteria) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            if (adminInstance.getPage().getLockedFlag()) {
-                /*
-                This may be an attempt to delete a target item criteria off an otherwise un-edited, production StructuredContent instance
-                 */
-                CriteriaBuilder criteriaBuilder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
-                CriteriaQuery<Page> query = criteriaBuilder.createQuery(Page.class);
-                Root<PageImpl> root = query.from(PageImpl.class);
-                query.where(criteriaBuilder.and(criteriaBuilder.equal(root.get("archivedFlag"), Boolean.FALSE), criteriaBuilder.equal(root.get("originalPageId"), adminInstance.getPage().getId())));
-                query.select(root);
-                TypedQuery<Page> scQuery = dynamicEntityDao.getStandardEntityManager().createQuery(query);
-                try {
-                    checkCriteria: {
-                        Page myContent = scQuery.getSingleResult();
-                        for (PageItemCriteria itemCriteria : myContent.getQualifyingItemCriteria()) {
-                            if (itemCriteria.getMatchRule().equals(adminInstance.getMatchRule()) && itemCriteria.getQuantity().equals(adminInstance.getQuantity())) {
-                                //manually set the values - otherwise unwanted properties will be set
-                                itemCriteria.setMatchRule(entity.findProperty("orderItemMatchRule").getValue());
-                                itemCriteria.setQuantity(Integer.parseInt(entity.findProperty("quantity").getValue()));
-                                adminInstance = itemCriteria;
-                                break checkCriteria;
-                            }
-                        }
-                        throw new RuntimeException("Unable to find an item criteria to update");
-                    }
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("Unable to update a locked record");
-                }
-            } else {
-                adminInstance = (PageItemCriteria) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            }
+            adminInstance = (PageItemCriteria) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             adminInstance = (PageItemCriteria) dynamicEntityDao.merge(adminInstance);
             Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
@@ -147,31 +108,6 @@ public class PageItemCriteriaCustomPersistenceHandler extends CustomPersistenceH
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(PageItemCriteria.class.getName(), persistencePerspective);
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             PageItemCriteria adminInstance = (PageItemCriteria) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-
-            if (adminInstance.getPage().getLockedFlag()) {
-                /*
-                This may be an attempt to delete a target item criteria off an otherwise un-edited, production StructuredContent instance
-                 */
-                CriteriaBuilder criteriaBuilder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
-                CriteriaQuery<Page> query = criteriaBuilder.createQuery(Page.class);
-                Root<PageImpl> root = query.from(PageImpl.class);
-                query.where(criteriaBuilder.and(criteriaBuilder.equal(root.get("archivedFlag"), Boolean.FALSE), criteriaBuilder.equal(root.get("originalPageId"), adminInstance.getPage().getId())));
-                query.select(root);
-                TypedQuery<Page> scQuery = dynamicEntityDao.getStandardEntityManager().createQuery(query);
-                try {
-                    Page myContent = scQuery.getSingleResult();
-                    for (PageItemCriteria itemCriteria : myContent.getQualifyingItemCriteria()) {
-                        if (itemCriteria.getMatchRule().equals(adminInstance.getMatchRule()) && itemCriteria.getQuantity().equals(adminInstance.getQuantity())) {
-                            myContent.getQualifyingItemCriteria().remove(itemCriteria);
-                            return;
-                        }
-                    }
-                    throw new RuntimeException("Unable to find an item criteria to delete");
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("Unable to update a locked record");
-                }
-            }
-
             dynamicEntityDao.remove(adminInstance);
         } catch (Exception e) {
             throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);

@@ -3,14 +3,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
-    <named-query name="BC_READ_PAGE_FIELDS_BY_PAGE_ID" >
-        <query>SELECT pageField
-               FROM org.broadleafcommerce.cms.page.domain.PageField pageField
-               WHERE pageField.page = :page
-        </query>
-    </named-query>
-
-
     <named-query name="BC_READ_PAGE_TEMPLATES_FOR_DEFAULT_LOCALE" >
         <query>SELECT pageTemplate
                FROM org.broadleafcommerce.cms.page.domain.PageTemplate pageTemplate
@@ -24,41 +16,8 @@
                FROM org.broadleafcommerce.cms.page.domain.PageImpl page
                WHERE
                   page.fullUrl = :uri AND
-                  page.sandbox is null AND
                   (page.pageTemplate.locale = :fullLocale OR page.pageTemplate.locale = :languageOnlyLocale) AND
-                  page.archivedFlag = false AND
-                  page.deletedFlag = false AND
                   (page.offlineFlag is null OR page.offlineFlag = false)
-        </query>
-    </named-query>
-
-    <named-query name="BC_READ_PAGE_BY_URI_AND_PRODUCTION_SANDBOX" >
-        <query>SELECT page
-               FROM org.broadleafcommerce.cms.page.domain.PageImpl page
-               WHERE
-                  page.fullUrl = :uri AND
-                  page.sandbox = :sandbox AND
-                  (page.pageTemplate.locale = :fullLocale OR page.pageTemplate.locale = :languageOnlyLocale) AND
-                  page.archivedFlag = false AND
-                  page.deletedFlag = false AND
-                  (page.offlineFlag is null OR page.offlineFlag = false)
-        </query>
-    </named-query>
-
-    <named-query name="BC_READ_PAGE_BY_URI_AND_USER_SANDBOX" >
-        <query>SELECT page
-               FROM org.broadleafcommerce.cms.page.domain.PageImpl page
-               WHERE
-                  page.fullUrl = :uri AND
-                  (page.pageTemplate.locale = :fullLocale OR page.pageTemplate.locale = :languageOnlyLocale) AND
-                  page.archivedFlag = false AND
-                  page.deletedFlag = false AND
-                  page.id in
-                    (SELECT sandboxItem.temporaryItemId
-                     FROM org.broadleafcommerce.openadmin.server.domain.SandBoxItemImpl sandboxItem
-                     WHERE (sandboxItem.originalSandBoxId = :sandboxId OR sandboxItem.sandBoxId = :sandboxId) AND
-                           sandboxItem.archivedFlag = 'N' AND
-                           sandboxItem.temporaryItemId = page.id)
         </query>
     </named-query>
 

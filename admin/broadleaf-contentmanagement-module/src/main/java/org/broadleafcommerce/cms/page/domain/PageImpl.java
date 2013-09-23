@@ -28,8 +28,6 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
@@ -131,44 +129,6 @@ public class PageImpl implements Page, AdminMainEntity {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @BatchSize(size = 20)
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
-
-    @ManyToOne (targetEntity = SandBoxImpl.class)
-    @JoinColumn(name="SANDBOX_ID")
-    @AdminPresentation(excluded = true)
-    protected SandBox sandbox;
-
-    @ManyToOne(targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "ORIG_SANDBOX_ID")
-    @AdminPresentation(excluded = true)
-    protected SandBox originalSandBox;
-
-    @Column (name = "DELETED_FLAG")
-    @Index(name="PAGE_DLTD_FLG_INDX", columnNames={"DELETED_FLAG"})
-    @AdminPresentation(friendlyName = "PageImpl_Deleted", order = 2, 
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Boolean deletedFlag = false;
-
-    @Column (name = "ARCHIVED_FLAG")
-    @AdminPresentation(friendlyName = "PageImpl_Archived", order = 5, 
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="PAGE_ARCHVD_FLG_INDX", columnNames={"ARCHIVED_FLAG"})
-    protected Boolean archivedFlag = false;
-
-    @Column (name = "LOCKED_FLAG")
-    @AdminPresentation(friendlyName = "PageImpl_Is_Locked", 
-        group = Presentation.Group.Name.Page, groupOrder = Presentation.Group.Order.Page,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="PAGE_LCKD_FLG_INDX", columnNames={"LOCKED_FLAG"})
-    protected Boolean lockedFlag = false;
-
-    @Column (name = "ORIG_PAGE_ID")
-    @AdminPresentation(friendlyName = "PageImpl_Original_Page_ID", order = 6, 
-        group = Presentation.Group.Name.Page, groupOrder = Presentation.Group.Order.Page,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="ORIG_PAGE_ID_INDX", columnNames={"ORIG_PAGE_ID"})
-    protected Long originalPageId;      
     
     @Column(name = "PRIORITY")
     @AdminPresentation(friendlyName = "PageImpl_Priority", order = 3, 
@@ -266,55 +226,6 @@ public class PageImpl implements Page, AdminMainEntity {
     }
 
     @Override
-    public Boolean getDeletedFlag() {
-        if (deletedFlag == null) {
-            return Boolean.FALSE;
-        } else {
-            return deletedFlag;
-        }
-    }
-
-    @Override
-    public void setDeletedFlag(Boolean deletedFlag) {
-        this.deletedFlag = deletedFlag;
-    }
-
-    @Override
-    public Boolean getArchivedFlag() {
-        if (archivedFlag == null) {
-            return Boolean.FALSE;
-        } else {
-            return archivedFlag;
-        }
-    }
-
-    @Override
-    public void setArchivedFlag(Boolean archivedFlag) {
-        this.archivedFlag = archivedFlag;
-    }
-
-    @Override
-    public SandBox getSandbox() {
-        return sandbox;
-    }
-
-    @Override
-    public void setSandbox(SandBox sandbox) {
-        this.sandbox = sandbox;
-    }
-
-
-    @Override
-    public Long getOriginalPageId() {
-        return originalPageId;
-    }
-
-    @Override
-    public void setOriginalPageId(Long originalPageId) {
-        this.originalPageId = originalPageId;
-    }
-
-    @Override
     public String getFullUrl() {
         return fullUrl;
     }
@@ -335,16 +246,6 @@ public class PageImpl implements Page, AdminMainEntity {
     }
 
     @Override
-    public SandBox getOriginalSandBox() {
-        return originalSandBox;
-    }
-
-    @Override
-    public void setOriginalSandBox(SandBox originalSandBox) {
-        this.originalSandBox = originalSandBox;
-    }
-
-    @Override
     public AdminAuditable getAuditable() {
         return auditable;
     }
@@ -352,20 +253,6 @@ public class PageImpl implements Page, AdminMainEntity {
     @Override
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
-    }
-
-    @Override
-    public Boolean getLockedFlag() {
-        if (lockedFlag == null) {
-            return Boolean.FALSE;
-        } else {
-            return lockedFlag;
-        }
-    }
-
-    @Override
-    public void setLockedFlag(Boolean lockedFlag) {
-        this.lockedFlag = lockedFlag;
     }
     
     @Override
@@ -414,42 +301,6 @@ public class PageImpl implements Page, AdminMainEntity {
     public void setQualifyingItemCriteria(Set<PageItemCriteria> qualifyingItemCriteria) {
         this.qualifyingItemCriteria = qualifyingItemCriteria;
     }
-
-    @Override
-    public Page cloneEntity() {
-        PageImpl newPage = new PageImpl();
-
-        newPage.archivedFlag = archivedFlag;
-        newPage.deletedFlag = deletedFlag;
-        newPage.pageTemplate = pageTemplate;
-        newPage.description = description;
-        newPage.sandbox = sandbox;
-        newPage.originalPageId = originalPageId;
-        newPage.offlineFlag = offlineFlag;        
-        newPage.priority = priority;
-        newPage.originalSandBox = originalSandBox;
-        newPage.fullUrl = fullUrl;
-        
-        Map<String, PageRule> ruleMap = newPage.getPageMatchRules();
-        for (String key : pageMatchRules.keySet()) {
-            PageRule newField = pageMatchRules.get(key).cloneEntity();
-            ruleMap.put(key, newField);
-        }
-
-        Set<PageItemCriteria> criteriaList = newPage.getQualifyingItemCriteria();
-        for (PageItemCriteria pageItemCriteria : qualifyingItemCriteria) {
-            PageItemCriteria newField = pageItemCriteria.cloneEntity();
-            criteriaList.add(newField);
-        }
-
-        for (PageField oldPageField: pageFields.values()) {
-            PageField newPageField = oldPageField.cloneEntity();
-            newPageField.setPage(newPage);
-            newPage.getPageFields().put(newPageField.getFieldKey(), newPageField);
-        }
-
-        return newPage;
-    }
     
     public static class Presentation {
         public static class Tab {
@@ -481,5 +332,6 @@ public class PageImpl implements Page, AdminMainEntity {
     public String getMainEntityName() {
         return getFullUrl();
     }
+
 }
 
