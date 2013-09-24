@@ -180,7 +180,7 @@ public class PaymentInfoImpl implements PaymentInfo, CurrencyCodeIdentifiable {
     )
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
-    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentInfoDetailImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentInfoDetailImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @AdminPresentationCollection(friendlyName="PaymentInfoImpl_Details",
             tab = Presentation.Tab.Name.Log, tabOrder = Presentation.Tab.Order.Log)
     protected List<PaymentInfoDetail> details = new ArrayList<PaymentInfoDetail>();
