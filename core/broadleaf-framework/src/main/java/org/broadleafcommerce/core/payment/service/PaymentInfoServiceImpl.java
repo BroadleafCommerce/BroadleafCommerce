@@ -23,9 +23,11 @@ import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @Service("blPaymentInfoService")
 public class PaymentInfoServiceImpl implements PaymentInfoService {
@@ -33,6 +35,7 @@ public class PaymentInfoServiceImpl implements PaymentInfoService {
     @Resource(name = "blPaymentInfoDao")
     protected PaymentInfoDao paymentInfoDao;
 
+    @Transactional(value = "blTransactionManager")
     public PaymentInfo save(PaymentInfo paymentInfo) {
         return paymentInfoDao.save(paymentInfo);
     }
