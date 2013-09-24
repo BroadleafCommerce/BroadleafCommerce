@@ -162,7 +162,7 @@ public abstract class AbstractModule implements PaymentModule {
         // Get the remaining amount to debit for the current transaction
         Money amountToDebit = paymentContext.getRemainingTransactionAmount();
         PaymentInfo paymentInfo = findPaymentInfoFromContext(paymentContext);
-        // Get the amount available to debit = [(amount) - ((amount already captured) - (amount already reversed))]
+        // Get the amount available to debit = [(amount) - (amount already captured) - (amount already reversed)]
         Money amountCaptured = paymentInfo.getPaymentCapturedAmount();
         Money amountAlreadyReversed = paymentInfo.getReverseAuthAmount();
         Money amount = paymentInfo.getAmount();
@@ -204,7 +204,7 @@ public abstract class AbstractModule implements PaymentModule {
         // Get the remaining amount to reverse for the current transaction
         Money amountToReverse = paymentContext.getRemainingTransactionAmount();
         PaymentInfo paymentInfo = findPaymentInfoFromContext(paymentContext);
-        // Get the amount available to reverse = [(amount) - ((amount already captured) - (amount already reversed))]
+        // Get the amount available to reverse = [(amount) - (amount already captured) - (amount already reversed)]
         Money amountCaptured = paymentInfo.getPaymentCapturedAmount();
         Money amountAlreadyReversed = paymentInfo.getReverseAuthAmount();
         Money amount = paymentInfo.getAmount();
