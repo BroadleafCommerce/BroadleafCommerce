@@ -24,6 +24,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.persistence.MapKey;
+
 /**
  * This annotation is used to describe a persisted map structure for use in the
  * admin tool
@@ -125,6 +127,14 @@ public @interface AdminPresentationMap {
      * @return The type for the key of this map
      */
     Class<?> keyClass() default void.class;
+    
+    /**
+     * <p>Optional - only required if you wish to specify a key different from the one on the
+     * {@link MapKey} annotation for the same field.
+     * 
+     * @return the property for the key
+     */
+    String mapKeyValueProperty() default "";
 
     /**
      * <p>Optional - only required if the key field title for this

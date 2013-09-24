@@ -43,6 +43,7 @@ import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 
 /**
@@ -100,6 +101,10 @@ public abstract class AbstractFieldMetadataProvider implements FieldMetadataProv
         if (oneToMany != null) {
             info.setOneToManyMappedBy(oneToMany.mappedBy());
             info.setOneToManyTargetEntity(oneToMany.targetEntity().getName());
+        }
+        MapKey mapKey = field.getAnnotation(MapKey.class);
+        if (mapKey != null) {
+            info.setMapKey(mapKey.name());
         }
         return info;
     }

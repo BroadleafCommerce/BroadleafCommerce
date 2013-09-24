@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -64,7 +65,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @Index(name="PRODUCTATTRIBUTE_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String name;
 
     /** The value. */
