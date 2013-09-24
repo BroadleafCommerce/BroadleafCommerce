@@ -13,7 +13,9 @@
             http://schema.broadleafcommerce.org/mo
             http://schema.broadleafcommerce.org/mo/mo-3.0.xsd">
 
-    <context:component-scan base-package="org.broadleafcommerce.cms"/>
+    <context:component-scan base-package="org.broadleafcommerce.cms">
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.cms.admin.web.controller.*"/>
+    </context:component-scan>
     
     <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">

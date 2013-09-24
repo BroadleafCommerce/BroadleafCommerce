@@ -10,7 +10,7 @@
 
     <!-- Component scan for custom admin controllers that need to occur in the servlet context. All other CMS beans should
         already be picked up in the global component scan included in the root context (from bl-cms-contentCreator-applicationContext)-->
-    <context:component-scan base-package="org.broadleafcommerce.cms.admin.web" />
+    <context:component-scan base-package="org.broadleafcommerce.cms.admin.web.controller" />
     
     <aop:config/>
 
