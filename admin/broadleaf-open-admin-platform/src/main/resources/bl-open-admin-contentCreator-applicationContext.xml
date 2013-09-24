@@ -12,7 +12,9 @@
            http://schema.broadleafcommerce.org/mo
            http://schema.broadleafcommerce.org/mo/mo-3.0.xsd">
 
-    <context:component-scan base-package="org.broadleafcommerce.openadmin"/>
+    <context:component-scan base-package="org.broadleafcommerce.openadmin">
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.web.controller.*"/>
+    </context:component-scan>
 
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
 
