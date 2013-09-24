@@ -17,7 +17,9 @@
 package org.broadleafcommerce.openadmin.web.service;
 
 import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Component;
 
+@Component("blFormBuilderExtensionManager")
 public class FormBuilderExtensionManager extends ExtensionManager<FormBuilderExtensionHandler> {
 
     public FormBuilderExtensionManager() {

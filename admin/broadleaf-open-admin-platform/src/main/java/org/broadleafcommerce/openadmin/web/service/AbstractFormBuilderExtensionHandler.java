@@ -18,37 +18,56 @@ package org.broadleafcommerce.openadmin.web.service;
 
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 /**
  * Abstract class to provide convenience for determining how to handle form 
- * extensions in the admin.
+ * extensions in the admin
  * 
  * @author Kelly Tisdell
- *
+ * @author Phillip Verheyden (phillipuniverse)
  */
 public abstract class AbstractFormBuilderExtensionHandler extends AbstractExtensionHandler implements FormBuilderExtensionHandler {
 
-    @Override
-    public ExtensionResultStatusType addFormExtensions(EntityForm ef) {
-        if (canHandle(ef)) {
-            handleFormExtensions(ef);
-            return ExtensionResultStatusType.HANDLED;
-        }
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
     /**
-     * Determine how to handle this.
+     * Determine if e to handle this.
      * @param ef
      * @return
      */
     protected abstract boolean canHandle(EntityForm ef);
 
-    /**
-     * Allows you to do things like add a button to a form.
-     * @param ef
-     */
-    protected abstract void handleFormExtensions(EntityForm ef);
+    protected abstract void handleModifyUnpopulatedEntityForm(EntityForm ef);
+    
+    protected abstract void handleModifyPopulatedEntityForm(EntityForm ef, Entity entity);
+    
+    protected abstract void handleModifyDetailEntityForm(EntityForm ef);
 
+    @Override
+    public ExtensionResultStatusType modifyUnpopulatedEntityForm(EntityForm ef) {
+        if (canHandle(ef)) {
+            handleModifyUnpopulatedEntityForm(ef);
+            return ExtensionResultStatusType.HANDLED;
+        }
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType modifyPopulatedEntityForm(EntityForm ef, Entity entity) {
+        if (canHandle(ef)) {
+            handleModifyPopulatedEntityForm(ef, entity);
+            return ExtensionResultStatusType.HANDLED;
+        }
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType modifyDetailEntityForm(EntityForm ef) {
+        if (canHandle(ef)) {
+            handleModifyDetailEntityForm(ef);
+            return ExtensionResultStatusType.HANDLED;
+        }
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+    
 }
