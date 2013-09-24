@@ -125,6 +125,32 @@ public class ListGrid {
         getToolbarActions().add(action);
     }
     
+    public void removeAllToolbarActions() {
+        getToolbarActions().clear();
+    }
+    
+    public void removeAllRowActions() {
+        getRowActions().clear();
+    }
+    
+    public ListGridAction findToolbarAction(String actionId) {
+        for (ListGridAction action : getToolbarActions()) {
+            if (action.getActionId().equals(actionId)) {
+                return action;
+            }
+        }
+        return null;
+    }
+    
+    public ListGridAction findRowAction(String actionId) {
+        for (ListGridAction action : getRowActions()) {
+            if (action.getActionId().equals(actionId)) {
+                return action;
+            }
+        }
+        return null;
+    }
+    
     /**
      * This grid is sortable if there is a reorder action defined in the toolbar. If records can be reordered, then the
      * sort functionality doesn't make any sense.
