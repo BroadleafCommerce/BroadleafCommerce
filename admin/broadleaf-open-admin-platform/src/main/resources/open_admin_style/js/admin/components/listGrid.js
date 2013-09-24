@@ -69,7 +69,7 @@
                     BLCAdmin.listGrid.showAlert($listGridContainer, alert.message, alert);
                 }
                 
-                $listGridContainer.trigger('replaced');
+                $listGridContainer.trigger('blc-listgrid-replaced', $listGridContainer);
             });
         },
         
