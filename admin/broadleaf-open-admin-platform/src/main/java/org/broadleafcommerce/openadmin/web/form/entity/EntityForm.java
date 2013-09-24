@@ -52,6 +52,7 @@ public class EntityForm {
     protected String entityType;
     protected String mainEntityName;
     protected String sectionKey;
+    protected Boolean readOnly = false;
     protected Set<Tab> tabs = new TreeSet<Tab>(new Comparator<Tab>() {
         @Override
         public int compare(Tab o1, Tab o2) {
@@ -341,6 +342,10 @@ public class EntityForm {
         getDynamicFormInfos().put(name, info);
     }
     
+    public Boolean getReadOnly() {
+        return readOnly;
+    }
+    
     public void setReadOnly() {
         if (getFields() != null) {
             for (Entry<String, Field> entry : getFields().entrySet()) {
@@ -361,8 +366,9 @@ public class EntityForm {
         }
         
         actions.clear();
+        this.readOnly = true;
     }
-
+    
     public List<EntityFormAction> getActions() {
         List<EntityFormAction> clonedActions = new ArrayList<EntityFormAction>(actions);
         Collections.reverse(clonedActions);
