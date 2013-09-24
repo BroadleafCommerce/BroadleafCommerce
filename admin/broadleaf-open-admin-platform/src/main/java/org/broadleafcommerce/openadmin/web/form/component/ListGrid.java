@@ -17,9 +17,11 @@
 
 package org.broadleafcommerce.openadmin.web.form.component;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 
 import java.util.ArrayList;
@@ -115,6 +117,36 @@ public class ListGrid {
         }
         
         return sb.toString();
+    }
+    
+    /**
+     * Grabs a filtered list of toolbar actions filtered by whether or not they match the same readonly state as the listgrid
+     * and are thus shown on the screen
+     */
+    @SuppressWarnings("unchecked")
+    public List<ListGridAction> getActiveToolbarActions() {
+        return (List<ListGridAction>) CollectionUtils.select(getToolbarActions(), new TypedPredicate<ListGridAction>() {
+            
+            @Override
+            public boolean eval(ListGridAction action) {
+                return action.getForListGridReadOnly().equals(getReadOnly());
+            }
+        });
+    }
+    
+    /**
+     * Grabs a filtered list of row actions filtered by whether or not they match the same readonly state as the listgrid
+     * and are thus shown on the screen
+     */
+    @SuppressWarnings("unchecked")
+    public List<ListGridAction> getActiveRowActions() {
+        return (List<ListGridAction>) CollectionUtils.select(getRowActions(), new TypedPredicate<ListGridAction>() {
+            
+            @Override
+            public boolean eval(ListGridAction action) {
+                return action.getForListGridReadOnly().equals(getReadOnly());
+            }
+        });
     }
     
     public void addRowAction(ListGridAction action) {
