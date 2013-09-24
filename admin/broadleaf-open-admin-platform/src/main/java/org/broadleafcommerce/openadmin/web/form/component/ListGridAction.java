@@ -40,7 +40,7 @@ public class ListGridAction implements Cloneable {
     protected String displayText = "";
     protected String actionId = "";
     protected Boolean forListGridReadOnly = false;
-
+    protected String actionUrlOverride = null;
     
     public ListGridAction(String actionId) {
         this.actionId = actionId;
@@ -82,6 +82,15 @@ public class ListGridAction implements Cloneable {
         setForListGridReadOnly(forListGridReadOnly);
         return this;
     }
+    
+    /**
+     * @see {@link #setActionUrlOverride(String)}
+     */
+    public ListGridAction withActionUrlOverride(String actionUrlOverride) {
+        setActionUrlOverride(actionUrlOverride);
+        return this;
+    }
+    
 
     public String getButtonClass() {
         return buttonClass;
@@ -109,12 +118,13 @@ public class ListGridAction implements Cloneable {
     public String getUrlPostfix() {
         return urlPostfix;
     }
+    
     /**
      * This means different things depending on where this action is on the list grid.
      * <ul>
      *  <li>If this is a toolbar action: this postfix will be appended onto the end of {@link ListGrid#getPath()} and 
      *  presented as a 'data-actionurl' attribute for the button</li>
-     *  <li>If this is a row action: this postfix will be presented as a 'data-urlpostfix' attribute on the button</li>
+     *  <li>This postfix will also be presented as a 'data-urlpostfix' attribute on the button</li>
      * </ul>
      * @param urlPostfix
      */
@@ -148,6 +158,25 @@ public class ListGridAction implements Cloneable {
 
     public void setForListGridReadOnly(Boolean forListGridReadOnly) {
         this.forListGridReadOnly = forListGridReadOnly;
+    }
+    
+    /**
+     * Gets the manual override for the data-actionurl attribute on an action.
+     * 
+     * @return
+     */
+    public String getActionUrlOverride() {
+        return actionUrlOverride;
+    }
+    
+    /**
+     * This is a manual override for the data-actionurl attribute for an listgrid action. The data-actionurl attribute on a
+     * button is normally automatically computed by appending the postfix URL to the path of the list grid
+     * 
+     * @param actionUrlOverride
+     */
+    public void setActionUrlOverride(String actionUrlOverride) {
+        this.actionUrlOverride = actionUrlOverride;
     }
 
     /**
