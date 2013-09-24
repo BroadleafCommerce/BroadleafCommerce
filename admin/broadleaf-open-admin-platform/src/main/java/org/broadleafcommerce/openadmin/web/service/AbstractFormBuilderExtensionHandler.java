@@ -37,10 +37,19 @@ public abstract class AbstractFormBuilderExtensionHandler extends AbstractExtens
      */
     protected abstract boolean canHandle(EntityForm ef);
 
+    /**
+     * Convenience method for {@link #modifyUnpopulatedEntityForm(EntityForm)}. See that method for usage documentation
+     */
     protected abstract void handleModifyUnpopulatedEntityForm(EntityForm ef);
     
+    /**
+     * Convenience method for {@link #modifyPopulatedEntityForm(EntityForm, Entity)}. See that method for usage documentation
+     */
     protected abstract void handleModifyPopulatedEntityForm(EntityForm ef, Entity entity);
     
+    /**
+     * Convenience method for {@link #modifyDetailEntityForm(EntityForm)}. See that method for usage documentation
+     */
     protected abstract void handleModifyDetailEntityForm(EntityForm ef);
 
     @Override
