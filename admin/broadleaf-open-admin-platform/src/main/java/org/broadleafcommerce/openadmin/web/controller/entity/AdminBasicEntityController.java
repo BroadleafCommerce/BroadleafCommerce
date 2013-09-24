@@ -979,7 +979,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
             if (entity == null) {
                 entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
-                    collectionItemId).getDynamicResultSet().getRecords()[0];
+                    collectionItemId).getEntity();
             }
             
             boolean populateTypeAndId = true;
