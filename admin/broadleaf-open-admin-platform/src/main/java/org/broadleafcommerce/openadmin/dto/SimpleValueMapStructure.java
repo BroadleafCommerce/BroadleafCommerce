@@ -41,8 +41,8 @@ public class SimpleValueMapStructure extends MapStructure {
      * @param valueClassName
      * @param mapProperty
      */
-    public SimpleValueMapStructure(String keyClassName, String keyPropertyName, String keyPropertyFriendlyName, String valueClassName, String valuePropertyName, String valuePropertyFriendlyName, String mapProperty) {
-        super(keyClassName, keyPropertyName, keyPropertyFriendlyName, valueClassName, mapProperty, false);
+    public SimpleValueMapStructure(String keyClassName, String keyPropertyName, String keyPropertyFriendlyName, String valueClassName, String valuePropertyName, String valuePropertyFriendlyName, String mapProperty, String mapKeyValueProperty) {
+        super(keyClassName, keyPropertyName, keyPropertyFriendlyName, valueClassName, mapProperty, false, mapKeyValueProperty);
         this.valuePropertyFriendlyName = valuePropertyFriendlyName;
         this.valuePropertyName = valuePropertyName;
     }

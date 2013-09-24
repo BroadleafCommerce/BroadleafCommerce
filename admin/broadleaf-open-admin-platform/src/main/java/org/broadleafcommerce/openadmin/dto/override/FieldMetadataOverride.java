@@ -680,6 +680,7 @@ public class FieldMetadataOverride {
     private UnspecifiedBooleanType isSimpleValue;
     private String mediaField;
     private String[][] keys;
+    private String mapKeyValueProperty;
     private String mapKeyOptionEntityClass;
     private String mapKeyOptionEntityDisplayField;
     private String mapKeyOptionEntityValueField;
@@ -709,6 +710,7 @@ public class FieldMetadataOverride {
     public void setKeyClass(String keyClass) {
         this.keyClass = keyClass;
     }
+    
 
     public String getKeyPropertyFriendlyName() {
         return keyPropertyFriendlyName;
@@ -805,4 +807,13 @@ public class FieldMetadataOverride {
     public void setForceFreeFormKeys(Boolean forceFreeFormKeys) {
         this.forceFreeFormKeys = forceFreeFormKeys;
     }
+    
+    public String getMapKeyValueProperty() {
+        return mapKeyValueProperty;
+    }
+
+    public void setMapKeyValueProperty(String mapKeyValueProperty) {
+        this.mapKeyValueProperty = mapKeyValueProperty;
+    }
+    
 }

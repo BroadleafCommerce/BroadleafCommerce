@@ -117,6 +117,7 @@ public class PropertyType {
         public static final String TAB = "tab";
         public static final String TABORDER = "tabOrder";
         public static final String KEYCLASS = "keyClass";
+        public static final String MAPKEYVALUEPROPERTY = "mapKeyValueProperty";
         public static final String KEYPROPERTYFRIENDLYNAME = "keyPropertyFriendlyName";
         public static final String VALUECLASS = "valueClass";
         public static final String DELETEENTITYUPONREMOVE = "deleteEntityUponRemove";

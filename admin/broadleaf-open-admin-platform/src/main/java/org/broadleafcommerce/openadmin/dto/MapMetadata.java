@@ -27,6 +27,7 @@ public class MapMetadata extends CollectionMetadata {
     private String[][] keys;
     private boolean isSimpleValue;
     private String mediaField;
+    private String mapKeyValueProperty;
     private String mapKeyOptionEntityClass;
     private String mapKeyOptionEntityDisplayField;
     private String mapKeyOptionEntityValueField;
@@ -62,6 +63,14 @@ public class MapMetadata extends CollectionMetadata {
 
     public void setKeys(String[][] keys) {
         this.keys = keys;
+    }
+    
+    public String getMapKeyValueProperty() {
+        return mapKeyValueProperty;
+    }
+    
+    public void setMapKeyValueProperty(String mapKeyValueProperty) {
+        this.mapKeyValueProperty = mapKeyValueProperty;
     }
 
     public String getMapKeyOptionEntityClass() {
@@ -107,6 +116,7 @@ public class MapMetadata extends CollectionMetadata {
         ((MapMetadata) metadata).isSimpleValue = isSimpleValue;
         ((MapMetadata) metadata).mediaField = mediaField;
         ((MapMetadata) metadata).keys = keys;
+        ((MapMetadata) metadata).mapKeyValueProperty = mapKeyValueProperty;
         ((MapMetadata) metadata).mapKeyOptionEntityClass = mapKeyOptionEntityClass;
         ((MapMetadata) metadata).mapKeyOptionEntityDisplayField = mapKeyOptionEntityDisplayField;
         ((MapMetadata) metadata).mapKeyOptionEntityValueField = mapKeyOptionEntityValueField;
@@ -130,6 +140,8 @@ public class MapMetadata extends CollectionMetadata {
         MapMetadata metadata = (MapMetadata) o;
 
         if (isSimpleValue != metadata.isSimpleValue) return false;
+        if (mapKeyValueProperty != null ? !mapKeyValueProperty.equals(metadata.mapKeyValueProperty) : metadata.mapKeyValueProperty != null)
+            return false;
         if (mapKeyOptionEntityClass != null ? !mapKeyOptionEntityClass.equals(metadata.mapKeyOptionEntityClass) : metadata.mapKeyOptionEntityClass != null)
             return false;
         if (mapKeyOptionEntityDisplayField != null ? !mapKeyOptionEntityDisplayField.equals(metadata.mapKeyOptionEntityDisplayField) : metadata.mapKeyOptionEntityDisplayField != null)
@@ -149,6 +161,7 @@ public class MapMetadata extends CollectionMetadata {
         result = 31 * result + (valueClassName != null ? valueClassName.hashCode() : 0);
         result = 31 * result + (isSimpleValue ? 1 : 0);
         result = 31 * result + (mediaField != null ? mediaField.hashCode() : 0);
+        result = 31 * result + (mapKeyValueProperty != null ? mapKeyValueProperty.hashCode() : 0);
         result = 31 * result + (mapKeyOptionEntityClass != null ? mapKeyOptionEntityClass.hashCode() : 0);
         result = 31 * result + (mapKeyOptionEntityDisplayField != null ? mapKeyOptionEntityDisplayField.hashCode() : 0);
         result = 31 * result + (mapKeyOptionEntityValueField != null ? mapKeyOptionEntityValueField.hashCode() : 0);
