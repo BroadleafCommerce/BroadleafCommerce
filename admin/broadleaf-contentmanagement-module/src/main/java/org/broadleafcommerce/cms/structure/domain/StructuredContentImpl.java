@@ -108,7 +108,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         prominent = true, gridOrder = 1)
     @Column(name = "CONTENT_NAME", nullable = false)
-    @Index(name="CONTENT_NAME_INDEX", columnNames={"CONTENT_NAME", "ARCHIVED_FLAG", "SC_TYPE_ID"})
+    @Index(name="CONTENT_NAME_INDEX", columnNames={"CONTENT_NAME", "SC_TYPE_ID"})
     protected String contentName;
 
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
