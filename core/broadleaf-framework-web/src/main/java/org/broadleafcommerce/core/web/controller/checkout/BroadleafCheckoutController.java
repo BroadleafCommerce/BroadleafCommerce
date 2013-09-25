@@ -579,6 +579,13 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                     setValue(null);
                 }
             }
+
+            @Override
+            public String getAsText() {
+                Phone phone = (Phone) getValue();
+                return phone.getPhoneNumber();
+            }
+
         });
     }
     
