@@ -185,7 +185,7 @@ public class PaymentInfoImpl implements PaymentInfo, CurrencyCodeIdentifiable {
             tab = Presentation.Tab.Name.Log, tabOrder = Presentation.Tab.Order.Log)
     protected List<PaymentInfoDetail> details = new ArrayList<PaymentInfoDetail>();
     
-    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentResponseItemImpl.class)
+    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentResponseItemImpl.class, cascade = {CascadeType.ALL})
     @AdminPresentationCollection(friendlyName="PaymentInfoImpl_Payment_Response_Items")
     protected List<PaymentResponseItem> paymentResponseItems = new ArrayList<PaymentResponseItem>();
 
