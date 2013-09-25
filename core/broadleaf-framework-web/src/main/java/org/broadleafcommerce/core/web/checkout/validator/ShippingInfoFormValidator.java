@@ -38,6 +38,7 @@ public class ShippingInfoFormValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.postalCode", "postalCode.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.firstName", "firstName.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.lastName", "lastName.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.phonePrimary", "phonePrimary.required");
 
         if (shippingInfoForm.getAddress().getCountry() == null) {
             errors.rejectValue("address.country", "country.required", null, null);
