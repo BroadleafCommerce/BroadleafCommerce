@@ -39,7 +39,7 @@ import java.io.Serializable;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @javax.persistence.Table(name = "BLC_TRANSLATION")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blTranslationElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
 //multi-column indexes don't appear to get exported correctly when declared at the field level, so declaring here as a workaround
 @Table(appliesTo = "BLC_TRANSLATION", indexes = {
