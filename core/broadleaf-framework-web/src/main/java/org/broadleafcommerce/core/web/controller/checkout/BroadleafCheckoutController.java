@@ -197,7 +197,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             return getCheckoutView();
         }
 
-        if (StringUtils.isEmpty(shippingForm.getAddress().getPhonePrimary().getPhoneNumber())) {
+        if ((shippingForm.getAddress().getPhonePrimary() != null) && (StringUtils.isEmpty(shippingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
             shippingForm.getAddress().setPhonePrimary(null);
         }
 
@@ -578,12 +578,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                 } else {
                     setValue(null);
                 }
-            }
-
-            @Override
-            public String getAsText() {
-                Phone phone = (Phone) getValue();
-                return phone.getPhoneNumber();
             }
 
         });
