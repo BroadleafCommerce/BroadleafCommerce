@@ -158,7 +158,7 @@
         },
         
         initialize : function($container) {
-            this.updateToolbarRowActionButtons($container);
+            BLCAdmin.listGrid.updateToolbarRowActionButtons($container);
             
             if (BLCAdmin.listGrid.paginate) {
                 BLCAdmin.listGrid.paginate.initialize($container);
