@@ -347,26 +347,30 @@ public class EntityForm {
     }
     
     public void setReadOnly() {
+        setReadOnly(true);
+    }
+
+    public void setReadOnly(boolean readOnly) {
         if (getFields() != null) {
             for (Entry<String, Field> entry : getFields().entrySet()) {
-                entry.getValue().setReadOnly(true);
+                entry.getValue().setReadOnly(readOnly);
             }
         }
         
         if (getAllListGrids() != null) {
             for (ListGrid lg : getAllListGrids()) {
-                lg.setReadOnly(true);
+                lg.setReadOnly(readOnly);
             }
         }
         
         if (getDynamicForms() != null) {
             for (Entry<String, EntityForm> entry : getDynamicForms().entrySet()) {
-                entry.getValue().setReadOnly();
+                entry.getValue().setReadOnly(readOnly);
             }
         }
         
         actions.clear();
-        this.readOnly = true;
+        this.readOnly = readOnly;
     }
     
     public List<EntityFormAction> getActions() {
