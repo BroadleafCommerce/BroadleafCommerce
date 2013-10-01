@@ -54,6 +54,10 @@ public class StoreServiceImpl implements StoreService {
         return storeDao.readAllStores();
     }
 
+    public List<Store> readAllStoresByState(String state) {
+        return storeDao.readAllStoresByState(state);
+    }
+
     public Map<Store, Double> findStoresByAddress(Address searchAddress, double distance) {
         Map<Store, Double> matchingStores = new HashMap<Store, Double>();
         for (Store store : readAllStores()) {

@@ -37,4 +37,6 @@ public interface StoreDao {
 
     public List<Store> readAllStores();
 
+    public List<Store> readAllStoresByState(final String state);
+
 }

@@ -13,4 +13,9 @@
         <query>SELECT store FROM org.broadleafcommerce.core.store.domain.Store store </query>
     </named-query>
 
+    <named-query name="BC_FIND_ALL_STORES_BY_STATE" >
+        <query>SELECT store FROM org.broadleafcommerce.core.store.domain.Store store
+            WHERE store.state = :state</query>
+    </named-query>
+
 </entity-mappings>

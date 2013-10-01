@@ -41,4 +41,6 @@ public interface StoreService {
 
     public List<Store> readAllStores();
 
+    public List<Store> readAllStoresByState(String state);
+
 }
