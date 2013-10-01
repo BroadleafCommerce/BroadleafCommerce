@@ -46,7 +46,7 @@ public class PomEvaluator {
     private static Category SLF4J = new Category("slfj", LicenseType.MIT, FrameworkType.LOGGING);
     private static Category LOG4J = new Category("log4j", LicenseType.APACHE2, FrameworkType.LOGGING);
     private static Category OTHER = new Category("Other", LicenseType.OTHER, FrameworkType.OTHER);
-    private static Category SMART_GWT = new Category("Smart GWT UI Toolkit", LicenseType.LGPL, FrameworkType.UI);    
+    private static Category YAHOO = new Category("Yahoo", LicenseType.YAHOO_YUI, FrameworkType.UI);
     
     // CODEHAUS is used by Apache and Spring Framework
     private static Category JACKSON = new Category("Codehaus Jackson Library", LicenseType.APACHE2, FrameworkType.XML, SPRING, APACHE_FOUNDATION);
@@ -91,6 +91,7 @@ public class PomEvaluator {
         knownLibraries.put("javax.mail", JAVAX);
         knownLibraries.put("javax.servlet", JAVAX);
         knownLibraries.put("javax.servlet.jsp", JAVAX);
+        knownLibraries.put("javax.validation", JAVAX);
         knownLibraries.put("jstl", JAVAX);
 
         // Logging
@@ -116,15 +117,14 @@ public class PomEvaluator {
         knownLibraries.put("org.apache.xmlbeans", APACHE_FOUNDATION);
         knownLibraries.put("taglibs", APACHE_FOUNDATION);
         knownLibraries.put("jakarta-regexp", APACHE_FOUNDATION);
+        knownLibraries.put("ant.ant", APACHE_FOUNDATION);
 
         // Google - Will retire
         knownLibraries.put("com.google.gwt", GOOGLE);
         knownLibraries.put("com.google.code.gwt-math", GOOGLE);
         knownLibraries.put("com.google.code.findbugs", GOOGLE);
         knownLibraries.put("net.sf.gwt-widget", GOOGLE);
-
-        // SmartGWT - Will retire with 3.0
-        knownLibraries.put("com.smartgwt", SMART_GWT);
+        knownLibraries.put("com.google.guava", GOOGLE);
 
         // CodeHaus - JSON / XML processing
         knownLibraries.put("org.codehaus.jackson", JACKSON);
@@ -174,6 +174,9 @@ public class PomEvaluator {
         // OWASP
         knownLibraries.put("org.owasp.antisamy", ANTISAMMY);
 
+        // OWASP
+        knownLibraries.put("com.yahoo.platform.yui", YAHOO);
+
     }
 
 
@@ -208,8 +211,9 @@ public class PomEvaluator {
                     }
 
                 } else {
-                    if (dependency.scope.equals("test") ||
-                            dependency.scope.equals("provided")) {
+
+                    if (dependency.scope != null && (dependency.scope.equals("test") ||
+                            dependency.scope.equals("provided"))) {
                         continue;
                     }
                     OTHER.dependencyList.add(dependency);
@@ -327,6 +331,7 @@ public class PomEvaluator {
         public static LicenseType ANTISAMMY_BSD = new LicenseType("ANTISAMMY_BSD", "http://opensource.org/licenses/bsd-license.php");
         public static LicenseType OTHER = new LicenseType("OTHER", "Unknown");
         public static LicenseType ECLIPSE_PUBLIC = new LicenseType("ECLIPSE PUBLIC", "http://www.eclipse.org/legal/epl-v10.html");
+        public static LicenseType YAHOO_YUI = new LicenseType("YAHOO YUI", "http://yuilibrary.com/license/");
 
         public LicenseType(String name, String url) {
             this.name = name;
