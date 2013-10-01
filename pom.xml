@@ -606,14 +606,14 @@
             <dependency>
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.0.0</version>
+                <version>4.4.0</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <artifactId>solr-core</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.0.0</version>
+                <version>4.4.0</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>

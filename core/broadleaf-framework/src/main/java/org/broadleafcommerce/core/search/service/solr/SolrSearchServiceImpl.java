@@ -149,7 +149,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             LOG.trace("Done printing solr.xml");
         }
 
-        CoreContainer coreContainer = new CoreContainer(solrServer, solrXml);
+        CoreContainer coreContainer = CoreContainer.createAndLoad(solrServer, solrXml);
         EmbeddedSolrServer primaryServer = new EmbeddedSolrServer(coreContainer, SolrContext.PRIMARY);
         EmbeddedSolrServer reindexServer = new EmbeddedSolrServer(coreContainer, SolrContext.REINDEX);
 
@@ -196,6 +196,21 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     public SolrSearchServiceImpl(SolrServer solrServer) {
         SolrContext.setPrimaryServer(solrServer);
+    }
+
+    /**
+     * This constructor serves to mimic the one below this, which takes in two {@link SolrServer} arguments.
+     * By having this and then simply disregarding the second parameter, we can more easily support 2-core
+     * Solr configurations that use embedded/standalone per environment.
+     * 
+     * @param solrServer
+     * @param reindexServer
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws IOException 
+     */
+    public SolrSearchServiceImpl(String solrServer, String reindexServer) throws IOException, ParserConfigurationException, SAXException {
+        this(solrServer);
     }
 
     public SolrSearchServiceImpl(SolrServer solrServer, SolrServer reindexServer) {
