@@ -29,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -184,7 +185,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         Entity entity = new Entity();
         entity.setProperties(properties);
-        entity.setType(new String[] { entityForm.getEntityType() });
+        String entityType = entityForm.getEntityType();
+        if (StringUtils.isEmpty(entityType)) {
+            entityType = entityForm.getCeilingEntityClassname();
+        }
+        entity.setType(new String[] { entityType });
 
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withEntity(entity)
