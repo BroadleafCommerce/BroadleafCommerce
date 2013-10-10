@@ -1,3 +1,19 @@
+/*
+ * Copyright 2008-2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.broadleafcommerce.common.sitemap.service;
 
 import org.broadleafcommerce.common.site.domain.Site;
@@ -9,6 +25,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.List;
 
 /**
@@ -32,8 +50,8 @@ public class SiteMapServiceImpl implements SiteMapUtility, SiteMapService {
         // TODO:  lookup SiteMapConfiguration from DAO
         SiteMapConfiguration smc = null;
         
-        OutputStream siteMapIndexOutputStream = createSiteMapIndexOutputStream(smc);
-        writeSiteIndexHeader(siteMapIndexOutputStream);
+        Writer siteMapIndexWriter = createSiteMapIndexWriter(smc);
+        writeSiteIndexHeader(siteMapIndexWriter);
         
         int currentURLCount = 0;
         for (SiteMapGeneratorConfiguration smgc : smc.getSiteMapGeneratorConfigurations()) {
@@ -44,17 +62,17 @@ public class SiteMapServiceImpl implements SiteMapUtility, SiteMapService {
         
         // TODO: Determine last sequence file.   Append the footer to it.
 
-        writeSiteIndexFooter(siteMapIndexOutputStream);
-        siteMapIndexOutputStream.close();
+        writeSiteIndexFooter(siteMapIndexWriter);
+        siteMapIndexWriter.close();
 
         return null;
     }
 
-    protected void writeSiteIndexHeader(OutputStream os) throws IOException {
+    protected void writeSiteIndexHeader(Writer writer) throws IOException {
         // TODO: write the site index header
     }
 
-    protected void writeSiteIndexFooter(OutputStream os) throws IOException {
+    protected void writeSiteIndexFooter(Writer writer) throws IOException {
         // TODO: write the site index footer
     }
 
@@ -106,7 +124,7 @@ public class SiteMapServiceImpl implements SiteMapUtility, SiteMapService {
     /**
      * Returns the output stream for the siteMap index file
      */
-    protected OutputStream createSiteMapIndexOutputStream(SiteMapConfiguration smc) throws IOException {
+    protected Writer createSiteMapIndexWriter(SiteMapConfiguration smc) throws IOException {
         String siteMapIndexFileName = smc.getSiteMapFileName();
         if (siteMapIndexFileName == null) {
             siteMapIndexFileName = "sitemap_index.xml";
@@ -120,7 +138,13 @@ public class SiteMapServiceImpl implements SiteMapUtility, SiteMapService {
                 throw new RuntimeException("Unable to create parent directories for file: " + sitemapIndexFileName);
             }
         }
-        return new FileOutputStream(tmpFile);
+
+        // if file doesn't exists, then create it
+        if (!tmpFile.exists()) {
+            tmpFile.createNewFile();
+        }
+
+        return new PrintWriter(tmpFile);
     }    
 
     /**
