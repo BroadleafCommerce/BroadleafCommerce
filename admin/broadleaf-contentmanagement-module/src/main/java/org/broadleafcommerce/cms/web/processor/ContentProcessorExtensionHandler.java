@@ -16,11 +16,11 @@
 
 package org.broadleafcommerce.cms.web.processor;
 
-import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.web.deeplink.DeepLink;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;

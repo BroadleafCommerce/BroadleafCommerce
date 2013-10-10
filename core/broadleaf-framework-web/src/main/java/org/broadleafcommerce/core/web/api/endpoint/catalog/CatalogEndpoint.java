@@ -16,8 +16,8 @@
 package org.broadleafcommerce.core.web.api.endpoint.catalog;
 
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -91,9 +91,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
     @Resource(name = "blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
 
-    //We don't inject this here because of a few dependency issues. Instead, we look this up dynamically
-    //using the ApplicationContext
-    protected StaticAssetService staticAssetService;
+    @Resource(name = "blStaticAssetPathService")
+    protected StaticAssetPathService staticAssetPathService;
 
     /**
      * Search for {@code Product} by product id
@@ -467,7 +466,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                     MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());
                     wrapper.wrapSummary(media, request);
                     if (wrapper.isAllowOverrideUrl()){
-                        wrapper.setUrl(getStaticAssetService().convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
+                        wrapper.setUrl(staticAssetPathService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
                     }
                     medias.add(wrapper);
                 }
@@ -501,7 +500,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                     MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());
                     wrapper.wrapSummary(med, request);
                     if (wrapper.isAllowOverrideUrl()){
-                        wrapper.setUrl(getStaticAssetService().convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
+                        wrapper.setUrl(staticAssetPathService.convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
                     }
                     out.add(wrapper);
                 }
@@ -545,15 +544,5 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                 .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
-    protected StaticAssetService getStaticAssetService() {
-        if (staticAssetService == null) {
-            staticAssetService = (StaticAssetService)this.context.getBean("blStaticAssetService");
-        }
-        return staticAssetService;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(StringUtils.isNotEmpty(null));
-    }
 }
 

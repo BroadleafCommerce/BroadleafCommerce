@@ -20,8 +20,8 @@ import net.sf.ehcache.Cache;
 
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
-import org.broadleafcommerce.cms.page.dto.PageDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 
 import java.util.List;

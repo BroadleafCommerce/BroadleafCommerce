@@ -8,12 +8,14 @@
         <mapping-file>config/bc/jpa/domain/SystemProperty.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ModuleConfiguration.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/BroadleafCurrency.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Locale.orm.xml</mapping-file>
         <class>org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl</class>
         <class>org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl</class>
         <class>org.broadleafcommerce.common.email.domain.EmailTrackingImpl</class>
         <class>org.broadleafcommerce.common.email.domain.EmailTrackingOpensImpl</class>
         <class>org.broadleafcommerce.common.i18n.domain.TranslationImpl</class>
         <class>org.broadleafcommerce.common.locale.domain.LocaleImpl</class>
+        <class>org.broadleafcommerce.common.media.domain.MediaImpl</class>
         <class>org.broadleafcommerce.common.sandbox.domain.SandBoxImpl</class>
         <class>org.broadleafcommerce.common.site.domain.SiteImpl</class>
         <class>org.broadleafcommerce.common.site.domain.CatalogImpl</class>

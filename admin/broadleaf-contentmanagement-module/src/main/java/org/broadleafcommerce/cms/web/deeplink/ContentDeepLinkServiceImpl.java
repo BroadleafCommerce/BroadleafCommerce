@@ -17,7 +17,7 @@
 package org.broadleafcommerce.cms.web.deeplink;
 
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
-import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
+import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.web.deeplink.DeepLink;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 

@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.file.domain;
+package org.broadleafcommerce.common.rule;
 
+import java.util.Map;
 
-/**
- * Created by IntelliJ IDEA.
- * User: jfischer
- * Date: 9/10/11
- * Time: 3:11 PM
- * To change this template use File | Settings | File Templates.
- */
-public interface ImageStaticAsset extends StaticAsset {
+public interface RuleProcessor<T> {
 
-    public Integer getWidth();
+    public abstract boolean checkForMatch(T sc, Map<String, Object> valueMap);
 
-    public void setWidth(Integer width);
-
-    public Integer getHeight();
-
-    public void setHeight(Integer height);
 }

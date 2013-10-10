@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.page.dto;
+package org.broadleafcommerce.common.page.dto;
 
-import org.broadleafcommerce.cms.structure.dto.ItemCriteriaDTO;
+import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 
 import java.io.Serializable;
 import java.util.HashMap;
