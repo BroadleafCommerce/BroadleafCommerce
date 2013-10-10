@@ -91,10 +91,15 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Default", order = 5000, prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected Boolean isDefault = false;
 
+    /*
+     * This should be set via the constructor of the child class with a call to setModuleConfigurationType(ModuleConfigurationType).
+     * It will not be set via the admin. The reason is that the type is know by the subclass.  The reason for this field is to allow us to search for various types.
+     * But this field must be set via the constructor on the subclass.
+     */
     @Column(name = "CONFIG_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Config_Type", order = 1000, prominent = true, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.common.config.service.type.ModuleConfigurationType",
-            requiredOverride = RequiredOverride.REQUIRED, readOnly = true)
+            requiredOverride = RequiredOverride.NOT_REQUIRED, readOnly = true)
     protected String configType;
 
     @Column(name = "MODULE_PRIORITY", nullable = false)
