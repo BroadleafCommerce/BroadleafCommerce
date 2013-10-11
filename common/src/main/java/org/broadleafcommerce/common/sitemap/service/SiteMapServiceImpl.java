@@ -38,7 +38,7 @@ import java.util.List;
  * @author bpolster
  *
  */
-public class SiteMapServiceImpl implements SiteMapUtility, SiteMapService {
+public class SiteMapServiceImpl implements SiteMapService {
 
     protected int maximumUrlEntriesPerFile = 50000;
     protected List<SiteMapGenerator> siteMapGenerators;
@@ -47,17 +47,18 @@ public class SiteMapServiceImpl implements SiteMapUtility, SiteMapService {
     @Override
     public SiteMapGenerationResponse generateSiteMap() throws IOException {
 
+        // TODO: Create the siteMapBuilder component.
+        SiteMapBuilder sitemapBuilder = null;
+
         // TODO:  lookup SiteMapConfiguration from DAO
         SiteMapConfiguration smc = null;
         
         Writer siteMapIndexWriter = createSiteMapIndexWriter(smc);
         writeSiteIndexHeader(siteMapIndexWriter);
         
-        int currentURLCount = 0;
-        for (SiteMapGeneratorConfiguration smgc : smc.getSiteMapGeneratorConfigurations()) {
-            SiteMapGenerator generator = selectSiteMapGenerator(smgc);
-            int urlsProcessed = generator.generateSiteMapEntries(this, currentURLCount);
-            currentURLCount += urlsProcessed;
+        for (SiteMapGeneratorConfiguration currentConfiguration : smc.getSiteMapGeneratorConfigurations()) {
+            SiteMapGenerator generator = selectSiteMapGenerator(currentConfiguration);
+            generator.addSiteMapEntries(currentConfiguration, sitemapBuilder);
         }
         
         // TODO: Determine last sequence file.   Append the footer to it.
@@ -108,17 +109,6 @@ public class SiteMapServiceImpl implements SiteMapUtility, SiteMapService {
             }
         }
         return new FileOutputStream(tmpFile);
-    }
-
-    @Override
-    public OutputStream getSiteMapOutputStream(OutputStream currentOutputStream, int currentUrlCount) throws IOException {
-        OutputStream returnStream = currentOutputStream;
-        if (currentOutputStream == null || (currentUrlCount % getMaximumUrlEntriesPerFile()) == 0) {
-            returnStream = createNewOutputStream(currentUrlCount);            
-            currentOutputStream.close();
-        }
-        
-        return returnStream;
     }
     
     /**

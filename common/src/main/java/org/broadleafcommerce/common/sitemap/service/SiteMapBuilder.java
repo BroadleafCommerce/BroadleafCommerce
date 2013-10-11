@@ -16,22 +16,20 @@
 
 package org.broadleafcommerce.common.sitemap.service;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import org.broadleafcommerce.common.sitemap.domain.SiteMapURLWrapper;
+
 
 /**
- * SiteMapGenerators are typically unaware of what the actual file they need to write to and depend on this utility 
- * to return them the file.
+ * Handles creating the various sitemap files. 
  * 
  * @author bpolster
  */
-public interface SiteMapUtility {
+public interface SiteMapBuilder {
 
     /**
-     * Returns a file to write the next part of the SiteMap.   If passed in fileName is null, assumes that 
-     * the fileName is the first file being written to. 
+     * Returns the SiteMapURLSetWrapper that a Generator should use to add its next URL element.
      * 
      */
-    public OutputStream getSiteMapOutputStream(OutputStream currentOutputStream, int currentFileCount) throws IOException;
+    public void addUrl(SiteMapURLWrapper urlWrapper);
 
 }
