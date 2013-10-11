@@ -20,12 +20,12 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
+import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -69,13 +69,14 @@ public class SiteMapURLEntryImpl implements SiteMapURLEntry {
     protected Date lastModified = new Date();
     
     @Column(name = "CHANGE_FREQ_TYPE", nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapURLEntry_Site_Map_Change_Freq_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+    @AdminPresentation(friendlyName = "SiteMapURLEntry_Site_Map_Change_Freq", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType")
-    protected String siteMapChangeFreqType;
+    protected String siteMapChangeFreq;
 
-    @Column(name = "SITE_MAP_PRIORITY", precision = 2, scale = 1, nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapURLEntry_Site_Map_Priority")
-    protected BigDecimal siteMapPriority = new BigDecimal("0.5");
+    @Column(name = "SITE_MAP_PRIORITY", nullable = false)
+    @AdminPresentation(friendlyName = "SiteMapURLEntry_Site_Map_Priority", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType")
+    protected String siteMapPriority;
     
     @ManyToOne(targetEntity = SiteMapGeneratorConfigurationImpl.class, optional = false)
     @JoinColumn(name = "MODULE_CONFIG_ID")
@@ -113,22 +114,22 @@ public class SiteMapURLEntryImpl implements SiteMapURLEntry {
 
     @Override
     public SiteMapChangeFreqType getSiteMapChangeFreqType() {
-        return SiteMapChangeFreqType.getInstance(this.siteMapChangeFreqType);
+        return SiteMapChangeFreqType.getInstance(this.siteMapChangeFreq);
     }
 
     @Override
-    public void setSiteMapChangeFreqType(SiteMapChangeFreqType siteMapChangeFreqType) {
-        this.siteMapChangeFreqType = siteMapChangeFreqType.getType();
+    public void setSiteMapChangeFreqType(SiteMapChangeFreqType siteMapChangeFreq) {
+        this.siteMapChangeFreq = siteMapChangeFreq.getType();
     }
 
     @Override
-    public BigDecimal getSiteMapPriority() {
-        return siteMapPriority;
+    public SiteMapPriorityType getSiteMapPriorityType() {
+        return SiteMapPriorityType.getInstance(this.siteMapPriority);
     }
 
     @Override
-    public void setSiteMapPriority(BigDecimal siteMapPriority) {
-        this.siteMapPriority = siteMapPriority;
+    public void setSiteMapPriorityType(SiteMapPriorityType siteMapPriority) {
+        this.siteMapChangeFreq = siteMapPriority.getType();
     }
 
     @Override

@@ -17,9 +17,9 @@
 package org.broadleafcommerce.common.sitemap.domain;
 
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
+import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -97,14 +97,14 @@ public interface SiteMapURLEntry extends Serializable {
      * 
      * @return
      */
-    public BigDecimal getSiteMapPriority();
+    public SiteMapPriorityType getSiteMapPriorityType();
 
     /**
-     * Sets the SiteMapPriority.  Must be a two digit value between 0.0 and 1.0.  The default priority is 0.5
+     * Sets the SiteMapPriority.  Must be a two digit value between 0.0 and 1.0.
      * 
      * @param siteMapPriority
      */
-    public void setSiteMapPriority(BigDecimal siteMapPriority);
+    public void setSiteMapPriorityType(SiteMapPriorityType siteMapPriority);
 
     /**
      * Returns the SiteMapGeneratorConfiguration.

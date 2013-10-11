@@ -23,36 +23,40 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * An enumeration of Sitemap change frequency values
+ * Reasonsable set of SiteMap URL priorities
  * 
- * @author Joshua Skorton (jskorton)
+ * @author bpolster
  */
-public class SiteMapChangeFreqType implements Serializable, BroadleafEnumerationType {
+public class SiteMapPriorityType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, SiteMapChangeFreqType> TYPES = new LinkedHashMap<String, SiteMapChangeFreqType>();
+    private static final Map<String, SiteMapPriorityType> TYPES = new LinkedHashMap<String, SiteMapPriorityType>();
 
-    public static final SiteMapChangeFreqType ALWAYS = new SiteMapChangeFreqType("ALWAYS", "always");
-    public static final SiteMapChangeFreqType HOURLY = new SiteMapChangeFreqType("HOURLY", "hourly");
-    public static final SiteMapChangeFreqType DAILY = new SiteMapChangeFreqType("DAILY", "daily");
-    public static final SiteMapChangeFreqType WEEKLY = new SiteMapChangeFreqType("WEEKLY", "weekly");
-    public static final SiteMapChangeFreqType MONTHLY = new SiteMapChangeFreqType("MONTHLY", "monthly");
-    public static final SiteMapChangeFreqType YEARLY = new SiteMapChangeFreqType("YEARLY", "yearly");
-    public static final SiteMapChangeFreqType NEVER = new SiteMapChangeFreqType("NEVER", "never");
+    public static final SiteMapPriorityType ZERO = new SiteMapPriorityType("0.0", "0.0");
+    public static final SiteMapPriorityType POINT1 = new SiteMapPriorityType("0.1", "0.1");
+    public static final SiteMapPriorityType POINT2 = new SiteMapPriorityType("0.2", "0.2");
+    public static final SiteMapPriorityType POINT3 = new SiteMapPriorityType("0.3", "0.3");
+    public static final SiteMapPriorityType POINT4 = new SiteMapPriorityType("0.4", "0.4");
+    public static final SiteMapPriorityType POINT5 = new SiteMapPriorityType("0.5", "0.5");
+    public static final SiteMapPriorityType POINT6 = new SiteMapPriorityType("0.6", "0.6");
+    public static final SiteMapPriorityType POINT7 = new SiteMapPriorityType("0.7", "0.7");
+    public static final SiteMapPriorityType POINT8 = new SiteMapPriorityType("0.8", "0.8");
+    public static final SiteMapPriorityType POINT9 = new SiteMapPriorityType("0.9", "0.9");
+    public static final SiteMapPriorityType ONE = new SiteMapPriorityType("1.0", "1.0");
 
-    public static SiteMapChangeFreqType getInstance(final String type) {
+    public static SiteMapPriorityType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
     private String friendlyType;
 
-    public SiteMapChangeFreqType() {
+    public SiteMapPriorityType() {
         //do nothing
     }
 
-    public SiteMapChangeFreqType(final String type, final String friendlyType) {
+    public SiteMapPriorityType(final String type, final String friendlyType) {
         this.friendlyType = friendlyType;
         setType(type);
     }
@@ -88,7 +92,7 @@ public class SiteMapChangeFreqType implements Serializable, BroadleafEnumeration
             return false;
         if (getClass() != obj.getClass())
             return false;
-        SiteMapChangeFreqType other = (SiteMapChangeFreqType) obj;
+        SiteMapPriorityType other = (SiteMapPriorityType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;
