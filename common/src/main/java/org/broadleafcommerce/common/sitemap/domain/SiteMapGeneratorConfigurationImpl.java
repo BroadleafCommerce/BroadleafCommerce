@@ -22,11 +22,10 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
+import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,9 +72,10 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
             broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType")
     protected String siteMapChangeFreqType;
 
-    @Column(name = "SITE_MAP_PRIORITY", precision = 2, scale = 1, nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Site_Map_Priority")
-    protected BigDecimal siteMapPriority = new BigDecimal("0.5", new MathContext(2)).setScale(1);
+    @Column(name = "SITE_MAP_PRIORITY", nullable = false)
+    @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Site_Map_Priority", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType")
+    protected String siteMapPriority;
 
     @Column(name = "SITE_MAP_GENERATOR_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Site_Map_Generator_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
@@ -122,13 +122,13 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     }
 
     @Override
-    public BigDecimal getSiteMapPriority() {
-        return siteMapPriority;
+    public SiteMapPriorityType getSiteMapPriority() {
+        return SiteMapPriorityType.getInstance(this.siteMapPriority);
     }
 
     @Override
-    public void setSiteMapPriority(BigDecimal siteMapPriority) {
-        this.siteMapPriority = siteMapPriority;
+    public void setSiteMapPriority(SiteMapPriorityType siteMapPriority) {
+        this.siteMapPriority = siteMapPriority.getType();
     }
 
     @Override
