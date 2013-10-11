@@ -16,9 +16,13 @@
 
 package org.broadleafcommerce.common.sitemap.service;
 
+import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
+import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
+import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
+import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.io.File;
@@ -28,6 +32,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * Component responsible for generating a sitemap.   Relies on SiteMapGenerators to 
@@ -44,29 +50,57 @@ public class SiteMapServiceImpl implements SiteMapService {
     protected List<SiteMapGenerator> siteMapGenerators;
     protected String tempDirectory = System.getProperty("java.io.tmpdir");
 
+    @Resource(name = "blModuleConfigurationService")
+    protected ModuleConfigurationService moduleConfigurationService;
+
     @Override
-    public SiteMapGenerationResponse generateSiteMap() throws IOException {
+    public SiteMapGenerationResponse generateSiteMap() throws SiteMapException, IOException {
 
         // TODO: Create the siteMapBuilder component.
         SiteMapBuilder sitemapBuilder = null;
 
-        // TODO:  lookup SiteMapConfiguration from DAO
-        SiteMapConfiguration smc = null;
-        
+        //lookup SiteMapConfiguration
+        SiteMapConfiguration smc = findActiveSiteMapConfiguration();
+        if (smc == null) {
+            throw new SiteMapException("No eligible Sitemap configurations were configured.");
+        }
+
         Writer siteMapIndexWriter = createSiteMapIndexWriter(smc);
         writeSiteIndexHeader(siteMapIndexWriter);
-        
+
         for (SiteMapGeneratorConfiguration currentConfiguration : smc.getSiteMapGeneratorConfigurations()) {
             SiteMapGenerator generator = selectSiteMapGenerator(currentConfiguration);
             generator.addSiteMapEntries(currentConfiguration, sitemapBuilder);
         }
-        
+
         // TODO: Determine last sequence file.   Append the footer to it.
 
         writeSiteIndexFooter(siteMapIndexWriter);
         siteMapIndexWriter.close();
 
         return null;
+    }
+
+    protected SiteMapConfiguration findActiveSiteMapConfiguration() {
+
+        List<ModuleConfiguration> configurations = moduleConfigurationService.findActiveConfigurationsByType(ModuleConfigurationType.SITE_MAP);
+
+        SiteMapConfiguration smc = null;
+        if (configurations != null && !configurations.isEmpty()) {
+            //Try to find a default configuration           
+            for (ModuleConfiguration configuration : configurations) {
+                if (configuration.getIsDefault()) {
+                    smc = (SiteMapConfiguration) configuration;
+                    break;
+                }
+            }
+            if (smc == null) {
+                //if there wasn't a default one, use the first active one...
+                smc = (SiteMapConfiguration) configurations.get(0);
+            }
+        }
+
+        return smc;
     }
 
     protected void writeSiteIndexHeader(Writer writer) throws IOException {

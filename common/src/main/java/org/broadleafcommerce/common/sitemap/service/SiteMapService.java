@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.sitemap.service;
 
+import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -40,10 +42,11 @@ public interface SiteMapService {
      * 
      * Implementations should utilize the list of SiteMapGenerators that build the actual entries in the sitemap xml
      * files.
+     * @throws SiteMapException 
      * 
      * @see SiteMapGenerator
      */
-    public SiteMapGenerationResponse generateSiteMap() throws IOException;
+    public SiteMapGenerationResponse generateSiteMap() throws IOException, SiteMapException;
 
     /**
      * Returns the list of SiteMapGenerators used to generate the SiteMap.
