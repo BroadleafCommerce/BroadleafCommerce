@@ -47,7 +47,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "BLC_SITE_MAP_GEN_CONFIG")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
+//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(friendlyName = "SiteMapGeneratorConfiguration")
 public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfiguration {
 
