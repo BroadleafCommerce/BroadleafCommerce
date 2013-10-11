@@ -22,8 +22,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -48,7 +46,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "BLC_SITE_MAP_GEN_CONFIG")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
+//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(friendlyName = "SiteMapGeneratorConfiguration")
 public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfiguration {
 

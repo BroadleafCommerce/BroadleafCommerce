@@ -24,8 +24,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +40,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "BLC_SITE_MAP_CONFIG")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
+//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(friendlyName = "DefaultSiteMapConfiguration")
 public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implements SiteMapConfiguration {
 

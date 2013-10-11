@@ -21,8 +21,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -42,7 +40,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "BLC_SITE_MAP_URL_ENTRY")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
+//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(friendlyName = "SiteMapURLEntry")
 public class SiteMapURLEntryImpl implements SiteMapURLEntry {
 
@@ -79,7 +77,7 @@ public class SiteMapURLEntryImpl implements SiteMapURLEntry {
     protected String siteMapPriority;
     
     @ManyToOne(targetEntity = SiteMapGeneratorConfigurationImpl.class, optional = false)
-    @JoinColumn(name = "MODULE_CONFIG_ID")
+    @JoinColumn(name = "SITE_MAP_GEN_CONFIG_ID")
     protected SiteMapGeneratorConfiguration siteMapGeneratorConfiguration;
     
     @Override
