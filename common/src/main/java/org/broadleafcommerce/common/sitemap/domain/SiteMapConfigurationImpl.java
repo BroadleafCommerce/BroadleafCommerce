@@ -17,6 +17,7 @@
 package org.broadleafcommerce.common.sitemap.domain;
 
 import org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration;
+import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -42,7 +43,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "BLC_SITE_MAP_CONFIG")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
-@AdminPresentationClass(friendlyName = "SiteMapConfiguration")
+@AdminPresentationClass(friendlyName = "DefaultSiteMapConfiguration")
 public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implements SiteMapConfiguration {
 
     private static final long serialVersionUID = 1L;
@@ -55,6 +56,11 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
     @AdminPresentationCollection(friendlyName = "SiteMapConfiguration_Site_Map_Generator_Configurations", addType = AddMethodType.LOOKUP, manyToField = "siteMapConfigurations",
             operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected List<SiteMapGeneratorConfiguration> siteMapGeneratorConfigurations = new ArrayList<SiteMapGeneratorConfiguration>();
+
+    public SiteMapConfigurationImpl() {
+        super();
+        super.setModuleConfigurationType(ModuleConfigurationType.SITE_MAP);
+    }
 
     @Override
     public String getSiteMapFileName() {

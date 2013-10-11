@@ -16,9 +16,9 @@
 
 package org.broadleafcommerce.common.sitemap.domain;
 
-import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -34,7 +34,21 @@ import java.util.Date;
  * 
  * @author Josh
  */
-public interface SiteMapURLEntry extends ModuleConfiguration {
+public interface SiteMapURLEntry extends Serializable {
+
+    /**
+     * Returns the SiteMapURLEntry Id.
+     * 
+     * @return
+     */
+    public Long getId();
+
+    /**
+     * Sets the SiteMapURLEntry Id.
+     * 
+     * @param id
+     */
+    public void setId(Long id);
 
     /**
      * Returns the URL location.

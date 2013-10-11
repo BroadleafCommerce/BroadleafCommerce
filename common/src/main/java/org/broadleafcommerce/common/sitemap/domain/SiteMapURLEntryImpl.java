@@ -16,19 +16,22 @@
 
 package org.broadleafcommerce.common.sitemap.domain;
 
-import org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -41,10 +44,22 @@ import javax.persistence.Table;
 @Table(name = "BLC_SITE_MAP_URL_ENTRY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(friendlyName = "SiteMapURLEntry")
-public class SiteMapURLEntryImpl extends AbstractModuleConfiguration implements SiteMapURLEntry {
+public class SiteMapURLEntryImpl implements SiteMapURLEntry {
 
     private static final long serialVersionUID = 1L;
     
+    @Id
+    @GeneratedValue(generator = "SiteMapURLEntryId")
+    @GenericGenerator(
+            name = "SiteMapURLEntryId",
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name = "segment_value", value = "SiteMapURLEntryImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.sitemap.domain.SiteMapURLEntryImpl")
+            })
+    @Column(name = "SITE_MAP_URL_ENTRY_ID")
+    protected Long id;
+
     @Column(name = "LOCATION", nullable = false)
     @AdminPresentation(friendlyName = "SiteMapURLEntryImpl_Location")
     protected String location;
@@ -66,6 +81,16 @@ public class SiteMapURLEntryImpl extends AbstractModuleConfiguration implements 
     @JoinColumn(name = "MODULE_CONFIG_ID")
     protected SiteMapGeneratorConfiguration siteMapGeneratorConfiguration;
     
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public String getLocation() {
         return location;

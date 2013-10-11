@@ -16,10 +16,10 @@
 
 package org.broadleafcommerce.common.sitemap.domain;
 
-import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -35,8 +35,36 @@ import java.util.List;
  * 
  * @author bpolster
  */
-public interface SiteMapGeneratorConfiguration extends ModuleConfiguration {
+public interface SiteMapGeneratorConfiguration extends Serializable {
     
+    /**
+     * Returns the SiteMapGeneratorConfiguration Id.
+     * 
+     * @return
+     */
+    public Long getId();
+
+    /**
+     * Sets the SiteMapGeneratorConfiguration Id.
+     * 
+     * @param id
+     */
+    public void setId(Long id);
+
+    /**
+     * Returns the "disabled" boolean.
+     * 
+     * @return
+     */
+    public Boolean getDisabled();
+
+    /**
+     * Sets the "disabled" boolean.
+     * 
+     * @param disabled
+     */
+    public void setDisabled(Boolean disabled);
+
     /**
      * Returns the list of SiteMapChangeFreqTypes.
      * 
@@ -105,6 +133,6 @@ public interface SiteMapGeneratorConfiguration extends ModuleConfiguration {
      * 
      * @param siteMapConfiguration
      */
-    void setSiteMapConfiguration(SiteMapConfiguration siteMapConfiguration);
+    public void setSiteMapConfiguration(SiteMapConfiguration siteMapConfiguration);
 
 }

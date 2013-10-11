@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.common.sitemap.domain;
 
-import org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -25,6 +24,8 @@ import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -34,6 +35,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -47,10 +50,26 @@ import javax.persistence.Table;
 @Table(name = "BLC_SITE_MAP_GEN_CONFIG")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(friendlyName = "SiteMapGeneratorConfiguration")
-public class SiteMapGeneratorConfigurationImpl extends AbstractModuleConfiguration implements SiteMapGeneratorConfiguration {
+public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfiguration {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(generator = "SiteMapGeneratorConfigurationId")
+    @GenericGenerator(
+            name = "SiteMapGeneratorConfigurationId",
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name = "segment_value", value = "SiteMapGeneratorConfigurationImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl")
+            })
+    @Column(name = "SITE_MAP_GEN_CONFIG_ID")
+    protected Long id;
+
+    @Column(name = "DISABLED", nullable = false)
+    @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Disabled")
+    protected Boolean disabled = false;
+    
     @Column(name = "CHANGE_FREQ_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Site_Map_Change_Freq_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType")
@@ -74,6 +93,26 @@ public class SiteMapGeneratorConfigurationImpl extends AbstractModuleConfigurati
     @JoinColumn(name = "MODULE_CONFIG_ID")
     protected SiteMapConfiguration siteMapConfiguration;
     
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public Boolean getDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
     @Override
     public SiteMapChangeFreqType getSiteMapChangeFreqType() {
         return SiteMapChangeFreqType.getInstance(this.siteMapChangeFreqType);
