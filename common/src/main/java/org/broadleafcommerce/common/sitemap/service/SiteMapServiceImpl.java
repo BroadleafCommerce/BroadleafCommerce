@@ -57,6 +57,7 @@ public class SiteMapServiceImpl implements SiteMapService {
     public SiteMapGenerationResponse generateSiteMap() throws SiteMapException, IOException {
 
         // TODO: Create the siteMapBuilder component.
+
         SiteMapBuilder sitemapBuilder = null;
 
         //lookup SiteMapConfiguration

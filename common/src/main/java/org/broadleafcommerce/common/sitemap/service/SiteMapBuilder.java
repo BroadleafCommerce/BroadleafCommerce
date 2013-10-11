@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.common.sitemap.service;
 
-import org.broadleafcommerce.common.sitemap.domain.SiteMapURLWrapper;
+import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
 
 
 /**
@@ -24,12 +24,20 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapURLWrapper;
  * 
  * @author bpolster
  */
-public interface SiteMapBuilder {
+public class SiteMapBuilder {
+
+    private int maxURLPerUrlSet = 50000;
+
+    public SiteMapBuilder() {
+
+    }
 
     /**
      * Returns the SiteMapURLSetWrapper that a Generator should use to add its next URL element.
      * 
      */
-    public void addUrl(SiteMapURLWrapper urlWrapper);
+    public void addUrl(SiteMapURLWrapper urlWrapper) {
+
+    }
 
 }

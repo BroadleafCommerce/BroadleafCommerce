@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.sitemap.domain;
+package org.broadleafcommerce.common.sitemap.wrapper;
 
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "url")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class SiteMapURLSetWrapper {
+public class SiteMapURLWrapper {
 
     protected final SimpleDateFormat W3C_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
     private static final long serialVersionUID = 1L;   
