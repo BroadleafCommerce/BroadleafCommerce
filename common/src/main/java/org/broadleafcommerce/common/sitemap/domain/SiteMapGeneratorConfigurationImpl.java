@@ -87,8 +87,8 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     @AdminPresentationCollection(friendlyName = "SiteMapConfiguration_Custom_URL_Entries")
     protected List<SiteMapURLEntry> customURLEntries = new ArrayList<SiteMapURLEntry>();
     
-    @ManyToOne(targetEntity = SiteMapConfigurationImpl.class, optional = true)
-    @JoinColumn(name = "MODULE_CONFIG_ID")
+    @ManyToOne(targetEntity = SiteMapConfigurationImpl.class, optional = false)
+    @JoinColumn(name = "SITE_MAP_CONFIG")
     protected SiteMapConfiguration siteMapConfiguration;
     
     @Override

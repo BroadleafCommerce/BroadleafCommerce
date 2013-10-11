@@ -77,7 +77,7 @@ public class SiteMapURLEntryImpl implements SiteMapURLEntry {
     protected String siteMapPriority;
     
     @ManyToOne(targetEntity = SiteMapGeneratorConfigurationImpl.class, optional = false)
-    @JoinColumn(name = "SITE_MAP_GEN_CONFIG_ID")
+    @JoinColumn(name = "SITE_MAP_GEN_CONFIG")
     protected SiteMapGeneratorConfiguration siteMapGeneratorConfiguration;
     
     @Override
