@@ -74,8 +74,9 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
             broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType")
     protected String siteMapChangeFreqType;
 
-    @Column(name = "SITE_MAP_PRIORITY", precision = 2, scale = 1, nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Site_Map_Priority")
+    @Column(name = "SITE_MAP_PRIORITY", nullable = false)
+    @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Site_Map_Priority", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType")
     protected String siteMapPriority;
 
     @Column(name = "SITE_MAP_GENERATOR_TYPE", nullable = false)
@@ -88,8 +89,8 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     @AdminPresentationCollection(friendlyName = "SiteMapConfiguration_Custom_URL_Entries")
     protected List<SiteMapURLEntry> customURLEntries = new ArrayList<SiteMapURLEntry>();
     
-    @ManyToOne(targetEntity = SiteMapConfigurationImpl.class, optional = true)
-    @JoinColumn(name = "MODULE_CONFIG_ID")
+    @ManyToOne(targetEntity = SiteMapConfigurationImpl.class, optional = false)
+    @JoinColumn(name = "SITE_MAP_CONFIG")
     protected SiteMapConfiguration siteMapConfiguration;
     
     @Override
