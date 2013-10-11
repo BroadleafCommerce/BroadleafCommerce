@@ -16,8 +16,27 @@
 
 package org.broadleafcommerce.common.sitemap.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.sitemap.domain.SiteMapConfiguration;
+import org.broadleafcommerce.common.sitemap.wrapper.SiteMapIndexWrapper;
+import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLSetWrapper;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
+import org.broadleafcommerce.common.sitemap.wrapper.SiteMapWrapper;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 /**
  * Handles creating the various sitemap files. 
@@ -26,10 +45,21 @@ import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
  */
 public class SiteMapBuilder {
 
-    private int maxURLPerUrlSet = 50000;
+    protected static final Log LOG = LogFactory.getLog(SiteMapBuilder.class);
 
-    public SiteMapBuilder() {
+    // TODO: Placeholder.   We need to get these values in a valid way (should be something we have in the framework).
+    protected String tempDirectory;
+    protected String siteUrlPath = "http://www.test.com/";
 
+    protected SimpleDateFormat W3C_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
+    protected SiteMapConfiguration siteMapConfig;
+    protected SiteMapURLSetWrapper currentURLSetWrapper;
+    protected List<String> indexFileNames = new ArrayList<String>();
+
+    public SiteMapBuilder(SiteMapConfiguration siteMapConfig, String tempDirectory) {
+        this.tempDirectory = tempDirectory;
+        fixTempDirectory();
+        currentURLSetWrapper = new SiteMapURLSetWrapper();
     }
 
     /**
@@ -37,7 +67,116 @@ public class SiteMapBuilder {
      * 
      */
     public void addUrl(SiteMapURLWrapper urlWrapper) {
-
+        if (currentURLSetWrapper.getSiteMapUrlWrappers().size() >= siteMapConfig.getMaximumUrlEntriesPerFile()) {
+            persistIndexedURLSetWrapper(currentURLSetWrapper);
+            currentURLSetWrapper = new SiteMapURLSetWrapper();
+        }
+        currentURLSetWrapper.getSiteMapUrlWrappers().add(urlWrapper);
     }
 
+    /**
+     * Method takes in a valid JAXB object (e.g. has a RootElement) and persists it to 
+     * the temporary directory associated with this builder. 
+     * 
+     * @param fileName
+     */
+    protected void persistXMLDocument(String fileName, Object xmlObject) {
+
+        try {
+            JAXBContext context = JAXBContext.newInstance(xmlObject.getClass());
+            Marshaller m = context.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+            File file = new File(tempDirectory + fileName);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            Writer writer = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
+            m.marshal(xmlObject, writer);
+            writer.close();
+        } catch (IOException ioe) {
+            LOG.error("IOException occurred persisting XML Document", ioe);
+            throw new RuntimeException("Error persisting XML document when trying to build Sitemap", ioe);
+        } catch (JAXBException je) {
+            LOG.error("JAXBException occurred persisting XML Document", je);
+            throw new RuntimeException("Error persisting XML document when trying to build Sitemap", je);
+        }
+    }
+
+    /**
+     * Save the passed in URL set to a new indexed file. 
+     * @return
+     */
+    protected void persistIndexedURLSetWrapper(SiteMapURLSetWrapper urlSetWrapper) {
+        String indexFileName = createNextIndexFileName();
+        persistXMLDocument(indexFileName, urlSetWrapper);
+        indexFileNames.add(createNextIndexFileName());
+    }
+
+    /**
+     * Save the passed in URL set to a new indexed file. 
+     * @return
+     */
+    protected void persistNonIndexedSiteMap() {
+        persistXMLDocument(siteMapConfig.getSiteMapFileName(), currentURLSetWrapper);
+        indexFileNames.add(createNextIndexFileName());
+    }
+
+    /**
+     * Save the passed in URL set to a new indexed file. 
+     * @return
+     */
+    protected void persistIndexedSiteMap() {
+        String now = W3C_DATE_FORMATTER.format(new Date());
+        
+        // Save the left over items
+        persistIndexedURLSetWrapper(currentURLSetWrapper);
+
+        // Build the siteMapIndex
+        SiteMapIndexWrapper siteMapIndexWrapper = new SiteMapIndexWrapper();
+        for (String fileName : indexFileNames) {
+            SiteMapWrapper siteMapWrapper = new SiteMapWrapper();
+            siteMapWrapper.setLoc(getSiteUrlPath() + fileName);
+            siteMapWrapper.setLastmod(now);
+            siteMapIndexWrapper.getSiteMapWrappers().add(siteMapWrapper);
+        }
+
+        persistXMLDocument(siteMapConfig.getSiteMapFileName(), siteMapIndexWrapper);
+    }
+
+    /**
+     * Returns a path to the URL where the sitemap files will be located.   Typically this is the 
+     * production address (e.g. http://www.mysite.com/);
+     * @return
+     */
+    protected String getSiteUrlPath() {
+        return siteUrlPath;
+    }
+
+    /**
+     * Create the name of the indexed files.
+     * For example, sitemap1.xml, sitemap2.xml, etc.
+     * 
+     * @return
+     */
+    protected String createNextIndexFileName() {
+        int fileNumber = indexFileNames.size() + 1;
+        return "siteMap" + fileNumber + ".xml";
+    }
+
+    protected void persistSiteMap() {
+        if (indexFileNames.size() > 0) {
+            persistIndexedSiteMap();
+        }
+        persistNonIndexedSiteMap();
+    }
+
+    // Ensure that the temp directory ends with a "/"
+    protected String fixTempDirectory() {
+        assert tempDirectory != null;
+        if (tempDirectory.endsWith("/")) {
+            return tempDirectory + "/";
+        }
+        return tempDirectory;
+    }
 }

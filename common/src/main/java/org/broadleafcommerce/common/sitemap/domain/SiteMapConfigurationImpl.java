@@ -45,10 +45,16 @@ import javax.persistence.Table;
 public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implements SiteMapConfiguration {
 
     private static final long serialVersionUID = 1L;
+    private static Integer DEFAULT_MAX_URL_ENTRIES = 50000;
 
     @Column(name = "SITE_MAP_FILE_NAME", nullable = false)
     @AdminPresentation(friendlyName = "SiteMapConfiguration_Site_Map_File_Name")
     protected String siteMapFileName;
+
+    @Column(name = "MAX_URL_ENTRIES_PER_FILE")
+    @AdminPresentation(excluded = true)
+    // This defaults to 50000 and does not normally need to be changed so it is excluded from the admin by default.
+    protected Integer maximumSiteMapURLEntriesPerFile;
 
     @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @AdminPresentationCollection(friendlyName = "SiteMapConfiguration_Site_Map_Generator_Configurations", addType = AddMethodType.LOOKUP, manyToField = "siteMapConfigurations",
@@ -80,4 +86,17 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
         this.siteMapGeneratorConfigurations = siteMapGeneratorConfigurations;
     }
 
+    @Override
+    public Integer getMaximumUrlEntriesPerFile() {
+        if (maximumSiteMapURLEntriesPerFile == null) {
+            return DEFAULT_MAX_URL_ENTRIES;
+        } else {
+            return maximumSiteMapURLEntriesPerFile.intValue();
+        }
+    }
+
+    @Override
+    public void setMaximumUrlEntriesPerFile(Integer maximumSiteMapURLEntriesPerFile) {
+        this.maximumSiteMapURLEntriesPerFile = maximumSiteMapURLEntriesPerFile;
+    }
 }

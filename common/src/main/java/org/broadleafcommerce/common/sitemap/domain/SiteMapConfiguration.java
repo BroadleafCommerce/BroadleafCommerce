@@ -30,7 +30,7 @@ import java.util.List;
 public interface SiteMapConfiguration extends ModuleConfiguration {
 
     /**
-     * The name of the file that holds the SiteMap.xml.    
+     * The name of the file that holds the SiteMap.xml.      Defaults to "sitemap.xml".
      * 
      * If this value was sitemap.xml then your sites robots.txt file would be configured to include the 
      * following line.
@@ -60,5 +60,24 @@ public interface SiteMapConfiguration extends ModuleConfiguration {
      * @return
      */
     public void setSiteMapGeneratorConfigurations(List<SiteMapGeneratorConfiguration> siteMapGeneratorConfigurations);
+
+    /**
+     * Returns the maximumUrlEntriesPerFile.   Defaults to 50000 per the sitemap.org schema requirement of
+     * a maximum of 50000 per file.   Useful to override for testing purposes.
+     * 
+     * Will allow values over 50000 but this would be considered invalid for the 0.9 version of the sitemap.org contract.
+     * 
+     * @return
+     */
+    public Integer getMaximumUrlEntriesPerFile();
+
+    /**
+     * Sets the maximumUrl Entries per sitemap file.   The sitemap.org contract (version 0.9) says that this number 
+     * should be a maximum of 50000 but it may be helpful for some implementations to override the default
+     * for testing purposes.
+     * 
+     * @param maximumUrlEntriesPerFile
+     */
+    public void setMaximumUrlEntriesPerFile(Integer maximumUrlEntriesPerFile);
 
 }

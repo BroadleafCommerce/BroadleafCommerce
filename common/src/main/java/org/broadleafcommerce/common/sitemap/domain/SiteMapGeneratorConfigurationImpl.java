@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -45,7 +47,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "BLC_SITE_MAP_GEN_CONFIG")
-//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(friendlyName = "SiteMapGeneratorConfiguration")
 public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfiguration {
 
@@ -72,9 +74,8 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
             broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType")
     protected String siteMapChangeFreqType;
 
-    @Column(name = "SITE_MAP_PRIORITY", nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Site_Map_Priority", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType")
+    @Column(name = "SITE_MAP_PRIORITY", precision = 2, scale = 1, nullable = false)
+    @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Site_Map_Priority")
     protected String siteMapPriority;
 
     @Column(name = "SITE_MAP_GENERATOR_TYPE", nullable = false)
@@ -87,8 +88,8 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     @AdminPresentationCollection(friendlyName = "SiteMapConfiguration_Custom_URL_Entries")
     protected List<SiteMapURLEntry> customURLEntries = new ArrayList<SiteMapURLEntry>();
     
-    @ManyToOne(targetEntity = SiteMapConfigurationImpl.class, optional = false)
-    @JoinColumn(name = "SITE_MAP_CONFIG")
+    @ManyToOne(targetEntity = SiteMapConfigurationImpl.class, optional = true)
+    @JoinColumn(name = "MODULE_CONFIG_ID")
     protected SiteMapConfiguration siteMapConfiguration;
     
     @Override
@@ -113,22 +114,38 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
 
     @Override
     public SiteMapChangeFreqType getSiteMapChangeFreqType() {
-        return SiteMapChangeFreqType.getInstance(this.siteMapChangeFreqType);
+        if (siteMapChangeFreqType != null) {
+            return SiteMapChangeFreqType.getInstance(this.siteMapChangeFreqType);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void setSiteMapChangeFreqType(SiteMapChangeFreqType siteMapChangeFreqType) {
-        this.siteMapChangeFreqType = siteMapChangeFreqType.getType();
+        if (siteMapChangeFreqType != null) {
+            this.siteMapChangeFreqType = siteMapChangeFreqType.getType();
+        } else {
+            this.siteMapChangeFreqType = null;
+        }
     }
 
     @Override
     public SiteMapPriorityType getSiteMapPriority() {
-        return SiteMapPriorityType.getInstance(this.siteMapPriority);
+        if (siteMapPriority != null) {
+            return SiteMapPriorityType.getInstance(this.siteMapPriority);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void setSiteMapPriority(SiteMapPriorityType siteMapPriority) {
-        this.siteMapPriority = siteMapPriority.getType();
+        if (siteMapPriority != null) {
+            this.siteMapPriority = siteMapPriority.getType();
+        } else {
+            this.siteMapPriority = null;
+        }
     }
 
     @Override
