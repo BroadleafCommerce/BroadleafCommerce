@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,6 +40,7 @@ import javax.annotation.Resource;
  * @author bpolster
  *
  */
+@Service("blSiteMapService")
 public class SiteMapServiceImpl implements SiteMapService {
 
     protected static final Log LOG = LogFactory.getLog(SiteMapServiceImpl.class);
