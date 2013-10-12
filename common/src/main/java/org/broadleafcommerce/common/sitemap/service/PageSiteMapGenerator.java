@@ -17,6 +17,7 @@
 package org.broadleafcommerce.common.sitemap.service;
 
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
+import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,10 +28,14 @@ import org.springframework.stereotype.Component;
 @Component("blPageSiteMapGenerator")
 public class PageSiteMapGenerator implements SiteMapGenerator {
 
-    @Override
+    /**
+     * Returns true if this SiteMapGenerator is able to process the passed in siteMapGeneratorConfiguration.   
+     * 
+     * @param siteMapGeneratorConfiguration
+     * @return
+     */
     public boolean canHandleSiteMapConfiguration(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration) {
-        // TODO Auto-generated method stub
-        return false;
+        return SiteMapGeneratorType.PAGE.equals(siteMapGeneratorConfiguration.getSiteMapGeneratorType());
     }
 
     @Override

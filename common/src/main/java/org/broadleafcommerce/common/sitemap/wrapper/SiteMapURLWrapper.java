@@ -29,8 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Representation of SiteMapURLEntry that can be used to generate
- * an XML element.
+ * Representation of SiteMapURLEntry that can be used to generate an XML element.
  * 
  * @author bpolster
  */
