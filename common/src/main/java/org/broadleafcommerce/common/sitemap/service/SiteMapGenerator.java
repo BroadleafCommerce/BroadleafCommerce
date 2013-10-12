@@ -41,8 +41,8 @@ public interface SiteMapGenerator {
      * Typically, the generator will loop through and build a list of URLs to add to the sitemap by calling 
      * methods on the SiteMapBuilder.
      * 
+     * @param siteMapGeneratorConfiguration
      * @param siteMapBuilder
      */
-    public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration,
-            SiteMapBuilder siteMapBuilder);
+    public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder);
 }

@@ -154,6 +154,9 @@
     <bean id="blSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
+                <ref bean="blCategorySiteMapGenerator" />
+                <ref bean="blProductSiteMapGenerator" />
+                <ref bean="blPageSiteMapGenerator" />
                 <ref bean="blCustomSiteMapGenerator" />
             </list>
         </property>
