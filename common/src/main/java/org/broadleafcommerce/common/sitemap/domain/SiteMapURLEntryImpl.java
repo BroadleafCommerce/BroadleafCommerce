@@ -67,9 +67,9 @@ public class SiteMapURLEntryImpl implements SiteMapURLEntry {
     protected Date lastModified = new Date();
     
     @Column(name = "CHANGE_FREQ_TYPE", nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapURLEntry_Site_Map_Change_Freq", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+    @AdminPresentation(friendlyName = "SiteMapURLEntry_Site_Map_Change_Freq_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType")
-    protected String siteMapChangeFreq;
+    protected String siteMapChangeFreqType;
 
     @Column(name = "SITE_MAP_PRIORITY", nullable = false)
     @AdminPresentation(friendlyName = "SiteMapURLEntry_Site_Map_Priority", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
@@ -112,22 +112,39 @@ public class SiteMapURLEntryImpl implements SiteMapURLEntry {
 
     @Override
     public SiteMapChangeFreqType getSiteMapChangeFreqType() {
-        return SiteMapChangeFreqType.getInstance(this.siteMapChangeFreq);
+        if (siteMapChangeFreqType != null) {
+            return SiteMapChangeFreqType.getInstance(this.siteMapChangeFreqType);
+        } else {
+            return null;
+        }
     }
 
     @Override
-    public void setSiteMapChangeFreqType(SiteMapChangeFreqType siteMapChangeFreq) {
-        this.siteMapChangeFreq = siteMapChangeFreq.getType();
+    public void setSiteMapChangeFreqType(SiteMapChangeFreqType siteMapChangeFreqType) {
+        if (siteMapChangeFreqType != null) {
+            this.siteMapChangeFreqType = siteMapChangeFreqType.getType();
+        } else {
+            this.siteMapChangeFreqType = null;
+        }
     }
 
     @Override
     public SiteMapPriorityType getSiteMapPriorityType() {
-        return SiteMapPriorityType.getInstance(this.siteMapPriority);
+        if (siteMapPriority != null) {
+            return SiteMapPriorityType.getInstance(this.siteMapPriority);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void setSiteMapPriorityType(SiteMapPriorityType siteMapPriority) {
-        this.siteMapChangeFreq = siteMapPriority.getType();
+        if (siteMapPriority != null) {
+            this.siteMapPriority = siteMapPriority.getType();
+        } else {
+            this.siteMapPriority = null;
+        }
+
     }
 
     @Override

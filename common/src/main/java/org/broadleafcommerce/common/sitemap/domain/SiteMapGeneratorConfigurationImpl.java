@@ -23,8 +23,6 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -151,12 +149,20 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
 
     @Override
     public SiteMapGeneratorType getSiteMapGeneratorType() {
-        return SiteMapGeneratorType.getInstance(this.siteMapGeneratorType);
+        if (siteMapGeneratorType != null) {
+            return SiteMapGeneratorType.getInstance(this.siteMapGeneratorType);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void setSiteMapGeneratorType(SiteMapGeneratorType siteMapGeneratorType) {
-        this.siteMapGeneratorType = siteMapGeneratorType.getType();
+        if (siteMapGeneratorType != null) {
+            this.siteMapGeneratorType = siteMapGeneratorType.getType();
+        } else {
+            this.siteMapGeneratorType = null;
+        }
     }
 
     @Override
