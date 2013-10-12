@@ -20,6 +20,7 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration
 import org.broadleafcommerce.common.sitemap.domain.SiteMapURLEntry;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
+import org.springframework.stereotype.Component;
 
 
 /**
@@ -30,6 +31,7 @@ import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
  * @author bpolster
  *
  */
+@Component("blCustomSiteMapGenerator")
 public class CustomUrlSiteMapGenerator implements SiteMapGenerator {
     
     /**

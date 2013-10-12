@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -44,11 +45,14 @@ import javax.annotation.Resource;
 public class SiteMapServiceImpl implements SiteMapService {
 
     protected static final Log LOG = LogFactory.getLog(SiteMapServiceImpl.class);
-    protected List<SiteMapGenerator> siteMapGenerators;
+
     protected String tempDirectory = System.getProperty("java.io.tmpdir");
 
     @Resource(name = "blModuleConfigurationService")
     protected ModuleConfigurationService moduleConfigurationService;
+
+    @Resource(name = "blSiteMapGenerators")
+    protected List<SiteMapGenerator> siteMapGenerators = new ArrayList<SiteMapGenerator>();
 
     @Override
     public SiteMapGenerationResponse generateSiteMap() throws SiteMapException, IOException {
