@@ -19,11 +19,8 @@ package org.broadleafcommerce.common.sitemap.service;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapURLEntry;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
-import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLSetWrapper;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 
 /**
@@ -49,8 +46,6 @@ public class CustomUrlSiteMapGenerator implements SiteMapGenerator {
 
     @Override
     public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder) {
-        SiteMapURLSetWrapper siteMapURLSetWrapper = new SiteMapURLSetWrapper();
-        List<SiteMapURLWrapper> siteMapUrls = siteMapURLSetWrapper.getSiteMapUrlWrappers();
         for (SiteMapURLEntry urlEntry : siteMapGeneratorConfiguration.getCustomURLEntries()) {
             SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
@@ -74,10 +69,8 @@ public class CustomUrlSiteMapGenerator implements SiteMapGenerator {
             // lastModDate
             siteMapUrl.setLastModDate(urlEntry.getLastMod());
             
-            siteMapUrls.add(siteMapUrl);
+            siteMapBuilder.addUrl(siteMapUrl);
         }
-
-        siteMapBuilder.persistIndexedURLSetWrapper(siteMapURLSetWrapper);
     }
     
 }
