@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.sitemap.service;
+package org.broadleafcommerce.core.catalog.service;
 
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
-import org.broadleafcommerce.common.sitemap.domain.SiteMapURLEntry;
+import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
+import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
-import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLSetWrapper;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -50,36 +48,9 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
 
     @Override
     public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder) {
-
-        SiteMapURLSetWrapper siteMapURLSetWrapper = new SiteMapURLSetWrapper();
-        List<SiteMapURLWrapper> siteMapUrls = siteMapURLSetWrapper.getSiteMapUrlWrappers();
-        for (SiteMapURLEntry urlEntry : siteMapGeneratorConfiguration.getCustomURLEntries()) {
-            SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
-
-            // location
-            siteMapUrl.setLoc(urlEntry.getLocation());
-
-            // changefreq
-            if (urlEntry.getSiteMapChangeFreqType() != null) {
-                siteMapUrl.setChangeFreqType(urlEntry.getSiteMapChangeFreqType());
-            } else {
-                siteMapUrl.setChangeFreqType(siteMapGeneratorConfiguration.getSiteMapChangeFreqType());
-            }
-
-            // priority
-            if (urlEntry.getSiteMapPriorityType() != null) {
-                siteMapUrl.setPriorityType(urlEntry.getSiteMapPriorityType());
-            } else {
-                siteMapUrl.setPriorityType(siteMapGeneratorConfiguration.getSiteMapPriority());
-            }
-
-            // lastModDate
-            siteMapUrl.setLastModDate(urlEntry.getLastMod());
-
-            siteMapUrls.add(siteMapUrl);
-        }
-
-        siteMapBuilder.persistIndexedURLSetWrapper(siteMapURLSetWrapper);
+        // TODO: loop and then call
+        SiteMapURLWrapper urlWrapper = null; // TODO: build one from the category
+        siteMapBuilder.addUrl(urlWrapper);
     }
 
 }

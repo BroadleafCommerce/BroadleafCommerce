@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.sitemap.service;
+package org.broadleafcommerce.core.catalog.service;
 
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
+import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
+import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
+import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
 import org.springframework.stereotype.Component;
 
 /**
- * Responsible for generating site map entries for Page.
+ * Responsible for generating site map entries for Product.
  * 
  * @author Joshua Skorton (jskorton)
  */
-@Component("blPageSiteMapGenerator")
-public class PageSiteMapGenerator implements SiteMapGenerator {
+@Component("blProductSiteMapGenerator")
+public class ProductSiteMapGenerator implements SiteMapGenerator {
 
     /**
      * Returns true if this SiteMapGenerator is able to process the passed in siteMapGeneratorConfiguration.   
@@ -35,13 +38,14 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
      * @return
      */
     public boolean canHandleSiteMapConfiguration(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration) {
-        return SiteMapGeneratorType.PAGE.equals(siteMapGeneratorConfiguration.getSiteMapGeneratorType());
+        return SiteMapGeneratorType.PRODUCT.equals(siteMapGeneratorConfiguration.getSiteMapGeneratorType());
     }
 
     @Override
     public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder) {
-        // TODO Auto-generated method stub
-
+        // TODO: loop and then call
+        SiteMapURLWrapper urlWrapper = null; // TODO: build one from the product
+        siteMapBuilder.addUrl(urlWrapper);
     }
 
 }
