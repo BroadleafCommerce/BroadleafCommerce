@@ -23,7 +23,6 @@ import org.broadleafcommerce.core.rating.service.RatingService;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
@@ -35,7 +34,6 @@ import javax.annotation.Resource;
  *
  * @author jfridye
  */
-@Component("blRatingsProcessor")
 public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
     
     @Resource(name = "blRatingService")

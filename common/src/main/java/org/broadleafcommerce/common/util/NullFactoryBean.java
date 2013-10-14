@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.web.processor;
+package org.broadleafcommerce.common.util;
 
-import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.beans.factory.FactoryBean;
 
-/**
- * @author Elbert Bautista (elbertbautista)
- */
-public class ContentProcessorExtensionManager extends ExtensionManager<ContentProcessorExtensionHandler> {
 
-    public ContentProcessorExtensionManager() {
-        super(ContentProcessorExtensionHandler.class);
+public class NullFactoryBean implements FactoryBean<Void> {
+
+    public Void getObject() throws Exception {
+        return null;
     }
 
-    @Override
-    public boolean continueOnHandled() {
+    public Class<? extends Void> getObjectType() {
+        return null;
+    }
+
+    public boolean isSingleton() {
         return true;
     }
-
 }

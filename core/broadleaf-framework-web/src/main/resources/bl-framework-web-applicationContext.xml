@@ -24,6 +24,24 @@
         </aop:aspect>
     </aop:config>
     
+    <bean id="blAddSortLinkProcessor" class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
+    <bean id="blCategoriesProcessor" class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
+    <bean id="blFormProcessor" class="org.broadleafcommerce.core.web.processor.FormProcessor" />
+    <bean id="blGoogleAnalyticsProcessor" class="org.broadleafcommerce.core.web.processor.GoogleAnalyticsProcessor" />
+    <bean id="blHeadProcessor" class="org.broadleafcommerce.core.web.processor.HeadProcessor" />
+    <bean id="blNamedOrderProcessor" class="org.broadleafcommerce.core.web.processor.NamedOrderProcessor" />
+    <bean id="blProductOptionDisplayProcessor" class="org.broadleafcommerce.core.web.processor.ProductOptionDisplayProcessor" />
+    <bean id="blProductOptionValueProcessor" class="org.broadleafcommerce.core.web.processor.ProductOptionValueProcessor" />
+    <bean id="blProductOptionsProcessor" class="org.broadleafcommerce.core.web.processor.ProductOptionsProcessor" />
+    <bean id="blPaginationPageLinkProcessor" class="org.broadleafcommerce.core.web.processor.PaginationPageLinkProcessor" />
+    <bean id="blPriceTextDisplayProcessor" class="org.broadleafcommerce.core.web.processor.PriceTextDisplayProcessor" />
+    <bean id="blRatingsProcessor" class="org.broadleafcommerce.core.web.processor.RatingsProcessor" />
+    <bean id="blRelatedProductProcessor" class="org.broadleafcommerce.core.web.processor.RelatedProductProcessor" />
+    <bean id="blRemoveFacetValuesLinkProcessor" class="org.broadleafcommerce.core.web.processor.RemoveFacetValuesLinkProcessor" />
+    <bean id="blToggleFacetLinkProcessor" class="org.broadleafcommerce.core.web.processor.ToggleFacetLinkProcessor" />
+    <bean id="blUrlRewriteProcessor" class="org.broadleafcommerce.core.web.processor.UrlRewriteProcessor" />
+    <bean id="blHeadProcessorExtensionManager" class="org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionManager" />
+    
     <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
     <!-- own dialect and add your processors there. -->
     <bean id="blDialectProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">

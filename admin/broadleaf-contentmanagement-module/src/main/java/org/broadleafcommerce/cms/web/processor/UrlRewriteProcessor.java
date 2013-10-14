@@ -18,7 +18,6 @@ package org.broadleafcommerce.cms.web.processor;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
@@ -37,7 +36,6 @@ import javax.servlet.http.HttpServletRequest;
  * 
  * @author apazzolini
  */
-@Component("blUrlRewriteProcessor")
 public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor {
     
     @Resource(name = "blStaticAssetService")

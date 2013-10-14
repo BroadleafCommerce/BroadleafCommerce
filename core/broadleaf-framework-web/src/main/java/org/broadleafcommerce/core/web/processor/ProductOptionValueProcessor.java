@@ -20,7 +20,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
@@ -31,7 +30,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
 
-@Component("blProductOptionValueProcessor")
 public class ProductOptionValueProcessor extends AbstractAttrProcessor  {
 
     private static final Log LOG = LogFactory.getLog(ProductOptionValueProcessor.class);

@@ -20,22 +20,24 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.RequestDTOImpl;
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
-import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 import org.thymeleaf.TemplateEngine;
 
-import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -70,7 +72,10 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
 
     @Resource(name = "blTimeZoneResolver")
     protected BroadleafTimeZoneResolver broadleafTimeZoneResolver;
-
+    
+    @Value("${thymeleaf.threadLocalCleanup.enabled}")
+    protected boolean thymeleafThreadLocalCleanupEnabled = true;
+    
     @Override
     public void process(WebRequest request) {
         Site site = siteResolver.resolveSite(request);
@@ -127,20 +132,22 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         ThreadLocalManager.remove();
         //temporary workaround for Thymeleaf issue #18 (resolved in version 2.1)
         //https://github.com/thymeleaf/thymeleaf-spring3/issues/18
-        try {
-            Field currentProcessLocale = TemplateEngine.class.getDeclaredField("currentProcessLocale");
-            currentProcessLocale.setAccessible(true);
-            ((ThreadLocal) currentProcessLocale.get(null)).remove();
-
-            Field currentProcessTemplateEngine = TemplateEngine.class.getDeclaredField("currentProcessTemplateEngine");
-            currentProcessTemplateEngine.setAccessible(true);
-            ((ThreadLocal) currentProcessTemplateEngine.get(null)).remove();
-
-            Field currentProcessTemplateName = TemplateEngine.class.getDeclaredField("currentProcessTemplateName");
-            currentProcessTemplateName.setAccessible(true);
-            ((ThreadLocal) currentProcessTemplateName.get(null)).remove();
-        } catch (Throwable e) {
-            LOG.warn("Unable to remove Thymeleaf threadlocal variables from request thread", e);
+        if (thymeleafThreadLocalCleanupEnabled) {
+            try {
+                Field currentProcessLocale = TemplateEngine.class.getDeclaredField("currentProcessLocale");
+                currentProcessLocale.setAccessible(true);
+                ((ThreadLocal) currentProcessLocale.get(null)).remove();
+    
+                Field currentProcessTemplateEngine = TemplateEngine.class.getDeclaredField("currentProcessTemplateEngine");
+                currentProcessTemplateEngine.setAccessible(true);
+                ((ThreadLocal) currentProcessTemplateEngine.get(null)).remove();
+    
+                Field currentProcessTemplateName = TemplateEngine.class.getDeclaredField("currentProcessTemplateName");
+                currentProcessTemplateName.setAccessible(true);
+                ((ThreadLocal) currentProcessTemplateName.get(null)).remove();
+            } catch (Throwable e) {
+                LOG.warn("Unable to remove Thymeleaf threadlocal variables from request thread", e);
+            }
         }
     }
 }

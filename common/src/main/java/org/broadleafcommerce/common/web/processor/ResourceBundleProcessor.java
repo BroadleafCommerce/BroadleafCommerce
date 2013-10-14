@@ -21,7 +21,6 @@ import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.broadleafcommerce.common.web.util.ProcessorUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.NestableNode;
@@ -41,7 +40,6 @@ import javax.annotation.Resource;
  * 
  * @author apazzolini
  */
-@Component("blResourceBundleProcessor")
 public class ResourceBundleProcessor extends AbstractElementProcessor {
     
     @Resource(name = "blResourceBundlingService")

@@ -129,6 +129,9 @@
     <bean id="blContentDeepLinkService" class="org.broadleafcommerce.cms.web.deeplink.ContentDeepLinkServiceImpl">
         <property name="structuredContentAdminPath" value="structured-content/" />
     </bean>
+    
+    <bean id="blContentProcessor" class="org.broadleafcommerce.cms.web.processor.ContentProcessor" />
+    <bean id="blContentProcessorExtensionManager" class="org.broadleafcommerce.cms.web.processor.ContentProcessorExtensionManager" />
 
     <bean id="blDialectCmsProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
         <property name="sourceSet">

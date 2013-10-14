@@ -35,7 +35,6 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.deeplink.DeepLink;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
@@ -94,7 +93,6 @@ import javax.servlet.http.HttpServletRequest;
  *                          The list will be sorted first by dynamicFieldA descending and then dynamicFieldB ascending
  * </ul>
  */
-@Component("blContentProcessor")
 public class ContentProcessor extends AbstractModelVariableModifierProcessor {
 
     protected final Log LOG = LogFactory.getLog(getClass());

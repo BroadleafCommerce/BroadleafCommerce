@@ -28,7 +28,6 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.util.LRUMap;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
@@ -53,7 +52,6 @@ import javax.annotation.Resource;
  * @author jfridye
  *
  */
-@Component("blProductOptionsProcessor")
 public class ProductOptionsProcessor extends AbstractModelVariableModifierProcessor {
     
     @Resource(name = "blCatalogService")

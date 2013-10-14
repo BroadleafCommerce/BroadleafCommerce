@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.web.processor.extension;
 
-import org.springframework.stereotype.Service;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
@@ -26,7 +25,6 @@ import java.util.List;
 /**
  * @author Jerry Ocanas (jocanas)
  */
-@Service("blHeadProcessorExtensionManager")
 public class HeadProcessorExtensionManager implements HeadProcessorExtensionListener {
 
     protected List<HeadProcessorExtensionListener> listeners;

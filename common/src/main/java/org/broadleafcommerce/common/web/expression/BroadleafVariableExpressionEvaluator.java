@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.common.web.expression;
 
-import org.springframework.stereotype.Component;
 import org.thymeleaf.context.IProcessingContext;
 import org.thymeleaf.spring3.expression.SpelVariableExpressionEvaluator;
 
@@ -32,7 +31,6 @@ import javax.annotation.Resource;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-@Component("blVariableExpressionEvaluator")
 public class BroadleafVariableExpressionEvaluator extends SpelVariableExpressionEvaluator {
     
     @Resource(name = "blVariableExpressions")
