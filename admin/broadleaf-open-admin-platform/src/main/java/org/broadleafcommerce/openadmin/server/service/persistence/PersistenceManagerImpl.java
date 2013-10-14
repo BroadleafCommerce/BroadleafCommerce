@@ -382,16 +382,16 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             response = myModule.add(persistencePackage);
         }
 
-        // Once the entity has been saved, we can utilize its id for the subsequent dynamic forms
-        Class<?> entityClass;
-        try {
-            entityClass = Class.forName(response.getType()[0]);
-        } catch (ClassNotFoundException e) {
-            throw new ServiceException(e);
-        }
-        Map<String, Object> idMetadata = getDynamicEntityDao().getIdMetadata(entityClass);
-        String idProperty = (String) idMetadata.get("name");
-        if (response.findProperty(idProperty) != null) {
+        if (!MapUtils.isEmpty(persistencePackage.getSubPackages())) {
+            // Once the entity has been saved, we can utilize its id for the subsequent dynamic forms
+            Class<?> entityClass;
+            try {
+                entityClass = Class.forName(response.getType()[0]);
+            } catch (ClassNotFoundException e) {
+                throw new ServiceException(e);
+            }
+            Map<String, Object> idMetadata = getDynamicEntityDao().getIdMetadata(entityClass);
+            String idProperty = (String) idMetadata.get("name");
             String idVal = response.findProperty(idProperty).getValue();
 
             Map<String, List<String>> subPackageValidationErrors = new HashMap<String, List<String>>();
