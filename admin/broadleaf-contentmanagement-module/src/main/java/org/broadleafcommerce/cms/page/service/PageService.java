@@ -78,6 +78,15 @@ public interface PageService {
     public List<Page> readAllPages();
     
     /**
+     * Retrieve a subset of all active Pages
+     *
+     * @param limit the maximum number of results
+     * @param offset the starting point in the record set
+     * @return
+     */
+    public List<Page> readAllActivePages(int limit, int offset);
+
+    /**
      * Returns all page templates, regardless of any sandbox they are apart of
      * @return all {@link PageTemplate}s configured in the system
      */

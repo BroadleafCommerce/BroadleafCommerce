@@ -16,12 +16,20 @@
 
 package org.broadleafcommerce.cms.page.service;
 
+import org.broadleafcommerce.cms.page.dao.PageDao;
+import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
 import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * Responsible for generating site map entries for Page.
@@ -30,6 +38,12 @@ import org.springframework.stereotype.Component;
  */
 @Component("blPageSiteMapGenerator")
 public class PageSiteMapGenerator implements SiteMapGenerator {
+
+    @Resource(name = "blPageService")
+    protected PageDao pageService;
+
+    @Value("${page.site.map.generator.row.limit}")
+    protected int rowLimit;
 
     /**
      * Returns true if this SiteMapGenerator is able to process the passed in siteMapGeneratorConfiguration.   
@@ -43,9 +57,31 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
 
     @Override
     public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder) {
-        // TODO: loop and then call
-        SiteMapURLWrapper urlWrapper = null; // TODO: build one from the page
-        siteMapBuilder.addUrl(urlWrapper);
+
+        int rowOffset = 0;
+        List<Page> pages;
+
+        do {
+            pages = pageService.readAllActivePages(rowLimit, rowOffset);
+            rowOffset += pages.size();
+            for (Page page : pages) {
+                SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
+
+                // location
+                siteMapUrl.setLoc(page.getFullUrl());
+
+                // change frequency
+                siteMapUrl.setChangeFreqType(siteMapGeneratorConfiguration.getSiteMapChangeFreqType());
+
+                // priority
+                siteMapUrl.setPriorityType(siteMapGeneratorConfiguration.getSiteMapPriority());
+
+                // lastModDate
+                siteMapUrl.setLastModDate(new Date());
+
+                siteMapBuilder.addUrl(siteMapUrl);
+            }
+        } while (pages.size() == rowLimit);
     }
 
 }

@@ -33,11 +33,12 @@ import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 @Service("blCatalogService")
 public class CatalogServiceImpl implements CatalogService {
@@ -179,6 +180,12 @@ public class CatalogServiceImpl implements CatalogService {
     public List<Product> findAllProducts(int limit, int offset) {
         return categoryDao.readAllProducts(limit, offset);
     }
+
+    @Override
+    public List<Product> readAllActiveProducts(int page, int pageSize, Date currentDate) {
+        return productDao.readAllActiveProducts(page, pageSize, currentDate);
+    }
+
 
     @Override
     public List<Sku> findAllSkus() {

@@ -133,6 +133,11 @@ public class PageServiceImpl implements PageService {
     }
 
     @Override
+    public List<Page> readAllActivePages(int limit, int offset) {
+        return pageDao.readAllActivePages(limit, offset);
+    }
+
+    @Override
     public List<PageTemplate> readAllPageTemplates() {
         return pageDao.readAllPageTemplates();
     }

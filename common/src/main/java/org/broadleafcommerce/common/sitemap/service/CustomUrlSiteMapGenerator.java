@@ -52,7 +52,7 @@ public class CustomUrlSiteMapGenerator implements SiteMapGenerator {
             // location
             siteMapUrl.setLoc(urlEntry.getLocation());
 
-            // changefreq
+            // change frequency
             if (urlEntry.getSiteMapChangeFreqType() != null) {
                 siteMapUrl.setChangeFreqType(urlEntry.getSiteMapChangeFreqType());
             } else {

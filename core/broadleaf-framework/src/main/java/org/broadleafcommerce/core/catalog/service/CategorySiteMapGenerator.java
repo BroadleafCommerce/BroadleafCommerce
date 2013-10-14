@@ -21,7 +21,13 @@ import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
 import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
+import org.broadleafcommerce.core.catalog.dao.CategoryDao;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -34,7 +40,10 @@ import javax.annotation.Resource;
 public class CategorySiteMapGenerator implements SiteMapGenerator {
 
     @Resource(name = "blCategoryDao")
-    //protected CategoryDao categoryDao;
+    protected CategoryDao categoryDao;
+
+    @Value("${category.site.map.generator.row.limit}")
+    protected int rowLimit;
 
     /**
      * Returns true if this SiteMapGenerator is able to process the passed in siteMapGeneratorConfiguration.   
@@ -48,9 +57,32 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
 
     @Override
     public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder) {
-        // TODO: loop and then call
-        SiteMapURLWrapper urlWrapper = null; // TODO: build one from the category
-        siteMapBuilder.addUrl(urlWrapper);
+
+        int rowOffset = 0;
+        List<Category> categories;
+
+        do {
+            categories = categoryDao.readAllCategories(rowLimit, rowOffset);
+            rowOffset += categories.size();
+            for (Category category : categories) {
+                SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
+
+                // location
+                siteMapUrl.setLoc(category.getUrl());
+
+                // change frequency
+                siteMapUrl.setChangeFreqType(siteMapGeneratorConfiguration.getSiteMapChangeFreqType());
+
+                // priority
+                siteMapUrl.setPriorityType(siteMapGeneratorConfiguration.getSiteMapPriority());
+
+                // lastModDate
+                siteMapUrl.setLastModDate(new Date());
+
+                siteMapBuilder.addUrl(siteMapUrl);
+            }
+        } while (categories.size() == rowLimit);
+
     }
 
 }
