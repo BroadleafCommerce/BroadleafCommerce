@@ -30,7 +30,13 @@ import java.util.List;
 
 /**
  * @author Jeff Fischer
+ * @deprecated This class should not be brought into the Spring context as this will remove any channel processors and completely
+ * replace them with ones that are only based on proto headers. As a result, this will only allow request.isSecure() to work
+ * properly in a load-balanced environment. We need to instead make this work in both environments at the same time so that
+ * the application can be deployed in a single-server staging environment and then in a load balanced environment and it
+ * still work.
  */
+@Deprecated
 public class ProtoChannelBeanPostProcessor implements BeanPostProcessor, Ordered {
 
     Log LOG = LogFactory.getLog(ProtoChannelBeanPostProcessor.class);
