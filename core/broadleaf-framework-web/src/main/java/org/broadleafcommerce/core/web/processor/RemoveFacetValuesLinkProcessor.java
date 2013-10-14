@@ -20,15 +20,15 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * A Thymeleaf processor that processes the value attribute on the element it's tied to
@@ -37,7 +37,6 @@ import java.util.Map;
  * 
  * @author apazzolini
  */
-@Component("blRemoveFacetValuesLinkProcessor")
 public class RemoveFacetValuesLinkProcessor extends AbstractAttributeModifierAttrProcessor {
 
     /**

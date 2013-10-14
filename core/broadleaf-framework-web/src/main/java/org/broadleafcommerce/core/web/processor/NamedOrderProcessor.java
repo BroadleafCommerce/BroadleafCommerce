@@ -22,7 +22,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
@@ -33,7 +32,6 @@ import javax.annotation.Resource;
  *
  * @author elbertbautista
  */
-@Component("blNamedOrderProcessor")
 public class NamedOrderProcessor extends AbstractModelVariableModifierProcessor {
     
     @Resource(name = "blOrderService")

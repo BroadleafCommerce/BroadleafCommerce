@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
@@ -31,7 +30,6 @@ import java.util.Map;
 /**
  * @author Priyesh Patel
  */
-@Component("blProductOptionDisplayProcessor")
 public class ProductOptionDisplayProcessor extends AbstractLocalVariableDefinitionElementProcessor {
 
     /**
