@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * An extendible enumeration of order status types.
+ * An extendible enumeration of site map generator types.
  * 
  * <ul>
  *  <li><b>CATEGORY</b> - Generator that understands how to generate category based sitemap entries.</li>
@@ -44,7 +44,6 @@ public class SiteMapGeneratorType implements Serializable, BroadleafEnumerationT
     public static final SiteMapGeneratorType PRODUCT = new SiteMapGeneratorType("PRODUCT", "Product");
     public static final SiteMapGeneratorType PAGE = new SiteMapGeneratorType("PAGE", "Page");
     public static final SiteMapGeneratorType CUSTOM = new SiteMapGeneratorType("CUSTOM", "Custom");
-    public static final SiteMapGeneratorType ADVANCED_CMS = new SiteMapGeneratorType("ADVANCED_CMS", "Advanced CMS");
 
     public static SiteMapGeneratorType getInstance(final String type) {
         return TYPES.get(type);

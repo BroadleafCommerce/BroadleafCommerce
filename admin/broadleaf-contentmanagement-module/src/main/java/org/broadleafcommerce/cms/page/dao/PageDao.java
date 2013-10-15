@@ -54,14 +54,15 @@ public interface PageDao {
     public List<Page> readAllPages();
     
     /**
-     * Retrieve a subset of all active Pages
+     * Retrieve a subset of all online Pages
      *
      * @param limit the maximum number of results
      * @param offset the starting point in the record set
+     * @param sortBy the column to sort by
      * @return
      */
     @Nonnull
-    public List<Page> readAllActivePages(@Nonnull int limit, @Nonnull int offset);
+    public List<Page> readOnlinePages(@Nonnull int limit, @Nonnull int offset, @Nonnull String sortBy);
 
     /**
      * Returns all page templates, regardless of any sandbox they are apart of

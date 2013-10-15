@@ -13,30 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.broadleafcommerce.core.catalog.domain;
 
-package org.broadleafcommerce.common.sitemap.domain;
-
-import java.util.List;
+import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 
 /**
- * CustomSiteMapGenerator is controlled by this configuration.
+ * CategorySiteMapGenerator is controlled by this configuration.
  * 
- * @author bpolster
+ * @author Joshua Skorton (jskorton)
  */
-public interface CustomUrlSiteMapGeneratorConfiguration extends SiteMapGeneratorConfiguration {
+public interface CategorySiteMapGeneratorConfiguration extends SiteMapGeneratorConfiguration {
 
-    /**
-     * Returns a list of custom SiteMapURLEntrys.
-     * 
-     * @return
-     */
-    public List<SiteMapURLEntry> getCustomURLEntries();
-
-    /**
-     * Sets a list of custom SiteMapURLEntrys.
-     * 
-     * @param customURLEntries
-     */
-    public void setCustomURLEntries(List<SiteMapURLEntry> customURLEntries);
 
 }

@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
 import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
+import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,8 +39,8 @@ import javax.annotation.Resource;
 @Component("blProductSiteMapGenerator")
 public class ProductSiteMapGenerator implements SiteMapGenerator {
 
-    @Resource(name = "blCatalogService")
-    protected CatalogService catalogService;
+    @Resource(name = "blProductDao")
+    protected ProductDao productDao;
 
     @Value("${product.site.map.generator.row.limit}")
     protected int pageSize;
@@ -61,7 +62,7 @@ public class ProductSiteMapGenerator implements SiteMapGenerator {
         List<Product> products;
 
         do {
-            products = catalogService.readAllActiveProducts(pageNum++, pageSize, new Date());
+            products = productDao.readAllActiveProducts(pageNum++, pageSize, new Date());
             for (Product product : products) {
                 SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 

@@ -121,12 +121,13 @@ public class PageDaoImpl implements PageDao {
     }
     
     @Override
-    public List<Page> readAllActivePages(int limit, int offset) {
+    public List<Page> readOnlinePages(int limit, int offset, String sortBy) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Page> criteria = builder.createQuery(Page.class);
         Root<PageImpl> page = criteria.from(PageImpl.class);
         criteria.select(page);
-        criteria.where(builder.isFalse(page.get("offlineFlag").as(Boolean.class)));
+        criteria.where(builder.not(builder.isTrue(page.get("offlineFlag").as(Boolean.class))));
+        criteria.orderBy(builder.asc(page.get(sortBy)));
         TypedQuery<Page> query = em.createQuery(criteria);
         query.setFirstResult(offset);
         query.setMaxResults(limit);

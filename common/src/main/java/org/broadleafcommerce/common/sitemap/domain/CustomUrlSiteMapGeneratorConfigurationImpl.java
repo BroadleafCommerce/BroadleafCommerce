@@ -29,12 +29,13 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 /**
+ * CustomSiteMapGenerator is controlled by this configuration.
  * 
- * @author Joshua Skorton (jskorton)
+ * @author bpolster
  */
 @Entity
 @AdminPresentationClass(friendlyName = "CustomUrlSiteMapGeneratorConfiguration")
-public class CustomUrlSiteMapGeneratorConfigurationImpl extends SiteMapGeneratorConfigurationImpl {
+public class CustomUrlSiteMapGeneratorConfigurationImpl extends SiteMapGeneratorConfigurationImpl implements CustomUrlSiteMapGeneratorConfiguration {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,7 +44,6 @@ public class CustomUrlSiteMapGeneratorConfigurationImpl extends SiteMapGenerator
     @AdminPresentationCollection(friendlyName = "SiteMapConfiguration_Custom_URL_Entries")
     protected List<SiteMapURLEntry> customURLEntries = new ArrayList<SiteMapURLEntry>();
     
-
     @Override
     public SiteMapGeneratorType getSiteMapGeneratorType() {
         return SiteMapGeneratorType.CUSTOM;
@@ -58,4 +58,5 @@ public class CustomUrlSiteMapGeneratorConfigurationImpl extends SiteMapGenerator
     public void setCustomURLEntries(List<SiteMapURLEntry> customURLEntries) {
         this.customURLEntries = customURLEntries;
     }
+
 }

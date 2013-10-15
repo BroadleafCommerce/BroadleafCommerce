@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.common.sitemap.service;
 
+import org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapURLEntry;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
@@ -46,7 +47,7 @@ public class CustomUrlSiteMapGenerator implements SiteMapGenerator {
 
     @Override
     public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder) {
-        for (SiteMapURLEntry urlEntry : siteMapGeneratorConfiguration.getCustomURLEntries()) {
+        for (SiteMapURLEntry urlEntry : ((CustomUrlSiteMapGeneratorConfiguration) siteMapGeneratorConfiguration).getCustomURLEntries()) {
             SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
             // location

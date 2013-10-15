@@ -182,12 +182,6 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public List<Product> readAllActiveProducts(int page, int pageSize, Date currentDate) {
-        return productDao.readAllActiveProducts(page, pageSize, currentDate);
-    }
-
-
-    @Override
     public List<Sku> findAllSkus() {
         return skuDao.readAllSkus();
     }

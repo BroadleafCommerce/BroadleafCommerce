@@ -39,8 +39,8 @@ import javax.annotation.Resource;
 @Component("blPageSiteMapGenerator")
 public class PageSiteMapGenerator implements SiteMapGenerator {
 
-    @Resource(name = "blPageService")
-    protected PageDao pageService;
+    @Resource(name = "blPageDao")
+    protected PageDao pageDao;
 
     @Value("${page.site.map.generator.row.limit}")
     protected int rowLimit;
@@ -60,15 +60,29 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
 
         int rowOffset = 0;
         List<Page> pages;
+        String previousUrl = "";
 
         do {
-            pages = pageService.readAllActivePages(rowLimit, rowOffset);
+            pages = pageDao.readOnlinePages(rowLimit, rowOffset, "fullUrl");
             rowOffset += pages.size();
             for (Page page : pages) {
+
+                if (page.getExcludeFromSiteMap()) {
+                    continue;
+                }
+
+                String currentURL = page.getFullUrl();
+
+                if (previousUrl.equals(currentURL)) {
+                    continue;
+                } else {
+                    previousUrl = currentURL;
+                }
+
                 SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
                 // location
-                siteMapUrl.setLoc(page.getFullUrl());
+                siteMapUrl.setLoc(currentURL);
 
                 // change frequency
                 siteMapUrl.setChangeFreqType(siteMapGeneratorConfiguration.getSiteMapChangeFreqType());
@@ -77,7 +91,11 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
                 siteMapUrl.setPriorityType(siteMapGeneratorConfiguration.getSiteMapPriority());
 
                 // lastModDate
-                siteMapUrl.setLastModDate(new Date());
+                if ((page.getAuditable() != null) && (page.getAuditable().getDateUpdated() != null)) {
+                    siteMapUrl.setLastModDate(page.getAuditable().getDateUpdated());
+                } else {
+                    siteMapUrl.setLastModDate(new Date());
+                }
 
                 siteMapBuilder.addUrl(siteMapUrl);
             }
