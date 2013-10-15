@@ -11,12 +11,6 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.server.service.artifact.upload.*"/>
     </context:component-scan>
 
-    <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
-        <property name="xsrfProtectionEnabled" value="true" />
-        <property name="xssProtectionEnabled" value="true" />
-    </bean>
-    
-    <bean id="blPasswordEncoder" class="${password.site.encoder}"/>
     <bean id="blAdminPasswordEncoder" class="${password.admin.encoder}"/>
 
     <bean id="blMergedEntityContexts" class="org.springframework.beans.factory.config.ListFactoryBean">

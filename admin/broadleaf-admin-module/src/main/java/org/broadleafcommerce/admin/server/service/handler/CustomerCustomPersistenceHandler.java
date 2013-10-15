@@ -18,7 +18,6 @@ package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.admin.server.handler.StructuredContentTypeCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -39,7 +38,7 @@ import javax.annotation.Resource;
  */
 public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private static final Log LOG = LogFactory.getLog(StructuredContentTypeCustomPersistenceHandler.class);
+    private static final Log LOG = LogFactory.getLog(CustomerCustomPersistenceHandler.class);
 
     @Resource(name="blCustomerService")
     protected CustomerService customerService;

@@ -16,12 +16,12 @@
 
 package org.broadleafcommerce.cms.web;
 
-import org.broadleafcommerce.cms.page.dto.NullPageDTO;
-import org.broadleafcommerce.cms.page.dto.PageDTO;
 import org.broadleafcommerce.cms.page.service.PageService;
 import org.broadleafcommerce.cms.web.controller.BroadleafPageController;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
+import org.broadleafcommerce.common.page.dto.NullPageDTO;
+import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;

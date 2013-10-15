@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.structure.dto;
+package org.broadleafcommerce.common.structure.dto;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
-import org.broadleafcommerce.cms.structure.service.StructuredContentServiceImpl;
 
 import java.io.Serializable;
 import java.util.HashMap;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.server.util;
+package org.broadleafcommerce.common.locale.util;
 
 import org.springframework.core.convert.converter.Converter;
 

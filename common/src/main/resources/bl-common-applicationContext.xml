@@ -9,6 +9,11 @@
 
     <context:component-scan base-package="org.broadleafcommerce.common"/>
 
+    <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
+        <property name="xsrfProtectionEnabled" value="true" />
+        <property name="xssProtectionEnabled" value="true" />
+    </bean>
+
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
 
     <bean id="blConfigurationManager" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager"/>

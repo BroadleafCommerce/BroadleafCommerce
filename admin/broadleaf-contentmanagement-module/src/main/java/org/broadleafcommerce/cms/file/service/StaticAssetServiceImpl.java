@@ -16,10 +16,8 @@
 
 package org.broadleafcommerce.cms.file.service;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.tools.view.ImportSupport;
 import org.broadleafcommerce.cms.common.AbstractContentService;
 import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.cms.file.dao.StaticAssetDao;
@@ -27,6 +25,7 @@ import org.broadleafcommerce.cms.file.domain.ImageStaticAsset;
 import org.broadleafcommerce.cms.file.domain.ImageStaticAssetImpl;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
+import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
@@ -65,20 +64,11 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
 
     private static final Log LOG = LogFactory.getLog(StaticAssetServiceImpl.class);
 
-    @Value("${asset.server.url.prefix.internal}")
-    protected String staticAssetUrlPrefix;
-
-    @Value("${asset.server.url.prefix}")
-    protected String staticAssetEnvironmentUrlPrefix;
-
     @Resource(name = "blImageArtifactProcessor")
     protected ImageArtifactProcessor imageArtifactProcessor;
 
     @Value("${asset.use.filesystem.storage}")
     protected boolean storeAssetsOnFileSystem = false;
-
-    @Value("${asset.server.url.prefix.secure}")
-    protected String staticAssetEnvironmentSecureUrlPrefix;
 
     @Value("${automatically.approve.static.assets}")
     protected boolean automaticallyApproveAndPromoteStaticAssets=true;
@@ -91,6 +81,9 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
 
     @Resource(name="blStaticAssetStorageService")
     protected StaticAssetStorageService staticAssetStorageService;
+    
+    @Resource(name = "blStaticAssetPathService")
+    protected StaticAssetPathService staticAssetPathService;
 
     private final Random random = new Random();
     private final String FILE_NAME_CHARS = "0123456789abcdef";
@@ -447,39 +440,19 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
         }
     }
 
-
     @Override
     public String getStaticAssetUrlPrefix() {
-        return staticAssetUrlPrefix;
-    }
-
-    @Override
-    public void setStaticAssetUrlPrefix(String staticAssetUrlPrefix) {
-        this.staticAssetUrlPrefix = staticAssetUrlPrefix;
+        return staticAssetPathService.getStaticAssetUrlPrefix();
     }
 
     @Override
     public String getStaticAssetEnvironmentUrlPrefix() {
-        return fixEnvironmentUrlPrefix(staticAssetEnvironmentUrlPrefix);
-    }
-
-    @Override
-    public void setStaticAssetEnvironmentUrlPrefix(String staticAssetEnvironmentUrlPrefix) {
-        this.staticAssetEnvironmentUrlPrefix = staticAssetEnvironmentUrlPrefix;
+        return staticAssetPathService.getStaticAssetEnvironmentUrlPrefix();
     }
 
     @Override
     public String getStaticAssetEnvironmentSecureUrlPrefix() {
-        if (StringUtils.isEmpty(staticAssetEnvironmentSecureUrlPrefix)) {
-            if (!StringUtils.isEmpty(staticAssetEnvironmentUrlPrefix) && staticAssetEnvironmentUrlPrefix.indexOf("http:") >= 0) {
-                staticAssetEnvironmentSecureUrlPrefix = staticAssetEnvironmentUrlPrefix.replace("http:", "https:");
-            }
-        }
-        return fixEnvironmentUrlPrefix(staticAssetEnvironmentSecureUrlPrefix);
-    }
-
-    public void setStaticAssetEnvironmentSecureUrlPrefix(String staticAssetEnvironmentSecureUrlPrefix) {        
-        this.staticAssetEnvironmentSecureUrlPrefix = staticAssetEnvironmentSecureUrlPrefix;
+        return staticAssetPathService.getStaticAssetEnvironmentSecureUrlPrefix();
     }
 
     @Override
@@ -492,97 +465,8 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
         this.automaticallyApproveAndPromoteStaticAssets = automaticallyApproveAndPromoteStaticAssets;
     }
 
-    /**
-     * Trims whitespace.   If the value is the same as the internal url prefix, then return
-     * null.
-     *
-     * @param urlPrefix
-     * @return
-     */
-    private String fixEnvironmentUrlPrefix(String urlPrefix) {
-        if (urlPrefix != null) {
-            urlPrefix = urlPrefix.trim();
-            if ("".equals(urlPrefix)) {
-                // The value was not set.
-                urlPrefix = null;
-            } else if (urlPrefix.equals(staticAssetUrlPrefix)) {
-                // The value is the same as the default, so no processing needed.
-                urlPrefix = null;
-            }
-        }
-
-        if (urlPrefix != null && !urlPrefix.endsWith("/")) {
-            urlPrefix = urlPrefix + "/";
-        }
-        return urlPrefix;
-    }
-
-    /**
-     * This method will take in an assetPath (think image url) and prepend the
-     * staticAssetUrlPrefix if one exists.
-     * 
-     * Will append any contextPath onto the request.    If the incoming assetPath contains
-     * the internalStaticAssetPrefix and the image is being prepended, the prepend will be
-     * removed.
-     *
-     * @param assetPath     - The path to rewrite if it is a cms managed asset
-     * @param contextPath   - The context path of the web application (if applicable)
-     * @param secureRequest - True if the request is being served over https
-     * @return
-     * @see org.broadleafcommerce.cms.file.service.StaticAssetService#getStaticAssetUrlPrefix()
-     * @see org.broadleafcommerce.cms.file.service.StaticAssetService#getStaticAssetEnvironmentUrlPrefix()
-     */
-    @Override
     public String convertAssetPath(String assetPath, String contextPath, boolean secureRequest) {
-        String returnValue = assetPath;
-        
-        if (assetPath != null && getStaticAssetEnvironmentUrlPrefix() != null && ! "".equals(getStaticAssetEnvironmentUrlPrefix())) {
-            final String envPrefix;
-            if (secureRequest) {
-                envPrefix = getStaticAssetEnvironmentSecureUrlPrefix();
-            } else {
-                envPrefix = getStaticAssetEnvironmentUrlPrefix();
-            }
-            if (envPrefix != null) {
-                // remove the starting "/" if it exists.
-                if (returnValue.startsWith("/")) {
-                    returnValue = returnValue.substring(1);
-                }
-
-                // Also, remove the "cmsstatic" from the URL before prepending the staticAssetUrlPrefix.
-                if (returnValue.startsWith(getStaticAssetUrlPrefix())) {
-                    returnValue = returnValue.substring(getStaticAssetUrlPrefix().trim().length());
-
-                    // remove the starting "/" if it exists.
-                    if (returnValue.startsWith("/")) {
-                        returnValue = returnValue.substring(1);
-                    }
-                }                
-                returnValue = envPrefix + returnValue;
-            }
-        } else {
-            if (returnValue != null && ! ImportSupport.isAbsoluteUrl(returnValue)) {
-                if (! returnValue.startsWith("/")) {
-                    returnValue = "/" + returnValue;
-                }
-
-                // Add context path
-                if (contextPath != null && ! contextPath.equals("")) {
-                    if (! contextPath.equals("/")) {
-                        // Shouldn't be the case, but let's handle it anyway
-                        if (contextPath.endsWith("/")) {
-                            returnValue = returnValue.substring(1);
-                        }
-                        if (contextPath.startsWith("/")) {
-                            returnValue = contextPath + returnValue;  // normal case
-                        } else {
-                            returnValue = "/" + contextPath + returnValue;
-                        }
-                    }
-                }
-            }
-        }
-
-        return returnValue;
+        return staticAssetPathService.convertAssetPath(assetPath, contextPath, secureRequest);
     }
+
 }

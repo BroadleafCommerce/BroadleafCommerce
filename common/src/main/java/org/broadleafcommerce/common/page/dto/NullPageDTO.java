@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.page.dto;
+package org.broadleafcommerce.common.page.dto;
 
 
 /**

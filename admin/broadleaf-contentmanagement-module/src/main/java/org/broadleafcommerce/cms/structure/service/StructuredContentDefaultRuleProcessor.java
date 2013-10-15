@@ -18,7 +18,8 @@ package org.broadleafcommerce.cms.structure.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
+import org.broadleafcommerce.common.rule.AbstractRuleProcessor;
+import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -32,7 +33,7 @@ import java.util.Map;
  *
  */
 @Service("blContentDefaultRuleProcessor")
-public class StructuredContentDefaultRuleProcessor extends AbstractStructuredContentRuleProcessor {
+public class StructuredContentDefaultRuleProcessor extends AbstractRuleProcessor<StructuredContentDTO> {
     private static final Log LOG = LogFactory.getLog(StructuredContentDefaultRuleProcessor.class);
 
     /**

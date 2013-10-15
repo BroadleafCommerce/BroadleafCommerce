@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.openadmin.server.service.type;
+package org.broadleafcommerce.common.presentation;
 
 import java.util.HashMap;
 import java.util.Map;

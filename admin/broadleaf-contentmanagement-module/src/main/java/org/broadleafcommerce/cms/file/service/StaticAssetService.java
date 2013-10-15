@@ -17,6 +17,7 @@
 package org.broadleafcommerce.cms.file.service;
 
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
+import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemListener;
 import org.hibernate.Criteria;
@@ -124,39 +125,22 @@ public interface StaticAssetService extends SandBoxItemListener {
     public List<StaticAsset> findAssets(SandBox sandbox, Criteria criteria);
 
     /**
-     * Returns the value configured to mark an item as a static URL.
-     *
-     * OOB BLC maintains this value in common.properties.
-     *
-     * @return
+     * @see StaticAssetPathService#getStaticAssetUrlPrefix()
+     * @deprecated since 3.1.0. 
      */
     public String getStaticAssetUrlPrefix();
 
-    public void setStaticAssetUrlPrefix(String prefix);
-
     /**
-     * Returns the value configured for the current environment
-     * for the static asset url prefix.   If this is different than
-     * the common value, then the URLs will get rewritten by the
-     * FieldMapWrapper when called from the DisplayContentTag or
-     * ProcessURLFilter.
-     *
-     * @return
+     * @see StaticAssetPathService#getStaticAssetEnvironmentUrlPrefix()
+     * @deprecated since 3.1.0. 
      */
     public String getStaticAssetEnvironmentUrlPrefix();
 
     /**
-     * Returns the secure value of the environment url prefix (e.g. prefixed with https if needed).
-     *
-     * @return
+     * @see StaticAssetPathService#getStaticAssetEnvironmentSecureUrlPrefix()
+     * @deprecated since 3.1.0. 
      */
     public String getStaticAssetEnvironmentSecureUrlPrefix();
-
-    /**
-     * Sets the environment url prefix.
-     * @param prefix
-     */
-    public void setStaticAssetEnvironmentUrlPrefix(String prefix);
 
 
     /**
@@ -183,15 +167,8 @@ public interface StaticAssetService extends SandBoxItemListener {
 
 
     /**
-     * This method will take in an assetPath (think image url) and convert it if
-     * the value contains the asseturlprefix.
-     * @see StaticAssetService#getStaticAssetUrlPrefix()
-     * @see StaticAssetService#getStaticAssetEnvironmentUrlPrefix()
-     * 
-     * @param assetPath - The path to rewrite if it is a cms managed asset
-     * @param contextPath - The context path of the web application (if applicable)
-     * @param secureRequest - True if the request is being served over https
-     * @return
+     * @see StaticAssetPathService#convertAssetPath(String, String, boolean)
+     * @deprecated since 3.1.0. 
      */
     public String convertAssetPath(String assetPath, String contextPath, boolean secureRequest);
 

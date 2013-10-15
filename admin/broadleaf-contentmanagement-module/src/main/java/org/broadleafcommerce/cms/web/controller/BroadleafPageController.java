@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.cms.web.controller;
 
-import org.broadleafcommerce.cms.page.dto.PageDTO;
 import org.broadleafcommerce.cms.web.PageHandlerMapping;
+import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;

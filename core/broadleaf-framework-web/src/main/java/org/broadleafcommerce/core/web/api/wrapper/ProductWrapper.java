@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
@@ -178,11 +178,11 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
         if (model.getMedia() != null && !model.getMedia().isEmpty()) {
             Media media = model.getMedia().get("primary");
             if (media != null) {
-                StaticAssetService staticAssetService = (StaticAssetService) this.context.getBean("blStaticAssetService");
+                StaticAssetPathService staticAssetPathService = (StaticAssetPathService) this.context.getBean("blStaticAssetPathService");
                 primaryMedia = (MediaWrapper) context.getBean(MediaWrapper.class.getName());
                 primaryMedia.wrapDetails(media, request);
                 if (primaryMedia.isAllowOverrideUrl()) {
-                    primaryMedia.setUrl(staticAssetService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
+                    primaryMedia.setUrl(staticAssetPathService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
                 }
             }
         }
@@ -225,12 +225,12 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
         if (model.getMedia() != null && !model.getMedia().isEmpty()) {
             Map<String, Media> mediaMap = model.getMedia();
             media = new ArrayList<MediaWrapper>();
-            StaticAssetService staticAssetService = (StaticAssetService) this.context.getBean("blStaticAssetService");
+            StaticAssetPathService staticAssetPathService = (StaticAssetPathService) this.context.getBean("blStaticAssetPathService");
             for (Media med : mediaMap.values()) {
                 MediaWrapper wrapper = (MediaWrapper) context.getBean(MediaWrapper.class.getName());
                 wrapper.wrapSummary(med, request);
                 if (wrapper.isAllowOverrideUrl()) {
-                    wrapper.setUrl(staticAssetService.convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
+                    wrapper.setUrl(staticAssetPathService.convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
                 }
                 media.add(wrapper);
             }
@@ -269,11 +269,11 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
         if (model.getMedia() != null && !model.getMedia().isEmpty()) {
             Media media = model.getMedia().get("primary");
             if (media != null) {
-                StaticAssetService staticAssetService = (StaticAssetService) this.context.getBean("blStaticAssetService");
+                StaticAssetPathService staticAssetPathService = (StaticAssetPathService) this.context.getBean("blStaticAssetPathService");
                 primaryMedia = (MediaWrapper) context.getBean(MediaWrapper.class.getName());
                 primaryMedia.wrapDetails(media, request);
                 if (primaryMedia.isAllowOverrideUrl()) {
-                    primaryMedia.setUrl(staticAssetService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
+                    primaryMedia.setUrl(staticAssetPathService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
                 }
             }
         }

@@ -32,13 +32,14 @@ import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageItemCriteria;
 import org.broadleafcommerce.cms.page.domain.PageRule;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
-import org.broadleafcommerce.cms.page.dto.NullPageDTO;
-import org.broadleafcommerce.cms.page.dto.PageDTO;
-import org.broadleafcommerce.cms.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
+import org.broadleafcommerce.common.page.dto.NullPageDTO;
+import org.broadleafcommerce.common.page.dto.PageDTO;
+import org.broadleafcommerce.common.rule.RuleProcessor;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +65,7 @@ public class PageServiceImpl implements PageService {
     protected PageDao pageDao;
     
     @Resource(name="blPageRuleProcessors")
-    protected List<PageRuleProcessor> pageRuleProcessors;    
+    protected List<RuleProcessor<PageDTO>> pageRuleProcessors;    
 
     @Resource(name="blLocaleService")
     protected LocaleService localeService;
@@ -271,7 +272,7 @@ public class PageServiceImpl implements PageService {
 
     protected boolean passesPageRules(PageDTO page, Map<String, Object> ruleDTOs) {
         if (pageRuleProcessors != null) {
-            for (PageRuleProcessor processor : pageRuleProcessors) {
+            for (RuleProcessor<PageDTO> processor : pageRuleProcessors) {
                 boolean matchFound = processor.checkForMatch(page, ruleDTOs);
                 if (! matchFound) {
                     return false;

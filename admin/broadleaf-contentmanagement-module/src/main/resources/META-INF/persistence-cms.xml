@@ -7,7 +7,6 @@
         <mapping-file>config/bc/jpa/domain/Page.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/StructuredContent.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/StaticAsset.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/Locale.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/URLHandler.orm.xml</mapping-file>
         <class>org.broadleafcommerce.common.locale.domain.LocaleImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl</class>
