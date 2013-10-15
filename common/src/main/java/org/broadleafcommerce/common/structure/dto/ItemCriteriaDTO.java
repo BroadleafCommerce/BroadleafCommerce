@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.cms.structure.dto;
+package org.broadleafcommerce.common.structure.dto;
 
 import java.io.Serializable;
 

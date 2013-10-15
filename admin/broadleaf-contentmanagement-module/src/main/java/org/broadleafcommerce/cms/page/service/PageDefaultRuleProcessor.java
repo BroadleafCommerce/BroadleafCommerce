@@ -18,7 +18,8 @@ package org.broadleafcommerce.cms.page.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.page.dto.PageDTO;
+import org.broadleafcommerce.common.page.dto.PageDTO;
+import org.broadleafcommerce.common.rule.AbstractRuleProcessor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -32,7 +33,7 @@ import java.util.Map;
  *
  */
 @Service("blPageDefaultRuleProcessor")
-public class PageDefaultRuleProcessor extends AbstractPageRuleProcessor {
+public class PageDefaultRuleProcessor extends AbstractRuleProcessor<PageDTO> {
     private static final Log LOG = LogFactory.getLog(PageDefaultRuleProcessor.class);
 
     /**
@@ -41,7 +42,7 @@ public class PageDefaultRuleProcessor extends AbstractPageRuleProcessor {
      *
      * Also returns true if no rules are present for the passed in item.
      *
-     * @param sc - a structured content item to test
+     * @param sc - a page item to test
      * @param vars - a map of objects used by the rule MVEL expressions
      * @return the result of the rule checks
      */

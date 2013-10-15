@@ -133,4 +133,17 @@
     <bean id="blContentProcessor" class="org.broadleafcommerce.cms.web.processor.ContentProcessor" />
     <bean id="blContentProcessorExtensionManager" class="org.broadleafcommerce.cms.web.processor.ContentProcessorExtensionManager" />
 
+    <bean id="blDialectCmsProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
+            <set>
+                <ref bean="blContentProcessor"/>
+                <ref bean="blUrlRewriteProcessor" />
+            </set>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blDialectCmsProcessors" />
+        <property name="targetRef" value="blDialectProcessors" />
+    </bean>
+
 </beans>

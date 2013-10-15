@@ -33,14 +33,15 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
-import org.broadleafcommerce.cms.structure.dto.ItemCriteriaDTO;
-import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.rule.RuleProcessor;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
+import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.Criteria;
@@ -50,6 +51,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +78,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     protected LocaleService localeService;
 
     @Resource(name="blContentRuleProcessors")
-    protected List<StructuredContentRuleProcessor> contentRuleProcessors;
+    protected List<RuleProcessor<StructuredContentDTO>> contentRuleProcessors;
     
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
@@ -279,11 +281,11 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         return evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs);
     }
 
-    public List<StructuredContentRuleProcessor> getContentRuleProcessors() {
+    public List<RuleProcessor<StructuredContentDTO>> getContentRuleProcessors() {
         return contentRuleProcessors;
     }
 
-    public void setContentRuleProcessors(List<StructuredContentRuleProcessor> contentRuleProcessors) {
+    public void setContentRuleProcessors(List<RuleProcessor<StructuredContentDTO>> contentRuleProcessors) {
         this.contentRuleProcessors = contentRuleProcessors;
     }
 
@@ -491,7 +493,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     protected boolean processContentRules(StructuredContentDTO sc, Map<String, Object> ruleDTOs) {
         if (contentRuleProcessors != null) {
-            for (StructuredContentRuleProcessor processor : contentRuleProcessors) {
+            for (RuleProcessor<StructuredContentDTO> processor : contentRuleProcessors) {
                 boolean matchFound = processor.checkForMatch(sc, ruleDTOs);
                 if (! matchFound) {
                     return false;
