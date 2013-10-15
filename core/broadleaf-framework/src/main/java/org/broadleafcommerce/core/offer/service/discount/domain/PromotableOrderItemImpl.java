@@ -16,14 +16,17 @@
 
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
+import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,6 +72,17 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
                     PromotableOrderItemPriceDetailAdjustment poidAdj =
                             new PromotableOrderItemPriceDetailAdjustmentImpl(adjustment, poid);
                     poid.addCandidateItemPriceDetailAdjustment(poidAdj);
+                }
+
+                List<OrderItemQualifier> oiqs = poid.getPromotableOrderItem().getOrderItem().getOrderItemQualifiers();
+                if (CollectionUtils.isNotEmpty(oiqs)) {
+                    for (OrderItemQualifier oiq : oiqs) {
+                        PromotionQualifier pq = new PromotionQualifier();
+                        pq.setPromotion(oiq.getOffer());
+                        pq.setQuantity(oiq.getQuantity().intValue());
+                        pq.setFinalizedQuantity(oiq.getQuantity().intValue());
+                        poid.getPromotionQualifiers().add(pq);
+                    }
                 }
             }
         } else {
