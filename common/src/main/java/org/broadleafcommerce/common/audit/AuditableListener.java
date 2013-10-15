@@ -18,18 +18,17 @@ package org.broadleafcommerce.common.audit;
 
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.springframework.web.context.request.RequestAttributes;
+import org.broadleafcommerce.common.web.BroadleafRequestCustomerResolverImpl;
+
+import java.lang.reflect.Field;
+import java.util.Calendar;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import java.lang.reflect.Field;
-import java.util.Calendar;
 
 public class AuditableListener {
-
-    public static final String customerRequestAttributeName = "customer";
 
     @PrePersist
     public void setAuditCreatedBy(Object entity) throws Exception {
@@ -80,7 +79,7 @@ public class AuditableListener {
         try {
             BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
             if (requestContext != null && requestContext.getWebRequest() != null) {
-                Object customer = requestContext.getWebRequest().getAttribute(customerRequestAttributeName, RequestAttributes.SCOPE_REQUEST);
+                Object customer = BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomer();
                 if (customer != null) {
                     Class<?> customerClass = customer.getClass();
                     Field userNameField = getSingleField(customerClass, "username");
@@ -113,4 +112,5 @@ public class AuditableListener {
             return null;
         }
     }
+    
 }
