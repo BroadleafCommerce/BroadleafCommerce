@@ -19,16 +19,16 @@ package org.broadleafcommerce.core.web.processor;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * A Thymeleaf processor that generates a search query link that will reflect the current 
@@ -36,7 +36,6 @@ import java.util.Map;
  * 
  * @author apazzolini
  */
-@Component("blAddSortLinkProcessor")
 public class AddSortLinkProcessor extends AbstractAttributeModifierAttrProcessor {
     
     protected boolean allowMultipleSorts = false;

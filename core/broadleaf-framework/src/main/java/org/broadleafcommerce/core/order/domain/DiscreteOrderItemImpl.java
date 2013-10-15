@@ -278,7 +278,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         boolean salePriceUpdated = updateSalePrice();
         boolean retailPriceUpdated = updateRetailPrice();
         if (!isRetailPriceOverride() && !isSalePriceOverride()) {
-            if (salePrice != null) {
+            if (salePrice != null && salePrice.compareTo(retailPrice) <= 0) {
                 price = salePrice;
             } else {
                 price = retailPrice;

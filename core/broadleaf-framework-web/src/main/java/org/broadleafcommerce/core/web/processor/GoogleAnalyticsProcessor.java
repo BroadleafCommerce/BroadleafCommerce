@@ -30,12 +30,12 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
-import javax.annotation.Resource;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will on order confirmation page, submit order
@@ -50,7 +50,6 @@ import java.util.Map;
  * </pre>
  * @author tleffert
  */
-@Component("blGoogleAnalyticsProcessor")
 public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProcessor {
 
     @Resource(name = "blOrderService")

@@ -21,7 +21,6 @@ import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
 import org.broadleafcommerce.common.enumeration.service.DataDrivenEnumerationService;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
@@ -46,7 +45,6 @@ import javax.annotation.Resource;
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
-@Component("blDataDrivenEnumerationProcessor")
 public class DataDrivenEnumerationProcessor extends AbstractModelVariableModifierProcessor {
 
     @Resource(name = "blDataDrivenEnumerationService")
