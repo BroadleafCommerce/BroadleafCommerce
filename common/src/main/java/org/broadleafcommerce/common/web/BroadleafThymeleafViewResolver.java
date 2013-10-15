@@ -165,7 +165,32 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
     }
     
     protected boolean isAjaxRequest() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest(); 
+        // First, let's try to get it from the BroadleafRequestContext
+        HttpServletRequest request = null;
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            HttpServletRequest brcRequest = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+            if (brcRequest != null) {
+                request = brcRequest;
+            }
+        }
+        
+        // If we didn't find it there, we might be outside of a security-configured uri. Let's see if the filter got it
+        if (request == null) {
+            try {
+                request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest(); 
+            } catch (ClassCastException e) {
+                // In portlet environments, we won't be able to cast to a ServletRequestAttributes. We don't want to 
+                // blow up in these scenarios.
+                LOG.warn("Unable to cast to ServletRequestAttributes and the request in BroadleafRequestContext " + 
+                         "was not set. This may introduce incorrect AJAX behavior.");
+            }
+        }
+        
+        // If we still don't have a request object, we'll default to non-ajax
+        if (request == null) {
+            return false;
+        }
+                
         return BroadleafControllerUtility.isAjaxRequest(request);
     }
 
