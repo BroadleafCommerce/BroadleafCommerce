@@ -23,24 +23,63 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.Ordered;
 import org.springframework.security.web.access.channel.ChannelDecisionManagerImpl;
 import org.springframework.security.web.access.channel.ChannelProcessor;
+import org.springframework.security.web.access.channel.InsecureChannelProcessor;
+import org.springframework.security.web.access.channel.SecureChannelProcessor;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * <p>This class is designed to work in both a load-balanced and non load-balanced environment by replacing the existing
+ * default Spring channel processors which do not work in a load balanced environment. Configuration should be done
+ * as follows in your applicationContext-security:</p>
+ * 
+ * <b>Deploying to a load balanced environment with SSL termination at the load balancer as well as an environment
+ * with SSL termination at Tomcat/Apache:</b>
+ * 
+ * <pre>
+ * {@code
+ *   <bean class="org.broadleafcommerce.common.security.channel.ProtoChannelBeanPostProcessor">
+ *       <property name="channelProcessorOverrides">
+ *           <list>
+ *              <bean class="org.springframework.security.web.access.channel.InsecureChannelProcessor" />
+ *              <bean class="org.broadleafcommerce.common.security.channel.ProtoInsecureChannelProcessor" />
+ *              <bean class="org.springframework.security.web.access.channel.SecureChannelProcessor" />
+ *              <bean class="org.broadleafcommerce.common.security.channel.ProtoSecureChannelProcessor" />
+ *          </list>
+ *      </property>
+ *  </bean>
+ *  }
+ * </pre>
+ * 
+ * <b>Deploying to only a load-balanced environment with SSL termination at the load balancer:</b>
+ * 
+ * <pre>
+ * {@code
+ *   <bean class="org.broadleafcommerce.common.security.channel.ProtoChannelBeanPostProcessor">
+ *       <property name="channelProcessorOverrides">
+ *           <list>
+ *              <bean class="org.broadleafcommerce.common.security.channel.ProtoInsecureChannelProcessor" />
+ *              <bean class="org.broadleafcommerce.common.security.channel.ProtoSecureChannelProcessor" />
+ *          </list>
+ *      </property>
+ *  </bean>
+ *  }
+ * </pre>
+ *
  * @author Jeff Fischer
- * @deprecated This class should not be brought into the Spring context as this will remove any channel processors and completely
- * replace them with ones that are only based on proto headers. As a result, this will only allow request.isSecure() to work
- * properly in a load-balanced environment. We need to instead make this work in both environments at the same time so that
- * the application can be deployed in a single-server staging environment and then in a load balanced environment and it
- * still work.
+ * @author Phillip Verheyden (phillipuniverse)
+ * @see {@link ProtoSecureChannelProcessor}
+ * @see {@link ProtoInsecureChannelProcessor}
+ * @see {@link SecureChannelProcessor}
+ * @see {@link InsecureChannelProcessor}
  */
-@Deprecated
 public class ProtoChannelBeanPostProcessor implements BeanPostProcessor, Ordered {
 
     Log LOG = LogFactory.getLog(ProtoChannelBeanPostProcessor.class);
-
+    
+    protected List<ChannelProcessor> channelProcessorOverrides;
+    
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return bean;
@@ -55,11 +94,9 @@ public class ProtoChannelBeanPostProcessor implements BeanPostProcessor, Ordered
                 channelProcessors.setAccessible(true);
                 List<ChannelProcessor> list = (List<ChannelProcessor>) channelProcessors.get(manager);
                 list.clear();
-                List<ChannelProcessor> myProcessors = new ArrayList<ChannelProcessor>();
-                myProcessors.add(new ProtoInsecureChannelProcessor());
-                myProcessors.add(new ProtoSecureChannelProcessor());
-                manager.setChannelProcessors(myProcessors);
-                LOG.info("Replacing the standard Spring Security channel processors with custom processors that look for a 'X-Forwarded-Proto' request header. This allows Spring Security to sit behind a load balancer with SSL termination.");
+                manager.setChannelProcessors(channelProcessorOverrides);
+                LOG.info("Replacing the standard Spring Security channel processors with custom processors that look for a " +
+                		"'X-Forwarded-Proto' request header. This allows Spring Security to sit behind a load balancer with SSL termination.");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -71,4 +108,19 @@ public class ProtoChannelBeanPostProcessor implements BeanPostProcessor, Ordered
     public int getOrder() {
         return 9999;
     }
+
+    /**
+     * @return the channelProcessors
+     */
+    public List<ChannelProcessor> getChannelProcessorOverrides() {
+        return channelProcessorOverrides;
+    }
+    
+    /**
+     * @param channelProcessors the channelProcessors to set
+     */
+    public void setChannelProcessorOverrides(List<ChannelProcessor> channelProcessorOverrides) {
+        this.channelProcessorOverrides = channelProcessorOverrides;
+    }
+    
 }
