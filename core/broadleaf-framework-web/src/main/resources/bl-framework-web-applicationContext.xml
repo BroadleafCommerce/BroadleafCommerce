@@ -39,7 +39,6 @@
     <bean id="blRelatedProductProcessor" class="org.broadleafcommerce.core.web.processor.RelatedProductProcessor" />
     <bean id="blRemoveFacetValuesLinkProcessor" class="org.broadleafcommerce.core.web.processor.RemoveFacetValuesLinkProcessor" />
     <bean id="blToggleFacetLinkProcessor" class="org.broadleafcommerce.core.web.processor.ToggleFacetLinkProcessor" />
-    <bean id="blUrlRewriteProcessor" class="org.broadleafcommerce.core.web.processor.UrlRewriteProcessor" />
     <bean id="blHeadProcessorExtensionManager" class="org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionManager" />
     
     <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
