@@ -18,7 +18,6 @@ package org.broadleafcommerce.common.sitemap.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
@@ -26,17 +25,12 @@ import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -81,11 +75,6 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Site_Map_Generator_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType")
     protected String siteMapGeneratorType;
-
-    @Column(name = "CUSTOM_URL_ENTRIES")
-    @OneToMany(mappedBy = "siteMapGeneratorConfiguration", targetEntity = SiteMapURLEntryImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @AdminPresentationCollection(friendlyName = "SiteMapConfiguration_Custom_URL_Entries")
-    protected List<SiteMapURLEntry> customURLEntries = new ArrayList<SiteMapURLEntry>();
     
     @ManyToOne(targetEntity = SiteMapConfigurationImpl.class, optional = false)
     @JoinColumn(name = "SITE_MAP_CONFIG")
@@ -163,16 +152,6 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
         } else {
             this.siteMapGeneratorType = null;
         }
-    }
-
-    @Override
-    public List<SiteMapURLEntry> getCustomURLEntries() {
-        return customURLEntries;
-    }
-
-    @Override
-    public void setCustomURLEntries(List<SiteMapURLEntry> customURLEntries) {
-        this.customURLEntries = customURLEntries;
     }
 
     @Override

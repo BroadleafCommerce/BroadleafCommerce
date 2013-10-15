@@ -21,7 +21,6 @@ import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Sample URL tag generated and controlled by this configuration.
@@ -106,20 +105,6 @@ public interface SiteMapGeneratorConfiguration extends Serializable {
      * @param siteMapGeneratorType
      */
     public void setSiteMapGeneratorType(SiteMapGeneratorType siteMapGeneratorType);
-    
-    /**
-     * Returns a list of custom SiteMapURLEntrys.
-     * 
-     * @return
-     */
-    public List<SiteMapURLEntry> getCustomURLEntries();
-
-    /**
-     * Sets a list of custom SiteMapURLEntrys.
-     * 
-     * @param customURLEntries
-     */
-    public void setCustomURLEntries(List<SiteMapURLEntry> customURLEntries);
 
     /**
      * Returns the SiteMapConfiguration.
