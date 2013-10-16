@@ -45,12 +45,7 @@ public class ProductSiteMapGenerator implements SiteMapGenerator {
     @Value("${product.site.map.generator.row.limit}")
     protected int pageSize;
 
-    /**
-     * Returns true if this SiteMapGenerator is able to process the passed in siteMapGeneratorConfiguration.   
-     * 
-     * @param siteMapGeneratorConfiguration
-     * @return
-     */
+    @Override
     public boolean canHandleSiteMapConfiguration(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration) {
         return SiteMapGeneratorType.PRODUCT.equals(siteMapGeneratorConfiguration.getSiteMapGeneratorType());
     }

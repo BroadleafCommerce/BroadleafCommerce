@@ -47,21 +47,8 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
 
     @Value("${category.site.map.generator.row.limit}")
     protected int rowLimit;
-    
-    SiteMapChangeFreqType siteMapChangeFreq;
-    SiteMapPriorityType siteMapPriority;
-    
-    protected int startingDepth;
-    protected int endingDepth;
 
-    SiteMapBuilder siteMapBuilder;
-
-    /**
-     * Returns true if this SiteMapGenerator is able to process the passed in siteMapGeneratorConfiguration.   
-     * 
-     * @param siteMapGeneratorConfiguration
-     * @return
-     */
+    @Override
     public boolean canHandleSiteMapConfiguration(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration) {
         return SiteMapGeneratorType.CATEGORY.equals(siteMapGeneratorConfiguration.getSiteMapGeneratorType());
     }
@@ -70,20 +57,12 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
     public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder) {
 
         CategorySiteMapGeneratorConfiguration categorySMGC = (CategorySiteMapGeneratorConfiguration) siteMapGeneratorConfiguration;
-        
-        siteMapChangeFreq = categorySMGC.getSiteMapChangeFreqType();
-        siteMapPriority = categorySMGC.getSiteMapPriority();
-        
-        startingDepth = categorySMGC.getStartingDepth();
-        endingDepth = categorySMGC.getEndingDepth();
-        
-        this.siteMapBuilder = siteMapBuilder;
 
-        addCategorySiteMapEntries(categorySMGC.getRootCategory(), 1);
+        addCategorySiteMapEntries(categorySMGC.getRootCategory(), 1, categorySMGC.getStartingDepth(), categorySMGC.getEndingDepth(), categorySMGC.getSiteMapChangeFreqType(), categorySMGC.getSiteMapPriority(), siteMapBuilder);
         
     }
 
-    protected void addCategorySiteMapEntries(Category parentCategory, int currentDepth) {
+    protected void addCategorySiteMapEntries(Category parentCategory, int currentDepth, int startingDepth, int endingDepth, SiteMapChangeFreqType siteMapChangeFreq, SiteMapPriorityType siteMapPriority, SiteMapBuilder siteMapBuilder) {
         
         int rowOffset = 0;
         List<Category> categories;
@@ -94,7 +73,7 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
             for (Category category : categories) {
 
                 if (currentDepth < endingDepth) {
-                    addCategorySiteMapEntries(category, currentDepth + 1);
+                    addCategorySiteMapEntries(category, currentDepth + 1, startingDepth, endingDepth, siteMapChangeFreq, siteMapPriority, siteMapBuilder);
                 }
 
                 if(currentDepth < startingDepth) {

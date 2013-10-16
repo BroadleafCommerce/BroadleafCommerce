@@ -22,6 +22,8 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 /**
  * Responsible for querying and updating {@link StructuredContent} items
  * @author bpolster
@@ -56,6 +58,27 @@ public interface StructuredContentDao {
      * @return the list of {@link StructuredContent}, an empty list of none are found
      */
     public List<StructuredContent> findAllContentItems();
+
+    /**
+     * Retrieve a subset of all online structured content.
+     *
+     * @param limit the maximum number of results
+     * @param offset the starting point in the record set
+     * @return
+     */
+    @Nonnull
+    public List<StructuredContent> findOnlineStructuredContent(@Nonnull int limit, @Nonnull int offset);
+
+    /**
+     * Retrieve a subset of a specific type of online structured content.
+     * 
+     * @param type
+     * @param limit the maximum number of results
+     * @param offset the starting point in the record set
+     * @return
+     */
+    @Nonnull
+    public List<StructuredContent> findOnlineStructuredContentByType(@Nonnull StructuredContentType structuredContentType, @Nonnull int limit, @Nonnull int offset);
 
     /**
      * Persists the changes or saves a new content item.

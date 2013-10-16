@@ -45,12 +45,7 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
     @Value("${page.site.map.generator.row.limit}")
     protected int rowLimit;
 
-    /**
-     * Returns true if this SiteMapGenerator is able to process the passed in siteMapGeneratorConfiguration.   
-     * 
-     * @param siteMapGeneratorConfiguration
-     * @return
-     */
+    @Override
     public boolean canHandleSiteMapConfiguration(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration) {
         return SiteMapGeneratorType.PAGE.equals(siteMapGeneratorConfiguration.getSiteMapGeneratorType());
     }
