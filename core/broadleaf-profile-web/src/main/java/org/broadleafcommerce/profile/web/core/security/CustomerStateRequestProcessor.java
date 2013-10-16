@@ -19,6 +19,7 @@ package org.broadleafcommerce.profile.web.core.security;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
+import org.broadleafcommerce.common.web.BroadleafRequestCustomerResolverImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -54,10 +55,9 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
 
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
-
+    
     protected ApplicationEventPublisher eventPublisher;
 
-    protected static String customerRequestAttributeName = "customer";
     public static final String ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME = "_blc_anonymousCustomer";
     public static final String ANONYMOUS_CUSTOMER_ID_SESSION_ATTRIBUTE_NAME = "_blc_anonymousCustomerId";
     private static final String LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME = "_blc_lastPublishedEvent";
@@ -68,7 +68,7 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
         Customer customer = null;
         if ((authentication != null) && !(authentication instanceof AnonymousAuthenticationToken)) {
             String userName = authentication.getName();
-            customer = (Customer) request.getAttribute(customerRequestAttributeName, WebRequest.SCOPE_REQUEST);
+            customer = (Customer) BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomer(request);
             if (userName != null && (customer == null || !userName.equals(customer.getUsername()))) {
                 // can only get here if the authenticated user does not match the user in session
                 customer = customerService.readCustomerByUsername(userName);
@@ -234,11 +234,7 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
      * @see {@link CustomerState}
      */
     public static String getCustomerRequestAttributeName() {
-        return customerRequestAttributeName;
+        return BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomerRequestAttributeName();
     }
-
-    public static void setCustomerRequestAttributeName(String customerRequestAttributeName) {
-        CustomerStateRequestProcessor.customerRequestAttributeName = customerRequestAttributeName;
-    }
-
+    
 }

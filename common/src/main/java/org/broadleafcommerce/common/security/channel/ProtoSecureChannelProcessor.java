@@ -32,36 +32,13 @@ import javax.servlet.ServletException;
  * application is deployed to an environment where SSL termination happens at a layer above the servlet container
  * (like at a load balancer)</p>
  * 
- * <p>This can be added to Spring Security by configuring an <b>access-decision-manager-ref</b> property in the <b>sec:http</b>
- * xml element. Below is an example configuration for SSL requests being terminated both by the servlet container OR relying
- * on a header being set by a load balancer:</p>
+ * <p>This is intended to be used in conjunction with the {@link ProtoChannelBeanPostProcessor}. See that class for
+ * more information on how to configure.</p>
  *
- * <pre>
- * {@code
- * <sec:http auto-config="false" access-decision-manager-ref="loadBalancerAwareAccessDecisionManager">
- *      ...
- * </sec:http>
- * 
- * <bean id="loadBalancerAwareAccessDecisionManager" class="org.springframework.security.web.access.channel.ChannelDecisionManagerImpl">
- *    <property name="channelProcessors">
- *       <list>
- *          <bean class="org.springframework.security.web.access.channel.InsecureChannelProcessor" />
- *          <bean class="org.broadleafcommerce.common.security.channel.ProtoInsecureChannelProcessor" />
- *          <bean class="org.springframework.security.web.access.channel.SecureChannelProcessor" />
- *          <bean class="org.broadleafcommerce.common.security.channel.ProtoSecureChannelProcessor" />
- *        </list>
- *    </property>
- *  </bean>
- *  }
- * </pre>
- * 
- * <p>Note the inclusion of both the Spring secure/insecure channel processors alongside the Broadleaf proto secure/insecure
- * channel processors</p>
- * 
  * @author Jeff Fischer
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link SecureChannelProcessor}
- * @see {@link ProtoInSecureChannelProcessor}
+ * @see {@link ProtoChannelBeanPostProcessor}
  */
 public class ProtoSecureChannelProcessor extends SecureChannelProcessor {
 
@@ -71,7 +48,7 @@ public class ProtoSecureChannelProcessor extends SecureChannelProcessor {
 
         for (ConfigAttribute attribute : config) {
             if (supports(attribute)) {
-                if (invocation.getHttpRequest().getHeader("X-Forwarded-Proto").equals("http")) {
+                if ("http".equals(invocation.getHttpRequest().getHeader("X-Forwarded-Proto"))) {
                     getEntryPoint().commence(invocation.getRequest(), invocation.getResponse());
                 }
             }

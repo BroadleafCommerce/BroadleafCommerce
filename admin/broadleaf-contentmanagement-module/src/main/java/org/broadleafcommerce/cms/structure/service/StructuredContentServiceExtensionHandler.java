@@ -17,9 +17,9 @@
 package org.broadleafcommerce.cms.structure.service;
 
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
-import org.broadleafcommerce.cms.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 
 
 /**

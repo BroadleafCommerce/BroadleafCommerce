@@ -12,6 +12,8 @@
     </context:component-scan>
     
     <task:annotation-driven/>
+
+    <bean id="blPasswordEncoder" class="${password.site.encoder}"/>
     
     <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
         <property name="autodetect" value="true"/>
@@ -93,7 +95,7 @@
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
             <set>
-                <bean class="org.broadleafcommerce.openadmin.server.util.LocaleConverter" />
+                <bean class="org.broadleafcommerce.common.locale.util.LocaleConverter" />
             </set>
         </property>
     </bean>                    

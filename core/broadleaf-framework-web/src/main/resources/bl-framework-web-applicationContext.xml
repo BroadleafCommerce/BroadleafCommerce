@@ -39,37 +39,37 @@
     <bean id="blRelatedProductProcessor" class="org.broadleafcommerce.core.web.processor.RelatedProductProcessor" />
     <bean id="blRemoveFacetValuesLinkProcessor" class="org.broadleafcommerce.core.web.processor.RemoveFacetValuesLinkProcessor" />
     <bean id="blToggleFacetLinkProcessor" class="org.broadleafcommerce.core.web.processor.ToggleFacetLinkProcessor" />
-    <bean id="blUrlRewriteProcessor" class="org.broadleafcommerce.core.web.processor.UrlRewriteProcessor" />
     <bean id="blHeadProcessorExtensionManager" class="org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionManager" />
     
     <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
     <!-- own dialect and add your processors there. -->
+    <bean id="blDialectProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
+            <set>
+                <ref bean="blAddSortLinkProcessor" />
+                <ref bean="blCategoriesProcessor" />
+                <ref bean="blFormProcessor" />
+                <ref bean="blGoogleAnalyticsProcessor" />
+                <ref bean="blHeadProcessor" />
+                <ref bean="blNamedOrderProcessor" />
+                <ref bean="blPaginationPageLinkProcessor" />
+                <ref bean="blPriceTextDisplayProcessor" />
+                <ref bean="blProductOptionValueProcessor" />
+                <ref bean="blProductOptionsProcessor" />
+                <ref bean="blProductOptionDisplayProcessor" />
+                <ref bean="blRatingsProcessor" />
+                <ref bean="blRelatedProductProcessor" />
+                <ref bean="blRemoveFacetValuesLinkProcessor" />
+                <ref bean="blToggleFacetLinkProcessor" />
+                <ref bean="blResourceBundleProcessor" />
+                <ref bean="blDataDrivenEnumerationProcessor" />
+            </set>
+        </property>
+    </bean>
     <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
-        <property name="processors">
-          <set>
-            <ref bean="blContentProcessor"/>
-            <ref bean="blAddSortLinkProcessor" />
-            <ref bean="blCategoriesProcessor" />
-            <ref bean="blFormProcessor" />
-            <ref bean="blGoogleAnalyticsProcessor" />
-            <ref bean="blHeadProcessor" />
-            <ref bean="blNamedOrderProcessor" />
-            <ref bean="blPaginationPageLinkProcessor" />
-            <ref bean="blPriceTextDisplayProcessor" />
-            <ref bean="blProductOptionValueProcessor" />
-            <ref bean="blProductOptionsProcessor" />
-            <ref bean="blProductOptionDisplayProcessor" />
-            <ref bean="blRatingsProcessor" />
-            <ref bean="blRelatedProductProcessor" />
-            <ref bean="blRemoveFacetValuesLinkProcessor" />
-            <ref bean="blToggleFacetLinkProcessor" />
-            <ref bean="blUrlRewriteProcessor" />
-            <ref bean="blResourceBundleProcessor" />
-            <ref bean="blDataDrivenEnumerationProcessor" />
-          </set>
-        </property>     
+        <property name="processors" ref="blDialectProcessors" />
     </bean> 
-    
+
     <!-- This list factory bean will accept classes that implment the BroadleafVariableExpression interface. -->
     <!-- This provides the ability to inject custom expression evaluators into Thymeleaf. -->
     <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">

@@ -16,12 +16,13 @@
 
 package org.broadleafcommerce.core.catalog.dao;
 
-import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 
-import javax.annotation.Nonnull;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 /**
  * {@code CategoryXrefDao} provides persistence access to the relationship
@@ -40,7 +41,7 @@ public interface CategoryXrefDao {
      * @return the list of child category relationships for the parent primary key
      */
     @Nonnull
-    public List<CategoryXrefImpl> readXrefsByCategoryId(@Nonnull Long categoryId);
+    public List<CategoryXref> readXrefsByCategoryId(@Nonnull Long categoryId);
 
     /**
      * Retrieve all the category relationships for which the passed in
@@ -50,7 +51,7 @@ public interface CategoryXrefDao {
      * @return the list of category relationships for the sub-category primary key
      */
     @Nonnull
-    public List<CategoryXrefImpl> readXrefsBySubCategoryId(@Nonnull Long subCategoryId);
+    public List<CategoryXref> readXrefsBySubCategoryId(@Nonnull Long subCategoryId);
 
     /**
      * Find a specific relationship between a parent categoy and sub-category (child)
@@ -76,7 +77,7 @@ public interface CategoryXrefDao {
      *
      * @param categoryXref the category relationship to remove
      */
-    public void delete(@Nonnull CategoryXrefImpl categoryXref);
+    public void delete(@Nonnull CategoryXref categoryXref);
 
     /**
      * Persist the passed in category/product relationship to the datastore
@@ -85,5 +86,5 @@ public interface CategoryXrefDao {
      * @return the persisted relationship between a category and product
      */
     @Nonnull
-    public CategoryProductXrefImpl save(CategoryProductXrefImpl categoryProductXref);
+    public CategoryProductXref save(CategoryProductXref categoryProductXref);
 }

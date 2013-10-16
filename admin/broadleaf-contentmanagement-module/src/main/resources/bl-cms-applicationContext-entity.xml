@@ -16,7 +16,4 @@
     <bean id="org.broadleafcommerce.cms.structure.domain.StructuredContentRule" class="org.broadleafcommerce.cms.structure.domain.StructuredContentRuleImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.cms.url.domain.URLHandler" class="org.broadleafcommerce.cms.url.domain.URLHandlerImpl" scope="prototype"/>
 
-    <bean id="org.broadleafcommerce.cms.structure.dto.StructuredContentDTO" class="org.broadleafcommerce.cms.structure.dto.StructuredContentDTO" scope="prototype" />
-    <bean id="org.broadleafcommerce.cms.structure.dto.ItemCriteriaDTO" class="org.broadleafcommerce.cms.structure.dto.ItemCriteriaDTO" scope="prototype" />
-
 </beans>

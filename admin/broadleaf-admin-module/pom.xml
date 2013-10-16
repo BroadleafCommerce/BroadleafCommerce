@@ -115,10 +115,6 @@
             <artifactId>broadleaf-open-admin-platform</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-contentmanagement-module</artifactId>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>

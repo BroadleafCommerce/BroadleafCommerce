@@ -230,7 +230,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
     @AdminPresentationToOneLookup()
     protected Category defaultParentCategory;
 
-    @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "categoryXrefPK.category")
+    @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "categoryXrefPK.category", orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
@@ -244,7 +244,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
             gridVisibleFields = { "name" })
     protected List<CategoryXref> allChildCategoryXrefs = new ArrayList<CategoryXref>(10);
 
-    @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "categoryXrefPK.subCategory")
+    @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "categoryXrefPK.subCategory", orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
@@ -258,7 +258,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
             gridVisibleFields = { "name" })
     protected List<CategoryXref> allParentCategoryXrefs = new ArrayList<CategoryXref>(10);
 
-    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "categoryProductXref.category")
+    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "categoryProductXref.category", orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
