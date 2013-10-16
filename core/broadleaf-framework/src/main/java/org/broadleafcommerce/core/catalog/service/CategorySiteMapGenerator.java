@@ -19,10 +19,13 @@ package org.broadleafcommerce.core.catalog.service;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
 import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
+import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
+import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -44,6 +47,14 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
 
     @Value("${category.site.map.generator.row.limit}")
     protected int rowLimit;
+    
+    SiteMapChangeFreqType siteMapChangeFreq;
+    SiteMapPriorityType siteMapPriority;
+    
+    protected int startingDepth;
+    protected int endingDepth;
+
+    SiteMapBuilder siteMapBuilder;
 
     /**
      * Returns true if this SiteMapGenerator is able to process the passed in siteMapGeneratorConfiguration.   
@@ -58,23 +69,48 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
     @Override
     public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder) {
 
+        CategorySiteMapGeneratorConfiguration categorySMGC = (CategorySiteMapGeneratorConfiguration) siteMapGeneratorConfiguration;
+        
+        siteMapChangeFreq = categorySMGC.getSiteMapChangeFreqType();
+        siteMapPriority = categorySMGC.getSiteMapPriority();
+        
+        startingDepth = categorySMGC.getStartingDepth();
+        endingDepth = categorySMGC.getEndingDepth();
+        
+        this.siteMapBuilder = siteMapBuilder;
+
+        addCategorySiteMapEntries(categorySMGC.getRootCategory(), 1);
+        
+    }
+
+    protected void addCategorySiteMapEntries(Category parentCategory, int currentDepth) {
+        
         int rowOffset = 0;
         List<Category> categories;
-
+        
         do {
-            categories = categoryDao.readAllCategories(rowLimit, rowOffset);
+            categories = categoryDao.readActiveSubCategoriesByCategory(parentCategory, rowLimit, rowOffset);
             rowOffset += categories.size();
             for (Category category : categories) {
+
+                if (currentDepth < endingDepth) {
+                    addCategorySiteMapEntries(category, currentDepth + 1);
+                }
+
+                if(currentDepth < startingDepth) {
+                    continue;
+                }
+                
                 SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
                 // location
                 siteMapUrl.setLoc(category.getUrl());
 
                 // change frequency
-                siteMapUrl.setChangeFreqType(siteMapGeneratorConfiguration.getSiteMapChangeFreqType());
+                siteMapUrl.setChangeFreqType(siteMapChangeFreq);
 
                 // priority
-                siteMapUrl.setPriorityType(siteMapGeneratorConfiguration.getSiteMapPriority());
+                siteMapUrl.setPriorityType(siteMapPriority);
 
                 // lastModDate
                 siteMapUrl.setLastModDate(new Date());

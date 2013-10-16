@@ -15,24 +15,70 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 /**
  * CategorySiteMapGenerator is controlled by this configuration.
  * 
  * @author Joshua Skorton (jskorton)
  */
-public class CategorySiteMapGeneratorConfigurationImpl extends SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfiguration {
+@Entity
+@AdminPresentationClass(friendlyName = "CategorySiteMapGeneratorConfiguration")
+public class CategorySiteMapGeneratorConfigurationImpl extends SiteMapGeneratorConfigurationImpl implements CategorySiteMapGeneratorConfiguration {
 
-    protected int startingLevel;
+    private static final long serialVersionUID = 1L;
 
-    protected int depth;
+    @Column(name = "ROOT_CATEGORY", nullable = false)
+    @AdminPresentation(friendlyName = "CategorySiteMapGeneratorConfiguration_Root_Category")
+    protected Category rootCategory;
+
+    @Column(name = "STARTING_DEPTH", nullable = false)
+    @AdminPresentation(friendlyName = "CategorySiteMapGeneratorConfiguration_Starting_Depth")
+    protected int startingDepth = 1;
+
+    @Column(name = "ENDING_DEPTH", nullable = false)
+    @AdminPresentation(friendlyName = "CategorySiteMapGeneratorConfiguration_Ending_Depth")
+    protected int endingDepth = 1;
 
     @Override
     public SiteMapGeneratorType getSiteMapGeneratorType() {
         return SiteMapGeneratorType.CATEGORY;
+    }
+
+    @Override
+    public Category getRootCategory() {
+        return rootCategory;
+    }
+
+    @Override
+    public void setRootCategory(Category rootCategory) {
+        this.rootCategory = rootCategory;
+    }
+
+    @Override
+    public int getStartingDepth() {
+        return startingDepth;
+    }
+
+    @Override
+    public void setStartingDepth(int startingDepth) {
+        this.startingDepth = startingDepth;
+    }
+
+    @Override
+    public int getEndingDepth() {
+        return endingDepth;
+    }
+
+    @Override
+    public void setEndingDepth(int endingDepth) {
+        this.endingDepth = endingDepth;
     }
 
 }

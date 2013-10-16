@@ -72,7 +72,8 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     protected String siteMapPriority;
 
     @Column(name = "SITE_MAP_GENERATOR_TYPE", nullable = false)
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Site_Map_Generator_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.BasicSiteMapGeneratorType")
     protected String siteMapGeneratorType;
     
     @ManyToOne(targetEntity = SiteMapConfigurationImpl.class, optional = false)
