@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * CategorySiteMapGenerator is controlled by this configuration.
@@ -29,6 +30,7 @@ import javax.persistence.Entity;
  * @author Joshua Skorton (jskorton)
  */
 @Entity
+@Table(name = "BLC_CATEGORY_SITE_MAP_GEN_CONFIG")
 @AdminPresentationClass(friendlyName = "CategorySiteMapGeneratorConfiguration")
 public class CategorySiteMapGeneratorConfigurationImpl extends SiteMapGeneratorConfigurationImpl implements CategorySiteMapGeneratorConfiguration {
 

@@ -27,6 +27,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  * CustomSiteMapGenerator is controlled by this configuration.
@@ -34,6 +35,7 @@ import javax.persistence.OneToMany;
  * @author bpolster
  */
 @Entity
+@Table(name = "BLC_CUSTOM_URL_SITE_MAP_GEN_CONFIG")
 @AdminPresentationClass(friendlyName = "CustomUrlSiteMapGeneratorConfiguration")
 public class CustomUrlSiteMapGeneratorConfigurationImpl extends SiteMapGeneratorConfigurationImpl implements CustomUrlSiteMapGeneratorConfiguration {
 
