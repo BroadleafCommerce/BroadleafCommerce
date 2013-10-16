@@ -111,7 +111,7 @@ public interface SiteMapURLEntry extends Serializable {
      * 
      * @return
      */
-    public SiteMapGeneratorConfiguration getSiteMapGeneratorConfiguration();
+    public CustomUrlSiteMapGeneratorConfiguration getCustomUrlSiteMapGeneratorConfiguration();
 
     /**
      * Sets the SiteMapGeneratorConfiguration.
@@ -119,6 +119,6 @@ public interface SiteMapURLEntry extends Serializable {
      * 
      * @param siteMapGeneratorConfiguration
      */
-    public void setSiteMapGenerator(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration);
+    public void setCustomUrlSiteMapGeneratorConfiguration(CustomUrlSiteMapGeneratorConfiguration customUrlSiteMapGeneratorConfiguration);
 
 }

@@ -76,9 +76,9 @@ public class SiteMapURLEntryImpl implements SiteMapURLEntry {
             broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType")
     protected String siteMapPriority;
     
-    @ManyToOne(targetEntity = SiteMapGeneratorConfigurationImpl.class, optional = false)
-    @JoinColumn(name = "SITE_MAP_GEN_CONFIG")
-    protected SiteMapGeneratorConfiguration siteMapGeneratorConfiguration;
+    @ManyToOne(targetEntity = CustomUrlSiteMapGeneratorConfigurationImpl.class, optional = false)
+    @JoinColumn(name = "CUSTOM_URL_ENTRIES")
+    protected CustomUrlSiteMapGeneratorConfiguration customUrlSiteMapGeneratorConfiguration;
     
     @Override
     public Long getId() {
@@ -148,13 +148,13 @@ public class SiteMapURLEntryImpl implements SiteMapURLEntry {
     }
 
     @Override
-    public SiteMapGeneratorConfiguration getSiteMapGeneratorConfiguration() {
-        return siteMapGeneratorConfiguration;
+    public CustomUrlSiteMapGeneratorConfiguration getCustomUrlSiteMapGeneratorConfiguration() {
+        return customUrlSiteMapGeneratorConfiguration;
     }
 
     @Override
-    public void setSiteMapGenerator(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration) {
-        this.siteMapGeneratorConfiguration = siteMapGeneratorConfiguration;
+    public void setCustomUrlSiteMapGeneratorConfiguration(CustomUrlSiteMapGeneratorConfiguration customUrlSiteMapGeneratorConfiguration) {
+        this.customUrlSiteMapGeneratorConfiguration = customUrlSiteMapGeneratorConfiguration;
     }
 
 }

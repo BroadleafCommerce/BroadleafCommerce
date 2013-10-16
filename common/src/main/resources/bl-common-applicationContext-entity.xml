@@ -18,4 +18,4 @@
     <bean id="org.broadleafcommerce.common.sitemap.domain.SiteMapURLEntry" class="org.broadleafcommerce.common.sitemap.domain.SiteMapURLEntryImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfiguration" class="org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfigurationImpl" scope="prototype" />
 
-</beans>"
+</beans>
