@@ -222,7 +222,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
     @AdminPresentationToOneLookup()
     protected Category defaultCategory;
 
-    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "categoryProductXref.product")
+    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "categoryProductXref.product", orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
