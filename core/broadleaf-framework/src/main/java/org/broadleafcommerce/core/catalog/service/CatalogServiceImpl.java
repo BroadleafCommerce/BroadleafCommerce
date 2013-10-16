@@ -137,6 +137,12 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
+    public void removeProduct(Product product) {
+        productDao.delete(product);
+    }
+
+    @Override
     public List<Category> findAllCategories() {
         return categoryDao.readAllCategories();
     }
@@ -260,6 +266,7 @@ public class CatalogServiceImpl implements CatalogService {
         return productOptionDao.readAllProductOptions();
     }
     
+    @Override
     @Transactional("blTransactionManager")
     public ProductOption saveProductOption(ProductOption option) {
         return productOptionDao.saveProductOption(option);

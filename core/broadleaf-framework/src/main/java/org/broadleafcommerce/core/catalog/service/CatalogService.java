@@ -89,6 +89,8 @@ public interface CatalogService {
     
     public void removeCategory(Category category);
 
+    public void removeProduct(Product product);
+
     public Category findCategoryById(Long categoryId);
 
     /**
