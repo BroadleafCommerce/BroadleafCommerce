@@ -339,11 +339,17 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                         subPackage.getValue().setEntity(subResponse);
                     }
                 } catch (ValidationException e) {
-                    for (Map.Entry<String, List<String>> error : e.getEntity().getValidationErrors().entrySet()) {
-                        subPackageValidationErrors.put(subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(), error.getValue());
-                    }
+                    subPackage.getValue().setEntity(e.getEntity());
                 }
             }
+            
+            //Build up validation errors in all of the subpackages, even those that might not have thrown ValidationExceptions
+            for (Map.Entry<String, PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
+                for (Map.Entry<String, List<String>> error : subPackage.getValue().getEntity().getValidationErrors().entrySet()) {
+                    subPackageValidationErrors.put(subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(), error.getValue());
+                }
+            }
+            
             response.getValidationErrors().putAll(subPackageValidationErrors);
         }
 
@@ -404,11 +410,17 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     subPackage.getValue().setEntity(subResponse);
                 }
             } catch (ValidationException e) {
-                for (Map.Entry<String, List<String>> error : e.getEntity().getValidationErrors().entrySet()) {
-                    subPackageValidationErrors.put(subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(), error.getValue());
-                }
+                subPackage.getValue().setEntity(e.getEntity());
             }
         }
+        
+        //Build up validation errors in all of the subpackages, even those that might not have thrown ValidationExceptions
+        for (Map.Entry<String, PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
+            for (Map.Entry<String, List<String>> error : subPackage.getValue().getEntity().getValidationErrors().entrySet()) {
+                subPackageValidationErrors.put(subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(), error.getValue());
+            }
+        }
+
         response.getValidationErrors().putAll(subPackageValidationErrors);
 
         if (response.isValidationFailure()) {
