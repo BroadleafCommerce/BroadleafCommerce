@@ -16,8 +16,8 @@
 
 package org.broadleafcommerce.core.web.order.security.extension;
 
-import org.broadleafcommerce.core.extension.AbstractExtensionHandler;
-import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.springframework.security.core.Authentication;
 
 import javax.servlet.http.HttpServletRequest;
