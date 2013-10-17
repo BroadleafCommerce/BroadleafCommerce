@@ -35,7 +35,7 @@ import javax.persistence.Table;
  * @author bpolster
  */
 @Entity
-@Table(name = "BLC_CUSTOM_URL_SITE_MAP_GEN_CONFIG")
+@Table(name = "BLC_CUST_URL_SITEMAP_GEN_CFG")
 @AdminPresentationClass(friendlyName = "CustomUrlSiteMapGeneratorConfiguration")
 public class CustomUrlSiteMapGeneratorConfigurationImpl extends SiteMapGeneratorConfigurationImpl implements CustomUrlSiteMapGeneratorConfiguration {
 

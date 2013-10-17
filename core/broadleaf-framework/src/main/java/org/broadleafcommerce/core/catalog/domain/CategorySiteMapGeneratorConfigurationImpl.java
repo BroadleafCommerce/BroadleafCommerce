@@ -30,7 +30,7 @@ import javax.persistence.Table;
  * @author Joshua Skorton (jskorton)
  */
 @Entity
-@Table(name = "BLC_CATEGORY_SITE_MAP_GEN_CONFIG")
+@Table(name = "BLC_CAT_SITEMAP_GEN_CFG")
 @AdminPresentationClass(friendlyName = "CategorySiteMapGeneratorConfiguration")
 public class CategorySiteMapGeneratorConfigurationImpl extends SiteMapGeneratorConfigurationImpl implements CategorySiteMapGeneratorConfiguration {
 

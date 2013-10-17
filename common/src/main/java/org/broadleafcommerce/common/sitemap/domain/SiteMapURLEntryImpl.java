@@ -39,7 +39,7 @@ import javax.persistence.Table;
  * @author Joshua Skorton (jskorton)
  */
 @Entity
-@Table(name = "BLC_SITE_MAP_URL_ENTRY")
+@Table(name = "BLC_SITEMAP_URL_ENTRY")
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(friendlyName = "SiteMapURLEntry")
 public class SiteMapURLEntryImpl implements SiteMapURLEntry {

@@ -39,7 +39,7 @@ import javax.persistence.Table;
  * @author Joshua Skorton (jskorton)
  */
 @Entity
-@Table(name = "BLC_SITE_MAP_CONFIG")
+@Table(name = "BLC_SITEMAP_CFG")
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(friendlyName = "DefaultSiteMapConfiguration")
 public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implements SiteMapConfiguration {
