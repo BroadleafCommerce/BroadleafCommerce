@@ -54,6 +54,7 @@ import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.broadleafcommerce.profile.core.domain.CustomerPersistedEntityListener;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -90,7 +91,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@EntityListeners(value = { AuditableListener.class })
+@EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")

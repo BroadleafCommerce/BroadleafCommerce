@@ -41,13 +41,11 @@ public class CustomerStateRefresher implements ApplicationListener<CustomerPersi
      * Removes the complete {@link Customer} stored in session and adds a new session variable for just the customer ID. This
      * should occur once the session-based {@link Customer} (all anonymous Customers start out this way) has been persisted.
      * 
-     * <p>Also updates {@link CustomerState} with the persisted {@link Customer} so that it will</p>
+     * <p>Also updates {@link CustomerState} with the persisted {@link Customer} so that it will always represent the most
+     * up-to-date version that is in the database</p>
      * 
      * @param request
      * @param databaseCustomer
-     * @return <b>true</b> if a session-based customer existed and was replaced by the database customer, <b>false</b>
-     * otherwise
-     * @see {@link CustomerStateRefresher}
      */
     @Override
     public void onApplicationEvent(final CustomerPersistedEvent event) {
