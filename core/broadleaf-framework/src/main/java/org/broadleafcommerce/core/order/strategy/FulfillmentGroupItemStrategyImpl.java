@@ -343,7 +343,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         }
         
         for (Entry<Long, Integer> entry : oiQuantityMap.entrySet()) {
-            if (entry.getValue() != 0) {
+            if (!entry.getValue().equals(0)) {
                 throw new IllegalStateException("Not enough fulfillment group items found for DiscreteOrderItem id: " + entry.getKey());
             }
         }
