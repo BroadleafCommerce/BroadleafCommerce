@@ -54,7 +54,7 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
 
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
-    protected static boolean copyCartWhenSpecifiedStateChanges = false;
+    protected boolean copyCartWhenSpecifiedStateChanges = false;
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -115,5 +115,23 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
         CartStateRequestProcessor.cartRequestAttributeName = cartRequestAttributeName;
     }
 
+    /**
+     * Gets whether or not the cart should be copied to a new cart and then repriced if
+     * {@link UpdateCartService#validateCart(Order)} throws an IllegalArgumentException
+     * 
+     * @return the copyCartWhenSpecifiedStateChanges
+     */
+    public boolean isCopyCartWhenSpecifiedStateChanges() {
+        return copyCartWhenSpecifiedStateChanges;
+    }
+
+    /**
+     * 
+     * @param copyCartWhenSpecifiedStateChanges whether or not the old cart should be copied to a new cart and then repriced
+     * {@link UpdateCartService#validateCart(Order)} throws an IllegalArgumentException
+     */
+    public void setCopyCartWhenSpecifiedStateChanges(boolean copyCartWhenSpecifiedStateChanges) {
+        this.copyCartWhenSpecifiedStateChanges = copyCartWhenSpecifiedStateChanges;
+    }
 
 }

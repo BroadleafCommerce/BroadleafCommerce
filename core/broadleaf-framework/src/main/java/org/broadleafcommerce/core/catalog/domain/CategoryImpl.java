@@ -503,7 +503,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
 
     @Override
     public void setActiveStartDate(Date activeStartDate) {
-        this.activeStartDate = new Date(activeStartDate.getTime());
+        this.activeStartDate = (activeStartDate == null) ? null : new Date(activeStartDate.getTime());
     }
 
     @Override
@@ -513,7 +513,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
 
     @Override
     public void setActiveEndDate(Date activeEndDate) {
-        this.activeEndDate = new Date(activeEndDate.getTime());
+        this.activeEndDate = (activeEndDate == null) ? null : new Date(activeEndDate.getTime());
     }
 
     @Override
