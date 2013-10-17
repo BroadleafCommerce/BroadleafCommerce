@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.web.order.security.extension;
 
-import org.broadleafcommerce.core.extension.ExtensionManager;
+import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.springframework.stereotype.Service;
 
 
