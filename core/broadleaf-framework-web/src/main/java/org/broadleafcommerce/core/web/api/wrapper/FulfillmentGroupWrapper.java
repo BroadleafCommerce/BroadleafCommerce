@@ -161,7 +161,7 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
 
         fulfillmentGroupRequest.setFulfillmentGroupItemRequests(fulfillmentGroupItemRequests);
 
-        OrderService orderService = (OrderService) appContext.getBean("blCartService");
+        OrderService orderService = (OrderService) appContext.getBean("blOrderService");
         Order order = orderService.findOrderById(this.orderId);
         if (order != null) {
             fulfillmentGroupRequest.setOrder(order);
