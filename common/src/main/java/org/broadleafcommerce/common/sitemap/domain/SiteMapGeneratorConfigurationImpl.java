@@ -77,7 +77,7 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     protected String siteMapGeneratorType;
     
     @ManyToOne(targetEntity = SiteMapConfigurationImpl.class, optional = false)
-    @JoinColumn(name = "SITE_MAP_CONFIG")
+    @JoinColumn(name = "MODULE_CONFIG_ID")
     protected SiteMapConfiguration siteMapConfiguration;
     
     @Override

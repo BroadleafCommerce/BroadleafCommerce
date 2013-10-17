@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -41,7 +40,6 @@ public class CustomUrlSiteMapGeneratorConfigurationImpl extends SiteMapGenerator
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "CUSTOM_URL_ENTRIES")
     @OneToMany(mappedBy = "customUrlSiteMapGeneratorConfiguration", targetEntity = SiteMapURLEntryImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @AdminPresentationCollection(friendlyName = "CustomSiteMapConfiguration_Custom_URL_Entries")
     protected List<SiteMapURLEntry> customURLEntries = new ArrayList<SiteMapURLEntry>();
