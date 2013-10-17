@@ -55,6 +55,9 @@ public class MergeCartServiceImpl implements MergeCartService {
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
 
+    @Resource(name = "blMergeCartServiceExtensionManager")
+    protected MergeCartServiceExtensionManager extensionManager;
+
     @Override
     public MergeCartResponse mergeCart(Customer customer, Order anonymousCart)
             throws PricingException, RemoveFromCartException {
@@ -183,6 +186,8 @@ public class MergeCartServiceImpl implements MergeCartService {
         if (cart != null && StringUtils.isNotBlank(customer.getEmailAddress())) {
             cart.setEmailAddress(customer.getEmailAddress());
         }
+        
+        extensionManager.getProxy().setNewCartOwnership(cart, customer);
     }
 
     /**
