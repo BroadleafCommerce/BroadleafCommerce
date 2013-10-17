@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -534,6 +535,16 @@ public class OrderServiceImpl implements OrderService {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
             ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(cartOpRequest);
             context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
+            
+            if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
+                for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
+                    childRequest.setParentOrderItemId(context.getSeedData().getAddedOrderItem().getId());
+                    CartOperationRequest childCartOpRequest = new CartOperationRequest(findOrderById(orderId), childRequest, priceOrder);
+                    ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
+                    context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) childContext).getActivityMessages());
+                }
+            }
+            
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {
             throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
@@ -562,15 +573,30 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(value = "blTransactionManager", rollbackFor = {RemoveFromCartException.class})
     public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
         try {
-            OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
-            orderItemRequestDTO.setOrderItemId(orderItemId);
-            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) removeItemWorkflow.doActivities(cartOpRequest);
-            context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
-            return context.getSeedData().getOrder();
+            OrderItem oi = orderItemService.readOrderItemById(orderItemId);
+            if (CollectionUtils.isNotEmpty(oi.getChildOrderItems())) {
+                List<Long> childrenToRemove = new ArrayList<Long>();
+                for (OrderItem childOrderItem : oi.getChildOrderItems()) {
+                    childrenToRemove.add(childOrderItem.getId());
+                }
+                for (Long childToRemove : childrenToRemove) {
+                    removeItemInternal(orderId, childToRemove, false);
+                }
+            }
+
+            return removeItemInternal(orderId, orderItemId, priceOrder);
         } catch (WorkflowException e) {
             throw new RemoveFromCartException("Could not remove from cart", getCartOperationExceptionRootCause(e));
         }
+    }
+    
+    protected Order removeItemInternal(Long orderId, Long orderItemId, boolean priceOrder) throws WorkflowException {
+        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(orderItemId);
+        CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+        ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) removeItemWorkflow.doActivities(cartOpRequest);
+        context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
+        return context.getSeedData().getOrder();
     }
 
     @Override

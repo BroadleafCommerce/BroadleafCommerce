@@ -109,6 +109,12 @@ public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperat
             item = orderItemService.createBundleOrderItem(bundleItemRequest);
         }
         
+        OrderItem parent = null;
+        if (orderItemRequestDTO.getParentOrderItemId() != null) {
+            parent = orderItemService.readOrderItemById(orderItemRequestDTO.getParentOrderItemId());
+            item.setParentOrderItem(parent);
+        }
+        
         item = orderItemService.saveOrderItem(item);
         order.getOrderItems().add(item);
         order = orderService.save(order, false);

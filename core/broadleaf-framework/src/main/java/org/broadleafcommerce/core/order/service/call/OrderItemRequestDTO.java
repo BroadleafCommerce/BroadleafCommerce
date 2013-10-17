@@ -21,7 +21,9 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,6 +53,8 @@ public class OrderItemRequestDTO {
     private Money overrideSalePrice;
     private Money overrideRetailPrice;
     private Map<String,String> itemAttributes = new HashMap<String,String>();
+    private List<OrderItemRequestDTO> childOrderItems = new ArrayList<OrderItemRequestDTO>();
+    private Long parentOrderItemId;
     
     public OrderItemRequestDTO() {}
     
@@ -141,4 +145,21 @@ public class OrderItemRequestDTO {
     public void setOverrideRetailPrice(Money overrideRetailPrice) {
         this.overrideRetailPrice = overrideRetailPrice;
     }
+
+    public List<OrderItemRequestDTO> getChildOrderItems() {
+        return childOrderItems;
+    }
+    
+    public void setChildOrderItems(List<OrderItemRequestDTO> childOrderItems) {
+        this.childOrderItems = childOrderItems;
+    }
+
+    public Long getParentOrderItemId() {
+        return parentOrderItemId;
+    }
+
+    public void setParentOrderItemId(Long parentOrderItemId) {
+        this.parentOrderItemId = parentOrderItemId;
+    }
+    
 }

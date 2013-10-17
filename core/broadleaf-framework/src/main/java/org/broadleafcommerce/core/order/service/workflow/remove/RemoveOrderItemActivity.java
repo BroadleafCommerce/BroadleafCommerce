@@ -55,6 +55,12 @@ public class RemoveOrderItemActivity extends BaseActivity<ProcessContext<CartOpe
         // Remove the OrderItem from the Order
         OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(orderItem));
         
+        if (itemFromOrder.getParentOrderItem() != null) {
+            OrderItem parentItem = itemFromOrder.getParentOrderItem();
+            parentItem.getChildOrderItems().remove(itemFromOrder);
+            parentItem = orderItemService.saveOrderItem(parentItem);
+        }
+        
         // Delete the OrderItem from the database
         itemFromOrder.setOrder(null);
         orderItemService.delete(itemFromOrder);

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.domain;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -49,6 +50,13 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
 
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,12 +69,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 @Entity
@@ -214,6 +216,15 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
                 fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
+    
+    @OneToMany(mappedBy = "parentOrderItem", targetEntity = OrderItemImpl.class)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+    protected List<OrderItem> childOrderItems = new ArrayList<OrderItem>();
+
+    @ManyToOne(targetEntity = OrderItemImpl.class)
+    @JoinColumn(name = "PARENT_ORDER_ITEM_ID")
+    @Index(name="ORDERITEM_PARENTORDERITEM_INDEX", columnNames={"PARENT_ORDER_ITEM_ID"})
+    protected OrderItem parentOrderItem;
     
     @Override
     public Money getRetailPrice() {
@@ -613,6 +624,26 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     public List<OrderItemPriceDetail> getOrderItemPriceDetails() {
         return orderItemPriceDetails;
     }
+    
+    @Override
+    public List<OrderItem> getChildOrderItems() {
+        return childOrderItems;
+    }
+    
+    @Override
+    public void setChildOrderItems(List<OrderItem> childOrderItems) {
+        this.childOrderItems = childOrderItems;
+    }
+    
+    @Override
+    public OrderItem getParentOrderItem() {
+        return parentOrderItem;
+    }
+    
+    @Override
+    public void setParentOrderItem(OrderItem parentOrderItem) {
+        this.parentOrderItem = parentOrderItem;
+    }
 
     @Override
     public String getMainEntityName() {
@@ -673,6 +704,14 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 }
             }
             
+            if (CollectionUtils.isNotEmpty(childOrderItems)) {
+                for (OrderItem childOrderItem : childOrderItems) {
+                    OrderItem clone = childOrderItem.clone();
+                    clone.setParentOrderItem(clonedOrderItem);
+                    clonedOrderItem.getChildOrderItems().add(clone);
+                }
+            }
+            
             clonedOrderItem.setCategory(category);
             clonedOrderItem.setGiftWrapOrderItem(giftWrapOrderItem);
             clonedOrderItem.setName(name);
@@ -685,6 +724,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             clonedOrderItem.discountsAllowed = discountsAllowed;
             clonedOrderItem.salePriceOverride = salePriceOverride;
             clonedOrderItem.retailPriceOverride = retailPriceOverride;
+            clonedOrderItem.setParentOrderItem(parentOrderItem);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

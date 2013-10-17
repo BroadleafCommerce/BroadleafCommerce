@@ -23,6 +23,8 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
@@ -52,6 +54,9 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
 
     @Resource(name = "blProductOptionValidationService")
     protected ProductOptionValidationService productOptionValidationService;
+    
+    @Resource(name = "blOrderItemService")
+    protected OrderItemService orderItemService;
 
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
@@ -87,7 +92,6 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         Sku sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(), (ActivityMessages) context);
         
         // If we couldn't find a sku, then we're unable to add to cart.
-        
         if (sku == null && !(orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO)) {
             StringBuilder sb = new StringBuilder();
             for (Entry<String, String> entry : orderItemRequestDTO.getItemAttributes().entrySet()) {
@@ -119,6 +123,18 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                 sku.getCurrency() != null && 
                 !request.getOrder().getCurrency().equals(sku.getCurrency())) {
             throw new IllegalArgumentException("Cannot have items with differing currencies in one cart");
+        }
+        
+        // If the user has specified a parent order item to attach this to, it must exist in this cart
+        if (orderItemRequestDTO.getParentOrderItemId() != null) {
+            OrderItem parent = orderItemService.readOrderItemById(orderItemRequestDTO.getParentOrderItemId());
+            if (parent == null) {
+                throw new IllegalArgumentException("Could not find parent order item by the given id");
+            }
+            
+            if (parent.getOrder().getId() != request.getOrder().getId()) { 
+                throw new IllegalArgumentException("Given parent order item was part of a different order");
+            }
         }
         
         return context;

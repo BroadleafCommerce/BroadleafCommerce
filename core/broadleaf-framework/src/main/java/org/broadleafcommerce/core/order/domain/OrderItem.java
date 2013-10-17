@@ -466,4 +466,28 @@ public interface OrderItem extends Serializable, Cloneable {
      */
     public boolean isSkuActive();
 
+    /**
+     * @return the list of orderitems that are dependent on this order item
+     */
+    public List<OrderItem> getChildOrderItems();
+
+    /**
+     * Sets the list of orderitems that are dependent on this order item
+     * 
+     * @param childOrderItems
+     */
+    public void setChildOrderItems(List<OrderItem> childOrderItems);
+
+    /**
+     * @return the parent order item for this item (potentially null)
+     */
+    public OrderItem getParentOrderItem();
+
+    /**
+     * Sets the parent order item for this order item
+     * 
+     * @param parentOrderItem
+     */
+    public void setParentOrderItem(OrderItem parentOrderItem);
+
 }
