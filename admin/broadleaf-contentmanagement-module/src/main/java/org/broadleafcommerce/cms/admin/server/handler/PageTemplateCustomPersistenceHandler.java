@@ -39,6 +39,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
@@ -111,7 +112,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             metadata.setCeilingType(PageTemplate.class.getName());
             ClassTree entities = new ClassTree(PageTemplateImpl.class.getName());
             metadata.setPolymorphicEntities(entities);
-            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(template.getFieldGroups(), PageTemplateImpl.class);
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(template.getFieldGroups(), PageTemplate.class);
             metadata.setProperties(properties);
             DynamicResultSet results = new DynamicResultSet(metadata);
 
@@ -184,7 +185,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             String pageId = persistencePackage.getCustomCriteria()[1];
             Page page = pageService.findPageById(Long.valueOf(pageId));
 
-            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(page.getPageTemplate().getFieldGroups(), PageTemplateImpl.class);
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(page.getPageTemplate().getFieldGroups(), PageTemplate.class);
             Map<String, FieldMetadata> md = new HashMap<String, FieldMetadata>();
             for (Property property : properties) {
                 md.put(property.getName(), property.getMetadata());
@@ -192,7 +193,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             
             boolean validated = helper.validate(persistencePackage.getEntity(), null, md);
             if (!validated) {
-                return persistencePackage.getEntity();
+                throw new ValidationException(persistencePackage.getEntity(), "Page dynamic fields failed validation");
             }
 
             List<String> templateFieldNames = new ArrayList<String>(20);
@@ -230,6 +231,8 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             }
 
             return fetchEntityBasedOnId(pageId);
+        } catch (ValidationException e) {
+            throw e;
         } catch (Exception e) {
             throw new ServiceException("Unable to perform update for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }
