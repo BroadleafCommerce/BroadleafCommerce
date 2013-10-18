@@ -538,7 +538,7 @@ public class OrderServiceImpl implements OrderService {
             
             if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
                 for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
-                    childRequest.setParentOrderItemId(context.getSeedData().getAddedOrderItem().getId());
+                    childRequest.setParentOrderItemId(context.getSeedData().getOrderItem().getId());
                     CartOperationRequest childCartOpRequest = new CartOperationRequest(findOrderById(orderId), childRequest, priceOrder);
                     ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
                     context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) childContext).getActivityMessages());

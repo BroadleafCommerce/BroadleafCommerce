@@ -311,7 +311,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
     
     @Override
-    public BundleOrderItem createBundleOrderItem(final ProductBundleOrderItemRequest itemRequest) {
+    public BundleOrderItem createBundleOrderItem(final ProductBundleOrderItemRequest itemRequest, boolean saveItem) {
         ProductBundle productBundle = itemRequest.getProductBundle();
         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
         bundleOrderItem.setQuantity(itemRequest.getQuantity());
@@ -360,8 +360,16 @@ public class OrderItemServiceImpl implements OrderItemService {
             bundleOrderItem.getDiscreteOrderItems().add(bundleDiscreteItem);
         }
         
-        bundleOrderItem = (BundleOrderItem) saveOrderItem(bundleOrderItem);
+        if (saveItem) {
+            bundleOrderItem = (BundleOrderItem) saveOrderItem(bundleOrderItem);
+        }
+
         return bundleOrderItem;
+    }
+
+    @Override
+    public BundleOrderItem createBundleOrderItem(final ProductBundleOrderItemRequest itemRequest) {
+        return createBundleOrderItem(itemRequest, true);
     }
     
     @Override

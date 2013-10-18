@@ -16,21 +16,21 @@
 
 package org.broadleafcommerce.core.order.service.workflow.remove;
 
-import org.broadleafcommerce.core.order.domain.Order;
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 /**
- * This class is responsible for removing OrderItems when requested by the OrderService.
- * Note that this class does not touch the FulfillmentGroupItems and expects that they 
- * have already been removed by the time this activity executes. 
+ * This class is responsible for determining which OrderItems should be removed from the order, taking into account
+ * the fact that removing an OrderItem should also remove all of its child order items.
  * 
  * @author Andre Azzolini (apazzolini)
  */
@@ -45,30 +45,21 @@ public class RemoveOrderItemActivity extends BaseActivity<ProcessContext<CartOpe
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
-        OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
 
-        // Find the OrderItem from the database based on its ID
-        Order order = request.getOrder();
-
-        OrderItem orderItem = orderItemService.readOrderItemById(orderItemRequestDTO.getOrderItemId());
+        OrderItem orderItem = request.getOrderItem();
+        removeItemAndChildren(request.getOisToDelete(), orderItem);
         
-        // Remove the OrderItem from the Order
-        OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(orderItem));
-        
-        if (itemFromOrder.getParentOrderItem() != null) {
-            OrderItem parentItem = itemFromOrder.getParentOrderItem();
-            parentItem.getChildOrderItems().remove(itemFromOrder);
-            parentItem = orderItemService.saveOrderItem(parentItem);
+        return context;
+    }
+    
+    protected void removeItemAndChildren(List<OrderItem> oisToDelete, OrderItem orderItem) {
+        if (CollectionUtils.isNotEmpty(orderItem.getChildOrderItems())) {
+            for (OrderItem childOrderItem : orderItem.getChildOrderItems()) {
+                removeItemAndChildren(oisToDelete, childOrderItem);
+            }
         }
         
-        // Delete the OrderItem from the database
-        itemFromOrder.setOrder(null);
-        orderItemService.delete(itemFromOrder);
-        
-        order = orderService.save(order, false);
-        
-        request.setOrder(order);
-        return context;
+        oisToDelete.add(orderItem);
     }
 
 }

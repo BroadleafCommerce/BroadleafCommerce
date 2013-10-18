@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
@@ -42,6 +43,8 @@ public interface FulfillmentGroupService {
     public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest, boolean priceOrder) throws PricingException;
     
     public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, boolean priceOrder) throws PricingException;
+
+    public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, boolean priceOrder, boolean save) throws PricingException;
     
     public Order removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException;
 
@@ -144,5 +147,15 @@ public interface FulfillmentGroupService {
      * @param order
      */
     public FulfillmentGroup getFirstShippableFulfillmentGroup(Order order);
+
+    /**
+     * Finds all FulfillmentGroupItems in the given Order that reference the given OrderItem.
+     * 
+     * @param order
+     * @param orderItem
+     * @return the list of related FulfillmentGroupItems
+     */
+    public List<FulfillmentGroupItem> getFulfillmentGroupItemsForOrderItem(Order order, OrderItem orderItem);
+
 
 }

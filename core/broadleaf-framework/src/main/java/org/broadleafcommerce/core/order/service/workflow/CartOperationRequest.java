@@ -16,9 +16,13 @@
 
 package org.broadleafcommerce.core.order.service.workflow;
 
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class represents the basic context necessary for the execution
@@ -35,10 +39,14 @@ public class CartOperationRequest {
     protected boolean priceOrder;
     
     // Set during the course of the workflow for use in subsequent workflow steps
-    protected OrderItem addedOrderItem;
+    protected OrderItem orderItem;
     
     // Set during the course of the workflow for use in subsequent workflow steps
     protected Integer orderItemQuantityDelta;
+    
+    protected List<Long[]> multishipOptionsToDelete = new ArrayList<Long[]>();
+    protected List<FulfillmentGroupItem> fgisToDelete = new ArrayList<FulfillmentGroupItem>();
+    protected List<OrderItem> oisToDelete = new ArrayList<OrderItem>();
     
     public CartOperationRequest(Order order, OrderItemRequestDTO itemRequest, boolean priceOrder) {
         setOrder(order);
@@ -70,12 +78,12 @@ public class CartOperationRequest {
         this.priceOrder = priceOrder;
     }
 
-    public OrderItem getAddedOrderItem() {
-        return addedOrderItem;
+    public OrderItem getOrderItem() {
+        return orderItem;
     }
 
-    public void setAddedOrderItem(OrderItem addedOrderItem) {
-        this.addedOrderItem = addedOrderItem;
+    public void setOrderItem(OrderItem addedOrderItem) {
+        this.orderItem = addedOrderItem;
     }
 
     public Integer getOrderItemQuantityDelta() {
@@ -84,6 +92,30 @@ public class CartOperationRequest {
 
     public void setOrderItemQuantityDelta(Integer orderItemQuantityDelta) {
         this.orderItemQuantityDelta = orderItemQuantityDelta;
+    }
+    
+    public List<Long[]> getMultishipOptionsToDelete() {
+        return multishipOptionsToDelete;
+    }
+    
+    public void setMultishipOptionsToDelete(List<Long[]> multishipOptionsToDelete) {
+        this.multishipOptionsToDelete = multishipOptionsToDelete;
+    }
+
+    public List<FulfillmentGroupItem> getFgisToDelete() {
+        return fgisToDelete;
+    }
+
+    public void setFgisToDelete(List<FulfillmentGroupItem> fgisToDelete) {
+        this.fgisToDelete = fgisToDelete;
+    }
+
+    public List<OrderItem> getOisToDelete() {
+        return oisToDelete;
+    }
+    
+    public void setOisToDelete(List<OrderItem> oisToDelete) {
+        this.oisToDelete = oisToDelete;
     }
     
 }

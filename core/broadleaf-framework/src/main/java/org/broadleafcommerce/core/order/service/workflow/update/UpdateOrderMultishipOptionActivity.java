@@ -35,7 +35,7 @@ public class UpdateOrderMultishipOptionActivity extends BaseActivity<ProcessCont
 
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
-
+    
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
@@ -45,7 +45,7 @@ public class UpdateOrderMultishipOptionActivity extends BaseActivity<ProcessCont
         if (orderItemQuantityDelta < 0) {
             int numToDelete = -1 * orderItemQuantityDelta;
             //find the qty in the default fg
-            OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
+            OrderItem orderItem = request.getOrderItem();
             int qty = 0;
             if (!CollectionUtils.isEmpty(orderItem.getOrder().getFulfillmentGroups())) {
                 FulfillmentGroup fg = orderItem.getOrder().getFulfillmentGroups().get(0);
@@ -58,7 +58,7 @@ public class UpdateOrderMultishipOptionActivity extends BaseActivity<ProcessCont
                 }
             }
             if (numToDelete >= qty) {
-                orderMultishipOptionService.deleteOrderItemOrderMultishipOptions(orderItemId, numToDelete - qty);
+                request.getMultishipOptionsToDelete().add(new Long[] { orderItemId, (long) (numToDelete - qty) });
             }
         }
         
