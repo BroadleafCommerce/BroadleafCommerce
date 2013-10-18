@@ -130,6 +130,10 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
             order.getOrderItems().remove(entry.getKey());
             OrderItem savedOi = orderItemService.saveOrderItem(entry.getKey());
             order.getOrderItems().add(savedOi);
+            
+            if (entry.getKey() == request.getOrderItem()) {
+                request.setOrderItem(savedOi);
+            }
 
             for (FulfillmentGroupItem fgi : entry.getValue()) {
                 fgi.setOrderItem(savedOi);
