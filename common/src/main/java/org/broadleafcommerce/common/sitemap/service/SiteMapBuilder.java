@@ -26,6 +26,8 @@ import org.broadleafcommerce.common.sitemap.wrapper.SiteMapWrapper;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -33,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -47,8 +50,7 @@ public class SiteMapBuilder {
 
     protected static final Log LOG = LogFactory.getLog(SiteMapBuilder.class);
 
-    // TODO: Placeholder.   We need to get these values in a valid way (should be something we have in the framework).
-    protected String tempDirectory;
+    protected String tempDirectory = System.getProperty("java.io.tmpdir");
     protected String siteUrlPath = "http://www.test.com/";
 
     protected SimpleDateFormat W3C_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
@@ -57,6 +59,7 @@ public class SiteMapBuilder {
     protected List<String> indexFileNames = new ArrayList<String>();
 
     public SiteMapBuilder(SiteMapConfiguration siteMapConfig, String tempDirectory) {
+        this.siteMapConfig = siteMapConfig;
         this.tempDirectory = tempDirectory;
         fixTempDirectory();
         currentURLSetWrapper = new SiteMapURLSetWrapper();
@@ -179,4 +182,25 @@ public class SiteMapBuilder {
         }
         return tempDirectory;
     }
+
+    private static void compressGzipFile(String file, String gzipFile) {
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            FileOutputStream fos = new FileOutputStream(gzipFile);
+            GZIPOutputStream gzipOS = new GZIPOutputStream(fos);
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = fis.read(buffer)) != -1) {
+                gzipOS.write(buffer, 0, len);
+            }
+            //close resources
+            gzipOS.close();
+            fos.close();
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

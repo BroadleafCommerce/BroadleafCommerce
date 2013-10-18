@@ -23,8 +23,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -34,22 +32,18 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author bpolster
  */
 @XmlRootElement(name = "url")
-@XmlAccessorType(value = XmlAccessType.FIELD)
 public class SiteMapURLWrapper implements Serializable {
 
     protected final SimpleDateFormat W3C_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
+
     private static final long serialVersionUID = 1L;   
 
-    @XmlElement
     protected String loc;
 
-    @XmlElement
     protected String lastmod;
 
-    @XmlElement
     protected String changefreq;
 
-    @XmlElement
     protected String priority;
 
     public void setLastModDate(Date lastModDate) {
@@ -76,6 +70,7 @@ public class SiteMapURLWrapper implements Serializable {
         return loc;
     }
 
+    @XmlElement
     public void setLoc(String loc) {
         this.loc = loc;
     }
@@ -84,6 +79,7 @@ public class SiteMapURLWrapper implements Serializable {
         return lastmod;
     }
 
+    @XmlElement
     public void setLastmod(String lastmod) {
         this.lastmod = lastmod;
     }
@@ -92,6 +88,7 @@ public class SiteMapURLWrapper implements Serializable {
         return changefreq;
     }
 
+    @XmlElement
     public void setChangefreq(String changefreq) {
         this.changefreq = changefreq;
     }
@@ -100,6 +97,7 @@ public class SiteMapURLWrapper implements Serializable {
         return priority;
     }
 
+    @XmlElement
     public void setPriority(String priority) {
         this.priority = priority;
     }

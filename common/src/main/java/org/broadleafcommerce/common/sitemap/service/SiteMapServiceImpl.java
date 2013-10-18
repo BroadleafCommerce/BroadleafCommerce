@@ -112,7 +112,7 @@ public class SiteMapServiceImpl implements SiteMapService {
      */
     protected SiteMapGenerator selectSiteMapGenerator(SiteMapGeneratorConfiguration smgc) {
         for (SiteMapGenerator siteMapGenerator : siteMapGenerators) {
-            if (siteMapGenerator.canHandleSiteMapConfiguration(smgc)) {
+            if ((!smgc.getDisabled()) && (siteMapGenerator.canHandleSiteMapConfiguration(smgc))) {
                 return siteMapGenerator;
             }
         }
