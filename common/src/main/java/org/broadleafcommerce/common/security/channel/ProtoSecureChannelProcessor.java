@@ -27,13 +27,17 @@ import java.util.Collection;
 import javax.servlet.ServletException;
 
 /**
- * <p>Very similar to the {@link SecureChannelProcessor} except that instead of relying on the HttpServletRequest this allows
+ * <p>Very similar to the {@link SecureChannelProcessor} except that instead of relying on only the HttpServletRequest this
+ * also allows
  * inspection of the X-Forwarded-Proto header to determine if the request is secure. This class is required when the
  * application is deployed to an environment where SSL termination happens at a layer above the servlet container
  * (like at a load balancer)</p>
  * 
  * <p>This is intended to be used in conjunction with the {@link ProtoChannelBeanPostProcessor}. See that class for
  * more information on how to configure.</p>
+ *
+ * <p>This class encapsulates functionality given in {@link SecureChannelProcessor} so it is unnecessary to configure
+ * both</p>
  *
  * @author Jeff Fischer
  * @author Phillip Verheyden (phillipuniverse)
@@ -48,7 +52,8 @@ public class ProtoSecureChannelProcessor extends SecureChannelProcessor {
 
         for (ConfigAttribute attribute : config) {
             if (supports(attribute)) {
-                if ("http".equals(invocation.getHttpRequest().getHeader("X-Forwarded-Proto"))) {
+                if (!invocation.getHttpRequest().isSecure() || 
+                        "http".equals(invocation.getHttpRequest().getHeader("X-Forwarded-Proto"))) {
                     getEntryPoint().commence(invocation.getRequest(), invocation.getResponse());
                 }
             }
