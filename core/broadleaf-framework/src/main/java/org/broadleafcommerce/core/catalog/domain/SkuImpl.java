@@ -921,7 +921,7 @@ public class SkuImpl implements Sku {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
 
