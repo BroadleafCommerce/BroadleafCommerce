@@ -82,7 +82,21 @@ public class CartOperationRequest {
         return orderItem;
     }
 
-    public void setOrderItem(OrderItem addedOrderItem) {
+    public void setOrderItem(OrderItem orderItem) {
+        this.orderItem = orderItem;
+    }
+
+    /**
+     * @deprecated in favor of {@link #getOrderItem()}. Keeping this method for backwards compatibility
+     */
+    public OrderItem getAddedOrderItem() {
+        return orderItem;
+    }
+
+    /**
+     * @deprecated in favor of {@link #setOrderItem(OrderItem)}. Keeping this method for backwards compatibility
+     */
+    public void setAddedOrderItem(OrderItem addedOrderItem) {
         this.orderItem = addedOrderItem;
     }
 
