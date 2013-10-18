@@ -131,6 +131,7 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
             OrderItem savedOi = orderItemService.saveOrderItem(entry.getKey());
             order.getOrderItems().add(savedOi);
             
+            // We also need to update the orderItem on the request in case it's used by the caller of this workflow
             if (entry.getKey() == request.getOrderItem()) {
                 request.setOrderItem(savedOi);
             }
