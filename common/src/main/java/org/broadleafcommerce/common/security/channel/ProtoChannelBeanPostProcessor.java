@@ -29,6 +29,8 @@ import org.springframework.security.web.access.channel.SecureChannelProcessor;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import javax.servlet.ServletRequest;
+
 /**
  * <p>This class is designed to work in both a load-balanced and non load-balanced environment by replacing the existing
  * default Spring channel processors which do not work in a load balanced environment. Configuration should be done
@@ -42,23 +44,6 @@ import java.util.List;
  *   <bean class="org.broadleafcommerce.common.security.channel.ProtoChannelBeanPostProcessor">
  *       <property name="channelProcessorOverrides">
  *           <list>
- *              <bean class="org.springframework.security.web.access.channel.InsecureChannelProcessor" />
- *              <bean class="org.broadleafcommerce.common.security.channel.ProtoInsecureChannelProcessor" />
- *              <bean class="org.springframework.security.web.access.channel.SecureChannelProcessor" />
- *              <bean class="org.broadleafcommerce.common.security.channel.ProtoSecureChannelProcessor" />
- *          </list>
- *      </property>
- *  </bean>
- *  }
- * </pre>
- * 
- * <b>Deploying to only a load-balanced environment with SSL termination at the load balancer:</b>
- * 
- * <pre>
- * {@code
- *   <bean class="org.broadleafcommerce.common.security.channel.ProtoChannelBeanPostProcessor">
- *       <property name="channelProcessorOverrides">
- *           <list>
  *              <bean class="org.broadleafcommerce.common.security.channel.ProtoInsecureChannelProcessor" />
  *              <bean class="org.broadleafcommerce.common.security.channel.ProtoSecureChannelProcessor" />
  *          </list>
@@ -66,7 +51,14 @@ import java.util.List;
  *  </bean>
  *  }
  * </pre>
- *
+ * 
+ * <p>That said, this solution only overrides the Spring Security directives but does not make any attempts to override
+ * any invocations to {@link ServletRequest#isSecure}. If your application server supports it, we recommend instead using
+ * that approach which will encapsulate any functionality encapsulated within the Proto processors. For more information
+ * on configuring your specific servlet container, see
+ * <a href="https://github.com/BroadleafCommerce/BroadleafCommerce/issues/424">this issue report</a>
+ * </p>
+ * 
  * @author Jeff Fischer
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link ProtoSecureChannelProcessor}
