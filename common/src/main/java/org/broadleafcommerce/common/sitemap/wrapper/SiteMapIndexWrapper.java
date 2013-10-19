@@ -19,11 +19,8 @@ package org.broadleafcommerce.common.sitemap.wrapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * Representation the sitemapindex element defined in the schema definition at
@@ -32,19 +29,17 @@ import javax.xml.bind.annotation.XmlType;
  * @author bpolster
  */
 @XmlRootElement(name = "sitemapindex")
-@XmlType(namespace = "http://www.sitemaps.org/schemas/sitemap/0.9")
-@XmlAccessorType(value = XmlAccessType.FIELD)
 public class SiteMapIndexWrapper {
 
     private static final long serialVersionUID = 1L;
 
     private List<SiteMapWrapper> siteMapWrappers = new ArrayList<SiteMapWrapper>();
     
-    @XmlElement(name = "sitemap")
     public List<SiteMapWrapper> getSiteMapWrappers() {
         return siteMapWrappers;
     }
     
+    @XmlElement(name = "sitemap")
     public void setSiteMapWrappers(List<SiteMapWrapper> siteMapWrappers) {
         this.siteMapWrappers = siteMapWrappers;
     }

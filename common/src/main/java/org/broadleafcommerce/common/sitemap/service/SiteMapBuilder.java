@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.sitemap.wrapper.SiteMapIndexWrapper;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLSetWrapper;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapWrapper;
+import org.broadleafcommerce.common.util.FormatUtil;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,7 +32,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,14 +49,16 @@ import javax.xml.bind.Marshaller;
 public class SiteMapBuilder {
 
     protected static final Log LOG = LogFactory.getLog(SiteMapBuilder.class);
+    
+    protected boolean gzipSiteMap;
+    protected boolean gzipSiteMapIndex;
 
     protected String tempDirectory = System.getProperty("java.io.tmpdir");
     protected String siteUrlPath = "http://www.test.com/";
 
-    protected SimpleDateFormat W3C_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
     protected SiteMapConfiguration siteMapConfig;
     protected SiteMapURLSetWrapper currentURLSetWrapper;
-    protected List<String> indexFileNames = new ArrayList<String>();
+    protected List<String> indexedFileNames = new ArrayList<String>();
 
     public SiteMapBuilder(SiteMapConfiguration siteMapConfig, String tempDirectory) {
         this.siteMapConfig = siteMapConfig;
@@ -89,12 +91,14 @@ public class SiteMapBuilder {
             JAXBContext context = JAXBContext.newInstance(xmlObject.getClass());
             Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            m.setProperty(Marshaller.JAXB_FRAGMENT, true);
 
             File file = new File(tempDirectory + fileName);
             if (!file.exists()) {
                 file.createNewFile();
             }
             Writer writer = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
+            writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             m.marshal(xmlObject, writer);
             writer.close();
         } catch (IOException ioe) {
@@ -111,18 +115,24 @@ public class SiteMapBuilder {
      * @return
      */
     protected void persistIndexedURLSetWrapper(SiteMapURLSetWrapper urlSetWrapper) {
-        String indexFileName = createNextIndexFileName();
-        persistXMLDocument(indexFileName, urlSetWrapper);
-        indexFileNames.add(createNextIndexFileName());
+        String indexedFileName = createNextIndexFileName();
+        persistXMLDocument(indexedFileName, urlSetWrapper);
+        if (isGzipSiteMap()) {
+            gzipAndDeleteFile(indexedFileName);
+        }
+        indexedFileNames.add(indexedFileName);
     }
 
     /**
-     * Save the passed in URL set to a new indexed file. 
+     * Save the passed in URL set to a new non indexed file. 
      * @return
      */
     protected void persistNonIndexedSiteMap() {
-        persistXMLDocument(siteMapConfig.getSiteMapFileName(), currentURLSetWrapper);
-        indexFileNames.add(createNextIndexFileName());
+        persistXMLDocument(siteMapConfig.getSiteMapPrimaryFileName(), currentURLSetWrapper);
+        if (isGzipSiteMap()) {
+            gzipAndDeleteFile(siteMapConfig.getSiteMapPrimaryFileName());
+        }
+        indexedFileNames.add(createNextIndexFileName());
     }
 
     /**
@@ -130,21 +140,24 @@ public class SiteMapBuilder {
      * @return
      */
     protected void persistIndexedSiteMap() {
-        String now = W3C_DATE_FORMATTER.format(new Date());
+        String now = FormatUtil.formatDateUsingW3C(new Date());
         
         // Save the left over items
         persistIndexedURLSetWrapper(currentURLSetWrapper);
 
         // Build the siteMapIndex
         SiteMapIndexWrapper siteMapIndexWrapper = new SiteMapIndexWrapper();
-        for (String fileName : indexFileNames) {
+        for (String fileName : indexedFileNames) {
             SiteMapWrapper siteMapWrapper = new SiteMapWrapper();
             siteMapWrapper.setLoc(getSiteUrlPath() + fileName);
             siteMapWrapper.setLastmod(now);
             siteMapIndexWrapper.getSiteMapWrappers().add(siteMapWrapper);
         }
 
-        persistXMLDocument(siteMapConfig.getSiteMapFileName(), siteMapIndexWrapper);
+        persistXMLDocument(siteMapConfig.getSiteMapPrimaryFileName(), siteMapIndexWrapper);
+        if (isGzipSiteMapIndex()) {
+            gzipAndDeleteFile(siteMapConfig.getSiteMapPrimaryFileName());
+        }
     }
 
     /**
@@ -163,15 +176,18 @@ public class SiteMapBuilder {
      * @return
      */
     protected String createNextIndexFileName() {
-        int fileNumber = indexFileNames.size() + 1;
-        return "siteMap" + fileNumber + ".xml";
+        if(indexedFileNames.size() == 0) {
+            return "sitemap.xml";
+        }
+        return "siteMap" + indexedFileNames.size() + ".xml";
     }
 
     protected void persistSiteMap() {
-        if (indexFileNames.size() > 0) {
+        if (indexedFileNames.size() > 0) {
             persistIndexedSiteMap();
+        } else {
+            persistNonIndexedSiteMap();
         }
-        persistNonIndexedSiteMap();
     }
 
     // Ensure that the temp directory ends with a "/"
@@ -183,10 +199,16 @@ public class SiteMapBuilder {
         return tempDirectory;
     }
 
-    private static void compressGzipFile(String file, String gzipFile) {
+    /**
+     * Gzip a file and then delete the file
+     * 
+     * @param fileName
+     */
+    public void gzipAndDeleteFile(String fileName) {
         try {
-            FileInputStream fis = new FileInputStream(file);
-            FileOutputStream fos = new FileOutputStream(gzipFile);
+            String fileNameWithPath = tempDirectory + fileName;
+            FileInputStream fis = new FileInputStream(fileNameWithPath);
+            FileOutputStream fos = new FileOutputStream(fileNameWithPath + ".gz");
             GZIPOutputStream gzipOS = new GZIPOutputStream(fos);
             byte[] buffer = new byte[1024];
             int len;
@@ -197,10 +219,29 @@ public class SiteMapBuilder {
             gzipOS.close();
             fos.close();
             fis.close();
+
+            File file = new File(fileNameWithPath);
+            file.delete();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public boolean isGzipSiteMap() {
+        return gzipSiteMap;
+    }
+
+    public void setGzipSiteMap(boolean gzipSiteMap) {
+        this.gzipSiteMap = gzipSiteMap;
+    }
+
+    public boolean isGzipSiteMapIndex() {
+        return gzipSiteMapIndex;
+    }
+
+    public void setGzipSiteMapIndex(boolean gzipSiteMapIndex) {
+        this.gzipSiteMapIndex = gzipSiteMapIndex;
     }
 
 }

@@ -18,9 +18,9 @@ package org.broadleafcommerce.common.sitemap.wrapper;
 
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
+import org.broadleafcommerce.common.util.FormatUtil;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -34,8 +34,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "url")
 public class SiteMapURLWrapper implements Serializable {
 
-    protected final SimpleDateFormat W3C_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
-
     private static final long serialVersionUID = 1L;   
 
     protected String loc;
@@ -48,9 +46,9 @@ public class SiteMapURLWrapper implements Serializable {
 
     public void setLastModDate(Date lastModDate) {
         if (lastModDate != null) {
-            lastmod = W3C_DATE_FORMAT.format(lastModDate);
+            lastmod = FormatUtil.formatDateUsingW3C(lastModDate);
         } else {
-            lastmod = W3C_DATE_FORMAT.format(new Date());
+            lastmod = FormatUtil.formatDateUsingW3C(new Date());
         }
     }
 
@@ -62,7 +60,7 @@ public class SiteMapURLWrapper implements Serializable {
 
     public void setChangeFreqType(SiteMapChangeFreqType changeFreqType) {
         if (changeFreqType != null) {
-            setChangefreq(changeFreqType.getType());
+            setChangefreq(changeFreqType.getFriendlyType());
         }
     }
 

@@ -18,8 +18,6 @@ package org.broadleafcommerce.common.sitemap.wrapper;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -30,15 +28,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author bpolster
  */
 @XmlRootElement(name = "sitemap")
-@XmlAccessorType(value = XmlAccessType.FIELD)
 public class SiteMapWrapper implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XmlElement
     protected String loc;
 
-    @XmlElement
     protected String lastmod;
 
 
@@ -46,7 +41,7 @@ public class SiteMapWrapper implements Serializable {
         return loc;
     }
 
-
+    @XmlElement
     public void setLoc(String loc) {
         this.loc = loc;
     }
@@ -56,7 +51,7 @@ public class SiteMapWrapper implements Serializable {
         return lastmod;
     }
 
-
+    @XmlElement
     public void setLastmod(String lastmod) {
         this.lastmod = lastmod;
     }

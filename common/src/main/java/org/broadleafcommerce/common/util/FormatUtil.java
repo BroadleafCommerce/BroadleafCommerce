@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.util;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author Jeff Fischer
@@ -27,6 +28,7 @@ public class FormatUtil {
 
     public static final String DATE_FORMAT = "yyyy.MM.dd HH:mm:ss";
     public static final String DATE_FORMAT_WITH_TIMEZONE = "yyyy.MM.dd HH:mm:ss Z";
+    public static final SimpleDateFormat W3C_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
 
     public static SimpleDateFormat getDateFormat() {
         SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
@@ -46,4 +48,15 @@ public class FormatUtil {
         formatter.setTimeZone(BroadleafRequestContext.getBroadleafRequestContext().getTimeZone());
         return formatter;
     }
+
+    /**
+     * Use to produce date Strings in the W3C date format
+     * 
+     * @param date
+     * @return
+     */
+    public static String formatDateUsingW3C(Date date) {
+        return W3C_DATE_FORMAT.format(date);
+    }
+
 }

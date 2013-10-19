@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.util;
+/**
+ *
+ * @author Joshua Skorton (jskorton)
+ */
 
-import org.broadleafcommerce.common.time.SystemTime;
+@XmlSchema(
+        namespace = "http://www.sitemaps.org/schemas/sitemap/0.9",
+        elementFormDefault = XmlNsForm.QUALIFIED)
+package org.broadleafcommerce.common.sitemap.wrapper;
 
-import java.util.Date;
+import javax.xml.bind.annotation.XmlNsForm;
+import javax.xml.bind.annotation.XmlSchema;
 
-public class DateUtil {
-
-    public static boolean isActive(Date startDate, Date endDate, boolean includeTime) {
-        Long date = SystemTime.asMillis(includeTime);
-        return !(startDate == null || startDate.getTime() > date || (endDate != null && endDate.getTime() < date));
-    }
-
-}

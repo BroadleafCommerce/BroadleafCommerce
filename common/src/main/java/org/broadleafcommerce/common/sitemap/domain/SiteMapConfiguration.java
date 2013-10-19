@@ -30,25 +30,47 @@ import java.util.List;
 public interface SiteMapConfiguration extends ModuleConfiguration {
 
     /**
-     * The name of the file that holds the SiteMap.xml.      Defaults to "sitemap.xml".
+     * Returns the name of the primary site map file.  Defaults to "sitemap_index.xml".
      * 
-     * If this value was sitemap.xml then your sites robots.txt file would be configured to include the 
+     * An index file will be created if there is more than one site map file.  If an index file is created,
+     * then the primary file refers to that index file.  If there is no index file, the primary file refers
+     * to the only site map file.
+     * 
+     * If this value was "sitemap.xml" then your sites robots.txt file would be configured to include the 
      * following line.
      * 
      * The value should include the directory path if applicable.
      * 
-     * Sitemap: http://www.yoursite.com/sitemap.xml
+     * Sitemap: http://www.yoursite.com/sitemap_index.xml
      * 
      * @return String representing the filename
      */
-    public String getSiteMapFileName();
+    public String getSiteMapPrimaryFileName();
     
     /**
-     * Sets the SiteMap file name.
+     * Sets the primary site map file name.
+     * 
      * @see #getSiteMapFileName()
+     * @param siteMapPrimaryFileName
      */
-    public void setSiteMapFileName(String siteMapFileName);
+    public void setSiteMapPrimaryFileName(String siteMapPrimaryFileName);
         
+    /**
+     * Returns a path to the URL where the site map files will be located.   Typically this is the 
+     * production address (e.g. http://www.mysite.com/);
+     *  
+     * @return
+     */
+    public String getSiteUrlPath();
+
+    /**
+     * Sets a path to the URL where the site map files will be located.   Typically this is the 
+     * production address (e.g. http://www.mysite.com/);
+     * 
+     * @param siteUrlPath
+     */
+    public void setSiteUrlPath(String siteUrlPath);
+
     /**
      * Returns the list of SiteMapGeneratorConfigurations used by this SiteMapConfiguration.
      * @return

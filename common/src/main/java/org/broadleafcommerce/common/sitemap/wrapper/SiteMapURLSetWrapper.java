@@ -19,11 +19,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * Representation the urlset element defined in the schema definition at
@@ -32,19 +29,17 @@ import javax.xml.bind.annotation.XmlType;
  * @author bpolster
  */
 @XmlRootElement(name = "urlset")
-@XmlType(namespace = "http://www.sitemaps.org/schemas/sitemap/0.9")
-@XmlAccessorType(value = XmlAccessType.FIELD)
 public class SiteMapURLSetWrapper implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XmlElement(name = "url")
     private List<SiteMapURLWrapper> siteMapUrlWrappers = new ArrayList<SiteMapURLWrapper>();
     
     public List<SiteMapURLWrapper> getSiteMapUrlWrappers() {
         return siteMapUrlWrappers;
     }
     
+    @XmlElement(name = "url")
     public void setSiteMapUrlWrappers(List<SiteMapURLWrapper> siteMapUrlWrappers) {
         this.siteMapUrlWrappers = siteMapUrlWrappers;
     }

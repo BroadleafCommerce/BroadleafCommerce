@@ -47,14 +47,18 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
     private static final long serialVersionUID = 1L;
     private static Integer DEFAULT_MAX_URL_ENTRIES = 50000;
 
-    @Column(name = "SITE_MAP_FILE_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapConfiguration_Site_Map_File_Name")
-    protected String siteMapFileName;
+    @Column(name = "SITE_MAP_PRIMARY_FILE_NAME", nullable = false)
+    @AdminPresentation(friendlyName = "SiteMapConfiguration_Site_Map_Primary_File_Name")
+    protected String siteMapPrimaryFileName = "sitemap.xml";
 
     @Column(name = "MAX_URL_ENTRIES_PER_FILE")
     @AdminPresentation(excluded = true)
     // This defaults to 50000 and does not normally need to be changed so it is excluded from the admin by default.
     protected Integer maximumSiteMapURLEntriesPerFile;
+
+    @Column(name = "SITE_URL_PATH", nullable = false)
+    @AdminPresentation(friendlyName = "SiteMapConfiguration_Site_URL_Path")
+    protected String siteUrlPath;
 
     @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @AdminPresentationCollection(friendlyName = "SiteMapConfiguration_Site_Map_Generator_Configurations", addType = AddMethodType.LOOKUP, manyToField = "siteMapConfigurations",
@@ -67,13 +71,23 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
     }
 
     @Override
-    public String getSiteMapFileName() {
-        return siteMapFileName;
+    public String getSiteMapPrimaryFileName() {
+        return siteMapPrimaryFileName;
     }
 
     @Override
-    public void setSiteMapFileName(String siteMapFileName) {
-        this.siteMapFileName = siteMapFileName;
+    public void setSiteMapPrimaryFileName(String siteMapPrimaryFileName) {
+        this.siteMapPrimaryFileName = siteMapPrimaryFileName;
+    }
+
+    @Override
+    public String getSiteUrlPath() {
+        return siteUrlPath;
+    }
+
+    @Override
+    public void setSiteUrlPath(String siteUrlPath) {
+        this.siteUrlPath = siteUrlPath;
     }
 
     @Override

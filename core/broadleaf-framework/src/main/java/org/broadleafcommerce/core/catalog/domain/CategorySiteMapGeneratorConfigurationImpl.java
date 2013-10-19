@@ -22,6 +22,8 @@ import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -36,7 +38,8 @@ public class CategorySiteMapGeneratorConfigurationImpl extends SiteMapGeneratorC
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "ROOT_CATEGORY", nullable = false)
+    @ManyToOne(targetEntity = CategoryImpl.class)
+    @JoinColumn(name = "ROOT_CATEGORY_ID", nullable = false)
     @AdminPresentation(friendlyName = "CategorySiteMapGeneratorConfiguration_Root_Category")
     protected Category rootCategory;
 

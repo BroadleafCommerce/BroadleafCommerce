@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -48,6 +49,12 @@ public class SiteMapServiceImpl implements SiteMapService {
 
     protected String tempDirectory = System.getProperty("java.io.tmpdir");
 
+    @Value("${gzip.site.map}")
+    protected boolean gzipSiteMap;
+
+    @Value("${gzip.site.map.index}")
+    protected boolean gzipSiteMapIndex;
+
     @Resource(name = "blModuleConfigurationService")
     protected ModuleConfigurationService moduleConfigurationService;
 
@@ -66,6 +73,8 @@ public class SiteMapServiceImpl implements SiteMapService {
         }
 
         SiteMapBuilder siteMapBuilder = new SiteMapBuilder(smc, tempDirectory);
+        siteMapBuilder.setGzipSiteMap(gzipSiteMap);
+        siteMapBuilder.setGzipSiteMapIndex(gzipSiteMapIndex);
 
         for (SiteMapGeneratorConfiguration currentConfiguration : smc.getSiteMapGeneratorConfigurations()) {
             SiteMapGenerator generator = selectSiteMapGenerator(currentConfiguration);
