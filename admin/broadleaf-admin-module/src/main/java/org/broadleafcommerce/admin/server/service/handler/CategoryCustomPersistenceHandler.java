@@ -16,24 +16,23 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.ForeignKey;
-import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 /**
@@ -47,9 +46,22 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
+        return canHandle(persistencePackage);
+    }
+    
+    @Override
+    public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
+        return canHandle(persistencePackage);
+    }
+    
+    public Boolean canHandle(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        String[] customCriteria = persistencePackage.getCustomCriteria();
-        return !ArrayUtils.isEmpty(customCriteria) && "addNewCategory".equals(customCriteria[0]) && Category.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        try {
+            Class testClass = Class.forName(ceilingEntityFullyQualifiedClassname);
+            return Category.class.isAssignableFrom(testClass);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     @Override
@@ -75,21 +87,64 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
         }
     }
+    
+    @Override
+    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = persistencePackage.getEntity();
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+            Category adminInstance = (Category) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            
+            final Long oldDefaultParentCategoryId = getDefaultCategoryId(adminInstance);
 
-    protected Map<String, FieldMetadata> getMergedProperties(Class<?> ceilingEntityFullyQualifiedClass, DynamicEntityDao dynamicEntityDao, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
-        Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityFullyQualifiedClass);
-        return dynamicEntityDao.getMergedProperties(
-            ceilingEntityFullyQualifiedClass.getName(), 
-            entities, 
-            null, 
-            new String[]{}, 
-            new ForeignKey[]{},
-            MergedPropertyType.PRIMARY,
-            populateManyToOneFields,
-            includeManyToOneFields, 
-            excludeManyToOneFields,
-            configurationKey,
-            ""
-        );
+            adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            adminInstance = (Category) dynamicEntityDao.merge(adminInstance);
+            
+            Long newDefaultParentCategoryId = getDefaultCategoryId(adminInstance);
+            
+            boolean categoryIdChanged = ObjectUtils.notEqual(oldDefaultParentCategoryId, newDefaultParentCategoryId);
+            if (categoryIdChanged) {
+                CategoryXref categoryXref = new CategoryXrefImpl();
+                categoryXref.setCategory(adminInstance.getDefaultParentCategory());
+                categoryXref.setSubCategory(adminInstance);
+                if (adminInstance.getDefaultParentCategory() != null && !adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
+                    adminInstance.getAllParentCategoryXrefs().add(categoryXref);
+                }
+                
+                //remove the old relationship
+                if (oldDefaultParentCategoryId != null) {
+                    CategoryXref oldXref = (CategoryXref)CollectionUtils.find(adminInstance.getAllParentCategoryXrefs(), new TypedPredicate<CategoryXref>() {
+                        
+                        @Override
+                        public boolean eval(CategoryXref xref) {
+                            return oldDefaultParentCategoryId.equals(xref.getCategory().getId());
+                        }
+                    });
+
+                    if (oldXref != null) {
+                        oldXref.getSubCategory().getAllParentCategoryXrefs().remove(oldXref);
+                        dynamicEntityDao.remove(oldXref);
+                    }
+                }
+            }
+            
+            return helper.getRecord(adminProperties, adminInstance, null, null);
+        } catch (Exception e) {
+            throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
+        }
     }
+    
+    /**
+     * Returns the default parent category ID for the given category or null if there is not one set
+     */
+    public Long getDefaultCategoryId(Category category) {
+        if (category.getDefaultParentCategory() != null) {
+            return category.getDefaultParentCategory().getId();
+        }
+        return null;
+    }
+    
+
 }
