@@ -16,10 +16,12 @@
 
 package org.broadleafcommerce.admin.server.service.handler;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -52,16 +54,24 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        String[] customCriteria = persistencePackage.getCustomCriteria();
-        return !ArrayUtils.isEmpty(customCriteria) && "productDirectEdit".equals(customCriteria[0]) && Product.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return canHandle(persistencePackage);
     }
 
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
-        return canHandleAdd(persistencePackage);
+        return canHandle(persistencePackage);
     }
 
+    public Boolean canHandle(PersistencePackage persistencePackage) {
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        try {
+            Class testClass = Class.forName(ceilingEntityFullyQualifiedClassname);
+            return Product.class.isAssignableFrom(testClass);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+    
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity  = persistencePackage.getEntity();
@@ -77,7 +87,8 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
            
             adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
-
+            
+            //Associate the default parent category to the list of parent categories
             CategoryProductXref categoryXref = new CategoryProductXrefImpl();
             categoryXref.setCategory(adminInstance.getDefaultCategory());
             categoryXref.setProduct(adminInstance);
@@ -113,6 +124,8 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             
+            final Long oldDefaultCategoryId = getDefaultCategoryId(adminInstance);
+            
             if (adminInstance instanceof ProductBundle) {
                 removeBundleFieldRestrictions((ProductBundle)adminInstance, adminProperties, entity);
             }
@@ -120,18 +133,49 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
            
             adminInstance = (Product) dynamicEntityDao.merge(adminInstance);
+            
+            Long newDefaultCategoryId = getDefaultCategoryId(adminInstance);
+            
+            boolean categoryIdChanged = ObjectUtils.notEqual(oldDefaultCategoryId, newDefaultCategoryId);
+            if (categoryIdChanged) {
+                CategoryProductXref categoryXref = new CategoryProductXrefImpl();
+                categoryXref.setCategory(adminInstance.getDefaultCategory());
+                categoryXref.setProduct(adminInstance);
+                if (adminInstance.getDefaultCategory() != null && !adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
+                    adminInstance.getAllParentCategoryXrefs().add(categoryXref);
+                }
+                
+                //remove the old relationship
+                if (oldDefaultCategoryId != null) {
+                    CategoryProductXref oldXref = (CategoryProductXref)CollectionUtils.find(adminInstance.getAllParentCategoryXrefs(), new TypedPredicate<CategoryProductXref>() {
+                        
+                        @Override
+                        public boolean eval(CategoryProductXref xref) {
+                            return oldDefaultCategoryId.equals(xref.getCategory().getId());
+                        }
+                    });
 
-            CategoryProductXref categoryXref = new CategoryProductXrefImpl();
-            categoryXref.setCategory(adminInstance.getDefaultCategory());
-            categoryXref.setProduct(adminInstance);
-            if (adminInstance.getDefaultCategory() != null && !adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
-                adminInstance.getAllParentCategoryXrefs().add(categoryXref);
+                    if (oldXref != null) {
+                        oldXref.getProduct().getAllParentCategoryXrefs().remove(oldXref);
+                        dynamicEntityDao.remove(oldXref);
+                    }
+                }
             }
             
             return helper.getRecord(adminProperties, adminInstance, null, null);
         } catch (Exception e) {
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
         }
+    }
+    
+    /**
+     * Returns the default category ID for the given product or null if there is not one set
+     */
+    public Long getDefaultCategoryId(Product product) {
+        if (product.getDefaultCategory() != null) {
+            return product.getDefaultCategory().getId();
+        }
+        return null;
     }
     
     /**
