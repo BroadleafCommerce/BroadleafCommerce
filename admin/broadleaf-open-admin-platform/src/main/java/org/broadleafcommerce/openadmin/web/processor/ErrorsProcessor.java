@@ -16,8 +16,11 @@
 
 package org.broadleafcommerce.openadmin.web.processor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -47,6 +50,8 @@ import java.util.Map;
  */
 @Component("blErrorsProcessor")
 public class ErrorsProcessor extends AbstractAttrProcessor {
+    
+    protected static final Log LOG = LogFactory.getLog(ErrorsProcessor.class);
 
     public ErrorsProcessor() {
         super("errors");
@@ -85,9 +90,21 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
                     //at this point the field name actually occurs within some array syntax
                     String fieldName = err.getField().substring(err.getField().indexOf('[') + 1, err.getField().lastIndexOf(']'));
                     String[] fieldInfo = fieldName.split("\\" + DynamicEntityFormInfo.FIELD_SEPARATOR);
-                    tabErrors.put(form.getDynamicForm(fieldInfo[0]).getFields().get(fieldName).getFriendlyName(), err.getCode());
+                    Field formField = form.getDynamicForm(fieldInfo[0]).getFields().get(fieldName);
+                    if (formField != null) {
+                        tabErrors.put(formField.getFriendlyName(), err.getCode());
+                    } else {
+                        LOG.warn("Could not find field " + fieldName + " within the dynamic form " + fieldInfo[0]);
+                        tabErrors.put(fieldName, err.getCode());
+                    }
                 } else {
-                    tabErrors.put(form.findField(err.getField()).getFriendlyName(), err.getCode());
+                    Field formField = form.findField(err.getField());
+                    if (formField != null) {
+                        tabErrors.put(formField.getFriendlyName(), err.getCode());
+                    } else {
+                        LOG.warn("Could not field field " + err.getField() + " within the main form");
+                        tabErrors.put(err.getField(), err.getCode());
+                    }
                 }
             }
             
