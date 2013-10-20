@@ -131,8 +131,10 @@ public class AdminProductController extends AdminBasicEntityController {
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
         
+        
         // Find the metadata and the entity for the selected sku
-        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md);
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md)
+                .withCustomCriteria(new String[] { id });
         ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
         if (collectionMetadata.getCeilingType().equals(SkuImpl.class.getName())) {
             collectionMetadata.setCeilingType(Sku.class.getName());
