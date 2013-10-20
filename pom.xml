@@ -621,6 +621,10 @@
                         <artifactId>slf4j-jdk14</artifactId>
                         <groupId>org.slf4j</groupId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>javax.servlet.jsp</groupId>
+                        <artifactId>jsp-api</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
