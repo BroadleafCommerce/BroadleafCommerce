@@ -114,11 +114,11 @@ input[type="text"], input[type="password"], input[type="date"], input[type="date
     display: block;
 }
 
-.entity-form div.errors {
+div.errors {
     margin-bottom: 10px;
 }
 
-.entity-form div.errors span {
+div.errors span {
     color: #c60f13;
     display: block;
     margin-left: 10px;

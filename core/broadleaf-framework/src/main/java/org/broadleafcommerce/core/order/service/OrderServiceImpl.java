@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -62,7 +63,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -226,16 +226,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order save(Order order, Boolean priceOrder) throws PricingException {
         //persist the order first
-        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-        def.setName("saveOrder");
-        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-
-        TransactionStatus status = transactionManager.getTransaction(def);
+        TransactionStatus status = TransactionUtils.createTransaction("saveOrder",
+                    TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
         try {
             order = persist(order);
-            finalizeTransaction(status, false);
+            TransactionUtils.finalizeTransaction(status, transactionManager, false);
         } catch (RuntimeException ex) {
-            finalizeTransaction(status, true);
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
             throw ex;
         }
 
@@ -293,39 +290,18 @@ public class OrderServiceImpl implements OrderService {
             }
 
             //make the final save of the priced order
-            def = new DefaultTransactionDefinition();
-            def.setName("saveOrder");
-            def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-
-            status = transactionManager.getTransaction(def);
+            status = TransactionUtils.createTransaction("saveOrder",
+                                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
             try {
                 order = persist(order);
-                finalizeTransaction(status, false);
+                TransactionUtils.finalizeTransaction(status, transactionManager, false);
             } catch (RuntimeException ex) {
-                finalizeTransaction(status, true);
+                TransactionUtils.finalizeTransaction(status, transactionManager, true);
                 throw ex;
             }
         }
 
         return order;
-    }
-
-    protected void finalizeTransaction(TransactionStatus status, boolean isError) {
-        boolean isActive = false;
-        try {
-            if (!status.isRollbackOnly()) {
-                isActive = true;
-            }
-        } catch (Exception e) {
-            //do nothing
-        }
-        if (isActive) {
-            if (isError) {
-                transactionManager.rollback(status);
-            } else {
-                transactionManager.commit(status);
-            }
-        }
     }
     
     // This method exists to provide OrderService methods the ability to save an order

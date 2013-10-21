@@ -20,12 +20,12 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.List;
 
@@ -93,12 +93,10 @@ public class SandBoxDaoImpl implements SandBoxDao {
         return entity;
     }
 
+    @Override
     public SandBox createSandBox(Site site, String sandBoxName, SandBoxType sandBoxType) {
-        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-        def.setName("createSandBox");
-        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
-        TransactionStatus status = transactionManager.getTransaction(def);
+        TransactionStatus status = TransactionUtils.createTransaction("createSandBox",
+                        TransactionDefinition.PROPAGATION_REQUIRES_NEW, transactionManager);
         try {
             SandBox approvalSandbox = retrieveNamedSandBox(site, sandBoxType, sandBoxName);
             if (approvalSandbox == null) {
@@ -108,10 +106,10 @@ public class SandBoxDaoImpl implements SandBoxDao {
                 approvalSandbox.setSandBoxType(sandBoxType);
                 approvalSandbox = persist(approvalSandbox);
             }
-            transactionManager.commit(status);
+            TransactionUtils.finalizeTransaction(status, transactionManager, false);
             return approvalSandbox;
         } catch (Exception ex) {
-            transactionManager.rollback(status);
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
             throw new RuntimeException(ex);
         }
     }
