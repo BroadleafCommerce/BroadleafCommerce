@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.core.domain;
+package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,23 +27,24 @@ import javax.persistence.PostUpdate;
 
 /**
  * The main function of this entity listener is to publish a Spring event that the customer has been persisted. This is
- * necessary in order to update the current customer in the application
+ * necessary in order to update the current order in the application
  *
  * @author Phillip Verheyden (phillipuniverse)
  * 
  * @see {@link ApplicationEventPublisher#publishEvent(org.springframework.context.ApplicationEvent)}
- * @see {@link CustomerPersistedEvent}
- * @see {@link org.broadleafcommerce.profile.web.core.CustomerStateRefresher}
- * @see {@link org.broadleafcommerce.profile.web.core.CustomerState}
+ * @see {@link OrderPersistedEvent}
+ * @see {@link org.broadleafcommerce.core.web.order.CartStateRefresher}
+ * @see {@link org.broadleafcommerce.core.web.order.CartState}
  */
-public class CustomerPersistedEntityListener {
-    
+public class OrderPersistedEntityListener {
+
     /**
      * Invoked on both the PostPersist and PostUpdate. The default implementation is to simply publish a Spring event
-     * to the ApplicationContext after the transaction has completed.
+     * to the ApplicationContext to allow an event listener to respond appropriately (like resetting the current cart
+     * in CartState)
      * 
-     * @param entity the newly-persisted Customer
-     * @see CustomerPersistedEvent
+     * @param entity the newly-persisted Order
+     * @see OrderPersistedEvent
      */
     @PostPersist
     @PostUpdate
@@ -52,7 +53,7 @@ public class CustomerPersistedEntityListener {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
                 public void afterCommit() {
-                    ApplicationContextHolder.getApplicationContext().publishEvent(new CustomerPersistedEvent((Customer) entity));
+                    ApplicationContextHolder.getApplicationContext().publishEvent(new OrderPersistedEvent((Order) entity));
                 }
             });
         }
