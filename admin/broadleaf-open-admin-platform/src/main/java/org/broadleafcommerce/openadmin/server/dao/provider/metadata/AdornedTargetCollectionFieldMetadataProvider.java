@@ -121,7 +121,7 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
                 Map<String, FieldMetadata> loopMap = new HashMap<String, FieldMetadata>();
                 loopMap.putAll(metadata);
                 for (Map.Entry<String, FieldMetadata> entry : loopMap.entrySet()) {
-                    if (entry.getKey().equals(propertyName) || StringUtils.isEmpty(propertyName)) {
+                    if (entry.getKey().startsWith(propertyName) || StringUtils.isEmpty(propertyName)) {
                         FieldMetadata targetMetadata = entry.getValue();
                         if (targetMetadata instanceof AdornedTargetCollectionMetadata) {
                             AdornedTargetCollectionMetadata serverMetadata = (AdornedTargetCollectionMetadata) targetMetadata;
