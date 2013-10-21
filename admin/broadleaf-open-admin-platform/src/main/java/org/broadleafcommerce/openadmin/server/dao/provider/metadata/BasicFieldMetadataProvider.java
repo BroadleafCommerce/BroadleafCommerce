@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -54,13 +61,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -469,7 +469,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 }
                 fieldMetadataOverride.setOptionFilterValues(params);
             } else {
-                throw new IllegalArgumentException("Unrecognized type: " + entry.getKey());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unrecognized type: " + entry.getKey() + ". Not setting on basic field.");
+                }
             }
         }
 
