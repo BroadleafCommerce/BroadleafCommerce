@@ -116,7 +116,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                 Map<String, FieldMetadata> loopMap = new HashMap<String, FieldMetadata>();
                 loopMap.putAll(metadata);
                 for (Map.Entry<String, FieldMetadata> entry : loopMap.entrySet()) {
-                    if (entry.getKey().startsWith(propertyName) || StringUtils.isEmpty(propertyName)) {
+                    if (entry.getKey().equals(propertyName) || StringUtils.isEmpty(propertyName)) {
                         FieldMetadata targetMetadata = entry.getValue();
                         if (targetMetadata instanceof BasicCollectionMetadata) {
                             BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) targetMetadata;
