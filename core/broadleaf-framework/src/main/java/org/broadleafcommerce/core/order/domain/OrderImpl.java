@@ -92,7 +92,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@EntityListeners(value = { AuditableListener.class })
+@EntityListeners(value = { AuditableListener.class, OrderPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER")
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")

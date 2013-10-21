@@ -553,14 +553,14 @@
             <dependency>
                 <groupId>org.thymeleaf</groupId>
                 <artifactId>thymeleaf</artifactId>
-                <version>2.0.17</version>
+                <version>2.0.18</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.thymeleaf</groupId>
                 <artifactId>thymeleaf-spring3</artifactId>
-                <version>2.0.17</version>
+                <version>2.0.18</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -620,6 +620,10 @@
                     <exclusion>
                         <artifactId>slf4j-jdk14</artifactId>
                         <groupId>org.slf4j</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.servlet.jsp</groupId>
+                        <artifactId>jsp-api</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
