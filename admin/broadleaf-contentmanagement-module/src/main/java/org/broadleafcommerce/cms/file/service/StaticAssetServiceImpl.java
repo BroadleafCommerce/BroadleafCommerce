@@ -189,11 +189,16 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
         int count = 0;
         while (newAsset != null) {
             count++;
-            newAsset = staticAssetDao.readStaticAssetByFullUrl(fullUrl + "-" + count, null);
+            
+            //try the new format first, then the old
+            newAsset = staticAssetDao.readStaticAssetByFullUrl(getCountUrl(fullUrl, count, false), null);
+            if (newAsset == null) {
+                newAsset = staticAssetDao.readStaticAssetByFullUrl(getCountUrl(fullUrl, count, true), null);
+            }
         }
 
         if (count > 0) {
-            fullUrl = fullUrl + "-" + count;
+            fullUrl = getCountUrl(fullUrl, count, false);
         }
 
         try {
@@ -218,6 +223,30 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
         newAsset.setFullUrl(fullUrl);
 
         return staticAssetDao.addOrUpdateStaticAsset(newAsset, false);
+    }
+    
+    /**
+     * Gets the count URL based on the original fullUrl. If requested in legacy format this will return URLs like:
+     * 
+     *  /path/to/image.jpg-1
+     *  /path/to/image.jpg-2
+     *  
+     * Whereas if this is in non-lagacy format (<b>legacy</b> == false):
+     * 
+     *  /path/to/image-1.jpg
+     *  /path/to/image-2.jpg
+     *  
+     * Used to deal with duplicate URLs of uploaded assets
+     *  
+     */
+    protected String getCountUrl(String fullUrl, int count, boolean legacyFormat) {
+        String countUrl = fullUrl + '-' + count;
+        int dotIndex = fullUrl.lastIndexOf('.');
+        if (dotIndex != -1 && !legacyFormat) {
+            countUrl = fullUrl.substring(0, dotIndex) + '-' + count + '.' + fullUrl.substring(dotIndex + 1);
+        }
+        
+        return countUrl;
     }
 
     protected void getMimeType(MultipartFile file, StaticAsset newAsset) {
