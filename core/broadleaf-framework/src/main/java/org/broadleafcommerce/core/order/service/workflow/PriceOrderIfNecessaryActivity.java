@@ -124,7 +124,7 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
             oiFgiMap.put(oi, fgis);
         }
         
-        // Save the OrderItems in the Order and then update any FulfillmentGroupItems that referecne those OrderItems to
+        // Save the OrderItems in the Order and then update any FulfillmentGroupItems that reference those OrderItems to
         // have the newly persisted version of the OrderItem.
         for (Entry<OrderItem, List<FulfillmentGroupItem>> entry : oiFgiMap.entrySet()) {
             order.getOrderItems().remove(entry.getKey());
@@ -141,6 +141,13 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
             }
         }
         
+        // We need to add the new item to the parent's child order items as well.
+        for (OrderItem oi : order.getOrderItems()) {
+            if (oi.getId().equals(request.getItemRequest().getParentOrderItemId())) {
+                oi.getChildOrderItems().add(request.getOrderItem());
+            }
+        }
+
         // If a custom implementation needs to handle additional saves before the parent Order is saved, this method
         // can be overridden to provide that functionality.
         preSaveOperation(request);

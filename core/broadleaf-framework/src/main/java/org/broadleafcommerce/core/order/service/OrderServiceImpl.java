@@ -35,6 +35,7 @@ import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
+import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
@@ -510,17 +511,21 @@ public class OrderServiceImpl implements OrderService {
         try {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
             ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(cartOpRequest);
-            context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
+
+            List<ActivityMessageDTO> orderMessages = new ArrayList<ActivityMessageDTO>();
+            orderMessages.addAll(((ActivityMessages) context).getActivityMessages());
             
             if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
                 for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
                     childRequest.setParentOrderItemId(context.getSeedData().getOrderItem().getId());
-                    CartOperationRequest childCartOpRequest = new CartOperationRequest(findOrderById(orderId), childRequest, priceOrder);
+
+                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, priceOrder);
                     ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
-                    context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) childContext).getActivityMessages());
+                    orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
                 }
             }
             
+            context.getSeedData().getOrder().setOrderMessages(orderMessages);
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {
             throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
