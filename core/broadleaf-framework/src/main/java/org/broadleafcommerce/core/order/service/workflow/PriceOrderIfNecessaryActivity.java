@@ -18,6 +18,8 @@ package org.broadleafcommerce.core.order.service.workflow;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
+import org.broadleafcommerce.core.order.domain.BundleOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -108,36 +110,80 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
         
         
         // We need to build up a map of OrderItem to which FulfillmentGroupItems reference that particular OrderItem.
-        // This is so we are able to update them appropriately on the FulfillmentGroupItem once the OrderItem is saved.
+        // We'll also save the order item and build up a map of the unsaved items to their saved counterparts.
         Map<OrderItem, List<FulfillmentGroupItem>> oiFgiMap = new HashMap<OrderItem, List<FulfillmentGroupItem>>();
+        Map<OrderItem, OrderItem> savedOrderItems = new HashMap<OrderItem, OrderItem>();
         for (OrderItem oi : order.getOrderItems()) {
-            List<FulfillmentGroupItem> fgis = new ArrayList<FulfillmentGroupItem>();
-
-            for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-                for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
-                    if (fgi.getOrderItem().equals(oi)) {
-                        fgis.add(fgi);
-                    }
+            if (oi instanceof BundleOrderItem) {
+                for (OrderItem doi : ((BundleOrderItem) oi).getDiscreteOrderItems()) {
+                    getOiFgiMap(order, oiFgiMap, doi);
+                    savedOrderItems.put(doi, orderItemService.saveOrderItem(doi));
                 }
+            } else {
+                getOiFgiMap(order, oiFgiMap, oi);
             }
-
-            oiFgiMap.put(oi, fgis);
+            savedOrderItems.put(oi, orderItemService.saveOrderItem(oi));
         }
         
-        // Save the OrderItems in the Order and then update any FulfillmentGroupItems that reference those OrderItems to
-        // have the newly persisted version of the OrderItem.
+        // First, we want to update anything that's a bundle order item
+        // Now, we'll update the orderitems in the order to their saved counterparts
+        for (Entry<OrderItem, OrderItem> entry : savedOrderItems.entrySet()) {
+            if (entry.getKey() instanceof BundleOrderItem) {
+                order.getOrderItems().remove(entry.getKey());
+                order.getOrderItems().add(savedOrderItems.get(entry.getKey()));
+            }
+        }
+        
+        // Now, we'll update the remainder of the order items
+        for (Entry<OrderItem, OrderItem> entry : savedOrderItems.entrySet()) {
+            if (!(entry.getKey() instanceof BundleOrderItem)) {
+                if (entry.getKey() instanceof DiscreteOrderItem && ((DiscreteOrderItem) entry.getKey()).getBundleOrderItem() != null) {
+                    // We're dealing with a discrete order item that is part of a bundle. We need to update the bundle
+                    DiscreteOrderItem doi = (DiscreteOrderItem) entry.getKey();
+                    DiscreteOrderItem savedDoi = (DiscreteOrderItem) entry.getValue();
+                    
+                    BundleOrderItem containingSavedBundle = (BundleOrderItem) savedOrderItems.get(doi.getBundleOrderItem());
+                    containingSavedBundle.getDiscreteOrderItems().remove(doi);
+                    containingSavedBundle.getDiscreteOrderItems().add(savedDoi);
+                    savedDoi.setBundleOrderItem(containingSavedBundle);
+                } else {
+                    order.getOrderItems().remove(entry.getKey());
+                    order.getOrderItems().add(entry.getValue());
+                }
+            }
+        }
+        
         for (Entry<OrderItem, List<FulfillmentGroupItem>> entry : oiFgiMap.entrySet()) {
-            order.getOrderItems().remove(entry.getKey());
-            OrderItem savedOi = orderItemService.saveOrderItem(entry.getKey());
-            order.getOrderItems().add(savedOi);
+            // Update the order items in the order with their saved versions
+            /*
+            if (entry.getKey() instanceof BundleOrderItem) {
+                order.getOrderItems().remove(entry.getKey());
+                order.getOrderItems().add(savedOrderItems.get(entry.getKey()));
+            } else if (entry.getKey() instanceof DiscreteOrderItem) {
+                DiscreteOrderItem doi = (DiscreteOrderItem) entry.getKey();
+                if (doi.getBundleOrderItem() != null) {
+                    BundleOrderItem boi = doi.getBundleOrderItem();
+                    BundleOrderItem savedBoi = (BundleOrderItem) savedOrderItems.get(boi);
+                    
+                    ((DiscreteOrderItem) savedOrderItems.get(doi)).setBundleOrderItem(savedBoi);
+
+                    savedBoi.getDiscreteOrderItems().remove(doi);
+                    savedBoi.getDiscreteOrderItems().add((DiscreteOrderItem) savedOrderItems.get(doi));
+                } else {
+                    order.getOrderItems().remove(entry.getKey());
+                    order.getOrderItems().add(savedOrderItems.get(entry.getKey()));
+                }
+            }
+            */
             
             // We also need to update the orderItem on the request in case it's used by the caller of this workflow
             if (entry.getKey() == request.getOrderItem()) {
-                request.setOrderItem(savedOi);
+                request.setOrderItem(savedOrderItems.get(entry.getKey()));
             }
 
+            // Update any FulfillmentGroupItems that reference order items
             for (FulfillmentGroupItem fgi : entry.getValue()) {
-                fgi.setOrderItem(savedOi);
+                fgi.setOrderItem(savedOrderItems.get(entry.getKey()));
             }
         }
         
@@ -158,6 +204,20 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
         request.setOrder(order);
         
         return context;
+    }
+
+    protected void getOiFgiMap(Order order, Map<OrderItem, List<FulfillmentGroupItem>> oiFgiMap, OrderItem oi) {
+        List<FulfillmentGroupItem> fgis = new ArrayList<FulfillmentGroupItem>();
+
+        for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+            for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+                if (fgi.getOrderItem().equals(oi)) {
+                    fgis.add(fgi);
+                }
+            }
+        }
+
+        oiFgiMap.put(oi, fgis);
     }
     
     /**
