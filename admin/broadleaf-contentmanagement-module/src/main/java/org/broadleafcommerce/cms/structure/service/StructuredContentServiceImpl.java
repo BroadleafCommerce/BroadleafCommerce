@@ -33,6 +33,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
@@ -73,6 +74,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;
+
+    @Resource(name="blStaticAssetPathService")
+    protected StaticAssetPathService staticAssetPathService;
 
     @Resource(name="blLocaleService")
     protected LocaleService localeService;
@@ -390,22 +394,16 @@ public class StructuredContentServiceImpl implements StructuredContentService {
      * @see {@link StaticAssetService#getStaticAssetEnvironmentUrlPrefix()}
      */
     protected void buildFieldValues(StructuredContent sc, StructuredContentDTO scDTO, boolean secure) {
-        String envPrefix = staticAssetService.getStaticAssetEnvironmentUrlPrefix();
-        if (envPrefix != null && secure) {
-            envPrefix = staticAssetService.getStaticAssetEnvironmentSecureUrlPrefix();
-        }
-        String cmsPrefix = staticAssetService.getStaticAssetUrlPrefix();
+
+        String cmsPrefix = staticAssetPathService.getStaticAssetUrlPrefix();
 
         scDTO.getValues().put("id", sc.getId());
 
         for (String fieldKey : sc.getStructuredContentFields().keySet()) {
             StructuredContentField scf = sc.getStructuredContentFields().get(fieldKey);
             String originalValue = scf.getValue();
-            if (StringUtils.isNotBlank(envPrefix) && StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
-                if (originalValue.startsWith("/")) {
-                    originalValue = originalValue.substring(1);
-                }
-                String fldValue = originalValue.replaceAll(cmsPrefix, envPrefix+cmsPrefix);
+            if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
+                String fldValue = staticAssetPathService.convertAssetPath(originalValue, null, secure);
                 scDTO.getValues().put(fieldKey, fldValue);
             } else {
                 FieldDefinition definition = null;
