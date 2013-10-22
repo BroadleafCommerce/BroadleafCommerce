@@ -11,8 +11,6 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.*"/> 
     </context:component-scan>
     
-    <task:annotation-driven/>
-
     <bean id="blPasswordEncoder" class="${password.site.encoder}"/>
     
     <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
