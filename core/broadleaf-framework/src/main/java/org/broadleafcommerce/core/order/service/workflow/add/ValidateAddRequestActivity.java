@@ -131,10 +131,6 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
             if (parent == null) {
                 throw new IllegalArgumentException("Could not find parent order item by the given id");
             }
-            
-            if (parent.getOrder().getId() != request.getOrder().getId()) { 
-                throw new IllegalArgumentException("Given parent order item was part of a different order");
-            }
         }
         
         return context;
