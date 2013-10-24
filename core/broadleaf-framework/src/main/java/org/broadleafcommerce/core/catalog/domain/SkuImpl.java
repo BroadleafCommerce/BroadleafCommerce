@@ -827,7 +827,7 @@ public class SkuImpl implements Sku {
     @Override
     public FulfillmentType getFulfillmentType() {
         if (StringUtils.isEmpty(this.fulfillmentType)) {
-            if (hasDefaultSku() && !StringUtils.isEmpty(lookupDefaultSku().getTaxCode())) {
+            if (hasDefaultSku() && lookupDefaultSku().getFulfillmentType() != null) {
                 return lookupDefaultSku().getFulfillmentType();
             } else if (getProduct() != null && getProduct().getDefaultCategory() != null) {
                 return getProduct().getDefaultCategory().getFulfillmentType();
