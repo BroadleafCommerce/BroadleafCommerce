@@ -353,7 +353,9 @@ var BLCAdmin = (function($) {
                         dropdown: oFontDropdown
                     }
                 },
-                convertDivs : false
+                convertDivs : false,
+                xhtml       : true,
+                paragraphy  : false
             });
             
             $container.find('textarea.autosize').autosize();
