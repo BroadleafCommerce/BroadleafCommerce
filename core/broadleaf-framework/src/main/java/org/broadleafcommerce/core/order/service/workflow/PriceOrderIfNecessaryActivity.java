@@ -108,82 +108,57 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
             }
         }
         
-        
         // We need to build up a map of OrderItem to which FulfillmentGroupItems reference that particular OrderItem.
         // We'll also save the order item and build up a map of the unsaved items to their saved counterparts.
         Map<OrderItem, List<FulfillmentGroupItem>> oiFgiMap = new HashMap<OrderItem, List<FulfillmentGroupItem>>();
         Map<OrderItem, OrderItem> savedOrderItems = new HashMap<OrderItem, OrderItem>();
         for (OrderItem oi : order.getOrderItems()) {
             if (oi instanceof BundleOrderItem) {
-                for (OrderItem doi : ((BundleOrderItem) oi).getDiscreteOrderItems()) {
+                List<DiscreteOrderItem> doisToAdd = new ArrayList<DiscreteOrderItem>();
+
+                ListIterator<DiscreteOrderItem> li = ((BundleOrderItem) oi ).getDiscreteOrderItems().listIterator();
+                while (li.hasNext()) {
+                    DiscreteOrderItem doi = li.next();
                     getOiFgiMap(order, oiFgiMap, doi);
-                    savedOrderItems.put(doi, orderItemService.saveOrderItem(doi));
+                    DiscreteOrderItem savedDoi = (DiscreteOrderItem) orderItemService.saveOrderItem(doi); 
+                    savedOrderItems.put(doi, savedDoi);
+                    li.remove();
+                    doisToAdd.add(savedDoi);
+                }
+
+                ((BundleOrderItem) oi).getDiscreteOrderItems().addAll(doisToAdd);
+                BundleOrderItem savedBoi = (BundleOrderItem) orderItemService.saveOrderItem(oi);
+                savedOrderItems.put(oi, savedBoi);
+                
+                for (DiscreteOrderItem doi : savedBoi.getDiscreteOrderItems()) {
+                    doi.setBundleOrderItem(savedBoi);
                 }
             } else {
                 getOiFgiMap(order, oiFgiMap, oi);
+                savedOrderItems.put(oi, orderItemService.saveOrderItem(oi));
             }
-            savedOrderItems.put(oi, orderItemService.saveOrderItem(oi));
         }
         
-        // First, we want to update anything that's a bundle order item
         // Now, we'll update the orderitems in the order to their saved counterparts
-        for (Entry<OrderItem, OrderItem> entry : savedOrderItems.entrySet()) {
-            if (entry.getKey() instanceof BundleOrderItem) {
-                order.getOrderItems().remove(entry.getKey());
-                order.getOrderItems().add(savedOrderItems.get(entry.getKey()));
-            }
+        ListIterator<OrderItem> li = order.getOrderItems().listIterator();
+        List<OrderItem> oisToAdd = new ArrayList<OrderItem>();
+        while (li.hasNext()) {
+            OrderItem oi = li.next();
+            OrderItem savedOi = savedOrderItems.get(oi);
+            oisToAdd.add(savedOi);
+            li.remove();
         }
-        
-        // Now, we'll update the remainder of the order items
-        for (Entry<OrderItem, OrderItem> entry : savedOrderItems.entrySet()) {
-            if (!(entry.getKey() instanceof BundleOrderItem)) {
-                if (entry.getKey() instanceof DiscreteOrderItem && ((DiscreteOrderItem) entry.getKey()).getBundleOrderItem() != null) {
-                    // We're dealing with a discrete order item that is part of a bundle. We need to update the bundle
-                    DiscreteOrderItem doi = (DiscreteOrderItem) entry.getKey();
-                    DiscreteOrderItem savedDoi = (DiscreteOrderItem) entry.getValue();
-                    
-                    BundleOrderItem containingSavedBundle = (BundleOrderItem) savedOrderItems.get(doi.getBundleOrderItem());
-                    containingSavedBundle.getDiscreteOrderItems().remove(doi);
-                    containingSavedBundle.getDiscreteOrderItems().add(savedDoi);
-                    savedDoi.setBundleOrderItem(containingSavedBundle);
-                } else {
-                    order.getOrderItems().remove(entry.getKey());
-                    order.getOrderItems().add(entry.getValue());
-                }
-            }
-        }
-        
+        order.getOrderItems().addAll(oisToAdd);
+
         for (Entry<OrderItem, List<FulfillmentGroupItem>> entry : oiFgiMap.entrySet()) {
-            // Update the order items in the order with their saved versions
-            /*
-            if (entry.getKey() instanceof BundleOrderItem) {
-                order.getOrderItems().remove(entry.getKey());
-                order.getOrderItems().add(savedOrderItems.get(entry.getKey()));
-            } else if (entry.getKey() instanceof DiscreteOrderItem) {
-                DiscreteOrderItem doi = (DiscreteOrderItem) entry.getKey();
-                if (doi.getBundleOrderItem() != null) {
-                    BundleOrderItem boi = doi.getBundleOrderItem();
-                    BundleOrderItem savedBoi = (BundleOrderItem) savedOrderItems.get(boi);
-                    
-                    ((DiscreteOrderItem) savedOrderItems.get(doi)).setBundleOrderItem(savedBoi);
-
-                    savedBoi.getDiscreteOrderItems().remove(doi);
-                    savedBoi.getDiscreteOrderItems().add((DiscreteOrderItem) savedOrderItems.get(doi));
-                } else {
-                    order.getOrderItems().remove(entry.getKey());
-                    order.getOrderItems().add(savedOrderItems.get(entry.getKey()));
-                }
-            }
-            */
-            
-            // We also need to update the orderItem on the request in case it's used by the caller of this workflow
-            if (entry.getKey() == request.getOrderItem()) {
-                request.setOrderItem(savedOrderItems.get(entry.getKey()));
-            }
-
             // Update any FulfillmentGroupItems that reference order items
             for (FulfillmentGroupItem fgi : entry.getValue()) {
                 fgi.setOrderItem(savedOrderItems.get(entry.getKey()));
+            }
+
+            // We also need to update the orderItem on the request in case it's used by the caller of this workflow
+            if (entry.getKey() == request.getOrderItem()) {
+                request.setOrderItem(savedOrderItems.get(entry.getKey()));
             }
         }
         
