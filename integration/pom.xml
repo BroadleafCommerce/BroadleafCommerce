@@ -86,7 +86,6 @@
                                 <exclude>**/PricingTest.java</exclude>
                             </excludes>
                             <argLine>-Xmx1024m -XX:MaxPermSize=512m -Dlegacy=true</argLine>
-                            <skipTests>true</skipTests>
                         </configuration>
                     </execution>
                     <execution>
@@ -100,7 +99,6 @@
                                 <exclude>**/Legacy**Test.java</exclude>
                             </excludes>
                             <argLine>-Xmx1024m -XX:MaxPermSize=512m</argLine>
-                            <skipTests>true</skipTests>
                         </configuration>
                     </execution>
                 </executions>
