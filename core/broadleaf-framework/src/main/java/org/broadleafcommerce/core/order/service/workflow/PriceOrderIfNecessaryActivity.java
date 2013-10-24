@@ -114,8 +114,9 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
         Map<OrderItem, OrderItem> savedOrderItems = new HashMap<OrderItem, OrderItem>();
         for (OrderItem oi : order.getOrderItems()) {
             if (oi instanceof BundleOrderItem) {
+                // We first need to save the discrete order items that are part of this bundle. Once they're saved, we'll
+                // mark them and remove them from this bundle.
                 List<DiscreteOrderItem> doisToAdd = new ArrayList<DiscreteOrderItem>();
-
                 ListIterator<DiscreteOrderItem> li = ((BundleOrderItem) oi ).getDiscreteOrderItems().listIterator();
                 while (li.hasNext()) {
                     DiscreteOrderItem doi = li.next();
@@ -125,11 +126,15 @@ public class PriceOrderIfNecessaryActivity extends BaseActivity<ProcessContext<C
                     li.remove();
                     doisToAdd.add(savedDoi);
                 }
-
+                
+                // After the discrete order items are saved, we can re-add the saved versions to our bundle and then
+                // save the bundle as well.
                 ((BundleOrderItem) oi).getDiscreteOrderItems().addAll(doisToAdd);
                 BundleOrderItem savedBoi = (BundleOrderItem) orderItemService.saveOrderItem(oi);
                 savedOrderItems.put(oi, savedBoi);
                 
+                // Lastly, we'll want to go through our saved discrete order items and update the bundle that they relate
+                // to to the saved version of the bundle.
                 for (DiscreteOrderItem doi : savedBoi.getDiscreteOrderItems()) {
                     doi.setBundleOrderItem(savedBoi);
                 }
