@@ -644,6 +644,24 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     public void setParentOrderItem(OrderItem parentOrderItem) {
         this.parentOrderItem = parentOrderItem;
     }
+    
+    @Override
+    public boolean isAParentOf(OrderItem candidateChild) {
+        if (CollectionUtils.isNotEmpty(this.getChildOrderItems())) {
+            for (OrderItem child : this.getChildOrderItems()) {
+                if (child.equals(candidateChild)) {
+                    return true;
+                }
+            }
+            // Item wasn't a direct child. Let's check the hierarchy
+            for (OrderItem child : this.getChildOrderItems()) {
+                if (child.isAParentOf(candidateChild)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     @Override
     public String getMainEntityName() {

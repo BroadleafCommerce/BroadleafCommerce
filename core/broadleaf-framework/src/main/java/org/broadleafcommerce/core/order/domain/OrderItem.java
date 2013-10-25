@@ -490,4 +490,10 @@ public interface OrderItem extends Serializable, Cloneable {
      */
     public void setParentOrderItem(OrderItem parentOrderItem);
 
+    /**
+     * @param candidateChild
+     * @return true if the candidateChild is a child of the hierarchy starting from this OrderItem
+     */
+    public boolean isAParentOf(OrderItem candidateChild);
+
 }
