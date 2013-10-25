@@ -254,7 +254,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         }       
         
         String deepLinksVar = element.getAttributeValue("deepLinks");
-        if (StringUtils.isNotBlank(deepLinksVar)) {
+        if (StringUtils.isNotBlank(deepLinksVar) && contentItems.size() > 0 ) {
             List<DeepLink> links = contentDeepLinkService.getLinks(contentItems.get(0));
             extensionManager.getProxy().addExtensionFieldDeepLink(links, arguments, element);
             extensionManager.getProxy().postProcessDeepLinks(links);
