@@ -235,8 +235,13 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
                     contentItemFields.add(item.getValues());
                 }
             }
-            
-            addToModel(arguments, contentItemVar, contentItemFields.get(0));
+
+            Map<String, Object> contentItem = null;
+            if (contentItemFields.size() > 0) {
+                contentItem = contentItemFields.get(0);
+            }
+
+            addToModel(arguments, contentItemVar, contentItem);
             addToModel(arguments, contentListVar, contentItemFields);
             addToModel(arguments, numResultsVar, contentItems.size());
         } else {
