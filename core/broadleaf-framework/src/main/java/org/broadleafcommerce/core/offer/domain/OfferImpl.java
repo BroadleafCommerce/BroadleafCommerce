@@ -293,6 +293,13 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
         visibility = VisibilityEnum.HIDDEN_ALL)
     protected Boolean totalitarianOffer = false;
+
+    @Column(name = "REQUIRES_RELATED_TAR_QUAL")
+    @AdminPresentation(friendlyName = "OfferImpl_Requires_Related_Target_And_Qualifiers", 
+        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+        group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
+        visibility = VisibilityEnum.VISIBLE_ALL)
+    protected Boolean requiresRelatedTargetAndQualifiers = false;
     
     @ManyToMany(targetEntity = OfferRuleImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_OFFER_RULE_MAP", 
@@ -751,6 +758,16 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     @Override
     public void setQualifyingItemSubTotal(Money qualifyingItemSubTotal) {
         this.qualifyingItemSubTotal = Money.toAmount(qualifyingItemSubTotal);
+    }
+    
+    @Override
+    public Boolean getRequiresRelatedTargetAndQualifiers() {
+        return requiresRelatedTargetAndQualifiers == null ? false : requiresRelatedTargetAndQualifiers;
+    }
+    
+    @Override
+    public void setRequiresRelatedTargetAndQualifiers(Boolean requiresRelatedTargetAndQualifiers) {
+        this.requiresRelatedTargetAndQualifiers = requiresRelatedTargetAndQualifiers;
     }
 
     @Override

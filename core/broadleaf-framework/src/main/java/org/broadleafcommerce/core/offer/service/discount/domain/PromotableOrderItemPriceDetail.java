@@ -124,8 +124,9 @@ public interface PromotableOrderItemPriceDetail {
      * @param itemOffer
      * @param itemCriteria
      * @param qtyToMarkAsQualifier
+     * @return 
      */
-    void addPromotionQualifier(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria, int qtyToMarkAsQualifier);
+    PromotionQualifier addPromotionQualifier(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria, int qtyToMarkAsQualifier);
 
     /**
      * Adds a promotionDiscount entry to this itemDetail.    PromotionDiscounts record the fact that this item has been 

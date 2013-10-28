@@ -16,8 +16,10 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -33,6 +35,7 @@ import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
+import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
@@ -61,7 +64,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -225,16 +227,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order save(Order order, Boolean priceOrder) throws PricingException {
         //persist the order first
-        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-        def.setName("saveOrder");
-        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-
-        TransactionStatus status = transactionManager.getTransaction(def);
+        TransactionStatus status = TransactionUtils.createTransaction("saveOrder",
+                    TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
         try {
             order = persist(order);
-            finalizeTransaction(status, false);
+            TransactionUtils.finalizeTransaction(status, transactionManager, false);
         } catch (RuntimeException ex) {
-            finalizeTransaction(status, true);
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
             throw ex;
         }
 
@@ -292,39 +291,18 @@ public class OrderServiceImpl implements OrderService {
             }
 
             //make the final save of the priced order
-            def = new DefaultTransactionDefinition();
-            def.setName("saveOrder");
-            def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-
-            status = transactionManager.getTransaction(def);
+            status = TransactionUtils.createTransaction("saveOrder",
+                                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
             try {
                 order = persist(order);
-                finalizeTransaction(status, false);
+                TransactionUtils.finalizeTransaction(status, transactionManager, false);
             } catch (RuntimeException ex) {
-                finalizeTransaction(status, true);
+                TransactionUtils.finalizeTransaction(status, transactionManager, true);
                 throw ex;
             }
         }
 
         return order;
-    }
-
-    protected void finalizeTransaction(TransactionStatus status, boolean isError) {
-        boolean isActive = false;
-        try {
-            if (!status.isRollbackOnly()) {
-                isActive = true;
-            }
-        } catch (Exception e) {
-            //do nothing
-        }
-        if (isActive) {
-            if (isError) {
-                transactionManager.rollback(status);
-            } else {
-                transactionManager.commit(status);
-            }
-        }
     }
     
     // This method exists to provide OrderService methods the ability to save an order
@@ -533,7 +511,21 @@ public class OrderServiceImpl implements OrderService {
         try {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
             ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(cartOpRequest);
-            context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
+
+            List<ActivityMessageDTO> orderMessages = new ArrayList<ActivityMessageDTO>();
+            orderMessages.addAll(((ActivityMessages) context).getActivityMessages());
+            
+            if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
+                for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
+                    childRequest.setParentOrderItemId(context.getSeedData().getOrderItem().getId());
+
+                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, priceOrder);
+                    ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
+                    orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
+                }
+            }
+            
+            context.getSeedData().getOrder().setOrderMessages(orderMessages);
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {
             throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
@@ -562,15 +554,30 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(value = "blTransactionManager", rollbackFor = {RemoveFromCartException.class})
     public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
         try {
-            OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
-            orderItemRequestDTO.setOrderItemId(orderItemId);
-            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) removeItemWorkflow.doActivities(cartOpRequest);
-            context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
-            return context.getSeedData().getOrder();
+            OrderItem oi = orderItemService.readOrderItemById(orderItemId);
+            if (CollectionUtils.isNotEmpty(oi.getChildOrderItems())) {
+                List<Long> childrenToRemove = new ArrayList<Long>();
+                for (OrderItem childOrderItem : oi.getChildOrderItems()) {
+                    childrenToRemove.add(childOrderItem.getId());
+                }
+                for (Long childToRemove : childrenToRemove) {
+                    removeItemInternal(orderId, childToRemove, false);
+                }
+            }
+
+            return removeItemInternal(orderId, orderItemId, priceOrder);
         } catch (WorkflowException e) {
             throw new RemoveFromCartException("Could not remove from cart", getCartOperationExceptionRootCause(e));
         }
+    }
+    
+    protected Order removeItemInternal(Long orderId, Long orderItemId, boolean priceOrder) throws WorkflowException {
+        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(orderItemId);
+        CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+        ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) removeItemWorkflow.doActivities(cartOpRequest);
+        context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
+        return context.getSeedData().getOrder();
     }
 
     @Override

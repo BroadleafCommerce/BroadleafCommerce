@@ -53,9 +53,7 @@ public class UpdateOrderItemActivity extends BaseActivity<ProcessContext<CartOpe
         if (orderItemRequestDTO.getQuantity() >= 0) {
             request.setOrderItemQuantityDelta(orderItemRequestDTO.getQuantity() - itemFromOrder.getQuantity());
             itemFromOrder.setQuantity(orderItemRequestDTO.getQuantity());
-            order = orderService.save(order, false);
-            request.setAddedOrderItem(itemFromOrder);
-            request.setOrder(order);
+            request.setOrderItem(itemFromOrder);
         }
 
         return context;

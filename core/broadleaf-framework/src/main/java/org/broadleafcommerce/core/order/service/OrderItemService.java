@@ -59,6 +59,8 @@ public interface OrderItemService {
 
     public BundleOrderItem createBundleOrderItem(ProductBundleOrderItemRequest itemRequest);
 
+    public BundleOrderItem createBundleOrderItem(ProductBundleOrderItemRequest itemRequest, boolean saveItem);
+
     /**
      * Creates an OrderItemRequestDTO object that most closely resembles the given OrderItem.
      * That is, it will copy the SKU and quantity and attempt to copy the product and category
@@ -72,5 +74,6 @@ public interface OrderItemService {
     public OrderItem updateDiscreteOrderItem(OrderItem orderItem, DiscreteOrderItemRequest itemRequest);
 
     public OrderItem createOrderItem(OrderItemRequest itemRequest);
+
 
 }

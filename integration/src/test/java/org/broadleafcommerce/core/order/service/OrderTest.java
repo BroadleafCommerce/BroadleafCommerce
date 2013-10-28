@@ -42,9 +42,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 public class OrderTest extends OrderBaseTest {
 
@@ -341,6 +342,7 @@ public class OrderTest extends OrderBaseTest {
         bundleOrderItemId = item.getId();
         assert item != null;
         assert item.getQuantity() == 1;
+        assert item.getDiscreteOrderItems().size() == 1;
     }
     
     @Test(groups = { "removeBundleFromOrder" }, dependsOnGroups = { "addBundleToOrder" })

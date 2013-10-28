@@ -106,15 +106,18 @@ public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperat
             bundleItemRequest.setOrder(order);
             bundleItemRequest.setSalePriceOverride(orderItemRequestDTO.getOverrideSalePrice());
             bundleItemRequest.setRetailPriceOverride(orderItemRequestDTO.getOverrideRetailPrice());
-            item = orderItemService.createBundleOrderItem(bundleItemRequest);
+            item = orderItemService.createBundleOrderItem(bundleItemRequest, false);
         }
         
-        item = orderItemService.saveOrderItem(item);
-        order.getOrderItems().add(item);
-        order = orderService.save(order, false);
+        OrderItem parent = null;
+        if (orderItemRequestDTO.getParentOrderItemId() != null) {
+            parent = orderItemService.readOrderItemById(orderItemRequestDTO.getParentOrderItemId());
+            item.setParentOrderItem(parent);
+        }
         
-        request.setOrder(order);
-        request.setAddedOrderItem(item);
+        order.getOrderItems().add(item);
+
+        request.setOrderItem(item);
         return context;
     }
 

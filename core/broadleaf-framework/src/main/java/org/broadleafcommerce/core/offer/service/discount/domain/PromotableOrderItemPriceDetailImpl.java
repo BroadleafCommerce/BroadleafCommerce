@@ -336,10 +336,11 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     }
 
     @Override
-    public void addPromotionQualifier(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria, int qtyToMarkAsQualifier) {
+    public PromotionQualifier addPromotionQualifier(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria, int qtyToMarkAsQualifier) {
         PromotionQualifier pq = lookupOrCreatePromotionQualifier(itemOffer);
         pq.incrementQuantity(qtyToMarkAsQualifier);
         pq.setItemCriteria(itemCriteria);
+        return pq;
     }
 
     @Override

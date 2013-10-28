@@ -249,4 +249,8 @@ public interface Offer extends Serializable {
 
     String getMarketingMessage();
 
+    public Boolean getRequiresRelatedTargetAndQualifiers();
+
+    public void setRequiresRelatedTargetAndQualifiers(Boolean requiresRelatedTargetAndQualifiers);
+
 }

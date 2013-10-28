@@ -39,13 +39,13 @@ public class RemoveOrderMultishipOptionActivity extends BaseActivity<ProcessCont
         CartOperationRequest request = context.getSeedData();
         Long orderItemId = request.getItemRequest().getOrderItemId();
 
-        OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
+        OrderItem orderItem = request.getOrderItem();
         if (orderItem instanceof BundleOrderItem) {
             for (OrderItem discrete : ((BundleOrderItem) orderItem).getDiscreteOrderItems()) {
-                orderMultishipOptionService.deleteOrderItemOrderMultishipOptions(discrete.getId());
+                request.getMultishipOptionsToDelete().add(new Long[] { discrete.getId(), null });
             }
         } else {
-            orderMultishipOptionService.deleteOrderItemOrderMultishipOptions(orderItemId);
+            request.getMultishipOptionsToDelete().add(new Long[] { orderItemId, null });
         }
         
         return context;

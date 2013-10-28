@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -23,6 +24,7 @@ import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems
 import org.broadleafcommerce.core.offer.service.discount.ItemOfferComparator;
 import org.broadleafcommerce.core.offer.service.discount.OrderOfferComparator;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
+import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
@@ -31,14 +33,15 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * Filter and apply order item offers.
@@ -382,7 +385,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
      * @param order
      * @return
      */
-    protected boolean markTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order) {
+    protected boolean markTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order, OrderItem relatedQualifier) {
         Offer promotion = itemOffer.getOffer();
         List<PromotableOrderItem> promotableItems = itemOffer.getCandidateTargets();
         List<PromotableOrderItemPriceDetail> priceDetails = buildPriceDetailListFromOrderItems(promotableItems);
@@ -391,10 +394,28 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         for (OfferItemCriteria targetCriteria : itemOffer.getOffer().getTargetItemCriteria()) {
             receiveQtyNeeded += targetCriteria.getQuantity();
         }
+        
+        // We want to find the root of the related qualifier so we can appropriately walk the tree later
+        OrderItem relatedQualifierRoot = null;
+        if (relatedQualifier != null) {
+            relatedQualifierRoot = relatedQualifier;
+            while (relatedQualifierRoot.getParentOrderItem() != null) {
+                relatedQualifierRoot = relatedQualifierRoot.getParentOrderItem();
+            }
+        }
 
         Collections.sort(priceDetails, getTargetItemComparator(promotion.getApplyDiscountToSalePrice()));
         for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
             if (receiveQtyNeeded > 0) {
+                if (relatedQualifier != null) {
+                    // We need to make sure that this item is either a parent, child, or the same as the qualifier root
+                    OrderItem thisItem = priceDetail.getPromotableOrderItem().getOrderItem();
+                    if (!relatedQualifierRoot.isAParentOf(thisItem) && !thisItem.isAParentOf(relatedQualifierRoot) && 
+                            !thisItem.equals(relatedQualifierRoot)) {
+                        continue;
+                    }
+                }
+                
                 int itemQtyAvailableToBeUsedAsTarget = priceDetail.getQuantityAvailableToBeUsedAsTarget(itemOffer);
                 if (itemQtyAvailableToBeUsedAsTarget > 0) {
                     if ((promotion.getMaxUses() == 0) || (itemOffer.getUses() < promotion.getMaxUses())) {
@@ -412,6 +433,76 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         }
 
         return (receiveQtyNeeded == 0);
+    }
+
+    /**
+     * When the {@link Offer#getRequiresRelatedTargetAndQualifiers()} flag is set to true, we must make sure that we
+     * identify qualifiers and targets together, as they must be related to each other based on the 
+     * {@link OrderItem#getParentOrderItem()} / {@link OrderItem#getChildOrderItems()} attributes.
+     * 
+     * @param itemOffer
+     * @param order
+     * @return whether or not a suitable qualifier/target pair was found and marked
+     */
+    protected boolean markRelatedQualifiersAndTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order) {
+        for (Entry<OfferItemCriteria, List<PromotableOrderItem>> entry : itemOffer.getCandidateQualifiersMap().entrySet()) {
+            OfferItemCriteria itemCriteria = entry.getKey();
+            List<PromotableOrderItem> promotableItems = entry.getValue();
+
+            List<PromotableOrderItemPriceDetail> priceDetails = buildPriceDetailListFromOrderItems(promotableItems);
+            Collections.sort(priceDetails, getQualifierItemComparator(itemOffer.getOffer().getApplyDiscountToSalePrice()));
+
+            // Calculate the number of qualifiers needed that will not receive the promotion.  
+            // These will be reserved first before the target is assigned.
+            int qualifierQtyNeeded = itemCriteria.getQuantity();
+            
+            for (PromotableOrderItemPriceDetail detail : priceDetails) {
+                OrderItem oi = detail.getPromotableOrderItem().getOrderItem();
+                
+                if (qualifierQtyNeeded > 0) {
+                    int itemQtyAvailableToBeUsedAsQualifier = detail.getQuantityAvailableToBeUsedAsQualifier(itemOffer);
+                    if (itemQtyAvailableToBeUsedAsQualifier > 0) {
+                        // We have found a qualifier that meets this offer criteria. First, we'll save some state that we 
+                        // might need in the future.
+                        OfferItemCriteria previousQualifierCriteria = null;
+                        for (PromotionQualifier possibleQualifier : detail.getPromotionQualifiers()) {
+                            if (possibleQualifier.getPromotion().equals(itemOffer.getOffer())) {
+                                previousQualifierCriteria = possibleQualifier.getItemCriteria();
+                                break;
+                            }
+                        }
+                        
+                        // Go ahead and mark this item as a qualifier
+                        int qtyToMarkAsQualifier = Math.min(qualifierQtyNeeded, itemQtyAvailableToBeUsedAsQualifier);
+                        qualifierQtyNeeded -= qtyToMarkAsQualifier;
+                        PromotionQualifier pq = detail.addPromotionQualifier(itemOffer, itemCriteria, qtyToMarkAsQualifier);
+                        
+                        // Now, we need to see if there exists a target(s) that is suitable for this qualifier due to
+                        // the relationship flag.
+                        if (!markTargets(itemOffer, order, oi)) {
+                            // If we didn't find a target, we need to roll back how we marked this item as a qualifier.
+                            qualifierQtyNeeded += qtyToMarkAsQualifier;
+                            if (pq.getQuantity() == qtyToMarkAsQualifier) {
+                                detail.getPromotionQualifiers().remove(pq);
+                            } else {
+                                pq.setItemCriteria(previousQualifierCriteria);
+                                pq.setQuantity(pq.getQuantity() - qtyToMarkAsQualifier);
+                            }
+                        }
+                    }
+                }
+                
+                if (qualifierQtyNeeded == 0) {
+                    break;
+                }
+            }
+
+            if (qualifierQtyNeeded != 0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -520,8 +611,17 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 
         int count = 1;
         do {
-            boolean qualifiersFound = markQualifiers(itemOffer, order);
-            boolean targetsFound = markTargets(itemOffer, order);
+            boolean qualifiersFound = false;
+            boolean targetsFound = false;
+
+            if (itemOffer.getOffer().getRequiresRelatedTargetAndQualifiers()) {
+                boolean qualifiersAndTargetsFound = markRelatedQualifiersAndTargets(itemOffer, order);
+                qualifiersFound = qualifiersAndTargetsFound;
+                targetsFound = qualifiersAndTargetsFound;
+            } else {
+                qualifiersFound = markQualifiers(itemOffer, order);
+                targetsFound = markTargets(itemOffer, order, null);
+            }
 
             if (qualifiersFound && targetsFound) {
                 finalizeQuantities(order.getAllPromotableOrderItemPriceDetails());

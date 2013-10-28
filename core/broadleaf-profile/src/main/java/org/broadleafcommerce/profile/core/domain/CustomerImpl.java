@@ -16,25 +16,6 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
-import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.audit.Auditable;
-import org.broadleafcommerce.common.audit.AuditableListener;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,13 +37,34 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.audit.Auditable;
+import org.broadleafcommerce.common.audit.AuditableListener;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.persistence.PreviewStatus;
+import org.broadleafcommerce.common.persistence.Previewable;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
+
 @Entity
 @EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_NAME" }))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCustomerElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "CustomerImpl_baseCustomer")
-public class CustomerImpl implements Customer, AdminMainEntity {
+public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     private static final long serialVersionUID = 1L;
 
@@ -74,6 +76,9 @@ public class CustomerImpl implements Customer, AdminMainEntity {
 
     @Embedded
     protected Auditable auditable = new Auditable();
+
+    @Embedded
+    protected PreviewStatus previewable = new PreviewStatus();
 
     @Column(name = "USER_NAME")
     @AdminPresentation(friendlyName = "CustomerImpl_UserName", order = 4000, group = "CustomerImpl_Customer",
@@ -460,6 +465,22 @@ public class CustomerImpl implements Customer, AdminMainEntity {
             return getFirstName() + " " + getLastName();
         }
         return String.valueOf(getId());
+    }
+
+    @Override
+    public Boolean getPreview() {
+        if (previewable == null) {
+            previewable = new PreviewStatus();
+        }
+        return previewable.getPreview();
+    }
+
+    @Override
+    public void setPreview(Boolean preview) {
+        if (previewable == null) {
+            previewable = new PreviewStatus();
+        }
+        previewable.setPreview(preview);
     }
 
     @Override

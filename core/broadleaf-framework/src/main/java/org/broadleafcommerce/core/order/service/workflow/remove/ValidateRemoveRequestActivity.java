@@ -48,13 +48,24 @@ public class ValidateRemoveRequestActivity extends BaseActivity<ProcessContext<C
         }
         
         // Throw an exception if the user is trying to remove an order item that is part of a bundle
-        OrderItem orderItem = orderItemService.readOrderItemById(orderItemRequestDTO.getOrderItemId());
+        OrderItem orderItem = null;
+        for (OrderItem oi : request.getOrder().getOrderItems()) {
+            if (oi.getId().equals(orderItemRequestDTO.getOrderItemId())) {
+                orderItem = oi;
+            }
+        }
+        
+        if (orderItem == null) {
+            throw new IllegalArgumentException("Could not find order item to remove");
+        }
+        
         if (orderItem != null && orderItem instanceof DiscreteOrderItem) {
             DiscreteOrderItem doi = (DiscreteOrderItem) orderItem;
             if (doi.getBundleOrderItem() != null) {
                 throw new IllegalArgumentException("Cannot remove an item that is part of a bundle");
             }
         }
+        request.setOrderItem(orderItem);
         
         return context;
     }

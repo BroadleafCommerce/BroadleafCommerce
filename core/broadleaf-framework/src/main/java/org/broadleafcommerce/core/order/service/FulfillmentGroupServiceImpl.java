@@ -112,8 +112,20 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     }
 
     @Override
-    @Transactional("blTransactionManager")
-    public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, boolean priceOrder) throws PricingException {
+    //@Transactional("blTransactionManager")
+    public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, 
+            boolean priceOrder) throws PricingException {
+        return addItemToFulfillmentGroup(fulfillmentGroupItemRequest, priceOrder, true);
+    }
+
+    @Override
+    //@Transactional("blTransactionManager")
+    public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, 
+            boolean priceOrder, boolean save) throws PricingException {
+        if (priceOrder && !save) {
+            throw new IllegalArgumentException("Pricing requires a save");
+        }
+
         Order order = fulfillmentGroupItemRequest.getOrder();
         OrderItem item = fulfillmentGroupItemRequest.getOrderItem();
         FulfillmentGroup fulfillmentGroup = fulfillmentGroupItemRequest.getFulfillmentGroup();
@@ -139,7 +151,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             }
         }
 
-        if (fulfillmentGroup == null || fulfillmentGroup.getId() == null) {
+        if (fulfillmentGroup == null) {
             // API user is trying to add an item to a fulfillment group not created
             fulfillmentGroup = fulfillmentGroupDao.create();
             FulfillmentGroupRequest fgRequest = new FulfillmentGroupRequest();
@@ -150,13 +162,42 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         }
 
         FulfillmentGroupItem fgi = createFulfillmentGroupItemFromOrderItem(item, fulfillmentGroup, fulfillmentGroupItemRequest.getQuantity());
-        fgi = fulfillmentGroupItemDao.save(fgi);
+        if (save) {
+            fgi = fulfillmentGroupItemDao.save(fgi);
+        }
 
         // 3) add the item to the new fulfillment group
         fulfillmentGroup.addFulfillmentGroupItem(fgi);
-        order = orderService.save(order, priceOrder);
+
+        if (save) {
+            order = orderService.save(order, priceOrder);
+        }
 
         return fulfillmentGroup;
+    }
+    
+    @Override
+    public List<FulfillmentGroupItem> getFulfillmentGroupItemsForOrderItem(Order order, OrderItem orderItem) {
+        List<FulfillmentGroupItem> fgis = new ArrayList<FulfillmentGroupItem>();
+
+        List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+                if (fulfillmentGroupItem.getOrderItem().equals(orderItem)) {
+                    fgis.add(fulfillmentGroupItem);
+                } else if (orderItem instanceof BundleOrderItem) {
+                    BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+                    for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
+                        if (fulfillmentGroupItem.getOrderItem().equals(discreteOrderItem)){
+                            fgis.add(fulfillmentGroupItem);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return fgis;
     }
     
     @Override
