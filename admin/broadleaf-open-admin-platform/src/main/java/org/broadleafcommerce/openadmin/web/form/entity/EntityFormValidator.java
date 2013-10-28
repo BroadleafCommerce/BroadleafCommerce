@@ -73,14 +73,17 @@ public class EntityFormValidator {
                         field = form.getFields().get(unserializedFieldName);
                     }
                     
-                    if (field != null) {
-                        String[] errorCodes = ((AbstractBindingResult) errors).resolveMessageCodes(errorMessage, serializedFieldName);
-                        FieldError fieldError = new FieldError(
-                                "entityForm", String.format("fields[%s].value", serializedFieldName),
-                                field.getValue(), false,
-                                errorCodes, null, errorMessage);
-                        ((AbstractBindingResult) errors).addError(fieldError);
-                    }
+                    //If the submitted field was a radio button but has validation associated with it, that radio field
+                    //will have never been submitted in the POST and thus will not have ever been attached to the EntityForm.
+                    //We still want to notate the fact that there was a validation failure on that field
+                    String value = (field != null) ? field.getValue() : null;
+                    
+                    String[] errorCodes = ((AbstractBindingResult) errors).resolveMessageCodes(errorMessage, serializedFieldName);
+                    FieldError fieldError = new FieldError(
+                            "entityForm", String.format("fields[%s].value", serializedFieldName),
+                            value, false,
+                            errorCodes, null, errorMessage);
+                    ((AbstractBindingResult) errors).addError(fieldError);
                 }
             }
         }

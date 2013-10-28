@@ -7,7 +7,8 @@
            th:classappend="${listGrid.listGridType != 'inline'}? 'table-hover'"
            th:attr="data-listgridtype=${listGrid.listGridType},
                     data-currenturl=${currentUrl},
-                    data-path=@{${listGrid.path}}"
+                    data-path=@{${listGrid.path}},
+                    data-currentparams=${currentParams}"
            blc_admin:component_id="${listGrid}">
         <thead>
             <tr>
@@ -28,24 +29,26 @@
     
                     <div href="#" class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
                         <div class="listgrid-title">
-                            <i class="filter-icon"></i>
-                            <i class="sort-icon"></i>
                             [[#{${headerField.friendlyName}}]]
+                            <div class="listgrid-filter-sort-container">
+                                <i class="sort-icon icon-sort"></i>
+                                <i class="filter-icon icon-filter"></i>
+                            </div>
                         </div>
     
                         <div class="resizer">||</div>
-                        <span class="hide-for-small"></span>
                         <ul th:include="${'components/partials/listGridHeaderFilter'}"
                             class="no-hover"
                             th:classappend="${headerField.mainEntityLink ? 'first' : ''}"
                             th:with="fieldType=${headerField.fieldType},
                                      fieldName=${headerField.name},
+                                     fieldFriendlyName=${headerField.friendlyName},
                                      index=${headerFieldStat.index}">
                         </ul>
                     </div>
                 </th>
                 
-                <th width="65" th:unless="${listGrid.hideIdColumn}">
+                <th width="75" th:unless="${listGrid.hideIdColumn}">
                     <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort}">
                         <div class="listgrid-title">
                         Id
@@ -54,17 +57,19 @@
                     
                     <div class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort}">
                         <div class="listgrid-title">
-                            <i class="filter-icon"></i>
-                            <i class="sort-icon"></i>
                             Id
+                            <div class="listgrid-filter-sort-container">
+                                <i class="sort-icon icon-sort"></i>
+                                <i class="filter-icon icon-filter"></i>
+                            </div>
                         </div>
                         
                         <div class="resizer">||</div>
-                        <span class="hide-for-small"></span>
                         <ul th:include="${'components/partials/listGridHeaderFilter'}"
                             class="no-hover end"
                             th:with="fieldType=${'id'},
                                      fieldName=${listGrid.idProperty},
+                                     fieldFriendlyName=${listGrid.idProperty},
                                      index=${#lists.size(listGrid.headerFields) - 1}">
                         </ul>
                    </div>

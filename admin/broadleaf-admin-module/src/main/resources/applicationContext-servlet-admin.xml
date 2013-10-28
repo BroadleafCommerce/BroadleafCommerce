@@ -9,26 +9,17 @@
 
     <context:component-scan base-package="org.broadleafcommerce.admin.web.controller" />
 
-<!--     <bean id="adminUrlMapping" class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredHandler"> -->
-<!--         <property name="mappings"> -->
-<!--             <map> -->
-<!--                 <entry key="/**/security.service" value-ref="blAdminSecurityRemoteService"/> -->
-<!--                 <entry key="/**/dynamic.entity.service" value-ref="blDynamicEntityRemoteService"/> -->
-<!--                 <entry key="/**/upload.progress.service" value-ref="blUploadRemoteService"/> -->
-<!--                 <entry key="/**/utility.service" value-ref="blUtilityRemoteService"/> -->
-<!--                 <entry key="/**/app.configuration.service" value-ref="blAppConfigurationRemoteService"/> -->
-<!--                 <entry key="/**/blc_gwt_logging" value-ref="blLog4JRemoteGwtLoggingService"/> -->
-<!--                 <entry key="/**/admin.catalog.service" value-ref="blAdminCatalogRemoteService"/> -->
-<!--                 <entry key="/**/admin.export.service" value-ref="blAdminExporterRemoteService"/> -->
-<!--             </map> -->
-<!--         </property> -->
-<!--         <property name="serviceExporterFactory"> -->
-<!--             <bean class="org.broadleafcommerce.openadmin.security.CompatibleGWTSecuredRPCServiceExporterFactory"/> -->
-<!--         </property> -->
-<!--     </bean> -->
+    <bean id="blAdminExtendedTranslationControllerExtensionListeners" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blAdminProductTranslationExtensionListener" />
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blAdminExtendedTranslationControllerExtensionListeners" />
+        <property name="targetRef" value="blAdminTranslationControllerExtensionListeners" />
+    </bean>
 
-<!--     <aop:config/> -->
-
-<!--     <mvc:annotation-driven/> -->
 
 </beans>

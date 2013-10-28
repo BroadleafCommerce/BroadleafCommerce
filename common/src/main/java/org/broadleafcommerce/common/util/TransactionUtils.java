@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.common.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -24,6 +26,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  * @author Jeff Fischer
  */
 public class TransactionUtils {
+
+    private static final Log LOG = LogFactory.getLog(TransactionUtils.class);
 
     public static TransactionStatus createTransaction(String name, int propagationBehavior, PlatformTransactionManager transactionManager) {
         return createTransaction(name, propagationBehavior, transactionManager, false);
@@ -53,12 +57,14 @@ public class TransactionUtils {
         } catch (Exception e) {
             //do nothing
         }
-        if (isActive) {
-            if (isError) {
+        if (isError || !isActive) {
+            try {
                 transactionManager.rollback(status);
-            } else {
-                transactionManager.commit(status);
+            } catch (Exception e) {
+                LOG.error("Rolling back caused exception. Logging and continuing.", e);
             }
+        } else {
+            transactionManager.commit(status);
         }
     }
 

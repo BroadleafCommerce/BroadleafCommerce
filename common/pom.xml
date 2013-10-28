@@ -3,7 +3,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>3.0.2-GA</version>
+        <version>3.0.3-GA</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-common</artifactId>
@@ -303,7 +303,7 @@
             <artifactId>commons-lang</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
+            <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>

@@ -39,6 +39,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
@@ -111,7 +112,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             metadata.setCeilingType(StructuredContentType.class.getName());
             ClassTree entities = new ClassTree(StructuredContentTypeImpl.class.getName());
             metadata.setPolymorphicEntities(entities);
-            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(structuredContentType.getStructuredContentFieldTemplate().getFieldGroups(), StructuredContentTypeImpl.class);
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(structuredContentType.getStructuredContentFieldTemplate().getFieldGroups(), StructuredContentType.class);
             metadata.setProperties(properties);
             DynamicResultSet results = new DynamicResultSet(metadata);
 
@@ -189,7 +190,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             String structuredContentId = persistencePackage.getCustomCriteria()[1];
             StructuredContent structuredContent = structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
             
-            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups(), StructuredContentTypeImpl.class);
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups(), StructuredContentType.class);
             Map<String, FieldMetadata> md = new HashMap<String, FieldMetadata>();
             for (Property property : properties) {
                 md.put(property.getName(), property.getMetadata());
@@ -197,7 +198,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             
             boolean validated = helper.validate(persistencePackage.getEntity(), null, md);
             if (!validated) {
-                return persistencePackage.getEntity();
+                throw new ValidationException(persistencePackage.getEntity(), "Structured Content dynamic fields failed validation");
             }
             
             List<String> templateFieldNames = new ArrayList<String>(20);
@@ -236,6 +237,8 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             structuredContentService.updateStructuredContent(structuredContent, getSandBox());
 
             return fetchEntityBasedOnId(structuredContentId);
+        } catch (ValidationException e) {
+            throw e;
         } catch (Exception e) {
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
         }

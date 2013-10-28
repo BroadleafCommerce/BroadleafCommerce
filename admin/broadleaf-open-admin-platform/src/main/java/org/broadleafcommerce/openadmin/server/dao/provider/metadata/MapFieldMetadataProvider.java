@@ -295,6 +295,8 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
                 fieldMetadataOverride.setKeyClass(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationMap.KEYPROPERTYFRIENDLYNAME)) {
                 fieldMetadataOverride.setKeyPropertyFriendlyName(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationMap.MAPKEYVALUEPROPERTY)) {
+                fieldMetadataOverride.setMapKeyValueProperty(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationMap.KEYS)) {
                 if (!ArrayUtils.isEmpty(entry.getValue().keys())) {
                     String[][] keys = new String[entry.getValue().keys().length][2];
@@ -356,6 +358,7 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
             FieldMetadataOverride override = new FieldMetadataOverride();
             override.setDeleteEntityUponRemove(map.deleteEntityUponRemove());
             override.setKeyClass(map.keyClass().getName());
+            override.setMapKeyValueProperty(map.mapKeyValueProperty());
             override.setKeyPropertyFriendlyName(map.keyPropertyFriendlyName());
             if (!ArrayUtils.isEmpty(map.keys())) {
                 String[][] keys = new String[map.keys().length][2];
@@ -476,6 +479,14 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
         }
 
         String keyPropertyName = "key";
+        String mapKeyValueProperty = "";
+        if (StringUtils.isNotBlank(field.getMapKey())) {
+            mapKeyValueProperty = field.getMapKey();
+        }
+        if (StringUtils.isNotBlank(map.getMapKeyValueProperty())) {
+            mapKeyValueProperty = map.getMapKeyValueProperty();
+        }
+        
         String keyPropertyFriendlyName = null;
         if (serverMetadata != null) {
             keyPropertyFriendlyName = ((MapStructure) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.MAPSTRUCTURE)).getKeyPropertyFriendlyName();
@@ -557,6 +568,10 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
         if (map.getKeys() != null) {
             metadata.setKeys(map.getKeys());
         }
+        
+        if (map.getMapKeyValueProperty() != null) {
+            metadata.setMapKeyValueProperty(map.getMapKeyValueProperty());
+        }
 
         if (map.getMapKeyOptionEntityClass()!=null) {
             if (!void.class.getName().equals(map.getMapKeyOptionEntityClass())) {
@@ -609,10 +624,10 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
             ForeignKey foreignKey = new ForeignKey(parentObjectIdField, parentObjectClass);
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
             if (metadata.isSimpleValue()) {
-                mapStructure = new SimpleValueMapStructure(keyClassName, keyPropertyName, keyPropertyFriendlyName, metadata.getValueClassName(), valuePropertyName, valuePropertyFriendlyName, prefix + field.getName());
+                mapStructure = new SimpleValueMapStructure(keyClassName, keyPropertyName, keyPropertyFriendlyName, metadata.getValueClassName(), valuePropertyName, valuePropertyFriendlyName, prefix + field.getName(), mapKeyValueProperty);
                 mapStructure.setMutable(metadata.isMutable());
             } else {
-                mapStructure = new MapStructure(keyClassName, keyPropertyName, keyPropertyFriendlyName, metadata.getValueClassName(), prefix + field.getName(), deleteEntityUponRemove);
+                mapStructure = new MapStructure(keyClassName, keyPropertyName, keyPropertyFriendlyName, metadata.getValueClassName(), prefix + field.getName(), deleteEntityUponRemove, mapKeyValueProperty);
                 mapStructure.setMutable(metadata.isMutable());
             }
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, mapStructure);

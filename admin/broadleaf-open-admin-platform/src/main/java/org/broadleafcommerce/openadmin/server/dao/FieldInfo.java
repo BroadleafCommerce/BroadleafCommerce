@@ -29,6 +29,7 @@ public class FieldInfo {
     protected String manyToManyTargetEntity;
     protected String oneToManyMappedBy;
     protected String oneToManyTargetEntity;
+    protected String mapKey;
 
     public String getName() {
         return name;
@@ -77,4 +78,13 @@ public class FieldInfo {
     public void setOneToManyTargetEntity(String oneToManyTargetEntity) {
         this.oneToManyTargetEntity = oneToManyTargetEntity;
     }
+
+    public String getMapKey() {
+        return mapKey;
+    }
+
+    public void setMapKey(String mapKey) {
+        this.mapKey = mapKey;
+    }
+
 }

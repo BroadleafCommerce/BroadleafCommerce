@@ -195,7 +195,7 @@ public class SkuImpl implements Sku {
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Discountable", order = 2000, 
         tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced, 
         group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced)
-    protected Character discountable;
+    protected Character discountable = 'Y';
 
     @Column(name = "AVAILABLE_FLAG")
     @Index(name = "SKU_AVAILABLE_INDEX", columnNames = {"AVAILABLE_FLAG"})
@@ -894,7 +894,7 @@ public class SkuImpl implements Sku {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
 

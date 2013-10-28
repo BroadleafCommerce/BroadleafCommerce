@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.profile.web.core.service;
+package org.broadleafcommerce.core.order.service;
 
+import org.broadleafcommerce.core.extension.ExtensionHandler;
+import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.springframework.security.core.Authentication;
 
-public interface LoginService {
-    public Authentication loginCustomer(Customer customer);
 
-    public Authentication loginCustomer(String username, String clearTextPassword);
-
-    public void logoutCustomer();
+/**
+ * Extension handler for merge cart
+ * 
+ * @author Andre Azzolini (apazzolini)
+ */
+public interface MergeCartServiceExtensionHandler extends ExtensionHandler {
+    
+    public ExtensionResultStatusType setNewCartOwnership(Order cart, Customer customer);
+    
 }

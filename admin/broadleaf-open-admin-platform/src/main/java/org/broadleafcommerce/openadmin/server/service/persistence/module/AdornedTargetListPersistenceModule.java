@@ -579,6 +579,9 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             cto.setCriteriaMap(convertedCto);
             
             List<FilterMapping> filterMappings2 = getBasicFilterMappings(persistencePerspective, cto, convertedMergedPropertiesTarget, ceilingEntityFullyQualifiedClassname);
+            for (FilterMapping fm : filterMappings2) {
+                fm.setInheritedFromClass(entities[0]);
+            }
             filterMappings.addAll(filterMappings2);
             
             records = getPersistentRecords(adornedTargetList.getAdornedTargetEntityClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());

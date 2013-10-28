@@ -77,7 +77,6 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
             try {
                 SolrContext.getServer().request(car);
-                SolrContext.getServer().commit();
             } catch (Exception e) {
                 LOG.error(e);
                 throw new ServiceException("Unable to swap cores", e);

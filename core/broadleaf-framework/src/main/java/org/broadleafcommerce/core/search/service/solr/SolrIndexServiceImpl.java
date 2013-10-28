@@ -36,12 +36,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
-import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.StopWatch;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -60,7 +60,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 
 /**
@@ -162,11 +161,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     protected void buildIncrementalIndex(int page, int pageSize) throws ServiceException {
-        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-        def.setName("saveOrder");
-        def.setReadOnly(true);
-        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-        TransactionStatus status = transactionManager.getTransaction(def);
+        TransactionStatus status = TransactionUtils.createTransaction("readProducts",
+                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("Building index - page: [%s], pageSize: [%s]", page, pageSize));
         }
@@ -191,38 +187,20 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 SolrContext.getReindexServer().add(documents);
                 SolrContext.getReindexServer().commit();
             }
-            finalizeTransaction(status, false);
+            TransactionUtils.finalizeTransaction(status, transactionManager, false);
         } catch (SolrServerException e) {
-            finalizeTransaction(status, true);
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
             throw new ServiceException("Could not rebuild index", e);
         } catch (IOException e) {
-            finalizeTransaction(status, true);
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
             throw new ServiceException("Could not rebuild index", e);
         } catch (RuntimeException e) {
-            finalizeTransaction(status, true);
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
             throw e;
         }
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("Built index - page: [%s], pageSize: [%s] in [%s]", page, pageSize, s.toLapString()));
-        }
-    }
-
-    protected void finalizeTransaction(TransactionStatus status, boolean isError) {
-        boolean isActive = false;
-        try {
-            if (!status.isRollbackOnly()) {
-                isActive = true;
-            }
-        } catch (Exception e) {
-            //do nothing
-        }
-        if (isActive) {
-            if (isError) {
-                transactionManager.rollback(status);
-            } else {
-                transactionManager.commit(status);
-            }
         }
     }
 

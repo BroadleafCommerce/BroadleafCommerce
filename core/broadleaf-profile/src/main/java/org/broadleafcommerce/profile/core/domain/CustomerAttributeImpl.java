@@ -17,6 +17,7 @@
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -57,6 +58,7 @@ public class CustomerAttributeImpl implements CustomerAttribute {
     
     /** The name. */
     @Column(name = "NAME", nullable=false)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String name;
 
     /** The value. */

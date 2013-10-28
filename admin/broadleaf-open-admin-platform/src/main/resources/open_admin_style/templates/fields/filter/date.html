@@ -1,13 +1,32 @@
-<div class="datepicker-container">
-    <input th:attr="data-name=${fieldName}, placeholder=#{Start_Date}"
-           class="listgrid-criteria-input datepicker"
-           type="text"/>
-    <i class="icon-calendar"></i>
-</div>
-<br />
-<div class="datepicker-container">
-    <input th:attr="data-name=${fieldName}, placeholder=#{End_Date}"
-           class="listgrid-criteria-input datepicker"
-           type="text"/>
-    <i class="icon-calendar"></i>
+<div class="range-input-container">
+    <input type="hidden" class="listgrid-criteria-input" th:attr="data-name=${fieldName}" />
+    
+    <div class="specific-input">
+        <a class="numeric-range-toggle" href="" th:text="#{dateInput.switchToRange}" />
+        <br />
+    
+        <div class="datepicker-container">
+            <input class="listgrid-criteria-input-range range-single datepicker"
+                   type="text"/>
+            <i class="icon-calendar"></i>
+        </div>
+    </div>
+    
+    <div class="range-input hidden">
+        <a class="numeric-range-toggle" href="" th:text="#{dateInput.switchToSpecific}" />
+        <br />
+    
+        <div class="datepicker-container">
+            <input class="listgrid-criteria-input-range range-low datepicker"
+                   type="text"/>
+            <i class="icon-calendar"></i>
+        </div>
+        <br />
+        <div class="datepicker-container">
+            <input class="listgrid-criteria-input-range range-high datepicker"
+                   type="text"/>
+            <i class="icon-calendar"></i>
+        </div>
+    
+    </div>
 </div>

@@ -30,6 +30,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
     private static final long serialVersionUID = 1L;
     
     private String keyClassName;
+    private String mapKeyValueProperty;
     private String keyPropertyName;
     private String keyPropertyFriendlyName;
     private String valueClassName;
@@ -42,7 +43,8 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         //do nothing - support serialization requirements
     }
     
-    public MapStructure(String keyClassName, String keyPropertyName, String keyPropertyFriendlyName, String valueClassName, String mapProperty, Boolean deleteValueEntity) {
+    public MapStructure(String keyClassName, String keyPropertyName, String keyPropertyFriendlyName, String valueClassName, 
+            String mapProperty, Boolean deleteValueEntity, String mapKeyValueProperty) {
         if (!keyClassName.equals(String.class.getName())) {
             throw new RuntimeException("keyClass of java.lang.String is currently the only type supported");
         }
@@ -52,6 +54,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         this.keyPropertyName = keyPropertyName;
         this.keyPropertyFriendlyName = keyPropertyFriendlyName;
         this.deleteValueEntity = deleteValueEntity;
+        this.mapKeyValueProperty = mapKeyValueProperty;
     }
     
     public String getKeyClassName() {
@@ -120,6 +123,14 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
     public void setMutable(Boolean mutable) {
         this.mutable = mutable;
     }
+    
+    public String getMapKeyValueProperty() {
+        return mapKeyValueProperty;
+    }
+    
+    public void setMapKeyValueProperty(String mapKeyValueProperty) {
+        this.mapKeyValueProperty = mapKeyValueProperty;
+    }
 
     public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
@@ -136,6 +147,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         mapStructure.deleteValueEntity = deleteValueEntity;
         mapStructure.manyToField = manyToField;
         mapStructure.mutable = mutable;
+        mapStructure.mapKeyValueProperty = mapKeyValueProperty;
 
         return mapStructure;
     }
@@ -148,6 +160,8 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         MapStructure that = (MapStructure) o;
 
         if (deleteValueEntity != null ? !deleteValueEntity.equals(that.deleteValueEntity) : that.deleteValueEntity != null)
+            return false;
+        if (mapKeyValueProperty != null ? !mapKeyValueProperty.equals(that.mapKeyValueProperty) : that.mapKeyValueProperty != null)
             return false;
         if (keyClassName != null ? !keyClassName.equals(that.keyClassName) : that.keyClassName != null) return false;
         if (keyPropertyFriendlyName != null ? !keyPropertyFriendlyName.equals(that.keyPropertyFriendlyName) : that.keyPropertyFriendlyName != null)
@@ -168,6 +182,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         int result = keyClassName != null ? keyClassName.hashCode() : 0;
         result = 31 * result + (keyPropertyName != null ? keyPropertyName.hashCode() : 0);
         result = 31 * result + (keyPropertyFriendlyName != null ? keyPropertyFriendlyName.hashCode() : 0);
+        result = 31 * result + (mapKeyValueProperty != null ? mapKeyValueProperty.hashCode() : 0);
         result = 31 * result + (valueClassName != null ? valueClassName.hashCode() : 0);
         result = 31 * result + (mapProperty != null ? mapProperty.hashCode() : 0);
         result = 31 * result + (deleteValueEntity != null ? deleteValueEntity.hashCode() : 0);

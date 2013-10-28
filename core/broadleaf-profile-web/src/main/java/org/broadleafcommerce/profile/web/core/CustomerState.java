@@ -20,15 +20,23 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.security.CustomerStateRequestProcessor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * Convenient class to get the active customer from the current request. This state is kept up-to-date in regards to the database
+ * throughout the lifetime of the request via the {@link CustomerStateRefresher}.
+ *
+ * @author Jeff Fischer
+ * @author Phillip Verheyden (phillipuniverse)
+ */
 @Component("blCustomerState")
 public class CustomerState {
 
     public static Customer getCustomer(HttpServletRequest request) {
-        return (Customer) request.getAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName());
+        return getCustomer(new ServletWebRequest(request));
     }
     
     public static Customer getCustomer(WebRequest request) {

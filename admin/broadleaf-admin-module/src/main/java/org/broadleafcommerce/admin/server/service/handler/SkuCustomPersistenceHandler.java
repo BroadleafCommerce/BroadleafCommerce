@@ -160,9 +160,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             Map<String, FieldMetadata> properties = helper.getSimpleMergedProperties(Sku.class.getName(), persistencePerspective);
             
             if (persistencePackage.getCustomCriteria() == null || persistencePackage.getCustomCriteria().length == 0) {
-                //look up all the ProductOptions and then create new fields for each of them. Although
-                //all of the options might not be relevant for the current Product (and thus the Skus as well) we
-                //can hide the irrelevant fields in the fetch via a custom ClientEntityModule
+                //look up all the ProductOptions and then create new fields for each of them
                 List<ProductOption> options = catalogService.readAllProductOptions();
                 int order = 0;
                 for (ProductOption option : options) {
@@ -173,6 +171,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                     }
                 }
             } else {
+                // If we have a product to filter the list of available product options, then use it
                 Long productId = Long.parseLong(persistencePackage.getCustomCriteria()[0]);
                 Product product = catalogService.findProductById(productId);
                 for (ProductOption option : product.getProductOptions()) {
@@ -222,7 +221,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         BasicFieldMetadata metadata = new BasicFieldMetadata();
         metadata.setFieldType(SupportedFieldType.STRING);
         metadata.setMutable(false);
-        metadata.setInheritedFromType(SkuImpl.class.getName());
+        metadata.setInheritedFromType(inheritedFromType.getName());
         metadata.setAvailableToTypes(new String[] { SkuImpl.class.getName() });
         metadata.setForeignKeyCollection(false);
         metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
@@ -357,21 +356,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
             int totalRecords = helper.getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
 
-            //Communicate to the front-end to allow form editing for all of the product options available for the current
-            //Product to allow inserting Skus one at a time
-            ClassMetadata metadata = new ClassMetadata();
-            if (cto.get("product").getFilterValues().size() > 0) {
-                Long productId = Long.parseLong(cto.get("product").getFilterValues().get(0));
-                Product product = catalogService.findProductById(productId);
-                List<Property> properties = new ArrayList<Property>();
-                for (ProductOption option : product.getProductOptions()) {
-                    Property optionProperty = new Property();
-                    optionProperty.setName(PRODUCT_OPTION_FIELD_PREFIX + option.getId());
-                    properties.add(optionProperty);
-                }
-                metadata.setProperties(properties.toArray(new Property[0]));
-            }
-
             //Now fill out the relevant properties for the product options for the Skus that were returned
             for (int i = 0; i < records.size(); i++) {
                 Sku sku = (Sku) records.get(i);
@@ -392,7 +376,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 }
             }
 
-            return new DynamicResultSet(metadata, payload, totalRecords);
+            return new DynamicResultSet(payload, totalRecords);
         } catch (Exception e) {
             throw new ServiceException("Unable to perform fetch for entity: " + ceilingEntityFullyQualifiedClassname, e);
         }

@@ -37,8 +37,8 @@ var BLCAdmin = (function($) {
         var sFontFace = oFont[1];
         oFontDropdown[iIndex] = {
             title: "<font face='"+sFontFace+"'>"+sFontName+"</font>",
-            callback: function(obj, e, sFont){
-                obj.execCommand("fontname", sFontFace);
+            callback: function(sFont, e, obj){
+                this.execCommand("fontname", sFontFace);
             }
         }
     });
@@ -161,7 +161,7 @@ var BLCAdmin = (function($) {
     	runValidationSubmitHandlers : function($form) {
     	    var pass = true;
             for (var i = 0; i < validationFormSubmitHandlers.length; i++) {
-                var pass = validationFormSubmitHandlers[i]($form);
+                pass = pass && validationFormSubmitHandlers[i]($form);
             }
             return pass;
         },
@@ -502,23 +502,4 @@ $('body').on('click', '.disabled', function(e) {
 $('body').on('change', 'input.color-picker-value', function() {
     var $this = $(this);
     $this.closest('.field-box').find('input.color-picker').spectrum('set', $this.val());
-});
-
-/**
- * Make the breadcrumb bar lock at the top of the window when it's scrolled off the page
- */
-$(window).on('scroll', function() {
-    var $bcc = $('.breadcrumb-container');
-    var $fbcc = $('.fake-breadcrumb-container');
-    
-    if ($(window).scrollTop() - 4 < $bcc.outerHeight()) {
-        $bcc.removeClass('breadcrumb-fixed');
-        $bcc.width('');
-        $fbcc.hide();
-    } else {
-        $fbcc.show();
-        $bcc.addClass('breadcrumb-fixed');
-        $bcc.outerWidth($('section.main').outerWidth());
-        $('.fake-breadcrumb-container').outerHeight($bcc.outerHeight());
-    }
 });

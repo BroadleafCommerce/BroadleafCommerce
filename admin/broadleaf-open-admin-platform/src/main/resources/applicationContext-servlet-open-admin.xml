@@ -13,7 +13,7 @@
     <aop:config/>
 
     <!-- Scan Broadleaf defined web utility classes -->
-    <context:component-scan base-package="org.broadleafcommerce.openadmin.web"/>
+    <context:component-scan base-package="org.broadleafcommerce.openadmin.web.controller"/>
     
     <bean id="blAdminStructuredContentController" class="org.broadleafcommerce.cms.admin.web.controller.AdminStructuredContentController" />
 

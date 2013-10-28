@@ -53,6 +53,11 @@ $(document).ready(function() {
     			data: $(this).serialize()
     		}, function(data) {
     			$('.modal .modal-body .tabs-content').replaceWith($(data).find('.modal-body .tabs-content'));
+    			var errorDiv = $(data).find('.modal-body .errors');
+    			if (errorDiv.length) {
+    			    //since we only replaced the content of the modal body, ensure the error div gets there as well
+    			    BLCAdmin.currentModal().find('.modal-body').prepend(errorDiv);
+    			}
     			BLCAdmin.initializeFields($('.modal .modal-body .tabs-content'));
     	    });
         }

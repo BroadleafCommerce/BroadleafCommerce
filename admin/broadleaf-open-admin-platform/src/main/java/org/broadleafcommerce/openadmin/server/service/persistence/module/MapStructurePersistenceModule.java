@@ -260,6 +260,10 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             FieldManager fieldManager = getFieldManager();
             Map map = (Map) fieldManager.getFieldValue(instance, mapStructure.getMapProperty());
             
+            if (map.containsKey(mapKey)) {
+                entity.addValidationError(mapStructure.getKeyPropertyName(), "keyExistsValidationError");
+            }
+            
             PersistentClass persistentClass = persistenceManager.getDynamicEntityDao().getPersistentClass(mapStructure.getValueClassName());
             Map<String, FieldMetadata> valueUnfilteredMergedProperties;
             if (persistentClass == null) {
@@ -402,6 +406,19 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             
             if (persistentClass != null) {
                 Serializable valueInstance = (Serializable) map.get(entity.findProperty("priorKey").getValue());
+
+                if (map.get(mapKey) != null && !map.get(mapKey).equals(valueInstance)) {
+                    entity.addValidationError(mapStructure.getKeyPropertyName(), "keyExistsValidationError");
+                }
+                
+                if (StringUtils.isNotBlank(mapStructure.getMapKeyValueProperty())) {
+                    Property p = entity.findProperty("key");
+                    Property newP = new Property();
+                    newP.setName(mapStructure.getMapKeyValueProperty());
+                    newP.setValue(p.getValue());
+                    newP.setIsDirty(p.getIsDirty());
+                    entity.addProperty(newP);
+                }
                 
                 //allow validation on other properties in order to show key validation errors along with all the other properties
                 //validation errors
@@ -423,10 +440,15 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                 }
             }
             
-            
             instance = persistenceManager.getDynamicEntityDao().merge(instance);
             
-            return getMapRecords(instance, mapStructure, ceilingMergedProperties, valueMergedProperties, entity.findProperty("symbolicId"))[0];
+            Entity[] responses = getMapRecords(instance, mapStructure, ceilingMergedProperties, valueMergedProperties, entity.findProperty("symbolicId"));
+            for (Entity response : responses) {
+                if (response.findProperty(mapStructure.getKeyPropertyName()).getValue().equals(persistencePackage.getEntity().findProperty(mapStructure.getKeyPropertyName()).getValue())) {
+                    return response;
+                }
+            }
+            return responses[0];
         } catch (Exception e) {
             throw new ServiceException("Problem updating entity : " + e.getMessage(), e);
         }

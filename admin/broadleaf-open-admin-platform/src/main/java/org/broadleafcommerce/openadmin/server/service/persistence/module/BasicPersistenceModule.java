@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -972,6 +973,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             );
             List<FilterMapping> filterMappings = getFilterMappings(persistencePerspective, cto, persistencePackage
                     .getFetchTypeFullyQualifiedClassname(), mergedProperties);
+            
+            if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
+                filterMappings.addAll(cto.getAdditionalFilterMappings());
+            }
 
             boolean isArchivable = false;
             for (Class<?> entity : entities) {

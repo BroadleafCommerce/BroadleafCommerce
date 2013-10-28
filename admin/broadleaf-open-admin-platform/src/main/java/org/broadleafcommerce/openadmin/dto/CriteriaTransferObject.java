@@ -17,8 +17,12 @@
 package org.broadleafcommerce.openadmin.dto;
 
 
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +37,8 @@ public class CriteriaTransferObject {
     private Integer maxResults;
     
     private Map<String, FilterAndSortCriteria> criteriaMap = new HashMap<String, FilterAndSortCriteria>();
+
+    private List<FilterMapping> additionalFilterMappings = new ArrayList<FilterMapping>();
     
     /**
      * The index of records in the database for which a fetch will start.
@@ -113,4 +119,18 @@ public class CriteriaTransferObject {
         criteriaMap.put(name, criteria);
         return criteriaMap.get(name);
     }
+
+    /**
+     * This list holds additional filter mappings that might have been constructed in a custom persistence
+     * handler. This is only used when very custom filtering needs to occur.
+     */
+    public List<FilterMapping> getAdditionalFilterMappings() {
+        return additionalFilterMappings;
+    }
+    
+    public void setAdditionalFilterMappings(List<FilterMapping> additionalFilterMappings) {
+        this.additionalFilterMappings = additionalFilterMappings;
+    }
+    
+    
 }

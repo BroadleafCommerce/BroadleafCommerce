@@ -30,6 +30,7 @@ import org.broadleafcommerce.openadmin.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
@@ -45,6 +46,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -62,6 +64,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -470,6 +473,50 @@ public class AdminBasicEntityController extends AdminAbstractController {
         setModelAttributes(model, owningClass);
         return "modules/modalContainer";
     }
+
+    @RequestMapping(value = "/{collectionField:.*}/details", method = RequestMethod.GET)
+    public @ResponseBody Map<String, String> getCollectionValueDetails(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="collectionField") String collectionField,
+            @RequestParam String ids,
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+        String sectionKey = getSectionKey(pathVars);
+        String sectionClassName = getClassNameForSection(sectionKey);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, requestParams);
+        ClassMetadata mainMetadata = service.getClassMetadata(ppr);
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        FieldMetadata md = collectionProperty.getMetadata();
+
+        ppr = PersistencePackageRequest.fromMetadata(md);
+        ppr.setStartIndex(getStartIndex(requestParams));
+        ppr.setMaxIndex(getMaxIndex(requestParams));
+        
+        if (md instanceof BasicFieldMetadata) {
+            String idProp = ((BasicFieldMetadata) md).getForeignKeyProperty();
+            String displayProp = ((BasicFieldMetadata) md).getForeignKeyDisplayValueProperty();
+
+            List<String> filterValues = Arrays.asList(ids.split(FILTER_VALUE_SEPARATOR_REGEX));
+            ppr.addFilterAndSortCriteria(new FilterAndSortCriteria(idProp, filterValues));
+            
+            DynamicResultSet drs = service.getRecords(ppr);
+            Map<String, String> returnMap = new HashMap<String, String>();
+            
+            for (Entity e : drs.getRecords()) {
+                String id = e.getPMap().get(idProp).getValue();
+                String disp = e.getPMap().get(displayProp).getDisplayValue();
+                
+                if (StringUtils.isBlank(disp)) {
+                    disp = e.getPMap().get(displayProp).getValue();
+                }
+                
+                returnMap.put(id,  disp);
+            }
+
+            return returnMap;
+        }
+
+        return null;
+    }
     
     /**
      * Shows the modal popup for the current selected "to-one" field. For instance, if you are viewing a list of products
@@ -532,6 +579,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         // Next, we must get the new list grid that represents this collection
         ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, requestParams, sectionKey);
         model.addAttribute("listGrid", listGrid);
+
+        model.addAttribute("currentParams", new ObjectMapper().writeValueAsString(requestParams));
 
         // We return the new list grid so that it can replace the currently visible one
         setModelAttributes(model, sectionKey);
@@ -596,6 +645,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 .withFilterAndSortCriteria(getCriteria(requestParams))
                 .withStartIndex(getStartIndex(requestParams))
                 .withMaxIndex(getMaxIndex(requestParams));
+        
+        model.addAttribute("currentParams", new ObjectMapper().writeValueAsString(requestParams));
 
         return buildAddCollectionItemModel(request, response, model, id, collectionField, sectionKey, collectionProperty, md, ppr, null, null);
     }
