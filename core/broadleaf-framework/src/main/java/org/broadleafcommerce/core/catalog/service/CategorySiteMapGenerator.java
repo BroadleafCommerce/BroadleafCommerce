@@ -19,9 +19,7 @@ package org.broadleafcommerce.core.catalog.service;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
 import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
-import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
-import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -54,15 +52,15 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
     }
 
     @Override
-    public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder) {
+    public void addSiteMapEntries(SiteMapGeneratorConfiguration smgc, SiteMapBuilder siteMapBuilder) {
 
-        CategorySiteMapGeneratorConfiguration categorySMGC = (CategorySiteMapGeneratorConfiguration) siteMapGeneratorConfiguration;
+        CategorySiteMapGeneratorConfiguration categorySMGC = (CategorySiteMapGeneratorConfiguration) smgc;
 
-        addCategorySiteMapEntries(categorySMGC.getRootCategory(), 1, categorySMGC.getStartingDepth(), categorySMGC.getEndingDepth(), categorySMGC.getSiteMapChangeFreqType(), categorySMGC.getSiteMapPriority(), siteMapBuilder);
+        addCategorySiteMapEntries(categorySMGC.getRootCategory(), 1, categorySMGC, siteMapBuilder);
         
     }
 
-    protected void addCategorySiteMapEntries(Category parentCategory, int currentDepth, int startingDepth, int endingDepth, SiteMapChangeFreqType siteMapChangeFreq, SiteMapPriorityType siteMapPriority, SiteMapBuilder siteMapBuilder) {
+    protected void addCategorySiteMapEntries(Category parentCategory, int currentDepth, CategorySiteMapGeneratorConfiguration categorySMGC, SiteMapBuilder siteMapBuilder) {
         
         int rowOffset = 0;
         List<Category> categories;
@@ -72,24 +70,24 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
             rowOffset += categories.size();
             for (Category category : categories) {
 
-                if (currentDepth < endingDepth) {
-                    addCategorySiteMapEntries(category, currentDepth + 1, startingDepth, endingDepth, siteMapChangeFreq, siteMapPriority, siteMapBuilder);
+                if (currentDepth < categorySMGC.getEndingDepth()) {
+                    addCategorySiteMapEntries(category, currentDepth + 1, categorySMGC, siteMapBuilder);
                 }
 
-                if(currentDepth < startingDepth) {
+                if (currentDepth < categorySMGC.getStartingDepth()) {
                     continue;
                 }
                 
                 SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
                 // location
-                siteMapUrl.setLoc(category.getUrl());
+                siteMapUrl.setLoc(categorySMGC.getSiteMapConfiguration().getSiteUrlPath() + category.getUrl());
 
                 // change frequency
-                siteMapUrl.setChangeFreqType(siteMapChangeFreq);
+                siteMapUrl.setChangeFreqType(categorySMGC.getSiteMapChangeFreqType());
 
                 // priority
-                siteMapUrl.setPriorityType(siteMapPriority);
+                siteMapUrl.setPriorityType(categorySMGC.getSiteMapPriority());
 
                 // lastModDate
                 siteMapUrl.setLastModDate(new Date());

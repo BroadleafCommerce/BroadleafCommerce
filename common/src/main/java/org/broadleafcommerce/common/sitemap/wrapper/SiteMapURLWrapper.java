@@ -25,6 +25,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Representation of SiteMapURLEntry that can be used to generate an XML element.
@@ -32,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author bpolster
  */
 @XmlRootElement(name = "url")
+@XmlType(propOrder = { "loc", "lastmod", "changefreq", "priority" })
 public class SiteMapURLWrapper implements Serializable {
 
     private static final long serialVersionUID = 1L;   

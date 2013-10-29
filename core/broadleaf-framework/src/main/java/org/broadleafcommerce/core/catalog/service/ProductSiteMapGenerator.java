@@ -51,7 +51,7 @@ public class ProductSiteMapGenerator implements SiteMapGenerator {
     }
 
     @Override
-    public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder) {
+    public void addSiteMapEntries(SiteMapGeneratorConfiguration smcg, SiteMapBuilder siteMapBuilder) {
 
         int pageNum = 0;
         List<Product> products;
@@ -62,13 +62,13 @@ public class ProductSiteMapGenerator implements SiteMapGenerator {
                 SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
                 // location
-                siteMapUrl.setLoc(product.getUrl());
+                siteMapUrl.setLoc(smcg.getSiteMapConfiguration().getSiteUrlPath() + product.getUrl());
 
                 // change frequency
-                siteMapUrl.setChangeFreqType(siteMapGeneratorConfiguration.getSiteMapChangeFreqType());
+                siteMapUrl.setChangeFreqType(smcg.getSiteMapChangeFreqType());
 
                 // priority
-                siteMapUrl.setPriorityType(siteMapGeneratorConfiguration.getSiteMapPriority());
+                siteMapUrl.setPriorityType(smcg.getSiteMapPriority());
 
                 // lastModDate
                 siteMapUrl.setLastModDate(new Date());

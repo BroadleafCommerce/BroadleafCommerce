@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Representation the sitemap element defined in the schema definition at
@@ -28,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author bpolster
  */
 @XmlRootElement(name = "sitemap")
+@XmlType(propOrder = { "loc", "lastmod" })
 public class SiteMapWrapper implements Serializable {
 
     private static final long serialVersionUID = 1L;

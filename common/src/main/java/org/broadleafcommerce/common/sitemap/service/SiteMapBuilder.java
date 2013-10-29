@@ -54,7 +54,6 @@ public class SiteMapBuilder {
     protected boolean gzipSiteMapIndex;
 
     protected String tempDirectory = System.getProperty("java.io.tmpdir");
-    protected String siteUrlPath = "http://www.test.com/";
 
     protected SiteMapConfiguration siteMapConfig;
     protected SiteMapURLSetWrapper currentURLSetWrapper;
@@ -112,19 +111,21 @@ public class SiteMapBuilder {
 
     /**
      * Save the passed in URL set to a new indexed file. 
+     * 
      * @return
      */
     protected void persistIndexedURLSetWrapper(SiteMapURLSetWrapper urlSetWrapper) {
-        String indexedFileName = createNextIndexFileName();
+        String indexedFileName = createNextIndexedFileName();
         persistXMLDocument(indexedFileName, urlSetWrapper);
         if (isGzipSiteMap()) {
             gzipAndDeleteFile(indexedFileName);
         }
-        indexedFileNames.add(indexedFileName);
+        indexedFileNames.add(indexedFileName + ".gz");
     }
 
     /**
-     * Save the passed in URL set to a new non indexed file. 
+     * Save the passed in URL set to a non-indexed file. 
+     * 
      * @return
      */
     protected void persistNonIndexedSiteMap() {
@@ -132,24 +133,24 @@ public class SiteMapBuilder {
         if (isGzipSiteMap()) {
             gzipAndDeleteFile(siteMapConfig.getSiteMapPrimaryFileName());
         }
-        indexedFileNames.add(createNextIndexFileName());
     }
 
     /**
-     * Save the passed in URL set to a new indexed file. 
+     * Save the site map index file. 
+     * 
      * @return
      */
     protected void persistIndexedSiteMap() {
         String now = FormatUtil.formatDateUsingW3C(new Date());
         
-        // Save the left over items
+        // Save the leftover URL set
         persistIndexedURLSetWrapper(currentURLSetWrapper);
 
         // Build the siteMapIndex
         SiteMapIndexWrapper siteMapIndexWrapper = new SiteMapIndexWrapper();
         for (String fileName : indexedFileNames) {
             SiteMapWrapper siteMapWrapper = new SiteMapWrapper();
-            siteMapWrapper.setLoc(getSiteUrlPath() + fileName);
+            siteMapWrapper.setLoc(siteMapConfig.getSiteUrlPath() + "/" + fileName);
             siteMapWrapper.setLastmod(now);
             siteMapIndexWrapper.getSiteMapWrappers().add(siteMapWrapper);
         }
@@ -161,25 +162,16 @@ public class SiteMapBuilder {
     }
 
     /**
-     * Returns a path to the URL where the sitemap files will be located.   Typically this is the 
-     * production address (e.g. http://www.mysite.com/);
-     * @return
-     */
-    protected String getSiteUrlPath() {
-        return siteUrlPath;
-    }
-
-    /**
      * Create the name of the indexed files.
      * For example, sitemap1.xml, sitemap2.xml, etc.
      * 
      * @return
      */
-    protected String createNextIndexFileName() {
+    protected String createNextIndexedFileName() {
         if(indexedFileNames.size() == 0) {
             return "sitemap.xml";
         }
-        return "siteMap" + indexedFileNames.size() + ".xml";
+        return "sitemap" + indexedFileNames.size() + ".xml";
     }
 
     protected void persistSiteMap() {

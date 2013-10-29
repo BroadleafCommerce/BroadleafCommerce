@@ -28,7 +28,7 @@ public class FormatUtil {
 
     public static final String DATE_FORMAT = "yyyy.MM.dd HH:mm:ss";
     public static final String DATE_FORMAT_WITH_TIMEZONE = "yyyy.MM.dd HH:mm:ss Z";
-    public static final SimpleDateFormat W3C_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
+    public static final SimpleDateFormat W3C_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     public static SimpleDateFormat getDateFormat() {
         SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);

@@ -77,12 +77,14 @@ public class SiteMapServiceImpl implements SiteMapService {
         siteMapBuilder.setGzipSiteMapIndex(gzipSiteMapIndex);
 
         for (SiteMapGeneratorConfiguration currentConfiguration : smc.getSiteMapGeneratorConfigurations()) {
+            if (currentConfiguration.getDisabled()) {
+                continue;
+            }
             SiteMapGenerator generator = selectSiteMapGenerator(currentConfiguration);
             if (generator != null) {
                 generator.addSiteMapEntries(currentConfiguration, siteMapBuilder);
             } else {
-                LOG.warn("No site map generator found to process configuration " +
-                        currentConfiguration.getSiteMapConfiguration().getModuleName());
+                LOG.warn("No site map generator found to process generator configuration for " + currentConfiguration.getSiteMapGeneratorType());
             }
         }
 
@@ -121,7 +123,7 @@ public class SiteMapServiceImpl implements SiteMapService {
      */
     protected SiteMapGenerator selectSiteMapGenerator(SiteMapGeneratorConfiguration smgc) {
         for (SiteMapGenerator siteMapGenerator : siteMapGenerators) {
-            if ((!smgc.getDisabled()) && (siteMapGenerator.canHandleSiteMapConfiguration(smgc))) {
+            if (siteMapGenerator.canHandleSiteMapConfiguration(smgc)) {
                 return siteMapGenerator;
             }
         }
