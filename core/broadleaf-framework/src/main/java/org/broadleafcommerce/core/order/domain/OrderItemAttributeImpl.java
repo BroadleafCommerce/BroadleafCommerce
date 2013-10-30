@@ -171,6 +171,6 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
             return false;
         }
         
-        return value.equals(((OrderAttribute) obj).getValue());
+        return value.equals(((OrderItemAttribute) obj).getValue());
     }
 }
