@@ -54,6 +54,7 @@ public class ProductOptionValueProcessor extends AbstractAttrProcessor  {
             Writer strWriter = new StringWriter();
             mapper.writeValue(strWriter, dto);
             element.setAttribute("data-product-option-value", strWriter.toString());
+            element.removeAttribute(attributeName);
             return ProcessorResult.OK;
         } catch (Exception ex) {
             LOG.error("There was a problem writing the product option value to JSON", ex);
