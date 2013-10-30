@@ -104,6 +104,7 @@
         <class>org.broadleafcommerce.core.offer.domain.CriteriaOfferXref</class>
         <class>org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl</class>
         <class>org.broadleafcommerce.core.social.domain.UserConnectionImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>

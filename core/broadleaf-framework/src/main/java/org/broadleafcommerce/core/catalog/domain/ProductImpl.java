@@ -245,19 +245,18 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
         deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name"
     )
     protected Map<String, ProductAttribute> productAttributes = new HashMap<String, ProductAttribute>();
-    
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductOptionImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_OPTION_XREF", 
-        joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), 
-        inverseJoinColumns = @JoinColumn(name = "PRODUCT_OPTION_ID", referencedColumnName = "PRODUCT_OPTION_ID"))
+
+    @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "product")
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "productOptionsTitle",
+    @AdminPresentationAdornedTargetCollection(friendlyName = "productOptionsTitle",
         tab = Presentation.Tab.Name.ProductOptions, tabOrder = Presentation.Tab.Order.ProductOptions,
-        addType = AddMethodType.LOOKUP,
-        manyToField = "products",
-        operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
-    protected List<ProductOption> productOptions = new ArrayList<ProductOption>();
+        joinEntityClass = "org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl",
+        targetObjectProperty = "productOption",
+        parentObjectProperty = "product",
+        gridVisibleFields = {"label", "required"})
+    protected List<ProductOptionXref> productOptions = new ArrayList<ProductOptionXref>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -675,13 +674,27 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
     }
 
     @Override
-    public List<ProductOption> getProductOptions() {
+    public List<ProductOptionXref> getProductOptionXrefs() {
         return productOptions;
     }
 
     @Override
-    public void setProductOptions(List<ProductOption> productOptions) {
+    public void setProductOptionXrefs(List<ProductOptionXref> productOptions) {
         this.productOptions = productOptions;
+    }
+
+    @Override
+    public List<ProductOption> getProductOptions() {
+        List<ProductOption> response = new ArrayList<ProductOption>();
+        for (ProductOptionXref xref : productOptions) {
+            response.add(xref.getProductOption());
+        }
+        return Collections.unmodifiableList(response);
+    }
+
+    @Override
+    public void setProductOptions(List<ProductOption> productOptions) {
+        throw new UnsupportedOperationException("Use setProductOptionXrefs(..) instead");
     }
     
     @Override
