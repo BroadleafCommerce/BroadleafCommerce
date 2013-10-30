@@ -126,7 +126,9 @@ public class PageDaoImpl implements PageDao {
         CriteriaQuery<Page> criteria = builder.createQuery(Page.class);
         Root<PageImpl> page = criteria.from(PageImpl.class);
         criteria.select(page);
-        criteria.where(builder.not(builder.isTrue(page.get("offlineFlag").as(Boolean.class))));
+        criteria.where(builder.and(
+                builder.or(builder.isFalse(page.get("offlineFlag").as(Boolean.class)), builder.isNull(page.get("offlineFlag").as(Boolean.class))),
+                builder.or(builder.isFalse(page.get("excludeFromSiteMap").as(Boolean.class)), builder.isNull(page.get("excludeFromSiteMap").as(Boolean.class)))));
         criteria.orderBy(builder.asc(page.get(sortBy)));
         TypedQuery<Page> query = em.createQuery(criteria);
         query.setFirstResult(offset);

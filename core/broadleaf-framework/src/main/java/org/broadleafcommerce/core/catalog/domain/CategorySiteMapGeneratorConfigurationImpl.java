@@ -17,6 +17,7 @@ package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 
@@ -41,6 +42,7 @@ public class CategorySiteMapGeneratorConfigurationImpl extends SiteMapGeneratorC
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "ROOT_CATEGORY_ID", nullable = false)
     @AdminPresentation(friendlyName = "CategorySiteMapGeneratorConfiguration_Root_Category")
+    @AdminPresentationToOneLookup()
     protected Category rootCategory;
 
     @Column(name = "STARTING_DEPTH", nullable = false)

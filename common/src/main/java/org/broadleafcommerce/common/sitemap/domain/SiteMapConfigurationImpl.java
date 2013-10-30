@@ -21,9 +21,6 @@ import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +38,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "BLC_SITEMAP_CFG")
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
-@AdminPresentationClass(friendlyName = "DefaultSiteMapConfiguration")
+@AdminPresentationClass(friendlyName = "SiteMapConfiguration")
 public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implements SiteMapConfiguration {
 
     private static final long serialVersionUID = 1L;
@@ -61,8 +58,7 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
     protected String siteUrlPath;
 
     @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @AdminPresentationCollection(friendlyName = "SiteMapConfiguration_Site_Map_Generator_Configurations", addType = AddMethodType.LOOKUP, manyToField = "siteMapConfigurations",
-            operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
+    @AdminPresentationCollection(friendlyName = "SiteMapConfiguration_Site_Map_Generator_Configurations")
     protected List<SiteMapGeneratorConfiguration> siteMapGeneratorConfigurations = new ArrayList<SiteMapGeneratorConfiguration>();
 
     public SiteMapConfigurationImpl() {

@@ -51,7 +51,7 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
     }
 
     @Override
-    public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder) {
+    public void addSiteMapEntries(SiteMapGeneratorConfiguration smgc, SiteMapBuilder siteMapBuilder) {
 
         int rowOffset = 0;
         List<Page> pages;
@@ -77,13 +77,13 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
                 SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
                 // location
-                siteMapUrl.setLoc(currentURL);
+                siteMapUrl.setLoc(smgc.getSiteMapConfiguration().getSiteUrlPath() + currentURL);
 
                 // change frequency
-                siteMapUrl.setChangeFreqType(siteMapGeneratorConfiguration.getSiteMapChangeFreqType());
+                siteMapUrl.setChangeFreqType(smgc.getSiteMapChangeFreqType());
 
                 // priority
-                siteMapUrl.setPriorityType(siteMapGeneratorConfiguration.getSiteMapPriority());
+                siteMapUrl.setPriorityType(smgc.getSiteMapPriority());
 
                 // lastModDate
                 if ((page.getAuditable() != null) && (page.getAuditable().getDateUpdated() != null)) {
