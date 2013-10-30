@@ -59,21 +59,21 @@ public class SiteMapURLEntryImpl implements SiteMapURLEntry {
     protected Long id;
 
     @Column(name = "LOCATION", nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapURLEntryImpl_Location")
+    @AdminPresentation(friendlyName = "SiteMapURLEntryImpl_Location", gridOrder = 1, prominent = true)
     protected String location;
     
     @Column(name = "LAST_MODIFIED", nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapURLEntryImpl_Last_Modified", fieldType = SupportedFieldType.DATE)
+    @AdminPresentation(friendlyName = "SiteMapURLEntryImpl_Last_Modified", fieldType = SupportedFieldType.DATE, gridOrder = 2, prominent = true)
     protected Date lastModified = new Date();
     
     @Column(name = "CHANGE_FREQ_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "SiteMapURLEntry_Site_Map_Change_Freq_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType")
+            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType", gridOrder = 3, prominent = true)
     protected String siteMapChangeFreqType;
 
     @Column(name = "SITE_MAP_PRIORITY", nullable = false)
     @AdminPresentation(friendlyName = "SiteMapURLEntry_Site_Map_Priority", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType")
+            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType", gridOrder = 4, prominent = true)
     protected String siteMapPriority;
     
     @ManyToOne(targetEntity = CustomUrlSiteMapGeneratorConfigurationImpl.class, optional = false)

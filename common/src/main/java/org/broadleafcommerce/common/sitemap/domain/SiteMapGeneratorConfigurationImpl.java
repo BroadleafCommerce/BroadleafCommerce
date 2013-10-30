@@ -61,22 +61,22 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     protected Long id;
 
     @Column(name = "DISABLED", nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Disabled")
+    @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Disabled", gridOrder = 2, prominent = true)
     protected Boolean disabled = false;
     
     @Column(name = "CHANGE_FREQ_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Site_Map_Change_Freq_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType")
+            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType", gridOrder = 3, prominent = true)
     protected String siteMapChangeFreqType;
 
     @Column(name = "SITE_MAP_PRIORITY", nullable = false)
     @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Site_Map_Priority", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType")
+            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType", gridOrder = 4, prominent = true)
     protected String siteMapPriority;
 
     @Column(name = "SITE_MAP_GENERATOR_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "SiteMapGeneratorConfiguration_Site_Map_Generator_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType")
+            broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType", gridOrder = 1, prominent = true)
     protected String siteMapGeneratorType;
     
     @ManyToOne(targetEntity = SiteMapConfigurationImpl.class, optional = false)
