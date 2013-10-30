@@ -5,6 +5,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 /**
@@ -84,5 +85,15 @@ public interface FormBuilderExtensionHandler extends ExtensionHandler {
      * @see {@link FormBuilderService#populateEntityForm(org.broadleafcommerce.openadmin.dto.ClassMetadata, org.broadleafcommerce.openadmin.dto.Entity, java.util.Map, EntityForm)
      */
     public ExtensionResultStatusType modifyDetailEntityForm(EntityForm ef);
+    
+    /**
+     * Provides a hook to modify the ListGridRecord for the given Entity while building the list grid record.
+     * 
+     * @param className
+     * @param record
+     * @param entity
+     * @return whether or not it was handled
+     */
+    public ExtensionResultStatusType modifyListGridRecord(String className, ListGridRecord record, Entity entity);
 
 }
