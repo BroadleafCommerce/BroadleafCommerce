@@ -18,7 +18,7 @@
         <label th:text="#{password.password}" />
         <input type="password" id="password" name="j_password" class="twelve" />
 
-        <input type="submit" class="button radius right" value="Sign In"/>
+        <input type="submit" class="button radius right" th:value="#{password.signIn}"/>
     </blc:form>
 
     <div th:fragment="options">
