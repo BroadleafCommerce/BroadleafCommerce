@@ -75,7 +75,11 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
             }
 
             if (envPrefix != null) {
-                returnValue = returnValue.replaceAll(getStaticAssetUrlPrefix(), envPrefix);
+                String trailing = "";
+                if (envPrefix.endsWith("/")) {
+                    trailing = "/";
+                }
+                returnValue = returnValue.replaceAll(getStaticAssetUrlPrefix()+trailing, envPrefix);
                 //Catch any scenario where there is a leading "/" after the replacement
                 returnValue = returnValue.replaceAll("/"+envPrefix, envPrefix);
             }
