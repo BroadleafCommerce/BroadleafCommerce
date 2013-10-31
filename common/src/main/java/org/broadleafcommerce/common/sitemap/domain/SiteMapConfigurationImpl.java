@@ -78,7 +78,7 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
 
     @Override
     public String getSiteUrlPath() {
-        return siteUrlPath;
+        return fixSiteUrlPath(siteUrlPath);
     }
 
     @Override
@@ -109,4 +109,16 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
     public void setMaximumUrlEntriesPerFile(Integer maximumSiteMapURLEntriesPerFile) {
         this.maximumURLEntriesPerFile = maximumSiteMapURLEntriesPerFile;
     }
+
+    @Override
+    public String fixSiteUrlPath(String siteUrlPath) {
+        if (siteUrlPath == null) {
+            return siteUrlPath;
+        }
+        if (siteUrlPath.endsWith("/")) {
+            return siteUrlPath.substring(0, siteUrlPath.length() - 1);
+        }
+        return siteUrlPath;
+    }
+
 }

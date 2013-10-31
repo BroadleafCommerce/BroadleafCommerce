@@ -73,13 +73,15 @@ public interface SiteMapConfiguration extends ModuleConfiguration {
 
     /**
      * Returns the list of SiteMapGeneratorConfigurations used by this SiteMapConfiguration.
+     * 
      * @return
      */
     public List<SiteMapGeneratorConfiguration> getSiteMapGeneratorConfigurations();
     
     /**
      * Sets the list of SiteMapGeneratorConfigurations.
-     * @return
+     * 
+     * @param siteMapGeneratorConfigurations
      */
     public void setSiteMapGeneratorConfigurations(List<SiteMapGeneratorConfiguration> siteMapGeneratorConfigurations);
 
@@ -101,5 +103,13 @@ public interface SiteMapConfiguration extends ModuleConfiguration {
      * @param maximumUrlEntriesPerFile
      */
     public void setMaximumUrlEntriesPerFile(Integer maximumUrlEntriesPerFile);
+
+    /**
+     * Ensure that the site URL path does not end with a "/"
+     * 
+     * @param siteUrlPath
+     * @return
+     */
+    public String fixSiteUrlPath(String siteUrlPath);
 
 }
