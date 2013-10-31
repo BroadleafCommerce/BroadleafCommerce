@@ -41,10 +41,6 @@ public interface SandBox extends Serializable {
 
     public void setSandBoxType(SandBoxType sandBoxType);
 
-    public Site getSite();
-
-    public void setSite(Site site);
-
     public Long getAuthor();
 
     public void setAuthor(Long author);

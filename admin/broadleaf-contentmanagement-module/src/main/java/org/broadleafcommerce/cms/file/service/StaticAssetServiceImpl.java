@@ -16,6 +16,22 @@
 
 package org.broadleafcommerce.cms.file.service;
 
+import eu.medsea.mimeutil.MimeType;
+import eu.medsea.mimeutil.MimeUtil;
+import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
+import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.common.AbstractContentService;
@@ -39,22 +55,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import eu.medsea.mimeutil.MimeType;
-import eu.medsea.mimeutil.MimeUtil;
-import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
-import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import javax.annotation.Resource;
 
 /**
  * Created by bpolster.
@@ -276,12 +276,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     public StaticAsset addStaticAsset(StaticAsset staticAsset, SandBox destinationSandbox) {
         
         if (automaticallyApproveAndPromoteStaticAssets) {           
-            if (destinationSandbox != null && destinationSandbox.getSite() != null) {
-                destinationSandbox = destinationSandbox.getSite().getProductionSandbox();
-            } else {
-                // Null means production for single-site installations.
-                destinationSandbox = null;
-            }            
+            destinationSandbox = null;
         }
         
         staticAsset.setSandbox(destinationSandbox);
@@ -302,12 +297,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
         }
         
         if (automaticallyApproveAndPromoteStaticAssets) {           
-            if (destSandbox != null && destSandbox.getSite() != null) {
-                destSandbox = destSandbox.getSite().getProductionSandbox();
-            } else {
-                // Null means production for single-site installations.
-                destSandbox = null;
-            }
+            destSandbox = null;
         }
 
         if (checkForSandboxMatch(staticAsset.getSandbox(), destSandbox)) {

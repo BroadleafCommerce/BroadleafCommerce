@@ -16,6 +16,15 @@
 
 package org.broadleafcommerce.openadmin.security;
 
+import java.io.IOException;
+
+import javax.annotation.Resource;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.web.SandBoxContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -24,14 +33,6 @@ import org.broadleafcommerce.openadmin.server.service.SandBoxMode;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import javax.annotation.Resource;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
 
 /**
  * @author Jeff Fischer
@@ -57,7 +58,7 @@ public class AdminSandBoxFilter extends OncePerRequestFilter {
             session.removeAttribute(SANDBOX_ADMIN_ID_VAR);
             SandBoxContext.setSandBoxContext(null);
         } else {
-            SandBox sandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
+            SandBox sandBox = sandBoxService.retrieveUserSandBox(adminUser);
             session.setAttribute(SANDBOX_ADMIN_ID_VAR, sandBox.getId());
             session.removeAttribute(SANDBOX_ID_VAR);
             AdminSandBoxContext context = new AdminSandBoxContext();

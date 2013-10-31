@@ -67,14 +67,14 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
-    public SandBox retrieveUserSandBox(Site site, AdminUser adminUser) {
+    public SandBox retrieveUserSandBox(AdminUser adminUser) {
         SandBox userSandbox;
         if (adminUser.getOverrideSandBox() != null) {
             userSandbox = adminUser.getOverrideSandBox();
         } else {
-            userSandbox = retrieveSandBox(site, adminUser.getLogin(), SandBoxType.USER);
+            userSandbox = retrieveSandBox(adminUser.getLogin(), SandBoxType.USER);
             if (userSandbox == null) {
-                userSandbox = createSandBox(site, adminUser.getLogin(), SandBoxType.USER);
+                userSandbox = createSandBox(adminUser.getLogin(), SandBoxType.USER);
             }
         }
 
@@ -229,33 +229,29 @@ public class SandBoxServiceImpl implements SandBoxService {
         if (SandBoxType.USER.equals(sandBox.getSandBoxType())) {
             return retrieveApprovalSandBox(sandBox);
         } else if (SandBoxType.APPROVAL.equals(sandBox.getSandBoxType())) {
-            if (sandBox.getSite() != null) {
-                return sandBox.getSite().getProductionSandbox();
-            } else {
-                // null is the production sandbox for a single tenant application
-                return null;
-            }
+            // null is the production sandbox for a single tenant application
+            return null;
         }
         throw new IllegalArgumentException("Unable to determine next sandbox for " + sandBox);
     }
 
     public SandBox retrieveApprovalSandBox(SandBox sandBox) {
         final String APPROVAL_SANDBOX_NAME = "Approval";
-        SandBox approvalSandbox = retrieveSandBox(sandBox.getSite(), APPROVAL_SANDBOX_NAME, SandBoxType.APPROVAL);
+        SandBox approvalSandbox = retrieveSandBox(APPROVAL_SANDBOX_NAME, SandBoxType.APPROVAL);
 
         // If the approval sandbox doesn't exist, create it.
         if (approvalSandbox == null) {
-            approvalSandbox = createSandBox(sandBox.getSite(), APPROVAL_SANDBOX_NAME, SandBoxType.APPROVAL);
+            approvalSandbox = createSandBox(APPROVAL_SANDBOX_NAME, SandBoxType.APPROVAL);
         }
         
         return approvalSandbox;
     }
 
-    public synchronized SandBox createSandBox(Site site, String sandBoxName, SandBoxType sandBoxType) {
-        return sandBoxDao.createSandBox(site, sandBoxName, sandBoxType);
+    public synchronized SandBox createSandBox(String sandBoxName, SandBoxType sandBoxType) {
+        return sandBoxDao.createSandBox(sandBoxName, sandBoxType);
     }
 
-    public SandBox retrieveSandBox(Site site, String sandBoxName, SandBoxType sandBoxType) {
-        return sandBoxDao.retrieveNamedSandBox(site, sandBoxType, sandBoxName);
+    public SandBox retrieveSandBox(String sandBoxName, SandBoxType sandBoxType) {
+        return sandBoxDao.retrieveNamedSandBox(sandBoxType, sandBoxName);
     }
 }

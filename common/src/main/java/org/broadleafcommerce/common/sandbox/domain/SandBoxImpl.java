@@ -73,10 +73,6 @@ public class SandBoxImpl implements SandBox {
     @Column(name="AUTHOR")
     protected Long author;
 
-    @ManyToOne(targetEntity = SiteImpl.class)
-    @JoinTable(name = "BLC_SITE_SANDBOX", joinColumns = @JoinColumn(name = "SANDBOX_ID"), inverseJoinColumns = @JoinColumn(name = "SITE_ID"))
-    protected Site site;
-
     @Column(name = "SANDBOX_TYPE")
     @AdminPresentation(friendlyName = "SandBoxImpl_SandBox_Type", group = "SandBoxImpl_Description", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.sandbox.domain.SandBoxType")
     protected String sandboxType;
@@ -133,16 +129,6 @@ public class SandBoxImpl implements SandBox {
     @Override
     public void setAuthor(Long author) {
         this.author = author;
-    }
-
-    @Override
-    public Site getSite() {
-        return site;
-    }
-
-    @Override
-    public void setSite(Site site) {
-        this.site = site;
     }
 
     @Override
@@ -204,10 +190,6 @@ public class SandBoxImpl implements SandBox {
             clone.setName(name);
             clone.setAuthor(author);
             clone.setSandBoxType(getSandBoxType());
-
-            if (site != null) {
-                clone.setSite(site.clone());
-            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
