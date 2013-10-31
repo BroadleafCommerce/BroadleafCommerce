@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.common.file.service;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.tools.view.ImportSupport;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,12 +34,81 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
     protected String staticAssetEnvironmentSecureUrlPrefix;
 
     /**
+     * This method will take in a content string (e.g. StructuredContentDTO or PageDTO HTML/ASSET_LOOKUP/STRING field value)
+     * and replace any instances of "staticAssetUrlPrefix" in the string with the "staticAssetEnvironmentUrlPrefix"
+     * or the "staticAssetEnvironmentSecureUrlPrefix" depending on if the request was secure and if it was configured.
+     *
+     * Given asset.server.url.prefix.internal=cmsstatic
+     * Given asset.server.url.prefix=http://static.mydomain.com/cmsstatic
+     * Given asset.server.url.prefix.secure=https://static.mydomain.com/cmsstatic
+     *
+     * Example 1:
+     * Given content = "<p><img src="/cmsstatic/my_image.jpg"/></p>"
+     *
+     * The result should yield: "<p><img src="http://static.mydomain.com/cmsstatic/my_image.jpg"/></p>"
+     *
+     * Example 2:
+     * Given content = "<p><img src="cmsstatic/my_image_2.jpg"/></p>"
+     *
+     * The result should yield: "<p><img src="http://static.mydomain.com/cmsstatic/my_image_2.jpg"/></p>"
+     *
+     * @param content       - The content string to rewrite if it contains a cms managed asset
+     * @param secureRequest - True if the request is being served over https
+     * @return
+     * @see org.broadleafcommerce.common.file.service.StaticAssetService#getStaticAssetUrlPrefix()
+     * @see org.broadleafcommerce.common.file.service.StaticAssetService#getStaticAssetEnvironmentUrlPrefix()
+     */
+    @Override
+    public String convertAllAssetPathsInContent(String content, boolean secureRequest) {
+        String returnValue = content;
+
+        if (StringUtils.isNotBlank(content) &&
+                StringUtils.isNotBlank(getStaticAssetUrlPrefix()) &&
+                StringUtils.isNotBlank(getStaticAssetEnvironmentUrlPrefix()) &&
+                content.contains(getStaticAssetUrlPrefix())) {
+
+            final String envPrefix;
+            if (secureRequest) {
+                envPrefix = getStaticAssetEnvironmentSecureUrlPrefix();
+            } else {
+                envPrefix = getStaticAssetEnvironmentUrlPrefix();
+            }
+
+            if (envPrefix != null) {
+                returnValue = returnValue.replaceAll(getStaticAssetUrlPrefix(), envPrefix);
+                //Catch any scenario where there is a leading "/" after the replacement
+                returnValue = returnValue.replaceAll("/"+envPrefix, envPrefix);
+            }
+
+        }
+
+        return returnValue;
+    }
+
+    /**
      * This method will take in an assetPath (think image url) and prepend the
      * staticAssetUrlPrefix if one exists.
      * 
      * Will append any contextPath onto the request.    If the incoming assetPath contains
      * the internalStaticAssetPrefix and the image is being prepended, the prepend will be
      * removed.
+     *
+     * Example 1:
+     * Given asset.server.url.prefix.internal=cmsstatic
+     * Given asset.server.url.prefix=http://static.mydomain.com/cmsstatic
+     * Given asset.server.url.prefix.secure=https://static.mydomain.com/cmsstatic
+     * Given assetPath = "/cmsstatic/my_image.jpg"
+     *
+     * The result should yield: "http://static.mydomain.com/cmsstatic/my_image.jpg"
+     *
+     * Example 2:
+     * Given asset.server.url.prefix.internal=cmsstatic
+     * Given asset.server.url.prefix=
+     * Given asset.server.url.prefix.secure=
+     * Given assetPath = "/cmsstatic/my_image.jpg"
+     * Given contextPath = "myApp"
+     *
+     * The result should yield: "/myApp/cmsstatic/my_image.jpg"
      *
      * @param assetPath     - The path to rewrite if it is a cms managed asset
      * @param contextPath   - The context path of the web application (if applicable)

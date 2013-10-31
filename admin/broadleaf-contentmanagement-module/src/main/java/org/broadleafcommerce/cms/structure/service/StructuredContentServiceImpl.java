@@ -403,7 +403,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             StructuredContentField scf = sc.getStructuredContentFields().get(fieldKey);
             String originalValue = scf.getValue();
             if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
-                String fldValue = staticAssetPathService.convertAssetPath(originalValue, null, secure);
+                //This may either be an ASSET_LOOKUP image path or an HTML block (with multiple <img>) or a plain STRING that contains the cmsPrefix.
+                //If there is an environment prefix configured (e.g. a CDN), then we must replace the cmsPrefix with this one.
+                String fldValue = staticAssetPathService.convertAllAssetPathsInContent(originalValue, secure);
                 scDTO.getValues().put(fieldKey, fldValue);
             } else {
                 FieldDefinition definition = null;
