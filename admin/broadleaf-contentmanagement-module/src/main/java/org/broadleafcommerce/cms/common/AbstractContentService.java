@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.cms.common;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -27,8 +29,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-
-import java.util.List;
 
 /**
  * PageService and StructuredContentService are similar and can share
@@ -78,12 +78,7 @@ public class AbstractContentService  {
         Criterion originalSandboxExpression = Restrictions.eq("originalSandBox", sandbox);
         Criterion currentSandboxExpression = Restrictions.eq("sandbox", sandbox);
         Criterion userSandboxExpression = Restrictions.or(currentSandboxExpression, originalSandboxExpression);
-        Criterion productionSandboxExpression = null;
-        if (sandbox.getSite() == null || sandbox.getSite().getProductionSandbox() == null) {
-            productionSandboxExpression = Restrictions.isNull("sandbox");
-        } else {
-            productionSandboxExpression = Restrictions.eq("sandbox", sandbox.getSite().getProductionSandbox());
-        }
+        Criterion productionSandboxExpression = Restrictions.isNull("sandbox");
 
         if (productionSandboxExpression != null) {
             c.add(Restrictions.or(userSandboxExpression, productionSandboxExpression));

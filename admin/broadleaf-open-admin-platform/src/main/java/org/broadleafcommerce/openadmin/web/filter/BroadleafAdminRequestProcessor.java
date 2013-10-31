@@ -16,6 +16,10 @@
 
 package org.broadleafcommerce.openadmin.web.filter;
 
+import java.util.TimeZone;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
@@ -28,21 +32,12 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafSandBoxResolver;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.broadleafcommerce.common.web.BroadleafTimeZoneResolver;
-import org.broadleafcommerce.common.web.SandBoxContext;
-import org.broadleafcommerce.openadmin.security.AdminSandBoxContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
-import org.broadleafcommerce.openadmin.server.service.SandBoxMode;
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.TimeZone;
 
 
 /**
@@ -99,7 +94,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             //clear any sandbox
             request.removeAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
         } else {
-            SandBox sandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
+            SandBox sandBox = sandBoxService.retrieveUserSandBox(adminUser);
             request.setAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, sandBox.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
             brc.setSandbox(sandBox);
             brc.getAdditionalProperties().put(ADMIN_USER_PROPERTY, adminUser);

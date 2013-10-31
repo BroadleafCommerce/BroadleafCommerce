@@ -16,14 +16,14 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
+import java.util.Calendar;
+import java.util.List;
+
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-
-import java.util.Calendar;
-import java.util.List;
 
 public interface SandBoxService {
 
@@ -39,7 +39,7 @@ public interface SandBoxService {
      * @param adminUser
      * @return
      */
-    public SandBox retrieveUserSandBox(Site site, AdminUser adminUser);
+    public SandBox retrieveUserSandBox(AdminUser adminUser);
 
     public void promoteAllSandBoxItems(SandBox sandBox, String comment);
 
@@ -59,8 +59,8 @@ public interface SandBoxService {
 
     public SandBox retrieveApprovalSandBox(SandBox sandBox);
 
-    public SandBox createSandBox(Site site, String sandBoxName, SandBoxType sandBoxType) throws Exception;
+    public SandBox createSandBox(String sandBoxName, SandBoxType sandBoxType) throws Exception;
 
-    public SandBox retrieveSandBox(Site site, String sandBoxName, SandBoxType sandBoxType);
+    public SandBox retrieveSandBox(String sandBoxName, SandBoxType sandBoxType);
 
 }

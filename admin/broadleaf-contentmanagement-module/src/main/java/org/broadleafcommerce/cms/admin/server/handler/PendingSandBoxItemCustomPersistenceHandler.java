@@ -16,6 +16,11 @@
 
 package org.broadleafcommerce.cms.admin.server.handler;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -35,11 +40,6 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -104,7 +104,7 @@ public class PendingSandBoxItemCustomPersistenceHandler extends SandBoxItemCusto
                 throw e;
             }
 
-            SandBox mySandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
+            SandBox mySandBox = sandBoxService.retrieveUserSandBox(adminUser);
             SandBox approvalSandBox = sandBoxService.retrieveApprovalSandBox(mySandBox);
 
             if (operation.equals("releaseAll")) {

@@ -16,11 +16,10 @@
 
 package org.broadleafcommerce.common.sandbox.dao;
 
+import java.util.List;
+
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
-import org.broadleafcommerce.common.site.domain.Site;
-
-import java.util.List;
 
 public interface SandBoxDao {
 
@@ -28,13 +27,13 @@ public interface SandBoxDao {
     
     public List<SandBox> retrieveAllSandBoxes();
 
-    public SandBox retrieveSandBoxByType(Site site, SandBoxType sandboxType);
+    public SandBox retrieveSandBoxByType(SandBoxType sandboxType);
 
-    public SandBox retrieveNamedSandBox(Site site, SandBoxType sandboxType, String sandboxName);
+    public SandBox retrieveNamedSandBox(SandBoxType sandboxType, String sandboxName);
 
     public SandBox persist(SandBox entity);
 
-    public SandBox createSandBox(Site site, String sandBoxName, SandBoxType sandBoxType);
+    public SandBox createSandBox(String sandBoxName, SandBoxType sandBoxType);
 
 
 }

@@ -164,10 +164,10 @@ public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandle
             SandBox originalSandBox;
             SandBox currentSandBox;
             if (moduleKey.equals("userSandBox")) {
-                currentSandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
+                currentSandBox = sandBoxService.retrieveUserSandBox(adminUser);
                 originalSandBox = currentSandBox;
             } else {
-                originalSandBox = sandBoxService.retrieveUserSandBox(null, adminUser);
+                originalSandBox = sandBoxService.retrieveUserSandBox(adminUser);
                 currentSandBox = sandBoxService.retrieveApprovalSandBox(originalSandBox);
             }
 
