@@ -16,35 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -98,6 +69,35 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 
 /**
  * @author jfischer
@@ -207,7 +207,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     }
 
     @Override
-    public Serializable createPopulatedInstance(Serializable instance, Entity entity, Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws ValidationException {
+    public Serializable createPopulatedInstance(Serializable instance, Entity entity, 
+            Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws ValidationException {
+        return createPopulatedInstance(instance, entity, unfilteredProperties, setId, true);
+    }
+
+    @Override
+    public Serializable createPopulatedInstance(Serializable instance, Entity entity, 
+            Map<String, FieldMetadata> unfilteredProperties, Boolean setId, Boolean validateUnsubmittedProperties) throws ValidationException {
         Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(unfilteredProperties);
         FieldManager fieldManager = getFieldManager();
         boolean handled = false;
@@ -300,7 +307,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     }
                 }
             }
-            validate(entity, instance, mergedProperties);
+            validate(entity, instance, mergedProperties, validateUnsubmittedProperties);
             //if validation failed, refresh the current instance so that none of the changes will be persisted
             if (entity.isValidationFailure()) {
                 //only refresh the instance if it was managed to begin with
@@ -644,7 +651,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
             Assert.isTrue(instance != null, "Entity not found");
 
-            instance = createPopulatedInstance(instance, entity, mergedProperties, false);
+            instance = createPopulatedInstance(instance, entity, mergedProperties, false, persistencePackage.isValidateUnsubmittedProperties());
             if (!entity.isValidationFailure()) {
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
                 if (includeRealEntity) {
@@ -1027,7 +1034,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Override
     public boolean validate(Entity entity, Serializable populatedInstance, Map<String, FieldMetadata> mergedProperties) {
-        entityValidatorService.validate(entity, populatedInstance, mergedProperties, this);
+        return validate(entity, populatedInstance, mergedProperties, true);
+    }
+
+    @Override
+    public boolean validate(Entity entity, Serializable populatedInstance, Map<String, FieldMetadata> mergedProperties, 
+            boolean validateUnsubmittedProperties) {
+        entityValidatorService.validate(entity, populatedInstance, mergedProperties, this, validateUnsubmittedProperties);
         return !entity.isValidationFailure();
     }
 

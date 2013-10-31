@@ -16,8 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.factory;
 
-import java.util.Map;
-
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.dto.OperationTypes;
@@ -25,6 +23,8 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -84,6 +84,8 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
         pp.setCustomCriteria(request.getCustomCriteria());
         pp.setCsrfToken(null);
         pp.setRequestingEntityName(request.getRequestingEntityName());
+        pp.setValidateUnsubmittedProperties(request.isValidateUnsubmittedProperties());
+
 
         if (request.getEntity() != null) {
             pp.setEntity(request.getEntity());
