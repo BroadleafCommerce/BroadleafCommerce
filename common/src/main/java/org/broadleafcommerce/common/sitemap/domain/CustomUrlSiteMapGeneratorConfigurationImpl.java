@@ -34,14 +34,14 @@ import javax.persistence.Table;
  * @author bpolster
  */
 @Entity
-@Table(name = "BLC_CUST_URL_SITEMAP_GEN_CFG")
-@AdminPresentationClass(friendlyName = "CustomUrlSiteMapGeneratorConfiguration")
+@Table(name = "BLC_CUST_SITE_MAP_GEN_CFG")
+@AdminPresentationClass(friendlyName = "CustomUrlSiteMapGeneratorConfigurationImpl")
 public class CustomUrlSiteMapGeneratorConfigurationImpl extends SiteMapGeneratorConfigurationImpl implements CustomUrlSiteMapGeneratorConfiguration {
 
     private static final long serialVersionUID = 1L;
 
     @OneToMany(mappedBy = "customUrlSiteMapGeneratorConfiguration", targetEntity = SiteMapURLEntryImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @AdminPresentationCollection(friendlyName = "CustomSiteMapConfiguration_Custom_URL_Entries")
+    @AdminPresentationCollection(friendlyName = "CustomUrlSiteMapGeneratorConfigurationImpl_Custom_URL_Entries")
     protected List<SiteMapURLEntry> customURLEntries = new ArrayList<SiteMapURLEntry>();
     
     @Override

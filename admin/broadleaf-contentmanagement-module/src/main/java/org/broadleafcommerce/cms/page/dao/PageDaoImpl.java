@@ -121,7 +121,7 @@ public class PageDaoImpl implements PageDao {
     }
     
     @Override
-    public List<Page> readOnlinePages(int limit, int offset, String sortBy) {
+    public List<Page> readOnlineAndIncludedPages(int limit, int offset, String sortBy) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Page> criteria = builder.createQuery(Page.class);
         Root<PageImpl> page = criteria.from(PageImpl.class);

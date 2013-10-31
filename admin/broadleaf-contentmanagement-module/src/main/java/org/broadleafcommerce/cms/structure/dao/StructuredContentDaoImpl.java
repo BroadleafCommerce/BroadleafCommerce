@@ -35,7 +35,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -88,36 +87,6 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         }
     }
     
-    @Override
-    public List<StructuredContent> findOnlineStructuredContent(int limit, int offset) {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<StructuredContent> criteria = builder.createQuery(StructuredContent.class);
-        Root<StructuredContentImpl> sc = criteria.from(StructuredContentImpl.class);
-        criteria.select(sc);
-        criteria.where(builder.not(builder.isTrue(sc.get("offlineFlag").as(Boolean.class))));
-        TypedQuery<StructuredContent> query = em.createQuery(criteria);
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-
-        return query.getResultList();
-    }
-
-    @Override
-    public List<StructuredContent> findOnlineStructuredContentByType(StructuredContentType structuredContentType, int limit, int offset) {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<StructuredContent> criteria = builder.createQuery(StructuredContent.class);
-        Root<StructuredContentImpl> sc = criteria.from(StructuredContentImpl.class);
-        criteria.select(sc);
-        criteria.where(builder.and(
-                builder.equal(sc.get("structuredContentType"), structuredContentType),
-                builder.not(builder.isTrue(sc.get("offlineFlag").as(Boolean.class)))));
-        TypedQuery<StructuredContent> query = em.createQuery(criteria);
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-
-        return query.getResultList();
-    }
-
     @Override
     public StructuredContent addOrUpdateContentItem(StructuredContent content) {
         return em.merge(content);

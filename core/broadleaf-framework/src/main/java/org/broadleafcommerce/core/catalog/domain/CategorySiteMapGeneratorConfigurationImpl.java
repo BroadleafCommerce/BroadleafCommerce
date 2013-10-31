@@ -33,24 +33,24 @@ import javax.persistence.Table;
  * @author Joshua Skorton (jskorton)
  */
 @Entity
-@Table(name = "BLC_CAT_SITEMAP_GEN_CFG")
-@AdminPresentationClass(friendlyName = "CategorySiteMapGeneratorConfiguration")
+@Table(name = "BLC_CAT_SITE_MAP_GEN_CFG")
+@AdminPresentationClass(friendlyName = "CategorySiteMapGeneratorConfigurationImpl")
 public class CategorySiteMapGeneratorConfigurationImpl extends SiteMapGeneratorConfigurationImpl implements CategorySiteMapGeneratorConfiguration {
 
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "ROOT_CATEGORY_ID", nullable = false)
-    @AdminPresentation(friendlyName = "CategorySiteMapGeneratorConfiguration_Root_Category")
+    @AdminPresentation(friendlyName = "CategorySiteMapGeneratorConfigurationImpl_Root_Category")
     @AdminPresentationToOneLookup()
     protected Category rootCategory;
 
     @Column(name = "STARTING_DEPTH", nullable = false)
-    @AdminPresentation(friendlyName = "CategorySiteMapGeneratorConfiguration_Starting_Depth")
+    @AdminPresentation(friendlyName = "CategorySiteMapGeneratorConfigurationImpl_Starting_Depth")
     protected int startingDepth = 1;
 
     @Column(name = "ENDING_DEPTH", nullable = false)
-    @AdminPresentation(friendlyName = "CategorySiteMapGeneratorConfiguration_Ending_Depth")
+    @AdminPresentation(friendlyName = "CategorySiteMapGeneratorConfigurationImpl_Ending_Depth")
     protected int endingDepth = 1;
 
     @Override

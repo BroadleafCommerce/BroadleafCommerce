@@ -39,23 +39,23 @@ import javax.persistence.Table;
  * @author Joshua Skorton (jskorton)
  */
 @Entity
-@Table(name = "BLC_SITEMAP_URL_ENTRY")
+@Table(name = "BLC_SITE_MAP_URL_ENTRY")
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
-@AdminPresentationClass(friendlyName = "SiteMapURLEntry")
+@AdminPresentationClass(friendlyName = "SiteMapURLEntryImpl")
 public class SiteMapURLEntryImpl implements SiteMapURLEntry {
 
     private static final long serialVersionUID = 1L;
     
     @Id
-    @GeneratedValue(generator = "SiteMapURLEntryId")
+    @GeneratedValue(generator = "URLEntryId")
     @GenericGenerator(
-            name = "SiteMapURLEntryId",
+            name = "URLEntryId",
             strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SiteMapURLEntryImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.sitemap.domain.SiteMapURLEntryImpl")
             })
-    @Column(name = "SITE_MAP_URL_ENTRY_ID")
+    @Column(name = "URL_ENTRY_ID")
     protected Long id;
 
     @Column(name = "LOCATION", nullable = false)
@@ -66,18 +66,18 @@ public class SiteMapURLEntryImpl implements SiteMapURLEntry {
     @AdminPresentation(friendlyName = "SiteMapURLEntryImpl_Last_Modified", fieldType = SupportedFieldType.DATE, gridOrder = 2, prominent = true)
     protected Date lastModified = new Date();
     
-    @Column(name = "CHANGE_FREQ_TYPE", nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapURLEntry_Site_Map_Change_Freq_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+    @Column(name = "CHANGE_FREQ", nullable = false)
+    @AdminPresentation(friendlyName = "SiteMapURLEntryImpl_Change_Freq", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType", gridOrder = 3, prominent = true)
-    protected String siteMapChangeFreqType;
+    protected String changeFreq;
 
-    @Column(name = "SITE_MAP_PRIORITY", nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapURLEntry_Site_Map_Priority", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+    @Column(name = "PRIORITY", nullable = false)
+    @AdminPresentation(friendlyName = "SiteMapURLEntryImpl_Priority", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType", gridOrder = 4, prominent = true)
-    protected String siteMapPriority;
+    protected String priority;
     
     @ManyToOne(targetEntity = CustomUrlSiteMapGeneratorConfigurationImpl.class, optional = false)
-    @JoinColumn(name = "SITE_MAP_GEN_CONFIG_ID")
+    @JoinColumn(name = "GEN_CONFIG_ID")
     protected CustomUrlSiteMapGeneratorConfiguration customUrlSiteMapGeneratorConfiguration;
     
     @Override
@@ -112,8 +112,8 @@ public class SiteMapURLEntryImpl implements SiteMapURLEntry {
 
     @Override
     public SiteMapChangeFreqType getSiteMapChangeFreqType() {
-        if (siteMapChangeFreqType != null) {
-            return SiteMapChangeFreqType.getInstance(this.siteMapChangeFreqType);
+        if (changeFreq != null) {
+            return SiteMapChangeFreqType.getInstance(this.changeFreq);
         } else {
             return null;
         }
@@ -122,16 +122,16 @@ public class SiteMapURLEntryImpl implements SiteMapURLEntry {
     @Override
     public void setSiteMapChangeFreqType(SiteMapChangeFreqType siteMapChangeFreqType) {
         if (siteMapChangeFreqType != null) {
-            this.siteMapChangeFreqType = siteMapChangeFreqType.getType();
+            this.changeFreq = siteMapChangeFreqType.getType();
         } else {
-            this.siteMapChangeFreqType = null;
+            this.changeFreq = null;
         }
     }
 
     @Override
     public SiteMapPriorityType getSiteMapPriorityType() {
-        if (siteMapPriority != null) {
-            return SiteMapPriorityType.getInstance(this.siteMapPriority);
+        if (priority != null) {
+            return SiteMapPriorityType.getInstance(this.priority);
         } else {
             return null;
         }
@@ -140,9 +140,9 @@ public class SiteMapURLEntryImpl implements SiteMapURLEntry {
     @Override
     public void setSiteMapPriorityType(SiteMapPriorityType siteMapPriority) {
         if (siteMapPriority != null) {
-            this.siteMapPriority = siteMapPriority.getType();
+            this.priority = siteMapPriority.getType();
         } else {
-            this.siteMapPriority = null;
+            this.priority = null;
         }
 
     }

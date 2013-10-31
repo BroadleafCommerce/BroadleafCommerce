@@ -36,29 +36,29 @@ import javax.persistence.Table;
  * @author Joshua Skorton (jskorton)
  */
 @Entity
-@Table(name = "BLC_SITEMAP_CFG")
+@Table(name = "BLC_SITE_MAP_CFG")
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
-@AdminPresentationClass(friendlyName = "SiteMapConfiguration")
+@AdminPresentationClass(friendlyName = "SiteMapConfigurationImpl")
 public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implements SiteMapConfiguration {
 
     private static final long serialVersionUID = 1L;
     private static Integer DEFAULT_MAX_URL_ENTRIES = 50000;
 
-    @Column(name = "SITE_MAP_PRIMARY_FILE_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapConfiguration_Site_Map_Primary_File_Name")
-    protected String siteMapPrimaryFileName = "sitemap.xml";
+    @Column(name = "PRIMARY_FILE_NAME", nullable = false)
+    @AdminPresentation(friendlyName = "SiteMapConfigurationImpl_Primary_File_Name")
+    protected String primaryFileName = "sitemap.xml";
 
     @Column(name = "MAX_URL_ENTRIES_PER_FILE")
     @AdminPresentation(excluded = true)
     // This defaults to 50000 and does not normally need to be changed so it is excluded from the admin by default.
-    protected Integer maximumSiteMapURLEntriesPerFile;
+    protected Integer maximumURLEntriesPerFile;
 
     @Column(name = "SITE_URL_PATH", nullable = false)
-    @AdminPresentation(friendlyName = "SiteMapConfiguration_Site_URL_Path")
+    @AdminPresentation(friendlyName = "SiteMapConfigurationImpl_Site_URL_Path")
     protected String siteUrlPath;
 
     @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @AdminPresentationCollection(friendlyName = "SiteMapConfiguration_Site_Map_Generator_Configurations")
+    @AdminPresentationCollection(friendlyName = "SiteMapConfigurationImpl_Generator_Configurations")
     protected List<SiteMapGeneratorConfiguration> siteMapGeneratorConfigurations = new ArrayList<SiteMapGeneratorConfiguration>();
 
     public SiteMapConfigurationImpl() {
@@ -68,12 +68,12 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
 
     @Override
     public String getSiteMapPrimaryFileName() {
-        return siteMapPrimaryFileName;
+        return primaryFileName;
     }
 
     @Override
     public void setSiteMapPrimaryFileName(String siteMapPrimaryFileName) {
-        this.siteMapPrimaryFileName = siteMapPrimaryFileName;
+        this.primaryFileName = siteMapPrimaryFileName;
     }
 
     @Override
@@ -98,15 +98,15 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
 
     @Override
     public Integer getMaximumUrlEntriesPerFile() {
-        if (maximumSiteMapURLEntriesPerFile == null) {
+        if (maximumURLEntriesPerFile == null) {
             return DEFAULT_MAX_URL_ENTRIES;
         } else {
-            return maximumSiteMapURLEntriesPerFile.intValue();
+            return maximumURLEntriesPerFile.intValue();
         }
     }
 
     @Override
     public void setMaximumUrlEntriesPerFile(Integer maximumSiteMapURLEntriesPerFile) {
-        this.maximumSiteMapURLEntriesPerFile = maximumSiteMapURLEntriesPerFile;
+        this.maximumURLEntriesPerFile = maximumSiteMapURLEntriesPerFile;
     }
 }

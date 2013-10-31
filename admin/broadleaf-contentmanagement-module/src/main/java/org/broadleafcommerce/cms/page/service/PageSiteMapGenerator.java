@@ -58,7 +58,7 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
         String previousUrl = "";
 
         do {
-            pages = pageDao.readOnlinePages(rowLimit, rowOffset, "fullUrl");
+            pages = pageDao.readOnlineAndIncludedPages(rowLimit, rowOffset, "fullUrl");
             rowOffset += pages.size();
             for (Page page : pages) {
 
