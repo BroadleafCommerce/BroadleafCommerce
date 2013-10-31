@@ -72,9 +72,7 @@ public class SiteMapServiceImpl implements SiteMapService {
             return smgr;
         }
 
-        SiteMapBuilder siteMapBuilder = new SiteMapBuilder(smc, tempDirectory);
-        siteMapBuilder.setGzipSiteMap(gzipSiteMap);
-        siteMapBuilder.setGzipSiteMapIndex(gzipSiteMapIndex);
+        SiteMapBuilder siteMapBuilder = new SiteMapBuilder(smc, tempDirectory, this.isGzipSiteMap(), this.isGzipSiteMapIndex());
 
         for (SiteMapGeneratorConfiguration currentConfiguration : smc.getSiteMapGeneratorConfigurations()) {
             if (currentConfiguration.getDisabled()) {
@@ -146,8 +144,9 @@ public class SiteMapServiceImpl implements SiteMapService {
      * 
      * @return
      */
+    @Override
     public String getTempDirectory() {
-        return tempDirectory;
+        return fixTempDirectory(tempDirectory);
     }
 
     /**
@@ -156,8 +155,39 @@ public class SiteMapServiceImpl implements SiteMapService {
      * 
      * @return
      */
+    @Override
     public void setTempDirectory(String tempDirectory) {
         this.tempDirectory = tempDirectory;
+    }
+
+    // Ensure that the temp directory ends with a "/"
+    @Override
+    public String fixTempDirectory(String tempDirectory) {
+        assert tempDirectory != null;
+        if (tempDirectory.endsWith("/")) {
+            return tempDirectory + "/";
+        }
+        return tempDirectory;
+    }
+
+    @Override
+    public boolean isGzipSiteMapIndex() {
+        return gzipSiteMapIndex;
+    }
+
+    @Override
+    public void setGzipSiteMapIndex(boolean gzipSiteMapIndex) {
+        this.gzipSiteMapIndex = gzipSiteMapIndex;
+    }
+
+    @Override
+    public boolean isGzipSiteMap() {
+        return gzipSiteMap;
+    }
+
+    @Override
+    public void setGzipSiteMap(boolean gzipSiteMap) {
+        this.gzipSiteMap = gzipSiteMap;
     }
 
 }

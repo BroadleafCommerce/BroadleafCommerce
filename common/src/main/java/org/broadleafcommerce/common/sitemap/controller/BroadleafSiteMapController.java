@@ -46,6 +46,7 @@ public class BroadleafSiteMapController {
     @Resource(name = "blSiteMapService")
     protected SiteMapService siteMapService;
     
+    @Resource()
     /**
      * Generates site map
      * 
@@ -75,7 +76,7 @@ public class BroadleafSiteMapController {
      */
 
     public FileSystemResource retrieveSiteMapIndex(HttpServletRequest request, HttpServletResponse response, Model model, String fileName) {
-        return new FileSystemResource(new File(fixTempDirectory(System.getProperty("java.io.tmpdir")) + fileName));
+        return new FileSystemResource(new File(siteMapService.getTempDirectory() + fileName));
     }
 
     /**
@@ -91,7 +92,7 @@ public class BroadleafSiteMapController {
         try {
 
             // get your file as InputStream
-            InputStream is = new FileInputStream(new File(fixTempDirectory(System.getProperty("java.io.tmpdir")) + fileName));
+            InputStream is = new FileInputStream(new File(siteMapService.getTempDirectory() + fileName));
             // copy it to response's OutputStream
             IOUtils.copy(is, response.getOutputStream());
             response.flushBuffer();
@@ -99,15 +100,6 @@ public class BroadleafSiteMapController {
             //LOG.info("Error writing file to output stream. Filename was '" + fileName + "'");
             throw new RuntimeException("IOError writing file to output stream");
         }
-    }
-
-    // Ensure that the temp directory ends with a "/"
-    protected String fixTempDirectory(String tempDirectory) {
-        assert tempDirectory != null;
-        if (tempDirectory.endsWith("/")) {
-            return tempDirectory + "/";
-        }
-        return tempDirectory;
     }
 
 }

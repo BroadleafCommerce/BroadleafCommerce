@@ -59,4 +59,58 @@ public interface SiteMapService {
      * @return
      */
     public void setSiteMapGenerators(List<SiteMapGenerator> siteMapGenerators);
+
+    /**
+     * Returns the root directory used to build the sitemap files.
+     * Defaults to java.io.tmpdir.
+     * 
+     * @return
+     */
+    public String getTempDirectory();
+
+    /**
+     * Returns the root directory used to build the sitemap files.
+     * Defaults to java.io.tmpdir.
+     * 
+     * @return
+     */
+    public void setTempDirectory(String tempDirectory);
+
+    /**
+     * Ensure that the temp directory ends with a "/"
+     * 
+     * @param tempDirectory
+     * @return
+     */
+    public String fixTempDirectory(String tempDirectory);
+
+
+    /**
+     * Return the flag indicating if the site map index file will be gzipped.
+     * 
+     * @return
+     */
+    public boolean isGzipSiteMapIndex();
+
+    /**
+     * Sets the flag indicating if the site map index file will be gzipped.
+     * 
+     * @param gzipSiteMapIndex
+     */
+    public void setGzipSiteMapIndex(boolean gzipSiteMapIndex);
+
+    /**
+     * Return the flag indicating if the site map file(s) will be gzipped.
+     * 
+     * @return
+     */
+    public boolean isGzipSiteMap();
+
+    /**
+     * Sets the flag indicating if the site map file(s) will be gzipped.
+     * 
+     * @param gzipSiteMap
+     */
+    public void setGzipSiteMap(boolean gzipSiteMap);
+
 }

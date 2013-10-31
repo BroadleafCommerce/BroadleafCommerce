@@ -59,9 +59,11 @@ public class SiteMapBuilder {
     protected SiteMapURLSetWrapper currentURLSetWrapper;
     protected List<String> indexedFileNames = new ArrayList<String>();
 
-    public SiteMapBuilder(SiteMapConfiguration siteMapConfig, String tempDirectory) {
+    public SiteMapBuilder(SiteMapConfiguration siteMapConfig, String tempDirectory, boolean gzipSiteMap, boolean gzipSiteMapIndex) {
         this.siteMapConfig = siteMapConfig;
         this.tempDirectory = tempDirectory;
+        this.gzipSiteMap = gzipSiteMap;
+        this.gzipSiteMapIndex = gzipSiteMapIndex;
         fixTempDirectory();
         currentURLSetWrapper = new SiteMapURLSetWrapper();
     }
