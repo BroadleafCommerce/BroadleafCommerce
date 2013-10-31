@@ -76,13 +76,24 @@ public interface RecordHelper extends DataFormatProvider {
      * @param entity
      * @param mergedProperties
      * @param setId
+     * @param validateUnsubmittedProperties if set to true, will ignore validation for properties that weren't submitted
+     *                                      along with the entity
      * @throws ValidationException if after populating <b>instance</b> via the values in <b>entity</b> then
      * {@link EntityValidatorService#validate(Entity, Serializable, Map)} returns false
      * @return <b>instance</b> populated with the property values from <b>entity</b> according to the metadata specified
      * in <b>mergedProperties</b>
      * @see {@link EntityValidatorService}
      */
-    public Serializable createPopulatedInstance(Serializable instance, Entity entity, Map<String, FieldMetadata> mergedProperties, Boolean setId) throws ValidationException;
+    public Serializable createPopulatedInstance(Serializable instance, Entity entity, 
+            Map<String, FieldMetadata> mergedProperties, Boolean setId, Boolean validateUnsubmittedProperties) throws ValidationException;
+
+    /**
+     * Delegates to the overloaded method with validateUnsubmittedProperties set to true.
+     * 
+     * @see #createPopulatedInstance(Serializable, Entity, Map, Boolean, Boolean)
+     */
+    public Serializable createPopulatedInstance(Serializable instance, Entity entity, 
+            Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws ValidationException;
     
     public Object getPrimaryKey(Entity entity, Map<String, FieldMetadata> mergedProperties);
     
@@ -98,8 +109,17 @@ public interface RecordHelper extends DataFormatProvider {
      * accordingly as a result of the validation
      * @param populatedInstance
      * @param mergedProperties TODO
+     * @param validateUnsubmittedProperties if set to true, will ignore validation for properties that weren't submitted
+     *                                      along with the entity
      * @return whether or not the entity passed validation. This yields the same result as calling !{@link Entity#isValidationFailure()}
      * after invoking this method
+     */
+    public boolean validate(Entity entity, Serializable populatedInstance, Map<String, FieldMetadata> mergedProperties, boolean validateUnsubmittedProperties);
+
+    /**
+     * Delegates to the overloaded method with validateUnsubmittedProperties set to true.
+     * 
+     * @see #validate(Entity, Serializable, Map, boolean)
      */
     public boolean validate(Entity entity, Serializable populatedInstance, Map<String, FieldMetadata> mergedProperties);
 
@@ -121,5 +141,5 @@ public interface RecordHelper extends DataFormatProvider {
      */
     public String getStringValueFromGetter(Serializable instance, String propertyName)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
-    
+
 }

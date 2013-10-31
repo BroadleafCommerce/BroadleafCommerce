@@ -16,12 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.domain;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -38,6 +32,12 @@ import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A DTO class used to seed a persistence package.
@@ -56,6 +56,7 @@ public class PersistencePackageRequest {
     protected Integer startIndex;
     protected Integer maxIndex;
     protected Map<String, PersistencePackageRequest> subRequests = new LinkedHashMap<String, PersistencePackageRequest>();
+    protected boolean validateUnsubmittedProperties = true;
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -388,6 +389,14 @@ public class PersistencePackageRequest {
 
     public void setSubRequests(Map<String, PersistencePackageRequest> subRequests) {
         this.subRequests = subRequests;
+    }
+
+    public boolean isValidateUnsubmittedProperties() {
+        return validateUnsubmittedProperties;
+    }
+
+    public void setValidateUnsubmittedProperties(boolean validateUnsubmittedProperties) {
+        this.validateUnsubmittedProperties = validateUnsubmittedProperties;
     }
     
 }
