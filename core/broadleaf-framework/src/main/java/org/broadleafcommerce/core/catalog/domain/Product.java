@@ -598,18 +598,26 @@ public interface Product extends Serializable {
      * (which could be "small" "medium" "large", "blue", "yellow", "green").  For specific pricing or
      * inventory needs on a per-value basis, multiple Skus can be associated to this Product based
      * off of the {@link ProductOptionValue}s
-     * 
+     *
+     * @deprecated use getProductOptionXrefs instead
      * @return the {@link ProductOption}s for this Product
      * @see Product#getAdditionalSkus(), {@link ProductOption}, {@link ProductOptionValue}
      */
+    @Deprecated
     public List<ProductOption> getProductOptions();
+
+    public List<ProductOptionXref> getProductOptionXrefs();
 
     /**
      * Sets the list of available ProductOptions for this Product
-     * 
+     *
+     * @deprecated use setProductOptionXrefs instead
      * @param productOptions
      */
+    @Deprecated
     public void setProductOptions(List<ProductOption> productOptions);
+
+    public void setProductOptionXrefs(List<ProductOptionXref> productOptions);
 
     /**
      * A product can have a designated URL.   When set, the ProductHandlerMapping will check for this

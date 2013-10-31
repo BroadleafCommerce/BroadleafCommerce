@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.web.service;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 /**
@@ -76,6 +77,11 @@ public abstract class AbstractFormBuilderExtensionHandler extends AbstractExtens
             handleModifyDetailEntityForm(ef);
             return ExtensionResultStatusType.HANDLED;
         }
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+    
+    @Override
+    public ExtensionResultStatusType modifyListGridRecord(String className, ListGridRecord record, Entity entity) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
     
