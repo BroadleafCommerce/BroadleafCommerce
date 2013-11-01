@@ -16,12 +16,14 @@
 
 package org.broadleafcommerce.openadmin.web.filter;
 
+import java.lang.reflect.Field;
 import java.util.TimeZone;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -38,6 +40,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
+import org.thymeleaf.TemplateEngine;
 
 
 /**
@@ -98,6 +101,28 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             request.setAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, sandBox.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
             brc.setSandbox(sandBox);
             brc.getAdditionalProperties().put(ADMIN_USER_PROPERTY, adminUser);
+        }
+    }
+
+    @Override
+    public void postProcess(WebRequest request) {
+        ThreadLocalManager.remove();
+        //temporary workaround for Thymeleaf issue #18 (resolved in version 2.1)
+        //https://github.com/thymeleaf/thymeleaf-spring3/issues/18
+        try {
+            Field currentProcessLocale = TemplateEngine.class.getDeclaredField("currentProcessLocale");
+            currentProcessLocale.setAccessible(true);
+            ((ThreadLocal) currentProcessLocale.get(null)).remove();
+
+            Field currentProcessTemplateEngine = TemplateEngine.class.getDeclaredField("currentProcessTemplateEngine");
+            currentProcessTemplateEngine.setAccessible(true);
+            ((ThreadLocal) currentProcessTemplateEngine.get(null)).remove();
+
+            Field currentProcessTemplateName = TemplateEngine.class.getDeclaredField("currentProcessTemplateName");
+            currentProcessTemplateName.setAccessible(true);
+            ((ThreadLocal) currentProcessTemplateName.get(null)).remove();
+        } catch (Throwable e) {
+            LOG.warn("Unable to remove Thymeleaf threadlocal variables from request thread", e);
         }
     }
 
