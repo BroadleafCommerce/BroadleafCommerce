@@ -2,15 +2,17 @@
 <div th:substituteby="components/fieldTranslation" />
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
-<div class="twelve indented-form-value">
+<div class="twelve indented-form-value"
+     th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">
+
     <textarea class="redactor" name="content"
               th:if="${overrideAssetSectionKey}"
-              th:attr="data-select-asset-url=@{${'/'+overrideAssetSectionKey+ '/' + entityForm.id + '/chooseAsset'}}"
+              th:attr="data-select-asset-url=@{${'/'+overrideAssetSectionKey+ '/' + assetAssociationId + '/chooseAsset'}}"
               th:field="*{fields['__${field.name}__'].value}"/>
 
     <textarea class="redactor" name="content"
               th:unless="${overrideAssetSectionKey}"
-              th:attr="data-select-asset-url=@{${'/'+sectionKey+ '/' + entityForm.id + '/chooseAsset'}}"
+              th:attr="data-select-asset-url=@{${'/'+sectionKey+ '/' + assetAssociationId + '/chooseAsset'}}"
               th:field="*{fields['__${field.name}__'].value}"/>
 
 </div>
