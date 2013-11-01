@@ -15,4 +15,6 @@
     <bean id="org.broadleafcommerce.common.structure.dto.StructuredContentDTO" class="org.broadleafcommerce.common.structure.dto.StructuredContentDTO" scope="prototype" />
     <bean id="org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO" class="org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO" scope="prototype" />
 
+    <bean id="org.broadleafcommerce.common.media.domain.MediaDto" class="org.broadleafcommerce.common.media.domain.MediaDto" />
+
 </beans>

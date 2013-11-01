@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaDto;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -94,6 +95,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     
     @Resource(name = "blFormBuilderExtensionManager")
     protected FormBuilderExtensionManager extensionManager;
+    
+    @Resource(name="blEntityConfiguration")
+    protected EntityConfiguration entityConfiguration;
 
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
             VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN 
@@ -615,12 +619,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             try {
                 ObjectMapper om = new ObjectMapper();
                 om.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                return om.readValue(json, MediaDto.class);
+                return om.readValue(json, entityConfiguration.lookupEntityClass(MediaDto.class.getName(), MediaDto.class));
             } catch (Exception e) {
                 LOG.warn("Error parsing json to media " + json, e);
             }
         }
-        return new MediaDto();
+        return entityConfiguration.createEntityInstance(MediaDto.class.getName(), MediaDto.class);
     }
 
     /**
