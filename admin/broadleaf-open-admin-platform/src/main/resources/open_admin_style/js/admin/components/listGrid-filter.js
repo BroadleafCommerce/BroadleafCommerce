@@ -65,6 +65,9 @@
                     params[key] = params[key].join('|');
                 }
             }
+            
+            // We'll make a clone of the object here so we don't modify the original data
+            params = $.extend({}, params);
 
             if (params) {
                 $('i.filter-icon').removeClass('active');

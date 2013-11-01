@@ -69,7 +69,7 @@ public class DataDTOToMVELTranslator {
             buildExpression((ExpressionDTO)dataDTO, sb, entityKey, operator, fieldService);
         } else {
             boolean includeTopLevelParenthesis = false;
-            if (sb.length() != 0 || BLCOperator.NOT.equals(operator)) {
+            if (sb.length() != 0 || BLCOperator.NOT.equals(operator) || (sb.length() == 0 && groupOperator != null)) {
                 includeTopLevelParenthesis = true;
             }
             if (BLCOperator.NOT.equals(operator)) {

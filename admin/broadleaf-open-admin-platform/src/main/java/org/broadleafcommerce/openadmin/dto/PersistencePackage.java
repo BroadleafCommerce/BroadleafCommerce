@@ -39,6 +39,7 @@ public class PersistencePackage implements Serializable {
     protected Integer batchId;
     protected Map<String, PersistencePackage> subPackages = new LinkedHashMap<String, PersistencePackage>();
     protected String requestingEntityName;
+    protected boolean validateUnsubmittedProperties = true;
     
     public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
         this(ceilingEntityFullyQualifiedClassname, null, entity, persistencePerspective, customCriteria, csrfToken);
@@ -172,6 +173,14 @@ public class PersistencePackage implements Serializable {
     
     public void setRequestingEntityName(String requestingEntityName) {
         this.requestingEntityName = requestingEntityName;
+    }
+
+    public boolean isValidateUnsubmittedProperties() {
+        return validateUnsubmittedProperties;
+    }
+
+    public void setValidateUnsubmittedProperties(boolean validateUnsubmittedProperties) {
+        this.validateUnsubmittedProperties = validateUnsubmittedProperties;
     }
 
     @Override

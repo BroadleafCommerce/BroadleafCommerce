@@ -43,12 +43,15 @@ public interface EntityValidatorService {
      * @param entity DTO representation of <b>instance</b>
      * @param instance actual domain representation of <b>entity</b>
      * @param propertiesMetadata all of the merged properties metadata for the given {@link Entity}
+     * @param recordHelper
+     * @param validateUnsubmittedProperties if set to true, will ignore validation for properties that weren't submitted
+     *                                      along with the entity
      * @throws InstantiationException
      * @throws IllegalAccessException
      * @throws ClassNotFoundException
      */
-    public void validate(Entity submittedEntity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata, RecordHelper recordHelper);
-
+    public void validate(Entity submittedEntity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata, 
+            RecordHelper recordHelper, boolean validateUnsubmittedProperties);
     /**
      * @return the global validators that will be executed for every {@link Entity}
      */
