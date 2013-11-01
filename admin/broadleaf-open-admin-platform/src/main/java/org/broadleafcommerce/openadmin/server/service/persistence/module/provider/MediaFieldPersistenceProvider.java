@@ -17,7 +17,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
 import org.broadleafcommerce.common.media.domain.Media;
-import org.broadleafcommerce.common.media.domain.MediaImpl;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -40,12 +40,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
  * @author Brian Polster
  */
 @Component("blMediaFieldPersistenceProvider")
 @Scope("prototype")
 public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
+    
+    @Resource(name="blEntityConfiguration")
+    protected EntityConfiguration entityConfiguration;
 
     protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
         return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.MEDIA;
@@ -55,6 +60,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         return extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.MEDIA;
     }
 
+    @Override
     public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
         if (!canHandlePersistence(populateValueRequest, instance)) {
             return FieldProviderResponse.NOT_HANDLED;
@@ -180,7 +186,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     protected Media convertJsonToMedia(String jsonProp) {
         try {
             ObjectMapper om = new ObjectMapper();
-            return om.readValue(jsonProp, MediaImpl.class);
+            return om.readValue(jsonProp, entityConfiguration.lookupEntityClass(Media.class.getName(), Media.class));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
