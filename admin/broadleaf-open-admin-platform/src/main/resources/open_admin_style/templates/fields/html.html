@@ -3,5 +3,14 @@
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
 <div class="twelve indented-form-value">
-    <textarea class="redactor" name="content" th:field="*{fields['__${field.name}__'].value}"/>
+    <textarea class="redactor" name="content"
+              th:if="${overrideAssetSectionKey}"
+              th:attr="data-select-asset-url=@{${'/'+overrideAssetSectionKey+ '/' + entityForm.id + '/chooseAsset'}}"
+              th:field="*{fields['__${field.name}__'].value}"/>
+
+    <textarea class="redactor" name="content"
+              th:unless="${overrideAssetSectionKey}"
+              th:attr="data-select-asset-url=@{${'/'+sectionKey+ '/' + entityForm.id + '/chooseAsset'}}"
+              th:field="*{fields['__${field.name}__'].value}"/>
+
 </div>

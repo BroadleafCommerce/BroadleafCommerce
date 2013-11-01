@@ -41,13 +41,8 @@
                 currentRedactor.insertHtml($img.outerHTML());
                 BLCAdmin.hideCurrentModal();
             });
-        	
-            var currentPath = window.location.pathname;
-            if (currentPath.charAt(currentPath.length - 1) != '/') {
-                currentPath += '/';
-            }
-            
-            BLCAdmin.showLinkAsModal(currentPath + 'chooseAsset', function() {
+
+            BLCAdmin.showLinkAsModal($('textarea.redactor').data('select-asset-url'), function() {
     			$('textarea.redactor').unbind('assetInfoSelected');
     			currentRedactor = null;
         	});
