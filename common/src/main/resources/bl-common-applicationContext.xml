@@ -21,7 +21,29 @@
     <bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.NullMessageCreator">
         <constructor-arg ref="blMailSender"/>
     </bean>
-    
+
+    <bean id="blDirectCopyIgnorePatterns" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>org\.apache.*</value>
+                <value>javassist.*</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blDirectCopyTransformTokenMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+            </map>
+        </property>
+    </bean>
+
+    <!--This class transformer is responsible for picking up @DirectCopyTransform annotations on entities -->
+    <bean id="blAnnotationDirectCopyClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyClassTransformer">
+        <constructor-arg name="moduleName" value="Annotated Transformation" />
+        <property name="templateTokens" ref="blDirectCopyTransformTokenMap"/>
+    </bean>
+
     <!-- to be overriden by 3rd party modules -->
     <bean id="blMergedClassTransformers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
