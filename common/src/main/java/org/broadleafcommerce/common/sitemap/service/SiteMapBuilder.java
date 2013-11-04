@@ -53,7 +53,7 @@ public class SiteMapBuilder {
     protected boolean gzipSiteMap;
     protected boolean gzipSiteMapIndex;
 
-    protected String tempDirectory = System.getProperty("java.io.tmpdir");
+    protected String tempDirectory;
 
     protected SiteMapConfiguration siteMapConfig;
     protected SiteMapURLSetWrapper currentURLSetWrapper;
@@ -64,7 +64,7 @@ public class SiteMapBuilder {
         this.tempDirectory = tempDirectory;
         this.gzipSiteMap = gzipSiteMap;
         this.gzipSiteMapIndex = gzipSiteMapIndex;
-        fixTempDirectory();
+        this.tempDirectory = tempDirectory;
         currentURLSetWrapper = new SiteMapURLSetWrapper();
     }
 
@@ -119,7 +119,7 @@ public class SiteMapBuilder {
     protected void persistIndexedURLSetWrapper(SiteMapURLSetWrapper urlSetWrapper) {
         String indexedFileName = createNextIndexedFileName();
         persistXMLDocument(indexedFileName, urlSetWrapper);
-        if (isGzipSiteMap()) {
+        if (gzipSiteMap) {
             gzipAndDeleteFile(indexedFileName);
         }
         indexedFileNames.add(indexedFileName + ".gz");
@@ -132,7 +132,7 @@ public class SiteMapBuilder {
      */
     protected void persistNonIndexedSiteMap() {
         persistXMLDocument(siteMapConfig.getSiteMapPrimaryFileName(), currentURLSetWrapper);
-        if (isGzipSiteMap()) {
+        if (gzipSiteMap) {
             gzipAndDeleteFile(siteMapConfig.getSiteMapPrimaryFileName());
         }
     }
@@ -158,7 +158,7 @@ public class SiteMapBuilder {
         }
 
         persistXMLDocument(siteMapConfig.getSiteMapPrimaryFileName(), siteMapIndexWrapper);
-        if (isGzipSiteMapIndex()) {
+        if (gzipSiteMapIndex) {
             gzipAndDeleteFile(siteMapConfig.getSiteMapPrimaryFileName());
         }
     }
@@ -181,14 +181,6 @@ public class SiteMapBuilder {
             persistIndexedSiteMap();
         } else {
             persistNonIndexedSiteMap();
-        }
-    }
-
-    // Ensure that the temp directory ends with a "/"
-    protected synchronized void fixTempDirectory() {
-        assert tempDirectory != null;
-        if (!tempDirectory.endsWith("/")) {
-            tempDirectory = tempDirectory + "/";
         }
     }
 
@@ -219,22 +211,6 @@ public class SiteMapBuilder {
             e.printStackTrace();
         }
 
-    }
-
-    public boolean isGzipSiteMap() {
-        return gzipSiteMap;
-    }
-
-    public void setGzipSiteMap(boolean gzipSiteMap) {
-        this.gzipSiteMap = gzipSiteMap;
-    }
-
-    public boolean isGzipSiteMapIndex() {
-        return gzipSiteMapIndex;
-    }
-
-    public void setGzipSiteMapIndex(boolean gzipSiteMapIndex) {
-        this.gzipSiteMapIndex = gzipSiteMapIndex;
     }
 
 }
