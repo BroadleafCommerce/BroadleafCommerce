@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
@@ -47,13 +48,14 @@ import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author jfischer, bpolster
@@ -398,6 +400,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                 // Create a new priceDetail
                 OrderItemPriceDetail newPriceDetail = orderItemDao.createOrderItemPriceDetail();
                 newPriceDetail.setOrderItem(orderItem);
+                newPriceDetail.setUseSalePrice(orderItem.getIsOnSale());
                 updatePriceDetail(newPriceDetail, priceDetail);
                 orderItem.getOrderItemPriceDetails().add(newPriceDetail);
             }
@@ -466,7 +469,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             itemDetail.setQuantity(promotableDetail.getQuantity());
         }
 
-        if (itemDetail.getUseSalePrice() != promotableDetail.useSaleAdjustments()) {
+        if (itemDetail.getUseSalePrice() != promotableDetail.useSaleAdjustments() && CollectionUtils.isNotEmpty(promotableDetail.getCandidateItemAdjustments())) {
             itemDetail.setUseSalePrice(promotableDetail.useSaleAdjustments());
         }
 
