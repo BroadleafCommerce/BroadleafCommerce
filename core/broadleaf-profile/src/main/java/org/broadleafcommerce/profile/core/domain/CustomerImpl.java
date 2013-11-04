@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.broadleafcommerce.profile.core.domain;
 
 import java.util.ArrayList;
@@ -41,6 +40,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.persistence.PreviewStatus;
@@ -64,6 +65,10 @@ import org.hibernate.annotations.Index;
 @Table(name = "BLC_CUSTOMER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_NAME" }))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCustomerElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "CustomerImpl_baseCustomer")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = "preview", skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = {"multiTenantSite"})
+})
 public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     private static final long serialVersionUID = 1L;

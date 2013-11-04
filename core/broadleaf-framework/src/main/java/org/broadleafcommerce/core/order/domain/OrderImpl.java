@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package org.broadleafcommerce.core.order.domain;
 
 import java.math.BigDecimal;
@@ -52,6 +53,8 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.money.Money;
@@ -106,6 +109,10 @@ import org.hibernate.annotations.Parameter;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderImpl_baseOrder")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = "preview", skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = {"multiTenantSite"})
+})
 public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiable, Previewable {
 
     private static final long serialVersionUID = 1L;

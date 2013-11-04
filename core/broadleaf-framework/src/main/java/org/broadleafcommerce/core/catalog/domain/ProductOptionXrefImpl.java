@@ -1,5 +1,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -27,6 +29,10 @@ import javax.persistence.Table;
 @Table(name = "BLC_PRODUCT_OPTION_XREF")
 @AdminPresentationClass(excludeFromPolymorphism = false)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = {"sandbox"}, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = {"multiTenantCatalog"})
+})
 public class ProductOptionXrefImpl implements ProductOptionXref {
 
     /** The Constant serialVersionUID. */

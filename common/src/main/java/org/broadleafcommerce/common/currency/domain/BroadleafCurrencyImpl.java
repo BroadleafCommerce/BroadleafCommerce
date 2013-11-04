@@ -17,17 +17,19 @@
 package org.broadleafcommerce.common.currency.domain;
 
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Author: jerryocanas Date: 9/6/12
@@ -38,6 +40,9 @@ import javax.persistence.Table;
 @Table(name = "BLC_CURRENCY")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 @AdminPresentationClass(friendlyName = "BroadleafCurrencyImpl_baseCurrency")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = {"multiTenantCatalog"})
+})
 public class BroadleafCurrencyImpl implements BroadleafCurrency {
 
     private static final long serialVersionUID = 1L;

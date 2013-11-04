@@ -30,6 +30,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 public @interface SiteDiscriminatable {
 
-    SiteDiscrimitableType type();
+    SiteDiscriminatableType type();
 
 }
