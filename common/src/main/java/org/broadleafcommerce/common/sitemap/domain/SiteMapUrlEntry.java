@@ -34,7 +34,7 @@ import java.util.Date;
  * 
  * @author Josh
  */
-public interface SiteMapURLEntry extends Serializable {
+public interface SiteMapUrlEntry extends Serializable {
 
     /**
      * Returns the SiteMapURLEntry Id.

@@ -30,13 +30,13 @@ public interface CustomUrlSiteMapGeneratorConfiguration extends SiteMapGenerator
      * 
      * @return
      */
-    public List<SiteMapURLEntry> getCustomURLEntries();
+    public List<SiteMapUrlEntry> getCustomURLEntries();
 
     /**
      * Sets a list of custom SiteMapURLEntrys.
      * 
      * @param customURLEntries
      */
-    public void setCustomURLEntries(List<SiteMapURLEntry> customURLEntries);
+    public void setCustomURLEntries(List<SiteMapUrlEntry> customURLEntries);
 
 }

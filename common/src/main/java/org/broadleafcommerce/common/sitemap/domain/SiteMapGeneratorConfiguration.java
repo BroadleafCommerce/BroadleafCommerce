@@ -55,7 +55,7 @@ public interface SiteMapGeneratorConfiguration extends Serializable {
      * 
      * @return
      */
-    public Boolean getDisabled();
+    public Boolean isDisabled();
 
     /**
      * Sets the "disabled" boolean.

@@ -42,7 +42,7 @@ import javax.persistence.Table;
 @Table(name = "BLC_SITE_MAP_URL_ENTRY")
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(friendlyName = "SiteMapURLEntryImpl")
-public class SiteMapURLEntryImpl implements SiteMapURLEntry {
+public class SiteMapUrlEntryImpl implements SiteMapUrlEntry {
 
     private static final long serialVersionUID = 1L;
     

@@ -75,7 +75,7 @@ public class SiteMapServiceImpl implements SiteMapService {
         SiteMapBuilder siteMapBuilder = new SiteMapBuilder(smc, tempDirectory, this.isGzipSiteMap(), this.isGzipSiteMapIndex());
 
         for (SiteMapGeneratorConfiguration currentConfiguration : smc.getSiteMapGeneratorConfigurations()) {
-            if (currentConfiguration.getDisabled()) {
+            if (currentConfiguration.isDisabled()) {
                 continue;
             }
             SiteMapGenerator generator = selectSiteMapGenerator(currentConfiguration);
@@ -138,29 +138,16 @@ public class SiteMapServiceImpl implements SiteMapService {
         this.siteMapGenerators = siteMapGenerators;
     }
 
-    /**
-     * Returns the root directory used to build the sitemap files.
-     * Defaults to java.io.tmpdir.
-     * 
-     * @return
-     */
     @Override
     public String getTempDirectory() {
         return fixTempDirectory(tempDirectory);
     }
 
-    /**
-     * Returns the root directory used to build the sitemap files.
-     * Defaults to java.io.tmpdir.
-     * 
-     * @return
-     */
     @Override
     public void setTempDirectory(String tempDirectory) {
         this.tempDirectory = tempDirectory;
     }
 
-    // Ensure that the temp directory ends with a "/"
     @Override
     public String fixTempDirectory(String tempDirectory) {
         assert tempDirectory != null;
@@ -188,6 +175,16 @@ public class SiteMapServiceImpl implements SiteMapService {
     @Override
     public void setGzipSiteMap(boolean gzipSiteMap) {
         this.gzipSiteMap = gzipSiteMap;
+    }
+
+    @Override
+    public ModuleConfigurationService getModuleConfigurationService() {
+        return moduleConfigurationService;
+    }
+
+    @Override
+    public void setModuleConfigurationService(ModuleConfigurationService moduleConfigurationService) {
+        this.moduleConfigurationService = moduleConfigurationService;
     }
 
 }

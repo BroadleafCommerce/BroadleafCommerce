@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.common.sitemap.service;
 
+import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
 
 import java.io.IOException;
@@ -112,5 +113,19 @@ public interface SiteMapService {
      * @param gzipSiteMap
      */
     public void setGzipSiteMap(boolean gzipSiteMap);
+
+    /**
+     * Returns the module configuration service.
+     * 
+     * @return
+     */
+    public ModuleConfigurationService getModuleConfigurationService();
+
+    /**
+     * Sets the module configuration service.
+     * 
+     * @param moduleConfigurationService
+     */
+    public void setModuleConfigurationService(ModuleConfigurationService moduleConfigurationService);
 
 }

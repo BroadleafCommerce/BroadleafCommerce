@@ -26,7 +26,7 @@
         <class>org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration</class>
         <class>org.broadleafcommerce.common.sitemap.domain.SiteMapConfigurationImpl</class>
         <class>org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl</class>
-        <class>org.broadleafcommerce.common.sitemap.domain.SiteMapURLEntryImpl</class>
+        <class>org.broadleafcommerce.common.sitemap.domain.SiteMapUrlEntryImpl</class>
         <class>org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfigurationImpl</class>
         <exclude-unlisted-classes/>
         <properties>

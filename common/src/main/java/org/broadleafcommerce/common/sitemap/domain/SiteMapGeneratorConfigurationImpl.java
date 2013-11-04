@@ -94,7 +94,7 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     }
 
     @Override
-    public Boolean getDisabled() {
+    public Boolean isDisabled() {
         return disabled;
     }
 

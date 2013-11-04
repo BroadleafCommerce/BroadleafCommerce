@@ -40,9 +40,9 @@ public class CustomUrlSiteMapGeneratorConfigurationImpl extends SiteMapGenerator
 
     private static final long serialVersionUID = 1L;
 
-    @OneToMany(mappedBy = "customUrlSiteMapGeneratorConfiguration", targetEntity = SiteMapURLEntryImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "customUrlSiteMapGeneratorConfiguration", targetEntity = SiteMapUrlEntryImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @AdminPresentationCollection(friendlyName = "CustomUrlSiteMapGeneratorConfigurationImpl_Custom_URL_Entries")
-    protected List<SiteMapURLEntry> customURLEntries = new ArrayList<SiteMapURLEntry>();
+    protected List<SiteMapUrlEntry> customURLEntries = new ArrayList<SiteMapUrlEntry>();
     
     @Override
     public SiteMapGeneratorType getSiteMapGeneratorType() {
@@ -50,12 +50,12 @@ public class CustomUrlSiteMapGeneratorConfigurationImpl extends SiteMapGenerator
     }
 
     @Override
-    public List<SiteMapURLEntry> getCustomURLEntries() {
+    public List<SiteMapUrlEntry> getCustomURLEntries() {
         return customURLEntries;
     }
 
     @Override
-    public void setCustomURLEntries(List<SiteMapURLEntry> customURLEntries) {
+    public void setCustomURLEntries(List<SiteMapUrlEntry> customURLEntries) {
         this.customURLEntries = customURLEntries;
     }
 
