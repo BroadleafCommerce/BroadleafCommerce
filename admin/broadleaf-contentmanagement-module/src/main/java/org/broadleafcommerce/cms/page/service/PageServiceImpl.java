@@ -32,6 +32,7 @@ import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageItemCriteria;
 import org.broadleafcommerce.cms.page.domain.PageRule;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
@@ -72,6 +73,9 @@ public class PageServiceImpl implements PageService {
     
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;
+
+    @Resource(name="blStaticAssetPathService")
+    protected StaticAssetPathService staticAssetPathService;
 
     protected Cache pageCache;
     protected final PageDTO NULL_PAGE = new NullPageDTO();
@@ -185,18 +189,15 @@ public class PageServiceImpl implements PageService {
             }
         }
 
-        String envPrefix = staticAssetService.getStaticAssetEnvironmentUrlPrefix();
-        if (envPrefix != null && secure) {
-            envPrefix = staticAssetService.getStaticAssetEnvironmentSecureUrlPrefix();
-        }
-
-        String cmsPrefix = staticAssetService.getStaticAssetUrlPrefix();
+        String cmsPrefix = staticAssetPathService.getStaticAssetUrlPrefix();
 
         for (String fieldKey : page.getPageFields().keySet()) {
             PageField pf = page.getPageFields().get(fieldKey);
             String originalValue = pf.getValue();
-            if (StringUtils.isNotBlank(envPrefix) && StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
-                String fldValue = originalValue.replaceAll(cmsPrefix, envPrefix+cmsPrefix);
+            if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
+                //This may either be an ASSET_LOOKUP image path or an HTML block (with multiple <img>) or a plain STRING that contains the cmsPrefix.
+                //If there is an environment prefix configured (e.g. a CDN), then we must replace the cmsPrefix with this one.
+                String fldValue = staticAssetPathService.convertAllAssetPathsInContent(originalValue, secure);
                 pageDTO.getPageFields().put(fieldKey, fldValue);
             } else {
                 pageDTO.getPageFields().put(fieldKey, originalValue);

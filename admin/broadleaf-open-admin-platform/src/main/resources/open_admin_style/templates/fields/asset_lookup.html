@@ -1,4 +1,5 @@
-<div class="asset-selector-container">  
+<div class="asset-selector-container"
+        th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">
     <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
     <a class="show-asset-freeform-url" href="#" th:text="'(' + #{Freeform_URL} + ')'" />
@@ -18,14 +19,14 @@
     <button class="show-asset-selector tiny radius secondary button hover-cursor"
             type="button" th:inline="text"
             th:if="${overrideAssetSectionKey}"
-            th:attr="data-select-url=@{${'/'+overrideAssetSectionKey+ '/' + entityForm.id + '/chooseAsset'}}">
+            th:attr="data-select-url=@{${'/'+overrideAssetSectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
         <i class="icon-camera"></i>&nbsp;[[#{Select_Upload_Image}]]
     </button>
 
     <button class="show-asset-selector tiny radius secondary button hover-cursor"
         type="button" th:inline="text"
         th:unless="${overrideAssetSectionKey}"
-        th:attr="data-select-url=@{${'/'+sectionKey+ '/' + entityForm.id + '/chooseAsset'}}">
+        th:attr="data-select-url=@{${'/'+sectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
         <i class="icon-camera"></i>&nbsp;[[#{Select_Upload_Image}]]
     </button>
 
