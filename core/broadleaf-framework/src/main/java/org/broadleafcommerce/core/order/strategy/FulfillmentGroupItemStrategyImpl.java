@@ -90,7 +90,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             List<DiscreteOrderItem> itemsToAdd = new ArrayList<DiscreteOrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
             for (DiscreteOrderItem doi : itemsToAdd) {
                 FulfillmentGroup fulfillmentGroup = null;
-                FulfillmentType type = resolveFulfillmentType(doi.getSku());
+                FulfillmentType type = resolveFulfillmentType(doi);
                 if (type == null) {
                     //Use the fulfillment group with a null type
                     fulfillmentGroup = nullFulfillmentTypeGroup;
@@ -119,7 +119,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         } else if (orderItem instanceof DiscreteOrderItem) {
             DiscreteOrderItem doi = (DiscreteOrderItem)orderItem;
             FulfillmentGroup fulfillmentGroup = null;
-            FulfillmentType type = resolveFulfillmentType(doi.getSku());
+            FulfillmentType type = resolveFulfillmentType(doi);
             if (type == null) {
                 //Use the fulfillment group with a null type
                 fulfillmentGroup = nullFulfillmentTypeGroup;
@@ -143,7 +143,8 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                 order.getFulfillmentGroups().add(fulfillmentGroup);
             }
             
-            fulfillmentGroup = addItemToFulfillmentGroup(order, (DiscreteOrderItem)orderItem, fulfillmentGroup);
+            fulfillmentGroup = addItemToFulfillmentGroup(order, orderItem, fulfillmentGroup);
+            order = fulfillmentGroup.getOrder();
         } else {
             FulfillmentGroup fulfillmentGroup = nullFulfillmentTypeGroup;
             if (fulfillmentGroup == null) {
@@ -156,6 +157,17 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         }
         
         return request;
+    }
+    
+    /**
+     * Resolves the fulfillment type based on the order item. The OOB implementation uses the {@link DiscreteOrderItem#getSku()}
+     * to then invoke {@link #resolveFulfillmentType(Sku)}.
+     * 
+     * @param discreteOrderItem
+     * @return
+     */
+    protected FulfillmentType resolveFulfillmentType(DiscreteOrderItem discreteOrderItem) {
+        return resolveFulfillmentType(discreteOrderItem.getSku());
     }
     
     protected FulfillmentType resolveFulfillmentType(Sku sku) {
