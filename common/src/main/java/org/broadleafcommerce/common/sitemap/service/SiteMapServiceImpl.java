@@ -151,7 +151,7 @@ public class SiteMapServiceImpl implements SiteMapService {
     @Override
     public String fixTempDirectory(String tempDirectory) {
         assert tempDirectory != null;
-        if (tempDirectory.endsWith("/")) {
+        if (!tempDirectory.endsWith("/")) {
             return tempDirectory + "/";
         }
         return tempDirectory;

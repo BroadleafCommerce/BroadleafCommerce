@@ -185,12 +185,11 @@ public class SiteMapBuilder {
     }
 
     // Ensure that the temp directory ends with a "/"
-    protected String fixTempDirectory() {
+    protected synchronized void fixTempDirectory() {
         assert tempDirectory != null;
-        if (tempDirectory.endsWith("/")) {
-            return tempDirectory + "/";
+        if (!tempDirectory.endsWith("/")) {
+            tempDirectory = tempDirectory + "/";
         }
-        return tempDirectory;
     }
 
     /**
