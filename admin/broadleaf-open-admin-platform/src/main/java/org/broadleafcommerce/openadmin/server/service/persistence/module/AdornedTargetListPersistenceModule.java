@@ -266,8 +266,8 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                 payload = getRecords(mergedPropertiesTarget, recordsInserted, mergedProperties, adornedTargetList.getTargetObjectPath())[0];
             } else {
                 Serializable instance = createPopulatedAdornedTargetInstance(adornedTargetList, entity);
-                instance = createPopulatedInstance(instance, entity, mergedProperties, false);
-                instance = createPopulatedInstance(instance, entity, mergedPropertiesTarget, false);
+                instance = createPopulatedInstance(instance, entity, mergedProperties, false, persistencePackage.isValidateUnsubmittedProperties());
+                instance = createPopulatedInstance(instance, entity, mergedPropertiesTarget, false, persistencePackage.isValidateUnsubmittedProperties());
                 FieldManager fieldManager = getFieldManager();
                 if (fieldManager.getField(instance.getClass(), "id") != null) {
                     fieldManager.setFieldValue(instance, "id", null);
