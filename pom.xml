@@ -23,11 +23,11 @@
     <artifactId>broadleaf-custom-field</artifactId>
     <name>BroadleafCommerce Custom Field</name>
     <description>BroadleafCommerce Custom Field Module</description>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <blc.version>3.0.1-GA</blc.version>
+        <blc.version>3.1.0-SNAPSHOT</blc.version>
     </properties>
 
     <scm>
