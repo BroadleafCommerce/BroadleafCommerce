@@ -40,7 +40,6 @@ import org.hibernate.annotations.SQLDelete;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StoreImpl_baseStore")
 @Inheritance(strategy = InheritanceType.JOINED)
-@SQLDelete(sql="UPDATE BLC_STORE SET ARCHIVED = 'Y' WHERE STORE_ID = ?")
 public class StoreImpl implements Store {
 
     private static final long serialVersionUID = 1L;
