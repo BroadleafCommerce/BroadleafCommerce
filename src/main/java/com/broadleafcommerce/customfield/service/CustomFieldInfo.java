@@ -18,13 +18,13 @@
 
 package com.broadleafcommerce.customfield.service;
 
-import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.broadleafcommerce.common.presentation.RuleIdentifier;
 
 import com.broadleafcommerce.customfield.service.type.CustomFieldTargetType;
 import com.broadleafcommerce.customfield.service.type.CustomFieldType;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Useful constants and relationship maps for custom fields.
