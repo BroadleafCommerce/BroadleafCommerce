@@ -20,6 +20,16 @@ package org.broadleafcommerce.common.file.service;
 public interface StaticAssetPathService {
 
     /**
+     * This method will take in a content string (e.g. StructuredContentDTO or PageDTO HTML/ASSET_LOOKUP/STRING field value)
+     * and replace any instances of "staticAssetUrlPrefix" in the string with the "staticAssetEnvironmentUrlPrefix"
+     * or the "staticAssetEnvironmentSecureUrlPrefix" depending on if the request was secure and if it was configured.
+     *
+     * @param content       - The content string to rewrite if it contains a cms managed asset
+     * @param secureRequest - True if the request is being served over https
+     */
+    public String convertAllAssetPathsInContent(String content, boolean secureRequest);
+
+    /**
      * This method will take in an assetPath (think image url) and convert it if
      * the value contains the asseturlprefix.
      * @see StaticAssetService#getStaticAssetUrlPrefix()

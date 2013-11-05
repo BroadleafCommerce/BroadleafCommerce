@@ -30,7 +30,7 @@ public class MultiTenantMergeBeanStatusProvider implements MergeBeanStatusProvid
 
     @Override
     public boolean isProcessingEnabled(Object bean, String beanName, ApplicationContext appCtx) {
-        return appCtx.containsBean("blMultiTenantClassTransformer");
+        return appCtx.containsBean("blMultiTenantFilterClassTransformer");
     }
 
 }

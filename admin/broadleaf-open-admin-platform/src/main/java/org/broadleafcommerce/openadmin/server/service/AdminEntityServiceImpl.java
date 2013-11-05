@@ -381,6 +381,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             properties.add(fp);
         } else if (md instanceof AdornedTargetCollectionMetadata) {
             ppr.getEntity().setType(new String[] { ppr.getAdornedList().getAdornedTargetEntityClassname() });
+            
+            String[] maintainedFields = ((AdornedTargetCollectionMetadata) md).getMaintainedAdornedTargetFields();
+            if (maintainedFields == null || maintainedFields.length == 0) {
+                ppr.setValidateUnsubmittedProperties(false);
+            }
         } else if (md instanceof MapMetadata) {
             ppr.getEntity().setType(new String[] { entityForm.getEntityType() });
             

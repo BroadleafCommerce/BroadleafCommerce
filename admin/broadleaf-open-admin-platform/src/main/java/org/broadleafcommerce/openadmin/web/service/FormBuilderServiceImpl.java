@@ -850,6 +850,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ef.addHiddenField(f);
         }
 
+        ef.setParentId(parentId);
+
         return ef;
     }
 
@@ -924,6 +926,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 .withName("priorKey")
                 .withFieldType(SupportedFieldType.HIDDEN.toString());
         ef.addHiddenField(f);
+
+        ef.setParentId(parentId);
+
         return ef;
     }
     

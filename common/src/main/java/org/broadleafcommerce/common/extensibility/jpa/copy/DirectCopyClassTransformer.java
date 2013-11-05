@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
 import javassist.ClassPool;
@@ -23,63 +22,146 @@ import javassist.CtField;
 import javassist.CtMethod;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
-import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
-import org.broadleafcommerce.common.logging.LifeCycleEvent;
-import org.broadleafcommerce.common.logging.SupportLogManager;
-import org.broadleafcommerce.common.logging.SupportLogger;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.AnnotationMemberValue;
+import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.BooleanMemberValue;
+import javassist.bytecode.annotation.MemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
 
 import java.io.ByteArrayInputStream;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
+import org.broadleafcommerce.common.logging.LifeCycleEvent;
+import org.broadleafcommerce.common.logging.SupportLogManager;
+import org.broadleafcommerce.common.logging.SupportLogger;
+
 /**
  * This class transformer will copy fields, methods, and interface definitions from a source class to a target class,
- * based on the xformTemplates map. It will fail if it encouters any duplicate definitions.
- * 
+ * based on the xformTemplates map. It will fail if it encounters any duplicate definitions.
+ *
  * @author Andre Azzolini (apazzolini)
+ * @author Jeff Fischer
  */
 public class DirectCopyClassTransformer implements BroadleafClassTransformer {
+
+    protected static List<String> transformedMethods = new ArrayList<String>();
+    protected static List<String> annotationTransformedClasses = new ArrayList<String>();
+
     protected SupportLogger logger;
-    
     protected String moduleName;
     protected Map<String, String> xformTemplates = new HashMap<String, String>();
-    
-    protected static List<String> transformedMethods = new ArrayList<String>();
-
     protected Boolean renameMethodOverlaps = false;
     protected String renameMethodPrefix = "__";
+    protected Boolean skipOverlaps = false;
+    protected Map<String, String> templateTokens = new HashMap<String, String>();
+
+    @Resource(name="blDirectCopyIgnorePatterns")
+    protected List<String> ignorePatterns = new ArrayList<String>();
 
     public DirectCopyClassTransformer(String moduleName) {
         this.moduleName = moduleName;
         logger = SupportLogManager.getLogger(moduleName, this.getClass());
     }
-    
+
     @Override
     public void compileJPAProperties(Properties props, Object key) throws Exception {
         // When simply copying properties over for Java class files, JPA properties do not need modification
     }
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, 
+    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-        String convertedClassName = className.replace('/', '.');
-        
-        if (xformTemplates.containsKey(convertedClassName)) {
+        //Be careful with Apache library usage in this class (e.g. ArrayUtils). Usage will likely cause a ClassCircularityError
+        //under JRebel. Favor not including outside libraries and unnecessary classes.
+        try {
+            boolean mySkipOverlaps = skipOverlaps;
+            boolean myRenameMethodOverlaps = renameMethodOverlaps;
+            String convertedClassName = className.replace('/', '.');
+            ClassPool classPool = null;
+            CtClass clazz = null;
             String xformKey = convertedClassName;
-            String[] xformVals = xformTemplates.get(xformKey).split(",");
-            logger.lifecycle(LifeCycleEvent.START, String.format("Transform - Copying into [%s] from [%s]", xformKey,
-                    StringUtils.join(xformVals, ",")));
-            
-            try {
+            String[] xformVals = null;
+            if (!xformTemplates.isEmpty()) {
+                if (xformTemplates.containsKey(xformKey)) {
+                    xformVals = xformTemplates.get(xformKey).split(",");
+                    classPool = ClassPool.getDefault();
+                    clazz = classPool.makeClass(new ByteArrayInputStream(classfileBuffer), false);
+                }
+            } else {
+                if (annotationTransformedClasses.contains(convertedClassName)) {
+                    logger.warn(convertedClassName + " has already been transformed by a previous instance of DirectCopyTransfomer. " +
+                            "Skipping this annotation based transformation. Generally, annotation-based transformation is handled " +
+                            "by bean id blAnnotationDirectCopyClassTransformer with template tokens being added to " +
+                            "blDirectCopyTransformTokenMap via EarlyStageMergeBeanPostProcessor.");
+                }
+                boolean isValidPattern = true;
+                for (String pattern : ignorePatterns) {
+                    isValidPattern = !convertedClassName.matches(pattern);
+                    if (!isValidPattern) {
+                        return null;
+                    }
+                }
+                if (isValidPattern) {
+                    classPool = ClassPool.getDefault();
+                    clazz = classPool.makeClass(new ByteArrayInputStream(classfileBuffer), false);
+                    List<?> attributes = clazz.getClassFile().getAttributes();
+                    Iterator<?> itr = attributes.iterator();
+                    List<String> templates = new ArrayList<String>();
+                    check: {
+                        while(itr.hasNext()) {
+                            Object object = itr.next();
+                            if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
+                                AnnotationsAttribute attr = (AnnotationsAttribute) object;
+                                Annotation[] items = attr.getAnnotations();
+                                for (Annotation annotation : items) {
+                                    String typeName = annotation.getTypeName();
+                                    if (typeName.equals(DirectCopyTransform.class.getName())) {
+                                        ArrayMemberValue arrayMember = (ArrayMemberValue) annotation.getMemberValue("value");
+                                        for (MemberValue arrayMemberValue : arrayMember.getValue()) {
+                                            AnnotationMemberValue member = (AnnotationMemberValue) arrayMemberValue;
+                                            Annotation memberAnnot = member.getValue();
+                                            ArrayMemberValue annot = (ArrayMemberValue) memberAnnot.getMemberValue("templateTokens");
+                                            for (MemberValue memberValue : annot.getValue()) {
+                                                String val = ((StringMemberValue) memberValue).getValue();
+                                                if (val != null && templateTokens.containsKey(val)) {
+                                                    templates.add(templateTokens.get(val));
+                                                }
+                                            }
+                                            BooleanMemberValue skipAnnot = (BooleanMemberValue) memberAnnot.getMemberValue("skipOverlaps");
+                                            if (skipAnnot != null) {
+                                                mySkipOverlaps = skipAnnot.getValue();
+                                            }
+                                            BooleanMemberValue renameAnnot = (BooleanMemberValue) memberAnnot.getMemberValue("renameMethodOverlaps");
+                                            if (renameAnnot != null) {
+                                                myRenameMethodOverlaps = renameAnnot.getValue();
+                                            }
+                                            xformVals = templates.toArray(new String[templates.size()]);
+                                        }
+                                        break check;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (xformVals != null && xformVals.length > 0) {
+                logger.lifecycle(LifeCycleEvent.START, String.format("Transform - Copying into [%s] from [%s]", xformKey,
+                        StringUtils.join(xformVals, ",")));
                 // Load the destination class and defrost it so it is eligible for modifications
-                ClassPool classPool = ClassPool.getDefault();
-                CtClass clazz = classPool.makeClass(new ByteArrayInputStream(classfileBuffer), false);
                 clazz.defrost();
 
                 for (String xformVal : xformVals) {
@@ -91,8 +173,20 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                     // Add in extra interfaces
                     CtClass[] interfacesToCopy = template.getInterfaces();
                     for (CtClass i : interfacesToCopy) {
-                        logger.debug(String.format("Adding interface [%s]", i.getName()));
-                        clazz.addInterface(i);
+                        checkInterfaces: {
+                            CtClass[] myInterfaces = clazz.getInterfaces();
+                            for (CtClass myInterface : myInterfaces) {
+                                if (myInterface.getName().equals(i.getName())) {
+                                    if (mySkipOverlaps) {
+                                        break checkInterfaces;
+                                    } else {
+                                        throw new RuntimeException("Duplicate interface detected " + myInterface.getName());
+                                    }
+                                }
+                            }
+                            logger.debug(String.format("Adding interface [%s]", i.getName()));
+                            clazz.addInterface(i);
+                        }
                     }
 
                     // Copy over all declared fields from the template class
@@ -102,6 +196,15 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                         if (field.hasAnnotation(NonCopied.class)) {
                             logger.debug(String.format("Not adding field [%s]", field.getName()));
                         } else {
+                            try {
+                                clazz.getDeclaredField(field.getName());
+                                if (mySkipOverlaps) {
+                                    logger.debug(String.format("Skipping overlapped field [%s]", field.getName()));
+                                    continue;
+                                }
+                            } catch (NotFoundException e) {
+                                //do nothing -- field does not exist
+                            }
                             logger.debug(String.format("Adding field [%s]", field.getName()));
                             CtField copiedField = new CtField(field, clazz);
 
@@ -144,6 +247,11 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                                 CtClass[] paramTypes = method.getParameterTypes();
                                 CtMethod originalMethod = clazz.getDeclaredMethod(method.getName(), paramTypes);
 
+                                if (mySkipOverlaps) {
+                                    logger.debug(String.format("Skipping overlapped method [%s]", methodDescription(originalMethod)));
+                                    continue;
+                                }
+
                                 if (transformedMethods.contains(methodDescription(originalMethod))) {
                                     throw new RuntimeException("Method already replaced " + methodDescription(originalMethod));
                                 } else {
@@ -152,7 +260,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                                 }
 
                                 logger.debug(String.format("Removing method [%s]", method.getName()));
-                                if (renameMethodOverlaps) {
+                                if (myRenameMethodOverlaps) {
                                     originalMethod.setName(renameMethodPrefix + method.getName());
                                 } else {
                                     clazz.removeMethod(originalMethod);
@@ -167,25 +275,31 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                         }
                     }
                 }
-                
+
+                if (xformTemplates.isEmpty()) {
+                    annotationTransformedClasses.add(convertedClassName);
+                }
                 logger.lifecycle(LifeCycleEvent.END, String.format("Transform - Copying into [%s] from [%s]", xformKey,
                                     StringUtils.join(xformVals, ",")));
                 return clazz.toBytecode();
-            } catch (Exception e) {
-                throw new RuntimeException("Unable to transform class", e);
             }
+        } catch (ClassCircularityError error) {
+            error.printStackTrace();
+            throw error;
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to transform class", e);
         }
-        
+
         return null;
     }
-    
+
     /**
      * This method will do its best to return an implementation type for a given classname. This will allow weaving
      * template classes to have initialized values.
-     * 
+     *
      * We provide default implementations for List, Map, and Set, and will attempt to utilize a default constructor for
      * other classes.
-     * 
+     *
      * If the className contains an '[', we will return null.
      */
     protected String getImplementationType(String className) {
@@ -205,7 +319,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
     protected String methodDescription(CtMethod method) {
         return method.getDeclaringClass().getName() + "|" + method.getName() + "|" + method.getSignature();
     }
-    
+
     public Map<String, String> getXformTemplates() {
         return xformTemplates;
     }
@@ -228,5 +342,29 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
 
     public void setRenameMethodPrefix(String renameMethodPrefix) {
         this.renameMethodPrefix = renameMethodPrefix;
+    }
+
+    public Boolean getSkipOverlaps() {
+        return skipOverlaps;
+    }
+
+    public void setSkipOverlaps(Boolean skipOverlaps) {
+        this.skipOverlaps = skipOverlaps;
+    }
+
+    public Map<String, String> getTemplateTokens() {
+        return templateTokens;
+    }
+
+    public void setTemplateTokens(Map<String, String> templateTokens) {
+        this.templateTokens = templateTokens;
+    }
+
+    public List<String> getIgnorePatterns() {
+        return ignorePatterns;
+    }
+
+    public void setIgnorePatterns(List<String> ignorePatterns) {
+        this.ignorePatterns = ignorePatterns;
     }
 }

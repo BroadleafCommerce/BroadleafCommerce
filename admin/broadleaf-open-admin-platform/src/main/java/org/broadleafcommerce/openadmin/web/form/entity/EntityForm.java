@@ -47,6 +47,7 @@ public class EntityForm {
     public static final Integer DEFAULT_TAB_ORDER = 100;
 
     protected String id;
+    protected String parentId;
     protected String idProperty = "id";
     protected String ceilingEntityClassname;
     protected String entityType;
@@ -390,7 +391,15 @@ public class EntityForm {
     public void setId(String id) {
         this.id = id;
     }
-    
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
     public String getIdProperty() {
         return idProperty;
     }
