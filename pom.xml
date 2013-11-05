@@ -264,7 +264,7 @@
     <dependencies>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-framework</artifactId>
+            <artifactId>broadleaf-framework-enterprise</artifactId>
             <version>${blc.version}</version>
             <scope>compile</scope>
             <type>jar</type>
@@ -272,7 +272,7 @@
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-framework-web</artifactId>
+            <artifactId>broadleaf-framework-web-enterprise</artifactId>
             <version>${blc.version}</version>
             <scope>compile</scope>
             <type>jar</type>
@@ -280,7 +280,7 @@
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
-            <artifactId>integration</artifactId>
+            <artifactId>integration-enterprise</artifactId>
             <version>${blc.version}</version>
             <type>jar</type>
             <classifier>tests</classifier>
@@ -289,7 +289,7 @@
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-open-admin-platform</artifactId>
+            <artifactId>broadleaf-open-admin-platform-enterprise</artifactId>
             <version>${blc.version}</version>
             <scope>compile</scope>
             <type>jar</type>
@@ -297,7 +297,7 @@
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-admin-module</artifactId>
+            <artifactId>broadleaf-admin-module-enterprise</artifactId>
             <version>${blc.version}</version>
             <scope>compile</scope>
             <type>jar</type>
