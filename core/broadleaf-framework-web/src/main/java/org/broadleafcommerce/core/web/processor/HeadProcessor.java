@@ -19,13 +19,14 @@ package org.broadleafcommerce.core.web.processor;
 import org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionListener;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.dom.Node;
 import org.thymeleaf.exceptions.TemplateProcessingException;
-import org.thymeleaf.fragment.FragmentAndTarget;
-import org.thymeleaf.fragment.WholeFragmentSpec;
 import org.thymeleaf.processor.element.AbstractFragmentHandlingElementProcessor;
 import org.thymeleaf.standard.expression.StandardExpressionProcessor;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -65,13 +66,13 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
     }
 
     @Override
-    protected boolean getSubstituteInclusionNode(Arguments arguments, Element element) {
+    protected boolean getRemoveHostNode(final Arguments arguments, final Element element) {
         return true;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected FragmentAndTarget getFragmentAndTarget(Arguments arguments, Element element, boolean substituteInclusionNode) {
+    protected List<Node> computeFragment(final Arguments arguments, final Element element) {
         // The pageTitle attribute could be an expression that needs to be evaluated. Try to evaluate, but fall back
         // to its text value if the expression wasn't able to be processed. This will allow things like
         // pageTitle="Hello this is a string"
@@ -88,8 +89,14 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
         ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("additionalCss", element.getAttributeValue("additionalCss"));
 
         extensionManager.processAttributeValues(arguments, element);
-
-        return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
+        
+        //TODO: The entire FragmentAndTarget class has been deprecated in favor of a completely new system. See
+        //the commit at https://github.com/thymeleaf/thymeleaf/commit/b214d9b5660369c41538e023d4b8d7223ebcbc22 along with
+        //the referenced issue at https://github.com/thymeleaf/thymeleaf/issues/205
+        
+        
+        //return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
+        return new ArrayList<Node>();
     }
 
 }

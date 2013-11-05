@@ -40,7 +40,10 @@ import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.Assignation;
 import org.thymeleaf.standard.expression.AssignationSequence;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.AssignationUtils;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.IStandardExpressionParser;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import com.google.common.primitives.Ints;
 
@@ -194,7 +197,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
                 Collections.sort(contentItems, new Comparator<StructuredContentDTO>() {
                     @Override
                     public int compare(StructuredContentDTO o1, StructuredContentDTO o2) {
-                        AssignationSequence sortAssignments = StandardExpressionProcessor.parseAssignationSequence(arguments, sorts, false);
+                        AssignationSequence sortAssignments = AssignationUtils.parseAssignationSequence(arguments.getConfiguration(), arguments, sorts, false);
                         CompareToBuilder compareBuilder = new CompareToBuilder();
                         for (Assignation sortAssignment : sortAssignments) {
                             String property = sortAssignment.getLeft().getStringRepresentation();
@@ -202,7 +205,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
                             Object val1 = o1.getPropertyValue(property);
                             Object val2 = o2.getPropertyValue(property);
                             
-                            if (StandardExpressionProcessor.executeExpression(arguments, sortAssignment.getRight()).equals("ASCENDING")) {
+                            if (sortAssignment.getRight().execute(arguments.getConfiguration(), arguments).equals("ASCENDING")) {
                                 compareBuilder.append(val1, val2);
                             } else {
                                 compareBuilder.append(val2, val1);
@@ -217,13 +220,13 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
             
             for (StructuredContentDTO item : contentItems) {
                 if (StringUtils.isNotEmpty(fieldFilters)) {
-                    AssignationSequence assignments = StandardExpressionProcessor.parseAssignationSequence(arguments, fieldFilters, false);
+                    AssignationSequence assignments = AssignationUtils.parseAssignationSequence(arguments.getConfiguration(), arguments, fieldFilters, false);
                     boolean valid = true;
                     for (Assignation assignment : assignments) {
                         
-                        if (ObjectUtils.notEqual(StandardExpressionProcessor.executeExpression(arguments, assignment.getRight()),
-                                                item.getValues().get(assignment.getLeft().getValue()))) {
-                            LOG.info("Excluding content " + item.getId()  + " based on the property value of " + assignment.getLeft().getValue());
+                        if (ObjectUtils.notEqual(assignment.getRight().execute(arguments.getConfiguration(), arguments),
+                                                item.getValues().get(assignment.getLeft().getStringRepresentation()))) {
+                            LOG.info("Excluding content " + item.getId()  + " based on the property value of " + assignment.getLeft().getStringRepresentation());
                             valid = false;
                             break;
                         }
@@ -330,7 +333,10 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         String productString = element.getAttributeValue("product");
 
         if (productString != null) {
-            Object product = StandardExpressionProcessor.processExpression(arguments, productString);
+            final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(arguments.getConfiguration());
+            Expression expression = (Expression) expressionParser.parseExpression(arguments.getConfiguration(), arguments, productString);
+            Object product = expression.execute(arguments.getConfiguration(), arguments);
+
             if (product != null) {
                 mvelParameters.put("product", product);
             }
