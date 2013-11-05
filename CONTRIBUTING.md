@@ -1,3 +1,12 @@
+# Community Resources
+
+- [Bug Tracker](https://github.com/BroadleafCommerce/BroadleafCommerce/issues)
+- [Forums](http://forum.broadleafcommerce.com)
+- IRC - #broadleaf on irc.freenode.net
+
+# Premium Support and Licensing
+See our pricing page (http://www.broadleafcommerce.com/pricing) for more details.
+
 # Issues
 We use GitHub issues for bug tracking. See the [issues tab](https://github.com/BroadleafCommerce/BroadleafCommerce/issues) of this project to open a bug.
 
@@ -74,6 +83,7 @@ So, if you want to make changes to include in **3.0.4-GA** then you should use t
 
 ### Setting up a Pull Request
 All of us at Broadlaef rely heavily on [Jrebel](http://zeroturnaround.com/software/jrebel/) to speed up our development. Our normal development cycle is:
+
 1. Clone the framework
 2. Check out the correct branch (see above for which branch to use)
 3. Execute a `mvn clean install -Pblc-development` on the command line or from Eclipse at the root of the Broadleaf project
