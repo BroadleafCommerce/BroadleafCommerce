@@ -25,7 +25,7 @@ import java.util.List;
 public class CategorySiteMapGeneratorTest extends SiteMapGeneratorTest {
 
     @Test
-    public void testProductSiteMapGenerator() throws SiteMapException, IOException {
+    public void testCategorySiteMapGenerator() throws SiteMapException, IOException {
 
         Category rootCategory = new CategoryImpl();
         Category c1 = new CategoryImpl();

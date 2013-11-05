@@ -25,7 +25,7 @@ import java.util.List;
 public class PageSiteMapGeneratorTest extends SiteMapGeneratorTest {
     
     @Test
-    public void testProductSiteMapGenerator() throws SiteMapException, IOException {
+    public void testPageSiteMapGenerator() throws SiteMapException, IOException {
 
         Page p1 = new PageImpl();
         p1.setFullUrl("/about_us");
