@@ -17,6 +17,29 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -53,28 +76,6 @@ import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 
@@ -126,7 +127,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     }
     
     @Override
-    public Serializable persist(Serializable entity) {
+    public <T> T persist(T entity) {
         standardEntityManager.persist(entity);
         standardEntityManager.flush();
         return entity;
@@ -138,8 +139,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     }
 
     @Override
-    public Serializable merge(Serializable entity) {
-        Serializable response = standardEntityManager.merge(entity);
+    public <T> T merge(T entity) {
+        T response = standardEntityManager.merge(entity);
         standardEntityManager.flush();
         return response;
     }

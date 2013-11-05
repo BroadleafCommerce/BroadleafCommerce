@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.openadmin.server.dao;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -28,12 +35,6 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
-
-import javax.persistence.EntityManager;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 
@@ -54,9 +55,9 @@ public interface DynamicEntityDao {
     
     public abstract Map<String, FieldMetadata> getMergedProperties(String ceilingEntityFullyQualifiedClassname, Class<?>[] entities, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey, String prefix);
     
-    public abstract Serializable persist(Serializable entity);
+    public abstract <T> T persist(T entity);
     
-    public abstract Serializable merge(Serializable entity);
+    public abstract <T> T merge(T entity);
 
     public abstract Serializable retrieve(Class<?> entityClass, Object primaryKey);
     
