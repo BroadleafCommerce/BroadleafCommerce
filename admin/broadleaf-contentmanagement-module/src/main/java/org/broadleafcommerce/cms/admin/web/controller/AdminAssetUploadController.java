@@ -33,16 +33,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * AdminAssetUploadController handles uploading or selecting assets.
@@ -90,13 +89,22 @@ public class AdminAssetUploadController extends AdminAbstractController {
         // We need these attributes to be set appropriately here
         model.addAttribute("entityId", id);
         model.addAttribute("sectionKey", sectionKey);
+
+        /**
+         * add a flag in model which indicates if the browser is IE
+         * @see https://github.com/BroadleafCommerce/BroadleafCommerce/issues/436#issuecomment-27771477
+         */
+        String userAgent = request.getHeader("User-Agent");
+        model.addAttribute("isIE", userAgent.contains("MSIE"));
         return "modules/modalContainer";
     }
     
-    @RequestMapping(value = "/{id}/uploadAsset", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-    public @ResponseBody Map<String, Object> upload(HttpServletRequest request,
+    @RequestMapping(value = "/{id}/uploadAsset", method = RequestMethod.POST)
+    public String upload(HttpServletRequest request,
             @RequestParam("file") MultipartFile file, 
-            @PathVariable(value="sectionKey") String sectionKey, @PathVariable(value="id") String id) throws IOException {
+            @PathVariable(value="sectionKey") String sectionKey,
+            @PathVariable(value="id") String id,
+            Model model) throws IOException {
         Map<String, Object> responseMap = new HashMap<String, Object>();
         
         Map<String, String> properties = new HashMap<String, String>();
@@ -124,7 +132,23 @@ public class AdminAssetUploadController extends AdminAbstractController {
             responseMap.put("image", Boolean.FALSE);
         }
 
-        return responseMap;
+        //translate the responseMap into JSON string
+        //TODO this section of code can be refactored using some JSON library
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("{");
+        Iterator<Map.Entry<String, Object>> iterator = responseMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry entry = iterator.next();
+            buffer.append("\"").append(entry.getKey()).append("\"").append(":").append("\"").append(entry.getValue()).append("\"");
+            if (iterator.hasNext()) {
+                buffer.append(",");
+            }
+        }
+        buffer.append("}");
+
+        model.addAttribute("responseJson", buffer.toString());
+
+        return "views/assetUploadResult";
     }
     
     @RequestMapping(value = "/uploadAsset", method = RequestMethod.POST)
