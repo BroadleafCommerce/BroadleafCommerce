@@ -7,7 +7,7 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapConfigurationImpl;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Assert;
 
 import java.io.BufferedReader;
@@ -37,12 +37,13 @@ public class SiteMapGeneratorTest {
         smc.setMaximumUrlEntriesPerFile(2);
         smc.setSiteUrlPath("http://www.heatclinic.com");
         smc.setSiteMapGeneratorConfigurations(smgcList);
+        smgc.setSiteMapConfiguration(smc);
 
-        List<ModuleConfiguration> configurations = new ArrayList<ModuleConfiguration>();
-        configurations.add(smc);
+        List<ModuleConfiguration> mcList = new ArrayList<ModuleConfiguration>();
+        mcList.add(smc);
 
         ModuleConfigurationService mcs = EasyMock.createMock(ModuleConfigurationService.class);
-        EasyMock.expect(mcs.findActiveConfigurationsByType(ModuleConfigurationType.SITE_MAP)).andReturn(configurations);
+        EasyMock.expect(mcs.findActiveConfigurationsByType(ModuleConfigurationType.SITE_MAP)).andReturn(mcList);
         EasyMock.replay(mcs);
 
         List<SiteMapGenerator> smgList = new ArrayList<SiteMapGenerator>();
@@ -69,12 +70,12 @@ public class SiteMapGeneratorTest {
         StringBuilder sb = new StringBuilder();
         String line;
         while ((line = br.readLine()) != null) {
-            if (line.contains("lastmod")) {
+            if (line.contains("</lastmod>")) {
                 continue;
             }
             sb.append(line);
         }
-        //System.out.println(sb.toString());
+        System.out.println(sb.toString());
         return sb.toString();
     }
 

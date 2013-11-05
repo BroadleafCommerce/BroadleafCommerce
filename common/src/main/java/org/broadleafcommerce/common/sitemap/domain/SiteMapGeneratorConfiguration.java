@@ -69,14 +69,14 @@ public interface SiteMapGeneratorConfiguration extends Serializable {
      * 
      * @return
      */
-    public SiteMapChangeFreqType getSiteMapChangeFreqType();
+    public SiteMapChangeFreqType getSiteMapChangeFreq();
 
     /**
      * Sets the list of SiteMapChangeFreqTypes.
      * 
-     * @param siteMapChangeFreqType
+     * @param siteMapChangeFreq
      */
-    public void setSiteMapChangeFreqType(SiteMapChangeFreqType siteMapChangeFreqType);
+    public void setSiteMapChangeFreq(SiteMapChangeFreqType siteMapChangeFreq);
 
     /**
      * Returns the SiteMapPriority.

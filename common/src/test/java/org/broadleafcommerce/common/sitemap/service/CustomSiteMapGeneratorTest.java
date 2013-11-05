@@ -28,20 +28,20 @@ public class CustomSiteMapGeneratorTest extends SiteMapGeneratorTest {
         SiteMapUrlEntry urlEntry1 = new SiteMapUrlEntryImpl();
         urlEntry1.setLastMod(new Date());
         urlEntry1.setLocation("http://www.heatclinic.com/1");
-        urlEntry1.setSiteMapChangeFreqType(SiteMapChangeFreqType.HOURLY);
-        urlEntry1.setSiteMapPriorityType(SiteMapPriorityType.POINT5);
+        urlEntry1.setSiteMapChangeFreq(SiteMapChangeFreqType.HOURLY);
+        urlEntry1.setSiteMapPriority(SiteMapPriorityType.POINT5);
 
         SiteMapUrlEntry urlEntry2 = new SiteMapUrlEntryImpl();
         urlEntry2.setLastMod(new Date());
         urlEntry2.setLocation("http://www.heatclinic.com/2");
-        urlEntry2.setSiteMapChangeFreqType(SiteMapChangeFreqType.HOURLY);
-        urlEntry2.setSiteMapPriorityType(SiteMapPriorityType.POINT5);
+        urlEntry2.setSiteMapChangeFreq(SiteMapChangeFreqType.HOURLY);
+        urlEntry2.setSiteMapPriority(SiteMapPriorityType.POINT5);
 
         SiteMapUrlEntry urlEntry3 = new SiteMapUrlEntryImpl();
         urlEntry3.setLastMod(new Date());
         urlEntry3.setLocation("http://www.heatclinic.com/3");
-        urlEntry3.setSiteMapChangeFreqType(SiteMapChangeFreqType.HOURLY);
-        urlEntry3.setSiteMapPriorityType(SiteMapPriorityType.POINT5);
+        urlEntry3.setSiteMapChangeFreq(SiteMapChangeFreqType.HOURLY);
+        urlEntry3.setSiteMapPriority(SiteMapPriorityType.POINT5);
 
         List<SiteMapUrlEntry> urlEntries = new ArrayList<SiteMapUrlEntry>();
         urlEntries.add(urlEntry1);

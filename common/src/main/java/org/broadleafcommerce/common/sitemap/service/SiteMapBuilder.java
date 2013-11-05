@@ -121,8 +121,10 @@ public class SiteMapBuilder {
         persistXMLDocument(indexedFileName, urlSetWrapper);
         if (gzipSiteMap) {
             gzipAndDeleteFile(indexedFileName);
+            indexedFileNames.add(indexedFileName + ".gz");
+        } else {
+            indexedFileNames.add(indexedFileName);
         }
-        indexedFileNames.add(indexedFileName + ".gz");
     }
 
     /**

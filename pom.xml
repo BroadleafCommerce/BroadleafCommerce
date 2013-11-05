@@ -263,6 +263,14 @@
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
+            <dependency>
+                <groupId>org.broadleafcommerce</groupId>
+                <artifactId>broadleaf-common</artifactId>
+                <version>${project.version}</version>
+                <classifier>tests</classifier>
+                <type>jar</type>
+                <scope>test</scope>
+            </dependency>
 
             <!-- Hibernate Libraries -->
             <dependency>

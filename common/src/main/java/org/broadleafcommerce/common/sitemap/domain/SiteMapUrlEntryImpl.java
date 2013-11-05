@@ -111,7 +111,7 @@ public class SiteMapUrlEntryImpl implements SiteMapUrlEntry {
     }
 
     @Override
-    public SiteMapChangeFreqType getSiteMapChangeFreqType() {
+    public SiteMapChangeFreqType getSiteMapChangeFreq() {
         if (changeFreq != null) {
             return SiteMapChangeFreqType.getInstance(this.changeFreq);
         } else {
@@ -120,16 +120,16 @@ public class SiteMapUrlEntryImpl implements SiteMapUrlEntry {
     }
 
     @Override
-    public void setSiteMapChangeFreqType(SiteMapChangeFreqType siteMapChangeFreqType) {
-        if (siteMapChangeFreqType != null) {
-            this.changeFreq = siteMapChangeFreqType.getType();
+    public void setSiteMapChangeFreq(SiteMapChangeFreqType siteMapChangeFreq) {
+        if (siteMapChangeFreq != null) {
+            this.changeFreq = siteMapChangeFreq.getType();
         } else {
             this.changeFreq = null;
         }
     }
 
     @Override
-    public SiteMapPriorityType getSiteMapPriorityType() {
+    public SiteMapPriorityType getSiteMapPriority() {
         if (priority != null) {
             return SiteMapPriorityType.getInstance(this.priority);
         } else {
@@ -138,7 +138,7 @@ public class SiteMapUrlEntryImpl implements SiteMapUrlEntry {
     }
 
     @Override
-    public void setSiteMapPriorityType(SiteMapPriorityType siteMapPriority) {
+    public void setSiteMapPriority(SiteMapPriorityType siteMapPriority) {
         if (siteMapPriority != null) {
             this.priority = siteMapPriority.getType();
         } else {

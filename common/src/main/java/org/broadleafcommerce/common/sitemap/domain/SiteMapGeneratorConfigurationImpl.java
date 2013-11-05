@@ -104,7 +104,7 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     }
 
     @Override
-    public SiteMapChangeFreqType getSiteMapChangeFreqType() {
+    public SiteMapChangeFreqType getSiteMapChangeFreq() {
         if (changeFreq != null) {
             return SiteMapChangeFreqType.getInstance(this.changeFreq);
         } else {
@@ -113,9 +113,9 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     }
 
     @Override
-    public void setSiteMapChangeFreqType(SiteMapChangeFreqType siteMapChangeFreqType) {
-        if (siteMapChangeFreqType != null) {
-            this.changeFreq = siteMapChangeFreqType.getType();
+    public void setSiteMapChangeFreq(SiteMapChangeFreqType siteMapChangeFreq) {
+        if (siteMapChangeFreq != null) {
+            this.changeFreq = siteMapChangeFreq.getType();
         } else {
             this.changeFreq = null;
         }

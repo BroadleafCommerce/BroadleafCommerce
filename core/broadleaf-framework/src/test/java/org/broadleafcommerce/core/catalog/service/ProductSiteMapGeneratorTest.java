@@ -4,11 +4,19 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
 import org.broadleafcommerce.common.sitemap.service.SiteMapGeneratorTest;
+import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
+import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
-import org.easymock.classextension.EasyMock;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
+import org.easymock.EasyMock;
+import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Product site map generator tests
@@ -17,18 +25,38 @@ import java.io.IOException;
  */
 public class ProductSiteMapGeneratorTest extends SiteMapGeneratorTest {
 
-    //@Test
+    @Test
     public void testProductSiteMapGenerator() throws SiteMapException, IOException {
+
+        Product p1 = new ProductImpl();
+        p1.setUrl("/hot-sauces/sudden_death_sauce");
+        Product p2 = new ProductImpl();
+        p2.setUrl("/hot-sauces/sweet_death_sauce");
+        Product p3 = new ProductImpl();
+        p3.setUrl("/hot-sauces/hoppin_hot_sauce");
+        Product p4 = new ProductImpl();
+        p4.setUrl("/hot-sauces/day_of_the_dead_chipotle_hot_sauce");
+
+        List<Product> products = new ArrayList<Product>();
+        products.add(p1);
+        products.add(p2);
+        products.add(p3);
+        products.add(p4);
+        
+        ProductDao productDao = EasyMock.createMock(ProductDao.class);
+        EasyMock.expect(productDao.readAllActiveProducts(EasyMock.eq(0), EasyMock.eq(5), EasyMock.isA(Date.class))).andReturn(products);
+        EasyMock.replay(productDao);
+
+        ProductSiteMapGenerator psmg = new ProductSiteMapGenerator();
+        psmg.setProductDao(productDao);
+        psmg.setPageSize(5);
 
         SiteMapGeneratorConfiguration smgc = new SiteMapGeneratorConfigurationImpl();
         smgc.setDisabled(false);
         smgc.setSiteMapGeneratorType(SiteMapGeneratorType.PRODUCT);
+        smgc.setSiteMapChangeFreq(SiteMapChangeFreqType.HOURLY);
+        smgc.setSiteMapPriority(SiteMapPriorityType.POINT5);
 
-        ProductDao pd = EasyMock.createMock(ProductDao.class);
-        //EasyMock.expect(mcs.findActiveConfigurationsByType(ModuleConfigurationType.SITE_MAP)).andReturn(configurations);
-        EasyMock.replay(pd);
-
-        ProductSiteMapGenerator psmg = new ProductSiteMapGenerator();
         testGenerator(smgc, psmg);
 
         compareFiles(siteMapService.getTempDirectory() + "sitemap_index.xml", "src/test/resources/org/broadleafcommerce/sitemap/product/sitemap_index.xml");
@@ -38,10 +66,3 @@ public class ProductSiteMapGeneratorTest extends SiteMapGeneratorTest {
     }
 
 }
-
-//INSERT INTO BLC_SITE_MAP_GEN_CFG (GEN_CONFIG_ID,MODULE_CONFIG_ID,DISABLED,CHANGE_FREQ,GENERATOR_TYPE,PRIORITY) VALUES (-2,-1,TRUE,'HOURLY','PRODUCT','0.5');
-//INSERT INTO BLC_SITE_MAP_GEN_CFG (GEN_CONFIG_ID,MODULE_CONFIG_ID,DISABLED,CHANGE_FREQ,GENERATOR_TYPE,PRIORITY) VALUES (-3,-1,TRUE,'HOURLY','PAGE','0.5');
-//INSERT INTO BLC_SITE_MAP_GEN_CFG (GEN_CONFIG_ID,MODULE_CONFIG_ID,DISABLED,CHANGE_FREQ,GENERATOR_TYPE,PRIORITY) VALUES (-4,-1,TRUE,'HOURLY','CATEGORY','0.5');
-//INSERT INTO BLC_CAT_SITE_MAP_GEN_CFG (GEN_CONFIG_ID,ROOT_CATEGORY_ID,STARTING_DEPTH,ENDING_DEPTH) VALUES (-4,2,1,1);
-//INSERT INTO BLC_SITE_MAP_GEN_CFG (GEN_CONFIG_ID,MODULE_CONFIG_ID,DISABLED,CHANGE_FREQ,GENERATOR_TYPE,PRIORITY) VALUES (-5,-1,FALSE,'HOURLY','STRUCTURED_CONTENT','0.5');
-//INSERT INTO BLC_ADV_SC_SITE_MAP_GEN_CFG (GEN_CONFIG_ID,TYPE_CATEGORY) VALUES (-5,'all');

@@ -46,25 +46,25 @@ public class CustomUrlSiteMapGenerator implements SiteMapGenerator {
     }
 
     @Override
-    public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder) {
-        for (SiteMapUrlEntry urlEntry : ((CustomUrlSiteMapGeneratorConfiguration) siteMapGeneratorConfiguration).getCustomURLEntries()) {
+    public void addSiteMapEntries(SiteMapGeneratorConfiguration smgc, SiteMapBuilder siteMapBuilder) {
+        for (SiteMapUrlEntry urlEntry : ((CustomUrlSiteMapGeneratorConfiguration) smgc).getCustomURLEntries()) {
             SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
             // location
             siteMapUrl.setLoc(urlEntry.getLocation());
 
             // change frequency
-            if (urlEntry.getSiteMapChangeFreqType() != null) {
-                siteMapUrl.setChangeFreqType(urlEntry.getSiteMapChangeFreqType());
+            if (urlEntry.getSiteMapChangeFreq() != null) {
+                siteMapUrl.setChangeFreqType(urlEntry.getSiteMapChangeFreq());
             } else {
-                siteMapUrl.setChangeFreqType(siteMapGeneratorConfiguration.getSiteMapChangeFreqType());
+                siteMapUrl.setChangeFreqType(smgc.getSiteMapChangeFreq());
             }
 
             // priority
-            if (urlEntry.getSiteMapPriorityType() != null) {
-                siteMapUrl.setPriorityType(urlEntry.getSiteMapPriorityType());
+            if (urlEntry.getSiteMapPriority() != null) {
+                siteMapUrl.setPriorityType(urlEntry.getSiteMapPriority());
             } else {
-                siteMapUrl.setPriorityType(siteMapGeneratorConfiguration.getSiteMapPriority());
+                siteMapUrl.setPriorityType(smgc.getSiteMapPriority());
             }
 
             // lastModDate

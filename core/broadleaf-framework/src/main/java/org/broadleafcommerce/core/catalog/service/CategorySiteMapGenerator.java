@@ -84,7 +84,7 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
                 siteMapUrl.setLoc(categorySMGC.getSiteMapConfiguration().getSiteUrlPath() + category.getUrl());
 
                 // change frequency
-                siteMapUrl.setChangeFreqType(categorySMGC.getSiteMapChangeFreqType());
+                siteMapUrl.setChangeFreqType(categorySMGC.getSiteMapChangeFreq());
 
                 // priority
                 siteMapUrl.setPriorityType(categorySMGC.getSiteMapPriority());
@@ -96,6 +96,22 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
             }
         } while (categories.size() == rowLimit);
 
+    }
+
+    public CategoryDao getCategoryDao() {
+        return categoryDao;
+    }
+
+    public void setCategoryDao(CategoryDao categoryDao) {
+        this.categoryDao = categoryDao;
+    }
+
+    public int getRowLimit() {
+        return rowLimit;
+    }
+
+    public void setRowLimit(int rowLimit) {
+        this.rowLimit = rowLimit;
     }
 
 }

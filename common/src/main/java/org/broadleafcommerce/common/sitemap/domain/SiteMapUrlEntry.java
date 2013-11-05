@@ -83,28 +83,28 @@ public interface SiteMapUrlEntry extends Serializable {
      * 
      * @return
      */
-    public SiteMapChangeFreqType getSiteMapChangeFreqType();
+    public SiteMapChangeFreqType getSiteMapChangeFreq();
     
     /**
      * Sets the SiteMapChangeFreqType.
      * 
-     * @param siteMapChangeFreqType
+     * @param siteMapChangeFreq
      */
-    public void setSiteMapChangeFreqType(SiteMapChangeFreqType siteMapChangeFreqType);
+    public void setSiteMapChangeFreq(SiteMapChangeFreqType siteMapChangeFreq);
     
     /**
      * Returns the SiteMapPriority.
      * 
      * @return
      */
-    public SiteMapPriorityType getSiteMapPriorityType();
+    public SiteMapPriorityType getSiteMapPriority();
 
     /**
      * Sets the SiteMapPriority.  Must be a two digit value between 0.0 and 1.0.
      * 
      * @param siteMapPriority
      */
-    public void setSiteMapPriorityType(SiteMapPriorityType siteMapPriority);
+    public void setSiteMapPriority(SiteMapPriorityType siteMapPriority);
 
     /**
      * Returns the SiteMapGeneratorConfiguration.

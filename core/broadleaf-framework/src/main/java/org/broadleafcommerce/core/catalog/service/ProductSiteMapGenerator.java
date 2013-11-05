@@ -51,7 +51,7 @@ public class ProductSiteMapGenerator implements SiteMapGenerator {
     }
 
     @Override
-    public void addSiteMapEntries(SiteMapGeneratorConfiguration smcg, SiteMapBuilder siteMapBuilder) {
+    public void addSiteMapEntries(SiteMapGeneratorConfiguration smgc, SiteMapBuilder siteMapBuilder) {
 
         int pageNum = 0;
         List<Product> products;
@@ -62,13 +62,13 @@ public class ProductSiteMapGenerator implements SiteMapGenerator {
                 SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
                 // location
-                siteMapUrl.setLoc(smcg.getSiteMapConfiguration().getSiteUrlPath() + product.getUrl());
+                siteMapUrl.setLoc(smgc.getSiteMapConfiguration().getSiteUrlPath() + product.getUrl());
 
                 // change frequency
-                siteMapUrl.setChangeFreqType(smcg.getSiteMapChangeFreqType());
+                siteMapUrl.setChangeFreqType(smgc.getSiteMapChangeFreq());
 
                 // priority
-                siteMapUrl.setPriorityType(smcg.getSiteMapPriority());
+                siteMapUrl.setPriorityType(smgc.getSiteMapPriority());
 
                 // lastModDate
                 siteMapUrl.setLastModDate(new Date());
@@ -77,6 +77,22 @@ public class ProductSiteMapGenerator implements SiteMapGenerator {
             }
         } while (products.size() == pageSize);
 
+    }
+
+    public ProductDao getProductDao() {
+        return productDao;
+    }
+
+    public void setProductDao(ProductDao productDao) {
+        this.productDao = productDao;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
     }
 
 }
