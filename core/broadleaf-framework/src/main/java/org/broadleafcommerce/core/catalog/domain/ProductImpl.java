@@ -52,6 +52,7 @@ import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminatable;
 import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminatableType;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
@@ -106,9 +107,9 @@ import org.hibernate.annotations.SQLDelete;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
 @SQLDelete(sql="UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = "sandbox", skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = "sandboxProductInvocation"),
-        @DirectCopyTransformMember(templateTokens = "multiTenantCatalog")
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_PRODUCT_INVOKE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class ProductImpl implements Product, Status, AdminMainEntity {
 

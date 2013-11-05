@@ -60,6 +60,7 @@ import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminatable;
 import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminatableType;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaImpl;
@@ -107,9 +108,9 @@ import org.hibernate.annotations.Type;
 @AdminPresentationClass(friendlyName = "CategoryImpl_baseCategory")
 @SQLDelete(sql="UPDATE BLC_CATEGORY SET ARCHIVED = 'Y' WHERE CATEGORY_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = "sandbox", skipOverlaps = true),
-        @DirectCopyTransformMember(templateTokens = "sandboxCategoryInvocation"),
-        @DirectCopyTransformMember(templateTokens = {"multiTenantCatalog"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_CATEGORY_INVOKE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class CategoryImpl implements Category, Status, AdminMainEntity {
 

@@ -41,7 +41,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 @AdminPresentationClass(friendlyName = "BroadleafCurrencyImpl_baseCurrency")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"multiTenantCatalog"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class BroadleafCurrencyImpl implements BroadleafCurrency {
 

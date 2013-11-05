@@ -52,7 +52,7 @@ import org.hibernate.annotations.Parameter;
 @Table(name = "BLC_SEARCH_FACET")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"multiTenantCatalog"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class SearchFacetImpl implements SearchFacet, Serializable {
 

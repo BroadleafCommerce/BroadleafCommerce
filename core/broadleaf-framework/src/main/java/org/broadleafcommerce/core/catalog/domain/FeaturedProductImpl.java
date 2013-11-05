@@ -41,8 +41,8 @@ import javax.persistence.Table;
 @Table(name = "BLC_PRODUCT_FEATURED")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"sandbox"}, skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = {"multiTenantCatalog"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class FeaturedProductImpl implements FeaturedProduct {
 

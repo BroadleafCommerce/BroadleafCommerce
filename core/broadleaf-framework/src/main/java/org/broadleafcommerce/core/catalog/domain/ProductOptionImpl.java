@@ -38,6 +38,7 @@ import javax.persistence.Table;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -60,9 +61,9 @@ import org.hibernate.annotations.Parameter;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(friendlyName = "ProductOptionImpl_baseProductOption", populateToOneFields=PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = "sandbox", skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = "sandboxProductOptionInvocation"),
-        @DirectCopyTransformMember(templateTokens = "multiTenantCatalog")
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_PRODUCTOPTION_INVOKE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class ProductOptionImpl implements ProductOption, AdminMainEntity {
 

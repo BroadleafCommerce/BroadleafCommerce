@@ -113,7 +113,7 @@ import org.hibernate.annotations.Parameter;
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PaymentInfoImpl_basePaymentInfo")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"multiTenantSite"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class PaymentInfoImpl implements PaymentInfo, CurrencyCodeIdentifiable {
 

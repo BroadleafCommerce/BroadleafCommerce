@@ -86,7 +86,7 @@ import org.hibernate.annotations.Parameter;
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemImpl_baseOrderItem")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"multiTenantSite"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable {
 

@@ -47,8 +47,8 @@ import org.hibernate.annotations.PolymorphismType;
 @AdminPresentationClass(excludeFromPolymorphism = false)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"sandbox"}, skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = {"multiTenantCatalog"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class CategoryXrefImpl implements CategoryXref {
 

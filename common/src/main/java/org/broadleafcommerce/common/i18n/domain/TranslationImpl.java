@@ -29,6 +29,7 @@ import javax.persistence.Lob;
 
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.hibernate.annotations.Cache;
@@ -49,7 +50,7 @@ import org.hibernate.annotations.Type;
         @Index(name = "TRANSLATION_INDEX", columnNames = {"ENTITY_TYPE","ENTITY_ID","FIELD_NAME","LOCALE_CODE"})
 })
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"multiTenantSite"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class TranslationImpl implements Serializable, Translation {
 

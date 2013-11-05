@@ -55,8 +55,8 @@ import org.springframework.util.ClassUtils;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE)
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"sandbox"}, skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = {"multiTenantCatalog"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class SkuBundleItemImpl implements SkuBundleItem {
 

@@ -40,6 +40,7 @@ import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -84,7 +85,7 @@ import org.hibernate.annotations.Parameter;
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"multiTenantCatalog"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
 

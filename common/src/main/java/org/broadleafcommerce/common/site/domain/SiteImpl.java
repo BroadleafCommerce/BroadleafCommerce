@@ -38,6 +38,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -68,7 +69,7 @@ import org.hibernate.annotations.SQLDelete;
 @AdminPresentationClass(friendlyName = "baseSite")
 @SQLDelete(sql="UPDATE BLC_SITE SET ARCHIVED = 'Y' WHERE SITE_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"multiTenantSiteMarker"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER)
 })
 public class SiteImpl implements Site, Status {
 

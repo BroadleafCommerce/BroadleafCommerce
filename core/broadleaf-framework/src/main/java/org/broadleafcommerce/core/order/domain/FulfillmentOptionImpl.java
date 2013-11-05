@@ -59,8 +59,8 @@ import org.hibernate.annotations.Type;
 )
 @AdminPresentationClass(friendlyName = "Base Fulfillment Option")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"sandbox"}, skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = {"multiTenantSite"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class FulfillmentOptionImpl implements FulfillmentOption {
 

@@ -42,6 +42,7 @@ import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.persistence.PreviewStatus;
@@ -66,8 +67,8 @@ import org.hibernate.annotations.Index;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCustomerElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "CustomerImpl_baseCustomer")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = "preview", skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = {"multiTenantSite"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 

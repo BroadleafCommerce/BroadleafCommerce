@@ -43,8 +43,8 @@ import org.hibernate.annotations.Parameter;
 @Table(name = "BLC_CAT_SEARCH_FACET_EXCL_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"sandbox"}, skipOverlaps = true),
-        @DirectCopyTransformMember(templateTokens = {"multiTenantCatalog"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class CategoryExcludedSearchFacetImpl implements CategoryExcludedSearchFacet, Serializable {
 

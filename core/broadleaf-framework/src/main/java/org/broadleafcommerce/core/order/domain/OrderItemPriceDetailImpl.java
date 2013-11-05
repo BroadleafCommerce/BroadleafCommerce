@@ -66,7 +66,7 @@ import org.hibernate.annotations.Parameter;
     }
 )
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"multiTenantSite"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyCodeIdentifiable {
 

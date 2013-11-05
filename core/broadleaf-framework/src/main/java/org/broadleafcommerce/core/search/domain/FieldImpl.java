@@ -48,7 +48,7 @@ import org.hibernate.annotations.Parameter;
 @Table(name = "BLC_FIELD")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = {"multiTenantCatalog"})
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class FieldImpl implements Field,Serializable {
     
