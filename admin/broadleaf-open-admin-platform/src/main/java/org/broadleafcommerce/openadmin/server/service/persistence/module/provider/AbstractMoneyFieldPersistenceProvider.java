@@ -53,6 +53,7 @@ public abstract class AbstractMoneyFieldPersistenceProvider extends FieldPersist
         NumberFormat format = NumberFormat.getInstance();
         format.setMaximumFractionDigits(2);
         format.setMinimumFractionDigits(2);
+        format.setGroupingUsed(false);
         return format.format(value);
     }
     
