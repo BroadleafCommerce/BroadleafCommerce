@@ -960,7 +960,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
                     Property alternateIdProperty = entity.getPMap().get(BasicPersistenceModule.ALTERNATE_ID_PROPERTY);
                     DynamicResultSet drs = service.getRecordsForCollection(cmd, entity, p, null, null, null,
-                            alternateIdProperty.getValue());
+                            alternateIdProperty.getValue()).getDynamicResultSet();
 
                     ListGrid listGrid = formService.buildCollectionListGrid(alternateIdProperty.getValue(), drs, p,
                             mmd.getTargetClass());
