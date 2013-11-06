@@ -99,7 +99,7 @@ public class AdminAssetUploadController extends AdminAbstractController {
     }
     
     @RequestMapping(value = "/{id}/uploadAsset", method = RequestMethod.POST)
-    public ResponseEntity<String> upload(HttpServletRequest request,
+    public ResponseEntity<Map<String, Object>> upload(HttpServletRequest request,
             @RequestParam("file") MultipartFile file, 
             @PathVariable(value="sectionKey") String sectionKey, @PathVariable(value="id") String id) throws IOException {
         Map<String, Object> responseMap = new HashMap<String, Object>();
@@ -131,7 +131,7 @@ public class AdminAssetUploadController extends AdminAbstractController {
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add("Content-Type", "text/html; charset=utf-8");
-        return new ResponseEntity<String>(new ObjectMapper().writeValueAsString(responseMap), responseHeaders, HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(responseMap, responseHeaders, HttpStatus.OK);
     }
     
     @RequestMapping(value = "/uploadAsset", method = RequestMethod.POST)
