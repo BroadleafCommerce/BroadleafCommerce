@@ -136,7 +136,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
             Money retailAdjustmentPrice = calculateRetailAdjustmentUnitPrice();
             
             if (promotableOrderItem.isOnSale()) {
-                if (saleAdjustmentPrice.lessThan(retailAdjustmentPrice)) {
+                if (saleAdjustmentPrice.lessThanOrEqual(retailAdjustmentPrice)) {
                     this.useSaleAdjustments = Boolean.TRUE;
                     adjustedTotal = saleAdjustmentPrice;
                 } else {
