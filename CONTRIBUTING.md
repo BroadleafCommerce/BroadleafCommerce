@@ -13,7 +13,7 @@ Broadleaf Commerce also has an enterprise edition with additional features and s
 See our pricing page (http://www.broadleafcommerce.com/pricing) for more details.
 
 
-# Overview of Community Resources
+## Overview of Community Resources
 - [Issue Tracking](https://github.com/BroadleafCommerce/BroadleafCommerce/issues) - GitHub issues are used to track bugs.
 - [Forums](http://forum.broadleafcommerce.com) - Forums are useful for requesting help from other community members.
 - IRC - Our IRC channel is #broadleaf on irc.freenode.net
@@ -24,10 +24,10 @@ Note: The broadleaf framework consists of the core framework as well as other op
 
 
 
-# Issues
+## Issues
 We use GitHub issues for bug tracking. See the [issues tab](https://github.com/BroadleafCommerce/BroadleafCommerce/issues) of this project to open a bug.
 
-### When to Open Issues
+### When to open issues
 There are 2 main avenues for community involvement: GitHub issues and [the forums](http://forum.broadleafcommerce.org). There is somewhat of a fine line that differentiates them but in general you can think of it like this:
 
 - Questions like 'how do I do xyz in Broadleaf?' or 'I'm thinking about doing abc, what do you think?' are suitable for the **forums**
@@ -47,10 +47,10 @@ All issues should, at a minimum, provide the following:
 -- It helps us if you  make sure that you are using the latest patch release for the version of Broadleaf that you are on and if you check to see if anyone else has filed the same issue.
 
 
-### Our Issue Management process
+### Our issue management process
 Our goal is to classify issues within a few days after they are filed.   We use the following GitHub labels for this purpose.
 
-##### Step 1 - We assign Issue Meta-Data
+##### Step 1 - We assign issue meta-data
 We use the following GitHub labels to classify issues.
 - **severity-(critical/major/minor)** - issue importance. Critical issues are those that have a large impact on functionality or give incorrect data such as errors in pricing or promotions.
 - **module-(admin/cms/core/rest/tests)** - which of the Broadleaf framework modules the issue occurs in
@@ -60,7 +60,7 @@ We use the following GitHub labels to classify issues.
 - **affects-(x.x.x-GA)** - which GA version line the issue is affecting
 - **needs-information** - more information is needed in order to continue. We might be waiting on a stack trace or for users to verify with the latest patch version, etc.
 
-##### Step 2 - We select issues for next Broadleaf Sprint / Patch Release
+##### Step 2 - We select issues for next Broadleaf sprint / patch release
 Generally, issues that have been properly classified and for which we have enough information will be eligible for our next Sprint Planning session.   
 During our Sprint Planning, we will select issues based on the classification factors.
 
@@ -83,9 +83,7 @@ We may ask you (as the submitter) to verify an issue before closing but generall
 Once we've completed the issues for a release, we'll create an official release of the code.
 
 
-
-
-### Fix it Yourself with a Pull Requests
+### Fix it yourself with a Pull Request
 
 What's better than issues? Pull requests, of course! The quickest way to get an issue fixed is to fork Broadleaf and submit a patch to the codebase. **Pull requests will receive priority access to getting reviewed and a fix in place.** While we will not accept all pull requests, we would love for you to kick off a discussion around some code. Key guidelines to getting your pull request accepted:
 [Learn more about Pull Requests ... ](https://help.github.com/articles/using-pull-requests)
@@ -102,8 +100,8 @@ What's better than issues? Pull requests, of course! The quickest way to get an 
 3. Provide comments on non-obvious code functionality
 4. Ensure that all tests successfully pass with Maven (`mvn test` passes all tests)
 
-### How to do a Pull Request
-All of us at Broadlaef rely heavily on [Jrebel](http://zeroturnaround.com/software/jrebel/) to speed up our development. Our normal development cycle is:
+### How to send a pull request
+All of us at Broadleaf rely heavily on [Jrebel](http://zeroturnaround.com/software/jrebel/) to speed up our development. Our normal development cycle is:
 
 1. Clone the framework
 2. Check out the correct branch (see [Our Branching Strategy](#broadleaf-commerce-branching-strategy))
@@ -111,9 +109,9 @@ All of us at Broadlaef rely heavily on [Jrebel](http://zeroturnaround.com/softwa
 > the `blc-development` Maven profile will create the appropriate metadata for JRebel to reload the framework classes
 4. Clone a clean version of [DemoSite](https://github.com/BroadleafCommerce/DemoSite) (or use your own)
 5. Target the same SNAPSHOT version of the framework in your root DemoSite pom.xml that you just built with Maven in previous steps
-6. Submit your code in a pull request
+6. Submit your code in a pull request (see https://help.github.com/articles/creating-a-pull-request and https://help.github.com/articles/using-pull-requests)
 
-# Broadleaf Commerce Branching Strategy
+## Broadleaf Commerce Branching Strategy
 The latest GA release is available on the `master` branch. Once a GA release has occurred, development continues on corresponding version branches of the form:
 
 > BroadleafCommerce-a.b.x
@@ -138,7 +136,5 @@ Subsequent patch releases of 3.0 (3.0.1-GA, 3.0.2-GA, etc) will now be made from
 
 So, if you want to make changes to include in **3.0.4-GA** then you should use the `BroadleafCommerce-3.0.x` branch which will likely be targeting **3.0.4-SNAPSHOT**.
 
-
-
-### Style Guides
+## Style Guides
 //TODO - upload Eclipse style config file
