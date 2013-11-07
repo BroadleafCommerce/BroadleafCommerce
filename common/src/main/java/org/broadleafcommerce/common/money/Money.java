@@ -142,11 +142,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
             throw new IllegalArgumentException("currency cannot be null");
         }
         this.currency = currency;
-        if (amount.compareTo(new BigDecimal(".01")) > -1) {
-            this.amount = BankersRounding.setScale(amount);
-        } else {
-            this.amount = amount;
-        }
+        this.amount = BankersRounding.setScale(BankersRounding.getScaleForCurrency(currency), amount);
     }
     
     public Money(BigDecimal amount, Currency currency, int scale) {
