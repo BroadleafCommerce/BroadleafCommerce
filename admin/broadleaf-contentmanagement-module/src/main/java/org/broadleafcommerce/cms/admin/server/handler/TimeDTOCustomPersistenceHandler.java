@@ -28,6 +28,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +40,7 @@ import java.util.Map;
  * Time: 1:56 PM
  * To change this template use File | Settings | File Templates.
  */
+@Component("blTimeDTOCustomPersistenceHandler")
 public class TimeDTOCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(TimeDTOCustomPersistenceHandler.class);

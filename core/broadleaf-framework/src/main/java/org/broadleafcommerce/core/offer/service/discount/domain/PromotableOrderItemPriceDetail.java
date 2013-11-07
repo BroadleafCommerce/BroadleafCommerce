@@ -193,4 +193,8 @@ public interface PromotableOrderItemPriceDetail {
      */
     boolean useSaleAdjustments();
 
+    boolean isAdjustmentsFinalized();
+
+    void setAdjustmentsFinalized(boolean adjustmentsFinalized);
+
 }

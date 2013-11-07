@@ -40,10 +40,12 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Jeff Fischer
  */
+@Component("blPendingSandBoxItemCustomPersistenceHandler")
 public class PendingSandBoxItemCustomPersistenceHandler extends SandBoxItemCustomPersistenceHandler {
 
     private final Log LOG = LogFactory.getLog(PendingSandBoxItemCustomPersistenceHandler.class);

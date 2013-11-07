@@ -23,15 +23,18 @@ import org.broadleafcommerce.core.rating.domain.RatingSummary;
 import org.broadleafcommerce.core.rating.domain.RatingSummaryImpl;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
+import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 @Repository("blRatingSummaryDao")
 public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSummaryDao {
@@ -42,19 +45,50 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @Override
+    public RatingSummary createSummary() {
+        return entityConfiguration.createEntityInstance(RatingSummary.class.getName(), RatingSummary.class);
+    }
+    
+    @Override
+    public RatingSummary createSummary(String itemId, RatingType type) {
+        RatingSummary summary = createSummary();
+        summary.setItemId(itemId);
+        summary.setRatingType(type);
+        return summary;
+    }
+    
+    @Override
+    public RatingDetail createDetail() {
+        return entityConfiguration.createEntityInstance(RatingDetail.class.getName(), RatingDetail.class);
+    }
+    
+    @Override
+    public RatingDetail createDetail(RatingSummary ratingSummary, Double rating, Date submittedDate, Customer customer) {
+        RatingDetail detail = createDetail();
+        detail.setRatingSummary(ratingSummary);
+        detail.setRating(rating);
+        detail.setRatingSubmittedDate(submittedDate);
+        detail.setCustomer(customer);
+        return detail;
+    }
+    
+    @Override
     public void deleteRatingSummary(final RatingSummary summary) {
         RatingSummary lSummary = summary;
         if (!em.contains(lSummary)) {
-            lSummary = (RatingSummary) em.find(RatingSummaryImpl.class, lSummary.getId());
+            lSummary = em.find(RatingSummaryImpl.class, lSummary.getId());
         }
         em.remove(lSummary);
     }
 
+    @Override
     public RatingSummary saveRatingSummary(final RatingSummary summary) {
         summary.resetAverageRating();
         return em.merge(summary);
     }
 
+    @Override
     public List<RatingSummary> readRatingSummaries(final List<String> itemIds, final RatingType type) {
         final Query query = em.createNamedQuery("BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE");
         query.setParameter("ratingType", type.getType());
@@ -63,6 +97,7 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
         return ratings;
     }
 
+    @Override
     public RatingSummary readRatingSummary(final String itemId, final RatingType type) {
         final Query query = em.createNamedQuery("BC_READ_RATING_SUMMARY_BY_ITEM_ID_AND_TYPE");
         query.setParameter("itemId", itemId);
@@ -80,6 +115,7 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
         return ratingSummary;
     }
 
+    @Override
     public RatingDetail readRating(final Long customerId, final Long ratingSummaryId) {
         final Query query = em.createNamedQuery("BC_READ_RATING_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID");
         query.setParameter("customerId", customerId);
@@ -97,6 +133,7 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
         return ratingDetail;
     }
 
+    @Override
     public ReviewDetail readReview(final Long customerId, final Long ratingSummaryId) {
         final Query query = em.createNamedQuery("BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID");
         query.setParameter("customerId", customerId);

@@ -31,10 +31,12 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Jeff Fischer
  */
+@Component("blChildCategoriesCustomPersistenceHandler")
 public class ChildCategoriesCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     @Override

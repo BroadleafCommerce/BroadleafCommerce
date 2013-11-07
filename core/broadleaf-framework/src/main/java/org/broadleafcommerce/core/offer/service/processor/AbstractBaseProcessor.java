@@ -410,11 +410,11 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         for (Offer offer : offers) {
             TimeZone timeZone = getOfferTimeZoneProcessor().getTimeZone(offer);
 
-            Calendar current = new GregorianCalendar(timeZone);
+            Calendar current = timeZone == null ? SystemTime.asCalendar() : SystemTime.asCalendar(timeZone);
             Calendar start = null;
             if (offer.getStartDate() != null) {
                 LocalDateTime startDate = new LocalDateTime(offer.getStartDate());
-                start = new GregorianCalendar(timeZone);
+                start = timeZone == null ? new GregorianCalendar() : new GregorianCalendar(timeZone);
                 start.set(Calendar.YEAR, startDate.getYear());
                 start.set(Calendar.MONTH, startDate.getMonthOfYear() - 1);
                 start.set(Calendar.DAY_OF_MONTH, startDate.getDayOfMonth());
@@ -430,7 +430,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             Calendar end = null;
             if (offer.getEndDate() != null) {
                 LocalDateTime endDate = new LocalDateTime(offer.getEndDate());
-                end = new GregorianCalendar(timeZone);
+                end = timeZone == null ? new GregorianCalendar() : new GregorianCalendar(timeZone);
                 end.set(Calendar.YEAR, endDate.getYear());
                 end.set(Calendar.MONTH, endDate.getMonthOfYear() - 1);
                 end.set(Calendar.DAY_OF_MONTH, endDate.getDayOfMonth());

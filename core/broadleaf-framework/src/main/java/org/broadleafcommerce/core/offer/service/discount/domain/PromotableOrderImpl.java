@@ -224,26 +224,37 @@ public class PromotableOrderImpl implements PromotableOrder {
 
     @Override
     public boolean isTotalitarianOfferApplied() {
-        boolean totalitarianOfferApplied = false;
+        return isTotalitarianFgOfferApplied() || isTotalitarianItemOfferApplied() || isTotalitarianOrderOfferApplied();
+    }
+    
+    @Override
+    public boolean isTotalitarianOrderOfferApplied() {
         for (PromotableOrderAdjustment adjustment : candidateOrderOfferAdjustments) {
             if (adjustment.isTotalitarian()) {
-                totalitarianOfferApplied = true;
-                break;
+                return true;
             }
         }
-        if (!totalitarianOfferApplied) {
-            for (PromotableOrderItemPriceDetail itemPriceDetail : getAllPromotableOrderItemPriceDetails()) {
-                totalitarianOfferApplied = itemPriceDetail.isTotalitarianOfferApplied();
+        return false;
+    }
+    
+    @Override
+    public boolean isTotalitarianItemOfferApplied() {
+        for (PromotableOrderItemPriceDetail itemPriceDetail : getAllPromotableOrderItemPriceDetails()) {
+            if (itemPriceDetail.isTotalitarianOfferApplied()) {
+                return true;
             }
         }
-        if (!totalitarianOfferApplied) {
-            for (PromotableFulfillmentGroup fg : getFulfillmentGroups()) {
-                if (fg.isTotalitarianOfferApplied()) {
-                    return true;
-                }
+        return false;
+    }
+    
+    @Override
+    public boolean isTotalitarianFgOfferApplied() {
+        for (PromotableFulfillmentGroup fg : getFulfillmentGroups()) {
+            if (fg.isTotalitarianOfferApplied()) {
+                return true;
             }
         }
-        return totalitarianOfferApplied;
+        return false;
     }
 
     @Override
@@ -292,10 +303,6 @@ public class PromotableOrderImpl implements PromotableOrder {
 
     @Override
     public boolean canApplyOrderOffer(PromotableCandidateOrderOffer offer) {
-        if (isTotalitarianOfferApplied()) {
-            return false;
-        }
-        
         if (isNotCombinableOrderOfferApplied()) {
             return false;
         }

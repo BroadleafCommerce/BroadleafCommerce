@@ -45,6 +45,16 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         this.promotableOrderItem = promotableOrderItem;
         this.quantity = quantity;
     }
+    
+    @Override
+    public boolean isAdjustmentsFinalized() {
+        return adjustmentsFinalized;
+    }
+    
+    @Override
+    public void setAdjustmentsFinalized(boolean adjustmentsFinalized) {
+        this.adjustmentsFinalized = adjustmentsFinalized;
+    }
 
     @Override
     public void addCandidateItemPriceDetailAdjustment(PromotableOrderItemPriceDetailAdjustment itemAdjustment) {
@@ -126,7 +136,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
             Money retailAdjustmentPrice = calculateRetailAdjustmentUnitPrice();
             
             if (promotableOrderItem.isOnSale()) {
-                if (saleAdjustmentPrice.lessThan(retailAdjustmentPrice)) {
+                if (saleAdjustmentPrice.lessThanOrEqual(retailAdjustmentPrice)) {
                     this.useSaleAdjustments = Boolean.TRUE;
                     adjustedTotal = saleAdjustmentPrice;
                 } else {

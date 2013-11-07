@@ -44,6 +44,7 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ import javax.annotation.Resource;
 /**
  * Created by jfischer
  */
+@Component("blStructuredContentTypeCustomPersistenceHandler")
 public class StructuredContentTypeCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private final Log LOG = LogFactory.getLog(StructuredContentTypeCustomPersistenceHandler.class);

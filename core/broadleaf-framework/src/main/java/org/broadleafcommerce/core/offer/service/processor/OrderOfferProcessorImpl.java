@@ -47,13 +47,14 @@ import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author jfischer, bpolster
@@ -218,16 +219,18 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         Iterator<PromotableCandidateOrderOffer> orderOfferIterator = orderOffers.iterator();
         while (orderOfferIterator.hasNext()) {
             PromotableCandidateOrderOffer orderOffer = orderOfferIterator.next();
-
+            
             if (promotableOrder.canApplyOrderOffer(orderOffer)) {
                 applyOrderOffer(promotableOrder, orderOffer);
-                if (orderOffer.isTotalitarian()) {
+                
+                if (orderOffer.isTotalitarian() || promotableOrder.isTotalitarianItemOfferApplied()) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Totalitarian Order Offer Applied.   Comparing order and item offers for best outcome.");
                     }
-
                     compareAndAdjustOrderAndItemOffers(promotableOrder);
-                    continue;
+                    // We continue because this could be the first offer and marked as totalitarian, but not as good as an
+                    // item offer. There could be other order offers that are not totalitarian that also qualify.
+                    continue; 
                 }
                 
                 if (!orderOffer.isCombinable()) {
@@ -466,7 +469,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             itemDetail.setQuantity(promotableDetail.getQuantity());
         }
 
-        if (itemDetail.getUseSalePrice() != promotableDetail.useSaleAdjustments()) {
+        if (promotableDetail.isAdjustmentsFinalized()) {
             itemDetail.setUseSalePrice(promotableDetail.useSaleAdjustments());
         }
 
