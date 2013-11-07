@@ -70,27 +70,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>legacy-test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <!-- Skip legacy tests by default, activated with -Plegacy -->
-                            <skipTests>true</skipTests>
-                            <excludes>
-                                <exclude>**/OrderTest.java</exclude>
-                                <exclude>**/CartTest.java</exclude>
-                                <exclude>**/CheckoutTest.java</exclude>
-                                <exclude>**/FulfillmentGroupDaoTest.java</exclude>
-                                <exclude>**/OfferServiceTest.java</exclude>
-                                <exclude>**/OfferTest.java</exclude>
-                                <exclude>**/PricingTest.java</exclude>
-                            </excludes>
-                            <argLine>-Xmx1024m -XX:MaxPermSize=512m -Dlegacy=true</argLine>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>non-legacy-test</id>
                         <phase>test</phase>
                         <goals>
@@ -126,6 +105,7 @@
     </build>
     <profiles>
         <profile>
+            <!-- Skip legacy tests by default, activated with the Maven 'legacy-test' profile -->
             <id>legacy-test</id>
             <build>
                 <plugins>
@@ -135,8 +115,20 @@
                         <executions>
                             <execution>
                                 <id>legacy-test</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
                                 <configuration>
-                                    <skipTests>false</skipTests>
+                                    <excludes>
+                                        <exclude>**/OrderTest.java</exclude>
+                                        <exclude>**/CartTest.java</exclude>
+                                        <exclude>**/CheckoutTest.java</exclude>
+                                        <exclude>**/FulfillmentGroupDaoTest.java</exclude>
+                                        <exclude>**/OfferServiceTest.java</exclude>
+                                        <exclude>**/OfferTest.java</exclude>
+                                        <exclude>**/PricingTest.java</exclude>
+                                    </excludes>
                                 </configuration>
                             </execution>
                         </executions>
