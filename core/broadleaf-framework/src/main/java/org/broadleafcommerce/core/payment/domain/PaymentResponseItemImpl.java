@@ -162,7 +162,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @Index(name="PAYRESPONSE_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
-    @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")
+    @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER", unique=true)
     @Index(name="PAYRESPONSE_REFERENCE_INDEX", columnNames={"PAYMENT_INFO_REFERENCE_NUMBER"})
     @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Payment_Ref_Number", order = 17, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String paymentInfoReferenceNumber;
