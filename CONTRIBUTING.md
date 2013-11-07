@@ -6,6 +6,7 @@ This page provides an overview of ways to interact with Broadleaf Commerce but f
 - [Overview of Community Resources](#overview-of-community-resources)
 - [Creating Issues / Bugs](#issues)
 - [Broadleaf Commerce Branching Strategy](#broadleaf-commerce-branching-strategy)
+- [Sending Pull Requests](#fix-it-yourself-with-a-pull-request)
 
 
 ## Note on Premium Support and Licensing
@@ -16,13 +17,11 @@ See our pricing page (http://www.broadleafcommerce.com/pricing) for more details
 ## Overview of Community Resources
 - [Issue Tracking](https://github.com/BroadleafCommerce/BroadleafCommerce/issues) - GitHub issues are used to track bugs.
 - [Forums](http://forum.broadleafcommerce.com) - Forums are useful for requesting help from other community members.
-- IRC - Our IRC channel is #broadleaf on irc.freenode.net
+- IRC - Our IRC channel is [#broadleaf on irc.freenode.net](irc://irc.freenode.net/broadleaf)
 - [Documentation](http://docs.broadleafcommerce.org) - In addition to JavaDoc'd classes and services, documentation and tutorials are available.
 - [Demo](http://www.broadleafcommerce.com/demo) - You can sign up for your own private demo with a site and admin 
 
 Note: The broadleaf framework consists of the core framework as well as other open source properties.  For example, the Broadleaf Demo application is also open source.   Bugs can and should be filed directly against the demo application (or any other related Broadleaf project).
-
-
 
 ## Issues
 We use GitHub issues for bug tracking. See the [issues tab](https://github.com/BroadleafCommerce/BroadleafCommerce/issues) of this project to open a bug.
@@ -61,7 +60,7 @@ We use the following GitHub labels to classify issues.
 - **needs-information** - more information is needed in order to continue. We might be waiting on a stack trace or for users to verify with the latest patch version, etc.
 
 ##### Step 2 - We select issues for next Broadleaf sprint / patch release
-Generally, issues that have been properly classified and for which we have enough information will be eligible for our next Sprint Planning session.   
+Generally, issues that have been properly classified and for which we have enough information will be eligible for our next Sprint Planning session.
 During our Sprint Planning, we will select issues based on the classification factors.
 
 ##### Step 3 - We assign a milestone
@@ -72,7 +71,7 @@ Milestones are tied to GA releases of the framework.  We use special milestones 
 - **Closed - No Release Required** - reserved for things like duplicates or for closing issues that are more suitable for the forums
 
 Once a GA milestone has been selected and it has been assigned to someone then that means that we are committed to putting that into the referenced milestone release. 
-Currently we are targeting ~3 week cycles for patch releases.   We do our best but cannot guarantee issue fix times AT ALL.   
+Currently we are targeting ~3 week cycles for patch releases. We do our best but cannot guarantee issue fix times AT ALL.   
 
 If you need an issue or feature on a specific timeline, [contact us](http://www.broadleafcommerce.com/contact) for professional services or support OR fix it yourself and send us a pull request (see next section).
 
@@ -82,7 +81,6 @@ We may ask you (as the submitter) to verify an issue before closing but generall
 ##### Step 5 - We release the patch (or new major version) of the software
 Once we've completed the issues for a release, we'll create an official release of the code.
 
-
 ### Fix it yourself with a Pull Request
 
 What's better than issues? Pull requests, of course! The quickest way to get an issue fixed is to fork Broadleaf and submit a patch to the codebase. **Pull requests will receive priority access to getting reviewed and a fix in place.** While we will not accept all pull requests, we would love for you to kick off a discussion around some code. Key guidelines to getting your pull request accepted:
@@ -90,15 +88,12 @@ What's better than issues? Pull requests, of course! The quickest way to get an 
 
 1. Requests should be based off of the 'develop' branch if you want to target the next Broadleaf release. To target older versions of Broadleaf, use the corresponding branch (version 3.0.x should use 'BroadleafCommerce-3.0.x', version 2.2.x should be based off of the 'BroadleafCommerce-2.2.x' branch, etc).
 2. Try to match the Broadleaf code styles as closely as possible
-    > Of particular importance is our ordering of imports. The package prefix ordering of class imports that we configure in our IDEs is:
 
-        1. org
-        2. com
-        3. java
-        4. javax
+    > Broadleaf Eclipse code formatter: http://f.cl.ly/items/1P3X2a2E1n1e3d3S3g3L/Broadleaf%20Eclipse%20Formatter.xml
 
-3. Provide comments on non-obvious code functionality
-4. Ensure that all tests successfully pass with Maven (`mvn test` passes all tests)
+3. **Use spaces and not tabs for indentation**
+4. Provide comments on non-obvious code functionality
+5. Ensure that all tests successfully pass with Maven (`mvn test` passes all tests)
 
 ### How to send a pull request
 All of us at Broadleaf rely heavily on [Jrebel](http://zeroturnaround.com/software/jrebel/) to speed up our development. Our normal development cycle is:
@@ -134,7 +129,4 @@ The latest SNAPSHOT version is available on the `develop` branch. So given the s
 
 Subsequent patch releases of 3.0 (3.0.1-GA, 3.0.2-GA, etc) will now be made from the `BroadleafCommerce-3.0.x` branch. Until 3.1.0-GA is released, these 3.0 patch releases will also be merged into master.
 
-So, if you want to make changes to include in **3.0.4-GA** then you should use the `BroadleafCommerce-3.0.x` branch which will likely be targeting **3.0.4-SNAPSHOT**.
-
-## Style Guides
-//TODO - upload Eclipse style config file
+So, if you want to make changes to include in **3.0.4-GA** then you should use the `BroadleafCommerce-3.0.x` branch which will be targeting **3.0.4-SNAPSHOT** until the GA version is released.
