@@ -189,4 +189,10 @@ public interface PromotableOrder extends Serializable {
      * @return
      */
     boolean isIncludeOrderAndItemAdjustments();
+
+    public boolean isTotalitarianOrderOfferApplied();
+
+    public boolean isTotalitarianItemOfferApplied();
+
+    public boolean isTotalitarianFgOfferApplied();
 }
