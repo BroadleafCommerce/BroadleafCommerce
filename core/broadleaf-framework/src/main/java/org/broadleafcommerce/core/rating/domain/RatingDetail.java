@@ -22,11 +22,24 @@ import java.util.Date;
 
 public interface RatingDetail {
 
-    Long getId();
-    Double getRating();
-    void setRating(Double newRating);
-    Customer getCustomer();
-    Date getRatingSubmittedDate();
-    RatingSummary getRatingSummary();
+    public Long getId();
+    
+    public void setId(Long id);
+    
+    public Double getRating();
+    
+    public void setRating(Double newRating);
+    
+    public Customer getCustomer();
+    
+    public void setCustomer(Customer customer);
+    
+    public Date getRatingSubmittedDate();
+    
+    public void setRatingSubmittedDate(Date ratingSubmittedDate);
+    
+    public RatingSummary getRatingSummary();
+    
+    public void setRatingSummary(RatingSummary ratingSummary);
 
 }
