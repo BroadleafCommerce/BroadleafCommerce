@@ -60,6 +60,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -78,6 +79,7 @@ import javax.persistence.criteria.Predicate;
  * @author Phillip Verheyden
  *
  */
+@Component("blSkuCustomPersistenceHandler")
 public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(SkuCustomPersistenceHandler.class);

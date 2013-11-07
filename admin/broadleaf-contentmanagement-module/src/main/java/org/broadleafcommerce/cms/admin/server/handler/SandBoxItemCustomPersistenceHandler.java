@@ -43,6 +43,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ import javax.annotation.Resource;
 /**
  * @author Jeff Fischer
  */
+@Component("blSandBoxItemCustomPersistenceHandler")
 public class SandBoxItemCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private final Log LOG = LogFactory.getLog(SandBoxItemCustomPersistenceHandler.class);
