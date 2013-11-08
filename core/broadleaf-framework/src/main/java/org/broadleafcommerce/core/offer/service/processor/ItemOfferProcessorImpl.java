@@ -378,6 +378,10 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         }
         return true;
     }
+
+    protected boolean markTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order, OrderItem relatedQualifier) {
+        return markTargets(itemOffer, order, relatedQualifier, false);
+    }
     
     /**
      * Loop through ItemCriteria and mark targets that can get this promotion to give the promotion to 1 or more targets.
@@ -385,7 +389,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
      * @param order
      * @return
      */
-    protected boolean markTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order, OrderItem relatedQualifier) {
+    protected boolean markTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order, OrderItem relatedQualifier,
+            boolean checkOnly) {
         Offer promotion = itemOffer.getOffer();
         List<PromotableOrderItem> promotableItems = itemOffer.getCandidateTargets();
         List<PromotableOrderItemPriceDetail> priceDetails = buildPriceDetailListFromOrderItems(promotableItems);
@@ -421,13 +426,17 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                     if ((promotion.getMaxUses() == 0) || (itemOffer.getUses() < promotion.getMaxUses())) {
                         int qtyToMarkAsTarget = Math.min(receiveQtyNeeded, itemQtyAvailableToBeUsedAsTarget);
                         receiveQtyNeeded -= qtyToMarkAsTarget;
-                        priceDetail.addPromotionDiscount(itemOffer, itemOffer.getOffer().getTargetItemCriteria(), qtyToMarkAsTarget);
+                        if (!checkOnly) {
+                            priceDetail.addPromotionDiscount(itemOffer, itemOffer.getOffer().getTargetItemCriteria(), qtyToMarkAsTarget);
+                        }
                     }
                 }
             }
 
             if (receiveQtyNeeded == 0) {
-                itemOffer.addUse();
+                if (!checkOnly) {
+                    itemOffer.addUse();
+                }
                 break;
             }
         }
@@ -445,7 +454,10 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
      * @return whether or not a suitable qualifier/target pair was found and marked
      */
     protected boolean markRelatedQualifiersAndTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order) {
+        int curQualifier = 0;
         for (Entry<OfferItemCriteria, List<PromotableOrderItem>> entry : itemOffer.getCandidateQualifiersMap().entrySet()) {
+            curQualifier++;
+
             OfferItemCriteria itemCriteria = entry.getKey();
             List<PromotableOrderItem> promotableItems = entry.getValue();
 
@@ -476,10 +488,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                         int qtyToMarkAsQualifier = Math.min(qualifierQtyNeeded, itemQtyAvailableToBeUsedAsQualifier);
                         qualifierQtyNeeded -= qtyToMarkAsQualifier;
                         PromotionQualifier pq = detail.addPromotionQualifier(itemOffer, itemCriteria, qtyToMarkAsQualifier);
-                        
+
                         // Now, we need to see if there exists a target(s) that is suitable for this qualifier due to
-                        // the relationship flag.
-                        if (!markTargets(itemOffer, order, oi)) {
+                        // the relationship flag. If we are on the last qualifier required for this offer, we want to 
+                        // actually go ahead and mark the target that we'll be using. Otherwise, we just want to check 
+                        // that there is an eligible target(s) and continue on.
+                        boolean lastQualifier = curQualifier == itemOffer.getCandidateQualifiersMap().entrySet().size();
+                        if (!markTargets(itemOffer, order, oi, !lastQualifier)) {
                             // If we didn't find a target, we need to roll back how we marked this item as a qualifier.
                             qualifierQtyNeeded += qtyToMarkAsQualifier;
                             if (pq.getQuantity() == qtyToMarkAsQualifier) {
