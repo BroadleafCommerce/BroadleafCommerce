@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.logging.Log;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -482,4 +483,12 @@ public interface OrderService {
 
     Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException;
 
+    /**
+     * This debugging method will print out a console-suitable representation of the current state of the order, including
+     * the items in the order and all pricing related information for the order.
+     * 
+     * @param order the order to debug
+     * @param log the Log to use to print a debug-level message
+     */
+    public void printOrder(Order order, Log log);
 }
