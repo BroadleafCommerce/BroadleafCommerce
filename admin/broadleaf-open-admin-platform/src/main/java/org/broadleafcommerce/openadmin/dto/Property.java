@@ -31,11 +31,13 @@ public class Property implements Serializable {
     protected String name;
     protected String value;
     protected String displayValue;
+    protected String originalDisplayValue;
     protected FieldMetadata metadata = new BasicFieldMetadata();
     protected boolean isAdvancedCollection = false;
     protected Boolean isDirty = false;
     protected String unHtmlEncodedValue;
     protected String rawValue;
+    protected String originalValue;
 
     public String getName() {
         return name;
@@ -99,6 +101,22 @@ public class Property implements Serializable {
 
     public void setAdvancedCollection(boolean advancedCollection) {
         isAdvancedCollection = advancedCollection;
+    }
+
+    public String getOriginalValue() {
+        return originalValue;
+    }
+
+    public void setOriginalValue(String originalValue) {
+        this.originalValue = originalValue;
+    }
+
+    public String getOriginalDisplayValue() {
+        return originalDisplayValue;
+    }
+
+    public void setOriginalDisplayValue(String originalDisplayValue) {
+        this.originalDisplayValue = originalDisplayValue;
     }
     
     @Override

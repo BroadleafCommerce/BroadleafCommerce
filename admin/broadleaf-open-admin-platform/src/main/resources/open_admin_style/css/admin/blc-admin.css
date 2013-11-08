@@ -1415,10 +1415,6 @@ div.uploadMessage {
 form.uploadFileForm {
 }
 
-form.uploadFileForm input[type="file"] {
-	display: none;
-}
-
 div.imagePreviewContainer {
 	width: 200px;
 	height: 200px;

@@ -40,7 +40,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -97,10 +96,7 @@ public class OfferCodeImpl implements OfferCode {
     @Deprecated
     protected int uses;
     
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OrderImpl.class)
-    @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", 
-        joinColumns = @JoinColumn(name = "OFFER_CODE_ID", referencedColumnName = "OFFER_CODE_ID"), 
-        inverseJoinColumns = @JoinColumn(name = "ORDER_ID", referencedColumnName = "ORDER_ID"))
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy="addedOfferCodes", targetEntity = OrderImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<Order> orders = new ArrayList<Order>();
 

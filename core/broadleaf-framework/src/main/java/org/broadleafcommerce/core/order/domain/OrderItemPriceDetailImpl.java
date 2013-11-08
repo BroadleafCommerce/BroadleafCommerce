@@ -103,7 +103,7 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
 
     @Column(name = "USE_SALE_PRICE")
     @AdminPresentation(friendlyName = "OrderItemPriceDetailImpl_useSalePrice", order = 5, group = "OrderItemPriceDetailImpl_Pricing", prominent = true)
-    protected Boolean useSalePrice;
+    protected Boolean useSalePrice = true;
 
     @Override
     public Long getId() {

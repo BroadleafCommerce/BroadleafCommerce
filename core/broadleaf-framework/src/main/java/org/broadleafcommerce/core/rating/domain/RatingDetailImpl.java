@@ -67,44 +67,55 @@ public class RatingDetailImpl implements RatingDetail {
     @JoinColumn(name = "RATING_SUMMARY_ID")
     protected RatingSummary ratingSummary;
 
-    public RatingDetailImpl() {
-    }
-
-    public RatingDetailImpl(RatingSummary ratingSummary, Double rating, Date ratingSubmittedDate, Customer customer) {
-        super();
-        this.ratingSummary = ratingSummary;
-        this.rating = rating;
-        this.ratingSubmittedDate = ratingSubmittedDate;
-        this.customer = customer;
-    }
-
     @Override
     public Long getId() {
         return id;
+    }
+    
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
     public Double getRating() {
         return rating;
     }
-
-    @Override
-    public Date getRatingSubmittedDate() {
-        return ratingSubmittedDate;
-    }
-
-    @Override
-    public Customer getCustomer() {
-        return customer;
-    }
-
+    
     @Override
     public void setRating(Double newRating) {
         this.rating = newRating;
     }
 
     @Override
+    public Date getRatingSubmittedDate() {
+        return ratingSubmittedDate;
+    }
+    
+    @Override
+    public void setRatingSubmittedDate(Date ratingSubmittedDate) {
+        this.ratingSubmittedDate = ratingSubmittedDate;
+    }
+
+    @Override
+    public Customer getCustomer() {
+        return customer;
+    }
+    
+    @Override
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    @Override
     public RatingSummary getRatingSummary() {
         return ratingSummary;
     }
+    
+    @Override
+    public void setRatingSummary(RatingSummary ratingSummary) {
+        this.ratingSummary = ratingSummary;
+    }
+    
+    
 }

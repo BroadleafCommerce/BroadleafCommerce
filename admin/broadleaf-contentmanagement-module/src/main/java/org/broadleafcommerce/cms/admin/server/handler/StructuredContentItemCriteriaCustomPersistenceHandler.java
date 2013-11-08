@@ -28,12 +28,14 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 /**
  * @author Jeff Fischer
  */
+@Component("blStructuredContentItemCriteriaCustomPersistenceHandler")
 public class StructuredContentItemCriteriaCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private final Log LOG = LogFactory.getLog(StructuredContentItemCriteriaCustomPersistenceHandler.class);

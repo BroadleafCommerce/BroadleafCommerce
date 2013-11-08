@@ -509,7 +509,11 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         try {
-            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+            // We only want to price on the last addition for performance reasons and only if the user asked for it.
+            int numAdditionRequests = priceOrder ? (1 + orderItemRequestDTO.getChildOrderItems().size()) : -1;
+            int currentAddition = 1;
+
+            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, currentAddition == numAdditionRequests);
             ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(cartOpRequest);
 
             List<ActivityMessageDTO> orderMessages = new ArrayList<ActivityMessageDTO>();
@@ -518,8 +522,9 @@ public class OrderServiceImpl implements OrderService {
             if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
                 for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
                     childRequest.setParentOrderItemId(context.getSeedData().getOrderItem().getId());
+                    currentAddition++;
 
-                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, priceOrder);
+                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
                     ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
                     orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
                 }

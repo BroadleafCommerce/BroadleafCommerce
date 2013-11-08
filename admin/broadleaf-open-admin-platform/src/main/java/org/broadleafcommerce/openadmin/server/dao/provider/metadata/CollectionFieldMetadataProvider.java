@@ -417,10 +417,12 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             foreignKey.setManyToField(foreignKeyName);
             foreignKey.setForeignKeyClass(resolvedClass.getName());
             foreignKey.setMutable(metadata.isMutable());
+            foreignKey.setOriginatingField(field.getName());
         } else {
             ForeignKey foreignKey = new ForeignKey(foreignKeyName, resolvedClass.getName(), null, ForeignKeyRestrictionType.ID_EQ);
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
             foreignKey.setMutable(metadata.isMutable());
+            foreignKey.setOriginatingField(field.getName());
         }
 
         String ceiling = null;

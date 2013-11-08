@@ -20,6 +20,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,6 +30,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
  * Time: 1:56 PM
  * To change this template use File | Settings | File Templates.
  */
+@Component("blRequestDTOCustomPersistenceHandler")
 public class RequestDTOCustomPersistenceHandler extends TimeDTOCustomPersistenceHandler {
 
     private static final Log LOG = LogFactory.getLog(RequestDTOCustomPersistenceHandler.class);
