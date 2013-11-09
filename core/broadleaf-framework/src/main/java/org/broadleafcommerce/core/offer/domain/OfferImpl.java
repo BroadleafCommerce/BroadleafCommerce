@@ -151,7 +151,8 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     @Index(name="OFFER_DISCOUNT_INDEX", columnNames={"OFFER_DISCOUNT_TYPE"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type", order = 1000, 
         group = Presentation.Group.Name.Amount, groupOrder = Presentation.Group.Order.Amount,
-        fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, 
+        requiredOverride = RequiredOverride.REQUIRED,
+        fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDiscountType")
     protected String discountType;
 
