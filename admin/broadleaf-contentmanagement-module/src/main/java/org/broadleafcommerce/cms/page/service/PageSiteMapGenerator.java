@@ -77,7 +77,7 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
                 SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
                 // location
-                siteMapUrl.setLoc(smgc.getSiteMapConfiguration().getSiteUrlPath() + currentURL);
+                siteMapUrl.setLoc(generateUri(smgc, page));
 
                 // change frequency
                 siteMapUrl.setChangeFreqType(smgc.getSiteMapChangeFreq());
@@ -86,15 +86,23 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
                 siteMapUrl.setPriorityType(smgc.getSiteMapPriority());
 
                 // lastModDate
-                if ((page.getAuditable() != null) && (page.getAuditable().getDateUpdated() != null)) {
-                    siteMapUrl.setLastModDate(page.getAuditable().getDateUpdated());
-                } else {
-                    siteMapUrl.setLastModDate(new Date());
-                }
+                siteMapUrl.setLastModDate(generateDate(page));
 
                 siteMapBuilder.addUrl(siteMapUrl);
             }
         } while (pages.size() == rowLimit);
+    }
+
+    protected String generateUri(SiteMapGeneratorConfiguration smgc, Page page) {
+        return smgc.getSiteMapConfiguration().getSiteUrlPath() + page.getFullUrl();
+    }
+
+    protected Date generateDate(Page page) {
+        if ((page.getAuditable() != null) && (page.getAuditable().getDateUpdated() != null)) {
+            return page.getAuditable().getDateUpdated();
+        } else {
+            return new Date();
+        }
     }
 
     public PageDao getPageDao() {

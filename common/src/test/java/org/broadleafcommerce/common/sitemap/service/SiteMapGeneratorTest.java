@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapConfigurationImpl;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
 import org.easymock.EasyMock;
+import org.junit.After;
 import org.junit.Assert;
 
 import java.io.BufferedReader;
@@ -42,6 +43,16 @@ import java.util.List;
 public class SiteMapGeneratorTest {
 
     protected SiteMapServiceImpl siteMapService = new SiteMapServiceImpl();
+
+    @After
+    public void deleteTempFiles() {
+        File f = new File(siteMapService.getTempDirectory() + "sitemap_index.xml");
+        f.delete();
+        f = new File(siteMapService.getTempDirectory() + "sitemap.xml");
+        f.delete();
+        f = new File(siteMapService.getTempDirectory() + "sitemap1.xml");
+        f.delete();
+    }
 
     protected void testGenerator(SiteMapGeneratorConfiguration smgc, SiteMapGenerator smg) throws SiteMapException, IOException {
 

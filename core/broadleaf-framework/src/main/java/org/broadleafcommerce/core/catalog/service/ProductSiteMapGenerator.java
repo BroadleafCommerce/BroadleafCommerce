@@ -62,7 +62,7 @@ public class ProductSiteMapGenerator implements SiteMapGenerator {
                 SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
                 // location
-                siteMapUrl.setLoc(smgc.getSiteMapConfiguration().getSiteUrlPath() + product.getUrl());
+                siteMapUrl.setLoc(generateUri(smgc, product));
 
                 // change frequency
                 siteMapUrl.setChangeFreqType(smgc.getSiteMapChangeFreq());
@@ -71,12 +71,20 @@ public class ProductSiteMapGenerator implements SiteMapGenerator {
                 siteMapUrl.setPriorityType(smgc.getSiteMapPriority());
 
                 // lastModDate
-                siteMapUrl.setLastModDate(new Date());
+                siteMapUrl.setLastModDate(generateDate(product));
 
                 siteMapBuilder.addUrl(siteMapUrl);
             }
         } while (products.size() == pageSize);
 
+    }
+
+    protected String generateUri(SiteMapGeneratorConfiguration smgc, Product product) {
+        return smgc.getSiteMapConfiguration().getSiteUrlPath() + product.getUrl();
+    }
+
+    protected Date generateDate(Product product) {
+        return new Date();
     }
 
     public ProductDao getProductDao() {

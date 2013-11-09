@@ -45,4 +45,5 @@ public interface SiteMapGenerator {
      * @param siteMapBuilder
      */
     public void addSiteMapEntries(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration, SiteMapBuilder siteMapBuilder);
+
 }

@@ -81,7 +81,7 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
                 SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
                 // location
-                siteMapUrl.setLoc(categorySMGC.getSiteMapConfiguration().getSiteUrlPath() + category.getUrl());
+                siteMapUrl.setLoc(generateUri(categorySMGC, category));
 
                 // change frequency
                 siteMapUrl.setChangeFreqType(categorySMGC.getSiteMapChangeFreq());
@@ -90,12 +90,20 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
                 siteMapUrl.setPriorityType(categorySMGC.getSiteMapPriority());
 
                 // lastModDate
-                siteMapUrl.setLastModDate(new Date());
+                siteMapUrl.setLastModDate(generateDate(category));
 
                 siteMapBuilder.addUrl(siteMapUrl);
             }
         } while (categories.size() == rowLimit);
 
+    }
+
+    protected String generateUri(CategorySiteMapGeneratorConfiguration smgc, Category category) {
+        return smgc.getSiteMapConfiguration().getSiteUrlPath() + category.getUrl();
+    }
+
+    protected Date generateDate(Category category) {
+        return new Date();
     }
 
     public CategoryDao getCategoryDao() {

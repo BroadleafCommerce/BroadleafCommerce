@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 
 /**
  * Responsible for generating site map entries.   
@@ -51,7 +52,7 @@ public class CustomUrlSiteMapGenerator implements SiteMapGenerator {
             SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
             // location
-            siteMapUrl.setLoc(urlEntry.getLocation());
+            siteMapUrl.setLoc(generateUri(smgc, urlEntry));
 
             // change frequency
             if (urlEntry.getSiteMapChangeFreq() != null) {
@@ -68,10 +69,22 @@ public class CustomUrlSiteMapGenerator implements SiteMapGenerator {
             }
 
             // lastModDate
-            siteMapUrl.setLastModDate(urlEntry.getLastMod());
+            siteMapUrl.setLastModDate(generateDate(urlEntry));
             
             siteMapBuilder.addUrl(siteMapUrl);
         }
     }
     
+    protected String generateUri(SiteMapGeneratorConfiguration smgc, SiteMapUrlEntry urlEntry) {
+        return urlEntry.getLocation();
+    }
+
+    protected Date generateDate(SiteMapUrlEntry urlEntry) {
+        if(urlEntry.getLastMod() != null) {
+            return urlEntry.getLastMod();
+        } else {
+            return new Date();
+        }
+    }
+
 }
