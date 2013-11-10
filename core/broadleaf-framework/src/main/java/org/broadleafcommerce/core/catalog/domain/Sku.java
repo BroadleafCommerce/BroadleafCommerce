@@ -368,7 +368,10 @@ public interface Sku extends Serializable {
     public void setProduct(Product product);
 
     /**
-     * A product is on sale provided the sale price is not null, non-zero, and less than the retail price
+     * A product is on sale provided the sale price is not null, non-zero, and less than the retail price.
+     * 
+     * Note that this flag should always be checked before showing or using a sale price as it is possible 
+     * for a sale price to be greater than the retail price from a purely data perspective.
      * 
      * @return whether or not the product is on sale
      */
