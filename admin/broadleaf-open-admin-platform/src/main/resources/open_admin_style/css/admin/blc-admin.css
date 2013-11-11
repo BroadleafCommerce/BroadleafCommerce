@@ -1410,6 +1410,11 @@ body .redactor_toolbar li a.redactor_btn_font {
 	display: none;
 }
 
+a.show-translations {
+	font-variant: small-caps;
+	font-size: 16px;
+}
+
 /* -----------------------------------------
    Static Assets
 ----------------------------------------- */
