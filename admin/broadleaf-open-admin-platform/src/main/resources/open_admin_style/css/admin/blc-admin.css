@@ -1489,3 +1489,8 @@ div#thumbnail-zoom {
 .disabled {
 	cursor: default;
 }
+
+#js-warning {
+	line-height: 19px;
+	text-align: center;
+}
