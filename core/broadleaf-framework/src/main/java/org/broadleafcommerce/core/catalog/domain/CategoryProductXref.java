@@ -75,4 +75,8 @@ public interface CategoryProductXref extends Serializable {
      * @param displayOrder the new display order
      */
     void setDisplayOrder(Long displayOrder);
+
+    public void setId(Long id);
+
+    public Long getId();
 }
