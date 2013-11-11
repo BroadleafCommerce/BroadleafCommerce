@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.common.file.service;
+package org.broadleafcommerce.cms.file.service;
 
 import java.io.IOException;
 import java.io.InputStream;
