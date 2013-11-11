@@ -19,7 +19,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl;
-import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,11 +51,6 @@ public class CategorySiteMapGeneratorConfigurationImpl extends SiteMapGeneratorC
     @Column(name = "ENDING_DEPTH", nullable = false)
     @AdminPresentation(friendlyName = "CategorySiteMapGeneratorConfigurationImpl_Ending_Depth")
     protected int endingDepth = 1;
-
-    @Override
-    public SiteMapGeneratorType getSiteMapGeneratorType() {
-        return SiteMapGeneratorType.CATEGORY;
-    }
 
     @Override
     public Category getRootCategory() {

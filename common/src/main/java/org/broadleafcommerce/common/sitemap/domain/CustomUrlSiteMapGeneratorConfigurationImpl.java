@@ -18,7 +18,6 @@ package org.broadleafcommerce.common.sitemap.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +42,6 @@ public class CustomUrlSiteMapGeneratorConfigurationImpl extends SiteMapGenerator
     @OneToMany(mappedBy = "customUrlSiteMapGeneratorConfiguration", targetEntity = SiteMapUrlEntryImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @AdminPresentationCollection(friendlyName = "CustomUrlSiteMapGeneratorConfigurationImpl_Custom_URL_Entries")
     protected List<SiteMapUrlEntry> customURLEntries = new ArrayList<SiteMapUrlEntry>();
-    
-    @Override
-    public SiteMapGeneratorType getSiteMapGeneratorType() {
-        return SiteMapGeneratorType.CUSTOM;
-    }
 
     @Override
     public List<SiteMapUrlEntry> getCustomURLEntries() {
