@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -32,8 +24,20 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * The Class CategoryProductXrefImpl is the default implmentation of {@link Category}.
@@ -56,92 +60,103 @@ import org.hibernate.annotations.PolymorphismType;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY_PRODUCT_XREF")
 @AdminPresentationClass(excludeFromPolymorphism = false)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class CategoryProductXrefImpl implements CategoryProductXref {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-    @EmbeddedId
-    CategoryProductXrefPK categoryProductXref = new CategoryProductXrefPK();
+    @Id
+    @GeneratedValue(generator = "CategoryProductId")
+    @GenericGenerator(
+            name = "CategoryProductId",
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CategoryProductXrefImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl")
+            })
+    @Column(name = "CATEGORY_PRODUCT_ID")
+    protected Long id;
 
-    public CategoryProductXrefPK getCategoryProductXref() {
-        return categoryProductXref;
-    }
+    @ManyToOne(targetEntity = CategoryImpl.class, optional = false)
+    @JoinColumn(name = "CATEGORY_ID", nullable = false)
+    protected Category category = new CategoryImpl();
 
-    public void setCategoryProductXref(CategoryProductXrefPK categoryProductXref) {
-        this.categoryProductXref = categoryProductXref;
-    }
+    /** The product. */
+    @ManyToOne(targetEntity = ProductImpl.class, optional = false)
+    @JoinColumn(name = "PRODUCT_ID", nullable = false)
+    protected Product product = new ProductImpl();
 
     /** The display order. */
     @Column(name = "DISPLAY_ORDER")
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long displayOrder;
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXref#getDisplayOrder()
-     */
+    @Override
     public Long getDisplayOrder() {
         return displayOrder;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXref#setDisplayOrder(java.lang.Integer)
-     */
+    @Override
     public void setDisplayOrder(Long displayOrder) {
         this.displayOrder = displayOrder;
     }
 
-    /**
-     * @return
-     * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPK#getCategory()
-     */
+    @Override
     public Category getCategory() {
-        return categoryProductXref.getCategory();
+        return category;
     }
 
-    /**
-     * @param category
-     * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPK#setCategory(org.broadleafcommerce.core.catalog.domain.Category)
-     */
+    @Override
     public void setCategory(Category category) {
-        categoryProductXref.setCategory(category);
+        this.category = category;
     }
 
-    /**
-     * @return
-     * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPK#getProduct()
-     */
+    @Override
     public Product getProduct() {
-        return categoryProductXref.getProduct();
+        return product;
     }
 
-    /**
-     * @param product
-     * @see org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl.CategoryProductXrefPK#setProduct(org.broadleafcommerce.core.catalog.domain.Product)
-     */
+    @Override
     public void setProduct(Product product) {
-        categoryProductXref.setProduct(product);
+        this.product = product;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof CategoryProductXrefImpl) {
-            CategoryProductXrefImpl that = (CategoryProductXrefImpl) o;
-            return new EqualsBuilder()
-                .append(categoryProductXref, that.categoryProductXref)
-                .build();
-        }
-        return false;
+        if (this == o) return true;
+        if (!(o instanceof CategoryProductXrefImpl)) return false;
+
+        CategoryProductXrefImpl that = (CategoryProductXrefImpl) o;
+
+        if (category != null ? !category.equals(that.category) : that.category != null) return false;
+        if (displayOrder != null ? !displayOrder.equals(that.displayOrder) : that.displayOrder != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (product != null ? !product.equals(that.product) : that.product != null) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = categoryProductXref != null ? categoryProductXref.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (category != null ? category.hashCode() : 0);
+        result = 31 * result + (product != null ? product.hashCode() : 0);
+        result = 31 * result + (displayOrder != null ? displayOrder.hashCode() : 0);
         return result;
     }
 

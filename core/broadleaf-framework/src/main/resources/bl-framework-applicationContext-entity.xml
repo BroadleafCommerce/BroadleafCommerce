@@ -6,6 +6,7 @@
     <!-- Entity mappings - override for extensibility -->
     <bean id="org.broadleafcommerce.core.catalog.domain.Category" class="org.broadleafcommerce.core.catalog.domain.CategoryImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.catalog.domain.CategoryAttribute" class="org.broadleafcommerce.core.catalog.domain.CategoryAttributeImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.catalog.domain.CategoryProductXref" class="org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.FulfillmentGroup" class="org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.FulfillmentGroupItem" class="org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.FulfillmentGroupFee" class="org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl" scope="prototype"/>
