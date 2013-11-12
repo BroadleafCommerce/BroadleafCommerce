@@ -19,9 +19,18 @@
 
         <div id="messages" th:include="${templateName}::messages" />
 
-        <div th:substituteby="${templateName}::form" />
+        <div id="js-warning" th:text="#{admin.login.requiresJs}" onload="" />
 
-        <div id="options" class="basic-links" th:include="${templateName}::options" />
+        <div id="js-visible" style="display: none;">
+            <div th:substituteby="${templateName}::form" />
+            <div id="options" class="basic-links" th:include="${templateName}::options" />
+        </div>
+
+        <script type="text/javascript">
+            // Act on this immediately to prevent the flash of unrendered content.
+            document.getElementById('js-warning').setAttribute('style', 'display: none;');
+            document.getElementById('js-visible').setAttribute('style', 'display: block;');
+        </script>
 
     </div> <!-- /basic-form -->
 </div>
