@@ -31,12 +31,14 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 /**
  * @author Jeff Fischer
  */
+@Component("blAdminPermissionCustomPersistenceHandler")
 public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(AdminPermissionCustomPersistenceHandler.class);

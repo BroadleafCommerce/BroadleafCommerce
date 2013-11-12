@@ -17,13 +17,12 @@
     <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
-                <bean class="org.broadleafcommerce.admin.server.service.handler.CategoryCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.admin.server.service.handler.CustomerPasswordCustomPersistenceHandler"/>                
-                <bean class="org.broadleafcommerce.openadmin.server.security.handler.AdminUserCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.admin.server.service.handler.CustomerCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.admin.server.service.handler.ChildCategoriesCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.admin.server.service.handler.SkuCustomPersistenceHandler"/>
+                <ref bean="blCategoryCustomPersistenceHandler" />
+                <ref bean="blCustomerPasswordCustomPersistenceHandler" />
+                <ref bean="blCustomerCustomPersistenceHandler" />
+                <ref bean="blProductCustomPersistenceHandler" />
+                <ref bean="blChildCategoriesCustomPersistenceHandler" />
+                <ref bean="blSkuCustomPersistenceHandler" />
             </list>
         </property>
     </bean>

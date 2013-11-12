@@ -1364,6 +1364,17 @@ a.add-main-condition {
     font-size: 12px;
 }
 
+a.rule-reset {
+    float: right;
+    margin-right: 20px;
+    color: inherit;
+    font-weight: inherit;
+}
+
+a.rule-reset:hover {
+    color: #930007;
+}
+
 form.custom div.conditional div.custom.dropdown {
     display:inline-block;
     margin-right: 10px;
@@ -1413,10 +1424,6 @@ div.uploadMessage {
 }
 
 form.uploadFileForm {
-}
-
-form.uploadFileForm input[type="file"] {
-	display: none;
 }
 
 div.imagePreviewContainer {

@@ -26,6 +26,9 @@ import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid.Type;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -33,7 +36,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -81,6 +83,9 @@ public class AdminAssetUploadController extends AdminAbstractController {
         listGrid.setPathOverride("/" + sectionKey + "/" + id + "/chooseAsset");
         listGrid.setListGridType(Type.ASSET);
         
+        String userAgent = request.getHeader("User-Agent");
+        model.addAttribute("isIE", userAgent.contains("MSIE"));
+        
         model.addAttribute("viewType", "modal/selectAsset");
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", "selectAsset");
@@ -93,8 +98,8 @@ public class AdminAssetUploadController extends AdminAbstractController {
         return "modules/modalContainer";
     }
     
-    @RequestMapping(value = "/{id}/uploadAsset", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-    public @ResponseBody Map<String, Object> upload(HttpServletRequest request,
+    @RequestMapping(value = "/{id}/uploadAsset", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> upload(HttpServletRequest request,
             @RequestParam("file") MultipartFile file, 
             @PathVariable(value="sectionKey") String sectionKey, @PathVariable(value="id") String id) throws IOException {
         Map<String, Object> responseMap = new HashMap<String, Object>();
@@ -124,7 +129,9 @@ public class AdminAssetUploadController extends AdminAbstractController {
             responseMap.put("image", Boolean.FALSE);
         }
 
-        return responseMap;
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+        return new ResponseEntity<Map<String, Object>>(responseMap, responseHeaders, HttpStatus.OK);
     }
     
     @RequestMapping(value = "/uploadAsset", method = RequestMethod.POST)

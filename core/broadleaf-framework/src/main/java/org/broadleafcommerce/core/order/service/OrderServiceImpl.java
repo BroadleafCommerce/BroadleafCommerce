@@ -18,6 +18,7 @@ package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -724,4 +725,43 @@ public class OrderServiceImpl implements OrderService {
         }
         return null;
     }
+
+    @Override
+    public void printOrder(Order order, Log log) {
+        if (!log.isDebugEnabled()) {
+            return;
+        }
+        
+        TableCreator tc = new TableCreator(new TableCreator.Col[] {
+            new TableCreator.Col("Order Item", 30),
+            new TableCreator.Col("Qty"),
+            new TableCreator.Col("Unit Price"),
+            new TableCreator.Col("Avg Adj"),
+            new TableCreator.Col("Total Adj"),
+            new TableCreator.Col("Total Price")
+        });
+
+        for (OrderItem oi : order.getOrderItems()) {
+            tc.addRow(new String[] {
+                oi.getName(),
+                String.valueOf(oi.getQuantity()),
+                String.valueOf(oi.getPriceBeforeAdjustments(true)),
+                String.valueOf(oi.getAverageAdjustmentValue()),
+                String.valueOf(oi.getTotalAdjustmentValue()),
+                String.valueOf(oi.getTotalPrice())
+            });
+        }
+        
+        tc.addSeparator()
+            .withGlobalRowHeaderWidth(15)
+            .addRow("Subtotal", order.getSubTotal())
+            .addRow("Order Adj.", order.getOrderAdjustmentsValue())
+            .addRow("Tax", order.getTotalTax())
+            .addRow("Shipping", order.getTotalShipping())
+            .addRow("Total", order.getTotal())
+            .addSeparator();
+        
+        log.debug(tc.toString());
+    }
+
 }

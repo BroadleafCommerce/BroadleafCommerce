@@ -142,11 +142,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
             throw new IllegalArgumentException("currency cannot be null");
         }
         this.currency = currency;
-        if (amount.compareTo(new BigDecimal(".01")) > -1) {
-            this.amount = BankersRounding.setScale(amount);
-        } else {
-            this.amount = amount;
-        }
+        this.amount = BankersRounding.setScale(BankersRounding.getScaleForCurrency(currency), amount);
     }
     
     public Money(BigDecimal amount, Currency currency, int scale) {
@@ -236,7 +232,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
     }
 
     public Money divide(BigDecimal divisor, RoundingMode roundingMode) {
-        return new Money(amount.divide(divisor, amount.precision(), roundingMode), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
+        return new Money(amount.divide(divisor, amount.scale(), roundingMode), currency, amount.scale() == 0 ? BankersRounding.getScaleForCurrency(currency) : amount.scale());
     }
 
     public Money abs() {

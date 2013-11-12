@@ -31,6 +31,7 @@ import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -41,6 +42,7 @@ import javax.annotation.Resource;
  * @author jfischer
  *
  */
+@Component("blAdminUserCustomPersistenceHandler")
 public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
     
     private static final Log LOG = LogFactory.getLog(AdminUserCustomPersistenceHandler.class);

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>3.0.3-GA</version>
+        <version>3.0.4-GA</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>integration</artifactId>
@@ -70,25 +70,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>legacy-test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/OrderTest.java</exclude>
-                                <exclude>**/CartTest.java</exclude>
-                                <exclude>**/CheckoutTest.java</exclude>
-                                <exclude>**/FulfillmentGroupDaoTest.java</exclude>
-                                <exclude>**/OfferServiceTest.java</exclude>
-                                <exclude>**/OfferTest.java</exclude>
-                                <exclude>**/PricingTest.java</exclude>
-                            </excludes>
-                            <argLine>-Xmx1024m -XX:MaxPermSize=512m -Dlegacy=true</argLine>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>non-legacy-test</id>
                         <phase>test</phase>
                         <goals>
@@ -123,6 +104,38 @@
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <!-- Skip legacy tests by default, activated with the Maven 'legacy-test' profile -->
+            <id>legacy-test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>legacy-test</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <excludes>
+                                        <exclude>**/OrderTest.java</exclude>
+                                        <exclude>**/CartTest.java</exclude>
+                                        <exclude>**/CheckoutTest.java</exclude>
+                                        <exclude>**/FulfillmentGroupDaoTest.java</exclude>
+                                        <exclude>**/OfferServiceTest.java</exclude>
+                                        <exclude>**/OfferTest.java</exclude>
+                                        <exclude>**/PricingTest.java</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>blc-development</id>
             <build>

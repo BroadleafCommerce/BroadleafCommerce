@@ -49,6 +49,13 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
 
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,12 +68,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 @Entity
@@ -444,7 +445,16 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Money getPriceBeforeAdjustments(boolean allowSalesPrice) {
-        if (allowSalesPrice) {
+        boolean retailPriceOverride = false;
+        
+        for (OrderItemPriceDetail oipd : getOrderItemPriceDetails()) {
+            if (oipd.getUseSalePrice() == false) {
+                retailPriceOverride = true;
+                break;
+            }
+        }
+        
+        if (allowSalesPrice && !retailPriceOverride) {
             return getSalePrice();
         } else {
             return getRetailPrice();

@@ -306,9 +306,9 @@ public class OfferServiceImpl implements OfferService {
             }
             if (!qualifiedFGOffers.isEmpty()) {
                 fulfillmentGroupOfferProcessor.applyAllFulfillmentGroupOffers(qualifiedFGOffers, promotableOrder);
+                fulfillmentGroupOfferProcessor.calculateFulfillmentGroupTotal(promotableOrder);
+                orderOfferProcessor.synchronizeAdjustmentsAndPrices(promotableOrder);
             }
-            fulfillmentGroupOfferProcessor.calculateFulfillmentGroupTotal(promotableOrder);
-            orderOfferProcessor.synchronizeAdjustmentsAndPrices(promotableOrder);
 
             orderService.save(order, false);
         }

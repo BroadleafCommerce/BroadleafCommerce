@@ -17,7 +17,16 @@
 package org.broadleafcommerce.common.web;
 
 
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.broadleafcommerce.common.RequestDTO;
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -25,17 +34,9 @@ import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
-import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
 
 /**
  * Convenient holder class for various objects to be automatically available on thread local without invoking the various
@@ -106,9 +107,7 @@ public class BroadleafRequestContext {
      */
     public void setRequest(HttpServletRequest request) {
         this.request = request;
-        if (webRequest == null) {
-            setWebRequest(new ServletWebRequest(request));
-        }
+        this.webRequest = new ServletWebRequest(request);
     }
 
     /**
@@ -143,11 +142,9 @@ public class BroadleafRequestContext {
      */
     public void setWebRequest(WebRequest webRequest) {
         this.webRequest = webRequest;
-        if (this.request == null) {
-            if (webRequest instanceof ServletWebRequest) {
-                setRequest(((ServletWebRequest) webRequest).getRequest());
-                setResponse(((ServletWebRequest) webRequest).getResponse());
-            }
+        if (webRequest instanceof ServletWebRequest) {
+            this.request = ((ServletWebRequest) webRequest).getRequest();
+            setResponse(((ServletWebRequest) webRequest).getResponse());
         }
     }
 

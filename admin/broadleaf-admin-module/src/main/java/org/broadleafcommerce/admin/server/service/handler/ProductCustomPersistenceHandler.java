@@ -35,6 +35,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -43,6 +44,7 @@ import javax.annotation.Resource;
 /**
  * @author Jeff Fischer
  */
+@Component("blProductCustomPersistenceHandler")
 public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
     
     @Resource(name = "blCatalogService")
@@ -142,8 +144,10 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
      */
     protected void removeBundleFieldRestrictions(ProductBundle adminInstance, Map<String, FieldMetadata> adminProperties, Entity entity) {
         //no required validation for product bundles
-        if (ProductBundlePricingModelType.ITEM_SUM.getType().equals(entity.getPMap().get("pricingModel").getValue())) {
-            ((BasicFieldMetadata)adminProperties.get("defaultSku.retailPrice")).setRequiredOverride(false);
+        if (entity.getPMap().get("pricingModel") != null) {
+            if (ProductBundlePricingModelType.ITEM_SUM.getType().equals(entity.getPMap().get("pricingModel").getValue())) {
+                ((BasicFieldMetadata)adminProperties.get("defaultSku.retailPrice")).setRequiredOverride(false);
+            }
         }
     }
 }

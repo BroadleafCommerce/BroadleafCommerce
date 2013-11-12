@@ -29,6 +29,7 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -37,6 +38,7 @@ import javax.annotation.Resource;
 /**
  * @author jfischer
  */
+@Component("blCustomerCustomPersistenceHandler")
 public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(StructuredContentTypeCustomPersistenceHandler.class);

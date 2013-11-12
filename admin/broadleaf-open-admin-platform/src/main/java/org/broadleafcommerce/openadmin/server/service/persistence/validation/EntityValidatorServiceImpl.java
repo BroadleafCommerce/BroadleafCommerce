@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -35,6 +27,14 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -54,7 +54,8 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
     protected ApplicationContext applicationContext;
 
     @Override
-    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata) {
+    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata, 
+            boolean validateUnsubmittedProperties) {
         List<String> types = getTypeHierarchy(entity);
         //validate each individual property according to their validation configuration
         for (Entry<String, FieldMetadata> metadataEntry : propertiesMetadata.entrySet()) {
@@ -63,6 +64,13 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
             //Don't test this field if it was not inherited from our polymorphic type (or supertype)
             if (types.contains(metadata.getInheritedFromType())) {
                 Property property = entity.getPMap().get(metadataEntry.getKey());
+                
+                // This property should be set to false only in the case where we are adding a member to a collection
+                // that has type of lookup. In this case, we don't have the properties from the target in our entity,
+                // and we don't need to validate them.
+                if (!validateUnsubmittedProperties && property == null) {
+                    continue;
+                }
 
                 //for radio buttons, it's possible that the entity property was never populated in the first place from the POST
                 //and so it will be null

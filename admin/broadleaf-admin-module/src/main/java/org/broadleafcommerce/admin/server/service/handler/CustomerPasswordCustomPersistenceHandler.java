@@ -26,6 +26,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.hibernate.tool.hbm2x.StringUtils;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
@@ -34,16 +35,19 @@ import javax.annotation.Resource;
  * @author jfischer
  *
  */
+@Component("blCustomerPasswordCustomPersistenceHandler")
 public class CustomerPasswordCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
     
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
 
+    @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
         String[] customCriteria = persistencePackage.getCustomCriteria();
         return customCriteria != null && customCriteria.length > 0 && customCriteria[0].equals("passwordUpdate");
     }
 
+    @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
         Customer customer = customerService.readCustomerByUsername(entity.findProperty("username").getValue());
