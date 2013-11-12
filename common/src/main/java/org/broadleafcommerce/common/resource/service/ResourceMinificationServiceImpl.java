@@ -100,8 +100,9 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
             }
             out.flush();
             minifiedBytes = baos.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) { // Catch everything - on a runtime exception, we still want to return the unminified bytes
+            LOG.warn("Could not minify resources, returned unminified bytes", e);
+            return bytes;
         } finally {
             try {
                 in.close();

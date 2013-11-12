@@ -91,19 +91,15 @@ public class FieldManager {
                     if (matchedClasses.size() > 1) {
                         LOG.warn("Found the property (" + peekAheadToken + ") in more than one class of an inheritance hierarchy. This may lead to unwanted behavior, as the system does not know which class was intended. Do not use the same property name in different levels of the inheritance hierarchy. Defaulting to the first class found (" + matchedClasses.get(0).getName() + ")");
                     }
-                    if (getSingleField(entities[0], peekAheadToken) != null) {
-                        Class<?> matchedClass = entities[0];
-                        PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(matchedClass.getName());
-                        if (persistentClass != null && matchedClasses.size() == 1) {
-                            Class<?> entityClass;
+                    if (getSingleField(matchedClasses.get(0), peekAheadToken) != null) {
+                        clazz = matchedClasses.get(0);
+                        PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(clazz.getName());
+                        if (persistentClass != null && matchedClasses.size() == 1 && clazz.isInterface()) {
                             try {
-                                entityClass = entityConfiguration.lookupEntityClass(field.getType().getName());
-                                clazz = entityClass;
+                                clazz = entityConfiguration.lookupEntityClass(field.getType().getName());
                             } catch (Exception e) {
-                                clazz = matchedClass;
+                                // Do nothing - we'll use the matchedClass
                             }
-                        } else {
-                            clazz = matchedClass;
                         }
                     } else {
                         clazz = field.getType();
