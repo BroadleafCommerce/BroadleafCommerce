@@ -96,7 +96,7 @@
             var qty = null;
             var _this = this;
             
-            if ($element.find('.rule').length == 0) {
+            if ($element.find('.rule').length == 0 && !$element.is('.rule')) {
                 return null;
             }
             
@@ -126,7 +126,7 @@
                 $element.find("> .conditional-rules > .conditional, > .rule").each(function() {
                     var data = _this.collectDataFromNode($(this));
                     if (data != null) {
-                        out.groups.push();
+                        out.groups.push(data);
                     }
                 });
                 return out;

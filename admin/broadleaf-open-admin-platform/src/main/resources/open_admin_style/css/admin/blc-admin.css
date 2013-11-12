@@ -1410,6 +1410,11 @@ body .redactor_toolbar li a.redactor_btn_font {
 	display: none;
 }
 
+a.show-translations {
+	font-variant: small-caps;
+	font-size: 16px;
+}
+
 /* -----------------------------------------
    Static Assets
 ----------------------------------------- */
@@ -1483,4 +1488,9 @@ div#thumbnail-zoom {
 
 .disabled {
 	cursor: default;
+}
+
+#js-warning {
+	line-height: 19px;
+	text-align: center;
 }
