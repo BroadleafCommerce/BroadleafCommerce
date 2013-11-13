@@ -36,7 +36,7 @@ import java.util.List;
  * 
  * @author Joshua Skorton (jskorton)
  */
-public class CustomSiteMapGeneratorTest extends SiteMapGeneratorTest {
+public class CustomUrlSiteMapGeneratorTest extends SiteMapGeneratorTest {
 
     @Test
     public void testCustomUrlSiteMapGenerator() throws SiteMapException, IOException {
