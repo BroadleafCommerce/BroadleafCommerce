@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
+import org.springframework.security.authentication.dao.SaltSource;
 
 import java.util.List;
 
@@ -110,5 +111,40 @@ public interface CustomerService {
     public GenericResponse checkPasswordResetToken(String token);
     
     public Long findNextCustomerId();
+    
+    /**
+     * @deprecated use {@link #getSaltSource()} instead
+     */
+    @Deprecated
+    public String getSalt();
+    
+    /**
+     * @deprecated use {@link #setSaltSource(SaltSource)} instead
+     */
+    @Deprecated
+    public void setSalt(String salt);
+
+    /**
+     * Returns the {@link SaltSource} used with the blPasswordEncoder to encrypt the user password. Usually configured in
+     * applicationContext-security.xml. This is not a required property and will return null if not configured
+     */
+    public SaltSource getSaltSource();
+    
+    /**
+     * Sets the {@link SaltSource} used with blPasswordencoder to encrypt the user password. Usually configured within
+     * applicationContext-security.xml
+     * 
+     * @param saltSource
+     */
+    public void setSaltSource(SaltSource saltSource);
+    
+    /**
+     * Gets the salt object for the current customer. By default this delegates to {@link #getSaltSource()}. If there is
+     * not a {@link SaltSource} configured ({@link #getSaltSource()} returns null) then this also returns null.
+     * 
+     * @param customer
+     * @return the salt for the current customer
+     */
+    public Object getSalt(Customer customer);
     
 }
