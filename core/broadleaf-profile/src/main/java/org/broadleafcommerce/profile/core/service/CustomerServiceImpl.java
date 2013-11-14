@@ -37,15 +37,21 @@ import org.broadleafcommerce.profile.core.domain.CustomerRoleImpl;
 import org.broadleafcommerce.profile.core.domain.Role;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
@@ -65,8 +71,18 @@ public class CustomerServiceImpl implements CustomerService {
     
     /**
      * Optional password salt to be used with the passwordEncoder
+     * @deprecated utilize {@link #saltSource} instead so that it can be shared between this class as well as Spring's
+     * authentication manager
      */
+    @Deprecated
     protected String salt;
+    
+    /**
+     * Use a Salt Source ONLY if there's one configured
+     */
+    @Autowired(required=false)
+    @Qualifier("blSaltSource")
+    protected SaltSource saltSource;
     
     @Resource(name="blRoleDao")
     protected RoleDao roleDao;
@@ -103,6 +119,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (register && !customer.isRegistered()) {
             customer.setRegistered(true);
         }
+        
         if (customer.getUnencodedPassword() != null) {
             customer.setPassword(passwordEncoder.encodePassword(customer.getUnencodedPassword(), getSalt(customer)));
         }
@@ -264,16 +281,33 @@ public class CustomerServiceImpl implements CustomerService {
      * @return
      * @see {@link CustomerServiceImpl#getSalt()}
      */
-    public String getSalt(Customer customer) {
-        return getSalt();
+    @Override
+    public Object getSalt(Customer customer) {
+        Object salt = null;
+        if (saltSource != null) {
+            salt = saltSource.getSalt(new User(customer.getUsername(), customer.getUnencodedPassword(), new ArrayList<GrantedAuthority>()));
+        }
+        return salt;
     }
     
+    @Override
     public String getSalt() {
         return salt;
     }
     
+    @Override
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+    
+    @Override
+    public SaltSource getSaltSource() {
+        return saltSource;
+    }
+    
+    @Override
+    public void setSaltSource(SaltSource saltSource) {
+        this.saltSource = saltSource;
     }
 
     @Override

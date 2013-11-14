@@ -395,6 +395,10 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             if (unmatchedDetailsIterator.hasNext()) {
                 // Reuse an existing priceDetail
                 OrderItemPriceDetail existingDetail = unmatchedDetailsIterator.next();
+
+                // Reset use Sale flag to true
+                existingDetail.setUseSalePrice(true);
+
                 updatePriceDetail(existingDetail, priceDetail);
                 unmatchedDetailsIterator.remove();
             } else {

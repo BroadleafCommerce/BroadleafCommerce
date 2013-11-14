@@ -21,15 +21,15 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
@@ -49,12 +49,13 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         for (AdminRole role : adminUser.getAllRoles()) {
             for (AdminPermission permission : role.getAllPermissions()) {
-                authorities.add(new GrantedAuthorityImpl(permission.getName()));
+                authorities.add(new SimpleGrantedAuthority(permission.getName()));
             }
         }
         for (AdminPermission permission : adminUser.getAllPermissions()) {
-            authorities.add(new GrantedAuthorityImpl(permission.getName()));
+            authorities.add(new SimpleGrantedAuthority(permission.getName()));
         }
-        return new User(username, adminUser.getPassword(), true, true, true, true, authorities);
+        return new AdminUserDetails(adminUser.getId(), username, adminUser.getPassword(), true, true, true, true, authorities);
     }
+
 }
