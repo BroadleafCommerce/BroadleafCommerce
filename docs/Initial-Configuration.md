@@ -5,13 +5,13 @@
 **Step 1.** Add the following to the depedency management section of your **parent** `pom.xml`:
 
 ```xml
-    <dependency>
-        <groupId>com.broadleafcommerce</groupId>
-        <artifactId>broadleaf-custom-field</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-        <type>jar</type>
-        <scope>compile</scope>
-    </dependency>
+<dependency>
+ <groupId>com.broadleafcommerce</groupId>
+ <artifactId>broadleaf-custom-field</artifactId>
+ <version>1.0.0-SNAPSHOT</version>
+ <type>jar</type>
+ <scope>compile</scope>
+</dependency>
 ```
 
 **Step 2.** Pull this depedency into your `core/pom.xml`:
