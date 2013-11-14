@@ -91,7 +91,15 @@
                 <ref bean="blPageDefaultRuleProcessor"/>
             </list>
         </property>
-    </bean>    
+    </bean>
+    
+    <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
+        <property name="processors">
+            <set>
+                <ref bean="blContentProcessor"/>
+            </set>
+        </property>
+    </bean>          
 
     <bean id="blNamedOperationManager" class="org.broadleafcommerce.cms.file.service.operation.NamedOperationManagerImpl">
         <property name="namedOperationComponents">
