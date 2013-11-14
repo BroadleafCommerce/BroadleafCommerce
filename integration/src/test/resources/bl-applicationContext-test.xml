@@ -13,8 +13,11 @@
 
     <context:component-scan base-package="org.broadleafcommerce.common.web"/>
     <context:component-scan base-package="org.broadleafcommerce.core.web"/>
-    <context:component-scan base-package="org.broadleafcommerce.profile.web"/>
     <context:component-scan base-package="org.broadleafcommerce.cms.file"/>
+    
+    <!-- Explicitly scan these packages since they are usually scanned in the servlet and not by default -->
+    <context:component-scan base-package="org.broadleafcommerce.profile.web.controller" />
+    <context:component-scan base-package="org.broadleafcommerce.profile.web.core.service.login" />
     
     <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
