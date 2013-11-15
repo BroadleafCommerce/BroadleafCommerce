@@ -454,10 +454,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
      * @return whether or not a suitable qualifier/target pair was found and marked
      */
     protected boolean markRelatedQualifiersAndTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order) {
-        int curQualifier = 0;
+        OrderItem relatedOrderItem = null;
         for (Entry<OfferItemCriteria, List<PromotableOrderItem>> entry : itemOffer.getCandidateQualifiersMap().entrySet()) {
-            curQualifier++;
-
             OfferItemCriteria itemCriteria = entry.getKey();
             List<PromotableOrderItem> promotableItems = entry.getValue();
 
@@ -493,8 +491,11 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                         // the relationship flag. If we are on the last qualifier required for this offer, we want to 
                         // actually go ahead and mark the target that we'll be using. Otherwise, we just want to check 
                         // that there is an eligible target(s) and continue on.
-                        boolean lastQualifier = curQualifier == itemOffer.getCandidateQualifiersMap().entrySet().size();
-                        if (!markTargets(itemOffer, order, oi, !lastQualifier)) {
+                        if (markTargets(itemOffer, order, oi, true)) {
+                            // We found a target. Let's save this related order item used as the qualifier in case
+                            // we succeed
+                            relatedOrderItem = oi;
+                        } else {
                             // If we didn't find a target, we need to roll back how we marked this item as a qualifier.
                             qualifierQtyNeeded += qtyToMarkAsQualifier;
                             if (pq.getQuantity() == qtyToMarkAsQualifier) {
@@ -516,8 +517,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                 return false;
             }
         }
-
-        return true;
+        
+        return markTargets(itemOffer, order, relatedOrderItem, false);
     }
 
     /**
