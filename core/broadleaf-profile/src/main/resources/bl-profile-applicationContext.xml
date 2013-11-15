@@ -18,12 +18,12 @@
     
     <bean id="springAppContext" class="org.broadleafcommerce.common.util.SpringAppContext"/>
     
-    <bean id="blEncryptionModule" class="org.broadleafcommerce.common.encryption.PassthroughEncryptionModule"/>
-    
     <bean id="blAddressVerificationProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list/>
         </property>
     </bean>
+    
+    <bean id="blPasswordEncoder" class="${password.site.encoder}"/>
     
 </beans>

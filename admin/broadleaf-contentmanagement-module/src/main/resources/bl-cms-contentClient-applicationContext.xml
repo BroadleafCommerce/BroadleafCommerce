@@ -91,7 +91,7 @@
                 <ref bean="blPageDefaultRuleProcessor"/>
             </list>
         </property>
-    </bean>    
+    </bean>
 
     <bean id="blNamedOperationManager" class="org.broadleafcommerce.cms.file.service.operation.NamedOperationManagerImpl">
         <property name="namedOperationComponents">

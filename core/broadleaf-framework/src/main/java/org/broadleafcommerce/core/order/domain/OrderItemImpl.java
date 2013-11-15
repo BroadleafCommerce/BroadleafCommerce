@@ -778,6 +778,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         result = prime * result + quantity;
         result = prime * result + ((retailPrice == null) ? 0 : retailPrice.hashCode());
         result = prime * result + ((salePrice == null) ? 0 : salePrice.hashCode());
+        result = prime * result + ((parentOrderItem == null) ? 0 : parentOrderItem.hashCode());
         return result;
     }
 
@@ -855,6 +856,13 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 return false;
             }
         } else if (!salePrice.equals(other.salePrice)) {
+            return false;
+        }
+        if (parentOrderItem == null) {
+            if (other.parentOrderItem != null) {
+                return false;
+            }
+        } else if (!parentOrderItem.equals(other.parentOrderItem)) {
             return false;
         }
         return true;

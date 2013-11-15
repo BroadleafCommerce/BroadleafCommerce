@@ -11,8 +11,6 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.openadmin.server.service.artifact.upload.*"/>
     </context:component-scan>
 
-    <bean id="blAdminPasswordEncoder" class="${password.admin.encoder}"/>
-
     <bean id="blMergedEntityContexts" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>

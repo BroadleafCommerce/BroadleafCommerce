@@ -13,6 +13,9 @@
     
     <bean id="blPasswordEncoder" class="${password.site.encoder}"/>
     
+    <!-- Bean for encrypting PCI data -->
+    <bean id="blEncryptionModule" class="org.broadleafcommerce.common.encryption.PassthroughEncryptionModule"/>
+    
     <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
         <property name="autodetect" value="true"/>
         <property name="assembler" ref="blAssembler"/>
