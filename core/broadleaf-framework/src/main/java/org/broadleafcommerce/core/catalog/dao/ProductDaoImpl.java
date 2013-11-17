@@ -31,6 +31,12 @@ import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map.Entry;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -45,11 +51,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map.Entry;
 
 /**
  * @author Jeff Fischer
@@ -408,7 +409,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public List<ProductBundle> readAutomaticProductBundles() {
-        Date myDate = getDateFactoringInDateResolution(currentDate);
+        Date myDate = getDateFactoringInDateResolution(SystemTime.asDate());
         TypedQuery<ProductBundle> query = em.createNamedQuery("BC_READ_AUTOMATIC_PRODUCT_BUNDLES", ProductBundle.class);
         query.setParameter("currentDate", myDate);
         query.setParameter("autoBundle", Boolean.TRUE);
