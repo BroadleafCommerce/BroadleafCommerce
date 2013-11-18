@@ -17,6 +17,7 @@
 package org.broadleafcommerce.core.offer.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.domain.OfferAuditImpl;
 import org.hibernate.ejb.QueryHints;
@@ -26,10 +27,6 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 @Repository("blOfferAuditDao")
 public class OfferAuditDaoImpl implements OfferAuditDao {
@@ -40,10 +37,12 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @Override
     public OfferAudit create() {
         return ((OfferAudit) entityConfiguration.createEntityInstance(OfferAudit.class.getName()));
     }
 
+    @Override
     public void delete(final OfferAudit offerAudit) {
         OfferAudit loa = offerAudit;
         if (!em.contains(loa)) {
@@ -52,26 +51,34 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         em.remove(loa);
     }
 
+    @Override
     public OfferAudit save(final OfferAudit offerAudit) {
         return em.merge(offerAudit);
     }
 
+    @Override
     public OfferAudit readAuditById(final Long offerAuditId) {
-        return (OfferAudit) em.find(OfferAuditImpl.class, offerAuditId);
+        return em.find(OfferAuditImpl.class, offerAuditId);
     }
 
+    @Override
     public Long countUsesByCustomer(Long customerId, Long offerId) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        cq.select(cb.count(cq.from(OfferAuditImpl.class)));
+        TypedQuery<Long> query = new TypedQueryBuilder<OfferAudit>(OfferAudit.class, "offerAudit")
+                .addRestriction("offerAudit.customerId", "=", customerId)
+                .addRestriction("offerAudit.offerId", "=", offerId)
+                .toCountQuery(em);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
-        Root<OfferAuditImpl> from = cq.from(OfferAuditImpl.class);
-        Predicate customerIdClause = cb.equal(from.get("customerId"),customerId);
-        
-        Predicate offerIdClause = cb.equal(from.get("offerId"), offerId);
-        cq.where(cb.and(customerIdClause, offerIdClause));
-
-        TypedQuery<Long> query = em.createQuery(cq);
+        Long result = query.getSingleResult();
+        return result;
+    }
+    
+    @Override
+    public Long countOfferCodeUses(Long offerCodeId) {
+        TypedQuery<Long> query = new TypedQueryBuilder<OfferAudit>(OfferAudit.class, "offerAudit")
+                .addRestriction("offerAudit.offerCodeId", "=", offerCodeId)
+                .toCountQuery(em);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 

@@ -141,8 +141,8 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
             Collections.sort(fgOffers, new ReverseComparator(new BeanComparator("discountedAmount", new NullComparator())));
             Collections.sort(fgOffers, new BeanComparator("priority", new NullComparator()));
 
-            if (potential.getOffer().getMaxUses() > 0 && fgOffers.size() > potential.getOffer().getMaxUses()) {
-                for (int j = potential.getOffer().getMaxUses(); j < fgOffers.size(); j++) {
+            if (potential.getOffer().isLimitedUsePerOrder() && fgOffers.size() > potential.getOffer().getMaxUsesPerOrder()) {
+                for (int j = potential.getOffer().getMaxUsesPerOrder(); j < fgOffers.size(); j++) {
                     fgOffers.remove(j);
                 }
             }

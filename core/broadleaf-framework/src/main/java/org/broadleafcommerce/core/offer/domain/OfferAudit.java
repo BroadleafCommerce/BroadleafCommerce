@@ -51,6 +51,16 @@ public interface OfferAudit extends Serializable {
      * @param offerId
      */
     public void setOfferId(Long offerId);
+    
+    /**
+     * The offer code that was used to retrieve the offer. This will be null if the offer was automatically applied
+     */
+    public Long getOfferCodeId();
+
+    /**
+     * Sets the offer code that was used to retrieve the offer
+     */
+    public void setOfferCodeId(Long offerCodeId);
 
     /**
      * The associated order id.

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
@@ -75,6 +77,7 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+
 @Entity
 @Table(name = "BLC_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
@@ -115,14 +118,6 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         prominent = true, gridOrder = 1)
     protected String name;
-
-    public List<OfferCode> getOfferCodes() {
-        return offerCodes;
-    }
-
-    public void setOfferCodes(List<OfferCode> offerCodes) {
-        this.offerCodes = offerCodes;
-    }
 
     @Column(name = "OFFER_DESCRIPTION")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = 2000, 
@@ -614,23 +609,46 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
 
     @Override
     public Long getMaxUsesPerCustomer() {
-        return maxUsesPerCustomer;
+        return maxUsesPerCustomer == null ? 0 : maxUsesPerCustomer;
     }
 
     @Override
     public void setMaxUsesPerCustomer(Long maxUsesPerCustomer) {
         this.maxUsesPerCustomer = maxUsesPerCustomer;
     }
+    
+    @Override
+    public boolean isUnlimitedUsePerCustomer() {
+        return getMaxUsesPerCustomer() == 0;
+    }
+    
+    @Override
+    public boolean isLimitedUsePerCustomer() {
+        return getMaxUsesPerCustomer() > 0;
+    }
 
+    @Override
     public int getMaxUsesPerOrder() {
         return maxUsesPerOrder == null ? 0 : maxUsesPerOrder;
     }
 
+    @Override
     public void setMaxUsesPerOrder(int maxUsesPerOrder) {
         this.maxUsesPerOrder = maxUsesPerOrder;
     }
+    
+    @Override
+    public boolean isUnlimitedUsePerOrder() {
+        return getMaxUsesPerOrder() == 0;
+    }
+    
+    @Override
+    public boolean isLimitedUsePerOrder() {
+        return getMaxUsesPerOrder() > 0;
+    }
 
     @Override
+    @Deprecated
     public int getMaxUses() {
         return getMaxUsesPerOrder();
     }
@@ -753,6 +771,16 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     public void setQualifyingItemSubTotal(Money qualifyingItemSubTotal) {
         this.qualifyingItemSubTotal = Money.toAmount(qualifyingItemSubTotal);
     }
+    
+    @Override
+    public List<OfferCode> getOfferCodes() {
+        return offerCodes;
+    }
+
+    @Override
+    public void setOfferCodes(List<OfferCode> offerCodes) {
+        this.offerCodes = offerCodes;
+    }
 
     @Override
     public String getMainEntityName() {
@@ -761,61 +789,12 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return HashCodeBuilder.reflectionHashCode(this);
     }
-
+    
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        OfferImpl other = (OfferImpl) obj;
-
-        if (id != null && other.id != null) {
-            return id.equals(other.id);
-        }
-        
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (startDate == null) {
-            if (other.startDate != null) {
-                return false;
-            }
-        } else if (!startDate.equals(other.startDate)) {
-            return false;
-        }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
-            return false;
-        }
-        if (value == null) {
-            if (other.value != null) {
-                return false;
-            }
-        } else if (!value.equals(other.value)) {
-            return false;
-        }
-        return true;
+    public boolean equals(Object o) {
+        return EqualsBuilder.reflectionEquals(this, o);
     }
 
     public static class Presentation {

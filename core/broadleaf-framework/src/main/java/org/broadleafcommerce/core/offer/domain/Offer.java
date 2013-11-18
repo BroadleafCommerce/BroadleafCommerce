@@ -25,8 +25,11 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 public interface Offer extends Serializable {
 
@@ -71,6 +74,7 @@ public interface Offer extends Serializable {
      * Use isCombinable instead.
      * @return
      */
+    @Deprecated
     public boolean isStackable();
 
     /**
@@ -78,6 +82,7 @@ public interface Offer extends Serializable {
      * calls {@link #setCombinableWithOtherOffers(boolean)}
      * @param stackable
      */
+    @Deprecated
     public void setStackable(boolean stackable);
 
     public String getTargetSystem();
@@ -152,12 +157,14 @@ public interface Offer extends Serializable {
      * this method will return a delivery type based on the isAutomatic property. 
      * @return
      */
+    @Deprecated
     public OfferDeliveryType getDeliveryType();
 
     /**
      * @deprecated Replaced by setAutomaticallyApplied(boolean val).
      * @param deliveryType
      */
+    @Deprecated
     public void setDeliveryType(OfferDeliveryType deliveryType);
 
     /**
@@ -170,11 +177,12 @@ public interface Offer extends Serializable {
      *
      * @return
      */
+    @Nonnull
     public Long getMaxUsesPerCustomer();
 
     /**
      * Sets the maximum number of times that this offer
-       can be used by the same customer.  Intended as a transient
+     * can be used by the same customer.  Intended as a transient
      * field that gets derived from the other persisted max uses fields
      * including maxUsesPerOrder and maxUsesPerCustomer.
      *
@@ -183,6 +191,17 @@ public interface Offer extends Serializable {
      * @param maxUses
      */
     public void setMaxUsesPerCustomer(Long maxUses);
+    
+    /**
+     * Indicates that there is no limit to how many times a customer can use this offer. By default this is true if
+     * {@link #getMaxUsesPerCustomer()} == 0
+     */
+    public boolean isUnlimitedUsePerCustomer();
+    
+    /**
+     * Whether or not this offer has limited use in an order. By default this is true if {@link #getMaxUsesPerCustomer()} > 0
+     */
+    public boolean isLimitedUsePerCustomer();
 
     /**
      * Returns the maximum number of times that this offer
@@ -190,9 +209,29 @@ public interface Offer extends Serializable {
      *
      * 0 indicates unlimited usage.
      *
-     * @return
+     * @deprecated use {@link #getMaxUsesPerOrder()} directly instead
      */
-    public int getMaxUses() ;
+    @Deprecated
+    public int getMaxUses();
+
+    /**
+     * Sets the maximum number of times that this offer
+     * can be used in the current order.
+     *
+     * 0 indicates unlimited usage.
+     *
+     * @deprecated use {@link #setMaxUsesPerOrder(int)} directly instead
+     */
+    @Deprecated
+    public void setMaxUses(int maxUses) ;
+
+    /**
+     * Returns the maximum number of times that this offer
+     * can be used in the current order.
+     *
+     * 0 indicates unlimited usage.
+     */
+    public int getMaxUsesPerOrder();
 
     /**
      * Sets the maximum number of times that this offer
@@ -202,11 +241,28 @@ public interface Offer extends Serializable {
      *
      * @param maxUses
      */
-    public void setMaxUses(int maxUses) ;
-
+    public void setMaxUsesPerOrder(int maxUsesPerOrder);
+    
+    /**
+     * Indicates that there is no limit to how many times this offer can be applied to the order. By default this is true if
+     * {@link #getMaxUsesPerOrder()} == 0
+     */
+    public boolean isUnlimitedUsePerOrder();
+    
+    /**
+     * Whether or not this offer has limited use in an order. By default this is true if {@link #getMaxUsesPerOrder()} > 0
+     */
+    public boolean isLimitedUsePerOrder();
+    
+    /**
+     * @deprecated replaced by the {@link OfferAudit} table
+     */
     @Deprecated
     public int getUses() ;
 
+    /**
+     * @deprecated replaced by the {@link OfferAudit} table
+     */
     @Deprecated
     public void setUses(int uses) ;
 
@@ -248,5 +304,17 @@ public interface Offer extends Serializable {
     void setMarketingMessage(String marketingMessage);
 
     String getMarketingMessage();
+    
+    /**
+     * Returns the offer codes that can be used to retrieve this Offer. These codes would be used in situations where
+     * this Offer is not automatically considered (meaning {@link Offer#isAutomaticallyAdded()} is false}
+     */
+    public List<OfferCode> getOfferCodes();
+    
+    /**
+     * Sets the offer codes that can be used to retrieve this Offer. These codes would be used in situations where
+     * this Offer is not automatically considered (meaning {@link Offer#isAutomaticallyAdded()} is false}
+     */
+    public void setOfferCodes(List<OfferCode> offerCodes);
 
 }

@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -54,6 +56,10 @@ public class OfferAuditImpl implements OfferAudit {
     @Index(name="OFFERAUDIT_OFFER_INDEX", columnNames={"OFFER_ID"})
     protected Long offerId;
 
+    @Column(name = "OFFER_CODE_ID")
+    @Index(name="OFFERAUDIT_OFFER_CODE_INDEX", columnNames={"OFFER_CODE_ID"})
+    protected Long offerCodeId;
+    
     @Column(name = "CUSTOMER_ID")
     @Index(name="OFFERAUDIT_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Long customerId;
@@ -83,6 +89,16 @@ public class OfferAuditImpl implements OfferAudit {
     @Override
     public void setOfferId(Long offerId) {
         this.offerId = offerId;
+    }
+
+    @Override
+    public Long getOfferCodeId() {
+        return offerCodeId;
+    }
+
+    @Override
+    public void setOfferCodeId(Long offerCodeId) {
+        this.offerCodeId = offerCodeId;
     }
 
     @Override
@@ -117,49 +133,12 @@ public class OfferAuditImpl implements OfferAudit {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
-        result = prime * result + ((offerId == null) ? 0 : offerId.hashCode());
-        result = prime * result + ((redeemedDate == null) ? 0 : redeemedDate.hashCode());
-        result = prime * result + ((orderId == null) ? 0 : orderId.hashCode());
-        return result;
+        return HashCodeBuilder.reflectionHashCode(this);
     }
-
+    
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        OfferAuditImpl other = (OfferAuditImpl) obj;
-
-        if (id != null && other.id != null) {
-            return id.equals(other.id);
-        }
-
-        if (customerId == null) {
-            if (other.customerId != null)
-                return false;
-        } else if (!customerId.equals(other.customerId))
-            return false;
-        if (offerId == null) {
-            if (other.offerId != null)
-                return false;
-        } else if (!offerId.equals(other.offerId))
-            return false;
-        if (redeemedDate == null) {
-            if (other.redeemedDate != null)
-                return false;
-        } else if (!redeemedDate.equals(other.redeemedDate))
-            return false;
-        if (orderId == null) {
-            if (other.orderId != null)
-                return false;
-        } else if (!orderId.equals(other.orderId))
-            return false;
-        return true;
+    public boolean equals(Object o) {
+        return EqualsBuilder.reflectionEquals(this, o);
     }
+
 }

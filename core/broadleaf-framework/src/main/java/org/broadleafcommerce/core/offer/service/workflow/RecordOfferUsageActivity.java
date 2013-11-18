@@ -20,16 +20,14 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutContext;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
-import org.broadleafcommerce.core.offer.domain.Adjustment;
+import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -41,61 +39,41 @@ import javax.annotation.Resource;
 public class RecordOfferUsageActivity extends BaseActivity<CheckoutContext> {
 
     @Resource(name="blOfferAuditDao")
-    private OfferAuditDao offerAuditDao;
+    protected OfferAuditDao offerAuditDao;
+    
+    @Resource(name = "blOfferService")
+    protected OfferService offerService;
 
     @Override
     public CheckoutContext execute(CheckoutContext context) throws Exception {
-        Set<Long> appliedOfferIds = new HashSet<Long>();
         CheckoutSeed seed = context.getSeedData();
         Order order = seed.getOrder();
         if (order != null) {
-            addOfferIds(order.getOrderAdjustments(), appliedOfferIds);
-
-            if (order.getOrderItems() != null) {
-                for (OrderItem item : order.getOrderItems()) {
-                    addOfferIds(item.getOrderItemAdjustments(), appliedOfferIds);
-                    
-                    //record usage for price details on the item as well
-                    if (item.getOrderItemPriceDetails() != null) {
-                        for (OrderItemPriceDetail detail : item.getOrderItemPriceDetails()) {
-                            addOfferIds(detail.getOrderItemPriceDetailAdjustments(), appliedOfferIds);
-                        }
-                    }
-                }
-            }
-
-            if (order.getFulfillmentGroups() != null) {
-                for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-                    addOfferIds(fg.getFulfillmentGroupAdjustments(), appliedOfferIds);
-                }
-            }
-            saveOfferIds(appliedOfferIds, order);
+            Set<Offer> appliedOffers = offerService.getUniqueOffersFromOrder(order);
+            Map<Offer, OfferCode> offerToCodeMapping = offerService.getOffersRetrievedFromCodes(order.getAddedOfferCodes(), appliedOffers);
+            
+            saveOfferIds(appliedOffers, offerToCodeMapping, order);
         }
 
         return context;
     }
     
-    protected void saveOfferIds(Set<Long> offerIds, Order order) {
-        for (Long offerId : offerIds) {
+    protected void saveOfferIds(Set<Offer> offers, Map<Offer, OfferCode> offerToCodeMapping, Order order) {
+        for (Offer offer : offers) {
             OfferAudit audit = offerAuditDao.create();
-            if (order.getCustomer() != null) {
-                audit.setCustomerId(order.getCustomer().getId());
-            }
-            audit.setOfferId(offerId);
+            audit.setCustomerId(order.getCustomer().getId());
+            audit.setOfferId(offer.getId());
             audit.setOrderId(order.getId());
+            
+            //add the code that was used to obtain the offer to the audit context
+            OfferCode codeUsedToRetrieveOffer = offerToCodeMapping.get(offer);
+            if (codeUsedToRetrieveOffer != null) {
+                audit.setOfferCodeId(codeUsedToRetrieveOffer.getId());
+            }
+            
             audit.setRedeemedDate(SystemTime.asDate());
             offerAuditDao.save(audit);
         }
     }
         
-    protected void addOfferIds(List<? extends Adjustment> adjustments, Set<Long> offerIds) {
-        if (adjustments != null) {
-            for (Adjustment adjustment : adjustments) {
-                if (adjustment.getOffer() != null) {
-                    offerIds.add(adjustment.getOffer().getId());
-                }
-            }
-        }
-    }
-
 }
