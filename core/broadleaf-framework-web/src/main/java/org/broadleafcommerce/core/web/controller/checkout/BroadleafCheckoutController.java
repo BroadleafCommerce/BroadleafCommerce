@@ -206,8 +206,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
         cart = orderService.save(cart, true);
 
-        CartState.setCart(cart);
-
         return isAjaxRequest(request) ? getCheckoutView() : getCheckoutPageRedirect();
     }
 
