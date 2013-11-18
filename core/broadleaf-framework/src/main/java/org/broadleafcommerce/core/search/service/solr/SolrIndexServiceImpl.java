@@ -39,7 +39,6 @@ import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.StopWatch;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -111,7 +110,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         DynamicSkuPricingService savedPricingService = SkuPricingConsiderationContext.getSkuPricingService();
         DynamicSkuActiveDatesService savedActiveDateServcie = SkuActiveDateConsiderationContext.getSkuActiveDatesService();
         try {
-            Long numProducts = productDao.readCountAllActiveProducts(SystemTime.asDate());
+            Long numProducts = productDao.readCountAllActiveProducts();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("There are " + numProducts + " total products");
             }
@@ -213,7 +212,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @return the list of all active products to be used by the index building task
      */
     protected List<Product> readAllActiveProducts() {
-        return productDao.readAllActiveProducts(SystemTime.asDate());
+        return productDao.readAllActiveProducts();
     }
 
     /**
@@ -227,7 +226,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @since 2.2.0
      */
     protected List<Product> readAllActiveProducts(int page, int pageSize) {
-        return productDao.readAllActiveProducts(page, pageSize, SystemTime.asDate());
+        return productDao.readAllActiveProducts(page, pageSize);
     }
 
     /**
