@@ -16,14 +16,16 @@
 
 package org.broadleafcommerce.core.search.redirect.dao;
 
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by ppatel.
@@ -34,12 +36,25 @@ public class SearchRedirectDaoImpl implements SearchRedirectDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
+    protected Long currentDateResolution = 10000L;
+    protected Date cachedDate = SystemTime.asDate();
+
+    protected Date getCurrentDateAfterFactoringInDateResolution() {
+        Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, currentDateResolution);
+        if (returnDate != cachedDate) {
+            if (SystemTime.shouldCacheDate()) {
+                cachedDate = returnDate;
+            }
+        }
+        return returnDate;
+    }
+
     @Override
     public SearchRedirect findSearchRedirectBySearchTerm(String searchTerm) {
         Query query;
         query = em.createNamedQuery("BC_READ_SEARCH_URL");
         query.setParameter("searchTerm", searchTerm);
-        query.setParameter("now",new Date());
+        query.setParameter("now", getCurrentDateAfterFactoringInDateResolution());
         query.setMaxResults(1);
         @SuppressWarnings("unchecked")
         List<SearchRedirect> results = query.getResultList();
@@ -48,6 +63,14 @@ public class SearchRedirectDaoImpl implements SearchRedirectDao {
         } else {
             return null;
         }
+    }
+
+    public Long getCurrentDateResolution() {
+        return currentDateResolution;
+    }
+
+    public void setCurrentDateResolution(Long currentDateResolution) {
+        this.currentDateResolution = currentDateResolution;
     }
 
 }

@@ -19,9 +19,9 @@ package org.broadleafcommerce.core.search.service;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
@@ -37,7 +37,6 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,6 +44,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 @Service("blSearchService")
 public class DatabaseSearchServiceImpl implements SearchService {
@@ -76,7 +77,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
     public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) {
         ProductSearchResult result = new ProductSearchResult();
         setQualifiedKeys(searchCriteria);
-        List<Product> products = catalogService.findFilteredActiveProductsByCategory(category, SystemTime.asDate(), searchCriteria);
+        List<Product> products = catalogService.findFilteredActiveProductsByCategory(category, searchCriteria);
         List<SearchFacetDTO> facets = getCategoryFacets(category);
         setActiveFacets(facets, searchCriteria);
         result.setProducts(products);
@@ -91,7 +92,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
     public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria) {
         ProductSearchResult result = new ProductSearchResult();
         setQualifiedKeys(searchCriteria);
-        List<Product> products = catalogService.findFilteredActiveProductsByQuery(query, SystemTime.asDate(), searchCriteria);
+        List<Product> products = catalogService.findFilteredActiveProductsByQuery(query, searchCriteria);
         List<SearchFacetDTO> facets = getSearchFacets();
         setActiveFacets(facets, searchCriteria);
         result.setProducts(products);

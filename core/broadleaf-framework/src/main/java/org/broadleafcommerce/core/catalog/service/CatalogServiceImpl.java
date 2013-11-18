@@ -71,21 +71,45 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public List<Product> findActiveProductsByCategory(Category category) {
+        return productDao.readActiveProductsByCategory(category.getId());
+    }
+
+    @Override
+    public List<Product> findFilteredActiveProductsByCategory(Category category, ProductSearchCriteria searchCriteria) {
+        return productDao.readFilteredActiveProductsByCategory(category.getId(), searchCriteria);
+    }
+
+    @Override
+    public List<Product> findFilteredActiveProductsByQuery(String query, ProductSearchCriteria searchCriteria) {
+        return productDao.readFilteredActiveProductsByQuery(query, searchCriteria);
+    }
+
+    @Override
+    public List<Product> findActiveProductsByCategory(Category category, int limit, int offset) {
+        return productDao.readActiveProductsByCategory(category.getId(), limit, offset);
+    }
+
+    @Override
+    @Deprecated
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate) {
         return productDao.readActiveProductsByCategory(category.getId(), currentDate);
     }
     
     @Override
+    @Deprecated
     public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria) {
         return productDao.readFilteredActiveProductsByCategory(category.getId(), currentDate, searchCriteria);
     }
     
     @Override
+    @Deprecated
     public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria) {
         return productDao.readFilteredActiveProductsByQuery(query, currentDate, searchCriteria);
     }
 
     @Override
+    @Deprecated
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset) {
         return productDao.readActiveProductsByCategory(category.getId(), currentDate, limit, offset);
     }

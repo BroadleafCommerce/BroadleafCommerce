@@ -48,15 +48,33 @@ public interface CatalogService {
      */
     public List<Product> findProductsByName(String searchName, int limit, int offset);
 
+    public List<Product> findActiveProductsByCategory(Category category);
+
+    /**
+     * @deprecated Use findActiveProductsByCategory
+     * 
+     * @param category
+     * @param currentDate
+     * @return
+     */
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate);
     
     /**
      * Given a category and a ProudctSearchCriteria, returns the appropriate matching products
      * 
      * @param category
-     * @param currentDate
      * @param searchCriteria
      * @return the matching products
+     */
+    public List<Product> findFilteredActiveProductsByCategory(Category category, ProductSearchCriteria searchCriteria);
+
+    /**
+     * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, ProductSearchCriteria)}
+     * 
+     * @param category
+     * @param currentDate
+     * @param searchCriteria
+     * @return
      */
     public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria);
     
@@ -64,12 +82,29 @@ public interface CatalogService {
      * Given a search query and a ProductSearchCriteria, returns the appropriate matching products
      * 
      * @param query
-     * @param currentDate
      * @param searchCriteria
      * @return the matching products
      */
+    public List<Product> findFilteredActiveProductsByQuery(String query, ProductSearchCriteria searchCriteria);
+
+    /**
+     * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, ProductSearchCriteria)}
+     */
     public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria);
 
+    /**
+     * Same as {@link #findActiveProductsByCategory(Category)} but allowing for pagination.
+     * 
+     * @param category
+     * @param limit
+     * @param offset
+     * @return
+     */
+    public List<Product> findActiveProductsByCategory(Category category, int limit, int offset);
+
+    /**
+     * @deprecated Use {@link #findActiveProductsByCategory(Category, limit, offset}
+     */
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset);
 
     /**

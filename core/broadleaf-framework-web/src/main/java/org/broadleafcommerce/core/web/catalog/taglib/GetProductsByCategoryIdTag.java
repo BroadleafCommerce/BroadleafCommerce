@@ -19,12 +19,12 @@ package org.broadleafcommerce.core.web.catalog.taglib;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 
-import javax.servlet.jsp.JspException;
 import java.util.List;
+
+import javax.servlet.jsp.JspException;
 
 /**
  * This class is for demonstration purposes only. It contains a call to
@@ -52,7 +52,7 @@ public class GetProductsByCategoryIdTag extends AbstractCatalogTag {
             }
         }
 
-        List<Product> productList = catalogService.findActiveProductsByCategory(c, SystemTime.asDate());
+        List<Product> productList = catalogService.findActiveProductsByCategory(c);
 
         if(CollectionUtils.isEmpty(productList) && LOG.isDebugEnabled()){
             LOG.debug("The productList returned was null for categoryId: " + categoryId);
