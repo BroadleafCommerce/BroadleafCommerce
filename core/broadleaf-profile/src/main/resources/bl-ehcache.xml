@@ -31,11 +31,51 @@
     <cache
         name="blStandardElements"
         maxElementsInMemory="100000"
-        eternal="true"
-        overflowToDisk="true">
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="86400">
         <cacheEventListenerFactory class="org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory"/>
     </cache>
-    
+
+    <cache
+        name="blProducts"
+        maxElementsInMemory="100000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="86400">
+        <cacheEventListenerFactory class="org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory"/>
+    </cache>
+
+    <cache name="blProductUrlCache"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="3600"/>
+
+    <cache
+        name="blCategories"
+        maxElementsInMemory="100000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="86400">
+        <cacheEventListenerFactory class="org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory"/>
+    </cache>
+
+    <cache name="blCategoryUrlCache"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="3600"/>
+
+    <cache
+        name="blOffers"
+        maxElementsInMemory="100000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="86400">
+        <cacheEventListenerFactory class="org.broadleafcommerce.common.cache.engine.HydratedCacheEventListenerFactory"/>
+    </cache>
+
     <cache
         name="blInventoryElements"
         maxElementsInMemory="100000"
@@ -44,7 +84,7 @@
         timeToLiveSeconds="60"/>
         
     <cache
-        name="org.hibernate.cache.StandardQueryCache"
+        name="org.hibernate.cache.internal.StandardQueryCache"
         maxElementsInMemory="1000"
         eternal="false"
         overflowToDisk="false"
@@ -56,7 +96,14 @@
         eternal="false"
         overflowToDisk="false"
         timeToLiveSeconds="600"/>
-        
+
+    <cache
+        name="query.Offer"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="false"
+        timeToLiveSeconds="600"/>
+
     <cache
         name="blOrderElements"
         maxElementsInMemory="100000"
@@ -84,6 +131,6 @@
      <cache name="org.hibernate.cache.UpdateTimestampsCache" 
         maxElementsInMemory="5000" 
         eternal="true" 
-        overflowToDisk="false"/>
+        overflowToDisk="true"/>
         
 </ehcache>

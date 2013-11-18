@@ -28,10 +28,12 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.springframework.validation.BindingResult;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,7 +53,7 @@ public interface FormBuilderService {
      * @return the ListGrid
      * @throws ServiceException
      */
-    public ListGrid buildMainListGrid(DynamicResultSet drs, ClassMetadata cmd, String sectionKey)
+    public ListGrid buildMainListGrid(DynamicResultSet drs, ClassMetadata cmd, String sectionKey, List<SectionCrumb> sectionCrumbs)
             throws ServiceException;
 
     /**
@@ -67,7 +69,7 @@ public interface FormBuilderService {
      * @return the ListGrid
      * @throws ServiceException
      */
-    public ListGrid buildCollectionListGrid(String containingEntityId, DynamicResultSet drs, Property field, String sectionKey)
+    public ListGrid buildCollectionListGrid(String containingEntityId, DynamicResultSet drs, Property field, String sectionKey, List<SectionCrumb> sectionCrumbs)
             throws ServiceException;
 
     /**
@@ -90,7 +92,7 @@ public interface FormBuilderService {
      * @throws ServiceException
      * @see {@link #populateEntityForm(ClassMetadata, EntityForm)}
      */
-    public EntityForm createEntityForm(ClassMetadata cmd) throws ServiceException;
+    public EntityForm createEntityForm(ClassMetadata cmd, List<SectionCrumb> sectionCrumbs) throws ServiceException;
 
     /**
      * Populates the given <b>ef</b> with all of the fields based on the properties from <b>cmd</b>. For all the fields that
@@ -101,7 +103,7 @@ public interface FormBuilderService {
      * @param ef
      * @throws ServiceException
      */
-    public void populateEntityForm(ClassMetadata cmd, EntityForm ef) throws ServiceException;
+    public void populateEntityForm(ClassMetadata cmd, EntityForm ef, List<SectionCrumb> sectionCrumbs) throws ServiceException;
     
     /**
      * Creates a new EntityForm that has all of the appropriate fields set up along with the values for those fields
@@ -113,7 +115,7 @@ public interface FormBuilderService {
      * @throws ServiceException
      * @see {@link #createEntityForm(ClassMetadata)}
      */
-    public EntityForm createEntityForm(ClassMetadata cmd, Entity entity)
+    public EntityForm createEntityForm(ClassMetadata cmd, Entity entity, List<SectionCrumb> sectionCrumbs)
             throws ServiceException;
     
     /**
@@ -126,7 +128,7 @@ public interface FormBuilderService {
      * @throws ServiceException
      * @see {@link #populateEntityForm(ClassMetadata, EntityForm)}
      */
-    public void populateEntityForm(ClassMetadata cmd, Entity entity, EntityForm ef) 
+    public void populateEntityForm(ClassMetadata cmd, Entity entity, EntityForm ef, List<SectionCrumb> sectionCrumbs)
             throws ServiceException;
 
     /**
@@ -156,7 +158,7 @@ public interface FormBuilderService {
      * @throws ServiceException
      * @see {@link #populateEntityForm(ClassMetadata, Entity, Map, EntityForm)}
      */
-    public EntityForm createEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords)
+    public EntityForm createEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords, List<SectionCrumb> sectionCrumbs)
             throws ServiceException;
 
     /**
@@ -175,7 +177,7 @@ public interface FormBuilderService {
      * @return the EntityForm
      * @throws ServiceException
      */
-    public void populateEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords, EntityForm entityForm)
+    public void populateEntityForm(ClassMetadata cmd, Entity entity, Map<String, DynamicResultSet> collectionRecords, EntityForm entityForm, List<SectionCrumb> sectionCrumbs)
             throws ServiceException;
     
 

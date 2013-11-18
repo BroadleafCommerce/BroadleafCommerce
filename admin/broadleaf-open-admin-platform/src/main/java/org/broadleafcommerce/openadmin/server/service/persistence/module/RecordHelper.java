@@ -128,6 +128,8 @@ public interface RecordHelper extends DataFormatProvider {
 
     public Integer getTotalRecords(String ceilingEntity, List<FilterMapping> filterMappings);
 
+    public Serializable getMaxValue(String ceilingEntity, List<FilterMapping> filterMappings, String maxField);
+
     public List<Serializable> getPersistentRecords(String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults);
 
     public EntityResult update(PersistencePackage persistencePackage, boolean includeRealEntityObject) throws ServiceException;

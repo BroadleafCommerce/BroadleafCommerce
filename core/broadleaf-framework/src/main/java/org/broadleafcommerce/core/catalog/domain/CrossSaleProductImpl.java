@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -69,9 +71,9 @@ public class CrossSaleProductImpl implements RelatedProduct {
     @AdminPresentation(friendlyName = "CrossSaleProductImpl_Cross_Sale_Promotion_Message", largeEntry=true)
     protected String promotionMessage;
 
-    @Column(name = "SEQUENCE")
+    @Column(name = "SEQUENCE", precision = 10, scale = 6)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Long sequence;
+    protected BigDecimal sequence;
     
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
@@ -109,12 +111,12 @@ public class CrossSaleProductImpl implements RelatedProduct {
     }
 
     @Override
-    public Long getSequence() {
+    public BigDecimal getSequence() {
         return sequence;
     }
     
     @Override
-    public void setSequence(Long sequence) {
+    public void setSequence(BigDecimal sequence) {
         this.sequence = sequence;
     }
 

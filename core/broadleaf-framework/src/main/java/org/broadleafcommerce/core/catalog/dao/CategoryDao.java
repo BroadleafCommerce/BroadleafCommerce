@@ -191,7 +191,6 @@ public interface CategoryDao {
     @Nonnull
     public List<Category> readActiveSubCategoriesByCategory(@Nonnull Category category, @Nonnull int limit, @Nonnull int offset);
 
-    @Nonnull
     public Category findCategoryByURI(String uri);
 
     /**

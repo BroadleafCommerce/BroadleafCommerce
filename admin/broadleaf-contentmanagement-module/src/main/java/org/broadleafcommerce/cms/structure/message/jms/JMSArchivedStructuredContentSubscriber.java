@@ -19,14 +19,15 @@
  */
 package org.broadleafcommerce.cms.structure.message.jms;
 
-import org.broadleafcommerce.cms.structure.service.StructuredContentService;
+import java.util.HashMap;
 
 import javax.annotation.Resource;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
-import java.util.HashMap;
+
+import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 
 /**
  * Receives JMS message with a String that indicates the cache key
@@ -49,7 +50,7 @@ public class JMSArchivedStructuredContentSubscriber implements MessageListener {
         try {
             HashMap<String,String> props = (HashMap<String,String>) ((ObjectMessage) message).getObject();
             if (props != null) {
-                structuredContentService.removeItemFromCache(props.get("nameKey"), props.get("typeKey"));
+                //structuredContentService.removeItemFromCache(props.get("nameKey"), props.get("typeKey"));
             }
         } catch (JMSException e) {
             throw new RuntimeException(e);

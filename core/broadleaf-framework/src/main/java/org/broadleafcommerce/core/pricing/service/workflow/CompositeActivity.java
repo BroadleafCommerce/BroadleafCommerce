@@ -22,11 +22,11 @@ package org.broadleafcommerce.core.pricing.service.workflow;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.core.workflow.SequenceProcessor;
+import org.broadleafcommerce.core.workflow.Processor;
 
 public class CompositeActivity extends BaseActivity<ProcessContext<Order>> {
 
-    private SequenceProcessor workflow;
+    private Processor workflow;
 
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
@@ -38,11 +38,11 @@ public class CompositeActivity extends BaseActivity<ProcessContext<Order>> {
         return context;
     }
 
-    public SequenceProcessor getWorkflow() {
+    public Processor getWorkflow() {
         return workflow;
     }
 
-    public void setWorkflow(SequenceProcessor workflow) {
+    public void setWorkflow(Processor workflow) {
         this.workflow = workflow;
     }
 

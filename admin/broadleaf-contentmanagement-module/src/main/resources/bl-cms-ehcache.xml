@@ -55,21 +55,5 @@
         eternal="false"
         overflowToDisk="true"
         timeToLiveSeconds="3600"/>
-        
-    <!-- If using message based cache-eviction, then the cmsPageCache can be set to eternal. -->
-    <!--
-        <cache name="cmsPageCache"
-            maxElementsInMemory="1000"
-            eternal="true"
-            overflowToDisk="true"/>
-        />
-
-        <cache name="cmsStructuredContentCache"
-            maxElementsInMemory="5000"
-            eternal="true"
-            overflowToDisk="true"/>
-        />
-
-      -->
 
 </ehcache>

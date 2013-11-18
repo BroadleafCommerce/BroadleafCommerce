@@ -19,12 +19,12 @@
  */
 package org.broadleafcommerce.core.workflow;
 
+import java.util.Map;
+
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 import org.springframework.core.Ordered;
 
-import java.util.Map;
-
-public abstract class BaseActivity<T extends ProcessContext<? extends Object>> implements Activity<T> {
+public abstract class BaseActivity<T extends ProcessContext<?>> implements Activity<T> {
     
     protected ErrorHandler errorHandler;
     protected String beanName;

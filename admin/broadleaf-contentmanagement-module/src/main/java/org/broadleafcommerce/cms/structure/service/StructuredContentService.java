@@ -203,8 +203,5 @@ public interface StructuredContentService {
 
     public List<StructuredContentDTO> getStructuredContentListFromCache(String key);
 
-
     public void removeItemFromCache(String nameKey, String typeKey);
-
 }
-

@@ -20,6 +20,7 @@
 package org.broadleafcommerce.openadmin.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -41,6 +42,7 @@ public class Property implements Serializable {
     protected String unHtmlEncodedValue;
     protected String rawValue;
     protected String originalValue;
+    protected Date deployDate;
 
     public String getName() {
         return name;
@@ -121,7 +123,15 @@ public class Property implements Serializable {
     public void setOriginalDisplayValue(String originalDisplayValue) {
         this.originalDisplayValue = originalDisplayValue;
     }
-    
+
+    public Date getDeployDate() {
+        return deployDate;
+    }
+
+    public void setDeployDate(Date deployDate) {
+        this.deployDate = deployDate;
+    }
+
     @Override
     public String toString() {
         return getName() + ": " + getValue();

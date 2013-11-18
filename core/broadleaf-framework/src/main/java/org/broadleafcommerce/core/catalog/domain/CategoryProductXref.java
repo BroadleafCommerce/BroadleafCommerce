@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * Implementations of this interface are used to hold data about the many-to-many relationship between
@@ -70,14 +71,14 @@ public interface CategoryProductXref extends Serializable {
      * 
      * @return the display order
      */
-    Long getDisplayOrder();
+    BigDecimal getDisplayOrder();
 
     /**
      * Sets the display order.
      * 
      * @param displayOrder the new display order
      */
-    void setDisplayOrder(Long displayOrder);
+    void setDisplayOrder(BigDecimal displayOrder);
 
     public void setId(Long id);
 

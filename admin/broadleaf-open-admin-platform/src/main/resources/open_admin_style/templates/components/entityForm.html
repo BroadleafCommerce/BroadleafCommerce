@@ -19,7 +19,8 @@
     <input type="hidden" th:field="*{ceilingEntityClassname}" />
     <input type="hidden" th:field="*{entityType}" />
     <input type="hidden" th:field="*{id}" />
-    
+    <input type="hidden" th:field="*{sectionCrumbs}"  />
+
     <div class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">
         <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
             <b>[[#{__${tab.key}__}]]</b>
@@ -52,7 +53,7 @@
                      class="field-box" 
                      blc_admin:component_id="${field}"
                      th:classappend="${!field.isVisible}? 'hidden'">
-                    
+
                     <div th:if="${field.readOnly}" th:remove="tag">
                         <div th:substituteby="fields/readonly" />
                     </div>

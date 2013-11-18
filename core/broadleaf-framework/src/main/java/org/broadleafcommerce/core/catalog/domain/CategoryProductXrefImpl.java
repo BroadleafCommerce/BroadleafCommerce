@@ -19,6 +19,18 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -31,16 +43,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
  * The Class CategoryProductXrefImpl is the default implmentation of {@link Category}.
@@ -63,7 +65,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY_PRODUCT_XREF")
 @AdminPresentationClass(excludeFromPolymorphism = false)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
@@ -74,67 +76,60 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CategoryProductId")
+    @GeneratedValue(generator= "CategoryProductId")
     @GenericGenerator(
-            name = "CategoryProductId",
-            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-            parameters = {
-                    @Parameter(name = "segment_value", value = "CategoryProductXrefImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl")
-            })
+        name="CategoryProductId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="CategoryProductXrefImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl")
+        }
+    )
     @Column(name = "CATEGORY_PRODUCT_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = CategoryImpl.class, optional = false)
-    @JoinColumn(name = "CATEGORY_ID", nullable = false)
+    @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+    @JoinColumn(name = "CATEGORY_ID")
     protected Category category = new CategoryImpl();
 
     /** The product. */
-    @ManyToOne(targetEntity = ProductImpl.class, optional = false)
-    @JoinColumn(name = "PRODUCT_ID", nullable = false)
+    @ManyToOne(targetEntity = ProductImpl.class, optional=false)
+    @JoinColumn(name = "PRODUCT_ID")
     protected Product product = new ProductImpl();
 
     /** The display order. */
-    @Column(name = "DISPLAY_ORDER")
+    @Column(name = "DISPLAY_ORDER", precision = 10, scale = 6)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Long displayOrder;
+    protected BigDecimal displayOrder;
 
-    @Override
-    public Long getDisplayOrder() {
+    public BigDecimal getDisplayOrder() {
         return displayOrder;
     }
 
-    @Override
-    public void setDisplayOrder(Long displayOrder) {
+    public void setDisplayOrder(BigDecimal displayOrder) {
         this.displayOrder = displayOrder;
     }
 
-    @Override
     public Category getCategory() {
         return category;
     }
 
-    @Override
     public void setCategory(Category category) {
         this.category = category;
     }
 
-    @Override
     public Product getProduct() {
         return product;
     }
 
-    @Override
     public void setProduct(Product product) {
         this.product = product;
     }
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -147,6 +142,8 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
         CategoryProductXrefImpl that = (CategoryProductXrefImpl) o;
 
         if (category != null ? !category.equals(that.category) : that.category != null) return false;
+        if (displayOrder != null ? !displayOrder.equals(that.displayOrder) : that.displayOrder != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (product != null ? !product.equals(that.product) : that.product != null) return false;
 
         return true;
@@ -154,9 +151,10 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
 
     @Override
     public int hashCode() {
-        int result = category != null ? category.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (category != null ? category.hashCode() : 0);
         result = 31 * result + (product != null ? product.hashCode() : 0);
+        result = 31 * result + (displayOrder != null ? displayOrder.hashCode() : 0);
         return result;
     }
-
 }

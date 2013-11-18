@@ -67,7 +67,9 @@
     <!-- to be overriden by 3rd party modules -->
     <bean id="blMergedClassTransformers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
-            <list />
+            <list>
+                <ref bean="blAnnotationDirectCopyClassTransformer"/>
+            </list>
         </property>
     </bean>
 

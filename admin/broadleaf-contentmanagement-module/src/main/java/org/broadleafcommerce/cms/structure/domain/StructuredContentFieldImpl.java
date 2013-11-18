@@ -19,13 +19,6 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -39,6 +32,16 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 /**
  * Created by bpolster.
  */
@@ -46,6 +49,9 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_FLD")
 @EntityListeners(value = { AdminAuditableListener.class })
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
+})
 public class StructuredContentFieldImpl implements StructuredContentField {
 
     private static final long serialVersionUID = 1L;
@@ -69,10 +75,6 @@ public class StructuredContentFieldImpl implements StructuredContentField {
 
     @Column (name = "FLD_KEY")
     protected String fieldKey;
-
-    @ManyToOne(targetEntity = StructuredContentImpl.class)
-    @JoinColumn(name="SC_ID")
-    protected StructuredContent structuredContent;
 
     @Column (name = "VALUE")
     protected String stringValue;
@@ -103,16 +105,6 @@ public class StructuredContentFieldImpl implements StructuredContentField {
     }
 
     @Override
-    public StructuredContent getStructuredContent() {
-        return structuredContent;
-    }
-
-    @Override
-    public void setStructuredContent(StructuredContent structuredContent) {
-        this.structuredContent = structuredContent;
-    }
-
-    @Override
     public String getValue() {
         if (stringValue != null && stringValue.length() > 0) {
             return stringValue;
@@ -135,18 +127,6 @@ public class StructuredContentFieldImpl implements StructuredContentField {
             lobValue = null;
             stringValue = null;
         }
-    }
-
-    @Override
-    public StructuredContentField cloneEntity() {
-        StructuredContentFieldImpl newContentField = new StructuredContentFieldImpl();
-        newContentField.fieldKey = fieldKey;
-        newContentField.structuredContent = structuredContent;
-        newContentField.lobValue = lobValue;
-        newContentField.stringValue = stringValue;
-
-        return newContentField;
-
     }
 
     @Override

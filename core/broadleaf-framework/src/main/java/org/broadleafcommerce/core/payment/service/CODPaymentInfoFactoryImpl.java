@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
+import java.util.UUID;
+
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 /**
  * Collect On Delivery(COD) PaymentInfo factory

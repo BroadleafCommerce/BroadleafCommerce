@@ -19,6 +19,17 @@
  */
 package org.broadleafcommerce.common.web;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTOImpl;
@@ -26,16 +37,6 @@ import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import javax.annotation.Resource;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Responsible for setting up the site and locale used by Broadleaf Commerce components.
@@ -51,6 +52,8 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
      * Parameter/Attribute name for the current language
      */
     public static String REQUEST_DTO_PARAM_NAME = "blRequestDTO";
+
+    public static final String ADMIN_USER_ID_PARAM_NAME = "blAdminUserId";
 
     // Properties to manage URLs that will not be processed by this filter.
     private static final String BLC_ADMIN_GWT = "org.broadleafcommerce.admin";

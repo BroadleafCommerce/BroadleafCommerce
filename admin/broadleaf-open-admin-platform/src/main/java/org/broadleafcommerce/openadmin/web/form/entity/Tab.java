@@ -20,6 +20,7 @@
 
 package org.broadleafcommerce.openadmin.web.form.entity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
@@ -33,6 +34,7 @@ public class Tab {
 
     protected String title;
     protected Integer order;
+    protected String tabClass;
 
     Set<FieldGroup> fieldGroups = new TreeSet<FieldGroup>(new Comparator<FieldGroup>() {
         @Override
@@ -89,6 +91,10 @@ public class Tab {
         listGrids.remove(listGrid);
     }
 
+    public String getTabClass() {
+        return StringUtils.isBlank(tabClass) ? "" : " " + tabClass;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -119,6 +125,10 @@ public class Tab {
 
     public void setListGrids(Set<ListGrid> listGrids) {
         this.listGrids = listGrids;
+    }
+
+    public void setTabClass(String tabClass) {
+        this.tabClass = tabClass;
     }
     
 }

@@ -19,18 +19,20 @@
  */
 package org.broadleafcommerce.common.email.service;
 
+import java.io.ByteArrayOutputStream;
+
+import javax.activation.DataHandler;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessagePreparator;
-import java.io.ByteArrayOutputStream;
-import javax.activation.DataHandler;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 
 /**
- * @aufthor Andre Azzolini (apazzolini)
+ * @author Andre Azzolini (apazzolini)
  */
 public class LoggingMailSender extends JavaMailSenderImpl {
     private static final Log LOG = LogFactory.getLog(LoggingMailSender.class);

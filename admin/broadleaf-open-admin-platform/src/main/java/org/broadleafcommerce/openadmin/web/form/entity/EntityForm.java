@@ -25,6 +25,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 import java.util.ArrayList;
@@ -66,6 +67,7 @@ public class EntityForm {
                     .toComparison();
         }
     });
+    protected List<SectionCrumb> sectionCrumbs = new ArrayList<SectionCrumb>();
 
     // This is used to data-bind when this entity form is submitted
     protected Map<String, Field> fields = null;
@@ -470,5 +472,48 @@ public class EntityForm {
     public void setActions(List<EntityFormAction> actions) {
         this.actions = actions;
     }
-    
+
+    public List<SectionCrumb> getSectionCrumbsImpl() {
+        return sectionCrumbs;
+    }
+
+    public void setSectionCrumbsImpl(List<SectionCrumb> sectionCrumbs) {
+        if (sectionCrumbs == null) {
+            this.sectionCrumbs.clear();
+            return;
+        }
+        this.sectionCrumbs = sectionCrumbs;
+    }
+
+    public void setSectionCrumbs(String crumbs) {
+        List<SectionCrumb> myCrumbs = new ArrayList<SectionCrumb>();
+        if (!StringUtils.isEmpty(crumbs)) {
+            String[] crumbParts = crumbs.split(",");
+            for (String part : crumbParts) {
+                SectionCrumb crumb = new SectionCrumb();
+                String[] crumbPieces = part.split("--");
+                crumb.setSectionIdentifier(crumbPieces[0]);
+                crumb.setSectionId(crumbPieces[1]);
+                if (!myCrumbs.contains(crumb)) {
+                    myCrumbs.add(crumb);
+                }
+            }
+        }
+        sectionCrumbs = myCrumbs;
+    }
+
+    public String getSectionCrumbs() {
+        StringBuilder sb = new StringBuilder();
+        int index = 0;
+        for (SectionCrumb section : sectionCrumbs) {
+            sb.append(section.getSectionIdentifier());
+            sb.append("--");
+            sb.append(section.getSectionId());
+            if (index < sectionCrumbs.size()-1) {
+                sb.append(",");
+            }
+            index++;
+        }
+        return sb.toString();
+    }
 }

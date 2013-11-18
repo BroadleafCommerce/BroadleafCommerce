@@ -98,6 +98,8 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
             CtClass clazz = null;
             String xformKey = convertedClassName;
             String[] xformVals = null;
+            Boolean[] xformSkipOverlaps = null;
+            Boolean[] xformRenameMethodOverlaps = null;
             if (!xformTemplates.isEmpty()) {
                 if (xformTemplates.containsKey(xformKey)) {
                     xformVals = xformTemplates.get(xformKey).split(",");
@@ -124,6 +126,8 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                     List<?> attributes = clazz.getClassFile().getAttributes();
                     Iterator<?> itr = attributes.iterator();
                     List<String> templates = new ArrayList<String>();
+                    List<Boolean> skips = new ArrayList<Boolean>();
+                    List<Boolean> renames = new ArrayList<Boolean>();
                     check: {
                         while(itr.hasNext()) {
                             Object object = itr.next();
@@ -146,14 +150,20 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                                             }
                                             BooleanMemberValue skipAnnot = (BooleanMemberValue) memberAnnot.getMemberValue("skipOverlaps");
                                             if (skipAnnot != null) {
-                                                mySkipOverlaps = skipAnnot.getValue();
+                                                skips.add(skipAnnot.getValue());
+                                            } else {
+                                                skips.add(mySkipOverlaps);
                                             }
                                             BooleanMemberValue renameAnnot = (BooleanMemberValue) memberAnnot.getMemberValue("renameMethodOverlaps");
                                             if (renameAnnot != null) {
-                                                myRenameMethodOverlaps = renameAnnot.getValue();
+                                                renames.add(renameAnnot.getValue());
+                                            } else {
+                                                renames.add(myRenameMethodOverlaps);
                                             }
-                                            xformVals = templates.toArray(new String[templates.size()]);
                                         }
+                                        xformVals = templates.toArray(new String[templates.size()]);
+                                        xformSkipOverlaps = skips.toArray(new Boolean[skips.size()]);
+                                        xformRenameMethodOverlaps = renames.toArray(new Boolean[renames.size()]);
                                         break check;
                                     }
                                 }
@@ -168,6 +178,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                 // Load the destination class and defrost it so it is eligible for modifications
                 clazz.defrost();
 
+                int index = 0;
                 for (String xformVal : xformVals) {
                     // Load the source class
                     String trimmed = xformVal.trim();
@@ -181,7 +192,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                             CtClass[] myInterfaces = clazz.getInterfaces();
                             for (CtClass myInterface : myInterfaces) {
                                 if (myInterface.getName().equals(i.getName())) {
-                                    if (mySkipOverlaps) {
+                                    if (xformSkipOverlaps[index]) {
                                         break checkInterfaces;
                                     } else {
                                         throw new RuntimeException("Duplicate interface detected " + myInterface.getName());
@@ -202,7 +213,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                         } else {
                             try {
                                 clazz.getDeclaredField(field.getName());
-                                if (mySkipOverlaps) {
+                                if (xformSkipOverlaps[index]) {
                                     logger.debug(String.format("Skipping overlapped field [%s]", field.getName()));
                                     continue;
                                 }
@@ -251,7 +262,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                                 CtClass[] paramTypes = method.getParameterTypes();
                                 CtMethod originalMethod = clazz.getDeclaredMethod(method.getName(), paramTypes);
 
-                                if (mySkipOverlaps) {
+                                if (xformSkipOverlaps[index]) {
                                     logger.debug(String.format("Skipping overlapped method [%s]", methodDescription(originalMethod)));
                                     continue;
                                 }
@@ -264,7 +275,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                                 }
 
                                 logger.debug(String.format("Removing method [%s]", method.getName()));
-                                if (myRenameMethodOverlaps) {
+                                if (xformRenameMethodOverlaps[index]) {
                                     originalMethod.setName(renameMethodPrefix + method.getName());
                                 } else {
                                     clazz.removeMethod(originalMethod);
@@ -278,6 +289,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                             clazz.addMethod(copiedMethod);
                         }
                     }
+                    index++;
                 }
 
                 if (xformTemplates.isEmpty()) {

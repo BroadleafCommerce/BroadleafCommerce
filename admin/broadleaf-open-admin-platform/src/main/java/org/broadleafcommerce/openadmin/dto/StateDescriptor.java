@@ -17,35 +17,19 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.domain;
+package org.broadleafcommerce.openadmin.dto;
 
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-
-import java.util.List;
+import java.util.Map;
 
 /**
- * Created by bpolster.
+ * @author Jeff Fischer
  */
-public interface SandBoxAction {
-    public Long getId();
+public interface StateDescriptor {
 
-    public void setId(Long id);
+    Property[] getProperties();
 
-    public SandBoxActionType getActionType();
+    Property findProperty(String name);
 
-    public void setActionType(SandBoxActionType type);
+    Map<String, Property> getPMap();
 
-    public String getComment();
-
-    public void setComment(String comment);
-
-    public List<SandBoxItem> getSandBoxItems();
-
-    public void setSandBoxItems(List<SandBoxItem> itemList);
-
-    public void addSandBoxItem(SandBoxItem item);
-
-    public AdminAuditable getAuditable();
-
-    public void setAuditable(AdminAuditable auditable);
 }

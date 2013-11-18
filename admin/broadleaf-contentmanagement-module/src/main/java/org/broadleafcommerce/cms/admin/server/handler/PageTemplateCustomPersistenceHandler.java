@@ -19,6 +19,16 @@
  */
 package org.broadleafcommerce.cms.admin.server.handler;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +42,7 @@ import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.cms.page.service.PageService;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.service.SandBoxService;
 import org.broadleafcommerce.common.web.SandBoxContext;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
@@ -44,23 +55,16 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
-import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
+import org.broadleafcommerce.openadmin.server.service.handler.DynamicEntityRetriever;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * Created by jfischer
  */
 @Component("blPageTemplateCustomPersistenceHandler")
-public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandlerAdapter implements DynamicEntityRetriever {
 
     private final Log LOG = LogFactory.getLog(PageTemplateCustomPersistenceHandler.class);
 
@@ -132,7 +136,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String pageId = persistencePackage.getCustomCriteria()[1];
-            Entity entity = fetchEntityBasedOnId(pageId);
+            Entity entity = fetchEntityBasedOnId(pageId, null);
             DynamicResultSet results = new DynamicResultSet(new Entity[]{entity}, 1);
 
             return results;
@@ -141,8 +145,20 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         }
     }
 
-    protected Entity fetchEntityBasedOnId(String pageId) throws Exception {
+    @Override
+    public String getFieldContainerClassName() {
+        return Page.class.getName();
+    }
+
+    @Override
+    public Entity fetchEntityBasedOnId(String pageId, List<String> dirtyFields) throws Exception {
         Page page = pageService.findPageById(Long.valueOf(pageId));
+        return fetchDynamicEntity(page, dirtyFields, true);
+    }
+
+    @Override
+    public Entity fetchDynamicEntity(Serializable root, List<String> dirtyFields, boolean includeId) throws Exception {
+        Page page = (Page) root;
         Map<String, PageField> pageFieldMap = page.getPageFields();
         Entity entity = new Entity();
         entity.setType(new String[]{PageTemplateImpl.class.getName()});
@@ -162,12 +178,17 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     }
                 }
                 property.setValue(value);
+                if (!CollectionUtils.isEmpty(dirtyFields) && dirtyFields.contains(property.getName())) {
+                    property.setIsDirty(true);
+                }
             }
         }
-        Property property = new Property();
-        propertiesList.add(property);
-        property.setName("id");
-        property.setValue(pageId);
+        if (includeId) {
+            Property property = new Property();
+            propertiesList.add(property);
+            property.setName("id");
+            property.setValue(String.valueOf(page.getId()));
+        }
 
         entity.setProperties(propertiesList.toArray(new Property[]{}));
 
@@ -207,18 +228,28 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     templateFieldNames.add(definition.getName());
                 }
             }
+            Map<String, String> dirtyFieldsOrigVals = new HashMap<String, String>();
+            List<String> dirtyFields = new ArrayList<String>();
             Map<String, PageField> pageFieldMap = page.getPageFields();
             for (Property property : persistencePackage.getEntity().getProperties()) {
                 if (templateFieldNames.contains(property.getName())) {
                     PageField pageField = pageFieldMap.get(property.getName());
                     if (pageField != null) {
+                        boolean isDirty = (pageField.getValue() == null && property.getValue() != null) ||
+                                (pageField.getValue() != null && property.getValue() == null);
+                        if (!isDirty && pageField.getValue() != null && property.getValue() != null &&
+                                !pageField.getValue().trim().equals(property.getValue().trim())) {
+                            dirtyFields.add(property.getName());
+                            dirtyFieldsOrigVals.put(property.getName(), pageField.getValue());
+                        }
                         pageField.setValue(property.getValue());
                     } else {
                         pageField = new PageFieldImpl();
-                        pageFieldMap.put(property.getName(), pageField);
                         pageField.setFieldKey(property.getName());
-                        pageField.setPage(page);
                         pageField.setValue(property.getValue());
+                        dynamicEntityDao.persist(pageField);
+                        pageFieldMap.put(property.getName(), pageField);
+                        dirtyFields.add(property.getName());
                     }
                 }
             }
@@ -230,12 +261,19 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             }
             if (removeItems.size() > 0) {
                 for (String removeKey : removeItems) {
-                    PageField pageField = pageFieldMap.remove(removeKey);
-                    pageField.setPage(null);
+                    pageFieldMap.remove(removeKey);
                 }
             }
 
-            return fetchEntityBasedOnId(pageId);
+            Collections.sort(dirtyFields);
+            Entity entity = fetchEntityBasedOnId(pageId, dirtyFields);
+
+            for (Map.Entry<String, String> entry : dirtyFieldsOrigVals.entrySet()) {
+                entity.getPMap().get(entry.getKey()).setOriginalValue(entry.getValue());
+                entity.getPMap().get(entry.getKey()).setOriginalDisplayValue(entry.getValue());
+            }
+
+            return entity;
         } catch (ValidationException e) {
             throw e;
         } catch (Exception e) {

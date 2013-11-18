@@ -19,14 +19,14 @@
  */
 package org.broadleafcommerce.core.checkout.service.workflow;
 
+import java.util.Map;
+
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.RollbackFailureException;
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 
 /**

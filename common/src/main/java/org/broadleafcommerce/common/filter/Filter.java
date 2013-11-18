@@ -40,7 +40,7 @@ public class Filter {
     }
 
     public String getName() {
-        return entityImplementationClassName.replaceAll("\\.", "_") + "_" + name;
+        return name;
     }
 
     public void setName(String name) {

@@ -65,7 +65,7 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
         Query query = em.createNamedQuery("BC_READ_OFFER_CODE_BY_CODE");
         query.setParameter("code", code);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Offer");
         List<OfferCode> result = query.getResultList();
         if (result.size() > 0) {
             offerCode = result.get(0);

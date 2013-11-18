@@ -19,6 +19,12 @@
  */
 package org.broadleafcommerce.admin.web.controller.entity;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -30,6 +36,7 @@ import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -44,10 +51,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * Handles admin operations for the {@link Product} entity. Editing a product requires custom criteria in order to properly
@@ -80,11 +83,12 @@ public class AdminProductController extends AdminBasicEntityController {
             String id) throws Exception {
         String collectionField = "additionalSkus";
         String mainClassName = getClassNameForSection(SECTION_KEY);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName)).getDynamicResultSet().getClassMetaData();
+        List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, SECTION_KEY, id);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
         
-        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md)
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
                 .withCustomCriteria(new String[] { id });
 
         ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
@@ -92,7 +96,7 @@ public class AdminProductController extends AdminBasicEntityController {
             collectionMetadata.setCeilingType(Sku.class.getName());
         }
         
-        EntityForm entityForm = formService.createEntityForm(collectionMetadata);
+        EntityForm entityForm = formService.createEntityForm(collectionMetadata, sectionCrumbs);
         
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
 
@@ -129,13 +133,13 @@ public class AdminProductController extends AdminBasicEntityController {
         
         // Find out metadata for the additionalSkus property
         String mainClassName = getClassNameForSection(SECTION_KEY);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName)).getDynamicResultSet().getClassMetaData();
+        List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, SECTION_KEY, id);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
-        
 
         // Find the metadata and the entity for the selected sku
-        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md)
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
                 .withCustomCriteria(new String[] { id });
         ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         if (collectionMetadata.getCeilingType().equals(SkuImpl.class.getName())) {
@@ -145,16 +149,17 @@ public class AdminProductController extends AdminBasicEntityController {
         Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true).getDynamicResultSet().getRecords()[0];
         
         // Find the records for all subcollections of Sku
-        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
+        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity, sectionCrumbs);
         
         // Build the entity form for the modal that includes the subcollections
-        EntityForm entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap);
+        EntityForm entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
         
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
         
         // Ensure that operations on the Sku subcollections go to the proper URL
         for (ListGrid lg : entityForm.getAllListGrids()) {
             lg.setSectionKey("org.broadleafcommerce.core.catalog.domain.Sku");
+            lg.setSectionCrumbs(sectionCrumbs);
         }
 
         removeRequiredValidation(entityForm);

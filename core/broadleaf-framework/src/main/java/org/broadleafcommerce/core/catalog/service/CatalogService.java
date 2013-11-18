@@ -35,11 +35,11 @@ import java.util.Map;
 
 public interface CatalogService {
 
-    public Product saveProduct(Product product);
+    Product saveProduct(Product product);
 
-    public Product findProductById(Long productId);
+    Product findProductById(Long productId);
 
-    public List<Product> findProductsByName(String searchName);
+    List<Product> findProductsByName(String searchName);
 
     /**
      * Find a subset of {@code Product} instances whose name starts with
@@ -49,9 +49,9 @@ public interface CatalogService {
      * @param offset the starting point in the record set
      * @return the list of product instances that fit the search criteria
      */
-    public List<Product> findProductsByName(String searchName, int limit, int offset);
+    List<Product> findProductsByName(String searchName, int limit, int offset);
 
-    public List<Product> findActiveProductsByCategory(Category category);
+    List<Product> findActiveProductsByCategory(Category category);
 
     /**
      * @deprecated Use findActiveProductsByCategory
@@ -60,7 +60,7 @@ public interface CatalogService {
      * @param currentDate
      * @return
      */
-    public List<Product> findActiveProductsByCategory(Category category, Date currentDate);
+    List<Product> findActiveProductsByCategory(Category category, Date currentDate);
     
     /**
      * Given a category and a ProudctSearchCriteria, returns the appropriate matching products
@@ -69,7 +69,7 @@ public interface CatalogService {
      * @param searchCriteria
      * @return the matching products
      */
-    public List<Product> findFilteredActiveProductsByCategory(Category category, ProductSearchCriteria searchCriteria);
+    List<Product> findFilteredActiveProductsByCategory(Category category, ProductSearchCriteria searchCriteria);
 
     /**
      * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, ProductSearchCriteria)}
@@ -79,7 +79,7 @@ public interface CatalogService {
      * @param searchCriteria
      * @return
      */
-    public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria);
+    List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria);
     
     /**
      * Given a search query and a ProductSearchCriteria, returns the appropriate matching products
@@ -88,7 +88,7 @@ public interface CatalogService {
      * @param searchCriteria
      * @return the matching products
      */
-    public List<Product> findFilteredActiveProductsByQuery(String query, ProductSearchCriteria searchCriteria);
+    List<Product> findFilteredActiveProductsByQuery(String query, ProductSearchCriteria searchCriteria);
 
     /**
      * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, ProductSearchCriteria)}
@@ -103,12 +103,12 @@ public interface CatalogService {
      * @param offset
      * @return
      */
-    public List<Product> findActiveProductsByCategory(Category category, int limit, int offset);
+    List<Product> findActiveProductsByCategory(Category category, int limit, int offset);
 
     /**
      * @deprecated Use {@link #findActiveProductsByCategory(Category, limit, offset}
      */
-    public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset);
+    List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset);
 
     /**
      * Find all ProductBundles whose automatic attribute is set to true.
@@ -120,16 +120,16 @@ public interface CatalogService {
      *
      * @return
      */
-    public List<ProductBundle> findAutomaticProductBundles();
+    List<ProductBundle> findAutomaticProductBundles();
 
 
-    public Category saveCategory(Category category);
+    Category saveCategory(Category category);
     
-    public void removeCategory(Category category);
+    void removeCategory(Category category);
 
-    public void removeProduct(Product product);
+    void removeProduct(Product product);
 
-    public Category findCategoryById(Long categoryId);
+    Category findCategoryById(Long categoryId);
 
     /**
      * Retrieve a {@code Category} instance based on its name property.
@@ -142,7 +142,7 @@ public interface CatalogService {
      * @return the Category instance matching the categoryName
      */
     @Deprecated
-    public Category findCategoryByName(String categoryName);
+    Category findCategoryByName(String categoryName);
 
     /**
      * Retrieve a list of {@code Category} instance based on the name
@@ -151,7 +151,7 @@ public interface CatalogService {
      * @param categoryName the category name to search by
      * @return the list of matching Category instances
      */
-    public List<Category> findCategoriesByName(String categoryName);
+    List<Category> findCategoriesByName(String categoryName);
 
     /**
      * Retrieve a list of {@code Category} instances based on the search criteria
@@ -161,29 +161,29 @@ public interface CatalogService {
      * @param offset the starting point of the records to return
      * @return a list of category instances that match the search criteria
      */
-    public List<Category> findCategoriesByName(String categoryName, int limit, int offset);
+    List<Category> findCategoriesByName(String categoryName, int limit, int offset);
 
-    public List<Category> findAllCategories();
+    List<Category> findAllCategories();
 
-    public List<Category> findAllCategories(int limit, int offset);
+    List<Category> findAllCategories(int limit, int offset);
 
-    public List<Product> findAllProducts();
+    List<Product> findAllProducts();
 
-    public List<Product> findAllProducts(int limit, int offset);
+    List<Product> findAllProducts(int limit, int offset);
 
-    public List<Product> findProductsForCategory(Category category);
+    List<Product> findProductsForCategory(Category category);
 
-    public List<Product> findProductsForCategory(Category category, int limit, int offset);
+    List<Product> findProductsForCategory(Category category, int limit, int offset);
 
-    public Sku saveSku(Sku sku);
+    Sku saveSku(Sku sku);
     
-    public SkuFee saveSkuFee(SkuFee fee);
+    SkuFee saveSkuFee(SkuFee fee);
 
-    public List<Sku> findAllSkus();
+    List<Sku> findAllSkus();
 
-    public List<Sku> findSkusByIds(List<Long> ids);
+    List<Sku> findSkusByIds(List<Long> ids);
 
-    public Sku findSkuById(Long skuId);
+    Sku findSkuById(Long skuId);
 
     /**
      * Get a hierarchical map of all child categories keyed on the url
@@ -193,31 +193,31 @@ public interface CatalogService {
      * @deprecated this approach is inherently inefficient - don't use.
      */
     @Deprecated
-    public Map<String, List<Long>> getChildCategoryURLMapByCategoryId(Long categoryId);
+    Map<String, List<Long>> getChildCategoryURLMapByCategoryId(Long categoryId);
 
-    public Category createCategory();
+    Category createCategory();
     
-    public Sku createSku();
+    Sku createSku();
     
-    public Product createProduct(ProductType productType);
+    Product createProduct(ProductType productType);
 
-    public List<Category> findAllParentCategories();
+    List<Category> findAllParentCategories();
     
-    public List<Category> findAllSubCategories(Category category);
+    List<Category> findAllSubCategories(Category category);
 
-    public List<Category> findAllSubCategories(Category category, int limit, int offset);
+    List<Category> findAllSubCategories(Category category, int limit, int offset);
 
-    public List<Category> findActiveSubCategoriesByCategory(Category category);
+    List<Category> findActiveSubCategoriesByCategory(Category category);
 
-    public List<Category> findActiveSubCategoriesByCategory(Category category, int limit, int offset);
+    List<Category> findActiveSubCategoriesByCategory(Category category, int limit, int offset);
     
-    public List<ProductOption> readAllProductOptions();
+    List<ProductOption> readAllProductOptions();
     
-    public ProductOption saveProductOption(ProductOption option);
+    ProductOption saveProductOption(ProductOption option);
     
-    public ProductOption findProductOptionById(Long productOptionId);
+    ProductOption findProductOptionById(Long productOptionId);
     
-    public ProductOptionValue findProductOptionValueById(Long productOptionValueId);
+    ProductOptionValue findProductOptionValueById(Long productOptionValueId);
     
     /**
      * Returns a category associated with the passed in URI or null if no Category is
@@ -226,7 +226,7 @@ public interface CatalogService {
      * @param uri
      * @return
      */
-    public Category findCategoryByURI(String uri);
+    Category findCategoryByURI(String uri);
     
     /**
      * Returns a product associated with the passed in URI or null if no Product is
@@ -235,6 +235,6 @@ public interface CatalogService {
      * @param uri
      * @return
      */    
-    public Product findProductByURI(String uri);
+    Product findProductByURI(String uri);
 
 }

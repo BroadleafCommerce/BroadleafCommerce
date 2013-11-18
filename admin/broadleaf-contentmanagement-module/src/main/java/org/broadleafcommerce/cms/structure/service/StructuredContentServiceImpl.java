@@ -23,6 +23,9 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+
+
+import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -555,5 +558,5 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         }
         return null;
     }
-}
 
+}

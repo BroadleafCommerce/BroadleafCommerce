@@ -19,14 +19,15 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
-
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 
 /**
  *   This class allows us to override Persistence Unit properties on a per-environment basis. Spring's

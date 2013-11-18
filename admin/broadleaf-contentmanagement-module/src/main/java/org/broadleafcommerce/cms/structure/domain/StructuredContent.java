@@ -19,15 +19,15 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 /**
  * StructuredContent implementations provide a representation of a generic content

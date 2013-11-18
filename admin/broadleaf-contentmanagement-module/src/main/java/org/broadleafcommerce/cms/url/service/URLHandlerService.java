@@ -19,9 +19,12 @@
  */
 package org.broadleafcommerce.cms.url.service;
 
-import org.broadleafcommerce.cms.url.domain.URLHandler;
+import net.sf.ehcache.Cache;
 
 import java.util.List;
+
+import org.broadleafcommerce.cms.url.domain.URLHandler;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
 
 
 /**
@@ -36,10 +39,16 @@ public interface URLHandlerService {
      * @param uri
      * @return
      */
-    public URLHandler findURLHandlerByURI(String uri);
+    URLHandler findURLHandlerByURI(String uri);
     
-    public List<URLHandler> findAllURLHandlers();
+    List<URLHandler> findAllURLHandlers();
     
-    public URLHandler saveURLHandler(URLHandler handler);
+    URLHandler saveURLHandler(URLHandler handler);
+
+    URLHandler findURLHandlerById(Long id);
+
+    void removeURLHandlerFromCache(SandBox sandBox, URLHandler urlhandler);
+
+    Cache getUrlHandlerCache();
 
 }

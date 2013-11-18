@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.filter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,11 +28,11 @@ import java.util.List;
 public class FilterDefinition {
 
     protected String name;
-    protected List<FilterParameter> params;
+    protected List<FilterParameter> params = new ArrayList<FilterParameter>();
     protected String entityImplementationClassName;
 
     public String getName() {
-        return entityImplementationClassName.replaceAll("\\.", "_") + "_" + name;
+        return name;
     }
 
     public void setName(String name) {

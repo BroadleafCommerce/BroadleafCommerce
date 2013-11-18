@@ -19,23 +19,21 @@
  */
 package org.broadleafcommerce.cms.web.file;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.common.AssetNotFoundException;
 import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
 import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by jfischer
@@ -80,17 +78,8 @@ public class StaticAssetViewController extends AbstractController {
         String fullUrl = removeAssetPrefix(request.getRequestURI());
 
         try {
-           Long sandBoxId = (Long) request.getSession().getAttribute(SANDBOX_ID_VAR);
-           if (sandBoxId == null) {
-               sandBoxId = (Long) request.getSession().getAttribute(SANDBOX_ADMIN_ID_VAR);
-           }
-           SandBox sandBox = null;
-           if (sandBoxId != null) {
-               sandBox = sandBoxDao.retrieve(sandBoxId);
-           }
-           
            try {
-               Map<String, String> model = staticAssetStorageService.getCacheFileModel(fullUrl, sandBox, convertParameterMap(request.getParameterMap()));
+               Map<String, String> model = staticAssetStorageService.getCacheFileModel(fullUrl, convertParameterMap(request.getParameterMap()));
                return new ModelAndView(viewResolverName, model);
            } catch (AssetNotFoundException e) {
                response.setStatus(HttpServletResponse.SC_NOT_FOUND);

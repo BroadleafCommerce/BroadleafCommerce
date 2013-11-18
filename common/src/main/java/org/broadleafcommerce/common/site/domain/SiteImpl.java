@@ -34,7 +34,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.logging.Log;
@@ -50,9 +49,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -105,11 +101,6 @@ public class SiteImpl implements Site, Status {
     @Index(name = "BLC_SITE_ID_VAL_INDEX", columnNames = { "SITE_IDENTIFIER_VALUE" })
     protected String siteIdentifierValue;
 
-    @ManyToOne(targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "PRODUCTION_SANDBOX_ID")
-    @AdminPresentation(friendlyName = "SiteImpl_Production_SandBox", visibility = VisibilityEnum.HIDDEN_ALL)
-    protected SandBox productionSandbox;
-
     @ManyToMany(targetEntity = CatalogImpl.class, cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "BLC_SITE_CATALOG", joinColumns = @JoinColumn(name = "SITE_ID"), inverseJoinColumns = @JoinColumn(name = "CATALOG_ID"))
     @BatchSize(size = 50)
@@ -161,16 +152,6 @@ public class SiteImpl implements Site, Status {
     @Override
     public void setSiteIdentifierValue(String siteIdentifierValue) {
         this.siteIdentifierValue = siteIdentifierValue;
-    }
-
-    @Override
-    public SandBox getProductionSandbox() {
-        return productionSandbox;
-    }
-
-    @Override
-    public void setProductionSandbox(SandBox productionSandbox) {
-        this.productionSandbox = productionSandbox;
     }
 
     @Override

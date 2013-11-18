@@ -97,7 +97,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     public static String ATTR_MAP = "productAttributes";
 
     @Override
-    @SuppressWarnings("rawtypes")
     public void rebuildIndex() throws ServiceException, IOException {
         LOG.info("Rebuilding the solr index...");
         StopWatch s = new StopWatch();

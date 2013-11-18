@@ -21,11 +21,13 @@ package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.hibernate.ejb.QueryHints;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -40,6 +42,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 
@@ -67,6 +71,8 @@ public class CategoryDaoImpl implements CategoryDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @Resource(name = "blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
     @Override
     public Category save(Category category) {
         return em.merge(category);
@@ -166,7 +172,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readAllSubCategories(Category category) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES", Category.class);
-        query.setParameter("defaultParentCategory", category);
+        query.setParameter("defaultParentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
@@ -176,7 +182,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readAllSubCategories(Category category, int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES", Category.class);
-        query.setParameter("defaultParentCategory", category);
+        query.setParameter("defaultParentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         query.setFirstResult(offset);
@@ -188,7 +194,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readActiveSubCategoriesByCategory(Category category) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
-        query.setParameter("defaultParentCategoryId", category.getId());
+        query.setParameter("defaultParentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
         query.setParameter("currentDate", getCurrentDateAfterFactoringInDateResolution());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
@@ -199,7 +205,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readActiveSubCategoriesByCategory(Category category, int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
-        query.setParameter("defaultParentCategoryId", category.getId());
+        query.setParameter("defaultParentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         query.setFirstResult(offset);

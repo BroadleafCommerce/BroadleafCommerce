@@ -19,6 +19,11 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.Referenced;
@@ -27,13 +32,9 @@ import org.broadleafcommerce.core.payment.service.module.PaymentResponse;
 import org.broadleafcommerce.core.payment.service.module.PaymentResponseImpl;
 import org.broadleafcommerce.core.payment.service.workflow.CompositePaymentResponse;
 import org.broadleafcommerce.core.payment.service.workflow.PaymentSeed;
-import org.broadleafcommerce.core.workflow.SequenceProcessor;
+import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Execute the payment workflow independently of the checkout workflow
@@ -43,7 +44,7 @@ import java.util.Map;
 public class CompositePaymentServiceImpl implements CompositePaymentService {
 
     @Resource(name = "blPaymentWorkflow")
-    protected SequenceProcessor paymentWorkflow;
+    protected Processor paymentWorkflow;
 
     public CompositePaymentResponse executePayment(Order order, Map<PaymentInfo, Referenced> payments, PaymentResponse response) throws PaymentException {
         /*
@@ -90,11 +91,11 @@ public class CompositePaymentServiceImpl implements CompositePaymentService {
         return executePayment(order, payments);
     }
 
-    public SequenceProcessor getPaymentWorkflow() {
+    public Processor getPaymentWorkflow() {
         return paymentWorkflow;
     }
 
-    public void setPaymentWorkflow(SequenceProcessor paymentWorkflow) {
+    public void setPaymentWorkflow(Processor paymentWorkflow) {
         this.paymentWorkflow = paymentWorkflow;
     }
 }

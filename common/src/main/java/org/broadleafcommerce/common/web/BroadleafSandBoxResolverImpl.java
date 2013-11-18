@@ -19,6 +19,14 @@
  */
 package org.broadleafcommerce.common.web;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,14 +40,6 @@ import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Responsible for determining the SandBox to use for the current request. 
@@ -62,7 +62,6 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
     protected Boolean sandBoxPreviewEnabled = true;
     
     // Request Parameters and Attributes for Sandbox Mode properties - mostly values to manage dates.
-    private static String SANDBOX_ID_VAR = "blSandboxId";
     private static String SANDBOX_DATE_TIME_VAR = "blSandboxDateTime";
     private static final SimpleDateFormat CONTENT_DATE_FORMATTER = new SimpleDateFormat("yyyyMMddHHmm");
     private static final SimpleDateFormat CONTENT_DATE_DISPLAY_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
@@ -127,9 +126,9 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
                 }
             }
 
-            if (currentSandbox == null && site != null) {
-                currentSandbox = site.getProductionSandbox();
-            }
+//            if (currentSandbox == null && site != null) {
+//                currentSandbox = site.getProductionSandbox();
+//            }
         }
 
         if (LOG.isTraceEnabled()) {
@@ -155,7 +154,6 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      * Otherwise, the request parameter is checked followed by the session attribute.
      *
      * @param request
-     * @param site
      * @return
      */
     private Long lookupSandboxId(WebRequest request) {
@@ -197,7 +195,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      */
     private void setContentTime(WebRequest request) {
         String sandboxDateTimeParam = request.getParameter(SANDBOX_DATE_TIME_VAR);
-        if (sandBoxPreviewEnabled) {
+        if (!sandBoxPreviewEnabled) {
             sandboxDateTimeParam = null;
         }
         Date overrideTime = null;

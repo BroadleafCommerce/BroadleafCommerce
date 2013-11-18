@@ -146,17 +146,25 @@ public interface ProductOption extends Serializable {
 
     /**
      * Gets all the Products associated with this ProductOption
-     * 
+     *
+     * @deprecated use getProductXrefs instead
      * @return the Products associated with this ProductOption
      */
+    @Deprecated
     public List<Product> getProducts();
 
     /**
      * Set the Products to associate with this ProductOption
-     * 
+     *
+     * @deprecated use setProductXrefs instead
      * @param products
      */
+    @Deprecated
     public void setProducts(List<Product> products);
+
+    public List<ProductOptionXref> getProductXrefs();
+
+    public void setProductXrefs(List<ProductOptionXref> xrefs);
 
     /**
      * Gets the available values that a user can select for this ProductOption.

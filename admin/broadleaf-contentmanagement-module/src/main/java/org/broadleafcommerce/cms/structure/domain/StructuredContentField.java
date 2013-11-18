@@ -19,11 +19,12 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Serializable;
+
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 /**
  * Holds the values for custom fields that are part of a <code>StructuredContent</code> item.
@@ -76,30 +77,6 @@ public interface StructuredContentField extends Serializable {
      * @see org.broadleafcommerce.cms.field.domain.FieldDefinition
      */
     public void setFieldKey(@Nonnull String fieldKey);
-
-    /**
-     * Returns the parent <code>StructuredContent</code> item to which this
-     * field belongs.
-     *
-     * @return
-     */
-    @Nonnull
-    public StructuredContent getStructuredContent();
-
-    /**
-     * Sets the parent <code>StructuredContent</code> item.
-     * @param structuredContent
-     */
-    public void setStructuredContent(@Nonnull StructuredContent structuredContent);
-
-    /**
-     * Builds a copy of this item.   Used by the content management system when an
-     * item is edited.
-     *
-     * @return a copy of this item
-     */
-    @Nonnull
-    public StructuredContentField cloneEntity();
 
     /**
      * Returns the value for this custom field.

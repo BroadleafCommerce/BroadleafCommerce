@@ -99,11 +99,8 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     @Resource(name="blNamedOperationManager")
     protected NamedOperationManager namedOperationManager;
 
-    protected StaticAsset findStaticAsset(String fullUrl, SandBox sandBox) {
-        StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl, sandBox);
-        if (staticAsset == null && sandBox != null) {
-            staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl, null);
-        }
+    protected StaticAsset findStaticAsset(String fullUrl) {
+        StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl);
 
         return staticAsset;
     }
@@ -184,14 +181,10 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
     @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
-    public Map<String, String> getCacheFileModel(String fullUrl, SandBox sandBox, Map<String, String> parameterMap) throws Exception {
-        StaticAsset staticAsset = findStaticAsset(fullUrl, sandBox);
+    public Map<String, String> getCacheFileModel(String fullUrl, Map<String, String> parameterMap) throws Exception {
+        StaticAsset staticAsset = findStaticAsset(fullUrl);
         if (staticAsset == null) {
-            if (sandBox == null) {
-                throw new AssetNotFoundException("Unable to find an asset for the url (" + fullUrl + ") using the production sandBox.");
-            } else {
-                throw new AssetNotFoundException("Unable to find an asset for the url (" + fullUrl + ") using the sandBox id (" + sandBox.getId() + "), or the production sandBox.");
-            }
+            throw new AssetNotFoundException("Unable to find an asset for the url (" + fullUrl + ")");
         }
         String mimeType = staticAsset.getMimeType();
 

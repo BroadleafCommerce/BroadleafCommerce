@@ -19,17 +19,16 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate;
 
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
-import org.springframework.stereotype.Component;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
+
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Jeff Fischer
@@ -46,12 +45,6 @@ public class EqPredicateProvider implements PredicateProvider<Serializable, Seri
         } else {
             path = fieldPathBuilder.getPath(root, fullPropertyName, builder);
         }
-        
-        List<Predicate> predicates = new ArrayList<Predicate>();
-        for (Serializable directValue : directValues) {
-            predicates.add(builder.equal(path, directValue));
-        }
-        
-        return builder.or(predicates.toArray(new Predicate[predicates.size()]));
+        return path.in(directValues);
     }
 }

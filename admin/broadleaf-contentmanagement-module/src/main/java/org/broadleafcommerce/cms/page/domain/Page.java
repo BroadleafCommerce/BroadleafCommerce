@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
+
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 /**
  * Created by bpolster.

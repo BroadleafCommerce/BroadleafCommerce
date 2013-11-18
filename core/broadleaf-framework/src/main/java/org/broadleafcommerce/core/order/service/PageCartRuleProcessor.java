@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import java.util.List;
+import java.util.Map;
+
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by bpolster.

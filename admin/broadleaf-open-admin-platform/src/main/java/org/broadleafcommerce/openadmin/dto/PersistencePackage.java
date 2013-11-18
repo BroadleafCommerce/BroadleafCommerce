@@ -19,31 +19,31 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class PersistencePackage implements Serializable {
+import org.apache.commons.lang3.ArrayUtils;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+
+public class PersistencePackage implements Serializable, StateDescriptor {
 
     private static final long serialVersionUID = 1L;
     
     protected String ceilingEntityFullyQualifiedClassname;
-    protected String sectionEntityClassname;
-    protected String sectionEntityIdValue;
     protected String sectionEntityField;
     protected String fetchTypeFullyQualifiedClassname;
     protected PersistencePerspective persistencePerspective;
     protected String[] customCriteria;
     protected Entity entity;
     protected String csrfToken;
-    protected Integer batchId;
-    protected Map<String, PersistencePackage> subPackages = new LinkedHashMap<String, PersistencePackage>();
     protected String requestingEntityName;
+    protected Map<String, PersistencePackage> subPackages = new LinkedHashMap<String, PersistencePackage>();
     protected boolean validateUnsubmittedProperties = true;
-    
+    protected SectionCrumb[] sectionCrumbs;
+
     public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
         this(ceilingEntityFullyQualifiedClassname, null, entity, persistencePerspective, customCriteria, csrfToken);
     }
@@ -60,7 +60,22 @@ public class PersistencePackage implements Serializable {
     public PersistencePackage() {
         //do nothing
     }
-    
+
+    @Override
+    public Property findProperty(String name) {
+        return entity.findProperty(name);
+    }
+
+    @Override
+    public Property[] getProperties() {
+        return entity.getProperties();
+    }
+
+    @Override
+    public Map<String, Property> getPMap() {
+        return entity.getPMap();
+    }
+
     public String getCeilingEntityFullyQualifiedClassname() {
         return ceilingEntityFullyQualifiedClassname;
     }
@@ -130,12 +145,27 @@ public class PersistencePackage implements Serializable {
         this.fetchTypeFullyQualifiedClassname = fetchTypeFullyQualifiedClassname;
     }
 
-    public Integer getBatchId() {
-        return batchId;
+    public String getSectionEntityField() {
+        return sectionEntityField;
     }
 
-    public void setBatchId(Integer batchId) {
-        this.batchId = batchId;
+    public void setSectionEntityField(String sectionEntityField) {
+        this.sectionEntityField = sectionEntityField;
+    }
+
+    public String getRequestingEntityName() {
+        return requestingEntityName;
+    }
+
+    public void setRequestingEntityName(String requestingEntityName) {
+        this.requestingEntityName = requestingEntityName;
+    }
+
+    public Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> getPersistencePerspectiveItems() {
+        if (persistencePerspective != null) {
+            return persistencePerspective.getPersistencePerspectiveItems();
+        }
+        return new HashMap<PersistencePerspectiveItemType, PersistencePerspectiveItem>();
     }
 
     public Map<String, PersistencePackage> getSubPackages() {
@@ -146,44 +176,50 @@ public class PersistencePackage implements Serializable {
         this.subPackages = subPackages;
     }
 
-    public String getSectionEntityClassname() {
-        return sectionEntityClassname;
-    }
-
-    public void setSectionEntityClassname(String sectionEntityClassname) {
-        this.sectionEntityClassname = sectionEntityClassname;
-    }
-
-    public String getSectionEntityIdValue() {
-        return sectionEntityIdValue;
-    }
-
-    public void setSectionEntityIdValue(String sectionEntityIdValue) {
-        this.sectionEntityIdValue = sectionEntityIdValue;
-    }
-
-    public String getSectionEntityField() {
-        return sectionEntityField;
-    }
-
-    public void setSectionEntityField(String sectionEntityField) {
-        this.sectionEntityField = sectionEntityField;
-    }
-    
-    public String getRequestingEntityName() {
-        return requestingEntityName;
-    }
-    
-    public void setRequestingEntityName(String requestingEntityName) {
-        this.requestingEntityName = requestingEntityName;
-    }
-
     public boolean isValidateUnsubmittedProperties() {
         return validateUnsubmittedProperties;
     }
 
     public void setValidateUnsubmittedProperties(boolean validateUnsubmittedProperties) {
         this.validateUnsubmittedProperties = validateUnsubmittedProperties;
+    }
+
+    public SectionCrumb[] getSectionCrumbs() {
+        return sectionCrumbs;
+    }
+
+    public void setSectionCrumbs(SectionCrumb[] sectionCrumbs) {
+        this.sectionCrumbs = sectionCrumbs;
+    }
+
+    public SectionCrumb getClosetCrumb(String myCeiling) {
+        if (ArrayUtils.isEmpty(sectionCrumbs)) {
+            return new SectionCrumb();
+        } else {
+            SectionCrumb previous = sectionCrumbs[sectionCrumbs.length-1];
+            for (SectionCrumb sectionCrumb : sectionCrumbs) {
+                if (sectionCrumb.getSectionIdentifier().equals(myCeiling)) {
+                    break;
+                } else {
+                    previous = sectionCrumb;
+                }
+            }
+            return previous;
+        }
+    }
+
+    public SectionCrumb getBottomCrumb() {
+        if (ArrayUtils.isEmpty(sectionCrumbs)) {
+            return new SectionCrumb();
+        }
+        return sectionCrumbs[sectionCrumbs.length-1];
+    }
+
+    public SectionCrumb getTopCrumb() {
+        if (ArrayUtils.isEmpty(sectionCrumbs)) {
+            return new SectionCrumb();
+        }
+        return sectionCrumbs[0];
     }
 
     @Override
@@ -193,7 +229,6 @@ public class PersistencePackage implements Serializable {
 
         PersistencePackage that = (PersistencePackage) o;
 
-        if (batchId != null ? !batchId.equals(that.batchId) : that.batchId != null) return false;
         if (ceilingEntityFullyQualifiedClassname != null ? !ceilingEntityFullyQualifiedClassname.equals(that
                 .ceilingEntityFullyQualifiedClassname) : that.ceilingEntityFullyQualifiedClassname != null)
             return false;
@@ -206,14 +241,8 @@ public class PersistencePackage implements Serializable {
         if (persistencePerspective != null ? !persistencePerspective.equals(that.persistencePerspective) : that
                 .persistencePerspective != null)
             return false;
-        if (sectionEntityClassname != null ? !sectionEntityClassname.equals(that.sectionEntityClassname) : that
-                .sectionEntityClassname != null)
-            return false;
         if (sectionEntityField != null ? !sectionEntityField.equals(that.sectionEntityField) : that
                 .sectionEntityField != null)
-            return false;
-        if (sectionEntityIdValue != null ? !sectionEntityIdValue.equals(that.sectionEntityIdValue) : that
-                .sectionEntityIdValue != null)
             return false;
 
         return true;
@@ -222,8 +251,6 @@ public class PersistencePackage implements Serializable {
     @Override
     public int hashCode() {
         int result = ceilingEntityFullyQualifiedClassname != null ? ceilingEntityFullyQualifiedClassname.hashCode() : 0;
-        result = 31 * result + (sectionEntityClassname != null ? sectionEntityClassname.hashCode() : 0);
-        result = 31 * result + (sectionEntityIdValue != null ? sectionEntityIdValue.hashCode() : 0);
         result = 31 * result + (sectionEntityField != null ? sectionEntityField.hashCode() : 0);
         result = 31 * result + (fetchTypeFullyQualifiedClassname != null ? fetchTypeFullyQualifiedClassname.hashCode
                 () : 0);
@@ -231,7 +258,6 @@ public class PersistencePackage implements Serializable {
         result = 31 * result + (customCriteria != null ? Arrays.hashCode(customCriteria) : 0);
         result = 31 * result + (entity != null ? entity.hashCode() : 0);
         result = 31 * result + (csrfToken != null ? csrfToken.hashCode() : 0);
-        result = 31 * result + (batchId != null ? batchId.hashCode() : 0);
         return result;
     }
 }

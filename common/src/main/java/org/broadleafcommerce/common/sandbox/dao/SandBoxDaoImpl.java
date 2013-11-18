@@ -19,18 +19,10 @@
  */
 package org.broadleafcommerce.common.sandbox.dao;
 
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
-import org.broadleafcommerce.common.site.domain.Site;
-import org.broadleafcommerce.common.util.TransactionUtils;
-import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -38,6 +30,16 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.util.TransactionUtils;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 
 @Repository("blSandBoxDao")
 public class SandBoxDaoImpl implements SandBoxDao {
@@ -59,6 +61,29 @@ public class SandBoxDaoImpl implements SandBoxDao {
                 .toQuery(sandBoxEntityManager);
         return query.getResultList();
     }
+
+    @Override
+    public List<SandBox> retrieveSandBoxesByType(SandBoxType sandboxType) {
+        TypedQuery<SandBox> query = new TypedQueryBuilder<SandBox>(SandBox.class, "sandbox")
+            .addRestriction("sandbox.sandboxType", "=", sandboxType.getType())
+            .toQuery(sandBoxEntityManager);
+        return query.getResultList();
+    }
+
+    @Override
+    public SandBox retrieveUserSandBoxForParent(Long authorId, Long parentSandBoxId) {
+        TypedQuery<SandBox> query = new TypedQueryBuilder<SandBox>(SandBox.class, "sandbox")
+            .addRestriction("sandbox.sandboxType", "=", SandBoxType.USER.getType())
+            .addRestriction("sandbox.author", "=", authorId)
+            .addRestriction("sandbox.parentSandBox.id", "=", parentSandBoxId)
+            .toQuery(sandBoxEntityManager);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
 
     @Override
     public SandBox retrieveSandBoxByType(SandBoxType sandboxType) {
@@ -88,6 +113,34 @@ public class SandBoxDaoImpl implements SandBoxDao {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public Map<Long, String> retrieveAuthorNamesForSandBoxes(Set<Long> sandBoxIds) {
+        Query query = sandBoxEntityManager.createQuery(
+                "SELECT sb.id, au.name " +
+                "FROM org.broadleafcommerce.common.sandbox.domain.SandBoxImpl sb, " +
+                    "org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl au " +
+                "WHERE sb.author = au.id " +
+                "AND sb.id IN :sandBoxIds");
+        query.setParameter("sandBoxIds", sandBoxIds);
+        List<Object[]> results = query.getResultList();
+
+        Map<Long, String> map = new HashMap<Long, String>();
+        for (Object[] result : results) {
+            map.put((Long) result[0], (String) result[1]);
+        }
+
+        return map;
+    }
+
+    @Override
+    public List<SandBox> retrieveSandBoxesForAuthor(Long authorId) {
+        TypedQuery<SandBox> query = new TypedQueryBuilder<SandBox>(SandBox.class, "sb")
+            .addRestriction("sb.author", "=", authorId)
+            .toQuery(sandBoxEntityManager);
+        return query.getResultList();
+    }
+
+    @Override
     public SandBox persist(SandBox entity) {
         sandBoxEntityManager.persist(entity);
         sandBoxEntityManager.flush();
@@ -113,5 +166,44 @@ public class SandBoxDaoImpl implements SandBoxDao {
             throw new RuntimeException(ex);
         }
     }
-   
+
+    @Override
+    public SandBox createUserSandBox(Long authorId, SandBox approvalSandBox) {
+        TransactionStatus status = TransactionUtils.createTransaction("createSandBox",
+                        TransactionDefinition.PROPAGATION_REQUIRES_NEW, transactionManager);
+        try {
+            SandBox userSandBox = new SandBoxImpl();
+            userSandBox.setName(approvalSandBox.getName());
+            userSandBox.setAuthor(authorId);
+            userSandBox.setParentSandBox(approvalSandBox);
+            userSandBox.setSandBoxType(SandBoxType.USER);
+            userSandBox = persist(userSandBox);
+
+            TransactionUtils.finalizeTransaction(status, transactionManager, false);
+            return userSandBox;
+        } catch (Exception ex) {
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public SandBox createDefaultSandBox() {
+        TransactionStatus status = TransactionUtils.createTransaction("createSandBox",
+                        TransactionDefinition.PROPAGATION_REQUIRES_NEW, transactionManager);
+        try {
+            SandBox defaultSB = new SandBoxImpl();
+            defaultSB.setName("Default");
+            defaultSB.setSandBoxType(SandBoxType.DEFAULT);
+            defaultSB.setColor("#0B9098");
+            defaultSB = persist(defaultSB);
+
+            TransactionUtils.finalizeTransaction(status, transactionManager, false);
+            return defaultSB;
+        } catch (Exception ex) {
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
+            throw new RuntimeException(ex);
+        }
+    }
+
 }

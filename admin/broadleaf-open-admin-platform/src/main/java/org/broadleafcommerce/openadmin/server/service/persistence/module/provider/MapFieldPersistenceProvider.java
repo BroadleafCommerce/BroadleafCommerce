@@ -19,6 +19,10 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.List;
+
 import org.broadleafcommerce.common.value.Searchable;
 import org.broadleafcommerce.common.value.ValueAssignable;
 import org.broadleafcommerce.openadmin.dto.Property;
@@ -33,10 +37,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -57,6 +57,7 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
 
     @Override
     public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
+        boolean dirty = false;
         try {
             //handle some additional field settings (if applicable)
             Class<?> valueType = null;
@@ -82,6 +83,11 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                 if (assignableValue == null) {
                     assignableValue = (ValueAssignable) valueType.newInstance();
                     persistValue = true;
+                    dirty = true;
+                } else {
+                    dirty = assignableValue.getValue().equals(populateValueRequest.getProperty().getValue());
+                    populateValueRequest.getProperty().setOriginalValue(String.valueOf(assignableValue));
+                    populateValueRequest.getProperty().setOriginalDisplayValue(String.valueOf(assignableValue));
                 }
                 assignableValue.setName(key);
                 assignableValue.setValue(populateValueRequest.getProperty().getValue());
@@ -123,6 +129,7 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
+        populateValueRequest.getProperty().setIsDirty(dirty);
         return FieldProviderResponse.HANDLED;
     }
 

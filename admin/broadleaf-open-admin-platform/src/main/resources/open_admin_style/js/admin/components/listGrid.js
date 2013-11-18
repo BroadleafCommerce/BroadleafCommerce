@@ -100,7 +100,10 @@
             if ($button.attr('data-urlpostfix')) {
                 link += $button.attr('data-urlpostfix');
             }
-            
+            if ($button.attr('data-queryparams')) {
+                link += $button.attr('data-queryparams');
+            }
+
             return link;
         },
         

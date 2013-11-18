@@ -17,17 +17,13 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.domain;
-
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
+package org.broadleafcommerce.openadmin.server.service.persistence;
 
 /**
- * Created by bpolster.
+ * @author Jeff Fischer
  */
-public interface SandBoxItemListener {
-    public void itemPromoted(SandBoxItem sandBoxItem, SandBox destinationSandBox);
+public interface Persistable<T, G extends Throwable> {
 
-    public void itemRejected(SandBoxItem sandBoxItem, SandBox destinationSandBox);
+    public T execute() throws G;
 
-    public void itemReverted(SandBoxItem sandBoxItem);
 }

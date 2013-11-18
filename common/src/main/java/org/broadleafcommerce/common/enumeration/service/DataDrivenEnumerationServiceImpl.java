@@ -19,12 +19,12 @@
  */
 package org.broadleafcommerce.common.enumeration.service;
 
+import javax.annotation.Resource;
+
 import org.broadleafcommerce.common.enumeration.dao.DataDrivenEnumerationDao;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 
 @Service("blDataDrivenEnumerationService")

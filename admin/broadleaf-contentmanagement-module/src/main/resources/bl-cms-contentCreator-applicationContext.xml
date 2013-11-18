@@ -42,12 +42,8 @@
             <list>
                 <ref bean="blPageTemplateCustomPersistenceHandler" />
                 <ref bean="blStructuredContentTypeCustomPersistenceHandler"/>
-                <ref bean="blSandBoxItemCustomPersistenceHandler"/>
-                <ref bean="blPendingSandBoxItemCustomPersistenceHandler"/>
                 <ref bean="blTimeDTOCustomPersistenceHandler"/>
                 <ref bean="blRequestDTOCustomPersistenceHandler"/>
-                <ref bean="blStructuredContentItemCriteriaCustomPersistenceHandler"/>
-                <ref bean="blPageItemCriteriaCustomPersistenceHandler"/>
             </list>
         </property>
     </bean>

@@ -24,13 +24,13 @@ import java.util.List;
 
 public interface Processor {
 
-    public boolean supports(Activity<? extends ProcessContext<? extends Object>> activity);
+    public boolean supports(Activity<? extends ProcessContext<?>> activity);
     
-    public ProcessContext<? extends Object> doActivities() throws WorkflowException;
+    public ProcessContext<?> doActivities() throws WorkflowException;
     
-    public ProcessContext<? extends Object> doActivities(Object seedData) throws WorkflowException;
+    public ProcessContext<?> doActivities(Object seedData) throws WorkflowException;
     
-    public void setActivities(List<Activity<ProcessContext<? extends Object>>> activities);
+    public void setActivities(List<Activity<ProcessContext<?>>> activities);
     
     public void setDefaultErrorHandler(ErrorHandler defaultErrorHandler);
     

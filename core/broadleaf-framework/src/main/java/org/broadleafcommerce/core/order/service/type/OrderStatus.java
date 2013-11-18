@@ -19,12 +19,12 @@
  */
 package org.broadleafcommerce.core.order.service.type;
 
-import org.broadleafcommerce.common.BroadleafEnumerationType;
-import org.broadleafcommerce.core.order.domain.Order;
-
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+import org.broadleafcommerce.core.order.domain.Order;
 
 /**
  * An extendible enumeration of order status types.

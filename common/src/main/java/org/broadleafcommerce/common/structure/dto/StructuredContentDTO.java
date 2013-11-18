@@ -43,7 +43,6 @@ public class StructuredContentDTO implements Serializable {
     protected String contentType;
     protected String localeCode;
     protected Integer priority;
-    protected Long sandboxId;    
     protected Map values = new HashMap<String,String>();
     protected String ruleExpression;
     protected List<ItemCriteriaDTO> itemCriteriaDTOList;
@@ -105,14 +104,6 @@ public class StructuredContentDTO implements Serializable {
     public void setPriority(Integer priority) {
         values.put("priority", priority);
         this.priority = priority;
-    }
-
-    public Long getSandboxId() {
-        return sandboxId;
-    }
-
-    public void setSandboxId(Long sandboxId) {
-        this.sandboxId = sandboxId;
     }
 
     public Map getValues() {

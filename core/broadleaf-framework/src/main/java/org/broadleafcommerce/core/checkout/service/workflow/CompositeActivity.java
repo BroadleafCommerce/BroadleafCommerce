@@ -21,11 +21,11 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.core.workflow.SequenceProcessor;
+import org.broadleafcommerce.core.workflow.Processor;
 
 public class CompositeActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
-    private SequenceProcessor workflow;
+    private Processor workflow;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.workflow.Activity#execute(org.broadleafcommerce.core.workflow.ProcessContext)
@@ -40,11 +40,11 @@ public class CompositeActivity extends BaseActivity<ProcessContext<CheckoutSeed>
         return context;
     }
 
-    public SequenceProcessor getWorkflow() {
+    public Processor getWorkflow() {
         return workflow;
     }
 
-    public void setWorkflow(SequenceProcessor workflow) {
+    public void setWorkflow(Processor workflow) {
         this.workflow = workflow;
     }
 }

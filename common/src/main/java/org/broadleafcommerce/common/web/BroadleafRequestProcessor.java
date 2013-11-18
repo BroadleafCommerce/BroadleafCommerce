@@ -19,6 +19,14 @@
  */
 package org.broadleafcommerce.common.web;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
@@ -34,14 +42,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 import org.thymeleaf.TemplateEngine;
-
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
-
-import javax.annotation.Resource;
-
 
 /**
  * 
@@ -90,7 +90,8 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         if (site == null) {
             brc.setIgnoreSite(true);
         }
-        
+        brc.setAdmin(false);
+
         BroadleafRequestContext.setBroadleafRequestContext(brc);
 
         Locale locale = localeResolver.resolveLocale(request);
@@ -128,6 +129,11 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         }
         ruleMap.put("locale", locale);
 
+        String adminUserId = request.getParameter(BroadleafRequestFilter.ADMIN_USER_ID_PARAM_NAME);
+        if (StringUtils.isNotBlank(adminUserId)) {
+            //TODO: Add token logic to secure the admin user id
+            brc.setAdminUserId(Long.parseLong(adminUserId));
+        }
     }
 
     @Override

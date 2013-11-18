@@ -19,6 +19,18 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -45,20 +57,9 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.hibernate.Session;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -132,9 +133,13 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         }
         boolean dirty = false;
         try {
+            Property prop = populateValueRequest.getProperty();
+            Object origValue = populateValueRequest.getFieldManager().getFieldValue(instance, prop.getName());
             switch (populateValueRequest.getMetadata().getFieldType()) {
                 case BOOLEAN:
                     boolean v = Boolean.valueOf(populateValueRequest.getRequestedValue());
+                    prop.setOriginalValue(String.valueOf(origValue));
+                    prop.setOriginalDisplayValue(prop.getOriginalValue());
                     try {
                         dirty = checkDirtyState(populateValueRequest, instance, v);
                         populateValueRequest.getFieldManager().setFieldValue(instance,
@@ -154,12 +159,18 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         date.setSeconds(0);
                         oldValue = populateValueRequest.getDataFormatProvider().getSimpleDateFormatter().format(date);
                     }
+                    prop.setOriginalValue(oldValue);
+                    prop.setOriginalDisplayValue(prop.getOriginalValue());
                     dirty = !StringUtils.equals(oldValue, populateValueRequest.getRequestedValue());
                     populateValueRequest.getFieldManager().setFieldValue(instance,
                             populateValueRequest.getProperty().getName(), populateValueRequest.getDataFormatProvider().
                             getSimpleDateFormatter().parse(populateValueRequest.getRequestedValue()));
                     break;
                 case DECIMAL:
+                    if (origValue != null) {
+                        prop.setOriginalValue(String.valueOf(origValue));
+                        prop.setOriginalDisplayValue(prop.getOriginalValue());
+                    }
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         dirty = checkDirtyState(populateValueRequest, instance, new BigDecimal(populateValueRequest.getRequestedValue()));
                         populateValueRequest.getFieldManager().setFieldValue(instance,
@@ -173,6 +184,10 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     }
                     break;
                 case MONEY:
+                    if (origValue != null) {
+                        prop.setOriginalValue(String.valueOf(origValue));
+                        prop.setOriginalDisplayValue(prop.getOriginalValue());
+                    }
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         dirty = checkDirtyState(populateValueRequest, instance, new BigDecimal(populateValueRequest.getRequestedValue()));
                         populateValueRequest.getFieldManager().setFieldValue(instance,
@@ -194,6 +209,10 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     }
                     break;
                 case INTEGER:
+                    if (origValue != null) {
+                        prop.setOriginalValue(String.valueOf(origValue));
+                        prop.setOriginalDisplayValue(prop.getOriginalValue());
+                    }
                     if (int.class.isAssignableFrom(populateValueRequest.getReturnType()) || Integer.class
                             .isAssignableFrom(populateValueRequest.getReturnType())) {
                         dirty = checkDirtyState(populateValueRequest, instance, Integer.valueOf(populateValueRequest.getRequestedValue()));
@@ -224,11 +243,18 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 case HTML_BASIC:
                 case HTML:
                 case EMAIL:
+                    if (origValue != null) {
+                        prop.setOriginalValue(String.valueOf(origValue));
+                        prop.setOriginalDisplayValue(prop.getOriginalValue());
+                    }
                     dirty = checkDirtyState(populateValueRequest, instance, populateValueRequest.getRequestedValue());
                     populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty()
                             .getName(), populateValueRequest.getRequestedValue());
                     break;
                 case FOREIGN_KEY: {
+                    if (origValue != null) {
+                        prop.setOriginalValue(String.valueOf(origValue));
+                    }
                     Serializable foreignInstance;
                     if (StringUtils.isEmpty(populateValueRequest.getRequestedValue())) {
                         foreignInstance = null;
@@ -281,6 +307,24 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                                     .retrieve(Class.forName(populateValueRequest.getMetadata().getForeignKeyClass()),
                                             populateValueRequest.getRequestedValue());
                         }
+                    }
+
+                    // Best guess at grabbing the original display value
+                    String fkProp = populateValueRequest.getMetadata().getForeignKeyDisplayValueProperty();
+                    Object origDispVal = null;
+                    if (origValue != null) {
+                        if (AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY.equals(fkProp)) {
+                            if (origValue instanceof AdminMainEntity) {
+                                origDispVal = ((AdminMainEntity) origValue).getMainEntityName();
+                            }
+                        } else {
+                            origDispVal = populateValueRequest.getFieldManager().getFieldValue(origValue, fkProp);
+                        }
+                    }
+                    if (origDispVal != null) {
+                        prop.setOriginalDisplayValue(String.valueOf(origDispVal));
+                        Session session = populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().unwrap(Session.class);
+                        prop.setOriginalValue(String.valueOf(session.getIdentifier(origValue)));
                     }
 
                     if (Collection.class.isAssignableFrom(populateValueRequest.getReturnType())) {

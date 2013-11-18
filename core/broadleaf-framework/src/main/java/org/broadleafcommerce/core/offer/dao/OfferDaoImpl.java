@@ -172,6 +172,7 @@ public class OfferDaoImpl implements OfferDao {
                         Restrictions.eq("deliveryType", "AUTOMATIC"))));
 
         criteria.setCacheable(true);
+        criteria.setCacheRegion("query.Offer");
 
         return criteria.list();
     }

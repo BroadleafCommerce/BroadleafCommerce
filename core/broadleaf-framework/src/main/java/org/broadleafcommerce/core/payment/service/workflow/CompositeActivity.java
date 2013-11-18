@@ -21,11 +21,11 @@ package org.broadleafcommerce.core.payment.service.workflow;
 
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.core.workflow.SequenceProcessor;
+import org.broadleafcommerce.core.workflow.Processor;
 
 public class CompositeActivity extends BaseActivity<ProcessContext<PaymentSeed>> {
 
-    private SequenceProcessor workflow;
+    private Processor workflow;
 
     /*
      * (non-Javadoc)
@@ -44,11 +44,11 @@ public class CompositeActivity extends BaseActivity<ProcessContext<PaymentSeed>>
         return context;
     }
 
-    public SequenceProcessor getWorkflow() {
+    public Processor getWorkflow() {
         return workflow;
     }
 
-    public void setWorkflow(SequenceProcessor workflow) {
+    public void setWorkflow(Processor workflow) {
         this.workflow = workflow;
     }
 }

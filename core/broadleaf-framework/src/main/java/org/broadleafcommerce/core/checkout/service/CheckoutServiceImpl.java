@@ -19,6 +19,11 @@
  */
 package org.broadleafcommerce.core.checkout.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
@@ -30,20 +35,15 @@ import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.core.workflow.SequenceProcessor;
+import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 @Service("blCheckoutService")
 public class CheckoutServiceImpl implements CheckoutService {
 
     @Resource(name="blCheckoutWorkflow")
-    protected SequenceProcessor checkoutWorkflow;
+    protected Processor checkoutWorkflow;
 
     @Resource(name="blOrderService")
     protected OrderService orderService;

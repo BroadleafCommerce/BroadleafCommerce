@@ -19,10 +19,9 @@
  */
 package org.broadleafcommerce.cms.file.dao;
 
-import org.broadleafcommerce.cms.file.domain.StaticAsset;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-
 import java.util.List;
+
+import org.broadleafcommerce.cms.file.domain.StaticAsset;
 
 /**
  * Created by bpolster.
@@ -37,6 +36,6 @@ public interface StaticAssetDao {
 
     public StaticAsset addOrUpdateStaticAsset(StaticAsset asset, boolean clearLevel1Cache);
 
-    public StaticAsset readStaticAssetByFullUrl(String fullUrl, SandBox targetSandBox);
+    public StaticAsset readStaticAssetByFullUrl(String fullUrl);
 
 }

@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.core.web.catalog;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This handler mapping works with the Category entity to determine if a category has been configured for
@@ -42,10 +42,10 @@ import javax.servlet.http.HttpServletRequest;
 public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
     
     private String controllerName="blProductController";
-    
+
     @Resource(name = "blCatalogService")
     private CatalogService catalogService;
-    
+
     public static final String CURRENT_PRODUCT_ATTRIBUTE_NAME = "currentProduct";
 
     @Override

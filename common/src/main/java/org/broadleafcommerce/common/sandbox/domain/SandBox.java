@@ -19,15 +19,15 @@
  */
 package org.broadleafcommerce.common.sandbox.domain;
 
-import org.broadleafcommerce.common.site.domain.Site;
-
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 public interface SandBox extends Serializable {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * The name of the sandbox.
@@ -36,19 +36,38 @@ public interface SandBox extends Serializable {
      *
      * @return String sandbox name
      */
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public SandBoxType getSandBoxType();
+    SandBoxType getSandBoxType();
 
-    public void setSandBoxType(SandBoxType sandBoxType);
+    void setSandBoxType(SandBoxType sandBoxType);
 
-    public Long getAuthor();
+    Long getAuthor();
 
-    public void setAuthor(Long author);
+    void setAuthor(Long author);
 
-    public SandBox clone();
+    SandBox getParentSandBox();
+
+    void setParentSandBox(SandBox parentSandBox);
+
+    String getColor();
+
+    void setColor(String color);
+
+    Date getGoLiveDate();
+
+    void setGoLiveDate(Date goLiveDate);
+
+    List<Long> getSandBoxIdsForUpwardHierarchy(boolean includeInherited);
+
+    List<Long> getSandBoxIdsForUpwardHierarchy(boolean includeInherited, boolean includeCurrent);
+
+    List<SandBox> getChildSandBoxes();
+
+    void setChildSandBoxes(List<SandBox> childSandBoxes);
+
 }
 
 

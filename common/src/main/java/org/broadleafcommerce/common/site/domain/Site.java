@@ -19,11 +19,10 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
-
 import java.io.Serializable;
 import java.util.List;
+
+import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 
 /**
  * Created by bpolster.
@@ -84,24 +83,6 @@ public interface Site extends Serializable {
      * @param siteIdentifierValue
      */
     public void setSiteIdentifierValue(String siteIdentifierValue);
-
-    /**
-     * If null, then this is a single-site installation.    Otherwise,
-     * each site must define it's production sandbox so that data can
-     * be properly segmented.
-     *
-     * @return
-     */
-    public SandBox getProductionSandbox();
-
-    /**
-     * Sets the production sandbox.   Typically configured via the
-     * database.
-     *
-     * @see #getProductionSandbox();
-     * @param sandbox
-     */
-    public void setProductionSandbox(SandBox sandbox);
     
     /**
      * Intended to be used along with the #getSiteIdentifierValue()

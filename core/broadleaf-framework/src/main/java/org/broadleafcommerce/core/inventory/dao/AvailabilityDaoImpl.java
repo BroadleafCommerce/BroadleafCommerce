@@ -19,15 +19,16 @@
  */
 package org.broadleafcommerce.core.inventory.dao;
 
-import org.broadleafcommerce.common.util.dao.BatchRetrieveDao;
-import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
+
+import org.broadleafcommerce.common.util.dao.BatchRetrieveDao;
+import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
 
 /**
  * 

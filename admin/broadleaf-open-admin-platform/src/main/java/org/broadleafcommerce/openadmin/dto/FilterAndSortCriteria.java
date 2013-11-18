@@ -19,14 +19,13 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.broadleafcommerce.common.util.BLCCollectionUtils;
-import org.broadleafcommerce.common.util.TypedPredicate;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.broadleafcommerce.common.util.BLCCollectionUtils;
+import org.broadleafcommerce.common.util.TypedPredicate;
 
 public class FilterAndSortCriteria {
 
@@ -83,6 +82,10 @@ public class FilterAndSortCriteria {
 
     public void setFilterValue(String value) {
         clearFilterValues();
+        addFilterValue(value);
+    }
+
+    public void addFilterValue(String value) {
         filterValues.add(value);
     }
 

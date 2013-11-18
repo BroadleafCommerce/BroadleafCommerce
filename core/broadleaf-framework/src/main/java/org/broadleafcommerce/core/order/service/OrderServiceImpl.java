@@ -56,7 +56,7 @@ import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.core.workflow.SequenceProcessor;
+import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.exception.LockAcquisitionException;
@@ -121,16 +121,16 @@ public class OrderServiceImpl implements OrderService {
     
     /* Workflows */
     @Resource(name = "blAddItemWorkflow")
-    protected SequenceProcessor addItemWorkflow;
+    protected Processor addItemWorkflow;
     
     @Resource(name = "blUpdateProductOptionsForItemWorkflow")
-    private SequenceProcessor updateProductOptionsForItemWorkflow;
+    private Processor updateProductOptionsForItemWorkflow;
 
     @Resource(name = "blUpdateItemWorkflow")
-    protected SequenceProcessor updateItemWorkflow;
+    protected Processor updateItemWorkflow;
     
     @Resource(name = "blRemoveItemWorkflow")
-    protected SequenceProcessor removeItemWorkflow;
+    protected Processor removeItemWorkflow;
 
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager transactionManager;

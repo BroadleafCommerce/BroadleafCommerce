@@ -486,6 +486,9 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
         if (adornedTargetCollectionMetadata.getTargetObjectProperty()!=null) {
             targetObjectProperty = adornedTargetCollectionMetadata.getTargetObjectProperty();
         }
+        if (StringUtils.isEmpty(parentObjectIdProperty)) {
+            throw new IllegalArgumentException("targetObjectProperty not defined");
+        }
 
         String joinEntityClass = null;
         if (serverMetadata != null) {

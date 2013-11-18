@@ -513,7 +513,6 @@ $(document).ready(function() {
     // Ensure that the breadcrumb will render behind the entity form actions
     var $bcc = $('.breadcrumb-container');
     $bcc.find('ul.breadcrumbs').outerWidth($bcc.outerWidth() - $bcc.find('.entity-form-actions').outerWidth() - 30);
-
 });
 
 $('body').on('click', '.disabled', function(e) {

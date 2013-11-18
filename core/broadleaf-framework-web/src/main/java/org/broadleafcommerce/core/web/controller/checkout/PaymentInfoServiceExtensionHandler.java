@@ -19,6 +19,12 @@
  */
 package org.broadleafcommerce.core.web.controller.checkout;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
@@ -27,12 +33,6 @@ import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Extension handler for the PaymentInfo services

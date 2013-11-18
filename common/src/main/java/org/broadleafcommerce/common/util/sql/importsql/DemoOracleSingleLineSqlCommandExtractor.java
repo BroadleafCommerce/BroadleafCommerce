@@ -17,29 +17,7 @@
  * limitations under the License.
  * #L%
  */
-/*
- * Broadleaf Commerce Confidential
- * _______________________________
- *
- * [2009] - [2013] Broadleaf Commerce, LLC
- * All Rights Reserved.
- *
- * NOTICE:  All information contained herein is, and remains
- * the property of Broadleaf Commerce, LLC
- * The intellectual and technical concepts contained
- * herein are proprietary to Broadleaf Commerce, LLC
- * and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Broadleaf Commerce, LLC.
- */
-
 package org.broadleafcommerce.common.util.sql.importsql;
-
-import org.broadleafcommerce.common.logging.SupportLogManager;
-import org.broadleafcommerce.common.logging.SupportLogger;
-import org.hibernate.tool.hbm2ddl.SingleLineSqlCommandExtractor;
 
 import java.io.Reader;
 import java.util.ArrayList;
@@ -47,6 +25,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.broadleafcommerce.common.logging.SupportLogManager;
+import org.broadleafcommerce.common.logging.SupportLogger;
+import org.hibernate.tool.hbm2ddl.SingleLineSqlCommandExtractor;
 
 /**
  * This is a utility class that is only meant to be used for testing the BLC demo on Oracle. In our current

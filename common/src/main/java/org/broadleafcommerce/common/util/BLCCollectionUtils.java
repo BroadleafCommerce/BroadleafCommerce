@@ -47,6 +47,16 @@ public class BLCCollectionUtils {
         return CollectionUtils.collect(inputCollection, transformer);
     }
 
+    @SuppressWarnings("rawtypes")
+    public static <T> List<T> collectList(Collection inputCollection, TypedTransformer<T> transformer) {
+        List<T> returnList = new ArrayList<T>();
+        for (Object obj : inputCollection) {
+            T transformed = transformer.transform(obj);
+            returnList.add(transformed);
+        }
+        return returnList;
+    }
+
     /**
      * Delegates to {@link CollectionUtils#select(Collection, org.apache.commons.collections.Predicate)}, but will
      * force the return type to be a List<T>.

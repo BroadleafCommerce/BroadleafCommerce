@@ -20,19 +20,16 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -48,6 +45,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
@@ -134,13 +132,13 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @OrderBy(value = "displayOrder")
     @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "ProductOptionImpl_Allowed_Values")
+    @ClonePolicyCollection
     protected List<ProductOptionValue> allowedValues = new ArrayList<ProductOptionValue>();
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_OPTION_XREF", joinColumns = @JoinColumn(name = "PRODUCT_OPTION_ID", referencedColumnName = "PRODUCT_OPTION_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"))
+    @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "productOption")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    protected List<Product> products = new ArrayList<Product>();
+    protected List<ProductOptionXref> products = new ArrayList<ProductOptionXref>();
     
     @Override
     public Long getId() {
@@ -203,13 +201,31 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     }
 
     @Override
-    public List<Product> getProducts() {
+    public List<ProductOptionXref> getProductXrefs() {
+        return getProductXrefsInternal();
+    }
+
+    protected List<ProductOptionXref> getProductXrefsInternal() {
         return products;
     }
 
     @Override
+    public void setProductXrefs(List<ProductOptionXref> xrefs) {
+        this.products = xrefs;
+    }
+
+    @Override
+    public List<Product> getProducts() {
+        List<Product> response = new ArrayList<Product>();
+        for (ProductOptionXref xref : products) {
+            response.add(xref.getProduct());
+        }
+        return Collections.unmodifiableList(response);
+    }
+
+    @Override
     public void setProducts(List<Product> products){
-        this.products = products;
+        throw new UnsupportedOperationException("Use setProductOptionXrefs(..) instead");
     }
 
     @Override

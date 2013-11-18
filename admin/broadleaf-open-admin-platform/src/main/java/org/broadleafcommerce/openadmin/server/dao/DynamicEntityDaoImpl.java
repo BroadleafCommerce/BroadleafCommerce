@@ -1275,7 +1275,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
 
     @Override
     public FieldManager getFieldManager() {
-        return new FieldManager(entityConfiguration, this);
+        return new FieldManager(entityConfiguration, getStandardEntityManager());
     }
 
     @Override

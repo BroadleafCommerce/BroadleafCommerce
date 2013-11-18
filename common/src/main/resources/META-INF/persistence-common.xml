@@ -37,6 +37,7 @@
         <class>org.broadleafcommerce.common.locale.domain.LocaleImpl</class>
         <class>org.broadleafcommerce.common.media.domain.MediaImpl</class>
         <class>org.broadleafcommerce.common.sandbox.domain.SandBoxImpl</class>
+        <class>org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl</class>
         <class>org.broadleafcommerce.common.site.domain.SiteImpl</class>
         <class>org.broadleafcommerce.common.site.domain.CatalogImpl</class>
         <class>org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl</class>
@@ -57,8 +58,6 @@
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.id.new_generator_mappings" value="true"/>
-            <!--<property name="hibernate.ejb.event.post-load" value="org.hibernate.ejb.event.EJB3PostLoadEventListener,org.broadleafcommerce.openadmin.server.changeset.ChangeSetListener" />
-            <property name="org.hibernate.envers.audit_strategy" value="org.broadleafcommerce.openadmin.server.changeset.ValidityAuditStrategy" />-->
         </properties>
     </persistence-unit>
 </persistence>

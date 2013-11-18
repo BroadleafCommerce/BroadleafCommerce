@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import java.io.Serializable;
+
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
@@ -26,8 +28,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.io.Serializable;
 
 /**
  * @author Jeff Fischer
@@ -40,6 +40,14 @@ public class DefaultFieldPersistenceProvider extends FieldPersistenceProviderAda
     public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
         boolean dirty;
         try {
+            Property p = populateValueRequest.getProperty();
+            Object value = populateValueRequest.getFieldManager().getFieldValue(instance, p.getName());
+
+            if (value != null) {
+                p.setOriginalValue(String.valueOf(value));
+                p.setOriginalDisplayValue(p.getOriginalValue());
+            }
+
             dirty = checkDirtyState(populateValueRequest, instance, populateValueRequest.getRequestedValue());
             populateValueRequest.getFieldManager().setFieldValue(instance,
                     populateValueRequest.getProperty().getName(), populateValueRequest.getRequestedValue());

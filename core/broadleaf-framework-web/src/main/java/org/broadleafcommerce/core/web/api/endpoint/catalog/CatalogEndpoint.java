@@ -19,7 +19,16 @@
  */
 package org.broadleafcommerce.core.web.api.endpoint.catalog;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.media.domain.Media;
@@ -50,14 +59,6 @@ import org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuWrapper;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 
 /**
  * This class exposes catalog services as RESTful APIs.  It is dependent on
@@ -155,11 +156,11 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                     .addMessage(BroadleafWebServicesException.INVALID_CATEGORY_ID, categoryId);
         }
 
-        List<SearchFacetDTO> availableFacets = searchService.getSearchFacets();
+        List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
         ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
         try {
             ProductSearchResult result = null;
-            result = searchService.findProductsByCategoryAndQuery(category, q, searchCriteria);
+            result = getSearchService().findProductsByCategoryAndQuery(category, q, searchCriteria);
             facetService.setActiveFacetResults(result.getFacets(), request);
 
             SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());
@@ -196,11 +197,11 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                     .addMessage(BroadleafWebServicesException.SEARCH_QUERY_MALFORMED, q);
         }
 
-        List<SearchFacetDTO> availableFacets = searchService.getSearchFacets();
+        List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
         ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
         try {
             ProductSearchResult result = null;
-            result = searchService.findProductsByQuery(q, searchCriteria);
+            result = getSearchService().findProductsByQuery(q, searchCriteria);
             facetService.setActiveFacetResults(result.getFacets(), request);
 
             SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());
@@ -548,5 +549,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                 .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
+    protected SearchService getSearchService() {
+        return searchService;
+    }
 }
 

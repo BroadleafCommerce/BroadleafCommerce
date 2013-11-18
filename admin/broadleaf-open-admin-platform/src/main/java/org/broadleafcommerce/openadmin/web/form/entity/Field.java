@@ -52,7 +52,8 @@ public class Field {
     protected Boolean isFilterSortDisabled;
     protected Boolean isDerived;
     protected Boolean isLargeEntry;
-    
+    protected Boolean isDirty;
+
     /* ************ */
     /* WITH METHODS */
     /* ************ */
@@ -350,6 +351,14 @@ public class Field {
     
     public void setLargeEntry(Boolean isLargeEntry) {
         this.isLargeEntry = isLargeEntry;
+    }
+
+    public Boolean getIsDirty() {
+        return isDirty == null ? false : isDirty;
+    }
+
+    public void setDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
     }
 
 }

@@ -19,17 +19,6 @@
  */
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
-import org.broadleafcommerce.core.search.domain.ProductSearchResult;
-import org.broadleafcommerce.core.search.service.SearchService;
-import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,6 +32,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.service.SearchService;
+import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 
 /**
  *  This is a JAXB wrapper for a Broadleaf Category.  There may be several reasons to extend this class.
@@ -132,7 +132,7 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
         }
 
         if (productLimit != null && productOffset != null) {
-            SearchService searchService = (SearchService) context.getBean("blSearchService");
+            SearchService searchService = getSearchService();
             ProductSearchCriteria searchCriteria = new ProductSearchCriteria();
             searchCriteria.setPage(productOffset);
             searchCriteria.setPageSize(productLimit);
@@ -188,5 +188,9 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
         }
 
         return wrappers;
+    }
+
+    protected SearchService getSearchService() {
+        return (SearchService) context.getBean("blSearchService");
     }
 }

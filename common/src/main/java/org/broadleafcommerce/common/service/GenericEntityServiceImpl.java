@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Profile Web
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -17,15 +17,25 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.service;
 
-/**
- * @author Jeff Fischer
- */
-public interface DynamicEntityRemote {
+package org.broadleafcommerce.common.service;
 
-    public String getPersistenceManagerRef();
+import org.broadleafcommerce.common.dao.GenericEntityDao;
+import org.springframework.stereotype.Service;
 
-    public void setPersistenceManagerRef(String persistenceManagerRef);
+import javax.annotation.Resource;
+
+
+@Service("blGenericEntityService")
+public class GenericEntityServiceImpl implements GenericEntityService {
+    
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericEntityDao;
+    
+    @Override
+    public Object readGenericEntity(String className, Object id) {
+        Class<?> clazz = genericEntityDao.getImplClass(className);
+        return genericEntityDao.readGenericEntity(clazz, id);
+    }
 
 }

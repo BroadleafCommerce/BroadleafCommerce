@@ -58,6 +58,9 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.web.Locatable;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.BatchSize;
@@ -91,7 +94,7 @@ import org.hibernate.annotations.Parameter;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class PageImpl implements Page, AdminMainEntity {
+public class PageImpl implements Page, AdminMainEntity, Locatable {
 
     private static final long serialVersionUID = 1L;
     
@@ -138,6 +141,7 @@ public class PageImpl implements Page, AdminMainEntity {
     @MapKeyColumn(name = "MAP_KEY")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @BatchSize(size = 20)
+    @ClonePolicyMap
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
     
     @Column(name = "PRIORITY")
@@ -187,6 +191,7 @@ public class PageImpl implements Page, AdminMainEntity {
             )
         }
     )
+    @ClonePolicyMap
     Map<String, PageRule> pageMatchRules = new HashMap<String, PageRule>();
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class, cascade={CascadeType.ALL})
@@ -199,6 +204,7 @@ public class PageImpl implements Page, AdminMainEntity {
         group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM)
+    @ClonePolicyCollection
     protected Set<PageItemCriteria> qualifyingItemCriteria = new HashSet<PageItemCriteria>();
 
     @Embedded
@@ -343,5 +349,9 @@ public class PageImpl implements Page, AdminMainEntity {
         return getFullUrl();
     }
 
+    @Override
+    public String getLocation() {
+        return getFullUrl();
+    }
 }
 

@@ -65,7 +65,7 @@ public class CustomerOfferDaoImpl implements CustomerOfferDao {
         final Query query = em.createNamedQuery("BC_READ_CUSTOMER_OFFER_BY_CUSTOMER_ID");
         query.setParameter("customerId", customer.getId());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Offer");
 
         return query.getResultList();
     }

@@ -19,13 +19,22 @@
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder.service;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
@@ -35,15 +44,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -191,8 +191,8 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
     @Override
     public void afterPropertiesSet() throws Exception {
         // This bean only is valid when the following bean is active. (admin)
-        if (applicationContext.containsBean(DynamicEntityRemoteService.DEFAULTPERSISTENCEMANAGERREF)) {
-            PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(DynamicEntityRemoteService.DEFAULTPERSISTENCEMANAGERREF);
+        if (applicationContext.containsBean(PersistenceManagerFactory.getPersistenceManagerRef())) {
+            PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(PersistenceManagerFactory.getPersistenceManagerRef());
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             dynamicEntityDao = persistenceManager.getDynamicEntityDao();
             setFields(new ArrayList<FieldData>());

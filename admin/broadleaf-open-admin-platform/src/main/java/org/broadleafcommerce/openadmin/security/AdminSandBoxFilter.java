@@ -29,11 +29,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.service.SandBoxService;
 import org.broadleafcommerce.common.web.SandBoxContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.service.SandBoxMode;
-import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -54,6 +54,7 @@ public class AdminSandBoxFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // this filter is not currently wired in
         HttpSession session = request.getSession();
         AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
         if (adminUser == null) {
@@ -61,7 +62,8 @@ public class AdminSandBoxFilter extends OncePerRequestFilter {
             session.removeAttribute(SANDBOX_ADMIN_ID_VAR);
             SandBoxContext.setSandBoxContext(null);
         } else {
-            SandBox sandBox = sandBoxService.retrieveUserSandBox(adminUser);
+            Long overrideSandBoxId = adminUser.getOverrideSandBox() == null ? null : adminUser.getOverrideSandBox().getId();
+            SandBox sandBox = sandBoxService.retrieveUserSandBox(adminUser.getId(), overrideSandBoxId, adminUser.getLogin());
             session.setAttribute(SANDBOX_ADMIN_ID_VAR, sandBox.getId());
             session.removeAttribute(SANDBOX_ID_VAR);
             AdminSandBoxContext context = new AdminSandBoxContext();

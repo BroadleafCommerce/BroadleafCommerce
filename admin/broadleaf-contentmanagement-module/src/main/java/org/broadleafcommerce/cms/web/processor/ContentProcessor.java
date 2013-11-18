@@ -270,7 +270,6 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
      * @param maxResults maximum results to return
      * @param request servlet request
      * @param mvelParameters values that should be considered when filtering the content list by rules
-     * @param currentSandbox current sandbox being used
      * @param structuredContentType the type of content that should be returned
      * @param locale current locale
      * @param arguments Thymeleaf Arguments passed into the tag

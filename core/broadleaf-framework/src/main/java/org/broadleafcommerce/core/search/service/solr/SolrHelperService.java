@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
+import java.util.List;
+
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -26,8 +28,6 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
-
-import java.util.List;
 
 /**
  * @author Andre Azzolini (apazzolini)

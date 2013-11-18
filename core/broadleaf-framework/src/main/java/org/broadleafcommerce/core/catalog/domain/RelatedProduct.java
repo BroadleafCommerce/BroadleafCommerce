@@ -20,6 +20,8 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 
+import java.math.BigDecimal;
+
 public interface RelatedProduct extends PromotableProduct {
     
     public Long getId();
@@ -32,7 +34,7 @@ public interface RelatedProduct extends PromotableProduct {
 
     public String getPromotionMessage();
 
-    public Long getSequence();
+    public BigDecimal getSequence();
 
     public void setId(Long id);
 
@@ -44,5 +46,5 @@ public interface RelatedProduct extends PromotableProduct {
 
     public void setPromotionMessage(String promotionMessage);
 
-    public void setSequence(Long sequence);
+    public void setSequence(BigDecimal sequence);
 }

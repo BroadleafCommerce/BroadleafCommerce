@@ -24,7 +24,6 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
@@ -64,7 +63,16 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
 
     @PostConstruct
     public void init() {
-        extensionManager.getHandlers().add(this);
+        boolean shouldAdd = true;
+        for (SolrSearchServiceExtensionHandler h : extensionManager.getHandlers()) {
+            if (h instanceof I18nSolrSearchServiceExtensionHandler) {
+                shouldAdd = false;
+                break;
+            }
+        }
+        if (shouldAdd) {
+            extensionManager.getHandlers().add(this);
+        }
     }
 
     @Override

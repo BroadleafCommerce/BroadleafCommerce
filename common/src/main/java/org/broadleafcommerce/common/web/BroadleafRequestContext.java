@@ -93,7 +93,9 @@ public class BroadleafRequestContext {
     protected Map<String, Object> additionalProperties = new HashMap<String, Object>();
     protected MessageSource messageSource;
     protected RequestDTO requestDTO;
-    
+    protected Boolean isAdmin = false;
+    protected Long adminUserId;
+
     /**
      * Gets the current request on the context
      * @return
@@ -174,6 +176,17 @@ public class BroadleafRequestContext {
         return sandbox;
     }
 
+    public Long getSandBoxId() {
+        if (sandbox != null) {
+            return sandbox.getId();
+        }
+        return null;
+    }
+
+    public boolean isProductionSandBox() {
+        return sandbox == null || SandBoxType.PRODUCTION == sandbox.getSandBoxType();
+    }
+
     public void setSandbox(SandBox sandbox) {
         this.sandbox = sandbox;
     }
@@ -181,11 +194,7 @@ public class BroadleafRequestContext {
     public Locale getLocale() {
         return locale;
     }
-    
-    public boolean isProductionSandBox() {
-        return sandbox == null || SandBoxType.PRODUCTION == sandbox.getSandBoxType();
-    }
-    
+
     /**
      * Returns the java.util.Locale constructed from the org.broadleafcommerce.common.locale.domain.Locale.
      * @return
@@ -334,8 +343,24 @@ public class BroadleafRequestContext {
         this.requestDTO = requestDTO;
     }
 
+    public Boolean getAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
+    }
+
+    public Long getAdminUserId() {
+        return adminUserId;
+    }
+
+    public void setAdminUserId(Long adminUserId) {
+        this.adminUserId = adminUserId;
+    }
+
     public boolean isAdminMode() {
         return getSandbox() != null;
     }
-    
+
 }

@@ -19,14 +19,14 @@
  */
 package org.broadleafcommerce.core.workflow.state;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 /**
  * @author Elbert Bautista (elbertbautista)

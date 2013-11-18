@@ -31,4 +31,8 @@ public interface DynamicEntityRetriever {
 
     Entity fetchDynamicEntity(Serializable root, List<String> dirtyFields, boolean includeId) throws Exception;
 
+    Entity fetchEntityBasedOnId(String themeConfigurationId, List<String> dirtyFields) throws Exception;
+
+    String getFieldContainerClassName();
+
 }

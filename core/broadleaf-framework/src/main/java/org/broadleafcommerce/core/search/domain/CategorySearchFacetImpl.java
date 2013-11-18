@@ -19,7 +19,7 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
-import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,13 +47,13 @@ import org.hibernate.annotations.Parameter;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CAT_SEARCH_FACET_XREF")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class CategorySearchFacetImpl implements CategorySearchFacet,Serializable {
+public class CategorySearchFacetImpl implements CategorySearchFacet {
     
     /**
      * 
@@ -84,7 +84,7 @@ public class CategorySearchFacetImpl implements CategorySearchFacet,Serializable
     
     @Column(name = "SEQUENCE")
     @AdminPresentation(friendlyName = "CategorySearchFacetImpl_sequence")
-    protected Long sequence;
+    protected BigDecimal sequence;
 
     @Override
     public Long getId() {
@@ -117,12 +117,12 @@ public class CategorySearchFacetImpl implements CategorySearchFacet,Serializable
     }
 
     @Override
-    public Long getSequence() {
+    public BigDecimal getSequence() {
         return sequence;
     }
 
     @Override
-    public void setSequence(Long sequence) {
+    public void setSequence(BigDecimal sequence) {
         this.sequence = sequence;
     }
     

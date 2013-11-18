@@ -19,22 +19,42 @@
  */
 package org.broadleafcommerce.openadmin.server.factory;
 
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
+import org.hibernate.Session;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 /**
  * @author Andre Azzolini (apazzolini)
  */
 @Service("blPersistencePackageFactory")
 public class PersistencePackageFactoryImpl implements PersistencePackageFactory {
-    
+
+    @Resource(name = "blAdminNavigationService")
+    protected AdminNavigationService adminNavigationService;
+
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
+
+    protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
+
     @Override
     public PersistencePackage create(PersistencePackageRequest request) {
         PersistencePerspective persistencePerspective = new PersistencePerspective();
@@ -79,8 +99,18 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
 
         PersistencePackage pp = new PersistencePackage();
         pp.setCeilingEntityFullyQualifiedClassname(request.getCeilingEntityClassname());
-        pp.setSectionEntityClassname(request.getSectionEntityClassname());
-        pp.setSectionEntityIdValue(request.getSectionEntityIdValue());
+        if (!ArrayUtils.isEmpty(request.getSectionCrumbs())) {
+            SectionCrumb[] converted = new SectionCrumb[request.getSectionCrumbs().length];
+            int index = 0;
+            for (SectionCrumb crumb : request.getSectionCrumbs()) {
+                SectionCrumb temp = new SectionCrumb();
+                temp.setSectionIdentifier(getClassNameForSection(crumb.getSectionIdentifier()));
+                temp.setSectionId(crumb.getSectionId());
+                converted[index] = temp;
+                index++;
+            }
+            pp.setSectionCrumbs(converted);
+        }
         pp.setSectionEntityField(request.getSectionEntityField());
         pp.setFetchTypeFullyQualifiedClassname(null);
         pp.setPersistencePerspective(persistencePerspective);
@@ -121,4 +151,14 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
         return operationTypes;
     }
 
+    protected String getClassNameForSection(String sectionKey) {
+        try {
+            AdminSection section = adminNavigationService.findAdminSectionByURI("/" + sectionKey);
+            String className = (section == null) ? sectionKey : section.getCeilingEntity();
+            Class<?>[] entities = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(Class.forName(className), em.unwrap(Session.class).getSessionFactory(), true, true);
+            return entities[entities.length - 1].getName();
+        } catch (ClassNotFoundException e) {
+            throw ExceptionHelper.refineException(RuntimeException.class, RuntimeException.class, e);
+        }
+    }
 }

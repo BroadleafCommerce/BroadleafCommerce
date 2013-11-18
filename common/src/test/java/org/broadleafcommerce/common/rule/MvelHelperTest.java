@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.common.rule;
 
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import junit.framework.TestCase;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 
 public class MvelHelperTest extends TestCase {
 

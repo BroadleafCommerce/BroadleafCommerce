@@ -76,7 +76,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
 
         TypedQuery<Long> query = em.createQuery(cq);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Offer");
 
         Long result =  query.getSingleResult();
         return result;

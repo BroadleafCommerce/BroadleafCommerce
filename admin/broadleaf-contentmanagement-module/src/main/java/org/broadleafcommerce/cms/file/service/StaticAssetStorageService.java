@@ -105,7 +105,7 @@ public interface StaticAssetStorageService {
      */
     String generateStorageFileName(StaticAsset staticAsset, boolean useSharedPath);
 
-    Map<String, String> getCacheFileModel(String fullUrl, SandBox sandBox, Map<String, String> parameterMap) throws Exception;
+    Map<String, String> getCacheFileModel(String fullUrl, Map<String, String> parameterMap) throws Exception;
 
     /**
      * Persists the file being based in according to the staticAsset's StorageType.

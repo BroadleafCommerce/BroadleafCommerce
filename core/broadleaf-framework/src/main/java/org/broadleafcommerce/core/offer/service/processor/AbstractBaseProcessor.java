@@ -43,6 +43,7 @@ import org.joda.time.LocalDateTime;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,8 +55,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-
-import javax.annotation.Resource;
 
 /**
  * 

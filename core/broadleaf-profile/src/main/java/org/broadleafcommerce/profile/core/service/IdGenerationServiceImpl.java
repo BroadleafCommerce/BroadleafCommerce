@@ -41,7 +41,13 @@ public class IdGenerationServiceImpl implements IdGenerationService {
 
     protected Map<String, Id> idTypeIdMap = new HashMap<String, Id>();
 
+    @Override
     public Long findNextId(String idType) {
+        return findNextId(idType, null);
+    }
+
+    @Override
+    public Long findNextId(String idType, Long batchSize) {
         Id id;
         synchronized (idTypeIdMap) {
             id = idTypeIdMap.get(idType);
@@ -52,7 +58,7 @@ public class IdGenerationServiceImpl implements IdGenerationService {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Getting the initial id from the database.");
                     }
-                    IdGeneration idGeneration = getCurrentIdRange(idType);
+                    IdGeneration idGeneration = getCurrentIdRange(idType, batchSize);
                     id = new Id(idGeneration.getBatchStart(), idGeneration.getBatchSize());
                 }
                 idTypeIdMap.put(idType, id);
@@ -64,7 +70,7 @@ public class IdGenerationServiceImpl implements IdGenerationService {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Updating batch size for idType " + idType);
                 }
-                IdGeneration idGeneration = getCurrentIdRange(idType);
+                IdGeneration idGeneration = getCurrentIdRange(idType, batchSize);
                 id.nextId = idGeneration.getBatchStart();
                 id.batchSize = idGeneration.getBatchSize();
             }
@@ -75,13 +81,13 @@ public class IdGenerationServiceImpl implements IdGenerationService {
         }
     }
     
-    private IdGeneration getCurrentIdRange(String idType) {
+    private IdGeneration getCurrentIdRange(String idType, Long batchSize) {
         IdGeneration idGeneration = null;
         int retryCount = 0;
         boolean stale = true;
         while (stale) {
             try {
-                idGeneration = idGenerationDao.findNextId(idType);
+                idGeneration = idGenerationDao.findNextId(idType, batchSize);
                 stale = false;
             } catch (OptimisticLockException e) {
                 //do nothing -- we will try again

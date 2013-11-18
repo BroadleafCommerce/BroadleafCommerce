@@ -19,13 +19,15 @@
  */
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
+import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 
 /**
  * This is a JAXB wrapper for RelatedProducts
@@ -41,7 +43,7 @@ public class RelatedProductWrapper extends BaseWrapper implements APIWrapper<Rel
     protected Long id;
     
     @XmlElement
-    protected Long sequence;
+    protected BigDecimal sequence;
     
     @XmlElement
     protected String promotionalMessage;
