@@ -8,7 +8,7 @@
     <dependency>
         <groupId>com.broadleafcommerce</groupId>
         <artifactId>broadleaf-custom-field</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
         <type>jar</type>
         <scope>compile</scope>
     </dependency>
