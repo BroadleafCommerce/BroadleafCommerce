@@ -64,6 +64,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Inspect
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.hibernate.mapping.PersistentClass;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -182,7 +183,11 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 if (myProperty.getMetadata().getInheritedFromType().equals(entities[i].getName()) && myProperty.getMetadata().getOrder() != null) {
                     for (Property property : propertiesList) {
                         if (!property.getMetadata().getInheritedFromType().equals(entities[i].getName()) && property.getMetadata().getOrder() != null && property.getMetadata().getOrder() >= myProperty.getMetadata().getOrder()) {
-                            property.getMetadata().setOrder(property.getMetadata().getOrder() + 1);
+                            if (property.getMetadata().getAdditionalMetadata() == null 
+                                    || property.getMetadata().getAdditionalMetadata().get(Field.ALTERNATE_ORDERING) == null
+                                    || ((Boolean) property.getMetadata().getAdditionalMetadata().get(Field.ALTERNATE_ORDERING)) == false) {
+                                property.getMetadata().setOrder(property.getMetadata().getOrder() + 1);
+                            }
                         }
                     }
                 }

@@ -283,7 +283,6 @@ public class EntityForm {
     }
 
     public void addField(Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
-        //        System.out.println(String.format("Adding field [%s] to group [%s] to tab [%s]", field.getName(), groupName, tabName));
         groupName = groupName == null ? DEFAULT_GROUP_NAME : groupName;
         groupOrder = groupOrder == null ? DEFAULT_GROUP_ORDER : groupOrder;
         tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;

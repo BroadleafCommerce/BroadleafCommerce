@@ -124,8 +124,8 @@ public class FieldGroup {
                 if (mapField.getOrder() <= 0) {
                     continue;
                 }
-                if (mapField.getOrder() < myFields.size()) {
-                    myFields.add(mapField.getOrder()-1, mapField);
+                if (mapField.getOrder() < myFields.size() + 1) {
+                    myFields.add(mapField.getOrder() - 1, mapField);
                     continue;
                 }
                 myFields.add(mapField);
