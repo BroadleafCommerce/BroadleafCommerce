@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.common.exception;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.UndeclaredThrowableException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,17 +37,14 @@ public class ExceptionHelper {
         if (refineType.isAssignableFrom(e.getClass())) {
             return wrapException(e, wrapType, message);
         }
-        Throwable rootCause = e;
-        boolean eof = false;
-        while (!eof) {
-            if (rootCause.getCause() != null) {
-                rootCause = rootCause.getCause();
-                if (refineType.isAssignableFrom(rootCause.getClass())) {
-                    return wrapException(e, wrapType, message);
-                }
-            } else {
-                eof = true;
-            }
+        if (e.getCause() != null) {
+            return refineException(refineType, wrapType, message, e.getCause());
+        }
+        if (e instanceof UndeclaredThrowableException) {
+            return refineException(refineType, wrapType, message, ((UndeclaredThrowableException) e).getUndeclaredThrowable());
+        }
+        if (e instanceof InvocationTargetException) {
+            return refineException(refineType, wrapType, message, ((InvocationTargetException) e).getTargetException());
         }
         return wrapException(e, wrapType, message);
     }
@@ -65,17 +65,14 @@ public class ExceptionHelper {
         if (refineType.isAssignableFrom(e.getClass())) {
             throw (G) e;
         }
-        Throwable rootCause = e;
-        boolean eof = false;
-        while (!eof) {
-            if (rootCause.getCause() != null) {
-                rootCause = rootCause.getCause();
-                if (refineType.isAssignableFrom(rootCause.getClass())) {
-                    throw (G) rootCause;
-                }
-            } else {
-                eof = true;
-            }
+        if (e.getCause() != null) {
+            processException(refineType, wrapType, message, e.getCause());
+        }
+        if (e instanceof UndeclaredThrowableException) {
+            processException(refineType, wrapType, message, ((UndeclaredThrowableException) e).getUndeclaredThrowable());
+        }
+        if (e instanceof InvocationTargetException) {
+            processException(refineType, wrapType, message, ((InvocationTargetException) e).getTargetException());
         }
         throw wrapException(e, wrapType, message);
     }

@@ -44,13 +44,6 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
 
-/**
- * The Class CategoryXrefImpl is for testing purposes only.  It helps autogenerate the cross reference table
- * properly with the DISPLY_ORDER column
-
- * @author krosenberg
- *
- */
 @Entity
 @Polymorphism(type = PolymorphismType.EXPLICIT)
 @Inheritance(strategy = InheritanceType.JOINED)

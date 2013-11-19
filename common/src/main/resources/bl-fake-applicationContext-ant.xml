@@ -46,7 +46,7 @@
         <property name="targetObject" ref="blSearchService" />
         <property name="targetMethod" value="rebuildIndex" />
     </bean> 
-    <bean id="rebuildIndexTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+    <bean id="rebuildIndexTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
         <property name="jobDetail" ref="rebuildIndexJobDetail" />
         <property name="startDelay" value="999999999999999" />
         <property name="repeatInterval" value="999999999999999" />
