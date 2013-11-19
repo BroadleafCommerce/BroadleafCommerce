@@ -611,6 +611,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             List<PromotableCandidateItemOffer> qualifiedItemOffers) {
         if (!qualifiedItemOffers.isEmpty()) {
             calculatePotentialSavings(qualifiedItemOffers, order);
+            
+            //after savings have been calculated, uses will have been marked on offers which can effect
+            //the actual application of those offers. Thus the uses for each item offer needs to be reset
+            for (PromotableCandidateItemOffer itemOffer : qualifiedItemOffers) {
+                itemOffer.resetUses();
+            }
+            
             // Sort order item offers by priority and potential total discount
             Collections.sort(qualifiedItemOffers, ItemOfferComparator.INSTANCE);
             

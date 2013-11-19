@@ -199,6 +199,11 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     public void addUse() {
         uses++;
     }
+    
+    @Override
+    public void resetUses() {
+        uses = 0;
+    }
 
     @Override
     public boolean isLegacyOffer() {
