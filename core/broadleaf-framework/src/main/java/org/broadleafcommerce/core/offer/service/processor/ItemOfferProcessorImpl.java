@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -49,9 +51,12 @@ import java.util.List;
 @Service("blItemOfferProcessor")
 public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements ItemOfferProcessor {
     
+    protected static final Log LOG = LogFactory.getLog(ItemOfferProcessorImpl.class);
+    
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#filterItemLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
      */
+    @Override
     public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers, Offer offer) {
         boolean isNewFormat = !CollectionUtils.isEmpty(offer.getQualifyingItemCriteria()) || !CollectionUtils.isEmpty(offer.getTargetItemCriteria());
         boolean itemLevelQualification = false;
@@ -317,6 +322,11 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
    
     protected void applyItemQualifiersAndTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order) {
         if (itemOffer.isLegacyOffer()) {
+            LOG.warn("The item offer with id " + itemOffer.getOffer().getId() + " is a legacy offer which means that it" +
+            		" does not have any item qualifier criteria AND does not have any target item criteria. As a result," +
+            		" we are skipping the marking of qualifiers and targets which will cause issues if you are relying on" +
+            		" 'maxUsesPerOrder' behavior. To resolve this, qualifier criteria is not required but you must at least" +
+            		" create some target item criteria for this offer.");
             return;
         } else {
             markQualifiersAndTargets(order, itemOffer);
@@ -513,8 +523,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     protected void markQualifiersAndTargets(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
         boolean matchFound = true;
 
-        if (itemOffer.getOffer().getQualifyingItemCriteria().isEmpty() &&
-                itemOffer.getOffer().getTargetItemCriteria().isEmpty()) {
+        if (itemOffer.isLegacyOffer()) {
             return;
         }
 

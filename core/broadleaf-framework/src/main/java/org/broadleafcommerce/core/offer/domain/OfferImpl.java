@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -284,12 +285,12 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     @AdminPresentation(friendlyName = "OfferImpl_Target_Item_Rule",
         group = Presentation.Group.Name.ItemTarget, groupOrder = Presentation.Group.Order.ItemTarget,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
-        ruleIdentifier = RuleIdentifier.ORDERITEM, 
-        requiredOverride = RequiredOverride.REQUIRED)
+        ruleIdentifier = RuleIdentifier.ORDERITEM,
+        validationConfigurations = {@ValidationConfiguration(validationImplementation="blTargetItemRulesValidator")})
     protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
     
     @Column(name = "TOTALITARIAN_OFFER")
-    @AdminPresentation(friendlyName = "OfferImpl_Totalitarian_Offer", 
+    @AdminPresentation(friendlyName = "OfferImpl_Totalitarian_Offer",
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
         visibility = VisibilityEnum.HIDDEN_ALL)
