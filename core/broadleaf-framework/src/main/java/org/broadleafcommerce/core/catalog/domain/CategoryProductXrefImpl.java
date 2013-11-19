@@ -142,8 +142,6 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
         CategoryProductXrefImpl that = (CategoryProductXrefImpl) o;
 
         if (category != null ? !category.equals(that.category) : that.category != null) return false;
-        if (displayOrder != null ? !displayOrder.equals(that.displayOrder) : that.displayOrder != null) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (product != null ? !product.equals(that.product) : that.product != null) return false;
 
         return true;
@@ -151,10 +149,8 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (category != null ? category.hashCode() : 0);
+        int result = category != null ? category.hashCode() : 0;
         result = 31 * result + (product != null ? product.hashCode() : 0);
-        result = 31 * result + (displayOrder != null ? displayOrder.hashCode() : 0);
         return result;
     }
 }

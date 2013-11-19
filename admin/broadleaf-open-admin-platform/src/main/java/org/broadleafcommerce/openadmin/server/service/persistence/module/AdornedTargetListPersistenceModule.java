@@ -330,7 +330,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                 myRecord = records.get(index);
                 
                 Integer requestedSequence = Integer.valueOf(entity.findProperty(adornedTargetList.getSortField()).getValue());
-                Integer previousSequence = Integer.parseInt(String.valueOf(getFieldManager().getFieldValue(myRecord, adornedTargetList.getSortField())));
+                Integer previousSequence = new BigDecimal(String.valueOf(getFieldManager().getFieldValue(myRecord, adornedTargetList.getSortField()))).intValue();
                 
                 if (!previousSequence.equals(requestedSequence)) {
                     // Sequence has changed. Rebalance the list

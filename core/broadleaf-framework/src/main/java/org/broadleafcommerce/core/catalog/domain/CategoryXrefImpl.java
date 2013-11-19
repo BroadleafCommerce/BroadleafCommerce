@@ -124,8 +124,6 @@ public class CategoryXrefImpl implements CategoryXref {
         CategoryXrefImpl that = (CategoryXrefImpl) o;
 
         if (category != null ? !category.equals(that.category) : that.category != null) return false;
-        if (displayOrder != null ? !displayOrder.equals(that.displayOrder) : that.displayOrder != null) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (subCategory != null ? !subCategory.equals(that.subCategory) : that.subCategory != null) return false;
 
         return true;
@@ -133,10 +131,8 @@ public class CategoryXrefImpl implements CategoryXref {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (category != null ? category.hashCode() : 0);
+        int result = category != null ? category.hashCode() : 0;
         result = 31 * result + (subCategory != null ? subCategory.hashCode() : 0);
-        result = 31 * result + (displayOrder != null ? displayOrder.hashCode() : 0);
         return result;
     }
 }
