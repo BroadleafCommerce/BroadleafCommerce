@@ -21,6 +21,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -284,7 +285,9 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     List<FilterMapping> filterMappings = getAdornedTargetFilterMappings(persistencePerspective, cto,
                             mergedProperties, adornedTargetList);
                     int totalRecords = getTotalRecords(adornedTargetList.getAdornedTargetEntityClassname(), filterMappings);
-                    fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), Long.valueOf(totalRecords + 1));
+                    Class<?> type = fieldManager.getField(instance.getClass(), adornedTargetList.getSortField()).getType();
+                    boolean isBigDecimal = BigDecimal.class.isAssignableFrom(type);
+                    fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), isBigDecimal?new BigDecimal(totalRecords + 1):Long.valueOf(totalRecords + 1));
                 }
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
                 persistenceManager.getDynamicEntityDao().clear();
@@ -340,8 +343,10 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     }
                     
                     index = 1;
+                    Class<?> type = fieldManager.getField(myRecord.getClass(), adornedTargetList.getSortField()).getType();
+                    boolean isBigDecimal = BigDecimal.class.isAssignableFrom(type);
                     for (Serializable record : records) {
-                        fieldManager.setFieldValue(record, adornedTargetList.getSortField(), Long.valueOf(index));
+                        fieldManager.setFieldValue(record, adornedTargetList.getSortField(), isBigDecimal?new BigDecimal(index):Long.valueOf(index));
                         index++;
                     }
                 }
