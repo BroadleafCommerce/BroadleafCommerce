@@ -131,13 +131,7 @@
                     collectedData.error = condition.data.error;
                 }
                 
-                //Only stringify the collected data into a JSON object if there is actual data there. Otherwise, there are
-                //no rules so no JSON should be sent at all
-                var ruleValue = "";
-                if (collectedData.length > 0) {
-                    ruleValue = JSON.stringify(collectedData);
-                }
-                $("#"+hiddenId).val(ruleValue);
+                $("#"+hiddenId).val(JSON.stringify(collectedData));
             }
         }
     });
