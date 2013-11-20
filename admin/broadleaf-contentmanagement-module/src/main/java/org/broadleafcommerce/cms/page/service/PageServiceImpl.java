@@ -31,7 +31,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,6 +41,8 @@ import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageItemCriteria;
 import org.broadleafcommerce.cms.page.domain.PageRule;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.common.cache.CacheStatType;
+import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
@@ -79,6 +80,9 @@ public class PageServiceImpl implements PageService {
 
     @Resource(name="blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
+
+    @Resource(name="blStatisticsService")
+    protected StatisticsService statisticsService;
 
     protected Cache pageCache;
     protected final PageDTO NULL_PAGE = new NullPageDTO();
@@ -121,11 +125,11 @@ public class PageServiceImpl implements PageService {
             if (context.isProductionSandBox()) {
                 returnList = getPageListFromCache(key);
             }
-            if (CollectionUtils.isEmpty(returnList)) {
+            if (returnList == null) {
                 //TODO does this pull the right sandbox in multitenant?
                 List<Page> pageList = pageDao.findPageByURI(locale, languageOnlyLocale, uri);
                 returnList = buildPageDTOList(pageList, secure);
-                if (context.isProductionSandBox() && !CollectionUtils.isEmpty(returnList)) {
+                if (context.isProductionSandBox()) {
                     Collections.sort(returnList, new BeanComparator("priority"));
                     addPageListToCache(returnList, key);
                 }
@@ -328,8 +332,10 @@ public class PageServiceImpl implements PageService {
     protected List<PageDTO> getPageListFromCache(String key) {
         Element cacheElement = getPageCache().get(key);
         if (cacheElement != null && cacheElement.getValue() != null) {
+            statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), true);
             return (List<PageDTO>) cacheElement.getValue();
         }
+        statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), false);
         return null;
     }
 

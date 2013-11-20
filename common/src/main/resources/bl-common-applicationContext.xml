@@ -203,5 +203,15 @@
     <bean id="blVariableExpressionEvaluator" class="org.broadleafcommerce.common.web.expression.BroadleafVariableExpressionEvaluator" />
     <bean id="blDataDrivenEnumerationProcessor" class="org.broadleafcommerce.common.web.processor.DataDrivenEnumerationProcessor" />
     <bean id="blResourceBundleProcessor" class="org.broadleafcommerce.common.web.processor.ResourceBundleProcessor" />
-    
+
+    <bean id="blStatisticsService" class="org.broadleafcommerce.common.cache.StatisticsServiceImpl">
+        <property name="appName">
+            <bean class="org.springframework.jndi.JndiObjectFactoryBean">
+                <property name="jndiName">
+                    <value>java:/comp/env/appName</value>
+                </property>
+                <property name="defaultObject" value="broadleaf"/>
+            </bean>
+        </property>
+    </bean>
 </beans>

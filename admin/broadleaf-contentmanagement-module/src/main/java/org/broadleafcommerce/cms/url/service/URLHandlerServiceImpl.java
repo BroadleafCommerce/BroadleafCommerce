@@ -32,6 +32,8 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.url.dao.URLHandlerDao;
 import org.broadleafcommerce.cms.url.domain.NullURLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandler;
+import org.broadleafcommerce.common.cache.CacheStatType;
+import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,9 @@ public class URLHandlerServiceImpl implements URLHandlerService {
 
     @Resource(name="blURLHandlerDao")
     protected URLHandlerDao urlHandlerDao;
+
+    @Resource(name="blStatisticsService")
+    protected StatisticsService statisticsService;
     
     protected Cache urlHandlerCache;
 
@@ -141,8 +146,10 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     protected URLHandler getUrlHandlerFromCache(String key) {
         Element cacheElement = getUrlHandlerCache().get(key);
         if (cacheElement != null) {
+            statisticsService.addCacheStat(CacheStatType.URL_HANDLER_CACHE_HIT_RATE.toString(), true);
             return (URLHandler) cacheElement.getValue();
         }
+        statisticsService.addCacheStat(CacheStatType.URL_HANDLER_CACHE_HIT_RATE.toString(), false);
         return null;
     }
 
