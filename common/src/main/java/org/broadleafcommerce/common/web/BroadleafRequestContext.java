@@ -17,14 +17,6 @@
 package org.broadleafcommerce.common.web;
 
 
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -37,6 +29,14 @@ import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Convenient holder class for various objects to be automatically available on thread local without invoking the various
@@ -191,16 +191,20 @@ public class BroadleafRequestContext {
     }
 
     /**
-     * Returns the java.util.Currency constructed from the org.broadleafcommerce.common.currency.domain.BroadleafCurrency
+     * Returns the java.util.Currency constructed from the org.broadleafcommerce.common.currency.domain.BroadleafCurrency.
+     * If there is no BroadleafCurrency specified this will return the currency based on the JVM locale
+     * 
      * @return
      */
     public Currency getJavaCurrency() {
-        if (this.javaCurrency == null) {
+        if (javaCurrency == null) {
             if (getBroadleafCurrency() != null && getBroadleafCurrency().getCurrencyCode() != null) {
-                this.javaCurrency = Currency.getInstance(getBroadleafCurrency().getCurrencyCode());
+                javaCurrency = Currency.getInstance(getBroadleafCurrency().getCurrencyCode());
+            } else {
+                javaCurrency = Currency.getInstance(getJavaLocale());
             }
         }
-        return this.javaCurrency;
+        return javaCurrency;
     }
 
     public void setLocale(Locale locale) {
@@ -229,9 +233,9 @@ public class BroadleafRequestContext {
         
     }
     
-    private java.util.Locale convertLocaleToJavaLocale() {      
+    protected java.util.Locale convertLocaleToJavaLocale() {      
         if (locale == null || locale.getLocaleCode() == null) {
-            return null;
+            return java.util.Locale.getDefault();
         } else {
             String localeString = locale.getLocaleCode();
             String[] components = localeString.split("_");

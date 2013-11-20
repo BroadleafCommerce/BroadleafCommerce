@@ -121,9 +121,9 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             } else if (Calendar.class.isAssignableFrom(key.getClass())) {
                 strVal = getSimpleDateFormatter().format(((Calendar) key).getTime());
             } else if (Double.class.isAssignableFrom(key.getClass())) {
-                strVal = decimalFormat.format(key);
+                strVal = getDecimalFormatter().format(key);
             } else if (BigDecimal.class.isAssignableFrom(key.getClass())) {
-                strVal = decimalFormat.format(((BigDecimal) key).doubleValue());
+                strVal = getDecimalFormatter().format(key);
             } else {
                 strVal = key.toString();
             }
