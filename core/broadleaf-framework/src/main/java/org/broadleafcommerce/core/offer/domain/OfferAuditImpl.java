@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
@@ -133,12 +133,30 @@ public class OfferAuditImpl implements OfferAudit {
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return new HashCodeBuilder()
+            .append(customerId)
+            .append(offerId)
+            .append(offerCodeId)
+            .append(redeemedDate)
+            .append(orderId)
+            .build();
     }
     
     @Override
     public boolean equals(Object o) {
-        return EqualsBuilder.reflectionEquals(this, o);
+        if (o instanceof OfferAuditImpl) {
+            OfferAuditImpl that = (OfferAuditImpl) o;
+            return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.customerId, that.customerId)
+                .append(this.offerId, that.offerId)
+                .append(this.offerCodeId, that.offerCodeId)
+                .append(this.redeemedDate, that.redeemedDate)
+                .append(this.orderId, that.orderId)
+                .build();
+        }
+        
+        return false;
     }
 
 }

@@ -789,12 +789,28 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return new HashCodeBuilder()
+            .append(name)
+            .append(startDate)
+            .append(type)
+            .append(value)
+            .build();
     }
     
     @Override
     public boolean equals(Object o) {
-        return EqualsBuilder.reflectionEquals(this, o);
+        if (o instanceof OfferImpl) {
+            OfferImpl that = (OfferImpl) o;
+            return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.name, that.name)
+                .append(this.startDate, that.startDate)
+                .append(this.type, that.type)
+                .append(this.value, that.value)
+                .build();
+        }
+        
+        return false;
     }
 
     public static class Presentation {

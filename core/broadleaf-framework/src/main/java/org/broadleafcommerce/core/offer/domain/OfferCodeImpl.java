@@ -16,7 +16,7 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -196,12 +196,24 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return new HashCodeBuilder()
+            .append(offer)
+            .append(offerCode)
+            .build();
     }
     
     @Override
     public boolean equals(Object o) {
-        return EqualsBuilder.reflectionEquals(this, o);
+        if (o instanceof OfferCodeImpl) {
+            OfferCodeImpl that = (OfferCodeImpl) o;
+            return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.offer, that.offer)
+                .append(this.offerCode, that.offerCode)
+                .build();
+        }
+        
+        return false;
     }
 
 
