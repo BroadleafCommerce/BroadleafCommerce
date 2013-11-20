@@ -254,6 +254,15 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
             }
         }
 
+        String categoryString = element.getAttributeValue("category");
+
+        if (categoryString != null) {
+            Object category = StandardExpressionProcessor.processExpression(arguments, categoryString);
+            if (category != null) {
+                mvelParameters.put("category", category);
+            }
+        }
+
         @SuppressWarnings("unchecked")
         Map<String,Object> blcRuleMap = (Map<String,Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
         if (blcRuleMap != null) {

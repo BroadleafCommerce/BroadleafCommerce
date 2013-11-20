@@ -166,6 +166,13 @@ public class StructuredContentImpl implements StructuredContent {
                     tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
                     group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
                     ruleIdentifier = RuleIdentifier.ORDER, friendlyName = "Generic_Order_Rule")
+                    ),
+            @AdminPresentationMapField(
+                fieldName = RuleIdentifier.CATEGORY,
+                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 6,
+                    tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
+                    group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
+                    ruleIdentifier = RuleIdentifier.CATEGORY, friendlyName = "Generic_Category_Rule")
                     )
         }
     )
