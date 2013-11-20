@@ -1,6 +1,5 @@
 package com.broadleafcommerce.customfield.service.handler;
 
-import com.broadleafcommerce.customfield.domain.CustomField;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -16,8 +15,12 @@ import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.context.NoSuchMessageException;
+
+import com.broadleafcommerce.customfield.domain.CustomField;
+import com.broadleafcommerce.customfield.service.CustomFieldInfo;
 
 import java.util.Map;
 
@@ -104,9 +107,18 @@ public class CustomFieldCustomPersistenceHandler extends CustomPersistenceHandle
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getMessageSource() != null) {
             Map<String, FieldMetadata> targetProperties = helper.getSimpleMergedProperties(customFieldInstance.getCustomFieldTarget(), persistencePerspective);
+            
+            String fieldName = CustomFieldInfo.CUSTOM_FIELD_FIELD_NAMES.get(customFieldInstance.getCustomFieldTarget());
+            fieldName = fieldName + FieldManager.MAPFIELDSEPARATOR + customFieldInstance.getAttributeName();
+            
             for (Map.Entry<String, FieldMetadata> entry : targetProperties.entrySet()) {
                 if (entry.getValue() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata metadata = (BasicFieldMetadata) entry.getValue();
+                    
+                    if (metadata.getName().equals(fieldName)) {
+                        continue;
+                    }
+                    
                     if (metadata.getGroup() != null) {
                         try {
                             String translatedGroup = context.getMessageSource().getMessage(metadata.getGroup(), null, context.getJavaLocale());
