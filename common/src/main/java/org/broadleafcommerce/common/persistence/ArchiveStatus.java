@@ -19,9 +19,10 @@ package org.broadleafcommerce.common.persistence;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.io.Serializable;
 
 /**
  * @author Jeff Fischer
@@ -30,7 +31,7 @@ import java.io.Serializable;
 public class ArchiveStatus implements Serializable {
 
     @Column(name = "ARCHIVED")
-    @AdminPresentation(friendlyName = "archived", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "archived", visibility = VisibilityEnum.HIDDEN_ALL, group = "ArchiveStatus")
     protected Character archived = 'N';
 
     public Character getArchived() {
