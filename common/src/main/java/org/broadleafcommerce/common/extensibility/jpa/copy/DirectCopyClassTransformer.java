@@ -27,6 +27,8 @@ import javassist.CtMethod;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.AnnotationMemberValue;
 import javassist.bytecode.annotation.ArrayMemberValue;
@@ -38,13 +40,17 @@ import java.io.ByteArrayInputStream;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityListeners;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
@@ -204,6 +210,12 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                         }
                     }
 
+                    //copy over any EntityListeners
+                    ClassFile classFile = clazz.getClassFile();
+                    ClassFile templateFile = template.getClassFile();
+                    ConstPool constantPool = classFile.getConstPool();
+                    buildClassLevelAnnotations(classFile, templateFile, constantPool);
+
                     // Copy over all declared fields from the template class
                     // Note that we do not copy over fields with the @NonCopiedField annotation
                     CtField[] fieldsToCopy = template.getDeclaredFields();
@@ -307,6 +319,75 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
         }
 
         return null;
+    }
+
+    protected void buildClassLevelAnnotations(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {
+        List<?> templateAttributes = templateClassFile.getAttributes();
+        Iterator<?> templateItr = templateAttributes.iterator();
+        Annotation templateEntityListeners = null;
+        while(templateItr.hasNext()) {
+            Object object = templateItr.next();
+            if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
+                AnnotationsAttribute attr = (AnnotationsAttribute) object;
+                Annotation[] items = attr.getAnnotations();
+                for (Annotation annotation : items) {
+                    String typeName = annotation.getTypeName();
+                    if (typeName.equals(EntityListeners.class.getName())) {
+                        templateEntityListeners = annotation;
+                    }
+                }
+            }
+        }
+
+        if (templateEntityListeners != null) {
+            AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
+            List<?> attributes = classFile.getAttributes();
+            Iterator<?> itr = attributes.iterator();
+            Annotation existingEntityListeners = null;
+            while(itr.hasNext()) {
+                Object object = itr.next();
+                if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
+                    AnnotationsAttribute attr = (AnnotationsAttribute) object;
+                    Annotation[] items = attr.getAnnotations();
+                    for (Annotation annotation : items) {
+                        String typeName = annotation.getTypeName();
+                        if (typeName.equals(EntityListeners.class.getName())) {
+                            logger.debug("Stripping out previous EntityListeners annotation at the class level - will merge into new EntityListeners");
+                            existingEntityListeners = annotation;
+                            continue;
+                        }
+                        annotationsAttribute.addAnnotation(annotation);
+                    }
+                    itr.remove();
+                }
+            }
+
+            Annotation entityListeners = getEntityListeners(constantPool, existingEntityListeners, templateEntityListeners);
+            annotationsAttribute.addAnnotation(entityListeners);
+
+            classFile.addAttribute(annotationsAttribute);
+        }
+    }
+
+    protected Annotation getEntityListeners(ConstPool constantPool, Annotation existingEntityListeners, Annotation templateEntityListeners) {
+        Annotation listeners = new Annotation(EntityListeners.class.getName(), constantPool);
+        ArrayMemberValue listenerArray = new ArrayMemberValue(constantPool);
+        Set<MemberValue> listenerMemberValues = new HashSet<MemberValue>();
+        {
+            ArrayMemberValue templateListenerValues = (ArrayMemberValue) templateEntityListeners.getMemberValue("value");
+            listenerMemberValues.addAll(Arrays.asList(templateListenerValues.getValue()));
+            logger.debug("Adding template values to new EntityListeners");
+        }
+        if (existingEntityListeners != null) {
+            ArrayMemberValue oldListenerValues = (ArrayMemberValue) existingEntityListeners.getMemberValue("value");
+            listenerMemberValues.addAll(Arrays.asList(oldListenerValues.getValue()));
+            logger.debug("Adding previous values to new EntityListeners");
+        }
+        listenerArray.setValue(listenerMemberValues.toArray(new MemberValue[listenerMemberValues.size()]));
+        listeners.addMemberValue("value", listenerArray);
+
+        return listeners;
+
     }
 
     /**
