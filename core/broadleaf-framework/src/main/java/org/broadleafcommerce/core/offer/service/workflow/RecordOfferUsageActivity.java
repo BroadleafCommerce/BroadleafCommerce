@@ -18,7 +18,6 @@ package org.broadleafcommerce.core.offer.service.workflow;
 
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutContext;
-import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -26,7 +25,11 @@ import org.broadleafcommerce.core.offer.service.OfferAuditService;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,9 +37,16 @@ import javax.annotation.Resource;
 
 /**
  * Saves an instance of OfferAudit for each offer in the passed in order.
- * Assumes that it is part of a larger transaction context.
+ * 
+ * @author Phillip Verheyden (phillipuniverse)
+ * @see {@link RecordOfferUsageRollbackHandler}
  */
 public class RecordOfferUsageActivity extends BaseActivity<CheckoutContext> {
+    
+    /**
+     * Key to retrieve the audits that were persisted
+     */
+    public static final String SAVED_AUDITS = "savedAudits";
 
     @Resource(name="blOfferAuditService")
     protected OfferAuditService offerAuditService;
@@ -46,19 +56,27 @@ public class RecordOfferUsageActivity extends BaseActivity<CheckoutContext> {
 
     @Override
     public CheckoutContext execute(CheckoutContext context) throws Exception {
-        CheckoutSeed seed = context.getSeedData();
-        Order order = seed.getOrder();
-        if (order != null) {
-            Set<Offer> appliedOffers = offerService.getUniqueOffersFromOrder(order);
-            Map<Offer, OfferCode> offerToCodeMapping = offerService.getOffersRetrievedFromCodes(order.getAddedOfferCodes(), appliedOffers);
-            
-            saveOfferIds(appliedOffers, offerToCodeMapping, order);
-        }
+        Order order = context.getSeedData().getOrder();
+        Set<Offer> appliedOffers = offerService.getUniqueOffersFromOrder(order);
+        Map<Offer, OfferCode> offerToCodeMapping = offerService.getOffersRetrievedFromCodes(order.getAddedOfferCodes(), appliedOffers);
+        
+        List<OfferAudit> audits = saveOfferIds(appliedOffers, offerToCodeMapping, order);
+        
+        Map<String, Object> state = new HashMap<String, Object>();
+        state.put(SAVED_AUDITS, audits);
+        
+        ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), state);
 
         return context;
     }
     
-    protected void saveOfferIds(Set<Offer> offers, Map<Offer, OfferCode> offerToCodeMapping, Order order) {
+    /**
+     * Persists each of the offers to the database as {@link OfferAudit}s.
+     * 
+     * @return the {@link OfferAudit}s that were persisted
+     */
+    protected List<OfferAudit> saveOfferIds(Set<Offer> offers, Map<Offer, OfferCode> offerToCodeMapping, Order order) {
+        List<OfferAudit> audits = new ArrayList<OfferAudit>(offers.size());
         for (Offer offer : offers) {
             OfferAudit audit = offerAuditService.create();
             audit.setCustomerId(order.getCustomer().getId());
@@ -73,7 +91,10 @@ public class RecordOfferUsageActivity extends BaseActivity<CheckoutContext> {
             
             audit.setRedeemedDate(SystemTime.asDate());
             audit = offerAuditService.save(audit);
+            audits.add(audit);
         }
+        
+        return audits;
     }
         
 }
