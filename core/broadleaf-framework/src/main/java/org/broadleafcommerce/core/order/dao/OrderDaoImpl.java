@@ -19,6 +19,22 @@
  */
 package org.broadleafcommerce.core.order.dao;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.ListIterator;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -28,14 +44,6 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.ListIterator;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -113,7 +121,11 @@ public class OrderDaoImpl implements OrderDao {
         if (customer.getUsername() == null) {
             customer.setUsername(String.valueOf(customer.getId()));
             if (customerDao.readCustomerById(customer.getId()) != null) {
-                throw new IllegalArgumentException("Attempting to save a customer with an id (" + customer.getId() + ") that already exists in the database. This can occur when legacy customers have been migrated to Broadleaf customers, but the batchStart setting has not been declared for id generation. In such a case, the defaultBatchStart property of IdGenerationDaoImpl (spring id of blIdGenerationDao) should be set to the appropriate start value.");
+                throw new IllegalArgumentException("Attempting to save a customer with an id (" + customer.getId() + ") " +
+                        "that already exists in the database. This can occur when legacy customers have been migrated to " +
+                        "Broadleaf customers, but the batchStart setting has not been declared for id generation. In " +
+                        "such a case, the defaultBatchStart property of IdGenerationDaoImpl (spring id of " +
+                        "blIdGenerationDao) should be set to the appropriate start value.");
             }
             customer = customerDao.save(customer);
         }
@@ -196,5 +208,32 @@ public class OrderDaoImpl implements OrderDao {
             order = save(order);
         }
         return order;
+    }
+
+    @Override
+    public List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<OrderImpl> root = criteria.from(OrderImpl.class);
+        criteria.select(root);
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<String> statusList = new ArrayList<String>();
+        if (statuses != null) {
+            for (OrderStatus status : statuses) {
+                statusList.add(status.getType());
+            }
+        } else {
+            statusList.add("IN_PROCESS");
+        }
+        restrictions.add(root.get("status").in(statusList));
+        if (names != null) {
+            restrictions.add(root.get("name").in(Arrays.asList(names)));
+        }
+        if (dateCreatedMinThreshold != null) {
+            restrictions.add(builder.lessThan(root.get("auditable").get("dateCreated").as(Date.class), dateCreatedMinThreshold));
+        }
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        TypedQuery<Order> query = em.createQuery(criteria);
+        return query.getResultList();
     }
 }
