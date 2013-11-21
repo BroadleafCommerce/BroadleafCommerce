@@ -76,7 +76,7 @@ public class PromotableOrderImpl implements PromotableOrder {
 
     @Override
     public void setOrderSubTotalToPriceWithoutAdjustments() {
-        Money calculatedSubTotal = calculateOrderSubTotalWithoutOrderAdjustments();
+        Money calculatedSubTotal = calculateSubtotalWithoutAdjustments();
         order.setSubTotal(calculatedSubTotal);
     }
     
@@ -84,14 +84,6 @@ public class PromotableOrderImpl implements PromotableOrder {
     public void setOrderSubTotalToPriceWithAdjustments() {
         Money calculatedSubTotal = calculateSubtotalWithAdjustments();
         order.setSubTotal(calculatedSubTotal);
-    }    
-
-    private Money calculateOrderSubTotalWithoutOrderAdjustments() {
-        Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(order.getCurrency());
-        for (OrderItem orderItem : order.getOrderItems()) {
-            calculatedSubTotal = calculatedSubTotal.add(orderItem.getTotalPrice());
-        }
-        return calculatedSubTotal;
     }
 
     @Override
