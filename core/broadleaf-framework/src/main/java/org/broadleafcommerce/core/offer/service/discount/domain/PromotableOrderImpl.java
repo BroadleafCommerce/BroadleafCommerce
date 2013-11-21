@@ -83,10 +83,10 @@ public class PromotableOrderImpl implements PromotableOrder {
         order.setSubTotal(calculatedSubTotal);
     }    
 
-    private Money calculateOrderSubTotalWithoutOrderAdjustments() {
+    protected Money calculateOrderSubTotalWithoutOrderAdjustments() {
         Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(order.getCurrency());
-        for (OrderItem orderItem : order.getOrderItems()) {
-            calculatedSubTotal = calculatedSubTotal.add(orderItem.getTotalPrice());
+        for (PromotableOrderItem orderItem : getAllOrderItems()) {
+            calculatedSubTotal = calculatedSubTotal.add(orderItem.calculateTotalWithoutAdjustments());
         }
         return calculatedSubTotal;
     }
