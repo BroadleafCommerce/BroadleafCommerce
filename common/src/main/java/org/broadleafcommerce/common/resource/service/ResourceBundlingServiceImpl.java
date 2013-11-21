@@ -23,18 +23,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.resource.GeneratedResource;
-import org.broadleafcommerce.common.web.resource.AbstractGeneratedResourceHandler;
-import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
-
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -47,6 +35,20 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.cache.CacheStatType;
+import org.broadleafcommerce.common.cache.StatisticsService;
+import org.broadleafcommerce.common.resource.GeneratedResource;
+import org.broadleafcommerce.common.web.resource.AbstractGeneratedResourceHandler;
+import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 
 /**
  * @see ResourceBundlingService
@@ -75,7 +77,10 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     
     @javax.annotation.Resource(name = "blResourceMinificationService")
     protected ResourceMinificationService minifyService;
-    
+
+    @javax.annotation.Resource(name="blStatisticsService")
+    protected StatisticsService statisticsService;
+
     @Override
     public Resource getBundle(String versionedBundleName) {
         // If we can find this bundle on the file system, we've already generated it
@@ -169,6 +174,11 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     @Override
     public String getVersionedBundleName(String unversionedBundleName) {
         Element e = getBundleVersionsCache().get(unversionedBundleName);
+        if (e == null) {
+            statisticsService.addCacheStat(CacheStatType.RESOURCE_BUNDLING_CACHE_HIT_RATE.toString(), false);
+        } else {
+            statisticsService.addCacheStat(CacheStatType.RESOURCE_BUNDLING_CACHE_HIT_RATE.toString(), true);
+        }
         return e == null ? null : (String) e.getValue();
     }
     

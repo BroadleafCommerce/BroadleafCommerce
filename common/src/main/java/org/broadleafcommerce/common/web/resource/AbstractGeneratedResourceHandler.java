@@ -26,6 +26,8 @@ import net.sf.ehcache.Element;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.cache.CacheStatType;
+import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.springframework.core.io.Resource;
 
@@ -42,8 +44,12 @@ import java.util.List;
  *
  */
 public abstract class AbstractGeneratedResourceHandler {
+
     protected static final Log LOG = LogFactory.getLog(AbstractGeneratedResourceHandler.class);
-    
+
+    @javax.annotation.Resource(name="blStatisticsService")
+    protected StatisticsService statisticsService;
+
     protected Cache generatedResourceCache;
     
     /**
@@ -78,7 +84,11 @@ public abstract class AbstractGeneratedResourceHandler {
     public Resource getResource(String path, List<Resource> locations) {
         Element e = getGeneratedResourceCache().get(path);
         Resource r = null;
-        
+        if (e == null) {
+            statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), false);
+        } else {
+            statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), true);
+        }
         boolean shouldGenerate = false;
         if (e == null || e.getObjectValue() == null) {
             shouldGenerate = true;

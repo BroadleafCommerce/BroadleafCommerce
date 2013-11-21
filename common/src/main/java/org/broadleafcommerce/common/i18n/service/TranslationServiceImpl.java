@@ -34,6 +34,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.cache.CacheStatType;
+import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.i18n.dao.TranslationDao;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
@@ -51,6 +53,9 @@ public class TranslationServiceImpl implements TranslationService {
     
     @Resource(name = "blTranslationDao")
     protected TranslationDao dao;
+
+    @Resource(name="blStatisticsService")
+    protected StatisticsService statisticsService;
     
     protected Cache cache;
     
@@ -132,8 +137,10 @@ public class TranslationServiceImpl implements TranslationService {
         String countryCacheKey = getCacheKey(entityType, entityId, property, localeCountryCode);
         Element countryValue = getCache().get(countryCacheKey);
         if (countryValue != null) {
+            statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
             translation = (Translation) countryValue.getObjectValue();
         } else {
+            statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
             translation = getTranslation(entityType, entityId, property, localeCountryCode);
             if (translation == null) {
                 translation = new TranslationImpl();
@@ -146,8 +153,10 @@ public class TranslationServiceImpl implements TranslationService {
             String nonCountryCacheKey = getCacheKey(entityType, entityId, property, localeCode);
             Element nonCountryValue = getCache().get(nonCountryCacheKey);
             if (nonCountryValue != null) {
+                statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
                 translation = (Translation) nonCountryValue.getObjectValue();
             } else {
+                statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
                 translation = getTranslation(entityType, entityId, property, localeCode);
                 if (translation == null) {
                     translation = new TranslationImpl();
