@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
-import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Adjustment;
@@ -74,8 +73,8 @@ public class OfferServiceImpl implements OfferService {
     @Resource(name="blOfferCodeDao")
     protected OfferCodeDao offerCodeDao;
     
-    @Resource(name="blOfferAuditDao")
-    protected OfferAuditDao offerAuditDao;
+    @Resource(name="blOfferAuditService")
+    protected OfferAuditService offerAuditService;
 
     @Resource(name="blOfferDao")
     protected OfferDao offerDao;
@@ -328,7 +327,7 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public boolean verifyMaxCustomerUsageThreshold(Customer customer, Offer offer) {
         if (offer.isLimitedUsePerCustomer()) {                
-            Long currentUses = offerAuditDao.countUsesByCustomer(customer.getId(), offer.getId());
+            Long currentUses = offerAuditService.countUsesByCustomer(customer.getId(), offer.getId());
             if (currentUses >= offer.getMaxUsesPerCustomer()) {
                 return false;
             }
@@ -341,7 +340,7 @@ public class OfferServiceImpl implements OfferService {
         int codeMaxUses = code.getMaxUses();
         boolean underCodeMaxUses = true;
         if (codeMaxUses > 0) {
-            Long currentCodeUses = offerAuditDao.countOfferCodeUses(code.getId());
+            Long currentCodeUses = offerAuditService.countOfferCodeUses(code.getId());
             underCodeMaxUses = currentCodeUses < codeMaxUses;
         }
         return underCodeMaxUses && verifyMaxCustomerUsageThreshold(customer, code.getOffer());

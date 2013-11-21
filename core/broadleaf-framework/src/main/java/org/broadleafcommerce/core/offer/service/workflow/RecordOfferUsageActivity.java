@@ -19,10 +19,10 @@ package org.broadleafcommerce.core.offer.service.workflow;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutContext;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
-import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.OfferAuditService;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.BaseActivity;
@@ -38,8 +38,8 @@ import javax.annotation.Resource;
  */
 public class RecordOfferUsageActivity extends BaseActivity<CheckoutContext> {
 
-    @Resource(name="blOfferAuditDao")
-    protected OfferAuditDao offerAuditDao;
+    @Resource(name="blOfferAuditService")
+    protected OfferAuditService offerAuditService;
     
     @Resource(name = "blOfferService")
     protected OfferService offerService;
@@ -60,7 +60,7 @@ public class RecordOfferUsageActivity extends BaseActivity<CheckoutContext> {
     
     protected void saveOfferIds(Set<Offer> offers, Map<Offer, OfferCode> offerToCodeMapping, Order order) {
         for (Offer offer : offers) {
-            OfferAudit audit = offerAuditDao.create();
+            OfferAudit audit = offerAuditService.create();
             audit.setCustomerId(order.getCustomer().getId());
             audit.setOfferId(offer.getId());
             audit.setOrderId(order.getId());
@@ -72,7 +72,7 @@ public class RecordOfferUsageActivity extends BaseActivity<CheckoutContext> {
             }
             
             audit.setRedeemedDate(SystemTime.asDate());
-            offerAuditDao.save(audit);
+            audit = offerAuditService.save(audit);
         }
     }
         
