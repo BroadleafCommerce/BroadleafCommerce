@@ -31,7 +31,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
 
 @Embeddable
-public class AdminAuditable implements Serializable, SandBoxNonProductionSkip {
+public class AdminAuditable implements Serializable, SandBoxNonProductionSkip, AdminAudit {
 
     private static final long serialVersionUID = 1L;
 
@@ -51,34 +51,42 @@ public class AdminAuditable implements Serializable, SandBoxNonProductionSkip {
     @Column(name = "UPDATED_BY")
     protected Long updatedBy;
 
+    @Override
     public Date getDateCreated() {
         return dateCreated;
     }
 
+    @Override
     public Date getDateUpdated() {
         return dateUpdated;
     }
 
+    @Override
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
 
+    @Override
     public void setDateUpdated(Date dateUpdated) {
         this.dateUpdated = dateUpdated;
     }
 
+    @Override
     public Long getCreatedBy() {
         return createdBy;
     }
 
+    @Override
     public void setCreatedBy(Long createdBy) {
         this.createdBy = createdBy;
     }
 
+    @Override
     public Long getUpdatedBy() {
         return updatedBy;
     }
 
+    @Override
     public void setUpdatedBy(Long updatedBy) {
         this.updatedBy = updatedBy;
     }
