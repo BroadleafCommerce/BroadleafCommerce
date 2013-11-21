@@ -37,6 +37,7 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -507,4 +508,18 @@ public interface OrderService {
      * @param log the Log to use to print a debug-level message
      */
     public void printOrder(Order order, Log log);
+
+    /**
+     * Deletes carts from the database. Carts are generally considered orders that have
+     * not made it to the submitted status. The method parameters can be left null, or included to refine
+     * the deletion criteria. Note, if statuses are null, the query defaults to selecting
+     * only orders that have a status of IN_PROCESS.
+     *
+     * @param names One or more order names to restrict the deletion by. Can be null.
+     * @param statuses One or more order statuses to restrict the deletion by. Can be null.
+     * @param dateCreatedMinThreshold Min creation date to restrict the deletion by. Orders created before this date
+     *                                are removed. Can be null.
+     * @return the number of deleted carts
+     */
+    List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold);
 }
