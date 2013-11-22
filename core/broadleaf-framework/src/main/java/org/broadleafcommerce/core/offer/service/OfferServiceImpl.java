@@ -337,11 +337,10 @@ public class OfferServiceImpl implements OfferService {
     
     @Override
     public boolean verifyMaxCustomerUsageThreshold(@NotNull Customer customer, OfferCode code) {
-        int codeMaxUses = code.getMaxUses();
         boolean underCodeMaxUses = true;
-        if (codeMaxUses > 0) {
+        if (code.isLimitedUse()) {
             Long currentCodeUses = offerAuditService.countOfferCodeUses(code.getId());
-            underCodeMaxUses = currentCodeUses < codeMaxUses;
+            underCodeMaxUses = currentCodeUses < code.getMaxUses();
         }
         return underCodeMaxUses && verifyMaxCustomerUsageThreshold(customer, code.getOffer());
     }

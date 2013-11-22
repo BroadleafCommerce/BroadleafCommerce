@@ -398,7 +398,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             if (receiveQtyNeeded > 0) {
                 int itemQtyAvailableToBeUsedAsTarget = priceDetail.getQuantityAvailableToBeUsedAsTarget(itemOffer);
                 if (itemQtyAvailableToBeUsedAsTarget > 0) {
-                    if ((promotion.isUnlimitedUsePerOrder()) || (itemOffer.getUses() < promotion.getMaxUsesPerOrder())) {
+                    if (promotion.isUnlimitedUsePerOrder() || (itemOffer.getUses() < promotion.getMaxUsesPerOrder())) {
                         int qtyToMarkAsTarget = Math.min(receiveQtyNeeded, itemQtyAvailableToBeUsedAsTarget);
                         receiveQtyNeeded -= qtyToMarkAsTarget;
                         priceDetail.addPromotionDiscount(itemOffer, itemOffer.getOffer().getTargetItemCriteria(), qtyToMarkAsTarget);
