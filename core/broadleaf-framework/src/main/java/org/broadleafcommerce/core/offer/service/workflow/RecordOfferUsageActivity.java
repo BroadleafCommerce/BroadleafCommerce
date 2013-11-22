@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.offer.service.workflow;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -47,6 +49,8 @@ public class RecordOfferUsageActivity extends BaseActivity<CheckoutContext> {
      * Key to retrieve the audits that were persisted
      */
     public static final String SAVED_AUDITS = "savedAudits";
+    
+    protected static final Log LOG = LogFactory.getLog(RecordOfferUsageActivity.class);
 
     @Resource(name="blOfferAuditService")
     protected OfferAuditService offerAuditService;
@@ -84,9 +88,16 @@ public class RecordOfferUsageActivity extends BaseActivity<CheckoutContext> {
             audit.setOrderId(order.getId());
             
             //add the code that was used to obtain the offer to the audit context
-            OfferCode codeUsedToRetrieveOffer = offerToCodeMapping.get(offer);
-            if (codeUsedToRetrieveOffer != null) {
-                audit.setOfferCodeId(codeUsedToRetrieveOffer.getId());
+            try {
+                OfferCode codeUsedToRetrieveOffer = offerToCodeMapping.get(offer);
+                if (codeUsedToRetrieveOffer != null) {
+                    audit.setOfferCodeId(codeUsedToRetrieveOffer.getId());
+                }
+            } catch (UnsupportedOperationException e) {
+                LOG.warn("Checking for offer code max usage has not been enabled in your Broadleaf installation. This warning" +
+                        " will only appear in the Broadleaf 3.0 line, versions 3.0.6-GA and above. In order to fix your" +
+                        " version of Broadleaf to enable this functionality, refer to the OfferAuditWeaveImpl or directly to" +
+                        " https://github.com/BroadleafCommerce/BroadleafCommerce/pull/195.");
             }
             
             audit.setRedeemedDate(SystemTime.asDate());

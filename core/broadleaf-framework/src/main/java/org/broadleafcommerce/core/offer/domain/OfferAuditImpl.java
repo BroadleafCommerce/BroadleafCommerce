@@ -18,6 +18,8 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -38,6 +40,8 @@ import javax.persistence.Table;
 public class OfferAuditImpl implements OfferAudit {
 
     public static final long serialVersionUID = 1L;
+    
+    protected static final Log LOG = LogFactory.getLog(OfferAuditImpl.class);
 
     @Id
     @GeneratedValue(generator = "OfferAuditId")
@@ -56,10 +60,6 @@ public class OfferAuditImpl implements OfferAudit {
     @Index(name="OFFERAUDIT_OFFER_INDEX", columnNames={"OFFER_ID"})
     protected Long offerId;
 
-    @Column(name = "OFFER_CODE_ID")
-    @Index(name="OFFERAUDIT_OFFER_CODE_INDEX", columnNames={"OFFER_CODE_ID"})
-    protected Long offerCodeId;
-    
     @Column(name = "CUSTOMER_ID")
     @Index(name="OFFERAUDIT_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Long customerId;
@@ -93,12 +93,12 @@ public class OfferAuditImpl implements OfferAudit {
 
     @Override
     public Long getOfferCodeId() {
-        return offerCodeId;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setOfferCodeId(Long offerCodeId) {
-        this.offerCodeId = offerCodeId;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -133,27 +133,47 @@ public class OfferAuditImpl implements OfferAudit {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
+        try {
+            return new HashCodeBuilder()
+                .append(customerId)
+                .append(offerId)
+                .append(getOfferCodeId())
+                .append(redeemedDate)
+                .append(orderId)
+                .build();
+        } catch (UnsupportedOperationException e) {
+            return new HashCodeBuilder()
             .append(customerId)
             .append(offerId)
-            .append(offerCodeId)
             .append(redeemedDate)
             .append(orderId)
             .build();
+        }
     }
     
     @Override
     public boolean equals(Object o) {
         if (o instanceof OfferAuditImpl) {
             OfferAuditImpl that = (OfferAuditImpl) o;
-            return new EqualsBuilder()
+            
+            try {
+                return new EqualsBuilder()
+                    .append(this.id, that.id)
+                    .append(this.customerId, that.customerId)
+                    .append(this.offerId, that.offerId)
+                    .append(this.getOfferCodeId(), that.getOfferCodeId())
+                    .append(this.redeemedDate, that.redeemedDate)
+                    .append(this.orderId, that.orderId)
+                    .build();
+            } catch (UnsupportedOperationException e) {
+                return new EqualsBuilder()
                 .append(this.id, that.id)
                 .append(this.customerId, that.customerId)
                 .append(this.offerId, that.offerId)
-                .append(this.offerCodeId, that.offerCodeId)
                 .append(this.redeemedDate, that.redeemedDate)
                 .append(this.orderId, that.orderId)
                 .build();
+            }
         }
         
         return false;
