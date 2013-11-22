@@ -130,7 +130,7 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
             dynamicEntityDao.detach(adminInstance);
             adminInstance = (AdminUser) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             
-            if(!databasePassword.equals(adminInstance.getPassword())){
+            if(!currentPassword.equals(adminInstance.getPassword())){
                  adminInstance.setUnencodedPassword(adminInstance.getPassword());
                  adminInstance.setPassword(null);
             }
