@@ -117,19 +117,24 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
         }
     }
 
-    @Override
+     @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {       
         Entity entity = persistencePackage.getEntity();
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminUser.class.getName(), persistencePerspective);
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-            AdminUser adminInstance = (AdminUser) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            AdminUser adminInstance = (AdminUser) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey); 
+            String currentPassword =  adminInstance.getPassword();
+            
             dynamicEntityDao.detach(adminInstance);
             adminInstance = (AdminUser) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            adminInstance.setUnencodedPassword(adminInstance.getPassword());
-            adminInstance.setPassword(null);
             
+            if(!currentPassword.equals(adminInstance.getPassword())){
+                 adminInstance.setUnencodedPassword(adminInstance.getPassword());
+                 adminInstance.setPassword(null);
+            }
+
             // The current user can update there data, but they cannot update other user's data.
             if (! adminRemoteSecurityService.getPersistentAdminUser().getId().equals(adminInstance.getId())) {
                 adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.UPDATE);                
