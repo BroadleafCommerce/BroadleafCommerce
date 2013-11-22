@@ -1,26 +1,38 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.structure.service;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.apache.commons.collections.CollectionUtils;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +45,8 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.common.cache.CacheStatType;
+import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
@@ -48,16 +62,6 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * @author bpolster
@@ -89,6 +93,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     
     @Resource(name = "blStructuredContentServiceExtensionManager")
     protected StructuredContentServiceExtensionManager extensionManager;
+
+    @Resource(name="blStatisticsService")
+    protected StatisticsService statisticsService;
 
     protected Cache structuredContentCache;
 
@@ -226,11 +233,11 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         if (context.isProductionSandBox()) {
             contentDTOList = getStructuredContentListFromCache(cacheKey);
         }
-        if (CollectionUtils.isEmpty(contentDTOList)) {
+        if (contentDTOList == null) {
             List<StructuredContent> contentList = structuredContentDao.findActiveStructuredContentByType(contentType,
                     locale, languageOnlyLocale);
             contentDTOList = buildStructuredContentDTOList(contentList, secure);
-            if (context.isProductionSandBox() && !CollectionUtils.isEmpty(contentDTOList)) {
+            if (context.isProductionSandBox()) {
                 addStructuredContentListToCache(cacheKey, contentDTOList);
             }
         }
@@ -250,11 +257,11 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         if (context.isProductionSandBox()) {
             contentDTOList = getStructuredContentListFromCache(cacheKey);
         }
-        if (CollectionUtils.isEmpty(contentDTOList)) {
+        if (contentDTOList == null) {
             List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByNameAndType(
                     contentType, contentName, locale, languageOnlyLocale);
             contentDTOList = buildStructuredContentDTOList(productionContentList, secure);
-            if (context.isProductionSandBox() && !CollectionUtils.isEmpty(contentDTOList)) {
+            if (context.isProductionSandBox()) {
                 addStructuredContentListToCache(cacheKey, contentDTOList);
             }
         }
@@ -274,10 +281,10 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         if (context.isProductionSandBox()) {
             contentDTOList = getStructuredContentListFromCache(cacheKey);
         }
-        if (CollectionUtils.isEmpty(contentDTOList)) {
+        if (contentDTOList == null) {
             List<StructuredContent> productionContentList = structuredContentDao.findActiveStructuredContentByName(contentName, locale, languageOnlyLocale);
             contentDTOList = buildStructuredContentDTOList(productionContentList, secure);
-            if (context.isProductionSandBox() && !CollectionUtils.isEmpty(contentDTOList)) {
+            if (context.isProductionSandBox()) {
                 addStructuredContentListToCache(cacheKey, contentDTOList);
             }
         }
@@ -548,9 +555,11 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     public List<StructuredContentDTO> getStructuredContentListFromCache(String key) {
         Element scElement =  getStructuredContentCache().get(key);
         if (scElement != null) {
+            statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), true);
             return (List<StructuredContentDTO>) scElement.getValue();
         }
+        statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), false);
         return null;
     }
-}
 
+}

@@ -1,24 +1,39 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
@@ -33,15 +48,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 /**
  * @author Brian Polster
  */
@@ -51,6 +57,9 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    @Resource(name="blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
 
     protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
         return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.MEDIA;
@@ -66,7 +75,9 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             return FieldProviderResponse.NOT_HANDLED;
         }
         
+        boolean dirty = false;
         try {
+            setNonDisplayableValues(populateValueRequest);
             Class<?> valueType = null;
             if (!populateValueRequest.getProperty().getName().contains(FieldManager.MAPFIELDSEPARATOR)) {
                 valueType = populateValueRequest.getReturnType();
@@ -93,21 +104,46 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 } catch (FieldNotAvailableException e) {
                     throw new IllegalArgumentException(e);
                 }
+                populateValueRequest.getProperty().setOriginalValue(convertMediaToJson(media));
 
+                boolean persist = false;
                 if (media == null) {
                     media = (Media) valueType.newInstance();
+                    persist = true;
                 }
 
-                updateMediaFields(media, newMedia);
-                populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(media);
-                populateValueRequest.getFieldManager().setFieldValue(instance,
-                        populateValueRequest.getProperty().getName(), media);
+                Map description = BeanUtils.describe(media);
+                for (Object temp : description.keySet()) {
+                    String property = (String) temp;
+                    //ignore id and SandBoxDiscriminator fields
+                    String[] ignoredProperties = sandBoxHelper.getSandBoxDiscriminatorFieldList();
+                    ignoredProperties = (String[]) ArrayUtils.add(ignoredProperties, "id");
+                    Arrays.sort(ignoredProperties);
+                    if (Arrays.binarySearch(ignoredProperties, property) < 0) {
+                        String prop1 = String.valueOf(description.get(property));
+                        String prop2 = String.valueOf(BeanUtils.getProperty(newMedia, property));
+                        if (!prop1.equals(prop2)) {
+                            dirty = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (dirty) {
+                    updateMediaFields(media, newMedia);
+                    if (persist) {
+                        populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(media);
+                    }
+                    populateValueRequest.getFieldManager().setFieldValue(instance,
+                            populateValueRequest.getProperty().getName(), media);
+                }
             } else {
                 throw new UnsupportedOperationException("MediaFields only work with Media types.");
             }
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
+        populateValueRequest.getProperty().setIsDirty(dirty);
 
         return FieldProviderResponse.HANDLED;
     }

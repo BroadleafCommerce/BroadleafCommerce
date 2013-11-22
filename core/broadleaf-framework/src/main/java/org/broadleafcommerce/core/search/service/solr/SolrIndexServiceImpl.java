@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -27,7 +30,6 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.StopWatch;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -95,7 +97,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     public static String ATTR_MAP = "productAttributes";
 
     @Override
-    @SuppressWarnings("rawtypes")
     public void rebuildIndex() throws ServiceException, IOException {
         LOG.info("Rebuilding the solr index...");
         StopWatch s = new StopWatch();
@@ -111,7 +112,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         DynamicSkuPricingService savedPricingService = SkuPricingConsiderationContext.getSkuPricingService();
         DynamicSkuActiveDatesService savedActiveDateServcie = SkuActiveDateConsiderationContext.getSkuActiveDatesService();
         try {
-            Long numProducts = productDao.readCountAllActiveProducts(SystemTime.asDate());
+            Long numProducts = productDao.readCountAllActiveProducts();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("There are " + numProducts + " total products");
             }
@@ -213,7 +214,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @return the list of all active products to be used by the index building task
      */
     protected List<Product> readAllActiveProducts() {
-        return productDao.readAllActiveProducts(SystemTime.asDate());
+        return productDao.readAllActiveProducts();
     }
 
     /**
@@ -227,7 +228,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @since 2.2.0
      */
     protected List<Product> readAllActiveProducts(int page, int pageSize) {
-        return productDao.readAllActiveProducts(page, pageSize, SystemTime.asDate());
+        return productDao.readAllActiveProducts(page, pageSize);
     }
 
     /**

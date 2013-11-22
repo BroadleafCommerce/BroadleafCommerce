@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.file.service;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -96,11 +99,8 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     @Resource(name="blNamedOperationManager")
     protected NamedOperationManager namedOperationManager;
 
-    protected StaticAsset findStaticAsset(String fullUrl, SandBox sandBox) {
-        StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl, sandBox);
-        if (staticAsset == null && sandBox != null) {
-            staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl, null);
-        }
+    protected StaticAsset findStaticAsset(String fullUrl) {
+        StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl);
 
         return staticAsset;
     }
@@ -181,14 +181,10 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
     @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
-    public Map<String, String> getCacheFileModel(String fullUrl, SandBox sandBox, Map<String, String> parameterMap) throws Exception {
-        StaticAsset staticAsset = findStaticAsset(fullUrl, sandBox);
+    public Map<String, String> getCacheFileModel(String fullUrl, Map<String, String> parameterMap) throws Exception {
+        StaticAsset staticAsset = findStaticAsset(fullUrl);
         if (staticAsset == null) {
-            if (sandBox == null) {
-                throw new AssetNotFoundException("Unable to find an asset for the url (" + fullUrl + ") using the production sandBox.");
-            } else {
-                throw new AssetNotFoundException("Unable to find an asset for the url (" + fullUrl + ") using the sandBox id (" + sandBox.getId() + "), or the production sandBox.");
-            }
+            throw new AssetNotFoundException("Unable to find an asset for the url (" + fullUrl + ")");
         }
         String mimeType = staticAsset.getMimeType();
 

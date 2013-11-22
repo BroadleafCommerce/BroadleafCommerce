@@ -1,20 +1,30 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -53,7 +63,7 @@ import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.core.workflow.SequenceProcessor;
+import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.exception.LockAcquisitionException;
@@ -65,12 +75,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * @author apazzolini
@@ -118,16 +122,16 @@ public class OrderServiceImpl implements OrderService {
     
     /* Workflows */
     @Resource(name = "blAddItemWorkflow")
-    protected SequenceProcessor addItemWorkflow;
+    protected Processor addItemWorkflow;
     
     @Resource(name = "blUpdateProductOptionsForItemWorkflow")
-    private SequenceProcessor updateProductOptionsForItemWorkflow;
+    private Processor updateProductOptionsForItemWorkflow;
 
     @Resource(name = "blUpdateItemWorkflow")
-    protected SequenceProcessor updateItemWorkflow;
+    protected Processor updateItemWorkflow;
     
     @Resource(name = "blRemoveItemWorkflow")
-    protected SequenceProcessor removeItemWorkflow;
+    protected Processor removeItemWorkflow;
 
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager transactionManager;
@@ -317,11 +321,19 @@ public class OrderServiceImpl implements OrderService {
     public void cancelOrder(Order order) {
         orderDao.delete(order);
     }
+
     @Override
     @Transactional("blTransactionManager")
     public void deleteOrder(Order order) {
         orderDao.delete(order);
     }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold) {
+        return orderDao.findCarts(names, statuses, dateCreatedMinThreshold);
+    }
+
     @Override
     @Transactional("blTransactionManager")
     public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {

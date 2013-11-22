@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.site.domain;
 
 import java.lang.reflect.Method;
@@ -31,7 +34,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.logging.Log;
@@ -47,9 +49,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -102,11 +101,6 @@ public class SiteImpl implements Site, Status {
     @Index(name = "BLC_SITE_ID_VAL_INDEX", columnNames = { "SITE_IDENTIFIER_VALUE" })
     protected String siteIdentifierValue;
 
-    @ManyToOne(targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "PRODUCTION_SANDBOX_ID")
-    @AdminPresentation(friendlyName = "SiteImpl_Production_SandBox", visibility = VisibilityEnum.HIDDEN_ALL)
-    protected SandBox productionSandbox;
-
     @ManyToMany(targetEntity = CatalogImpl.class, cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "BLC_SITE_CATALOG", joinColumns = @JoinColumn(name = "SITE_ID"), inverseJoinColumns = @JoinColumn(name = "CATALOG_ID"))
     @BatchSize(size = 50)
@@ -158,16 +152,6 @@ public class SiteImpl implements Site, Status {
     @Override
     public void setSiteIdentifierValue(String siteIdentifierValue) {
         this.siteIdentifierValue = siteIdentifierValue;
-    }
-
-    @Override
-    public SandBox getProductionSandbox() {
-        return productionSandbox;
-    }
-
-    @Override
-    public void setProductionSandbox(SandBox productionSandbox) {
-        this.productionSandbox = productionSandbox;
     }
 
     @Override

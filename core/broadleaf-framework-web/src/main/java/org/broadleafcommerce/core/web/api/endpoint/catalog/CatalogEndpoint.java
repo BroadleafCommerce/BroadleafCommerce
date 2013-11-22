@@ -1,21 +1,34 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
 package org.broadleafcommerce.core.web.api.endpoint.catalog;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.media.domain.Media;
@@ -46,14 +59,6 @@ import org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuWrapper;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 
 /**
  * This class exposes catalog services as RESTful APIs.  It is dependent on
@@ -151,11 +156,11 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                     .addMessage(BroadleafWebServicesException.INVALID_CATEGORY_ID, categoryId);
         }
 
-        List<SearchFacetDTO> availableFacets = searchService.getSearchFacets();
+        List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
         ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
         try {
             ProductSearchResult result = null;
-            result = searchService.findProductsByCategoryAndQuery(category, q, searchCriteria);
+            result = getSearchService().findProductsByCategoryAndQuery(category, q, searchCriteria);
             facetService.setActiveFacetResults(result.getFacets(), request);
 
             SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());
@@ -192,11 +197,11 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                     .addMessage(BroadleafWebServicesException.SEARCH_QUERY_MALFORMED, q);
         }
 
-        List<SearchFacetDTO> availableFacets = searchService.getSearchFacets();
+        List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
         ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
         try {
             ProductSearchResult result = null;
-            result = searchService.findProductsByQuery(q, searchCriteria);
+            result = getSearchService().findProductsByQuery(q, searchCriteria);
             facetService.setActiveFacetResults(result.getFacets(), request);
 
             SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());
@@ -544,5 +549,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                 .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
+    protected SearchService getSearchService() {
+        return searchService;
+    }
 }
 

@@ -1,22 +1,36 @@
 /*
- * Copyright 2008-2009 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCMapUtils;
@@ -30,6 +44,7 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
@@ -48,16 +63,6 @@ import org.broadleafcommerce.openadmin.web.handler.AdminNavigationHandlerMapping
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for the Admin
@@ -152,17 +157,17 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @throws ServiceException
      */
     protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, Entity entity, Property collectionProperty,
-            MultiValueMap<String, String> requestParams, String sectionKey, PersistenceResponse persistenceResponse)
+            MultiValueMap<String, String> requestParams, String sectionKey, PersistenceResponse persistenceResponse, List<SectionCrumb> sectionCrumbs)
             throws ServiceException {
         String idProperty = service.getIdProperty(mainMetadata);
         if (persistenceResponse != null && persistenceResponse.getAdditionalData().containsKey(PersistenceResponse.AdditionalData.CLONEID)) {
             entity.findProperty(idProperty).setValue((String) persistenceResponse.getAdditionalData().get(PersistenceResponse.AdditionalData.CLONEID));
         }
         DynamicResultSet drs = service.getRecordsForCollection(mainMetadata, entity, collectionProperty,
-                getCriteria(requestParams), getStartIndex(requestParams), getMaxIndex(requestParams)).getDynamicResultSet();
+                getCriteria(requestParams), getStartIndex(requestParams), getMaxIndex(requestParams), sectionCrumbs).getDynamicResultSet();
 
         ListGrid listGrid = formService.buildCollectionListGrid(entity.findProperty(idProperty).getValue(), drs,
-                collectionProperty, sectionKey);
+                collectionProperty, sectionKey, sectionCrumbs);
         listGrid.setListGridType(ListGrid.Type.INLINE);
 
         return listGrid;
@@ -181,11 +186,11 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @throws ServiceException
      */
     protected ListGrid getCollectionListGrid(ClassMetadata mainMetadata, Entity entity, Property collectionProperty,
-                MultiValueMap<String, String> requestParams, String sectionKey)
+                MultiValueMap<String, String> requestParams, String sectionKey, List<SectionCrumb> sectionCrumbs)
                 throws ServiceException {
-        return getCollectionListGrid(mainMetadata, entity, collectionProperty, requestParams, sectionKey, null);
+        return getCollectionListGrid(mainMetadata, entity, collectionProperty, requestParams, sectionKey, null, sectionCrumbs);
     }
-    
+
     /**
      * @see #getBlankDynamicFieldTemplateForm(DynamicEntityFormInfo, EntityForm)
      * @param info
@@ -214,7 +219,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                 .withCustomCriteria(new String[] { info.getCriteriaName(), null, info.getPropertyName(), info.getPropertyValue() });
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         
-        EntityForm dynamicForm = formService.createEntityForm(cmd);
+        EntityForm dynamicForm = formService.createEntityForm(cmd, null);
         dynamicForm.clearFieldsMap();
 
         if (dynamicFormOverride != null) {
@@ -284,7 +289,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         }
         
         // Assemble the dynamic form for structured content type
-        EntityForm dynamicForm = formService.createEntityForm(cmd, entity);
+        EntityForm dynamicForm = formService.createEntityForm(cmd, entity, null, null);
         
         for (Field field : fieldsToMove) {
             FieldMetadata fmd = cmd.getPMap().get(field.getName()).getMetadata();
@@ -584,11 +589,12 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @param sectionClassName
      * @return the PersistencePacakageRequest
      */
-    protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName) {
+    protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, List<SectionCrumb> sectionCrumbs) {
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(sectionClassName)
-                .withCustomCriteria(getSectionCustomCriteria());
-        
+                .withCustomCriteria(getSectionCustomCriteria())
+                .withSectionCrumbs(sectionCrumbs);
+
         attachSectionSpecificInfo(ppr);
         
         return ppr;
@@ -603,13 +609,47 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @return the PersistencePacakageRequest
      */
     protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, 
-            MultiValueMap<String, String> requestParams) {
+            MultiValueMap<String, String> requestParams, List<SectionCrumb> sectionCrumbs) {
         FilterAndSortCriteria[] fascs = getCriteria(requestParams);
-        return getSectionPersistencePackageRequest(sectionClassName)
+        PersistencePackageRequest ppr = PersistencePackageRequest.standard()
+                .withCeilingEntityClassname(sectionClassName)
+                .withCustomCriteria(getSectionCustomCriteria())
                 .withFilterAndSortCriteria(fascs)
                 .withStartIndex(getStartIndex(requestParams))
-                .withMaxIndex(getMaxIndex(requestParams));
-    }
-    
+                .withMaxIndex(getMaxIndex(requestParams))
+                .withSectionCrumbs(sectionCrumbs);
 
+        attachSectionSpecificInfo(ppr);
+
+        return ppr;
+    }
+
+    protected List<SectionCrumb> getSectionCrumbs(HttpServletRequest request, String currentSection, String currentSectionId) {
+        String crumbs = request.getParameter("sectionCrumbs");
+        List<SectionCrumb> myCrumbs = new ArrayList<SectionCrumb>();
+        if (!StringUtils.isEmpty(crumbs)) {
+            String[] crumbParts = crumbs.split(",");
+            for (String part : crumbParts) {
+                SectionCrumb crumb = new SectionCrumb();
+                String[] crumbPieces = part.split("--");
+                crumb.setSectionIdentifier(crumbPieces[0]);
+                crumb.setSectionId(crumbPieces[1]);
+                if (!myCrumbs.contains(crumb)) {
+                    myCrumbs.add(crumb);
+                }
+            }
+        }
+        if (currentSection != null && currentSectionId != null) {
+            SectionCrumb crumb = new SectionCrumb();
+            if (currentSection.startsWith("/")) {
+                currentSection = currentSection.substring(1, currentSection.length());
+            }
+            crumb.setSectionIdentifier(currentSection);
+            crumb.setSectionId(currentSectionId);
+            if (!myCrumbs.contains(crumb)) {
+                myCrumbs.add(crumb);
+            }
+        }
+        return myCrumbs;
+    }
 }

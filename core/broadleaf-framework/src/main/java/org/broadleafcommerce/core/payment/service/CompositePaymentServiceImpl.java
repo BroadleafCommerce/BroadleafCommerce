@@ -1,20 +1,28 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.payment.service;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
@@ -24,13 +32,9 @@ import org.broadleafcommerce.core.payment.service.module.PaymentResponse;
 import org.broadleafcommerce.core.payment.service.module.PaymentResponseImpl;
 import org.broadleafcommerce.core.payment.service.workflow.CompositePaymentResponse;
 import org.broadleafcommerce.core.payment.service.workflow.PaymentSeed;
-import org.broadleafcommerce.core.workflow.SequenceProcessor;
+import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Execute the payment workflow independently of the checkout workflow
@@ -40,7 +44,7 @@ import java.util.Map;
 public class CompositePaymentServiceImpl implements CompositePaymentService {
 
     @Resource(name = "blPaymentWorkflow")
-    protected SequenceProcessor paymentWorkflow;
+    protected Processor paymentWorkflow;
 
     public CompositePaymentResponse executePayment(Order order, Map<PaymentInfo, Referenced> payments, PaymentResponse response) throws PaymentException {
         /*
@@ -87,11 +91,11 @@ public class CompositePaymentServiceImpl implements CompositePaymentService {
         return executePayment(order, payments);
     }
 
-    public SequenceProcessor getPaymentWorkflow() {
+    public Processor getPaymentWorkflow() {
         return paymentWorkflow;
     }
 
-    public void setPaymentWorkflow(SequenceProcessor paymentWorkflow) {
+    public void setPaymentWorkflow(Processor paymentWorkflow) {
         this.paymentWorkflow = paymentWorkflow;
     }
 }

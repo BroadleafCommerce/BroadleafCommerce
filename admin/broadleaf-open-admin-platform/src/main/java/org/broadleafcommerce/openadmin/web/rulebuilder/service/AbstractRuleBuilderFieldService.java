@@ -1,37 +1,23 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.rulebuilder.service;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.service.DynamicEntityRemoteService;
-import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
-import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
-import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
-import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
-import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.MessageSource;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -41,6 +27,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
+import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -188,8 +191,8 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
     @Override
     public void afterPropertiesSet() throws Exception {
         // This bean only is valid when the following bean is active. (admin)
-        if (applicationContext.containsBean(DynamicEntityRemoteService.DEFAULTPERSISTENCEMANAGERREF)) {
-            PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(DynamicEntityRemoteService.DEFAULTPERSISTENCEMANAGERREF);
+        if (applicationContext.containsBean(PersistenceManagerFactory.getPersistenceManagerRef())) {
+            PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(PersistenceManagerFactory.getPersistenceManagerRef());
             persistenceManager.setTargetMode(TargetModeType.SANDBOX);
             dynamicEntityDao = persistenceManager.getDynamicEntityDao();
             setFields(new ArrayList<FieldData>());

@@ -1,29 +1,32 @@
-
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
 
 package org.broadleafcommerce.openadmin.web.form.component;
-
-import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.openadmin.web.form.entity.Field;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 
 public class ListGridRecord {
 
@@ -31,7 +34,10 @@ public class ListGridRecord {
     protected String id;
     protected List<Field> fields = new ArrayList<Field>();
     protected List<Field> hiddenFields = new ArrayList<Field>();
-    
+    protected Boolean isDirty;
+    protected Boolean isError;
+    protected String errorKey;
+
     /**
      * Convenience map keyed by the field name. Used to guarantee field ordering with header fields within a ListGrid
      */
@@ -142,4 +148,29 @@ public class ListGridRecord {
 
         return sb.toString();
     }
+
+    public Boolean getIsDirty() {
+        return isDirty == null ? false : isDirty;
+    }
+
+    public void setDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+
+    public Boolean getIsError() {
+        return isError == null ? false : isError;
+    }
+
+    public void setIsError(Boolean isError) {
+        this.isError = isError;
+    }
+
+    public String getErrorKey() {
+        return errorKey;
+    }
+
+    public void setErrorKey(String errorKey) {
+        this.errorKey = errorKey;
+    }
+
 }

@@ -1,26 +1,34 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.domain;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -31,22 +39,17 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
 
-/**
- * The Class CategoryXrefImpl is for testing purposes only.  It helps autogenerate the cross reference table
- * properly with the DISPLY_ORDER column
-
- * @author krosenberg
- *
- */
 @Entity
 @Polymorphism(type = PolymorphismType.EXPLICIT)
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY_XREF")
 @AdminPresentationClass(excludeFromPolymorphism = false)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
@@ -56,60 +59,61 @@ public class CategoryXrefImpl implements CategoryXref {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-    /** The category id. */
-    @EmbeddedId
-    CategoryXrefPK categoryXrefPK = new CategoryXrefPK();
+    @Id
+    @GeneratedValue(generator= "CategoryXrefId")
+    @GenericGenerator(
+        name="CategoryXrefId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="CategoryXrefImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl")
+        }
+    )
+    @Column(name = "CATEGORY_XREF_ID")
+    protected Long id;
 
-    public CategoryXrefPK getCategoryXrefPK() {
-        return categoryXrefPK;
-    }
+    @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+    @JoinColumn(name = "CATEGORY_ID")
+    protected Category category = new CategoryImpl();
 
-    public void setCategoryXrefPK(final CategoryXrefPK categoryXrefPK) {
-        this.categoryXrefPK = categoryXrefPK;
-    }
+    @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+    @JoinColumn(name = "SUB_CATEGORY_ID")
+    protected Category subCategory = new CategoryImpl();
 
-    @Column(name = "DISPLAY_ORDER")
+    @Column(name = "DISPLAY_ORDER", precision = 10, scale = 6)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Long displayOrder;
+    protected BigDecimal displayOrder;
 
-    public Long getDisplayOrder() {
+    public BigDecimal getDisplayOrder() {
         return displayOrder;
     }
 
-    public void setDisplayOrder(final Long displayOrder) {
+    public void setDisplayOrder(final BigDecimal displayOrder) {
         this.displayOrder = displayOrder;
     }
 
-    /**
-     * @return
-     * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#getCategory()
-     */
     public Category getCategory() {
-        return categoryXrefPK.getCategory();
+        return category;
     }
 
-    /**
-     * @param category
-     * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#setCategory(org.broadleafcommerce.core.catalog.domain.Category)
-     */
     public void setCategory(Category category) {
-        categoryXrefPK.setCategory(category);
+        this.category = category;
     }
 
-    /**
-     * @return
-     * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#getSubCategory()
-     */
     public Category getSubCategory() {
-        return categoryXrefPK.getSubCategory();
+        return subCategory;
     }
 
-    /**
-     * @param subCategory
-     * @see org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl.CategoryXrefPK#setSubCategory(org.broadleafcommerce.core.catalog.domain.Category)
-     */
     public void setSubCategory(Category subCategory) {
-        categoryXrefPK.setSubCategory(subCategory);
+        this.subCategory = subCategory;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
@@ -119,17 +123,16 @@ public class CategoryXrefImpl implements CategoryXref {
 
         CategoryXrefImpl that = (CategoryXrefImpl) o;
 
-        if (categoryXrefPK != null ? !categoryXrefPK.equals(that.categoryXrefPK) : that.categoryXrefPK != null)
-            return false;
-        if (displayOrder != null ? !displayOrder.equals(that.displayOrder) : that.displayOrder != null) return false;
+        if (category != null ? !category.equals(that.category) : that.category != null) return false;
+        if (subCategory != null ? !subCategory.equals(that.subCategory) : that.subCategory != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = categoryXrefPK != null ? categoryXrefPK.hashCode() : 0;
-        result = 31 * result + (displayOrder != null ? displayOrder.hashCode() : 0);
+        int result = category != null ? category.hashCode() : 0;
+        result = 31 * result + (subCategory != null ? subCategory.hashCode() : 0);
         return result;
     }
 }

@@ -1,27 +1,23 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.structure.domain;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -36,6 +32,16 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 /**
  * Created by bpolster.
  */
@@ -43,6 +49,9 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_FLD")
 @EntityListeners(value = { AdminAuditableListener.class })
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
+})
 public class StructuredContentFieldImpl implements StructuredContentField {
 
     private static final long serialVersionUID = 1L;
@@ -66,10 +75,6 @@ public class StructuredContentFieldImpl implements StructuredContentField {
 
     @Column (name = "FLD_KEY")
     protected String fieldKey;
-
-    @ManyToOne(targetEntity = StructuredContentImpl.class)
-    @JoinColumn(name="SC_ID")
-    protected StructuredContent structuredContent;
 
     @Column (name = "VALUE")
     protected String stringValue;
@@ -100,16 +105,6 @@ public class StructuredContentFieldImpl implements StructuredContentField {
     }
 
     @Override
-    public StructuredContent getStructuredContent() {
-        return structuredContent;
-    }
-
-    @Override
-    public void setStructuredContent(StructuredContent structuredContent) {
-        this.structuredContent = structuredContent;
-    }
-
-    @Override
     public String getValue() {
         if (stringValue != null && stringValue.length() > 0) {
             return stringValue;
@@ -132,18 +127,6 @@ public class StructuredContentFieldImpl implements StructuredContentField {
             lobValue = null;
             stringValue = null;
         }
-    }
-
-    @Override
-    public StructuredContentField cloneEntity() {
-        StructuredContentFieldImpl newContentField = new StructuredContentFieldImpl();
-        newContentField.fieldKey = fieldKey;
-        newContentField.structuredContent = structuredContent;
-        newContentField.lobValue = lobValue;
-        newContentField.stringValue = stringValue;
-
-        return newContentField;
-
     }
 
     @Override

@@ -1,20 +1,37 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
+
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,19 +62,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 
 /**
  * @author jfischer
@@ -281,7 +285,9 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     List<FilterMapping> filterMappings = getAdornedTargetFilterMappings(persistencePerspective, cto,
                             mergedProperties, adornedTargetList);
                     int totalRecords = getTotalRecords(adornedTargetList.getAdornedTargetEntityClassname(), filterMappings);
-                    fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), Long.valueOf(totalRecords + 1));
+                    Class<?> type = fieldManager.getField(instance.getClass(), adornedTargetList.getSortField()).getType();
+                    boolean isBigDecimal = BigDecimal.class.isAssignableFrom(type);
+                    fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), isBigDecimal?new BigDecimal(totalRecords + 1):Long.valueOf(totalRecords + 1));
                 }
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
                 persistenceManager.getDynamicEntityDao().clear();
@@ -324,7 +330,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                 myRecord = records.get(index);
                 
                 Integer requestedSequence = Integer.valueOf(entity.findProperty(adornedTargetList.getSortField()).getValue());
-                Integer previousSequence = Integer.parseInt(String.valueOf(getFieldManager().getFieldValue(myRecord, adornedTargetList.getSortField())));
+                Integer previousSequence = new BigDecimal(String.valueOf(getFieldManager().getFieldValue(myRecord, adornedTargetList.getSortField()))).intValue();
                 
                 if (!previousSequence.equals(requestedSequence)) {
                     // Sequence has changed. Rebalance the list
@@ -337,8 +343,10 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     }
                     
                     index = 1;
+                    Class<?> type = fieldManager.getField(myRecord.getClass(), adornedTargetList.getSortField()).getType();
+                    boolean isBigDecimal = BigDecimal.class.isAssignableFrom(type);
                     for (Serializable record : records) {
-                        fieldManager.setFieldValue(record, adornedTargetList.getSortField(), Long.valueOf(index));
+                        fieldManager.setFieldValue(record, adornedTargetList.getSortField(), isBigDecimal?new BigDecimal(index):Long.valueOf(index));
                         index++;
                     }
                 }

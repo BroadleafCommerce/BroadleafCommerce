@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.file.domain;
 
 import java.util.HashMap;
@@ -31,10 +34,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -51,9 +52,6 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
-import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.BatchSize;
@@ -115,12 +113,6 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
             gridOrder = Presentation.FieldOrder.NAME,
             prominent = true)
     protected String name;
-
-    /*@ManyToOne(targetEntity = SiteImpl.class)
-    @JoinColumn(name="SITE_ID")*/
-    @Transient
-    @AdminPresentation(excluded = true)
-    protected Site site;
 
     @Column(name ="FULL_URL", nullable = false)
     @AdminPresentation(friendlyName = "StaticAssetImpl_Full_URL",
@@ -184,36 +176,6 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
 )
     protected Map<String,StaticAssetDescription> contentMessageValues = new HashMap<String,StaticAssetDescription>();
 
-    @ManyToOne (targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "SANDBOX_ID")
-    @AdminPresentation(excluded = true)
-    protected SandBox sandbox;
-
-    @ManyToOne(targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "ORIG_SANDBOX_ID")
-    @AdminPresentation(excluded = true)
-    protected SandBox originalSandBox;
-
-    @Column (name = "ARCHIVED_FLAG")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Archived_Flag", visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="ASST_ARCHVD_FLG_INDX", columnNames={"ARCHIVED_FLAG"})
-    protected Boolean archivedFlag = false;
-
-    @Column (name = "DELETED_FLAG")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Deleted_Flag", visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="ASST_DLTD_FLG_INDX", columnNames={"DELETED_FLAG"})
-    protected Boolean deletedFlag = false;
-
-    @Column (name = "LOCKED_FLAG")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Is_Locked", visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="ASST_LCKD_FLG_INDX", columnNames={"LOCKED_FLAG"})
-    protected Boolean lockedFlag = false;
-
-    @Column (name = "ORIG_ASSET_ID")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Original_Asset_ID", visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="ORIG_ASSET_ID_INDX", columnNames={"ORIG_ASSET_ID"})
-    protected Long originalAssetId;
-
     @Column(name = "STORAGE_TYPE")
     @AdminPresentation(excluded = true)
     protected String storageType;
@@ -269,40 +231,6 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
     }
 
     @Override
-    public Boolean getArchivedFlag() {
-        if (archivedFlag == null) {
-            return Boolean.FALSE;
-        } else {
-            return archivedFlag;
-        }
-    }
-
-    @Override
-    public void setArchivedFlag(Boolean archivedFlag) {
-        this.archivedFlag = archivedFlag;
-    }
-
-    @Override
-    public Long getOriginalAssetId() {
-        return originalAssetId;
-    }
-
-    @Override
-    public void setOriginalAssetId(Long originalAssetId) {
-        this.originalAssetId = originalAssetId;
-    }
-
-    @Override
-    public SandBox getSandbox() {
-        return sandbox;
-    }
-
-    @Override
-    public void setSandbox(SandBox sandbox) {
-        this.sandbox = sandbox;
-    }
-
-    @Override
     public String getMimeType() {
         return mimeType;
     }
@@ -323,16 +251,6 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
     }
 
     @Override
-    public SandBox getOriginalSandBox() {
-        return originalSandBox;
-    }
-
-    @Override
-    public void setOriginalSandBox(SandBox originalSandBox) {
-        this.originalSandBox = originalSandBox;
-    }
-
-    @Override
     public AdminAuditable getAuditable() {
         return auditable;
     }
@@ -340,16 +258,6 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
     @Override
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
-    }
-
-    @Override
-    public Boolean getDeletedFlag() {
-        return deletedFlag;
-    }
-
-    @Override
-    public void setDeletedFlag(Boolean deletedFlag) {
-        this.deletedFlag = deletedFlag;
     }
 
     @Override
@@ -363,16 +271,6 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
     }
 
     @Override
-    public Boolean getLockedFlag() {
-        return lockedFlag;
-    }
-
-    @Override
-    public void setLockedFlag(Boolean lockedFlag) {
-        this.lockedFlag = lockedFlag;
-    }
-
-    @Override
     public String getName() {
         return name;
     }
@@ -380,40 +278,6 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public Site getSite() {
-        return site;
-    }
-
-    @Override
-    public void setSite(Site site) {
-        this.site = site;
-    }
-
-    @Override
-    public StaticAsset cloneEntity() {
-        StaticAssetImpl asset = new StaticAssetImpl();
-        asset.name = name;
-        asset.site = site;
-        asset.archivedFlag = archivedFlag;
-        asset.deletedFlag = deletedFlag;
-        asset.fullUrl = fullUrl;
-        asset.fileSize = fileSize;
-        asset.mimeType = mimeType;
-        asset.sandbox = sandbox;
-        asset.originalSandBox = originalSandBox;
-        asset.originalAssetId = originalAssetId;
-        asset.fileExtension = fileExtension;
-
-        for (String key : contentMessageValues.keySet()) {
-            StaticAssetDescription oldAssetDescription = contentMessageValues.get(key);
-            StaticAssetDescription newAssetDescription = oldAssetDescription.cloneEntity();
-            asset.getContentMessageValues().put(key, newAssetDescription);
-        }
-
-        return asset;
     }
 
     @Override

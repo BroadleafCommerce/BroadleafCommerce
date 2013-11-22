@@ -1,22 +1,24 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -291,56 +293,6 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
     @Override
     public void setContextKey(String contextKey) {
         //do nothing
-    }
-
-    public void checkCloneable(AdminUser adminUser) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = adminUser.getClass().getMethod("clone", new Class[]{});
-        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !adminUser.getClass().getName().startsWith("org.broadleafcommerce")) {
-            //subclass is not implementing the clone method
-            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
-        }
-    }
-
-    @Override
-    public AdminUser clone() {
-        AdminUser clone;
-        try {
-            clone = (AdminUser) Class.forName(this.getClass().getName()).newInstance();
-            try {
-                checkCloneable(clone);
-            } catch (CloneNotSupportedException e) {
-                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
-            }
-            clone.setId(id);
-            clone.setName(name);
-            clone.setLogin(login);
-            clone.setPassword(password);
-            clone.setEmail(email);
-            clone.setPhoneNumber(phoneNumber);
-            clone.setActiveStatusFlag(activeStatusFlag);
-
-            if (allRoles != null) {
-                for (AdminRole role : allRoles) {
-                    AdminRole roleClone = role.clone();
-                    clone.getAllRoles().add(roleClone);
-                }
-            }
-
-            if (allPermissions != null) {
-                for (AdminPermission permission : allPermissions) {
-                    AdminPermission permissionClone = permission.clone();
-                    clone.getAllPermissions().add(permissionClone);
-                }
-            }
-
-            if (overrideSandBox != null) {
-                clone.setOverrideSandBox(overrideSandBox.clone());
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return clone;
     }
 
     @Override

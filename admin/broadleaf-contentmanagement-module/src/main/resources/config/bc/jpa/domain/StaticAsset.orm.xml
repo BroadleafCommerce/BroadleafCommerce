@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce CMS Module
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
@@ -7,16 +27,6 @@
         <query>SELECT staticAsset
                FROM org.broadleafcommerce.cms.file.domain.StaticAsset staticAsset
                WHERE
-                  staticAsset.sandbox = :targetSandbox AND
-                  upper(staticAsset.fullUrl) = upper(:fullUrl)
-        </query>
-    </named-query>
-
-    <named-query name="BC_READ_STATIC_ASSET_BY_FULL_URL_AND_TARGET_SANDBOX_NULL" >
-        <query>SELECT staticAsset
-               FROM org.broadleafcommerce.cms.file.domain.StaticAsset staticAsset
-               WHERE
-                  staticAsset.sandbox is null AND
                   upper(staticAsset.fullUrl) = upper(:fullUrl)
         </query>
     </named-query>
