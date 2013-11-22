@@ -327,7 +327,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         if (filterQueries != null) {
             solrQuery.setFilterQueries(filterQueries);
         }
-        solrQuery.addFilterQuery(shs.getNamespaceFieldName() + ":" + shs.getCurrentNamespace());
+        solrQuery.addFilterQuery(shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")");
         solrQuery.set("defType", "edismax");
         solrQuery.set("qf", buildQueryFieldsString());
 

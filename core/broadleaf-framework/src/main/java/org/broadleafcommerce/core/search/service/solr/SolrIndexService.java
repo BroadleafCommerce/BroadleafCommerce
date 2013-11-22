@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
+import org.apache.solr.client.solrj.SolrServer;
 import org.broadleafcommerce.common.exception.ServiceException;
 
 import java.io.IOException;
@@ -35,5 +36,41 @@ public interface SolrIndexService {
      * @throws ServiceException
      */
     public void rebuildIndex() throws ServiceException, IOException;
+    
+    /**
+     * The internal method for building indexes. This is exposed via this interface in case someone would like to 
+     * more granularly control the indexing strategy.
+     * 
+     * @see #restoreState(Object[])
+     * @param page
+     * @param pageSize
+     * @param useReindexServer - if set to false will index directly on the primary server
+     * @throws ServiceException
+     */
+    public void buildIncrementalIndex(int page, int pageSize, boolean useReindexServer) throws ServiceException;
+
+    /**
+     * Saves some global context that might be altered during indexing.
+     * 
+     * @return
+     */
+    public Object[] saveState();
+
+    /**
+     * Restores state that was saved prior to indexing that might have been altered.
+     * 
+     * @see #saveState()
+     * @param pack
+     */
+    public void restoreState(Object[] pack);
+
+    /**
+     * Triggers the Solr optimize index function on the given server
+     * 
+     * @param server
+     * @throws ServiceException
+     * @throws IOException
+     */
+    public void optimizeIndex(SolrServer server) throws ServiceException, IOException;
 
 }

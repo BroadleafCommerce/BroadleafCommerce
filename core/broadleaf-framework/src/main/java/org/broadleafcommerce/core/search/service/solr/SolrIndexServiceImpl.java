@@ -24,6 +24,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -106,11 +107,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             deleteAllDocuments();
         }
 
-        // Populate the reindex core with the necessary information
-        BroadleafRequestContext savedContext = BroadleafRequestContext.getBroadleafRequestContext();
-        HashMap savedPricing = SkuPricingConsiderationContext.getSkuPricingConsiderationContext();
-        DynamicSkuPricingService savedPricingService = SkuPricingConsiderationContext.getSkuPricingService();
-        DynamicSkuActiveDatesService savedActiveDateServcie = SkuActiveDateConsiderationContext.getSkuActiveDatesService();
+        Object[] pack = saveState();
         try {
             Long numProducts = productDao.readCountAllActiveProducts();
             if (LOG.isDebugEnabled()) {
@@ -121,22 +118,11 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 buildIncrementalIndex(page, pageSize);
                 page++;
             }
-            try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Optimizing the index...");
-                }
-                SolrContext.getReindexServer().optimize();
-            } catch (SolrServerException e) {
-                throw new ServiceException("Could not rebuild index", e);
-            }
+            optimizeIndex(SolrContext.getReindexServer());
         } catch (ServiceException e) {
             throw e;
         } finally {
-            // Restore the current context, regardless of whether an exception happened or not
-            BroadleafRequestContext.setBroadleafRequestContext(savedContext);
-            SkuPricingConsiderationContext.setSkuPricingConsiderationContext(savedPricing);
-            SkuPricingConsiderationContext.setSkuPricingService(savedPricingService);
-            SkuActiveDateConsiderationContext.setSkuActiveDatesService(savedActiveDateServcie);
+            restoreState(pack);
         }
 
         // Swap the active and the reindex cores
@@ -152,7 +138,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     protected void deleteAllDocuments() throws ServiceException {
         try {
-            String deleteQuery = "*:*";
+            String deleteQuery = shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")";
             LOG.debug("Deleting by query: " + deleteQuery);
             SolrContext.getReindexServer().deleteByQuery(deleteQuery);
             SolrContext.getReindexServer().commit();
@@ -162,6 +148,11 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     protected void buildIncrementalIndex(int page, int pageSize) throws ServiceException {
+        buildIncrementalIndex(page, pageSize, true);
+    }
+
+    @Override
+    public void buildIncrementalIndex(int page, int pageSize, boolean useReindexServer) throws ServiceException {
         TransactionStatus status = TransactionUtils.createTransaction("readProducts",
                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (LOG.isDebugEnabled()) {
@@ -185,8 +176,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             }
 
             if (!CollectionUtils.isEmpty(documents)) {
-                SolrContext.getReindexServer().add(documents);
-                SolrContext.getReindexServer().commit();
+                SolrServer server = useReindexServer ? SolrContext.getReindexServer() : SolrContext.getServer();
+                server.add(documents);
+                server.commit();
             }
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
         } catch (SolrServerException e) {
@@ -417,5 +409,36 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
         return convertedProperty.toString();
     }
+
+    @Override
+    public Object[] saveState() {
+         return new Object[] {
+             BroadleafRequestContext.getBroadleafRequestContext(),
+             SkuPricingConsiderationContext.getSkuPricingConsiderationContext(),
+             SkuPricingConsiderationContext.getSkuPricingService(),
+             SkuActiveDateConsiderationContext.getSkuActiveDatesService()
+         };
+     }
+         
+    @Override
+    @SuppressWarnings("rawtypes")
+    public void restoreState(Object[] pack) {
+         BroadleafRequestContext.setBroadleafRequestContext((BroadleafRequestContext) pack[0]);
+         SkuPricingConsiderationContext.setSkuPricingConsiderationContext((HashMap) pack[1]);
+         SkuPricingConsiderationContext.setSkuPricingService((DynamicSkuPricingService) pack[2]);
+         SkuActiveDateConsiderationContext.setSkuActiveDatesService((DynamicSkuActiveDatesService) pack[3]);
+     }
+     
+    @Override
+    public void optimizeIndex(SolrServer server) throws ServiceException, IOException {
+         try {
+             if (LOG.isDebugEnabled()) {
+                 LOG.debug("Optimizing the index...");
+             }
+             server.optimize();
+         } catch (SolrServerException e) {
+             throw new ServiceException("Could not optimize index", e);
+         }
+     }
 
 }
