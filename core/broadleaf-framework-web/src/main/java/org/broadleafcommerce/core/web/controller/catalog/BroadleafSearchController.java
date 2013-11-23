@@ -63,7 +63,7 @@ public class BroadleafSearchController extends AbstractCatalogController {
     @Resource(name = "blSearchFacetDTOService")
     protected SearchFacetDTOService facetService;
     @Resource(name = "blSearchRedirectService")
-    private SearchRedirectService searchRedirectService;
+    protected SearchRedirectService searchRedirectService;
     protected static String searchView = "catalog/search";
     
     protected static String PRODUCTS_ATTRIBUTE_NAME = "products";  
