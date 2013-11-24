@@ -19,15 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder.service;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -45,6 +36,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.annotation.Resource;
+
 /**
  * @author Elbert Bautista (elbertbautista)
  */
@@ -53,6 +55,14 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
     protected DynamicEntityDao dynamicEntityDao;
     protected ApplicationContext applicationContext;
     protected List<FieldData> fields = new ArrayList<FieldData>();
+
+    @Resource(name = "blRuleBuilderFieldServiceExtensionManager")
+    protected RuleBuilderFieldServiceExtensionManager extensionManager;
+
+    @Override
+    public void setRuleBuilderFieldServiceExtensionManager(RuleBuilderFieldServiceExtensionManager extensionManager) {
+        this.extensionManager = extensionManager;
+    }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -177,7 +187,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
         try {
             RuleBuilderFieldService clone = this.getClass().newInstance();
             clone.setFields(this.fields);
-
+            clone.setRuleBuilderFieldServiceExtensionManager(extensionManager);
             return clone;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -208,6 +218,9 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
 
             try {
                 init();
+                if (extensionManager != null) {
+                    extensionManager.getProxy().modify(fields, getName());
+                }
             } finally {
                 if (contextWasNull) {
                     BroadleafRequestContext.setBroadleafRequestContext(null);
