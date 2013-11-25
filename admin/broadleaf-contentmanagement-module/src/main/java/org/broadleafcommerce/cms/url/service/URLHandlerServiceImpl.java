@@ -124,7 +124,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         String[] keys = CacheManager.getInstance().getCacheNames();
         URLHandler handler = null;
-        String key = buildKey(context.getSandbox(), requestURI);
+        String key = buildKey(context.getSandBox(), requestURI);
         if (context.isProductionSandBox()) {
             handler = getUrlHandlerFromCache(key);
         }

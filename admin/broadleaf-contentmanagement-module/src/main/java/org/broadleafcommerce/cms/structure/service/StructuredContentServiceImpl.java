@@ -228,7 +228,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        String cacheKey = buildTypeKey(context.getSandbox(), languageOnlyLocale, contentType.getName());
+        String cacheKey = buildTypeKey(context.getSandBox(), languageOnlyLocale, contentType.getName());
         cacheKey = cacheKey+"-"+secure;
         if (context.isProductionSandBox()) {
             contentDTOList = getStructuredContentListFromCache(cacheKey);
@@ -252,7 +252,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        String cacheKey = buildNameKey(context.getSandbox(), languageOnlyLocale, contentType.getName(), contentName);
+        String cacheKey = buildNameKey(context.getSandBox(), languageOnlyLocale, contentType.getName(), contentName);
         cacheKey = cacheKey+"-"+secure;
         if (context.isProductionSandBox()) {
             contentDTOList = getStructuredContentListFromCache(cacheKey);
@@ -276,7 +276,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        String cacheKey = buildNameKey(context.getSandbox(), languageOnlyLocale, "any", contentName);
+        String cacheKey = buildNameKey(context.getSandBox(), languageOnlyLocale, "any", contentName);
         cacheKey = cacheKey+"-"+secure;
         if (context.isProductionSandBox()) {
             contentDTOList = getStructuredContentListFromCache(cacheKey);

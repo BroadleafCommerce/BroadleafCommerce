@@ -114,7 +114,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         Theme theme = themeResolver.resolveTheme(request);
         brc.setLocale(locale);
         brc.setBroadleafCurrency(currency);
-        brc.setSandbox(currentSandbox);
+        brc.setSandBox(currentSandbox);
         brc.setTheme(theme);
         brc.setMessageSource(messageSource);
         brc.setTimeZone(timeZone);

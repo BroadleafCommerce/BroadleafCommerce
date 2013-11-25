@@ -19,12 +19,12 @@
  */
 package org.broadleafcommerce.common.web.expression;
 
+import java.util.Date;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-
-import java.util.Date;
 
 
 /**
@@ -42,7 +42,7 @@ public class BRCVariableExpression implements BroadleafVariableExpression {
     public SandBox getSandbox() {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null) {
-            return brc.getSandbox();
+            return brc.getSandBox();
         }
         return null;
     }

@@ -20,6 +20,14 @@
 package org.broadleafcommerce.common.web;
 
 
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -32,14 +40,6 @@ import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Convenient holder class for various objects to be automatically available on thread local without invoking the various
@@ -80,7 +80,7 @@ public class BroadleafRequestContext {
     protected HttpServletRequest request;
     protected HttpServletResponse response;
     protected WebRequest webRequest;
-    protected SandBox sandbox;
+    protected SandBox sandBox;
     protected Locale locale;
     protected TimeZone timeZone;
     protected BroadleafCurrency broadleafCurrency;
@@ -172,23 +172,23 @@ public class BroadleafRequestContext {
         this.site = site;
     }
 
-    public SandBox getSandbox() {
-        return sandbox;
+    public SandBox getSandBox() {
+        return sandBox;
     }
 
     public Long getSandBoxId() {
-        if (sandbox != null) {
-            return sandbox.getId();
+        if (sandBox != null) {
+            return sandBox.getId();
         }
         return null;
     }
 
     public boolean isProductionSandBox() {
-        return sandbox == null || SandBoxType.PRODUCTION == sandbox.getSandBoxType();
+        return sandBox == null || SandBoxType.PRODUCTION == sandBox.getSandBoxType();
     }
 
-    public void setSandbox(SandBox sandbox) {
-        this.sandbox = sandbox;
+    public void setSandBox(SandBox sandBox) {
+        this.sandBox = sandBox;
     }
 
     public Locale getLocale() {
@@ -272,10 +272,6 @@ public class BroadleafRequestContext {
              secure = ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
         }
         return secure;
-    }
-    
-    public boolean isProductionSandbox() {
-        return (sandbox == null || SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType()));
     }
 
     public Theme getTheme() {
@@ -364,7 +360,7 @@ public class BroadleafRequestContext {
     }
 
     public boolean isAdminMode() {
-        return getSandbox() != null;
+        return getSandBox() != null;
     }
 
 }
