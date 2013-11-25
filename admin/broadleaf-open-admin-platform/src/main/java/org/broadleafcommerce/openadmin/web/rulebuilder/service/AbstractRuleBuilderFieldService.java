@@ -55,6 +55,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
     protected DynamicEntityDao dynamicEntityDao;
     protected ApplicationContext applicationContext;
     protected List<FieldData> fields = new ArrayList<FieldData>();
+    protected static Boolean handlersInitialized = false;
 
     @Resource(name = "blRuleBuilderFieldServiceExtensionManager")
     protected RuleBuilderFieldServiceExtensionManager extensionManager;
@@ -136,6 +137,18 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
 
     @Override
     public List<FieldData> getFields() {
+        // Initialize additional static fields method for the component.  
+        if (!handlersInitialized) {
+            synchronized (handlersInitialized) {
+                if (!handlersInitialized) {
+                    if (extensionManager != null) {
+                        extensionManager.getProxy().addFields(fields, getName());
+                    }
+                }
+            }
+            handlersInitialized = true;
+        }
+
         return fields;
     }
 
@@ -218,9 +231,6 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
 
             try {
                 init();
-                if (extensionManager != null) {
-                    extensionManager.getProxy().modify(fields, getName());
-                }
             } finally {
                 if (contextWasNull) {
                     BroadleafRequestContext.setBroadleafRequestContext(null);
