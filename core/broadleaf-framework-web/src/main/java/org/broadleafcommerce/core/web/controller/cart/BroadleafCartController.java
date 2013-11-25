@@ -232,18 +232,21 @@ public class BroadleafCartController extends AbstractCartController {
         Boolean promoAdded = false;
         String exception = "";
         
-        OfferCode offerCode = offerService.lookupOfferCodeByCode(customerOffer);
-        
-        if (offerCode!=null) {
-            try {
-                orderService.addOfferCode(cart, offerCode, false);
-                promoAdded = true;
-                cart = orderService.save(cart, true);
-            } catch(OfferMaxUseExceededException e) {
-                exception = "Use Limit Exceeded";
+        if (cart != null && !(cart instanceof NullOrderImpl)) {
+            OfferCode offerCode = offerService.lookupOfferCodeByCode(customerOffer);
+            if (offerCode != null) {
+                try {
+                    orderService.addOfferCode(cart, offerCode, false);
+                    promoAdded = true;
+                    cart = orderService.save(cart, true);
+                } catch(OfferMaxUseExceededException e) {
+                    exception = "Use Limit Exceeded";
+                }
+            } else {
+                exception = "Invalid Code";
             }
         } else {
-            exception = "Invalid Code";
+            exception = "Invalid cart";
         }
         
         if (isAjaxRequest(request)) {
