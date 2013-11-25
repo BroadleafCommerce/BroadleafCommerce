@@ -24,13 +24,14 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.List;
 
 /**
  *
@@ -91,7 +92,7 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
                 "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
             q.setParameter("className", className);
             q.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
-            return q.getSingleResult();
+            return q.getResultList().get(0);
         } catch (NoResultException e) {
             return null;
         }
