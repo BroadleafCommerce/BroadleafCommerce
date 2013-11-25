@@ -159,8 +159,9 @@
             <bean class="org.broadleafcommerce.core.checkout.service.workflow.CommitTaxRollbackHandler"/>
         </property>
     </bean>
-    <bean p:order="5000" id="blCompleteOrderActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
-    
+    <bean p:order="5000" id="blCompleteOrderActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity">
+        <property name="rollbackHandler" ref="blCompleteOrderRollbackHandler" />
+    </bean>    
 
     <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
