@@ -18,8 +18,6 @@
         <property name="factor" value="0.00"/>
     </bean>
     
-    <bean id="blTaxService" class="org.broadleafcommerce.core.pricing.service.TaxServiceImpl"/>
-    
     <bean id="blFulfillmentLocationResolver" class="org.broadleafcommerce.core.pricing.service.fulfillment.SimpleFulfillmentLocationResolver" />
 
     <bean id="blFixedPriceFulfillmentPricingProvider"
@@ -155,9 +153,7 @@
         <property name="rollbackHandler" ref="blRecordOfferUsageRollbackHandler" />
     </bean>
     <bean p:order="4000" id="blCommitTaxActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CommitTaxActivity">
-        <property name="rollbackHandler">
-            <bean class="org.broadleafcommerce.core.checkout.service.workflow.CommitTaxRollbackHandler"/>
-        </property>
+        <property name="rollbackHandler" ref="blCommitTaxRollbackHandler" />
     </bean>
     <bean p:order="5000" id="blCompleteOrderActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity">
         <property name="rollbackHandler" ref="blCompleteOrderRollbackHandler" />

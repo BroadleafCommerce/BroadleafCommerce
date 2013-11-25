@@ -23,11 +23,13 @@ import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.RollbackFailureException;
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+@Component("blCommitTaxRollbackHandler")
 public class CommitTaxRollbackHandler implements RollbackHandler {
 
     @Resource(name = "blTaxService")
