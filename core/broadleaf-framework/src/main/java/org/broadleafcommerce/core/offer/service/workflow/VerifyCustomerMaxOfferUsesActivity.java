@@ -20,85 +20,61 @@
 package org.broadleafcommerce.core.offer.service.workflow;
 
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
-import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
-import org.broadleafcommerce.core.offer.domain.Adjustment;
+import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.OfferAuditService;
+import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
 /**
- * Checks the offers being used in the order to make sure that the customer
- * has not exceeded the max uses for the offer.
+ * <p>Checks the offers being used in the order to make sure that the customer
+ * has not exceeded the max uses for the {@link Offer}.</p>
+ * 
+ * This will also verify that max uses for any {@link OfferCode}s that were used to retrieve the {@link Offer}s.
+ * 
+ * @author Phillip Verheyden (phillipuniverse)
  */
 public class VerifyCustomerMaxOfferUsesActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
-    @Resource(name="blOfferAuditDao")
-    private OfferAuditDao offerAuditDao;
+    @Resource(name="blOfferAuditService")
+    protected OfferAuditService offerAuditService;
+    
+    @Resource(name = "blOfferService")
+    protected OfferService offerService;
 
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
-        Map<Long,Long> offerIdToAllowedUsesMap = new HashMap<Long,Long>();
-        CheckoutSeed seed = context.getSeedData();
-        Order order = seed.getOrder();
-        if (order != null) {
-            addOfferIds(order.getOrderAdjustments(), offerIdToAllowedUsesMap);
-
-            if (order.getOrderItems() != null) {
-                for (OrderItem item : order.getOrderItems()) {
-                    addOfferIds(item.getOrderItemAdjustments(), offerIdToAllowedUsesMap);
+        Order order = context.getSeedData().getOrder();
+        Set<Offer> appliedOffers = offerService.getUniqueOffersFromOrder(order);
+        
+        for (Offer offer : appliedOffers) {
+            if (offer.isLimitedUsePerCustomer()) {
+                Long currentUses = offerAuditService.countUsesByCustomer(order.getCustomer().getId(), offer.getId());
+                if (currentUses >= offer.getMaxUsesPerCustomer()) {
+                    throw new OfferMaxUseExceededException("The customer has used this offer more than the maximum allowed number of times.");
                 }
-            }
-
-            if (order.getFulfillmentGroups() != null) {
-                for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-                    addOfferIds(fg.getFulfillmentGroupAdjustments(), offerIdToAllowedUsesMap);
-                }
-            }
-            if (! checkOffers(offerIdToAllowedUsesMap, order)) {
-                throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
             }
         }
-
+        
+        //TODO: allow lenient checking on offer code usage
+        for (OfferCode code : order.getAddedOfferCodes()) {
+            if (code.isLimitedUse()) {
+                Long currentCodeUses = offerAuditService.countOfferCodeUses(code.getId());
+                if (currentCodeUses >= code.getMaxUses()) {
+                    throw new OfferMaxUseExceededException("Offer code " + code.getOfferCode() + " with id " + code.getId()
+                            + " has been than the maximum allowed number of times.");
+                }
+            }
+        }
+        
         return context;
     }
-    
-    private boolean checkOffers(Map<Long,Long> offerIdToAllowedUsesMap, Order order) {
-        boolean orderVerified = true;    
-    
-        if (order.getCustomer() != null && order.getCustomer().getId() != null) {
-            Long customerId = order.getCustomer().getId();
-                        
-            for(Long offerId : offerIdToAllowedUsesMap.keySet()) {
-                Long allowedUses = offerIdToAllowedUsesMap.get(offerId);
-                Long currentUses = offerAuditDao.countUsesByCustomer(customerId, offerId);
-                if (currentUses != null && currentUses >= allowedUses) {
-                    return false;
-                }
-            }
-        }
-        return true;                      
-    }
-        
-    private void addOfferIds(List<? extends Adjustment> adjustments, Map<Long, Long> offerIdToAllowedUsesMap) {
-        if (adjustments != null) {
-            for(Adjustment adjustment : adjustments) {
-                if (adjustment.getOffer() != null) {
-                    Long maxUsesPerCustomer = adjustment.getOffer().getMaxUsesPerCustomer();
-                    if (maxUsesPerCustomer != null && maxUsesPerCustomer > 0) {                
-                        offerIdToAllowedUsesMap.put(adjustment.getOffer().getId(), maxUsesPerCustomer);
-                    }
-                }
-            }
-        }
-    }
-
+   
 }

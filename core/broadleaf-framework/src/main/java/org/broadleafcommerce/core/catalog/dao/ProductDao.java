@@ -24,10 +24,10 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 
-import javax.annotation.Nonnull;
-import javax.persistence.EntityManager;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 /**
  * {@code ProductDao} provides persistence access to {@code Product} instances

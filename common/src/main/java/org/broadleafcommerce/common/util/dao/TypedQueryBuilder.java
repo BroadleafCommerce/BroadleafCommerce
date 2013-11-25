@@ -91,8 +91,24 @@ public class TypedQueryBuilder<T> {
      * @return the QL string
      */
     public String toQueryString() {
-        StringBuilder sb = new StringBuilder()
-            .append("SELECT ").append(rootAlias).append(" FROM ").append(rootClass.getName()).append(" ").append(rootAlias);
+        return toQueryString(false);
+    }
+    
+    /**
+     * Generates the query string based on the current contents of this builder. As the string is generated, this method
+     * will also populate the paramMap, which binds actual restriction values.
+     * 
+     * Note that this method should typically not be invoked through DAOs. Instead, utilize {@link #toQuery(EntityManager)},
+     * which will automatically generate the TypedQuery and populate the required parameters.
+     * 
+     * If you are using this as a COUNT query, you should look at the corresponding {@link #toCountQuery(EntityManager)}
+     * 
+     * @param whether or not the resulting query string should be used as a count query or not
+     * @return the QL string
+     */
+    public String toQueryString(boolean count) {
+        StringBuilder sb = getSelectClause(new StringBuilder(), count)
+                .append(" FROM ").append(rootClass.getName()).append(" ").append(rootAlias);
         if (CollectionUtils.isNotEmpty(restrictions)) {
             sb.append(" WHERE ");
             for (int i = 0; i < restrictions.size(); i++) {
@@ -105,6 +121,20 @@ public class TypedQueryBuilder<T> {
         }
         return sb.toString();
     }
+
+    /**
+     * Adds the select query from {@link #toQueryString()}
+     * 
+     * @return <b>sb</b> with the select query appended to it
+     */
+    protected StringBuilder getSelectClause(StringBuilder sb, boolean count) {
+        sb.append("SELECT ");
+        if (count) {
+            return sb.append("COUNT(*)");
+        } else {
+            return sb.append(rootAlias);
+        }
+    }
     
     /**
      * Returns a TypedQuery that represents this builder object. It will already have all of the appropriate parameter
@@ -115,12 +145,22 @@ public class TypedQueryBuilder<T> {
      */
     public TypedQuery<T> toQuery(EntityManager em) {
         TypedQuery<T> q = em.createQuery(toQueryString(), rootClass);
+        fillParameterMap(q);
+        return q;
+    }
+    
+    public TypedQuery<Long> toCountQuery(EntityManager em) {
+        TypedQuery<Long> q = em.createQuery(toQueryString(true), Long.class);
+        fillParameterMap(q);
+        return q;
+    }
+    
+    protected void fillParameterMap(TypedQuery<?> q) {
         for (Entry<String, Object> entry : paramMap.entrySet()) {
             if (entry.getValue() != null) {
                 q.setParameter(entry.getKey(), entry.getValue());
             }
         }
-        return q;
     }
     
     /**

@@ -186,6 +186,7 @@
             <list>
                 <ref bean="blOrderItemFieldService"/>
                 <ref bean="blCustomerFieldService"/>
+                <ref bean="blCategoryFieldService"/>
                 <ref bean="blTimeFieldService"/>
                 <ref bean="blRequestFieldService"/>
                 <ref bean="blOrderFieldService"/>

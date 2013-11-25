@@ -17,22 +17,38 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.offer.dao;
+/*
+ * Copyright 2008-2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+package org.broadleafcommerce.core.offer.service;
+
+import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
-import org.broadleafcommerce.core.offer.service.OfferService;
-import org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity;
-import org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity;
+import org.broadleafcommerce.profile.core.domain.Customer;
+
 
 /**
- * DAO for auditing what went on with offers being added to an order
+ * Service for managing {@link OfferAudit}s. An {@link OfferAudit} is used to track usage of an offer and offer code
+ * for a particular {@link Order} and {@link Customer}. This provides easy and fast tracking of verifying max uses on
+ * particular {@link Offer}s.
  *
  * @author Phillip Verheyden (phillipuniverse)
- * @see {@link VerifyCustomerMaxOfferUsesActivity}, {@link RecordOfferUsageActivity},
- * {@link OfferService#verifyMaxCustomerUsageThreshold(org.broadleafcommerce.profile.core.domain.Customer, org.broadleafcommerce.core.offer.domain.OfferCode)}
  */
-public interface OfferAuditDao {
-    
+public interface OfferAuditService {
+
     public OfferAudit readAuditById(Long offerAuditId);
     
     /**
@@ -63,5 +79,5 @@ public interface OfferAuditDao {
      * @return
      */
     public Long countOfferCodeUses(Long offerCodeId);
-
+    
 }

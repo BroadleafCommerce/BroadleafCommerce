@@ -19,20 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -65,6 +51,20 @@ import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * 
@@ -584,9 +584,9 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             } else if (Calendar.class.isAssignableFrom(key.getClass())) {
                 strVal = getSimpleDateFormatter().format(((Calendar) key).getTime());
             } else if (Double.class.isAssignableFrom(key.getClass())) {
-                strVal = decimalFormat.format(key);
+                strVal = getDecimalFormatter().format(key);
             } else if (BigDecimal.class.isAssignableFrom(key.getClass())) {
-                strVal = decimalFormat.format(((BigDecimal) key).doubleValue());
+                strVal = getDecimalFormatter().format(key);
             } else {
                 strVal = key.toString();
             }

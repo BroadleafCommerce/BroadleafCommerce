@@ -19,14 +19,14 @@
  */
 package org.broadleafcommerce.common.persistence;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
 
 /**
  * @author Jeff Fischer
@@ -35,7 +35,7 @@ import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
 public class ArchiveStatus implements Serializable, SandBoxNonProductionSkip {
 
     @Column(name = "ARCHIVED")
-    @AdminPresentation(friendlyName = "archived", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "archived", visibility = VisibilityEnum.HIDDEN_ALL, group = "ArchiveStatus")
     protected Character archived = 'N';
 
     public Character getArchived() {

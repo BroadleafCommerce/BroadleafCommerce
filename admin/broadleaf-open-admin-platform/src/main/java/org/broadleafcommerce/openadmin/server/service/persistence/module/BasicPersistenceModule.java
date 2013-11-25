@@ -19,31 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -60,6 +35,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.FormatUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -93,6 +69,31 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+
 /**
  * @author jfischer
  */
@@ -105,7 +106,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     public static final String MAIN_ENTITY_NAME_PROPERTY = "MAIN_ENTITY_NAME";
     public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
 
-    protected DecimalFormat decimalFormat;
     protected ApplicationContext applicationContext;
     protected PersistenceManager persistenceManager;
 
@@ -127,11 +127,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     @Resource(name="blRestrictionFactory")
     protected RestrictionFactory restrictionFactory;
 
-    public BasicPersistenceModule() {
-        decimalFormat = (DecimalFormat) NumberFormat.getInstance(Locale.US);
-        decimalFormat.applyPattern("0.########");
-    }
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -149,7 +144,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     
     @Override
     public DecimalFormat getDecimalFormatter()  {
-        return decimalFormat;
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        Locale locale = brc.getJavaLocale();
+        DecimalFormat format = (DecimalFormat) NumberFormat.getInstance(locale);
+        format.applyPattern("0.########");
+        return format;
     }
 
     @Override
@@ -561,9 +560,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                 } else if (Calendar.class.isAssignableFrom(value.getClass())) {
                                     strVal = getSimpleDateFormatter().format(((Calendar) value).getTime());
                                 } else if (Double.class.isAssignableFrom(value.getClass())) {
-                                    strVal = decimalFormat.format(value);
+                                    strVal = getDecimalFormatter().format(value);
                                 } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
-                                    strVal = decimalFormat.format(((BigDecimal) value).doubleValue());
+                                    strVal = getDecimalFormatter().format(value);
                                 } else {
                                     strVal = value.toString();
                                 }
@@ -607,7 +606,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             } else if (Double.class.isAssignableFrom(value.getClass())) {
                 strVal = getDecimalFormatter().format(value);
             } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
-                strVal = getDecimalFormatter().format(((BigDecimal) value).doubleValue());
+                strVal = getDecimalFormatter().format(value);
             } else {
                 strVal = value.toString();
             }

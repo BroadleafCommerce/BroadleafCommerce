@@ -35,7 +35,6 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.hibernate.ejb.QueryHints;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -54,7 +53,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -493,7 +491,7 @@ public class ProductDaoImpl implements ProductDao {
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
     
         @SuppressWarnings("unchecked")
-        List<Product> results = (List<Product>) query.getResultList();
+        List<Product> results = query.getResultList();
         return results;
     }
     

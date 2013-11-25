@@ -19,14 +19,6 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.LoaderClassPath;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.logging.LifeCycleEvent;
@@ -42,12 +34,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.LoaderClassPath;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+
 /**
  * This class transformer will copy fields, methods, and interface definitions from a source class to a target class,
  * based on the xformTemplates map. It will fail if it encouters any duplicate definitions.
  * 
  * @author Andre Azzolini (apazzolini)
+ * @deprecated do not use this class, use {@link DirectCopyClassTransformer} instead
  */
+@Deprecated
 public class AnnotationsCopyClassTransformer implements BroadleafClassTransformer {
     protected SupportLogger logger;
     

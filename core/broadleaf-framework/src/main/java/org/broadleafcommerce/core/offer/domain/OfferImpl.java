@@ -19,6 +19,46 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.RuleIdentifier;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
+import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
+import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Type;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,44 +84,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.RuleIdentifier;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
-import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
-import org.broadleafcommerce.core.offer.service.type.OfferType;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "BLC_OFFER")
@@ -294,11 +296,10 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM, 
         requiredOverride = RequiredOverride.REQUIRED)
-    @ClonePolicyCollection
     protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
     
     @Column(name = "TOTALITARIAN_OFFER")
-    @AdminPresentation(friendlyName = "OfferImpl_Totalitarian_Offer", 
+    @AdminPresentation(friendlyName = "OfferImpl_Totalitarian_Offer",
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
         visibility = VisibilityEnum.HIDDEN_ALL)
@@ -363,20 +364,6 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
-
-    @Override
-    public List<OfferCode> getOfferCodes() {
-        return getOfferCodesInternal();
-    }
-
-    protected List<OfferCode> getOfferCodesInternal() {
-        return offerCodes;
-    }
-
-    @Override
-    public void setOfferCodes(List<OfferCode> offerCodes) {
-        this.offerCodes = offerCodes;
-    }
 
     @Override
     public Long getId() {
@@ -645,23 +632,46 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
 
     @Override
     public Long getMaxUsesPerCustomer() {
-        return maxUsesPerCustomer;
+        return maxUsesPerCustomer == null ? 0 : maxUsesPerCustomer;
     }
 
     @Override
     public void setMaxUsesPerCustomer(Long maxUsesPerCustomer) {
         this.maxUsesPerCustomer = maxUsesPerCustomer;
     }
+    
+    @Override
+    public boolean isUnlimitedUsePerCustomer() {
+        return getMaxUsesPerCustomer() == 0;
+    }
+    
+    @Override
+    public boolean isLimitedUsePerCustomer() {
+        return getMaxUsesPerCustomer() > 0;
+    }
 
+    @Override
     public int getMaxUsesPerOrder() {
         return maxUsesPerOrder == null ? 0 : maxUsesPerOrder;
     }
 
+    @Override
     public void setMaxUsesPerOrder(int maxUsesPerOrder) {
         this.maxUsesPerOrder = maxUsesPerOrder;
     }
+    
+    @Override
+    public boolean isUnlimitedUsePerOrder() {
+        return getMaxUsesPerOrder() == 0;
+    }
+    
+    @Override
+    public boolean isLimitedUsePerOrder() {
+        return getMaxUsesPerOrder() > 0;
+    }
 
     @Override
+    @Deprecated
     public int getMaxUses() {
         return getMaxUsesPerOrder();
     }
@@ -784,7 +794,17 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     public void setQualifyingItemSubTotal(Money qualifyingItemSubTotal) {
         this.qualifyingItemSubTotal = Money.toAmount(qualifyingItemSubTotal);
     }
-    
+
+    @Override
+    public List<OfferCode> getOfferCodes() {
+        return offerCodes;
+    }
+
+    @Override
+    public void setOfferCodes(List<OfferCode> offerCodes) {
+        this.offerCodes = offerCodes;
+    }
+
     @Override
     public Boolean getRequiresRelatedTargetAndQualifiers() {
         return requiresRelatedTargetAndQualifiers == null ? false : requiresRelatedTargetAndQualifiers;
@@ -802,61 +822,28 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return new HashCodeBuilder()
+            .append(name)
+            .append(startDate)
+            .append(type)
+            .append(value)
+            .build();
     }
-
+    
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        OfferImpl other = (OfferImpl) obj;
-
-        if (id != null && other.id != null) {
-            return id.equals(other.id);
+    public boolean equals(Object o) {
+        if (o instanceof OfferImpl) {
+            OfferImpl that = (OfferImpl) o;
+            return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.name, that.name)
+                .append(this.startDate, that.startDate)
+                .append(this.type, that.type)
+                .append(this.value, that.value)
+                .build();
         }
         
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (startDate == null) {
-            if (other.startDate != null) {
-                return false;
-            }
-        } else if (!startDate.equals(other.startDate)) {
-            return false;
-        }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
-            return false;
-        }
-        if (value == null) {
-            if (other.value != null) {
-                return false;
-            }
-        } else if (!value.equals(other.value)) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     public static class Presentation {
