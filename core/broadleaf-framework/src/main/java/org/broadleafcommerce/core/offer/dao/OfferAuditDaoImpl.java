@@ -16,7 +16,10 @@
 
 package org.broadleafcommerce.core.offer.dao;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.domain.OfferAuditImpl;
 import org.hibernate.ejb.QueryHints;
@@ -26,13 +29,11 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 @Repository("blOfferAuditDao")
 public class OfferAuditDaoImpl implements OfferAuditDao {
+    
+    protected static final Log LOG = LogFactory.getLog(OfferAuditDaoImpl.class);
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -40,10 +41,12 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @Override
     public OfferAudit create() {
         return ((OfferAudit) entityConfiguration.createEntityInstance(OfferAudit.class.getName()));
     }
 
+    @Override
     public void delete(final OfferAudit offerAudit) {
         OfferAudit loa = offerAudit;
         if (!em.contains(loa)) {
@@ -52,26 +55,47 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         em.remove(loa);
     }
 
+    @Override
     public OfferAudit save(final OfferAudit offerAudit) {
         return em.merge(offerAudit);
     }
 
+    @Override
     public OfferAudit readAuditById(final Long offerAuditId) {
-        return (OfferAudit) em.find(OfferAuditImpl.class, offerAuditId);
+        return em.find(OfferAuditImpl.class, offerAuditId);
     }
 
+    @Override
     public Long countUsesByCustomer(Long customerId, Long offerId) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        cq.select(cb.count(cq.from(OfferAuditImpl.class)));
+        TypedQuery<Long> query = new TypedQueryBuilder<OfferAudit>(OfferAudit.class, "offerAudit")
+                .addRestriction("offerAudit.customerId", "=", customerId)
+                .addRestriction("offerAudit.offerId", "=", offerId)
+                .toCountQuery(em);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
-        Root<OfferAuditImpl> from = cq.from(OfferAuditImpl.class);
-        Predicate customerIdClause = cb.equal(from.get("customerId"),customerId);
+        Long result = query.getSingleResult();
+        return result;
+    }
+    
+    @Override
+    public Long countOfferCodeUses(Long offerCodeId) {
         
-        Predicate offerIdClause = cb.equal(from.get("offerId"), offerId);
-        cq.where(cb.and(customerIdClause, offerIdClause));
-
-        TypedQuery<Long> query = em.createQuery(cq);
+        OfferAudit check = new OfferAuditImpl();
+        try {
+            check.getOfferCodeId();
+        } catch (UnsupportedOperationException e) {
+            LOG.warn("Checking for offer code max usage has not been enabled in your Broadleaf installation. This warning" +
+            		" will only appear in the Broadleaf 3.0 line, versions 3.0.6-GA and above. In order to fix your" +
+            		" version of Broadleaf to enable this functionality, refer to the OfferAuditWeaveImpl or directly to" +
+            		" https://github.com/BroadleafCommerce/BroadleafCommerce/pull/195.");
+            LOG.warn("Returning unlimited usage for offer code ID " + offerCodeId);
+            return -1l;
+        }
+        
+        TypedQuery<Long> query = new TypedQueryBuilder<OfferAudit>(OfferAudit.class, "offerAudit")
+                .addRestriction("offerAudit.offerCodeId", "=", offerCodeId)
+                .toCountQuery(em);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 

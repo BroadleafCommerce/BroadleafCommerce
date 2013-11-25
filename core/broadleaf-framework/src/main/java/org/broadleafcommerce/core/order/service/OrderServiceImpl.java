@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
+import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
@@ -66,6 +67,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -311,22 +313,26 @@ public class OrderServiceImpl implements OrderService {
     public void cancelOrder(Order order) {
         orderDao.delete(order);
     }
+
     @Override
     @Transactional("blTransactionManager")
     public void deleteOrder(Order order) {
         orderDao.delete(order);
     }
+
     @Override
     @Transactional("blTransactionManager")
     public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
-        if( !order.getAddedOfferCodes().contains(offerCode)) {
-            if (! offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode.getOffer())) {
+        Set<Offer> addedOffers = offerService.getUniqueOffersFromOrder(order);
+        //TODO: give some sort of notification that adding the offer code to the order was unsuccessful
+        if (!order.getAddedOfferCodes().contains(offerCode) && !addedOffers.contains(offerCode.getOffer())) {
+            if (!offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode)) {
                 throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
             }
             order.getAddedOfferCodes().add(offerCode);
             order = save(order, priceOrder);
         }
-        return order;   
+        return order;
     }
 
     @Override
