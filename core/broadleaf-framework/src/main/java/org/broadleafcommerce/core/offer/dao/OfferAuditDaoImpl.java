@@ -83,19 +83,6 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     
     @Override
     public Long countOfferCodeUses(Long offerCodeId) {
-        
-        OfferAudit check = new OfferAuditImpl();
-        try {
-            check.getOfferCodeId();
-        } catch (UnsupportedOperationException e) {
-            LOG.warn("Checking for offer code max usage has not been enabled in your Broadleaf installation. This warning" +
-            		" will only appear in the Broadleaf 3.0 line, versions 3.0.6-GA and above. In order to fix your" +
-            		" version of Broadleaf to enable this functionality, refer to the OfferAuditWeaveImpl or directly to" +
-            		" https://github.com/BroadleafCommerce/BroadleafCommerce/pull/195.");
-            LOG.warn("Returning unlimited usage for offer code ID " + offerCodeId);
-            return -1l;
-        }
-        
         TypedQuery<Long> query = new TypedQueryBuilder<OfferAudit>(OfferAudit.class, "offerAudit")
                 .addRestriction("offerAudit.offerCodeId", "=", offerCodeId)
                 .toCountQuery(em);

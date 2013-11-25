@@ -92,16 +92,9 @@ public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<Checko
             audit.setOrderId(order.getId());
             
             //add the code that was used to obtain the offer to the audit context
-            try {
-                OfferCode codeUsedToRetrieveOffer = offerToCodeMapping.get(offer);
-                if (codeUsedToRetrieveOffer != null) {
-                    audit.setOfferCodeId(codeUsedToRetrieveOffer.getId());
-                }
-            } catch (UnsupportedOperationException e) {
-                LOG.warn("Checking for offer code max usage has not been enabled in your Broadleaf installation. This warning" +
-                        " will only appear in the Broadleaf 3.0 line, versions 3.0.6-GA and above. In order to fix your" +
-                        " version of Broadleaf to enable this functionality, refer to the OfferAuditWeaveImpl or directly to" +
-                        " https://github.com/BroadleafCommerce/BroadleafCommerce/pull/195.");
+            OfferCode codeUsedToRetrieveOffer = offerToCodeMapping.get(offer);
+            if (codeUsedToRetrieveOffer != null) {
+                audit.setOfferCodeId(codeUsedToRetrieveOffer.getId());
             }
             
             audit.setRedeemedDate(SystemTime.asDate());

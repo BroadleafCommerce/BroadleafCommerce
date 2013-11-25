@@ -58,26 +58,14 @@ public interface OfferAudit extends Serializable {
     /**
      * <p>The offer code that was used to retrieve the offer. This will be null if the offer was automatically applied
      * and not obtained by an {@link OfferCode}.</p>
-     * 
-     * <p>For any 3.0 version starting with 3.0.6-GA and above, this has the potential to throw an {@link UnsupportedOperationException}.
-     * This column did not exist until 3.0.6-GA. Rather than prevent a drop-in release of 3.0.6-GA, by making this database
-     * modification, {@link OfferAuditWeaveImpl} should instead be weaved into this class to obtain the column definition
-     * along with correct implementation of this method.</p>
-     * @see {@link OfferAuditWeaveImpl}
      */
-    public Long getOfferCodeId() throws UnsupportedOperationException;
+    public Long getOfferCodeId();
 
     /**
      * <p>Sets the offer code that was used to retrieve the offer. This should be null if the offer was automatically applied
      * and not obtained by an {@link OfferCode}.</p>
-     * 
-     * <p>For any 3.0 version starting with 3.0.6-GA and above, this has the potential to throw an {@link UnsupportedOperationException}.
-     * This column did not exist until 3.0.6-GA. Rather than prevent a drop-in release of 3.0.6-GA, by making this database
-     * modification, {@link OfferAuditWeaveImpl} should instead be weaved into this class to obtain the column definition
-     * along with correct implementation of this method.</p>
-     * @see {@link OfferAuditWeaveImpl}
      */
-    public void setOfferCodeId(Long offerCodeId) throws UnsupportedOperationException;
+    public void setOfferCodeId(Long offerCodeId);
 
     /**
      * The associated order id.
