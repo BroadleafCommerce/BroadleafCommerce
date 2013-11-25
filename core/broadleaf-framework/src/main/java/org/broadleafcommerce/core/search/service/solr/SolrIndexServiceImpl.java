@@ -324,7 +324,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 }
                 count++;
             }
-            document.addField(categorySortFieldName, index);
+
+            if (document.getField(categorySortFieldName) == null) {
+                document.addField(categorySortFieldName, index);
+            }
         }
 
         // This is the entire tree of every category defined on the product
