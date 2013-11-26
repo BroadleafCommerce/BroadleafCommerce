@@ -120,6 +120,14 @@ public interface Sku extends Serializable {
     public boolean hasRetailPrice();
 
     /**
+     * Resolves the price of the Sku. If the Sku is on sale (that is, isOnSale() returns true), the
+     * return value will be the result of getSalePrice(). Otherwise, the return value will be the result of
+     * getRetailPrice().
+     * @return the price of the Sku
+     */
+    public Money getPrice();
+
+    /**
      * Returns the List Price of the Sku.  The List Price is the MSRP of the sku.
      * @deprecated
      */
