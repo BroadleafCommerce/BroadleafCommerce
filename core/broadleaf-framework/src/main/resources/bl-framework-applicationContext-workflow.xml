@@ -18,8 +18,6 @@
         <property name="factor" value="0.00"/>
     </bean>
     
-    <bean id="blTaxService" class="org.broadleafcommerce.core.pricing.service.TaxServiceImpl"/>
-    
     <bean id="blFulfillmentLocationResolver" class="org.broadleafcommerce.core.pricing.service.fulfillment.SimpleFulfillmentLocationResolver" />
 
     <bean id="blFixedPriceFulfillmentPricingProvider"
@@ -151,14 +149,15 @@
     <bean p:order="1000" id="blVerifyCustomerMaxOfferUsesActivity" class="org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity"/>
     <!-- For all payment workflow configurations, see bl-framework-applicationContext-workflow.xml -->
     <bean p:order="2000" id="blPaymentServiceActivity" class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
-    <bean p:order="3000" id="blRecordOfferUsageActivity" class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity"/>
-    <bean p:order="4000" id="blCommitTaxActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CommitTaxActivity">
-        <property name="rollbackHandler">
-            <bean class="org.broadleafcommerce.core.checkout.service.workflow.CommitTaxRollbackHandler"/>
-        </property>
+    <bean p:order="3000" id="blRecordOfferUsageActivity" class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity">
+        <property name="rollbackHandler" ref="blRecordOfferUsageRollbackHandler" />
     </bean>
-    <bean p:order="5000" id="blCompleteOrderActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
-    
+    <bean p:order="4000" id="blCommitTaxActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CommitTaxActivity">
+        <property name="rollbackHandler" ref="blCommitTaxRollbackHandler" />
+    </bean>
+    <bean p:order="5000" id="blCompleteOrderActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity">
+        <property name="rollbackHandler" ref="blCompleteOrderRollbackHandler" />
+    </bean>    
 
     <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">

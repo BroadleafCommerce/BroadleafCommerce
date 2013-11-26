@@ -16,13 +16,15 @@
 
 package org.broadleafcommerce.core.offer.service;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
-import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
+import org.broadleafcommerce.core.offer.domain.Adjustment;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
@@ -35,7 +37,10 @@ import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferP
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -44,9 +49,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
 /**
  * The Class OfferServiceImpl.
@@ -63,8 +73,8 @@ public class OfferServiceImpl implements OfferService {
     @Resource(name="blOfferCodeDao")
     protected OfferCodeDao offerCodeDao;
     
-    @Resource(name="blOfferAuditDao")
-    protected OfferAuditDao offerAuditDao;
+    @Resource(name="blOfferAuditService")
+    protected OfferAuditService offerAuditService;
 
     @Resource(name="blOfferDao")
     protected OfferDao offerDao;
@@ -154,7 +164,7 @@ public class OfferServiceImpl implements OfferService {
         }
         List<Offer> globalOffers = lookupAutomaticDeliveryOffers();
         for (Offer globalOffer : globalOffers) {
-            if (!offers.contains(globalOffer)) {
+            if (!offers.contains(globalOffer) && verifyMaxCustomerUsageThreshold(order.getCustomer(), globalOffer)) {
                 offers.add(globalOffer);
             }
         }
@@ -316,17 +326,77 @@ public class OfferServiceImpl implements OfferService {
     
     @Override
     public boolean verifyMaxCustomerUsageThreshold(Customer customer, Offer offer) {
-        if (customer != null && customer.getId() != null && offer != null && offer.getId() != null) {
-            if (offer.getMaxUsesPerCustomer() != null && offer.getMaxUsesPerCustomer() > 0) {                
-                Long currentUses = offerAuditDao.countUsesByCustomer(customer.getId(), offer.getId());
-                if (currentUses >= offer.getMaxUsesPerCustomer()) {
-                    return false;
-                }
+        if (offer.isLimitedUsePerCustomer()) {                
+            Long currentUses = offerAuditService.countUsesByCustomer(customer.getId(), offer.getId());
+            if (currentUses >= offer.getMaxUsesPerCustomer()) {
+                return false;
             }
         }
         return true;
-    }        
+    }
+    
+    @Override
+    public boolean verifyMaxCustomerUsageThreshold(@NotNull Customer customer, OfferCode code) {
+        boolean underCodeMaxUses = true;
+        if (code.isLimitedUse()) {
+            Long currentCodeUses = offerAuditService.countOfferCodeUses(code.getId());
+            underCodeMaxUses = currentCodeUses < code.getMaxUses();
+        }
+        return underCodeMaxUses && verifyMaxCustomerUsageThreshold(customer, code.getOffer());
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public Set<Offer> getUniqueOffersFromOrder(Order order) {
+        HashSet<Offer> result = new HashSet<Offer>();
+        
+        Transformer adjustmentToOfferTransformer = new Transformer() {
+            
+            @Override
+            public Object transform(Object input) {
+                return ((Adjustment)input).getOffer();
+            }
+        };
+        
+        result.addAll(CollectionUtils.collect(order.getOrderAdjustments(), adjustmentToOfferTransformer));
 
+        if (order.getOrderItems() != null) {
+            for (OrderItem item : order.getOrderItems()) {
+                result.addAll(CollectionUtils.collect(item.getOrderItemAdjustments(), adjustmentToOfferTransformer));
+                
+                //record usage for price details on the item as well
+                if (item.getOrderItemPriceDetails() != null) {
+                    for (OrderItemPriceDetail detail : item.getOrderItemPriceDetails()) {
+                        result.addAll(CollectionUtils.collect(detail.getOrderItemPriceDetailAdjustments(), adjustmentToOfferTransformer));
+                    }
+                }
+            }
+        }
+
+        if (order.getFulfillmentGroups() != null) {
+            for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+                result.addAll(CollectionUtils.collect(fg.getFulfillmentGroupAdjustments(), adjustmentToOfferTransformer));
+            }
+        }
+        return result;
+    }
+    
+    @Override
+    public Map<Offer, OfferCode> getOffersRetrievedFromCodes(Order order)  {
+        return getOffersRetrievedFromCodes(order.getAddedOfferCodes(), getUniqueOffersFromOrder(order));
+    }
+    
+    @Override
+    public Map<Offer, OfferCode> getOffersRetrievedFromCodes(List<OfferCode> codes, Set<Offer> appliedOffers) {
+        HashMap<Offer, OfferCode> offerToCodeMapping = new HashMap<Offer, OfferCode>();
+        for (OfferCode code : codes) {
+            if (appliedOffers.contains(code.getOffer())) {
+                offerToCodeMapping.put(code.getOffer(), code);
+            }
+        }
+        return offerToCodeMapping;
+    }
+    
     @Override
     public CustomerOfferDao getCustomerOfferDao() {
         return customerOfferDao;

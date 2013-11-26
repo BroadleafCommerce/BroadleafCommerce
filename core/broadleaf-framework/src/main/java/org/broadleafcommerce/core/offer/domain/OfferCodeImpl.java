@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -132,12 +134,22 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public int getMaxUses() {
-        return maxUses;
+        return maxUses == null ? 0 : maxUses;
     }
 
     @Override
     public void setMaxUses(int maxUses) {
         this.maxUses = maxUses;
+    }
+    
+    @Override
+    public boolean isUnlimitedUse() {
+        return getMaxUses() == 0;
+    }
+    
+    @Override
+    public boolean isLimitedUse() {
+        return getMaxUses() > 0;
     }
 
     @Override
@@ -184,38 +196,24 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((offer == null) ? 0 : offer.hashCode());
-        result = prime * result + ((offerCode == null) ? 0 : offerCode.hashCode());
-        return result;
+        return new HashCodeBuilder()
+            .append(offer)
+            .append(offerCode)
+            .build();
     }
-
+    
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        OfferCodeImpl other = (OfferCodeImpl) obj;
-
-        if (id != null && other.id != null) {
-            return id.equals(other.id);
+    public boolean equals(Object o) {
+        if (o instanceof OfferCodeImpl) {
+            OfferCodeImpl that = (OfferCodeImpl) o;
+            return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.offer, that.offer)
+                .append(this.offerCode, that.offerCode)
+                .build();
         }
-
-        if (offer == null) {
-            if (other.offer != null)
-                return false;
-        } else if (!offer.equals(other.offer))
-            return false;
-        if (offerCode == null) {
-            if (other.offerCode != null)
-                return false;
-        } else if (!offerCode.equals(other.offerCode))
-            return false;
-        return true;
+        
+        return false;
     }
 
 

@@ -31,6 +31,12 @@ import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map.Entry;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -45,11 +51,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map.Entry;
 
 /**
  * @author Jeff Fischer
@@ -65,9 +66,7 @@ public class ProductDaoImpl implements ProductDao {
     protected EntityConfiguration entityConfiguration;
 
     protected Long currentDateResolution = 10000L;
-    protected Date currentDate = SystemTime.asDate();
-
-    private String DATE_LOCK = "DATE_LOCK"; // for use in synchronization
+    protected Date cachedDate = SystemTime.asDate();
 
     @Override
     public Product save(Product product) {
@@ -122,26 +121,32 @@ public class ProductDaoImpl implements ProductDao {
         return query.getResultList();
     }
     
-    protected Date getDateFactoringInDateResolution(Date currentDate) {
-        Date myDate;
-        Long myCurrentDateResolution = currentDateResolution;
-        synchronized(DATE_LOCK) {
-            if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
-                this.currentDate = new Date(currentDate.getTime());
-                myDate = currentDate;
-            } else {
-                myDate = this.currentDate;
+    protected Date getCurrentDateAfterFactoringInDateResolution() {
+        Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, currentDateResolution);
+        if (returnDate != cachedDate) {
+            if (SystemTime.shouldCacheDate()) {
+                cachedDate = returnDate;
             }
         }
-        return myDate;
+        return returnDate;
     }
 
     @Override
+    public List<Product> readActiveProductsByCategory(Long categoryId) {
+        Date currentDate = getCurrentDateAfterFactoringInDateResolution();
+        return readActiveProductsByCategoryInternal(categoryId, currentDate);
+    }
+
+    @Override
+    @Deprecated
     public List<Product> readActiveProductsByCategory(Long categoryId, Date currentDate) {
-        Date myDate = getDateFactoringInDateResolution(currentDate);
+        return readActiveProductsByCategoryInternal(categoryId, currentDate);
+    }
+
+    protected List<Product> readActiveProductsByCategoryInternal(Long categoryId, Date currentDate) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY", Product.class);
         query.setParameter("categoryId", categoryId);
-        query.setParameter("currentDate", myDate);
+        query.setParameter("currentDate", currentDate);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
@@ -149,7 +154,18 @@ public class ProductDaoImpl implements ProductDao {
     }
     
     @Override
+    public List<Product> readFilteredActiveProductsByQuery(String query, ProductSearchCriteria searchCriteria) {
+        Date currentDate = getCurrentDateAfterFactoringInDateResolution();
+        return readFilteredActiveProductsByQueryInternal(query, currentDate, searchCriteria);
+    }
+
+    @Override
+    @Deprecated
     public List<Product> readFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria) {
+        return readFilteredActiveProductsByQueryInternal(query, currentDate, searchCriteria);
+    }
+
+    protected List<Product> readFilteredActiveProductsByQueryInternal(String query, Date currentDate, ProductSearchCriteria searchCriteria) {
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
@@ -189,7 +205,19 @@ public class ProductDaoImpl implements ProductDao {
     }
     
     @Override
+    public List<Product> readFilteredActiveProductsByCategory(Long categoryId, ProductSearchCriteria searchCriteria) {
+        Date currentDate = getCurrentDateAfterFactoringInDateResolution();
+        return readFilteredActiveProductsByCategoryInternal(categoryId, currentDate, searchCriteria);
+    }
+
+    @Override
+    @Deprecated
     public List<Product> readFilteredActiveProductsByCategory(Long categoryId, Date currentDate, 
+            ProductSearchCriteria searchCriteria) {
+        return readFilteredActiveProductsByCategoryInternal(categoryId, currentDate, searchCriteria);
+    }
+
+    protected List<Product> readFilteredActiveProductsByCategoryInternal(Long categoryId, Date currentDate,
             ProductSearchCriteria searchCriteria) {
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -234,11 +262,10 @@ public class ProductDaoImpl implements ProductDao {
                             builder.equal(product.get("archiveStatus").get("archived"), 'N')));
         
         // Add the active start/end date restrictions
-        Date myDate = getDateFactoringInDateResolution(currentDate);
-        restrictions.add(builder.lessThan(sku.get("activeStartDate").as(Date.class), myDate));
+        restrictions.add(builder.lessThan(sku.get("activeStartDate").as(Date.class), currentDate));
         restrictions.add(builder.or(
                             builder.isNull(sku.get("activeEndDate")),
-                            builder.greaterThan(sku.get("activeEndDate").as(Date.class), myDate)));
+                builder.greaterThan(sku.get("activeEndDate").as(Date.class), currentDate)));
     }
     
     protected void attachOrderBy(ProductSearchCriteria searchCriteria, 
@@ -358,13 +385,23 @@ public class ProductDaoImpl implements ProductDao {
             }
         }
     }
+
+    @Override
+    public List<Product> readActiveProductsByCategory(Long categoryId, int limit, int offset) {
+        Date currentDate = getCurrentDateAfterFactoringInDateResolution();
+        return readActiveProductsByCategoryInternal(categoryId, currentDate, limit, offset);
+    }
     
     @Override
+    @Deprecated
     public List<Product> readActiveProductsByCategory(Long categoryId, Date currentDate, int limit, int offset) {
-        Date myDate = getDateFactoringInDateResolution(currentDate);
+        return readActiveProductsByCategoryInternal(categoryId, currentDate, limit, offset);
+    }
+
+    public List<Product> readActiveProductsByCategoryInternal(Long categoryId, Date currentDate, int limit, int offset) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY", Product.class);
         query.setParameter("categoryId", categoryId);
-        query.setParameter("currentDate", myDate);
+        query.setParameter("currentDate", currentDate);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -408,9 +445,9 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public List<ProductBundle> readAutomaticProductBundles() {
-        Date myDate = getDateFactoringInDateResolution(currentDate);
+        Date currentDate = getCurrentDateAfterFactoringInDateResolution();
         TypedQuery<ProductBundle> query = em.createNamedQuery("BC_READ_AUTOMATIC_PRODUCT_BUNDLES", ProductBundle.class);
-        query.setParameter("currentDate", myDate);
+        query.setParameter("currentDate", currentDate);
         query.setParameter("autoBundle", Boolean.TRUE);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
@@ -444,9 +481,20 @@ public class ProductDaoImpl implements ProductDao {
         List<Product> results = (List<Product>) query.getResultList();
         return results;
     }
-
+    
     @Override
-    public List<Product> readAllActiveProducts(int page, int pageSize, Date currentDate) {
+    public List<Product> readAllActiveProducts(int page, int pageSize) {
+        Date currentDate = getCurrentDateAfterFactoringInDateResolution();
+        return readAllActiveProductsInternal(page, pageSize, currentDate);
+    }
+    
+    @Override
+    @Deprecated
+    public List<Product> readAllActiveProducts(int page, int pageSize, Date currentDate) {    
+        return readAllActiveProductsInternal(page, pageSize, currentDate);
+    }
+
+    protected List<Product> readAllActiveProductsInternal(int page, int pageSize, Date currentDate) {
         CriteriaQuery<Product> criteria = getCriteriaForActiveProducts(currentDate);
         int firstResult = page * pageSize;
         TypedQuery<Product> query = em.createQuery(criteria);
@@ -455,9 +503,20 @@ public class ProductDaoImpl implements ProductDao {
 
         return query.setFirstResult(firstResult).setMaxResults(pageSize).getResultList();
     }
-
+    
     @Override
+    public List<Product> readAllActiveProducts() {
+        Date currentDate = getCurrentDateAfterFactoringInDateResolution();
+        return readAllActiveProductsInternal(currentDate);
+    }
+    
+    @Override
+    @Deprecated
     public List<Product> readAllActiveProducts(Date currentDate) {
+        return readAllActiveProductsInternal(currentDate);
+    }
+
+    protected List<Product> readAllActiveProductsInternal(Date currentDate) {
         CriteriaQuery<Product> criteria = getCriteriaForActiveProducts(currentDate);
         TypedQuery<Product> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -465,9 +524,20 @@ public class ProductDaoImpl implements ProductDao {
 
         return query.getResultList();
     }
-
+    
     @Override
+    public Long readCountAllActiveProducts() {
+        Date currentDate = getCurrentDateAfterFactoringInDateResolution();
+        return readCountAllActiveProductsInternal(currentDate);
+    }
+    
+    @Override
+    @Deprecated
     public Long readCountAllActiveProducts(Date currentDate) {
+        return readCountAllActiveProductsInternal(currentDate);
+    }
+
+    protected Long readCountAllActiveProductsInternal(Date currentDate) {
         // Set up the criteria query that specifies we want to return a Long
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);

@@ -42,7 +42,6 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 @Repository("blOfferDao")
 public class OfferDaoImpl implements OfferDao {
@@ -54,22 +53,16 @@ public class OfferDaoImpl implements OfferDao {
     protected EntityConfiguration entityConfiguration;
 
     protected Long currentDateResolution = 10000L;
-    protected Date currentDate = SystemTime.asDate();
+    protected Date cachedDate = SystemTime.asDate();
 
-    private String DATE_LOCK = "DATE_LOCK"; // for use in synchronization
-
-    protected Date getDateFactoringInDateResolution(Date currentDate) {
-        Date myDate;
-        Long myCurrentDateResolution = currentDateResolution;
-        synchronized(DATE_LOCK) {
-            if (currentDate.getTime() - this.currentDate.getTime() > myCurrentDateResolution) {
-                this.currentDate = new Date(currentDate.getTime());
-                myDate = currentDate;
-            } else {
-                myDate = this.currentDate;
+    protected Date getCurrentDateAfterFactoringInDateResolution() {
+        Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, currentDateResolution);
+        if (returnDate != cachedDate) {
+            if (SystemTime.shouldCacheDate()) {
+                cachedDate = returnDate;
             }
         }
-        return myDate;
+        return returnDate;
     }
 
     @Override
@@ -157,8 +150,7 @@ public class OfferDaoImpl implements OfferDao {
         //TODO change this to a JPA criteria
         Criteria criteria = ((HibernateEntityManager) em).getSession().createCriteria(OfferImpl.class);
 
-        Date myDate = SystemTime.asDate();
-        myDate = getDateFactoringInDateResolution(myDate);
+        Date myDate = getCurrentDateAfterFactoringInDateResolution();
 
         Calendar c = Calendar.getInstance();
         c.setTime(myDate);

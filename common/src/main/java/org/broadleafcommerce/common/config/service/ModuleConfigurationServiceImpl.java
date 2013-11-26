@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.config.service;
 import org.broadleafcommerce.common.config.dao.ModuleConfigurationDao;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +28,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 @Service("blModuleConfigurationService")
-@Transactional("blTransactionManager")
 public class ModuleConfigurationServiceImpl implements ModuleConfigurationService {
 
     @Resource(name = "blModuleConfigurationDao")
@@ -39,11 +39,13 @@ public class ModuleConfigurationServiceImpl implements ModuleConfigurationServic
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public ModuleConfiguration save(ModuleConfiguration config) {
         return moduleConfigDao.save(config);
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void delete(ModuleConfiguration config) {
         moduleConfigDao.delete(config);
     }

@@ -31,11 +31,12 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.ui.Model;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * In charge of performing the various modify cart operations
@@ -92,7 +93,6 @@ public class BroadleafCartController extends AbstractCartController {
 
         cart = orderService.addItem(cart.getId(), itemRequest, false);
         cart = orderService.save(cart,  true);
-        CartState.setCart(cart);
         
         return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
     }
@@ -128,7 +128,6 @@ public class BroadleafCartController extends AbstractCartController {
 
         cart = orderService.addItemWithPriceOverrides(cart.getId(), itemRequest, false);
         cart = orderService.save(cart, true);
-        CartState.setCart(cart);
 
         return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
     }
@@ -155,7 +154,6 @@ public class BroadleafCartController extends AbstractCartController {
 
         cart = orderService.updateItemQuantity(cart.getId(), itemRequest, true);
         cart = orderService.save(cart, false);
-        CartState.setCart(cart);
         
         if (isAjaxRequest(request)) {
             Map<String, Object> extraData = new HashMap<String, Object>();
@@ -188,7 +186,6 @@ public class BroadleafCartController extends AbstractCartController {
         
         cart = orderService.removeItem(cart.getId(), itemRequest.getOrderItemId(), false);
         cart = orderService.save(cart, true);
-        CartState.setCart(cart);
         
         if (isAjaxRequest(request)) {
             Map<String, Object> extraData = new HashMap<String, Object>();
@@ -235,21 +232,22 @@ public class BroadleafCartController extends AbstractCartController {
         Boolean promoAdded = false;
         String exception = "";
         
-        OfferCode offerCode = offerService.lookupOfferCodeByCode(customerOffer);
-        
-        if (offerCode!=null) {
-            try {
-                orderService.addOfferCode(cart, offerCode, false);
-                promoAdded = true;
-                cart = orderService.save(cart, true);
-            } catch(OfferMaxUseExceededException e) {
-                exception = "Use Limit Exceeded";
+        if (cart != null && !(cart instanceof NullOrderImpl)) {
+            OfferCode offerCode = offerService.lookupOfferCodeByCode(customerOffer);
+            if (offerCode != null) {
+                try {
+                    orderService.addOfferCode(cart, offerCode, false);
+                    promoAdded = true;
+                    cart = orderService.save(cart, true);
+                } catch(OfferMaxUseExceededException e) {
+                    exception = "Use Limit Exceeded";
+                }
+            } else {
+                exception = "Invalid Code";
             }
         } else {
-            exception = "Invalid Code";
+            exception = "Invalid cart";
         }
-        
-        CartState.setCart(cart);
         
         if (isAjaxRequest(request)) {
             Map<String, Object> extraData = new HashMap<String, Object>();
@@ -283,7 +281,6 @@ public class BroadleafCartController extends AbstractCartController {
 
         orderService.removeOfferCode(cart, offerCode, false);
         cart = orderService.save(cart, true);
-        CartState.setCart(cart);
 
         return isAjaxRequest(request) ? getCartView() : getCartPageRedirect();
     }

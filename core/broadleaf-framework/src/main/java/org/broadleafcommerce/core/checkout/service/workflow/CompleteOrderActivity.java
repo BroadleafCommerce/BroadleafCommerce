@@ -24,6 +24,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class CompleteOrderActivity extends BaseActivity<CheckoutContext> {
+    
+    public CompleteOrderActivity() {
+        //no specific state to set here for the rollback handler; it's always safe for it to run
+        setAutomaticallyRegisterRollbackHandler(true);
+    }
 
     @Override
     public CheckoutContext execute(CheckoutContext context) throws Exception {

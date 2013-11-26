@@ -16,9 +16,14 @@
 
 package org.broadleafcommerce.core.pricing.service.module;
 
+import org.broadleafcommerce.core.checkout.service.workflow.CommitTaxActivity;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.pricing.service.TaxService;
 import org.broadleafcommerce.core.pricing.service.exception.TaxException;
 
+/**
+ * @deprectated use {@link TaxService} instead which should be utilized by {@link CommitTaxActivity}
+ */
 @Deprecated
 public interface TaxModule {
     

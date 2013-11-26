@@ -10,5 +10,6 @@
 <div class="field-label" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 <div class="twelve" style="margin-left: 20px; margin-bottom: 10px;">
-   <span th:text="*{fields['__${field.name}__'].displayValue}"/> 
+   <span th:text="*{fields['__${field.name}__'].displayValue}"/>
+   <input type="hidden" th:field="*{fields['__${field.name}__'].value}" />
 </div>  

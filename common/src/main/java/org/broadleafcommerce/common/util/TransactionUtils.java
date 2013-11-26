@@ -27,6 +27,12 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  */
 public class TransactionUtils {
 
+    /**
+     * Intended for use in all @Transactional definitions. For instance:
+     * <pre>@Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)</pre>
+     */
+    public static final String DEFAULT_TRANSACTION_MANAGER = "blTransactionManager";
+    
     private static final Log LOG = LogFactory.getLog(TransactionUtils.class);
 
     public static TransactionStatus createTransaction(String name, int propagationBehavior, PlatformTransactionManager transactionManager) {

@@ -18,6 +18,8 @@
 
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
 
+    <bean id="blAdminPasswordEncoder" class="${password.admin.encoder}"/>
+
     <bean id="blPersistenceModules" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>

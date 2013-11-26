@@ -56,7 +56,12 @@ $(document).ready(function() {
     			var errorDiv = $(data).find('.modal-body .errors');
     			if (errorDiv.length) {
     			    //since we only replaced the content of the modal body, ensure the error div gets there as well
-    			    BLCAdmin.currentModal().find('.modal-body').prepend(errorDiv);
+    			    var currentErrorDiv = BLCAdmin.currentModal().find('.modal-body .errors')
+    			    if (currentErrorDiv.length) {
+    			        currentErrorDiv.replaceWith(errorDiv)
+    			    } else {
+    			        BLCAdmin.currentModal().find('.modal-body').prepend(errorDiv);
+    			    }
     			}
     			BLCAdmin.initializeFields($('.modal .modal-body .tabs-content'));
     	    });

@@ -206,8 +206,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
         cart = orderService.save(cart, true);
 
-        CartState.setCart(cart);
-
         return isAjaxRequest(request) ? getCheckoutView() : getCheckoutPageRedirect();
     }
 
@@ -557,8 +555,12 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                State state = stateService.findStateByAbbreviation(text);
-                setValue(state);
+                if (StringUtils.isNotEmpty(text)) {
+                    State state = stateService.findStateByAbbreviation(text);
+                    setValue(state);
+                } else {
+                    setValue(null);
+                }
             }
         });
 

@@ -35,19 +35,24 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  *
@@ -78,9 +83,18 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     
     /**
      * Optional password salt to be used with the passwordEncoder
+     * @deprecated use {@link #saltSource} instead
      */
+    @Deprecated
     protected String salt;
-
+    
+    /**
+     * Use a Salt Source ONLY if there's one configured
+     */
+    @Autowired(required=false)
+    @Qualifier("blAdminSaltSource")
+    protected SaltSource saltSource;
+    
     @Resource(name="blEmailService")
     protected EmailService emailService;
 
@@ -372,24 +386,33 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         this.resetPasswordEmailInfo = resetPasswordEmailInfo;
     }
     
-    /**
-     * Optionally provide a salt based on a a specific AdminUser.  By default, this returns
-     * the salt property of this class
-     * 
-     * @param customer
-     * @return
-     * @see {@link AdminSecurityServiceImpl#getSalt()}
-     */
-    public String getSalt(AdminUser user) {
-        return getSalt();
+    @Override
+    public Object getSalt(AdminUser user) {
+        Object salt = null;
+        if (saltSource != null) {
+            salt = saltSource.getSalt(new AdminUserDetails(user.getId(), user.getLogin(), user.getUnencodedPassword(), new ArrayList<GrantedAuthority>()));
+        }
+        return salt;
     }
     
+    @Override
     public String getSalt() {
         return salt;
     }
     
+    @Override
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    @Override
+    public SaltSource getSaltSource() {
+        return saltSource;
+    }
+    
+    @Override
+    public void setSaltSource(SaltSource saltSource) {
+        this.saltSource = saltSource;
     }
 
     @Override

@@ -18,12 +18,14 @@ package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -42,6 +44,19 @@ import javax.persistence.criteria.Root;
  */
 @Repository("blCategoryDao")
 public class CategoryDaoImpl implements CategoryDao {
+
+    protected Long currentDateResolution = 10000L;
+    protected Date cachedDate = SystemTime.asDate();
+
+    protected Date getCurrentDateAfterFactoringInDateResolution() {
+        Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, currentDateResolution);
+        if (returnDate != cachedDate) {
+            if (SystemTime.shouldCacheDate()) {
+                cachedDate = returnDate;
+            }
+        }
+        return returnDate;
+    }
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -171,6 +186,7 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readActiveSubCategoriesByCategory(Category category) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
         query.setParameter("defaultParentCategoryId", category.getId());
+        query.setParameter("currentDate", getCurrentDateAfterFactoringInDateResolution());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
@@ -181,12 +197,23 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readActiveSubCategoriesByCategory(Category category, int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
         query.setParameter("defaultParentCategoryId", category.getId());
+        query.setParameter("currentDate", getCurrentDateAfterFactoringInDateResolution());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         query.setFirstResult(offset);
         query.setMaxResults(limit);
 
         return query.getResultList();
+    }
+
+    @Override
+    public Long getCurrentDateResolution() {
+        return currentDateResolution;
+    }
+
+    @Override
+    public void setCurrentDateResolution(Long currentDateResolution) {
+        this.currentDateResolution = currentDateResolution;
     }
 
     @Override

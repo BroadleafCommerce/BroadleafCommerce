@@ -22,6 +22,7 @@
         <class>org.broadleafcommerce.common.config.domain.SystemPropertyImpl</class>
         <class>org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl</class>
         <class>org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration</class>
+        <class>org.broadleafcommerce.common.media.domain.MediaImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>

@@ -22,11 +22,13 @@ import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.TaxException;
 import org.broadleafcommerce.core.pricing.service.tax.provider.TaxProvider;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 import javax.annotation.Resource;
 
+@Service("blTaxService")
 public class TaxServiceImpl implements TaxService {
 
     protected boolean mustCalculate = false;

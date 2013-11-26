@@ -16,6 +16,8 @@
 
 package org.broadleafcommerce.core.offer.service.processor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -49,9 +51,12 @@ import java.util.List;
 @Service("blItemOfferProcessor")
 public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements ItemOfferProcessor {
     
+    protected static final Log LOG = LogFactory.getLog(ItemOfferProcessorImpl.class);
+    
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#filterItemLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
      */
+    @Override
     public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers, Offer offer) {
         boolean isNewFormat = !CollectionUtils.isEmpty(offer.getQualifyingItemCriteria()) || !CollectionUtils.isEmpty(offer.getTargetItemCriteria());
         boolean itemLevelQualification = false;
@@ -317,6 +322,11 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
    
     protected void applyItemQualifiersAndTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order) {
         if (itemOffer.isLegacyOffer()) {
+            LOG.warn("The item offer with id " + itemOffer.getOffer().getId() + " is a legacy offer which means that it" +
+            		" does not have any item qualifier criteria AND does not have any target item criteria. As a result," +
+            		" we are skipping the marking of qualifiers and targets which will cause issues if you are relying on" +
+            		" 'maxUsesPerOrder' behavior. To resolve this, qualifier criteria is not required but you must at least" +
+            		" create some target item criteria for this offer.");
             return;
         } else {
             markQualifiersAndTargets(order, itemOffer);
@@ -397,7 +407,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             if (receiveQtyNeeded > 0) {
                 int itemQtyAvailableToBeUsedAsTarget = priceDetail.getQuantityAvailableToBeUsedAsTarget(itemOffer);
                 if (itemQtyAvailableToBeUsedAsTarget > 0) {
-                    if ((promotion.getMaxUses() == 0) || (itemOffer.getUses() < promotion.getMaxUses())) {
+                    if (promotion.isUnlimitedUsePerOrder() || (itemOffer.getUses() < promotion.getMaxUsesPerOrder())) {
                         int qtyToMarkAsTarget = Math.min(receiveQtyNeeded, itemQtyAvailableToBeUsedAsTarget);
                         receiveQtyNeeded -= qtyToMarkAsTarget;
                         priceDetail.addPromotionDiscount(itemOffer, itemOffer.getOffer().getTargetItemCriteria(), qtyToMarkAsTarget);
@@ -513,8 +523,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     protected void markQualifiersAndTargets(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
         boolean matchFound = true;
 
-        if (itemOffer.getOffer().getQualifyingItemCriteria().isEmpty() &&
-                itemOffer.getOffer().getTargetItemCriteria().isEmpty()) {
+        if (itemOffer.isLegacyOffer()) {
             return;
         }
 
@@ -611,6 +620,13 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             List<PromotableCandidateItemOffer> qualifiedItemOffers) {
         if (!qualifiedItemOffers.isEmpty()) {
             calculatePotentialSavings(qualifiedItemOffers, order);
+            
+            //after savings have been calculated, uses will have been marked on offers which can effect
+            //the actual application of those offers. Thus the uses for each item offer needs to be reset
+            for (PromotableCandidateItemOffer itemOffer : qualifiedItemOffers) {
+                itemOffer.resetUses();
+            }
+            
             // Sort order item offers by priority and potential total discount
             Collections.sort(qualifiedItemOffers, ItemOfferComparator.INSTANCE);
             

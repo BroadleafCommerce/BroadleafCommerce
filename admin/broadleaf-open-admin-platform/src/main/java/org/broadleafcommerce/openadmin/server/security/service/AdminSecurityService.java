@@ -22,6 +22,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
+import org.springframework.security.authentication.dao.SaltSource;
 
 import java.util.List;
 
@@ -83,4 +84,40 @@ public interface AdminSecurityService {
      */
     GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword);
     GenericResponse changePassword(String username, String oldPassword, String password, String confirmPassword);
+    
+    /**
+     * @deprecated use {@link #getSaltSource()} instead
+     */
+    @Deprecated
+    public String getSalt();
+    
+    /**
+     * @deprecated use {@link #setSaltSource(SaltSource)} instead
+     */
+    @Deprecated
+    public void setSalt(String salt);
+
+    /**
+     * Returns the {@link SaltSource} used with the blAdminPasswordEncoder to encrypt the user password. Usually configured in
+     * applicationContext-admin-security.xml. This is not a required property and will return null if not configured
+     */
+    public SaltSource getSaltSource();
+    
+    /**
+     * Sets the {@link SaltSource} used with blAdminPasswordencoder to encrypt the user password. Usually configured within
+     * applicationContext-admin-security.xml
+     * 
+     * @param saltSource
+     */
+    public void setSaltSource(SaltSource saltSource);
+    
+    /**
+     * Gets the salt object for the current admin user. By default this delegates to {@link #getSaltSource()}. If there is
+     * not a {@link SaltSource} configured ({@link #getSaltSource()} returns null) then this also returns null.
+     * 
+     * @param user
+     * @return the salt for the current admin user
+     */
+    public Object getSalt(AdminUser user);
+
 }

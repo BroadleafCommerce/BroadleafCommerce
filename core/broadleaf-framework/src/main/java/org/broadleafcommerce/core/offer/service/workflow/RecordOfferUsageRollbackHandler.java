@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,37 +14,41 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.checkout.service.workflow;
+package org.broadleafcommerce.core.offer.service.workflow;
 
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.pricing.service.TaxService;
-import org.broadleafcommerce.core.pricing.service.exception.TaxException;
+import org.broadleafcommerce.core.offer.domain.OfferAudit;
+import org.broadleafcommerce.core.offer.service.OfferAuditService;
 import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.RollbackFailureException;
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
-@Component("blCommitTaxRollbackHandler")
-public class CommitTaxRollbackHandler implements RollbackHandler {
 
-    @Resource(name = "blTaxService")
-    protected TaxService taxService;
+/**
+ * Rolls back audits that were saved in the database from {@link RecordOfferUsageActivity}.
+ *
+ * @author Phillip Verheyden (phillipuniverse)
+ * @see {@link RecordOfferUsageActivity}
+ */
+@Component("blRecordOfferUsageRollbackHandler")
+public class RecordOfferUsageRollbackHandler implements RollbackHandler {
 
+    @Resource(name = "blOfferAuditService")
+    protected OfferAuditService offerAuditService;
+    
     @Override
     public void rollbackState(Activity<? extends ProcessContext> activity, ProcessContext processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
-        CheckoutContext ctx = (CheckoutContext) processContext;
-        Order order = ctx.getSeedData().getOrder();
-        try {
-            taxService.cancelTax(order);
-        } catch (TaxException e) {
-            throw new RollbackFailureException("An exception occured cancelling taxes for order id: " + order.getId(), e);
+        List<OfferAudit> audits = (List<OfferAudit>) stateConfiguration.get(RecordOfferUsageActivity.SAVED_AUDITS);
+        
+        for (OfferAudit audit : audits) {
+            offerAuditService.delete(audit);
         }
-
     }
-
+    
 }
