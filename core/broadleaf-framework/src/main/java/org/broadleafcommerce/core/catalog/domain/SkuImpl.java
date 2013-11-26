@@ -520,11 +520,13 @@ public class SkuImpl implements Sku {
     }
 
     @Override
+    @Deprecated
     public Money getListPrice() {
         return getRetailPrice();
     }
 
     @Override
+    @Deprecated
     public void setListPrice(Money listPrice) {
         this.retailPrice = Money.toAmount(listPrice);
     }
