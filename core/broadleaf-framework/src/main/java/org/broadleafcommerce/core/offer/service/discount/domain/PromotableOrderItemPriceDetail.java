@@ -22,7 +22,6 @@ import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 
 import java.util.List;
-import java.util.Set;
 
 
 public interface PromotableOrderItemPriceDetail {
@@ -136,7 +135,7 @@ public interface PromotableOrderItemPriceDetail {
      * @param itemCriteria
      * @param qtyToMarkAsTarget
      */
-    void addPromotionDiscount(PromotableCandidateItemOffer itemOffer, Set<OfferItemCriteria> itemCriteria, int qtyToMarkAsTarget);
+    void addPromotionDiscount(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria, int qtyToMarkAsTarget);
 
     /**
      * Returns the price to be used for this priceDetail taking into account whether or not the
