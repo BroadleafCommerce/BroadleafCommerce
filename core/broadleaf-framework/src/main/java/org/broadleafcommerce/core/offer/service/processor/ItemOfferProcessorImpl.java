@@ -427,6 +427,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                 return false;
             }
         }
+
+        itemOffer.addUse();
         return true;
     }
 
