@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
@@ -70,6 +72,10 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
+
+    @Resource(name = "blCategoryDaoExtensionManager")
+    protected CategoryDaoExtensionManager extensionManager;
+
     @Override
     public Category save(Category category) {
         return em.merge(category);
@@ -235,6 +241,13 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Override
     public Category findCategoryByURI(String uri) {
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findCategoryByURI(uri, holder);
+            if (result != null && ExtensionResultStatusType.NOT_HANDLED != result) {
+                return (Category) holder.getResult();
+            }
+        }
         Query query;
         query = em.createNamedQuery("BC_READ_CATEGORY_OUTGOING_URL");
         query.setParameter("url", uri);
