@@ -19,7 +19,33 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map.Entry;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.logging.SupportLogManager;
+import org.broadleafcommerce.common.logging.SupportLogger;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
@@ -37,33 +63,14 @@ import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map.Entry;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
 /**
  * @author Jeff Fischer
  * @author Andre Azzolini (apazzolini)
  */
 @Repository("blProductDao")
 public class ProductDaoImpl implements ProductDao {
+
+    private static final SupportLogger logger = SupportLogManager.getLogger("Enterprise", ProductDaoImpl.class);
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -73,6 +80,10 @@ public class ProductDaoImpl implements ProductDao {
 
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
+
+    @Resource(name = "blProductDaoExtensionManager")
+    protected ProductDaoExtensionManager extensionManager;
+
     protected Long currentDateResolution = 10000L;
     protected Date cachedDate = SystemTime.asDate();
 
@@ -91,11 +102,16 @@ public class ProductDaoImpl implements ProductDao {
         if (productIds == null || productIds.size() == 0) {
             return null;
         }
-        
+        if (productIds.size() > 100) {
+            logger.warn("Not recommended to use the readProductsByIds method for long lists of productIds, since " +
+                    "Hibernate is required to transform the distinct results. The list of requested" +
+                    "product ids was (" + productIds.size() +") in length.");
+        }
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
         Root<ProductImpl> product = criteria.from(ProductImpl.class);
+        product.fetch("defaultSku", JoinType.LEFT).fetch("skuMedia", JoinType.LEFT);
         criteria.select(product);
 
         // We only want results that match the product IDs
@@ -480,7 +496,13 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public List<Product> findProductByURI(String uri) {
-        
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findProductByURI(uri, holder);
+            if (result != null && ExtensionResultStatusType.NOT_HANDLED != result) {
+                return (List<Product>) holder.getResult();
+            }
+        }
         String urlKey = uri.substring(uri.lastIndexOf('/'));        
         Query query;
     
