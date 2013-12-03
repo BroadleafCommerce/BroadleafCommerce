@@ -60,7 +60,11 @@
     </bean>
     
     <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager">
-        <property name="persistenceUnitPostProcessors">
+        <property name="persistenceUnitPostProcessors" ref="blPersistenceUnitPostProcessors"/>
+    </bean>
+
+    <bean id="blPersistenceUnitPostProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
             <list>
                 <bean class="org.broadleafcommerce.common.extensibility.jpa.JPAPropertiesPersistenceUnitPostProcessor"/>
             </list>
