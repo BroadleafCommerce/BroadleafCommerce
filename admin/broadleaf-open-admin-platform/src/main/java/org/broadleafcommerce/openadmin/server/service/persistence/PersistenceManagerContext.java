@@ -53,7 +53,9 @@ public class PersistenceManagerContext {
     }
 
     public void remove() {
-        persistenceManager.pop();
+        if (!persistenceManager.empty()) {
+            persistenceManager.pop();
+        }
         if (persistenceManager.empty()) {
             PersistenceManagerContext.clear();
         }
