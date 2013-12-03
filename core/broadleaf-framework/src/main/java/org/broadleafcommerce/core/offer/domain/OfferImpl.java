@@ -417,7 +417,12 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     
     @Override
     public OfferItemRestrictionRuleType getOfferItemQualifierRuleType() {
-        return OfferItemRestrictionRuleType.getInstance(offerItemQualifierRuleType);
+        OfferItemRestrictionRuleType returnType = OfferItemRestrictionRuleType.getInstance(offerItemQualifierRuleType);
+        if (returnType == null) {
+            return OfferItemRestrictionRuleType.NONE;
+        } else {
+            return returnType;
+        }
     }
 
     @Override
@@ -427,7 +432,12 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     
     @Override
     public OfferItemRestrictionRuleType getOfferItemTargetRuleType() {
-        return OfferItemRestrictionRuleType.getInstance(offerItemTargetRuleType);
+        OfferItemRestrictionRuleType returnType = OfferItemRestrictionRuleType.getInstance(offerItemTargetRuleType);
+        if (returnType == null) {
+            return OfferItemRestrictionRuleType.NONE;
+        } else {
+            return returnType;
+        }
     }
 
     @Override
