@@ -74,8 +74,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                     //support legacy offers                   
                     PromotableCandidateItemOffer candidate = createCandidateItemOffer(qualifiedItemOffers, offer, order);
                    
-                    if (!candidate.getCandidateTargets().contains(promotableOrderItem)) {
-                        candidate.getCandidateTargets().add(promotableOrderItem);
+                    if (!candidate.getLegacyCandidateTargets().contains(promotableOrderItem)) {
+                        candidate.getLegacyCandidateTargets().add(promotableOrderItem);
                     }
                     offerCreated = true;
                     continue;
@@ -88,8 +88,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                     if (!isNewFormat) {
                         //support legacy offers
                         PromotableCandidateItemOffer candidate = createCandidateItemOffer(qualifiedItemOffers, offer, order);
-                        if (!candidate.getCandidateTargets().contains(promotableOrderItem)) {
-                            candidate.getCandidateTargets().add(promotableOrderItem);
+                        if (!candidate.getLegacyCandidateTargets().contains(promotableOrderItem)) {
+                            candidate.getLegacyCandidateTargets().add(promotableOrderItem);
                         }
                         offerCreated = true;
                         continue;
@@ -115,7 +115,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
                     candidateOffer = createCandidateItemOffer(qualifiedItemOffers, offer, order);
                 }
 
-                candidateOffer.getCandidateTargets().addAll(candidates.getCandidateTargets());
+                candidateOffer.getCandidateTargetsMap().putAll(candidates.getCandidateTargetsMap());
             }
         }
     }
@@ -218,7 +218,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
      * @param itemOffer
      */
     protected void applyLegacyAdjustments(PromotableOrder order, PromotableCandidateItemOffer itemOffer) {
-        for (PromotableOrderItem item : itemOffer.getCandidateTargets()) {
+        for (PromotableOrderItem item : itemOffer.getLegacyCandidateTargets()) {
             for (PromotableOrderItemPriceDetail itemPriceDetail : item.getPromotableOrderItemPriceDetails()) {
                 if (!itemOffer.getOffer().isStackable() || !itemOffer.getOffer().isCombinableWithOtherOffers()) {
                     if (itemPriceDetail.getCandidateItemAdjustments().size() != 0) {
@@ -405,15 +405,11 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     protected boolean markTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order, OrderItem relatedQualifier,
             boolean checkOnly) {
         Offer promotion = itemOffer.getOffer();
-        List<PromotableOrderItem> promotableItems = itemOffer.getCandidateTargets();
-        List<PromotableOrderItemPriceDetail> priceDetails = buildPriceDetailListFromOrderItems(promotableItems);
 
-        int receiveQtyNeeded = 0;
-        for (OfferItemCriteria targetCriteria : itemOffer.getOffer().getTargetItemCriteria()) {
-            receiveQtyNeeded += targetCriteria.getQuantity();
+        if (itemOffer.getCandidateTargetsMap().keySet().isEmpty()) {
+            return false;
         }
         
-        // We want to find the root of the related qualifier so we can appropriately walk the tree later
         OrderItem relatedQualifierRoot = null;
         if (relatedQualifier != null) {
             relatedQualifierRoot = relatedQualifier;
@@ -422,39 +418,49 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             }
         }
 
-        Collections.sort(priceDetails, getTargetItemComparator(promotion.getApplyDiscountToSalePrice()));
-        for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
-            if (receiveQtyNeeded > 0) {
+        for (OfferItemCriteria itemCriteria : itemOffer.getCandidateTargetsMap().keySet()) {
+            List<PromotableOrderItem> promotableItems = itemOffer.getCandidateTargetsMap().get(itemCriteria);
+
+            List<PromotableOrderItemPriceDetail> priceDetails = buildPriceDetailListFromOrderItems(promotableItems);
+
+            Collections.sort(priceDetails, getTargetItemComparator(itemOffer.getOffer().getApplyDiscountToSalePrice()));
+            int targetQtyNeeded = itemCriteria.getQuantity();
+
+            for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
                 if (relatedQualifier != null) {
                     // We need to make sure that this item is either a parent, child, or the same as the qualifier root
                     OrderItem thisItem = priceDetail.getPromotableOrderItem().getOrderItem();
-                    if (!relatedQualifierRoot.isAParentOf(thisItem) && !thisItem.isAParentOf(relatedQualifierRoot) && 
+                    if (!relatedQualifierRoot.isAParentOf(thisItem) && !thisItem.isAParentOf(relatedQualifierRoot) &&
                             !thisItem.equals(relatedQualifierRoot)) {
                         continue;
                     }
                 }
-                
+
                 int itemQtyAvailableToBeUsedAsTarget = priceDetail.getQuantityAvailableToBeUsedAsTarget(itemOffer);
                 if (itemQtyAvailableToBeUsedAsTarget > 0) {
                     if (promotion.isUnlimitedUsePerOrder() || (itemOffer.getUses() < promotion.getMaxUsesPerOrder())) {
-                        int qtyToMarkAsTarget = Math.min(receiveQtyNeeded, itemQtyAvailableToBeUsedAsTarget);
-                        receiveQtyNeeded -= qtyToMarkAsTarget;
+                        int qtyToMarkAsTarget = Math.min(targetQtyNeeded, itemQtyAvailableToBeUsedAsTarget);
+                        targetQtyNeeded -= qtyToMarkAsTarget;
                         if (!checkOnly) {
-                            priceDetail.addPromotionDiscount(itemOffer, itemOffer.getOffer().getTargetItemCriteria(), qtyToMarkAsTarget);
+                            priceDetail.addPromotionDiscount(itemOffer, itemCriteria, qtyToMarkAsTarget);
                         }
                     }
                 }
+
+                if (targetQtyNeeded == 0) {
+                    break;
+                }
             }
 
-            if (receiveQtyNeeded == 0) {
-                if (!checkOnly) {
-                    itemOffer.addUse();
-                }
-                break;
+            if (targetQtyNeeded != 0) {
+                return false;
             }
         }
 
-        return (receiveQtyNeeded == 0);
+        if (!checkOnly) {
+            itemOffer.addUse();
+        }
+        return true;
     }
 
     /**
@@ -608,7 +614,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
             for (PromotableCandidateItemOffer itemOffer : itemOffers) {
                 Money potentialSavings = new Money(order.getOrderCurrency());
                 if (itemOffer.isLegacyOffer()) {
-                    for (PromotableOrderItem item : itemOffer.getCandidateTargets()) {
+                    for (PromotableOrderItem item : itemOffer.getLegacyCandidateTargets()) {
                         potentialSavings = potentialSavings.add(
                                 itemOffer.calculateSavingsForOrderItem(item, item.getQuantity()));
                     }

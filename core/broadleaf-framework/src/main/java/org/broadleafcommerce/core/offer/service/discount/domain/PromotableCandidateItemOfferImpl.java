@@ -37,50 +37,19 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     protected Money potentialSavings;
     protected int uses = 0;
     
-    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
-    protected List<PromotableOrderItem> candidateTargets = new ArrayList<PromotableOrderItem>();
+    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap =
+            new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+
+    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateTargetsMap =
+            new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
     
+    protected List<PromotableOrderItem> legacyCandidateTargets = new ArrayList<PromotableOrderItem>();
 
     public PromotableCandidateItemOfferImpl(PromotableOrder promotableOrder, Offer offer) {
         assert (offer != null);
         assert (promotableOrder != null);
         this.offer = offer;
         this.promotableOrder = promotableOrder;
-    }
-    
-    /**
-     * This method determines how much the customer might save using this promotion for the
-     * purpose of sorting promotions with the same priority. The assumption is that any possible
-     * target specified for BOGO style offers are of equal or lesser value. We are using
-     * a calculation based on the qualifiers here strictly for rough comparative purposes.
-     *  
-     * If two promotions have the same priority, the one with the highest potential savings
-     * will be used as the tie-breaker to determine the order to apply promotions.
-     * 
-     * This method makes a good approximation of the promotion value as determining the exact value
-     * would require all permutations of promotions to be run resulting in a costly 
-     * operation.
-     * 
-     * @return
-     */
-    public Money calculatePotentialSavings() {
-        Money savings = new Money(0D);
-        int maxUses = calculateMaximumNumberOfUses();
-        int appliedCount = 0;
-        
-        for (PromotableOrderItem chgItem : candidateTargets) {
-            // TODO:  BCP - Transferred the original logic but it looks like there is a bug here
-            //        when a targetItemCriteria has a quantity > 1.
-            int qtyToReceiveSavings = Math.min(chgItem.getQuantity(), maxUses);
-            savings = savings.add(calculateSavingsForOrderItem(chgItem, qtyToReceiveSavings));
-
-            appliedCount = appliedCount + qtyToReceiveSavings;
-            if (appliedCount >= maxUses) {
-                return savings;
-            }
-        }
-        
-        return savings;
     }
 
     @Override
@@ -105,9 +74,14 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     @Override
     public int calculateTargetQuantityForTieredOffer() {
         int returnQty = 0;
-        for (PromotableOrderItem promotableOrderItem : candidateTargets) {
-            returnQty += promotableOrderItem.getQuantity();
+
+        for (OfferItemCriteria itemCriteria : getCandidateQualifiersMap().keySet()) {
+            List<PromotableOrderItem> candidateTargets = getCandidateTargetsMap().get(itemCriteria);
+            for (PromotableOrderItem promotableOrderItem : candidateTargets) {
+                returnQty += promotableOrderItem.getQuantity();
+            }
         }
+
         return returnQty;
     }
 
@@ -157,6 +131,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
         int numberOfUsesForThisItemCriteria = 9999;
         
         if (itemCriteria != null) {
+            List<PromotableOrderItem> candidateTargets = getCandidateTargetsMap().get(itemCriteria);
             for(PromotableOrderItem potentialTarget : candidateTargets) {
                 numberOfTargets += potentialTarget.getQuantity();
             }
@@ -177,13 +152,13 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     }
 
     @Override
-    public List<PromotableOrderItem> getCandidateTargets() {
-        return candidateTargets;
+    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateTargetsMap() {
+        return candidateTargetsMap;
     }
 
     @Override
-    public void setCandidateTargets(List<PromotableOrderItem> candidateTargets) {
-        this.candidateTargets = candidateTargets;
+    public void setCandidateTargetsMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap) {
+        this.candidateTargetsMap = candidateItemsMap;
     }
 
     @Override
@@ -214,5 +189,15 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     @Override
     public boolean isLegacyOffer() {
         return offer.getQualifyingItemCriteria().isEmpty() && offer.getTargetItemCriteria().isEmpty();
+    }
+
+    @Override
+    public List<PromotableOrderItem> getLegacyCandidateTargets() {
+        return legacyCandidateTargets;
+    }
+
+    @Override
+    public void setLegacyCandidateTargets(List<PromotableOrderItem> candidateTargets) {
+        this.legacyCandidateTargets = candidateTargets;
     }
 }

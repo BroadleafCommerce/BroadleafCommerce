@@ -34,9 +34,9 @@ public interface PromotableCandidateItemOffer extends Serializable {
 
     public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
 
-    public List<PromotableOrderItem> getCandidateTargets();
+    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateTargetsMap();
 
-    public void setCandidateTargets(List<PromotableOrderItem> candidateTargets);
+    public void setCandidateTargetsMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
 
     public Money getPotentialSavings();
 
@@ -86,4 +86,8 @@ public interface PromotableCandidateItemOffer extends Serializable {
     public void resetUses();
     
     public boolean isLegacyOffer();
+
+    public List<PromotableOrderItem> getLegacyCandidateTargets();
+
+    public void setLegacyCandidateTargets(List<PromotableOrderItem> candidateTargets);
 }

@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 
 public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPriceDetail {
@@ -357,7 +356,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     }
 
     @Override
-    public void addPromotionDiscount(PromotableCandidateItemOffer itemOffer, Set<OfferItemCriteria> itemCriteria, int qtyToMarkAsTarget) {
+    public void addPromotionDiscount(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria, int qtyToMarkAsTarget) {
         PromotionDiscount pd = lookupOrCreatePromotionDiscount(itemOffer);
         if (pd == null) {
             return;

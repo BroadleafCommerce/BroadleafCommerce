@@ -323,7 +323,10 @@ public class ItemOfferProcessorTest extends TestCase {
         CandidatePromotionItems candidates = itemProcessor.couldOfferApplyToOrderItems(offers.get(0), orderItems);
         //test that the valid order item offer is included
         //both cart items are valid for qualification and target
-        assertTrue(candidates.isMatchedQualifier() && candidates.getCandidateQualifiersMap().size() == 1 && candidates.getCandidateQualifiersMap().values().iterator().next().size() == 2 && candidates.isMatchedTarget() && candidates.getCandidateTargets().size() == 2);
+        assertTrue(candidates.isMatchedQualifier() && candidates.getCandidateQualifiersMap().size() == 1 &&
+                candidates.getCandidateQualifiersMap().values().iterator().next().size() == 2 &&
+                candidates.isMatchedTarget() && candidates.getCandidateTargetsMap().size() == 1 &&
+                candidates.getCandidateTargetsMap().values().iterator().next().size() == 2);
 
         offers = dataProvider.createItemBasedOfferWithItemCriteria(
             "order.subTotal.getAmount()>20",

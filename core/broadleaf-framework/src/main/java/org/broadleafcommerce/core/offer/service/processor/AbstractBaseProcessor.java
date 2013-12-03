@@ -126,7 +126,8 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             } else {            
                 // Checking if targets meet subtotal for item offer with no item criteria.
                 Money accumulatedTotal = null;
-                for (PromotableOrderItem orderItem : candidateItem.getCandidateTargets()) {                     
+
+                for (PromotableOrderItem orderItem : candidateItem.getAllCandidateTargets()) {
                     Money itemPrice = orderItem.getCurrentBasePrice().multiply(orderItem.getQuantity());
                     accumulatedTotal = accumulatedTotal==null?itemPrice:accumulatedTotal.add(itemPrice);
                     if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
@@ -185,7 +186,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                     if (isQualifier) {
                         candidates.addQualifier(criteria, item);
                     } else {
-                        candidates.addTarget(item);
+                        candidates.addTarget(criteria, item);
                     }
                     matchFound = true;
                 }
