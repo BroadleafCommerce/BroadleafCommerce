@@ -19,12 +19,12 @@
  */
 package org.broadleafcommerce.common.page.dto;
 
-import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 
 /**
  * Page fields must be pre-processed (for example to fix image paths).
@@ -41,7 +41,6 @@ public class PageDTO implements Serializable {
     protected String localeCode;
     protected String templatePath;
     protected String url;
-    protected Long sandboxId;
     protected Integer priority;
     protected Map<String, String> pageFields = new HashMap<String,String>();
     protected String ruleExpression;
@@ -85,14 +84,6 @@ public class PageDTO implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public Long getSandboxId() {
-        return sandboxId;
-    }
-
-    public void setSandboxId(Long sandboxId) {
-        this.sandboxId = sandboxId;
     }
 
     public Map<String, String> getPageFields() {
