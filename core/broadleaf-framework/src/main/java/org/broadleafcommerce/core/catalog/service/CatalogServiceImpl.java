@@ -19,6 +19,15 @@
  */
 package org.broadleafcommerce.core.catalog.service;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
@@ -36,13 +45,6 @@ import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 @Service("blCatalogService")
 public class CatalogServiceImpl implements CatalogService {
 
@@ -57,6 +59,9 @@ public class CatalogServiceImpl implements CatalogService {
     
     @Resource(name="blProductOptionDao")
     protected ProductOptionDao productOptionDao;
+
+    @Resource(name = "blCatalogServiceExtensionManager")
+    protected CatalogServiceExtensionManager extensionManager;
 
     @Override
     public Product findProductById(Long productId) {
@@ -311,11 +316,25 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Category findCategoryByURI(String uri) {
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findCategoryByURI(uri, holder);
+            if (result != null && ExtensionResultStatusType.NOT_HANDLED != result) {
+                return (Category) holder.getResult();
+            }
+        }
         return categoryDao.findCategoryByURI(uri);
     }
 
     @Override
     public Product findProductByURI(String uri) {
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findProductByURI(uri, holder);
+            if (result != null && ExtensionResultStatusType.NOT_HANDLED != result) {
+                return (Product) holder.getResult();
+            }
+        }
         List<Product> products = productDao.findProductByURI(uri);
         if (products == null || products.size() == 0) {
             return null;

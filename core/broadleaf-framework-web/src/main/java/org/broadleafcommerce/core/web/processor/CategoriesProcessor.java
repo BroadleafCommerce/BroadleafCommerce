@@ -25,10 +25,13 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.catalog.service.CatalogServiceExtensionManager;
 import org.springframework.util.ReflectionUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -44,6 +47,9 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
     
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
+
+    @Resource(name = "blCategoriesProcessorExtensionManager")
+    protected CategoriesProcessorExtensionManager extensionManager;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -62,7 +68,16 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
         String resultVar = element.getAttributeValue("resultVar");
         String parentCategory = element.getAttributeValue("parentCategory");
         String unparsedMaxResults = element.getAttributeValue("maxResults");
-        
+
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findAllPossibleChildCategories(parentCategory, unparsedMaxResults, holder);
+            if (result != null && ExtensionResultStatusType.NOT_HANDLED != result) {
+                addToModel(arguments, resultVar, holder.getResult());
+                return;
+            }
+        }
+
         // TODO: Potentially write an algorithm that will pick the minimum depth category
         // instead of the first category in the list
         List<Category> categories = catalogService.findCategoriesByName(parentCategory);
