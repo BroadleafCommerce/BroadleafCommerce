@@ -35,10 +35,10 @@
 
 package org.broadleafcommerce.common.web;
 
+import javax.annotation.Resource;
+
 import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.annotation.Resource;
 
 
 @Resource(name = "blBaseUrlResolver")

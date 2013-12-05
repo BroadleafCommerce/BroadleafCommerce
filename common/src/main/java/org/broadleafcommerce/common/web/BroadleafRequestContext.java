@@ -96,6 +96,8 @@ public class BroadleafRequestContext {
     protected Boolean isAdmin = false;
     protected Long adminUserId;
 
+    protected Boolean internalIgnoreFilters = false;
+
     /**
      * Gets the current request on the context
      * @return
@@ -363,4 +365,17 @@ public class BroadleafRequestContext {
         return getSandBox() != null;
     }
 
+    /**
+     * Intended for internal use only
+     */
+    public Boolean getInternalIgnoreFilters() {
+        return internalIgnoreFilters;
+    }
+
+    /**
+     * Intended for internal use only
+     */
+    public void setInternalIgnoreFilters(Boolean internalIgnoreFilters) {
+        this.internalIgnoreFilters = internalIgnoreFilters;
+    }
 }
