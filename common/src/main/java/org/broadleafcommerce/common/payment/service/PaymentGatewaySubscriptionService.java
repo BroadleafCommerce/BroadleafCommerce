@@ -17,18 +17,15 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.vendor.service.monitor;
 
-import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
+package org.broadleafcommerce.common.payment.service;
 
-import java.io.Serializable;
-
-public interface ServiceStatusDetectable<T> {
-
-    public ServiceStatusType getServiceStatus();
-
-    public String getServiceName();
-    
-    public Object process(T arg) throws Exception;
-
+/**
+ * @author Elbert Bautista (elbertbautista)
+ *
+ * Some gateways allow you to create a form of recurring billing by creating a subscription profile.
+ * Note: Some Gateways charge an extra fee to enable this feature
+ *
+ */
+public interface PaymentGatewaySubscriptionService {
 }

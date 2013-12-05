@@ -17,18 +17,22 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.vendor.service.monitor;
 
-import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
+package org.broadleafcommerce.common.payment.service;
 
-import java.io.Serializable;
+import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 
-public interface ServiceStatusDetectable<T> {
+/**
+ * @author Elbert Bautista (elbertbautista)
+ */
+public interface PaymentGatewayCheckoutService {
 
-    public ServiceStatusType getServiceStatus();
+    public Long applyPaymentToOrder(PaymentResponseDTO responseDTO);
 
-    public String getServiceName();
-    
-    public Object process(T arg) throws Exception;
+    public void markPaymentAsInvalid(Long orderPaymentId);
+
+    public String initiateCheckout(Long orderId);
+
+    public String lookupOrderNumberFromOrderId(PaymentResponseDTO responseDTO);
 
 }
