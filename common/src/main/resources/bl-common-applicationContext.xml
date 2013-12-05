@@ -185,6 +185,13 @@
         </property>
     </bean>
     
+    <bean id="blCssFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+    
     <bean id="blJsHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>

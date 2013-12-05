@@ -20,9 +20,15 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.search.domain.Field;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -72,5 +78,28 @@ public interface SolrIndexService {
      * @throws IOException
      */
     public void optimizeIndex(SolrServer server) throws ServiceException, IOException;
+
+    /**
+     * Prints out the docs to the trace logger
+     * 
+     * @param documents
+     */
+    public void logDocuments(Collection<SolrInputDocument> documents);
+
+    /**
+     * @return a list of all possible locale prefixes to consider
+     */
+    public List<Locale> getAllLocales();
+
+    /**
+     * Given a product, fields that relate to that product, and a list of locales and pricelists, builds a 
+     * SolrInputDocument to be added to the Solr index.
+     * 
+     * @param product
+     * @param fields
+     * @param locales
+     * @return the document
+     */
+    public SolrInputDocument buildDocument(Product product, List<Field> fields, List<Locale> locales);
 
 }

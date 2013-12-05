@@ -52,9 +52,9 @@
     </bean>
 
     <context:component-scan base-package="org.broadleafcommerce.openadmin.web.controller" />
-
-    <bean id="blAdminDialect" class="org.broadleafcommerce.common.web.dialect.BLCAdminDialect">
-        <property name="processors">
+    
+    <bean id="blAdminDialectProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
             <set>
                 <ref bean="blAdminUserProcessor"/>
                 <ref bean="blAdminComponentIdProcessor"/>
@@ -64,6 +64,9 @@
                 <ref bean="blErrorsProcessor"/>
             </set>
         </property>
+    </bean>
+    <bean id="blAdminDialect" class="org.broadleafcommerce.common.web.dialect.BLCAdminDialect">
+        <property name="processors" ref="blAdminDialectProcessors" />
     </bean>
     
     <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
