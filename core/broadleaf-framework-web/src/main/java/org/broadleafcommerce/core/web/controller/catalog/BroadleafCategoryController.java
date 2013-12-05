@@ -31,6 +31,7 @@ import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -67,7 +68,7 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
     protected SearchFacetDTOService facetService;
     
     @Autowired(required = false)
-    @Resource(name = "blCategoryDeepLinkService")
+    @Qualifier("blCategoryDeepLinkService")
     protected DeepLinkService<Category> deepLinkService;
 
     @Override
