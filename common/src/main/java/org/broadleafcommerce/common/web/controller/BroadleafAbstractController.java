@@ -79,6 +79,10 @@ public abstract class BroadleafAbstractController {
     }
     
     protected <T> void addDeepLink(ModelAndView model, DeepLinkService<T> service, T item) {
+        if (service == null) {
+            return;
+        }
+
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.isAdminMode()) {
             List<DeepLink> links = service.getLinks(item);

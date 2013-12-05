@@ -20,9 +20,11 @@
 package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
 import org.hibernate.tool.hbm2x.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -40,6 +42,10 @@ public class BroadleafProductController extends BroadleafAbstractController impl
     
     protected String defaultProductView = "catalog/product";
     protected static String MODEL_ATTRIBUTE_NAME = "product";    
+    
+    @Autowired(required = false)
+    @Resource(name = "blProductDeepLinkService")
+    protected DeepLinkService<Product> deepLinkService;
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -48,6 +54,8 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         assert(product != null);
         
         model.addObject(MODEL_ATTRIBUTE_NAME, product);
+
+        addDeepLink(model, deepLinkService, product);
 
         if (StringUtils.isNotEmpty(product.getDisplayTemplate())) {
             model.setViewName(product.getDisplayTemplate());    

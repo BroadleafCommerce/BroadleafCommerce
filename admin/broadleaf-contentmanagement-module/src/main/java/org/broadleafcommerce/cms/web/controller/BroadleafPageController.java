@@ -22,6 +22,9 @@ package org.broadleafcommerce.cms.web.controller;
 import org.broadleafcommerce.cms.web.PageHandlerMapping;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -36,6 +39,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BroadleafPageController extends BroadleafAbstractController implements Controller {    
     protected static String MODEL_ATTRIBUTE_NAME="page";    
+    
+    @Autowired(required = false)
+    @Qualifier("blPageDeepLinkService")
+    protected DeepLinkService<PageDTO> deepLinkService;
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -45,6 +52,9 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
 
         model.addObject(MODEL_ATTRIBUTE_NAME, page);        
         model.setViewName(page.getTemplatePath());
+        
+        addDeepLink(model, deepLinkService, page);
+
         return model;
     }
 }
