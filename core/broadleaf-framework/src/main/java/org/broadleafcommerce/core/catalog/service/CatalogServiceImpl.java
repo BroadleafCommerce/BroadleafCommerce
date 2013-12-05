@@ -19,13 +19,6 @@
  */
 package org.broadleafcommerce.core.catalog.service;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
@@ -44,6 +37,13 @@ import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 @Service("blCatalogService")
 public class CatalogServiceImpl implements CatalogService {
@@ -319,7 +319,7 @@ public class CatalogServiceImpl implements CatalogService {
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
             ExtensionResultStatusType result = extensionManager.getProxy().findCategoryByURI(uri, holder);
-            if (result != null && ExtensionResultStatusType.NOT_HANDLED != result) {
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
                 return (Category) holder.getResult();
             }
         }
@@ -331,7 +331,7 @@ public class CatalogServiceImpl implements CatalogService {
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
             ExtensionResultStatusType result = extensionManager.getProxy().findProductByURI(uri, holder);
-            if (result != null && ExtensionResultStatusType.NOT_HANDLED != result) {
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
                 return (Product) holder.getResult();
             }
         }

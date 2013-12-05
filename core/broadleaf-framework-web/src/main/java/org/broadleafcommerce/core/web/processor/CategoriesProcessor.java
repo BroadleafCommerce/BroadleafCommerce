@@ -19,11 +19,6 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
@@ -31,10 +26,13 @@ import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierPro
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.catalog.service.CatalogServiceExtensionManager;
-import org.springframework.util.ReflectionUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the desired categories to the model. It does this by
@@ -72,7 +70,7 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
             ExtensionResultStatusType result = extensionManager.getProxy().findAllPossibleChildCategories(parentCategory, unparsedMaxResults, holder);
-            if (result != null && ExtensionResultStatusType.NOT_HANDLED != result) {
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
                 addToModel(arguments, resultVar, holder.getResult());
                 return;
             }

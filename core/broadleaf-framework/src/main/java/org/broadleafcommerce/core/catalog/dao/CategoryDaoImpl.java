@@ -244,7 +244,7 @@ public class CategoryDaoImpl implements CategoryDao {
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
             ExtensionResultStatusType result = extensionManager.getProxy().findCategoryByURI(uri, holder);
-            if (result != null && ExtensionResultStatusType.NOT_HANDLED != result) {
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
                 return (Category) holder.getResult();
             }
         }
