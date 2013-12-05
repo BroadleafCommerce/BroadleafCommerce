@@ -24,6 +24,7 @@
         saved : 'Saved',
         reorder : 'Reorder',
         done : 'Done',
+        updated : 'Updated',
         
         // Rule builder messages
         rule : 'Rule',

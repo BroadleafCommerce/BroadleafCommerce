@@ -1,0 +1,5 @@
+<div class="listgrid-container" th:id="${listGrid.subCollectionFieldName}">
+    <label th:text="#{${listGrid.friendlyName}}" />
+    <div th:include="components/listGridToolbar" th:remove="tag" />
+    <div th:include="components/listGrid" th:remove="tag" />
+</div>

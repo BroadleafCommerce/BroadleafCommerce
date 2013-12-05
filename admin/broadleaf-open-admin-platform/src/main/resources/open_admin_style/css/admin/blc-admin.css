@@ -145,6 +145,7 @@ div.errors span {
 }
 
 .entity-form .custom-checkbox {
+	display: inline-block;
 }
 
 div.field-box {
@@ -314,6 +315,15 @@ h2#mainEntityName {
 .top-bar .attached > .brand {
     float: left;
     padding: 5px 10px 0px;
+}
+
+.top-bar ul > li.has-dropdown .dropdown li a  {
+    display: inline-block;
+    width: 100%;
+}
+
+.top-bar ul > li.has-dropdown a {
+    display: inline-block;
 }
 
 /* --------------------------------------------------
@@ -1222,6 +1232,10 @@ ul.magellan-toolbar > li.divider {
 
 table.list-grid-table tr.clickable.selected {
 	background-color: #CCDADD;
+}
+
+table.list-grid-table tr.selected.forced {
+	background-color: #C0C6C7;
 }
 
 table.list-grid-table tr.clickable.selected:hover {

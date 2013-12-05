@@ -134,6 +134,10 @@
             } else {
                 $listGridContainer.find('button.row-action').attr('disabled', 'disabled');
             }
+            
+            if (!$listGridContainer.find('td.list-grid-no-results').length) {
+                $listGridContainer.find('button.row-action.all-capable').removeAttr('disabled');
+            }
         },
         
         showAlert : function($container, message, options) {
@@ -214,8 +218,13 @@ $(document).ready(function() {
     $('body').on('click', '.list-grid-table tbody tr', function() {
         var $tr = $(this);
         var $table = $tr.closest('table');
-        var link = $tr.data('link');
         var listGridType = $table.data('listgridtype');
+        
+        if (listGridType != 'main' && !$tr.hasClass('clickable')) {
+            return false;
+        }
+        
+        var link = $tr.data('link');
         var currentUrl = $table.data('currenturl');
         var fields = BLCAdmin.listGrid.getRowFields($tr);
         

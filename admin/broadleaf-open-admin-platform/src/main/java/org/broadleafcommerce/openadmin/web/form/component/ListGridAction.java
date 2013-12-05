@@ -44,6 +44,7 @@ public class ListGridAction implements Cloneable {
     protected String actionId = "";
     protected Boolean forListGridReadOnly = false;
     protected String actionUrlOverride = null;
+    protected Boolean allCapable = false;
     
     public ListGridAction(String actionId) {
         this.actionId = actionId;
@@ -95,8 +96,16 @@ public class ListGridAction implements Cloneable {
     }
     
 
+    /**
+     * @see {@link #setAllCapable(Boolean)}
+     */
+    public ListGridAction withAllCapable(Boolean allCapable) {
+        setAllCapable(allCapable);
+        return this;
+    }
+    
     public String getButtonClass() {
-        return buttonClass;
+        return buttonClass + (allCapable ? " all-capable" : "");
     }
 
     public Boolean getForListGridReadOnly() {
@@ -192,6 +201,22 @@ public class ListGridAction implements Cloneable {
     public String getActionId() {
         return actionId;
     }
+    
+    /**
+     * @return whether or not the given list grid action is capable of acting on rows even when none are selected
+     */
+    public Boolean getAllCapable() {
+        return allCapable;
+    }
+    
+    /**
+     * Sets whether or not the given list grid action is capable of acting on rows even when none are selected
+     * 
+     * @param allCapable
+     */
+    public void setAllCapable(Boolean allCapable) {
+        this.allCapable = allCapable;
+    }
 
     @Override
     public ListGridAction clone() {
@@ -201,6 +226,7 @@ public class ListGridAction implements Cloneable {
         cloned.iconClass = iconClass;
         cloned.urlPostfix = urlPostfix;
         cloned.forListGridReadOnly = forListGridReadOnly;
+        cloned.allCapable = allCapable;
         return cloned;
     }
 }
