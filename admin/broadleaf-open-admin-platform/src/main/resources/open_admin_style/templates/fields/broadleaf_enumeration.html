@@ -10,13 +10,15 @@
 </select>
 
 <div th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) lt #props.getAsInt('admin.enum.minCountForDropDown')}"
-     th:each="entry : *{fields['__${field.name}__'].options}">
-    <label th:inline="text" class="inline-radio-label">
-        <input th:field="*{fields['__${field.name}__'].value}"
-               type="radio"
-               th:value="${entry.key}" />
-        [[${entry.value}]]
-    </label>
+     class="small-enum-container">
+    <div th:each="entry : *{fields['__${field.name}__'].options}">
+        <label th:inline="text" class="inline-radio-label">
+            <input th:field="*{fields['__${field.name}__'].value}"
+                   type="radio"
+                   th:value="${entry.key}" />
+            [[${entry.value}]]
+        </label>
+    </div>
 </div>
             
 <span th:if="${#maps.isEmpty(field.options)}" class="indented-form-value" th:inline="text">
