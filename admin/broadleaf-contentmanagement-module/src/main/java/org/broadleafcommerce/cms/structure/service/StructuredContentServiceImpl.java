@@ -340,11 +340,15 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     public void removeItemFromCache(String nameKey, String typeKey) {
         // Remove secure and non-secure instances of the structured content.
         // Typically the structured content will be in one or the other if at all.
-        getStructuredContentCache().remove(nameKey+"-"+true);
-        getStructuredContentCache().remove(nameKey+"-"+false);
+        if (!StringUtils.isEmpty(nameKey)) {
+            getStructuredContentCache().remove(nameKey+"-"+true);
+            getStructuredContentCache().remove(nameKey+"-"+false);
+        }
 
-        getStructuredContentCache().remove(typeKey+"-"+true);
-        getStructuredContentCache().remove(typeKey+"-"+false);
+        if (!StringUtils.isEmpty(typeKey)) {
+            getStructuredContentCache().remove(typeKey+"-"+true);
+            getStructuredContentCache().remove(typeKey+"-"+false);
+        }
     }
 
     protected String buildRuleExpression(StructuredContent sc) {
