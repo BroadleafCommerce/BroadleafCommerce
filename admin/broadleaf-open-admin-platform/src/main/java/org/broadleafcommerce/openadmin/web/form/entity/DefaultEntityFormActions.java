@@ -32,4 +32,8 @@ public class DefaultEntityFormActions {
         .withButtonClass("delete-button alert")
         .withDisplayText("Delete");
     
+    public static final EntityFormAction PREVIEW = new EntityFormAction(EntityFormAction.PREVIEW)
+        .withButtonClass("preview-button")
+        .withDisplayText("Preview");
+
 }
