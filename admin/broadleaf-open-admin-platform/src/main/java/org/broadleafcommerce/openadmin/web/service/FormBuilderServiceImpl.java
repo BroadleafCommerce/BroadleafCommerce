@@ -19,16 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.web.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
@@ -562,6 +552,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             throws ServiceException {
         EntityForm ef = createStandardEntityForm();
         populateEntityForm(cmd, entity, ef, sectionCrumbs);
+        extensionManager.getProxy().addAdditionalFormActions(ef);
         return ef;
     }
 
@@ -731,6 +722,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             throws ServiceException {
         EntityForm ef = createStandardEntityForm();
         populateEntityForm(cmd, entity, collectionRecords, ef, sectionCrumbs);
+        extensionManager.getProxy().addAdditionalFormActions(ef);
         return ef;
     }
     

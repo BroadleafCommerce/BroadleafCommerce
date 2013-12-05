@@ -88,4 +88,9 @@ public abstract class AbstractFormBuilderExtensionHandler extends AbstractExtens
         return ExtensionResultStatusType.NOT_HANDLED;
     }
     
+    @Override
+    public ExtensionResultStatusType addAdditionalFormActions(EntityForm entityForm) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+    
 }
