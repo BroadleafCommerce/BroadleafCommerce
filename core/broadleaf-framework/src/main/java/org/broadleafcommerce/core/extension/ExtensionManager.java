@@ -135,9 +135,9 @@ public abstract class ExtensionManager<T extends ExtensionHandler> implements In
         }
         if (notHandled) {
             return ExtensionResultStatusType.NOT_HANDLED;
+        } else {
+            return ExtensionResultStatusType.HANDLED;
         }
-
-        return null;
     }
        
 }
