@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.payment.service;
 
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.CreditCardDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
@@ -25,7 +26,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
-import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -54,6 +54,10 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             throw new IllegalArgumentException("Invalid payment responses cannot be parsed into the order payment domain");
         }
         
+        if (configService == null) {
+            throw new IllegalArgumentException("Config service cannot be null");
+        }
+        
         Long orderId = Long.parseLong(responseDTO.getOrderId());
         Order order = orderService.findOrderById(orderId);
         
@@ -65,6 +69,12 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         PaymentType type = null;
         if (responseDTO.getCreditCard() instanceof CreditCardDTO) {
             type = PaymentType.CREDIT_CARD;
+        }
+        
+        if (!configService.handlesMultiplePayments()) {
+            for (OrderPayment payment : order.getPayments()) {
+                markPaymentAsInvalid(payment.getId());
+            }
         }
         
         // ALWAYS create a new order payment for the payment that comes in. Invalid payments should be cleaned up by
@@ -99,13 +109,15 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         //TODO: get the transaction type from the response DTO
         //transaction.setType(type);
         
+        //TODO: copy additional fields from payment response into payment transaction
+        
         //TODO: validate that this particular type of transaction is valid to be added to the payment (there might already
         // be an AUTHORIZE transaction, for instance)
         payment.addTransaction(transaction);
-        
+        payment = orderPaymentService.save(payment);
         orderService.addPaymentToOrder(order, payment, null);
         
-        return null;
+        return payment.getId();
     }
 
     @Override
