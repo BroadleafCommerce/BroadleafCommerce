@@ -61,7 +61,6 @@ import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
-import org.broadleafcommerce.core.payment.domain.PaymentTransactionType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.BatchSize;
@@ -352,30 +351,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
             previewable = new PreviewStatus();
         }
         previewable.setPreview(preview);
-    }
-
-    @Override
-    public Money getRemainingTotal() {
-        Money myTotal = getTotal();
-        if (myTotal == null) {
-            return null;
-        }
-        Money totalPayments = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
-        for (OrderPayment payment : getPayments()) {
-            if (payment.getAmount() != null) {
-                totalPayments = totalPayments.add(payment.getAmount());
-            }
-        }
-        return myTotal.subtract(totalPayments);
-    }
-
-    @Override
-    public Money getCapturedTotal() {
-        Money totalCaptured = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
-        for (OrderPayment payment : getPayments()) {
-            totalCaptured = totalCaptured.add(payment.getTransactionAmountForType(PaymentTransactionType.CAPTURE));
-        }
-        return totalCaptured;
     }
 
     @Override

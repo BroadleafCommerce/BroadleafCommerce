@@ -136,23 +136,6 @@ public interface Order extends Serializable {
     void setTotal(Money orderTotal);
 
     /**
-     * Convenience method for determining how much is left on the Order based on the payments that have already been
-     * applied. This takes {@link #getTotal()} and subtracts the sum of all the {@link OrderPayment}s associated with this
-     * Order.  Note that if an order has been fully paid for, this method will return zero.
-     * 
-     * @return {@link #getTotal()} minus the {@link OrderPayment#getAmount()} for each {@link OrderPayment} on this Order
-     */
-    Money getRemainingTotal();
-
-    /**
-     * Convenience method for determining how much of the order total has been captured. This takes the {@link OrderPayment}s
-     * and checks the {@link org.broadleafcommerce.core.payment.domain.PaymentTransactionType} for captured records.
-     *
-     * @return
-     */
-    Money getCapturedTotal();
-
-    /**
      * Gets the {@link Customer} for this {@link Order}.
      * 
      * @return
