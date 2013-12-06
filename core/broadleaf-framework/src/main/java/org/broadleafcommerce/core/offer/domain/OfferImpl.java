@@ -296,6 +296,7 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM, 
         requiredOverride = RequiredOverride.REQUIRED)
+    @ClonePolicyCollection
     protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
     
     @Column(name = "TOTALITARIAN_OFFER")
