@@ -21,12 +21,25 @@
 package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
+import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 
 /**
+ * <p>The default implementation of this interface is represented in the core Broadleaf framework at
+ * {@link org.broadleafcommerce.core.payment.service.BroadleafPaymentGatewayCheckoutService}. This is designed as
+ * a generic contract for allowing payment modules to add payments to an order represented in Broadleaf while still
+ * staying decoupled from any of the Broadleaf core framework concepts.</p>
+ * 
+ * <p>These service methods are usually invoked from the controller that listens to the endpoint hit by the external payment
+ * provider (which should be a subclass of {@link PaymentGatewayAbstractController}).</p>
+ * 
+ * @see {@link PaymentGatewayAbstractController}
  * @author Elbert Bautista (elbertbautista)
  */
 public interface PaymentGatewayCheckoutService {
 
+    /*
+     * @return a unique ID of the payment as it is saved in the Broadleaf domain.
+     */
     public Long applyPaymentToOrder(PaymentResponseDTO responseDTO);
 
     public void markPaymentAsInvalid(Long orderPaymentId);

@@ -34,13 +34,13 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  *
- * Abstract controller that provides convenience methods and resource declarations for Payment Gateway
+ * <p>Abstract controller that provides convenience methods and resource declarations for Payment Gateway
  * Operations that are shared between all gateway controllers belong here.
  *
- * The Core Framework should have an implementation of "blPaymentGatewayCheckoutService" defined.
+ * The Core Framework should have an implementation of a "blPaymentGatewayCheckoutService" bean defined.
  * If you are using the common jars without the framework dependency, you will either have to
  * implement the blPaymentGatewayCheckoutService yourself, or override the applyPaymentToOrder and
- * the markPaymentAsInvalid methods accordingly.
+ * the markPaymentAsInvalid methods accordingly.</p>
  *
  * @author Elbert Bautista (elbertbautista)
  */

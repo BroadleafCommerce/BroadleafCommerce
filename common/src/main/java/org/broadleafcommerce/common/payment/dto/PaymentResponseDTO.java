@@ -26,35 +26,51 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Elbert Bautista (elbertbautista)
- *
- * The DTO object that represents the response coming back from any call to the Gateway.
+ * <p>The DTO object that represents the response coming back from any call to the Gateway.
  * This can either wrap an API result call or a translated HTTP Web response.
- * This can not only be the results of a transaction, but also a request for a Secure Token etc...
+ * This can not only be the results of a transaction, but also a request for a Secure Token etc...</p>
  *
- * The following values can be set on this object.
+ * <p>Note: the success and validity flags are set to true by default, unless otherwise overridden by specific
+ * gateway implementations</p>
  *
- * amount - the amount that was sent back on the transaction
- * successful - whether or not the transaction on the gateway was successful
- * valid - whether the response was valid (e.g. the tamper proof seal,
- *   or the web response was actually from the gateway and wasn't manipulated)
- * credit card - for sale/authorize transactions, this will be the Credit Card object that was charged
- *   (Useful for showing on the Order Confirmation Screen)
- * rawResponse = a String representation of the response coming back
- * responseMap - a convenience Map representation of the fields coming back
- *
- * Note: the success and validtity flags are set to true by default, unless otherwise overriten by the
- * gateway implementations
- *
+ * @author Elbert Bautista (elbertbautista)
  */
 public class PaymentResponseDTO {
 
     protected String orderId;
+    
+    /**
+     * The amount that was sent back from the gateway
+     */
     protected Money amount;
+    
+    /**
+     * Whether or not the transaction on the gateway was successful. This should be provided by the gateway alone.
+     */
     protected Boolean successful = true;
+    
+    /**
+     * Whether or not this response was tampered with. This used to verify that the response that was received on the
+     * endpoint (which is intended to only be invoked from the payment gateway) actually came from the gateway and was not
+     * otherwise maliciously invoked by a 3rd-party. 
+     */
     protected Boolean valid = true;
+    
+    /**
+     * for sale/authorize transactions, this will be the Credit Card object that was charged. This data is useful for showing
+     * on an order confirmation screen.
+     */
     protected CreditCardDTO creditCard;
+
+    /**
+     * A string representation of the response that came from the gateway. This should be a string serialization of
+     * {@link #responseMap}.
+     */
     protected String rawResponse;
+    
+    /**
+     * A more convenient representation of {@link #rawResponse} to hold the response from the gateway.
+     */
     protected Map<String, Object> responseMap = new HashMap<String, Object>();
 
     public String getOrderId() {
