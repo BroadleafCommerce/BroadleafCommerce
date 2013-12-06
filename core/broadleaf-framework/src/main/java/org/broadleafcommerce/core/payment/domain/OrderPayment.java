@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
@@ -42,12 +43,14 @@ import java.util.List;
  * {@link OrderPayment} that is associated with an {@link Order} that has gone through checkout</b> (usually, whose
  * {@link Order#getStatus()} is {@link OrderStatus#SUBMITTED}).</p>
  * 
+ * <p>{@link OrderPayment}s are not actually deleted from the database but rather are only soft-deleted (archived = true)</p>
+ * 
  * @see {@link PaymentTransactionType}
  * @see {@link PaymentTransaction}
  * @see {@link PaymentType}
  * @author Phillip Verheyden (phillipuniverse)
  */
-public interface OrderPayment extends Serializable {
+public interface OrderPayment extends Serializable, Status {
 
     public Long getId();
 

@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.payment.service.type.PaymentAdditionalFieldType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
@@ -51,7 +52,7 @@ import java.util.Map;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-public interface PaymentTransaction extends Serializable {
+public interface PaymentTransaction extends Serializable, Status {
 
     public Long getId();
 

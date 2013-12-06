@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -48,6 +49,7 @@ import org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -55,6 +57,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -94,6 +97,7 @@ import javax.persistence.Table;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PaymentInfoImpl_basePaymentInfo")
+@SQLDelete(sql="UPDATE BLC_ORDER_PAYMENT SET ARCHIVED = 'Y' WHERE ORDER_PAYMENT_ID = ?")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
@@ -152,7 +156,10 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @Index(name="CUSTOMER_PAYMENT", columnNames={"CUSTOMER_PAYMENT_ID"})
     @AdminPresentation(excluded = true) //don't display the payment token info in the admin by default
     protected CustomerPayment customerPayment;
-
+    
+    @Embedded
+    protected ArchiveStatus archiveStatus = new ArchiveStatus();
+    
     @Override
     public Money getAmount() {
         return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, getOrder().getCurrency());
@@ -261,6 +268,27 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     }
     
     @Override
+    public Character getArchived() {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        return archiveStatus.getArchived();
+    }
+
+    @Override
+    public void setArchived(Character archived) {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        archiveStatus.setArchived(archived);
+    }
+
+    @Override
+    public boolean isActive() {
+        return 'N' == getArchived();
+    }
+    
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof OrderPaymentImpl) {
             OrderPaymentImpl that = (OrderPaymentImpl) obj;
@@ -268,6 +296,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
                 .append(this.id, that.id)
                 .append(this.referenceNumber, that.referenceNumber)
                 .append(this.type, that.type)
+                .append(this.archiveStatus, that.archiveStatus)
                 .build();
         }
         return false;
@@ -278,6 +307,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
         return new HashCodeBuilder()
             .append(referenceNumber)
             .append(type)
+            .append(archiveStatus)
             .build();
     }
 
@@ -310,4 +340,5 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
             public static final int REFNUMBER = 3000;
         }
     }
+
 }

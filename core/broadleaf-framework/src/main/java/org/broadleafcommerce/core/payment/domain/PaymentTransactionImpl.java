@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -33,6 +34,7 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -62,6 +65,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_PAYMENT_TRANSACTION")
+@SQLDelete(sql="UPDATE BLC_ORDER_PAYMENT_TRANSACTION SET ARCHIVED = 'Y' WHERE PAYMENT_TRANSACTION_ID = ?")
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "", mergeEntries =
@@ -109,6 +113,9 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @Column(name = "RAW_RESPONSE")
     @AdminPresentation(friendlyName = "PaymentTransaction_rawResponse")
     protected String rawResponse;
+    
+    @Embedded
+    protected ArchiveStatus archiveStatus = new ArchiveStatus();
     
     @ManyToOne(targetEntity = OrderPaymentImpl.class, optional = false)
     @JoinColumn(name = "ORDER_PAYMENT")
@@ -209,10 +216,12 @@ public class PaymentTransactionImpl implements PaymentTransaction {
         this.customerIpAddress = customerIpAddress;
     }
     
+    @Override
     public String getRawResponse() {
         return rawResponse;
     }
     
+    @Override
     public void setRawResponse(String rawResponse) {
         this.rawResponse = rawResponse;
     }
@@ -235,6 +244,27 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @Override
     public void setPaymentResponseItems(List<PaymentResponseItem> paymentResponseItems) {
         this.paymentResponseItems = paymentResponseItems;
+    }
+    
+    @Override
+    public Character getArchived() {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        return archiveStatus.getArchived();
+    }
+
+    @Override
+    public void setArchived(Character archived) {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        archiveStatus.setArchived(archived);
+    }
+
+    @Override
+    public boolean isActive() {
+        return 'N' == getArchived();
     }
 
 
