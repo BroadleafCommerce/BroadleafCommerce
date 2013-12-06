@@ -90,11 +90,11 @@ public class CustomFieldImpl implements CustomField {
 
     @Column(name = "SHOW_FIELD_ON_FORM")
     @AdminPresentation(friendlyName = "CustomFieldImpl_Show_Field_On_Form", order = 5)
-    protected Boolean showFieldOnForm = true;
+    protected Boolean showFieldOnForm;
 
     @Column(name = "SHOW_FIELD_IN_RULE")
     @AdminPresentation(friendlyName = "CustomFieldImpl_Show_Field_In_Rule", order = 6)
-    protected Boolean showFieldInRuleBuilder = true;
+    protected Boolean showFieldInRuleBuilder;
 
     @Column(name = "GROUP_NAME")
     @AdminPresentation(friendlyName = "CustomFieldImpl_Group_Name", order = 7)
