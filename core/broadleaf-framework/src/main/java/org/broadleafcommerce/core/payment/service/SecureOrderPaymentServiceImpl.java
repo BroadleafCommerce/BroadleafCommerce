@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.payment.dao.SecureOrderPaymentDao;
 import org.broadleafcommerce.core.payment.domain.secure.BankAccountPayment;
 import org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment;
@@ -27,6 +28,7 @@ import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -46,6 +48,7 @@ public class SecureOrderPaymentServiceImpl implements SecureOrderPaymentService 
     protected SecureOrderPaymentDao securePaymentInfoDao;
 
     @Override
+    @Transactional(TransactionUtils.SECURE_TRANSACTION_MANAGER)
     public Referenced save(Referenced securePaymentInfo) {
         return securePaymentInfoDao.save(securePaymentInfo);
     }
@@ -101,6 +104,7 @@ public class SecureOrderPaymentServiceImpl implements SecureOrderPaymentService 
     }
 
     @Override
+    @Transactional(TransactionUtils.SECURE_TRANSACTION_MANAGER)
     public void remove(Referenced securePaymentInfo) {
         securePaymentInfoDao.delete(securePaymentInfo);
     }
