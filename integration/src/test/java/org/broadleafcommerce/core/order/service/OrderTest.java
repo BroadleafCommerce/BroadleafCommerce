@@ -35,7 +35,7 @@ import org.broadleafcommerce.core.order.service.exception.RemoveFromCartExceptio
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.PaymentInfoDataProvider;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -712,12 +712,12 @@ public class OrderTest extends OrderBaseTest {
     @Test(groups = { "addPaymentToOrder" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class, dependsOnGroups = { "checkOrderItems" })
     @Rollback(false)
     @Transactional
-    public void addPaymentToOrder(PaymentInfo paymentInfo) {
+    public void addPaymentToOrder(OrderPayment paymentInfo) {
         Order order = orderService.findOrderById(orderId);
         orderService.addPaymentToOrder(order, paymentInfo, null);
 
         order = orderService.findOrderById(orderId);
-        PaymentInfo payment = order.getPaymentInfos().get(order.getPaymentInfos().indexOf(paymentInfo));
+        OrderPayment payment = order.getPayments().get(order.getPayments().indexOf(paymentInfo));
         assert payment != null;
         assert payment.getOrder() != null;
         assert payment.getOrder().equals(order);
@@ -725,14 +725,14 @@ public class OrderTest extends OrderBaseTest {
 
     @Test(groups = { "testOrderPaymentInfos" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class)
     @Transactional
-    public void testOrderPaymentInfos(PaymentInfo info) throws PricingException {
+    public void testOrderPaymentInfos(OrderPayment info) throws PricingException {
         Customer customer = customerService.saveCustomer(createNamedCustomer());
         Order order = orderService.createNewCartForCustomer(customer);
         orderService.addPaymentToOrder(order, info, null);
 
         boolean foundInfo = false;
-        assert order.getPaymentInfos() != null;
-        for (PaymentInfo testInfo : order.getPaymentInfos()) {
+        assert order.getPayments() != null;
+        for (OrderPayment testInfo : order.getPayments()) {
             if (testInfo.equals(info)) {
                 foundInfo = true;
             }

@@ -32,7 +32,7 @@ import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity;
 import org.broadleafcommerce.core.pricing.service.workflow.TotalActivity;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -55,7 +55,7 @@ import java.util.Map;
  * 3c.    getTotalTax() :  The total taxes being charged for the order
  * 3d.    getTotal() : The order total (equivalent of getSubTotal() - getOrderAdjustmentsValue() + getTotalTax())
  * 
- * 4.  Order payments are represented with PaymentInfo objects.
+ * 4.  Order payments are represented with OrderPayment objects.
  * 
  * 5.  Order shipping (e.g. fulfillment) are represented with Fulfillment objects.
  */
@@ -137,16 +137,16 @@ public interface Order extends Serializable {
 
     /**
      * Convenience method for determining how much is left on the Order based on the payments that have already been
-     * applied. This takes {@link #getTotal()} and subtracts the sum of all the {@link PaymentInfo}s associated with this
+     * applied. This takes {@link #getTotal()} and subtracts the sum of all the {@link OrderPayment}s associated with this
      * Order.  Note that if an order has been fully paid for, this method will return zero.
      * 
-     * @return {@link #getTotal()} minus the {@link PaymentInfo#getAmount()} for each {@link PaymentInfo} on this Order
+     * @return {@link #getTotal()} minus the {@link OrderPayment#getAmount()} for each {@link OrderPayment} on this Order
      */
     Money getRemainingTotal();
 
     /**
-     * Convenience method for determining how much of the order total has been captured. This takes the {@link PaymentInfo}s
-     * and checks the {@link org.broadleafcommerce.core.payment.domain.PaymentInfoDetailType} for captured records.
+     * Convenience method for determining how much of the order total has been captured. This takes the {@link OrderPayment}s
+     * and checks the {@link org.broadleafcommerce.core.payment.domain.PaymentTransactionType} for captured records.
      *
      * @return
      */
@@ -266,6 +266,7 @@ public interface Order extends Serializable {
      * 
      * @param totalShipping
      */
+    @Deprecated
     void setTotalShipping(Money totalShipping);
 
     /**
@@ -286,20 +287,20 @@ public interface Order extends Serializable {
     void setTotalFulfillmentCharges(Money totalFulfillmentCharges);
 
     /**
-     * Gets all the {@link PaymentInfo}s associated with this {@link Order}. An {@link Order} can have many
-     * {@link PaymentInfo}s associated with it to support things like paying with multiple cards or perhaps paying some of
+     * Gets all the {@link OrderPayment}s associated with this {@link Order}. An {@link Order} can have many
+     * {@link OrderPayment}s associated with it to support things like paying with multiple cards or perhaps paying some of
      * this {@link Order} with a gift card and some with a credit card.
      * 
-     * @return the {@link PaymentInfo}s associated with this {@link Order}.
+     * @return the {@link OrderPayment}s associated with this {@link Order}.
      */
-    List<PaymentInfo> getPaymentInfos();
+    List<OrderPayment> getPayments();
 
     /**
      * Sets the various payment types associated with this {@link Order}
      * 
-     * @param paymentInfos
+     * @param payments
      */
-    void setPaymentInfos(List<PaymentInfo> paymentInfos);
+    void setPayments(List<OrderPayment> payments);
 
     /**
      * Determines if this {@link Order} has an item in the given category.

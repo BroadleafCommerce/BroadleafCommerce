@@ -31,7 +31,7 @@ import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.Date;
@@ -201,12 +201,12 @@ public class NullOrderImpl implements Order {
     }
 
     @Override
-    public List<PaymentInfo> getPaymentInfos() {
+    public List<OrderPayment> getPayments() {
         return null;
     }
 
     @Override
-    public void setPaymentInfos(List<PaymentInfo> paymentInfos) {
+    public void setPayments(List<OrderPayment> paymentInfos) {
         throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
     }
 

@@ -30,7 +30,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.beans.factory.annotation.Value;
 import org.thymeleaf.Arguments;
@@ -183,19 +183,19 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
     }
 
     protected Address getBillingAddress(Order order) {
-        PaymentInfo paymentInfo = null;
-        if (order.getPaymentInfos().size() > 0) {
-            paymentInfo = order.getPaymentInfos().get(0);
+        OrderPayment paymentInfo = null;
+        if (order.getPayments().size() > 0) {
+            paymentInfo = order.getPayments().get(0);
         }
 
         Address address = null;
-        if (paymentInfo == null || paymentInfo.getAddress() == null) {
+        if (paymentInfo == null || paymentInfo.getBillingAddress() == null) {
             // in this case, no payment info object on the order or no billing
             // information received due to external payment gateway
             address = order.getFulfillmentGroups().get(0).getAddress();
         } else {
             // then the address must exist on the payment info
-            address = paymentInfo.getAddress();
+            address = paymentInfo.getBillingAddress();
         }
 
         return address;

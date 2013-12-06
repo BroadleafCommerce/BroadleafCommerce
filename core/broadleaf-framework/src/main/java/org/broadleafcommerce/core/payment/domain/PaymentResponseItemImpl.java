@@ -19,13 +19,10 @@
  */
 package org.broadleafcommerce.core.payment.domain;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.core.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.BatchSize;
@@ -114,11 +111,6 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Implementer_Response_Text", order = 9, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
     protected String implementorResponseText;
 
-    @Column(name = "REFERENCE_NUMBER")
-    @Index(name="PAYRESPONSE_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
-    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Response_Ref_Number", order = 10, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
-    protected String referenceNumber;
-
     @Column(name = "TRANSACTION_SUCCESS")
     @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Transaction_Successful", order = 11, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true, prominent = true, gridOrder = 300)
     protected Boolean transactionSuccess = false;
@@ -155,29 +147,14 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @BatchSize(size = 50)
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
-    @Column(name = "ORDER_PAYMENT_ID")
-    @Index(name="PAYRESPONSE_ORDERPAYMENT_INDEX", columnNames={"ORDER_PAYMENT_ID"})
-    @AdminPresentation(excluded = true, readOnly = true)
-    protected Long paymentInfoId;
-
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID")
     @Index(name="PAYRESPONSE_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
-    @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")
-    @Index(name="PAYRESPONSE_REFERENCE_INDEX", columnNames={"PAYMENT_INFO_REFERENCE_NUMBER"})
-    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_Payment_Ref_Number", order = 17, group = "PaymentResponseItemImpl_Payment_Response", readOnly = true)
-    protected String paymentInfoReferenceNumber;
-
-    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
-    @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "PaymentResponseItemImpl_currency", order = 2, group = "PaymentLogImpl_Payment_Log", readOnly = true)
-    protected BroadleafCurrency currency;
-    
-    @ManyToOne(targetEntity = PaymentInfoImpl.class)
-    @JoinColumn(name = "PAYMENT_INFO_REFERENCE_NUMBER", referencedColumnName = "REFERENCE_NUMBER", insertable = false, updatable = false)
-    protected PaymentInfo paymentInfo;
+    @ManyToOne(targetEntity = PaymentTransactionImpl.class)
+    @JoinColumn(name = "PAYMENT_TRANSACTION_ID", referencedColumnName = "PAYMENT_TRANSACTION_ID", insertable = false, updatable = false)
+    protected PaymentTransaction paymentTransaction;
     
     @Override
     public String getAuthorizationCode() {
@@ -230,30 +207,8 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     }
 
     @Override
-    public String getReferenceNumber() {
-        return referenceNumber;
-    }
-
-    @Override
-    public void setReferenceNumber(String referenceNumber) {
-        this.referenceNumber = referenceNumber;
-    }
-
-    @Override
-    @Deprecated
-    public Money getAmountPaid() {
-        return BroadleafCurrencyUtils.getMoney(amountPaid, getCurrency());
-    }
-
-    @Override
-    @Deprecated
-    public void setAmountPaid(Money amountPaid) {
-        this.amountPaid = Money.toAmount(amountPaid);
-    }
-
-    @Override
     public Money getTransactionAmount() {
-        return BroadleafCurrencyUtils.getMoney(transactionAmount, getCurrency());
+        return BroadleafCurrencyUtils.getMoney(transactionAmount, getPaymentTransaction().getOrderPayment().getCurrency());
     }
 
     @Override
@@ -326,33 +281,13 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     }
 
     @Override
-    public String getCvvCode() {
-        return cvvCode;
-    }
-
-    @Override
-    public void setCvvCode(String cvvCode) {
-        this.cvvCode = cvvCode;
-    }
-
-    @Override
     public Money getRemainingBalance() {
-        return remainingBalance == null ? null : BroadleafCurrencyUtils.getMoney(remainingBalance, getCurrency());
+        return remainingBalance == null ? null : BroadleafCurrencyUtils.getMoney(remainingBalance, getPaymentTransaction().getOrderPayment().getCurrency());
     }
 
     @Override
     public void setRemainingBalance(Money remainingBalance) {
         this.remainingBalance = remainingBalance==null?null:Money.toAmount(remainingBalance);
-    }
-
-    @Override
-    public TransactionType getTransactionType() {
-        return TransactionType.getInstance(transactionType);
-    }
-
-    @Override
-    public void setTransactionType(TransactionType transactionType) {
-        this.transactionType = transactionType.getType();
     }
 
     @Override
@@ -371,16 +306,6 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @Override
-    public Long getPaymentInfoId() {
-        return paymentInfoId;
-    }
-
-    @Override
-    public void setPaymentInfoId(Long paymentInfoId) {
-        this.paymentInfoId = paymentInfoId;
     }
 
     @Override
@@ -404,33 +329,13 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     }
     
     @Override
-    public BroadleafCurrency getCurrency() {
-        return currency;
-    }
-
-    @Override
-    public void setCurrency(BroadleafCurrency currency) {
-        this.currency = currency;
-    }
-
-    @Override
-    public String getPaymentInfoReferenceNumber() {
-        return paymentInfoReferenceNumber;
-    }
-
-    @Override
-    public void setPaymentInfoReferenceNumber(String paymentInfoReferenceNumber) {
-        this.paymentInfoReferenceNumber = paymentInfoReferenceNumber;
+    public PaymentTransaction getPaymentTransaction() {
+        return paymentTransaction;
     }
     
     @Override
-    public PaymentInfo getPaymentInfo() {
-        return paymentInfo;
-    }
-    
-    @Override
-    public void setPaymentInfo(PaymentInfo paymentInfo) {
-        this.paymentInfo = paymentInfo;
+    public void setPaymentTransaction(PaymentTransaction paymentTransaction) {
+        this.paymentTransaction = paymentTransaction;
     }
 
     @Override
@@ -444,7 +349,6 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         sb.append("middleware response text: ").append(this.getMiddlewareResponseText()).append("\n");
         sb.append("processor response code: ").append(this.getProcessorResponseCode()).append("\n");
         sb.append("processor response text: ").append(this.getProcessorResponseText()).append("\n");
-        sb.append("reference number: ").append(this.getReferenceNumber()).append("\n");
         sb.append("transaction id: ").append(this.getTransactionId()).append("\n");
         sb.append("avs code: ").append(this.getAvsCode()).append("\n");
         if (remainingBalance != null) {

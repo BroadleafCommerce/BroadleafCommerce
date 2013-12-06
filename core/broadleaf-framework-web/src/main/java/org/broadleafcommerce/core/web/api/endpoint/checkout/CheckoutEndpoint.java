@@ -27,13 +27,11 @@ import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.CompositePaymentService;
-import org.broadleafcommerce.core.payment.service.exception.PaymentException;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.core.payment.service.workflow.CompositePaymentResponse;
+import org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl;
+import org.broadleafcommerce.core.payment.domain.secure.Referenced;
+import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
@@ -67,11 +65,6 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
     @Resource(name="blCheckoutService")
     protected CheckoutService checkoutService;
 
-    //This service is backed by the entire payment workflow configured in the application context.
-    //It is the entry point for engaging the payment workflow
-    @Resource(name="blCompositePaymentService")
-    protected CompositePaymentService compositePaymentService;
-
     @Resource(name="blOrderService")
     protected OrderService orderService;
 
@@ -80,23 +73,25 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
     public PaymentResponseItemWrapper executePayment(HttpServletRequest request, PaymentReferenceMapWrapper mapWrapper) {
         Order cart = CartState.getCart();
         if (cart != null) {
-            try {
-                Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
-                PaymentInfo paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
+            //try {
+                Map<OrderPayment, Referenced> payments = new HashMap<OrderPayment, Referenced>();
+                OrderPayment paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
                 Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
                 payments.put(paymentInfo, referenced);
 
-                CompositePaymentResponse compositePaymentResponse = compositePaymentService.executePayment(cart, payments);
-                PaymentResponseItem responseItem = compositePaymentResponse.getPaymentResponse().getResponseItems().get(paymentInfo);
-
+                //CompositePaymentResponse compositePaymentResponse = compositePaymentService.executePayment(cart, payments);
+                //CompositePaymentResponse compositePaymentResponse = new CompositePayme
+                //PaymentResponseItem responseItem = compositePaymentResponse.getPaymentResponse().getResponseItems().get(paymentInfo);
+                PaymentResponseItem responseItem = new PaymentResponseItemImpl();
+                
                 PaymentResponseItemWrapper paymentResponseItemWrapper = context.getBean(PaymentResponseItemWrapper.class);
                 paymentResponseItemWrapper.wrapDetails(responseItem, request);
 
                 return paymentResponseItemWrapper;
 
-            } catch (PaymentException e) {
-                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e);
-            }
+            //} catch (PaymentException e) {
+            //    throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e);
+            //}
         }
         throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
                 .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
@@ -108,19 +103,19 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
         if (cart != null) {
             try {
                 if (mapWrappers != null && !mapWrappers.isEmpty()) {
-                    Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
-                    orderService.removePaymentsFromOrder(cart, PaymentInfoType.CREDIT_CARD);
+                    Map<OrderPayment, Referenced> payments = new HashMap<OrderPayment, Referenced>();
+                    orderService.removePaymentsFromOrder(cart, PaymentType.CREDIT_CARD);
 
                     for (PaymentReferenceMapWrapper mapWrapper : mapWrappers) {
-                        PaymentInfo paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
+                        OrderPayment paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
                         paymentInfo.setOrder(cart);
                         Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
 
-                        if (cart.getPaymentInfos() == null) {
-                            cart.setPaymentInfos(new ArrayList<PaymentInfo>());
+                        if (cart.getPayments() == null) {
+                            cart.setPayments(new ArrayList<OrderPayment>());
                         }
 
-                        cart.getPaymentInfos().add(paymentInfo);
+                        cart.getPayments().add(paymentInfo);
                         payments.put(paymentInfo, referenced);
                     }
 

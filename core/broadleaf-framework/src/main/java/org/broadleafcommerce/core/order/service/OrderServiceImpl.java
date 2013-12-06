@@ -48,11 +48,11 @@ import org.broadleafcommerce.core.order.service.exception.RemoveFromCartExceptio
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
-import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.secure.Referenced;
+import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
+import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
@@ -88,8 +88,8 @@ public class OrderServiceImpl implements OrderService {
     private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
     
     /* DAOs */
-    @Resource(name = "blPaymentInfoDao")
-    protected PaymentInfoDao paymentInfoDao;
+    @Resource(name = "blOrderPaymentDao")
+    protected OrderPaymentDao paymentInfoDao;
     
     @Resource(name = "blOrderDao")
     protected OrderDao orderDao;
@@ -114,8 +114,8 @@ public class OrderServiceImpl implements OrderService {
     @Resource(name = "blOfferService")
     protected OfferService offerService;
 
-    @Resource(name = "blSecurePaymentInfoService")
-    protected SecurePaymentInfoService securePaymentInfoService;
+    @Resource(name = "blSecureOrderPaymentService")
+    protected SecureOrderPaymentService securePaymentInfoService;
 
     @Resource(name = "blMergeCartService")
     protected MergeCartService mergeCartService;
@@ -213,23 +213,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<PaymentInfo> findPaymentInfosForOrder(Order order) {
+    public List<OrderPayment> findPaymentInfosForOrder(Order order) {
         return paymentInfoDao.readPaymentInfosForOrder(order);
     }
     
     @Override
     @Transactional("blTransactionManager")
-    public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment, Referenced securePaymentInfo) {
+    public OrderPayment addPaymentToOrder(Order order, OrderPayment payment, Referenced securePaymentInfo) {
         payment.setOrder(order);
-        order.getPaymentInfos().add(payment);
+        order.getPayments().add(payment);
         order = persist(order);
-        int paymentIndex = order.getPaymentInfos().size() - 1;
+        int paymentIndex = order.getPayments().size() - 1;
 
         if (securePaymentInfo != null) {
             securePaymentInfoService.save(securePaymentInfo);
         }
 
-        return order.getPaymentInfos().get(paymentIndex);
+        return order.getPayments().get(paymentIndex);
     }
 
     @Override
@@ -657,22 +657,22 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional("blTransactionManager")
-    public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType) {
-        List<PaymentInfo> infos = new ArrayList<PaymentInfo>();
-        for (PaymentInfo paymentInfo : order.getPaymentInfos()) {
+    public void removePaymentsFromOrder(Order order, PaymentType paymentInfoType) {
+        List<OrderPayment> infos = new ArrayList<OrderPayment>();
+        for (OrderPayment paymentInfo : order.getPayments()) {
             if (paymentInfoType == null || paymentInfoType.equals(paymentInfo.getType())) {
                 infos.add(paymentInfo);
             }
         }
-        order.getPaymentInfos().removeAll(infos);
-        for (PaymentInfo paymentInfo : infos) {
+        order.getPayments().removeAll(infos);
+        for (OrderPayment paymentInfo : infos) {
             try {
                 securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfo.getReferenceNumber(), paymentInfo.getType());
             } catch (WorkflowException e) {
                 // do nothing--this is an acceptable condition
-                LOG.debug("No secure payment is associated with the PaymentInfo", e);
+                LOG.debug("No secure payment is associated with the OrderPayment", e);
             }
-            order.getPaymentInfos().remove(paymentInfo);
+            order.getPayments().remove(paymentInfo);
             paymentInfo = paymentInfoDao.readPaymentInfoById(paymentInfo.getId());
             paymentInfoDao.delete(paymentInfo);
         }
@@ -680,9 +680,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional("blTransactionManager")
-    public void removePaymentFromOrder(Order order, PaymentInfo paymentInfo){
-        PaymentInfo paymentInfoToRemove = null;
-        for(PaymentInfo info : order.getPaymentInfos()){
+    public void removePaymentFromOrder(Order order, OrderPayment paymentInfo){
+        OrderPayment paymentInfoToRemove = null;
+        for(OrderPayment info : order.getPayments()){
             if(info.equals(paymentInfo)){
                 paymentInfoToRemove = info;
             }
@@ -692,9 +692,9 @@ public class OrderServiceImpl implements OrderService {
                 securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfoToRemove.getReferenceNumber(), paymentInfo.getType());
             } catch (WorkflowException e) {
                 // do nothing--this is an acceptable condition
-                LOG.debug("No secure payment is associated with the PaymentInfo", e);
+                LOG.debug("No secure payment is associated with the OrderPayment", e);
             }
-            order.getPaymentInfos().remove(paymentInfoToRemove);
+            order.getPayments().remove(paymentInfoToRemove);
             paymentInfo = paymentInfoDao.readPaymentInfoById(paymentInfoToRemove.getId());
             paymentInfoDao.delete(paymentInfo);
         }

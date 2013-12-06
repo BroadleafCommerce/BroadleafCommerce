@@ -19,13 +19,12 @@
  */
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo;
-import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
-import org.broadleafcommerce.core.payment.domain.EmptyReferenced;
-import org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.core.payment.domain.secure.BankAccountPayment;
+import org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment;
+import org.broadleafcommerce.core.payment.domain.secure.GiftCardPayment;
+import org.broadleafcommerce.core.payment.domain.secure.Referenced;
+import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
+import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,9 +37,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * <p>
  * This is a JAXB wrapper around Referenced.
  * This wrapper can either be an instance of:
- *  <code>CreditCardPaymentInfo</code>
- *  <code>BankAccountPaymentInfo</code>
- *  <code>GiftCardPaymentInfo</code>
+ *  <code>CreditCardPayment</code>
+ *  <code>BankAccountPayment</code>
+ *  <code>GiftCardPayment</code>
  *  <code>EmptyReferenced</code>
  *
  * <p/>
@@ -86,9 +85,9 @@ public class ReferencedWrapper extends BaseWrapper implements APIWrapper<Referen
         this.id = model.getId();
         this.referenceNumber = model.getReferenceNumber();
 
-        if (model instanceof CreditCardPaymentInfo) {
-            CreditCardPaymentInfo referenced = (CreditCardPaymentInfo) model;
-            this.type = CreditCardPaymentInfo.class.getName();
+        if (model instanceof CreditCardPayment) {
+            CreditCardPayment referenced = (CreditCardPayment) model;
+            this.type = CreditCardPayment.class.getName();
 
             this.pan = referenced.getPan();
             this.cvvCode = referenced.getCvvCode();
@@ -96,34 +95,30 @@ public class ReferencedWrapper extends BaseWrapper implements APIWrapper<Referen
             this.expirationYear = referenced.getExpirationYear();
         }
 
-        if (model instanceof BankAccountPaymentInfo) {
-            BankAccountPaymentInfo referenced = (BankAccountPaymentInfo) model;
-            this.type = BankAccountPaymentInfo.class.getName();
+        if (model instanceof BankAccountPayment) {
+            BankAccountPayment referenced = (BankAccountPayment) model;
+            this.type = BankAccountPayment.class.getName();
 
             this.accountNumber = referenced.getAccountNumber();
             this.routingNumber = referenced.getRoutingNumber();
         }
 
-        if (model instanceof GiftCardPaymentInfo) {
-            GiftCardPaymentInfo referenced = (GiftCardPaymentInfo) model;
-            this.type = GiftCardPaymentInfo.class.getName();
+        if (model instanceof GiftCardPayment) {
+            GiftCardPayment referenced = (GiftCardPayment) model;
+            this.type = GiftCardPayment.class.getName();
 
             this.pan = referenced.getPan();
             this.pin = referenced.getPin();
-        }
-
-        if (model instanceof EmptyReferenced) {
-            this.type = EmptyReferenced.class.getName();
         }
 
     }
 
     @Override
     public Referenced unwrap(HttpServletRequest request, ApplicationContext context) {
-        SecurePaymentInfoService securePaymentInfoService = (SecurePaymentInfoService) context.getBean("blSecurePaymentInfoService");
+        SecureOrderPaymentService securePaymentInfoService = (SecureOrderPaymentService) context.getBean("blSecureOrderPaymentService");
 
-        if (CreditCardPaymentInfo.class.getName().equals(this.type)) {
-            CreditCardPaymentInfo paymentInfo = (CreditCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.CREDIT_CARD);
+        if (CreditCardPayment.class.getName().equals(this.type)) {
+            CreditCardPayment paymentInfo = (CreditCardPayment) securePaymentInfoService.create(PaymentType.CREDIT_CARD);
             paymentInfo.setId(this.id);
             paymentInfo.setReferenceNumber(this.referenceNumber);
             paymentInfo.setPan(this.pan);
@@ -134,8 +129,8 @@ public class ReferencedWrapper extends BaseWrapper implements APIWrapper<Referen
             return paymentInfo;
         }
 
-        if (BankAccountPaymentInfo.class.getName().equals(this.type)) {
-            BankAccountPaymentInfo paymentInfo = (BankAccountPaymentInfo) securePaymentInfoService.create(PaymentInfoType.BANK_ACCOUNT);
+        if (BankAccountPayment.class.getName().equals(this.type)) {
+            BankAccountPayment paymentInfo = (BankAccountPayment) securePaymentInfoService.create(PaymentType.BANK_ACCOUNT);
             paymentInfo.setId(this.id);
             paymentInfo.setReferenceNumber(this.referenceNumber);
             paymentInfo.setAccountNumber(this.accountNumber);
@@ -144,22 +139,14 @@ public class ReferencedWrapper extends BaseWrapper implements APIWrapper<Referen
             return paymentInfo;
         }
 
-        if (GiftCardPaymentInfo.class.getName().equals(this.type)) {
-            GiftCardPaymentInfo paymentInfo = (GiftCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.GIFT_CARD);
+        if (GiftCardPayment.class.getName().equals(this.type)) {
+            GiftCardPayment paymentInfo = (GiftCardPayment) securePaymentInfoService.create(PaymentType.GIFT_CARD);
             paymentInfo.setId(this.id);
             paymentInfo.setReferenceNumber(this.referenceNumber);
             paymentInfo.setPan(this.pan);
             paymentInfo.setPin(this.pin);
 
             return paymentInfo;
-        }
-
-        if (EmptyReferenced.class.getName().equals(this.type)) {
-            EmptyReferenced emptyReferenced = new EmptyReferenced();
-            emptyReferenced.setId(this.id);
-            emptyReferenced.setReferenceNumber(this.referenceNumber);
-
-            return emptyReferenced;
         }
 
         return null;

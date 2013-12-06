@@ -38,7 +38,7 @@ import java.io.Serializable;
  * amount is required.
  * 
  * For example, a custom implementation might have a payment method of "points" or "payAtPickup" which 
- * don't require a complex Payment integration.
+ * don't require a complex OrderPayment integration.
  *
  * @author Elbert Bautista (elbertbautista)
  * @author Brian Polster (bpolster)

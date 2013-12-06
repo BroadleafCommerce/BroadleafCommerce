@@ -95,23 +95,23 @@
     </aop:config>
 
     <aop:config>
-        <aop:pointcut id="blSecurePaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.core.payment.service.SecurePaymentInfoService.save(..))"/>
-        <aop:advisor advice-ref="blTxAdviceSecureInfo" pointcut-ref="blSecurePaymentInfoServiceOperation"/>
+        <aop:pointcut id="blSecureOrderPaymentServiceOperation" expression="execution(* org.broadleafcommerce.core.payment.service.SecureOrderPaymentService.save(..))"/>
+        <aop:advisor advice-ref="blTxAdviceSecureInfo" pointcut-ref="blSecureOrderPaymentServiceOperation"/>
     </aop:config>
     
     <aop:config>
-        <aop:pointcut id="blSecurePaymentInfoServiceOperation2" expression="execution(* org.broadleafcommerce.core.payment.service.SecurePaymentInfoService.remove(..))"/>
-        <aop:advisor advice-ref="blTxAdviceSecureInfo" pointcut-ref="blSecurePaymentInfoServiceOperation2"/>
+        <aop:pointcut id="blSecureOrderPaymentServiceOperation2" expression="execution(* org.broadleafcommerce.core.payment.service.SecureOrderPaymentService.remove(..))"/>
+        <aop:advisor advice-ref="blTxAdviceSecureInfo" pointcut-ref="blSecureOrderPaymentServiceOperation2"/>
     </aop:config>
 
     <aop:config>
-        <aop:pointcut id="blPaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.core.payment.service.PaymentInfoService.save(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPaymentInfoServiceOperation"/>
+        <aop:pointcut id="blOrderPaymentServiceOperation" expression="execution(* org.broadleafcommerce.core.payment.service.OrderPaymentService.save(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderPaymentServiceOperation"/>
     </aop:config>
     
     <aop:config>
-        <aop:pointcut id="blPaymentInfoServiceOperation2" expression="execution(* org.broadleafcommerce.core.payment.service.PaymentInfoService.delete(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPaymentInfoServiceOperation2"/>
+        <aop:pointcut id="blOrderPaymentServiceOperation2" expression="execution(* org.broadleafcommerce.core.payment.service.OrderPaymentService.delete(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderPaymentServiceOperation2"/>
     </aop:config>
 
     <aop:config>

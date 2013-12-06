@@ -22,7 +22,6 @@ package org.broadleafcommerce.core.payment.domain;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.payment.service.type.PaymentLogEventType;
-import org.broadleafcommerce.core.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.io.Serializable;
@@ -54,9 +53,9 @@ public interface PaymentLog extends Serializable {
 
     public void setPaymentInfoReferenceNumber(String paymentInfoReferenceNumber);
 
-    public TransactionType getTransactionType();
+    public PaymentTransactionType getTransactionType();
 
-    public void setTransactionType(TransactionType transactionType);
+    public void setTransactionType(PaymentTransactionType transactionType);
 
     public Boolean getTransactionSuccess();
 

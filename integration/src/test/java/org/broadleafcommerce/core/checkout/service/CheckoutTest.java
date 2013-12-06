@@ -39,12 +39,12 @@ import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillment
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
+import org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment;
+import org.broadleafcommerce.core.payment.domain.secure.Referenced;
+import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
+import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -83,8 +83,8 @@ public class CheckoutTest extends BaseTest {
     @Resource(name = "blOrderItemService")
     private OrderItemService orderItemService;
 
-    @Resource(name = "blSecurePaymentInfoService")
-    private SecurePaymentInfoService securePaymentInfoService;
+    @Resource(name = "blSecureOrderPaymentService")
+    private SecureOrderPaymentService securePaymentInfoService;
 
     @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
     @Transactional
@@ -97,13 +97,13 @@ public class CheckoutTest extends BaseTest {
         FulfillmentGroup group = buildFulfillmentGroup(order, address);
         addSampleItemToOrder(order, group);
         order.setTotalShipping(new Money(0D));
-        Map<PaymentInfo, Referenced> map = addPaymentToOrder(order, address);
+        Map<OrderPayment, Referenced> map = addPaymentToOrder(order, address);
 
         //execute pricing for this order
         orderService.save(order, true);
         CheckoutResponse response = checkoutService.performCheckout(order, map);
         //The DummyCreditCardModule changed the reference Number - make sure it's represented
-        for(PaymentInfo paymentInfo : response.getInfos().keySet()) {
+        for(OrderPayment paymentInfo : response.getInfos().keySet()) {
             assert(paymentInfo.getReferenceNumber().equals("abc123"));
             assert(response.getInfos().get(paymentInfo).getReferenceNumber().equals("abc123"));
         }
@@ -111,12 +111,12 @@ public class CheckoutTest extends BaseTest {
         //confirm that the secure payment info items are not persisted
         Referenced referenced = null;
         try {
-            referenced = securePaymentInfoService.findSecurePaymentInfo("abc123", PaymentInfoType.CREDIT_CARD);
+            referenced = securePaymentInfoService.findSecurePaymentInfo("abc123", PaymentType.CREDIT_CARD);
         } catch (Exception e) {
             //do nothing
         }
         try {
-            referenced = securePaymentInfoService.findSecurePaymentInfo("1234", PaymentInfoType.CREDIT_CARD);
+            referenced = securePaymentInfoService.findSecurePaymentInfo("1234", PaymentType.CREDIT_CARD);
         } catch (Exception e) {
             //do nothing
         }
@@ -147,7 +147,7 @@ public class CheckoutTest extends BaseTest {
         addSampleItemToOrder(order, group);
         cartService.addOfferCode(order, code, false);
         order.setTotalShipping(new Money(0D));
-        Map<PaymentInfo, Referenced> map = addPaymentToOrder(order, address);
+        Map<OrderPayment, Referenced> map = addPaymentToOrder(order, address);
         CheckoutResponse response = checkoutService.performCheckout(order, map);
         
         assert(offerAuditDao.countUsesByCustomer(customer.getId(), offer.getId()) == 1L);
@@ -161,7 +161,7 @@ public class CheckoutTest extends BaseTest {
         FulfillmentGroup group2 = buildFulfillmentGroup(order2, address2);
         addSampleItemToOrder(order2, group2);
         order2.setTotalShipping(new Money(0D));
-        Map<PaymentInfo, Referenced> map2 = addPaymentToOrder(order2, address2);
+        Map<OrderPayment, Referenced> map2 = addPaymentToOrder(order2, address2);
         CheckoutResponse response2 = checkoutService.performCheckout(order2, map2);
         
         assert(offerAuditDao.countUsesByCustomer(customer.getId(), offer.getId()) == 2L);
@@ -183,7 +183,7 @@ public class CheckoutTest extends BaseTest {
         FulfillmentGroup group3 = buildFulfillmentGroup(order3, address3);
         addSampleItemToOrder(order3, group3);
         order3.setTotalShipping(new Money(0D));
-        Map<PaymentInfo, Referenced> map3 = addPaymentToOrder(order3, address3);
+        Map<OrderPayment, Referenced> map3 = addPaymentToOrder(order3, address3);
 
         exceptionCaught = false;
         try {
@@ -204,7 +204,7 @@ public class CheckoutTest extends BaseTest {
         FulfillmentGroup group4 = buildFulfillmentGroup(order4, address4);
         addSampleItemToOrder(order4, group4);
         order4.setTotalShipping(new Money(0D));
-        Map<PaymentInfo, Referenced> map4 = addPaymentToOrder(order4, address4);
+        Map<OrderPayment, Referenced> map4 = addPaymentToOrder(order4, address4);
         CheckoutResponse response4 = checkoutService.performCheckout(order4, map4);
 
         assert(offerAuditDao.countUsesByCustomer(customer2.getId(), offer.getId()) == 1L);
@@ -213,15 +213,15 @@ public class CheckoutTest extends BaseTest {
     */
 
 
-    private Map<PaymentInfo, Referenced> addPaymentToOrder(Order order, Address address) {
-        PaymentInfo payment = new PaymentInfoImpl();
+    private Map<OrderPayment, Referenced> addPaymentToOrder(Order order, Address address) {
+        OrderPayment payment = new OrderPaymentImpl();
         payment.setAddress(address);
         payment.setAmount(new Money(15D + (15D * 0.05D)));
         payment.setReferenceNumber("1234");
-        payment.setType(PaymentInfoType.CREDIT_CARD);
+        payment.setType(PaymentType.CREDIT_CARD);
         payment.setOrder(order);
 
-        CreditCardPaymentInfo cc = new CreditCardPaymentInfo() {
+        CreditCardPayment cc = new CreditCardPayment() {
 
             private static final long serialVersionUID = 1L;
             private String referenceNumber = "1234";
@@ -308,8 +308,8 @@ public class CheckoutTest extends BaseTest {
 
         };
 
-        order.getPaymentInfos().add(payment);
-        Map<PaymentInfo, Referenced> map = new HashMap<PaymentInfo, Referenced>();
+        order.getPayments().add(payment);
+        Map<OrderPayment, Referenced> map = new HashMap<OrderPayment, Referenced>();
         map.put(payment, cc);
         return map;
     }

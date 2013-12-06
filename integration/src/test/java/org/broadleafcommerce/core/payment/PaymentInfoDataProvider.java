@@ -20,9 +20,9 @@
 package org.broadleafcommerce.core.payment;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
+import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.testng.annotations.DataProvider;
 
 import java.math.BigDecimal;
@@ -31,10 +31,10 @@ public class PaymentInfoDataProvider {
 
     @DataProvider(name = "basicPaymentInfo")
     public static Object[][] provideBasicSalesPaymentInfo() {
-        PaymentInfo sop = new PaymentInfoImpl();
+        OrderPayment sop = new OrderPaymentImpl();
         sop.setAmount(new Money(BigDecimal.valueOf(10.99)));
         sop.setReferenceNumber("987654321");
-        sop.setType(PaymentInfoType.CREDIT_CARD);
+        sop.setType(PaymentType.CREDIT_CARD);
         return new Object[][] { { sop } };
     }
 }

@@ -19,37 +19,18 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
-import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.PaymentLog;
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
-import org.broadleafcommerce.core.payment.service.exception.PaymentException;
-import org.broadleafcommerce.core.payment.service.exception.PaymentProcessorException;
-import org.broadleafcommerce.core.payment.service.module.PaymentModule;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.core.payment.service.type.PaymentLogEventType;
-import org.broadleafcommerce.core.payment.service.type.TransactionType;
-
-import javax.annotation.Resource;
 
 public class PaymentServiceImpl implements PaymentService {
-
+    
+    /*
     protected PaymentModule paymentModule;
 
-    @Resource(name = "blPaymentInfoService")
-    protected PaymentInfoService paymentInfoService;
-
-    public PaymentModule getPaymentModule() {
-        return paymentModule;
-    }
-
-    public void setPaymentModule(PaymentModule paymentModule) {
-        this.paymentModule = paymentModule;
-    }
+    @Resource(name = "blOrderPaymentService")
+    protected OrderPaymentService paymentInfoService;
 
     @Override
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
-        logPaymentStartEvent(paymentContext, TransactionType.AUTHORIZE);
+        logPaymentStartEvent(paymentContext, PaymentTransactionType.AUTHORIZE);
         PaymentResponseItem response = null;
         PaymentException paymentException = null;
         try {
@@ -61,8 +42,8 @@ public class PaymentServiceImpl implements PaymentService {
             paymentException = e;
             throw e;
         } finally {
-            logResponseItem(paymentContext, response, TransactionType.AUTHORIZE);
-            logPaymentFinishEvent(paymentContext, TransactionType.AUTHORIZE, paymentException);
+            logResponseItem(paymentContext, response, PaymentTransactionType.AUTHORIZE);
+            logPaymentFinishEvent(paymentContext, PaymentTransactionType.AUTHORIZE, paymentException);
         }
 
         return response;
@@ -70,7 +51,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
-        logPaymentStartEvent(paymentContext, TransactionType.AUTHORIZEANDDEBIT);
+        logPaymentStartEvent(paymentContext, PaymentTransactionType.AUTHORIZE_AND_CAPTURE);
         PaymentResponseItem response = null;
         PaymentException paymentException = null;
         try {
@@ -82,29 +63,8 @@ public class PaymentServiceImpl implements PaymentService {
             paymentException = e;
             throw e;
         } finally {
-            logResponseItem(paymentContext, response, TransactionType.AUTHORIZEANDDEBIT);
-            logPaymentFinishEvent(paymentContext, TransactionType.AUTHORIZEANDDEBIT, paymentException);
-        }
-
-        return response;
-    }
-
-    @Override
-    public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
-        logPaymentStartEvent(paymentContext, TransactionType.BALANCE);
-        PaymentResponseItem response = null;
-        PaymentException paymentException = null;
-        try {
-            response = paymentModule.balance(paymentContext);
-        } catch (PaymentException e) {
-            if (e instanceof PaymentProcessorException) {
-                response = ((PaymentProcessorException) e).getPaymentResponseItem();
-            }
-            paymentException = e;
-            throw e;
-        } finally {
-            logResponseItem(paymentContext, response, TransactionType.BALANCE);
-            logPaymentFinishEvent(paymentContext, TransactionType.BALANCE, paymentException);
+            logResponseItem(paymentContext, response, PaymentTransactionType.AUTHORIZE_AND_CAPTURE);
+            logPaymentFinishEvent(paymentContext, PaymentTransactionType.AUTHORIZE_AND_CAPTURE, paymentException);
         }
 
         return response;
@@ -112,7 +72,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
-        logPaymentStartEvent(paymentContext, TransactionType.CREDIT);
+        logPaymentStartEvent(paymentContext, PaymentTransactionType.REFUND);
         PaymentResponseItem response = null;
         PaymentException paymentException = null;
         try {
@@ -124,8 +84,8 @@ public class PaymentServiceImpl implements PaymentService {
             paymentException = e;
             throw e;
         } finally {
-            logResponseItem(paymentContext, response, TransactionType.CREDIT);
-            logPaymentFinishEvent(paymentContext, TransactionType.CREDIT, paymentException);
+            logResponseItem(paymentContext, response, PaymentTransactionType.REFUND);
+            logPaymentFinishEvent(paymentContext, PaymentTransactionType.REFUND, paymentException);
         }
 
         return response;
@@ -133,7 +93,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
-        logPaymentStartEvent(paymentContext, TransactionType.DEBIT);
+        logPaymentStartEvent(paymentContext, PaymentTransactionType.CAPTURE);
         PaymentResponseItem response = null;
         PaymentException paymentException = null;
         try {
@@ -145,8 +105,8 @@ public class PaymentServiceImpl implements PaymentService {
             paymentException = e;
             throw e;
         } finally {
-            logResponseItem(paymentContext, response, TransactionType.DEBIT);
-            logPaymentFinishEvent(paymentContext, TransactionType.DEBIT, paymentException);
+            logResponseItem(paymentContext, response, PaymentTransactionType.CAPTURE);
+            logPaymentFinishEvent(paymentContext, PaymentTransactionType.CAPTURE, paymentException);
         }
 
         return response;
@@ -154,7 +114,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
-        logPaymentStartEvent(paymentContext, TransactionType.VOIDPAYMENT);
+        logPaymentStartEvent(paymentContext, PaymentTransactionType.VOID);
         PaymentResponseItem response = null;
         PaymentException paymentException = null;
         try {
@@ -166,8 +126,8 @@ public class PaymentServiceImpl implements PaymentService {
             paymentException = e;
             throw e;
         } finally {
-            logResponseItem(paymentContext, response, TransactionType.VOIDPAYMENT);
-            logPaymentFinishEvent(paymentContext, TransactionType.VOIDPAYMENT, paymentException);
+            logResponseItem(paymentContext, response, PaymentTransactionType.VOID);
+            logPaymentFinishEvent(paymentContext, PaymentTransactionType.VOID, paymentException);
         }
 
         return response;
@@ -175,7 +135,7 @@ public class PaymentServiceImpl implements PaymentService {
     
     @Override
     public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
-        logPaymentStartEvent(paymentContext, TransactionType.REVERSEAUTHORIZE);
+        logPaymentStartEvent(paymentContext, PaymentTransactionType.REVERSE_AUTH);
         PaymentResponseItem response = null;
         PaymentException paymentException = null;
         try {
@@ -187,44 +147,23 @@ public class PaymentServiceImpl implements PaymentService {
             paymentException = e;
             throw e;
         } finally {
-            logResponseItem(paymentContext, response, TransactionType.REVERSEAUTHORIZE);
-            logPaymentFinishEvent(paymentContext, TransactionType.REVERSEAUTHORIZE, paymentException);
+            logResponseItem(paymentContext, response, PaymentTransactionType.REVERSE_AUTH);
+            logPaymentFinishEvent(paymentContext, PaymentTransactionType.REVERSE_AUTH, paymentException);
         }
 
         return response;
     }
 
     @Override
-    public PaymentResponseItem partialPayment(PaymentContext paymentContext) throws PaymentException {
-        logPaymentStartEvent(paymentContext, TransactionType.PARTIALPAYMENT);
-        PaymentResponseItem response = null;
-        PaymentException paymentException = null;
-        try {
-            response = paymentModule.partialPayment(paymentContext);
-        } catch (PaymentException e) {
-            if (e instanceof PaymentProcessorException) {
-                response = ((PaymentProcessorException) e).getPaymentResponseItem();
-            }
-            paymentException = e;
-            throw e;
-        } finally {
-            logResponseItem(paymentContext, response, TransactionType.PARTIALPAYMENT);
-            logPaymentFinishEvent(paymentContext, TransactionType.PARTIALPAYMENT, paymentException);
-        }
-
-        return response;
-    }
-
-    @Override
-    public Boolean isValidCandidate(PaymentInfoType paymentType) {
+    public Boolean isValidCandidate(PaymentType paymentType) {
         return paymentModule.isValidCandidate(paymentType);
     }
 
-    protected void logResponseItem(PaymentContext paymentContext, PaymentResponseItem response, TransactionType transactionType) {
+    protected void logResponseItem(PaymentContext paymentContext, PaymentResponseItem response, PaymentTransactionType transactionType) {
         if (response != null) {
             response.setTransactionType(transactionType);
             response.setUserName(paymentContext.getUserName());
-            PaymentInfo info = paymentContext.getPaymentInfo();
+            OrderPayment info = paymentContext.getPaymentInfo();
             if (info != null) {
                 response.setPaymentInfoId(info.getId());
                 if (info.getOrder() != null && info.getOrder().getCustomer() != null) {
@@ -236,7 +175,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    protected void logPaymentStartEvent(PaymentContext paymentContext, TransactionType transactionType) {
+    protected void logPaymentStartEvent(PaymentContext paymentContext, PaymentTransactionType transactionType) {
         PaymentLog log = paymentInfoService.createLog();
         log.setLogType(PaymentLogEventType.START);
         log.setTransactionTimestamp(SystemTime.asDate());
@@ -245,7 +184,7 @@ public class PaymentServiceImpl implements PaymentService {
         log.setUserName(paymentContext.getUserName());
         log.setExceptionMessage(null);
 
-        PaymentInfo info = paymentContext.getPaymentInfo();
+        OrderPayment info = paymentContext.getPaymentInfo();
         if (info != null) {
             log.setCustomer(info.getOrder().getCustomer());
             log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
@@ -256,7 +195,7 @@ public class PaymentServiceImpl implements PaymentService {
         paymentInfoService.save(log);
     }
 
-    protected void logPaymentFinishEvent(PaymentContext paymentContext, TransactionType transactionType, Exception e) {
+    protected void logPaymentFinishEvent(PaymentContext paymentContext, PaymentTransactionType transactionType, Exception e) {
         PaymentLog log = paymentInfoService.createLog();
         log.setLogType(PaymentLogEventType.FINISHED);
         log.setTransactionTimestamp(SystemTime.asDate());
@@ -278,7 +217,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
         log.setExceptionMessage(exceptionMessage);
 
-        PaymentInfo info = paymentContext.getPaymentInfo();
+        OrderPayment info = paymentContext.getPaymentInfo();
         if (info != null) {
             log.setCustomer(info.getOrder().getCustomer());
             log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
@@ -288,4 +227,5 @@ public class PaymentServiceImpl implements PaymentService {
         }
         paymentInfoService.save(log);
     }
+    */
 }

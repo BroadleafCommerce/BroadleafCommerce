@@ -22,8 +22,8 @@ package org.broadleafcommerce.core.checkout.service;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.Referenced;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 
 import java.util.Map;
 
@@ -31,6 +31,12 @@ public interface CheckoutService {
 
     public CheckoutResponse performCheckout(Order order) throws CheckoutException;
 
-    public CheckoutResponse performCheckout(Order order, Map<PaymentInfo, Referenced> payments) throws CheckoutException;
+    /**
+     * This method should not be used, and only really made sense if you were storing credit card numbers in your own system
+     * which is not something that Broadleaf recommends. The normal case is 
+     * @deprecated Use {@link #performCheckout(Order)} instead
+     */
+    @Deprecated
+    public CheckoutResponse performCheckout(Order order, Map<OrderPayment, Referenced> payments) throws CheckoutException;
 
 }

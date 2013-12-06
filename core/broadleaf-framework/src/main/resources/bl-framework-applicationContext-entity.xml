@@ -46,8 +46,8 @@
     <bean id="org.broadleafcommerce.core.order.domain.GiftWrapOrderItem" class="org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.PersonalMessage" class="org.broadleafcommerce.core.order.domain.PersonalMessageImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.order.domain.TaxDetail" class="org.broadleafcommerce.core.order.domain.TaxDetailImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.payment.domain.PaymentInfo" class="org.broadleafcommerce.core.payment.domain.PaymentInfoImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.payment.domain.PaymentInfoDetail" class="org.broadleafcommerce.core.payment.domain.PaymentInfoDetailImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.payment.domain.OrderPayment" class="org.broadleafcommerce.core.payment.domain.OrderPaymentImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.payment.domain.PaymentTransaction" class="org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.PaymentResponseItem" class="org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.PaymentLog" class="org.broadleafcommerce.core.payment.domain.PaymentLogImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.catalog.domain.Product" class="org.broadleafcommerce.core.catalog.domain.ProductImpl" scope="prototype" />
@@ -57,9 +57,9 @@
     <bean id="org.broadleafcommerce.core.catalog.domain.SkuBundleItem" class="org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.Sku" class="org.broadleafcommerce.core.catalog.domain.SkuImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.catalog.domain.SkuFee" class="org.broadleafcommerce.core.catalog.domain.SkuFeeImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfoImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfoImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl" scope="prototype"/>    
+    <bean id="org.broadleafcommerce.core.payment.domain.secure.BankAccountPayment" class="org.broadleafcommerce.core.payment.domain.secure.BankAccountPaymentImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment" class="org.broadleafcommerce.core.payment.domain.secure.CreditCardPaymentInfoImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.payment.domain.secure.GiftCardPayment" class="org.broadleafcommerce.core.payment.domain.secure.GiftCardPaymentImpl" scope="prototype"/>    
     <bean id="org.broadleafcommerce.core.offer.domain.Offer" class="org.broadleafcommerce.core.offer.domain.OfferImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.offer.domain.OfferRule" class="org.broadleafcommerce.core.offer.domain.OfferRuleImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.offer.domain.CustomerOffer" class="org.broadleafcommerce.core.offer.domain.CustomerOfferImpl" scope="prototype"/>

@@ -187,7 +187,7 @@
     <bean p:order="1000" id="blVerifyCustomerMaxOfferUsesActivity" class="org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity"/>
     <bean p:order="2000" id="blValidateProductOptionsActivity" class="org.broadleafcommerce.core.checkout.service.workflow.ValidateProductOptionsActivity"/>
     <!-- For all payment workflow configurations, see bl-framework-applicationContext-workflow.xml -->
-    <bean p:order="3000" id="blPaymentServiceActivity" class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
+    <bean p:order="3000" id="blVerifyPaymentActivity" class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
     <bean p:order="4000" id="blRecordOfferUsageActivity" class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity">
         <property name="rollbackHandler" ref="blRecordOfferUsageRollbackHandler" />
     </bean>

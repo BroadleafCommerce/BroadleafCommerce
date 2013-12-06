@@ -32,10 +32,9 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.secure.Referenced;
+import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentEstimationResponse;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
@@ -381,19 +380,19 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     public String completeCheckout(HttpServletRequest request, HttpServletResponse response, Model model, BillingInfoForm billingForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
         Order cart = CartState.getCart();
         if (cart != null && !(cart instanceof NullOrderImpl)) {
-            Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
+            Map<OrderPayment, Referenced> payments = new HashMap<OrderPayment, Referenced>();
             
-            Iterator<PaymentInfo> paymentInfoItr = cart.getPaymentInfos().iterator();
+            Iterator<OrderPayment> paymentInfoItr = cart.getPayments().iterator();
             while (paymentInfoItr.hasNext()) {
-                PaymentInfo paymentInfo = paymentInfoItr.next();
-                if (!PaymentInfoType.CUSTOMER_CREDIT.equals(paymentInfo.getType()) && !PaymentInfoType.GIFT_CARD.equals(paymentInfo.getType())) {
+                OrderPayment paymentInfo = paymentInfoItr.next();
+                if (!PaymentType.CUSTOMER_CREDIT.equals(paymentInfo.getType()) && !PaymentType.GIFT_CARD.equals(paymentInfo.getType())) {
                     paymentInfoItr.remove();
                     orderService.removePaymentFromOrder(cart, paymentInfo);
                 }
             }
 
             //Create list of PaymentInfoTypes that will determine which extension handler will run
-            List<PaymentInfoType> paymentInfoTypes = createPaymentInfoTypeList(billingForm);
+            List<PaymentType> paymentInfoTypes = createPaymentInfoTypeList(billingForm);
 
             //Extension handlers add PaymentInfos to the payments map and the order
             paymentInfoServiceExtensionManager.getProxy().addAdditionalPaymentInfos(payments, paymentInfoTypes, request, response, model, billingForm, result);
@@ -404,13 +403,13 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             }
             
             try {
-                CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart, payments);
-                Map<PaymentInfo, PaymentResponseItem> paymentResponseItemMap = checkoutResponse.getPaymentResponse().getResponseItems();
-                for (PaymentResponseItem paymentResponseItem : paymentResponseItemMap.values()) {
-                    if (!paymentResponseItem.getTransactionSuccess()) {
-                        return handleCheckoutError(request, model);
-                    }
-                }
+                CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart);
+                //Map<OrderPayment, PaymentResponseItem> paymentResponseItemMap = checkoutResponse.getPaymentResponse().getResponseItems();
+                //for (PaymentResponseItem paymentResponseItem : paymentResponseItemMap.values()) {
+                //    if (!paymentResponseItem.getTransactionSuccess()) {
+                //        return handleCheckoutError(request, model);
+                //    }
+                //}
             } catch (CheckoutException workflowException) {
                 return handleCheckoutError(request, model);
             }
@@ -441,12 +440,12 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @param billingForm
      * @return
      */
-    protected List<PaymentInfoType> createPaymentInfoTypeList(BillingInfoForm billingForm) {
-        List<PaymentInfoType> paymentInfoTypes = new ArrayList<PaymentInfoType>();
+    protected List<PaymentType> createPaymentInfoTypeList(BillingInfoForm billingForm) {
+        List<PaymentType> paymentInfoTypes = new ArrayList<PaymentType>();
         if ("credit_card".equals(billingForm.getPaymentMethod())) {
-            paymentInfoTypes.add(PaymentInfoType.CREDIT_CARD);
+            paymentInfoTypes.add(PaymentType.CREDIT_CARD);
         } else if ("cod".equals(billingForm.getPaymentMethod())) {
-            paymentInfoTypes.add(PaymentInfoType.COD);
+            paymentInfoTypes.add(PaymentType.COD);
         }
         return paymentInfoTypes;
     }
