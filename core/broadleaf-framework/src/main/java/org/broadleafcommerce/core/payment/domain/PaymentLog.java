@@ -21,7 +21,8 @@ package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.payment.service.type.PaymentLogEventType;
+import org.broadleafcommerce.common.payment.PaymentLogEventType;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.io.Serializable;

@@ -17,22 +17,17 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.payment.service.type;
+package org.broadleafcommerce.common.payment;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
-import org.broadleafcommerce.core.payment.domain.OrderPayment;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * <p>There is usually only a single {@link OrderPayment} of a particular type for a single order. An instance of multiple
- * {@link OrderPayment}s with the same type for an {@link Order} would be accepting multiple credit cards or multiple
- * gift cards for a single {@link Order}.</p>
- * 
- * <p>While supporting multiple credit card payments for a single {@link Order} might be uncommon, multiple payment types
- * are very common, such as paying with both a gift card and a credit card.</p>
+ * <p>This represents types of payments that can be applied to an order. There might be multiple order payments with the
+ * same type on an order if the customer can pay with multiple cards (like 2 credit cards or 3 gift cards).</p>
  * 
  * @see {@link OrderPayment}
  * @author Phillip Verheyden (phillipuniverse)
@@ -53,9 +48,9 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
     public static final PaymentType CUSTOMER_CREDIT = new PaymentType("CUSTOMER_CREDIT", "Customer Credit");
     public static final PaymentType COD = new PaymentType("COD", "Collect On Delivery");
     /**
-     * Intended for things like Google Wallet, Paypal, etc
+     * Intended for different modules like Google Wallet, Paypal, etc
      */
-    public static final PaymentType HOSTED_THIRD_PARTY = new PaymentType("HOSTED_THIRD_PARTY", "Hosted 3rd-Party");
+    public static final PaymentType THIRD_PARTY_ACCOUNT = new PaymentType("THIRD_PARTY_ACCOUNT", "3rd-Party Account");
 
     public static PaymentType getInstance(final String type) {
         return TYPES.get(type);

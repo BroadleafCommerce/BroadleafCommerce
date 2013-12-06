@@ -19,11 +19,11 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.PaymentInfoDataProvider;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
-import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.broadleafcommerce.profile.core.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;

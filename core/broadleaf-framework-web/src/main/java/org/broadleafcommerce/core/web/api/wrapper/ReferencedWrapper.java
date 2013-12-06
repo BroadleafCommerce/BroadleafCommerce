@@ -19,12 +19,12 @@
  */
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.payment.domain.secure.BankAccountPayment;
 import org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment;
 import org.broadleafcommerce.core.payment.domain.secure.GiftCardPayment;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
-import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;

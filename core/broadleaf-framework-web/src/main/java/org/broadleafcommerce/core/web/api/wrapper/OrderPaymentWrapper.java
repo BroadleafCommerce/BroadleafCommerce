@@ -21,10 +21,10 @@ package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.money.util.CurrencyAdapter;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.xml.BigDecimalRoundingAdapter;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
-import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.springframework.context.ApplicationContext;
 
 import java.math.BigDecimal;

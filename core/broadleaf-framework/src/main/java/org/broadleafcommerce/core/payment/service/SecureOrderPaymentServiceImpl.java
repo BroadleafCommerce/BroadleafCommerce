@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.payment.dao.SecureOrderPaymentDao;
 import org.broadleafcommerce.core.payment.domain.secure.BankAccountPayment;
 import org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment;
 import org.broadleafcommerce.core.payment.domain.secure.GiftCardPayment;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
-import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

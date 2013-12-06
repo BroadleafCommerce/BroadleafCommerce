@@ -20,8 +20,9 @@
 package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.core.payment.service.type.PaymentAdditionalFieldType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.io.Serializable;

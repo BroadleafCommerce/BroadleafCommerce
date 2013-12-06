@@ -21,11 +21,12 @@ package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
-import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 
@@ -98,11 +99,15 @@ public interface OrderPayment extends Serializable, Status {
     public void setReferenceNumber(String referenceNumber);
 
     /**
+     * The type of this payment like Credit Card or Gift Card.
+     * 
      * @see {@link PaymentType}
      */
     public PaymentType getType();
 
     /**
+     * Sets the type of this payment like Credit Card or Gift Card
+     * 
      * @see {@link PaymentType}
      */
     public void setType(PaymentType type);

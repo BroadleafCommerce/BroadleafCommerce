@@ -40,8 +40,8 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
 
     @Override
     @Transactional(value = "blTransactionManager")
-    public OrderPayment save(OrderPayment paymentInfo) {
-        return paymentDao.save(paymentInfo);
+    public OrderPayment save(OrderPayment payment) {
+        return paymentDao.save(payment);
     }
 
     @Override
@@ -70,8 +70,8 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
     }
 
     @Override
-    public void delete(OrderPayment paymentInfo) {
-        paymentDao.delete(paymentInfo);
+    public void delete(OrderPayment payment) {
+        paymentDao.delete(payment);
     }
 
     @Override

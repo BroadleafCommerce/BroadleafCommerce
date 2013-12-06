@@ -28,7 +28,7 @@ import java.util.List;
 
 public interface OrderPaymentService {
 
-    public OrderPayment save(OrderPayment paymentInfo);
+    public OrderPayment save(OrderPayment payment);
 
     public PaymentTransaction save(PaymentTransaction transaction);
 

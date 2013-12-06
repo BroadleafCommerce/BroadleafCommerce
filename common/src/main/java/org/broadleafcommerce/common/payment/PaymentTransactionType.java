@@ -17,17 +17,17 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.payment.domain;
+package org.broadleafcommerce.common.payment;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
-import org.broadleafcommerce.core.order.domain.Order;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * The PaymentTransactionType is used to represent the types of operations that could occur on the same {@link OrderPayment}.
+ * The PaymentTransactionType is used to represent the types of operations that could occur on the within the same payment.
+ * In the Broadleaf core framework, these types appear on the org.broadleafcommerce.core.payment.domain.PaymentTransaction.
  *
  * @see {@link #AUTHORIZE}
  * @see {@link #CAPTURE}

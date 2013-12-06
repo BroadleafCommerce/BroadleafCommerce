@@ -27,9 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
-import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

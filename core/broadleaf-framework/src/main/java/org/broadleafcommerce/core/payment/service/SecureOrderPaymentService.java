@@ -19,8 +19,8 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
-import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 
 public interface SecureOrderPaymentService {
