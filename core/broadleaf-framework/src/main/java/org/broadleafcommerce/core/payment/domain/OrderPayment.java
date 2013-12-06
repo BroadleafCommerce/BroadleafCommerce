@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.persistence.Status;
@@ -35,13 +36,14 @@ import java.util.List;
 
 /**
  * <p>This entity is designed to deal with payments associated to an {@link Order} and is <i>usually</i> unique for a particular
- * amount and {@link PaymentType} combination. This is immediately invalid for scenarios where multiple payments of the
+ * amount, {@link PaymentGatewayType} and {@link PaymentType} combination. This is immediately invalid for scenarios where multiple payments of the
  * same {@link PaymentType} should be supported (like paying with 2 {@link PaymentType#CREDIT_CARD} or 2 {@link PaymentType#GIFT_CARD}).
- * That said, even though the use case is uncommon, Broadleaf does not actively prevent that situation from occurring</p>
+ * That said, even though the use case might be uncommon in, Broadleaf does not actively prevent that situation from occurring
+ * online payments it is very common in point of sale systems.</p>
  * 
  * <p>Once an {@link OrderPayment} is created, various {@link PaymentTransaction}s can be applied to this payment as
  * denoted by {@link PaymentTransactionType}. <b>There should be at least 1 {@link PaymentTransaction} for every
- * {@link OrderPayment} that is associated with an {@link Order} that has gone through checkout</b> (usually, whose
+ * {@link OrderPayment} that is associated with an {@link Order} that has gone through checkout</b> (which means that
  * {@link Order#getStatus()} is {@link OrderStatus#SUBMITTED}).</p>
  * 
  * <p>{@link OrderPayment}s are not actually deleted from the database but rather are only soft-deleted (archived = true)</p>
@@ -111,6 +113,21 @@ public interface OrderPayment extends Serializable, Status {
      * @see {@link PaymentType}
      */
     public void setType(PaymentType type);
+    
+    /**
+     * Gets the gateway that was used to process this order payment. Only a SINGLE payment gateway can modify transactions
+     * on a particular order payment.
+     */
+    public PaymentGatewayType getGatewayType();
+
+    /**
+     * <p>Gets the gateway that was used to process this order payment. Only a SINGLE payment gateway can modify transactions
+     * on a particular order payment.</p>
+     * 
+     * <p>It usually does not make sense to modify the gateway type after it has already been set once. Instead, consider
+     * just archiving this payment type (by deleting it) and creating a new payment for the new gateway.</p>
+     */
+    public void setPaymentGatewayType(PaymentGatewayType gatewayType);
     
     /**
      * <p>All of the transactions that have been applied to this particular payment. Transactions are denoted by the various

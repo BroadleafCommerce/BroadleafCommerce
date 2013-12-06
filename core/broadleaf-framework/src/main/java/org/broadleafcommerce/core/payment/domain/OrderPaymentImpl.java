@@ -28,6 +28,9 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -41,7 +44,6 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
@@ -143,8 +145,13 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @Index(name="ORDERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
     @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Type", order=3000, gridOrder = 3000, prominent=true,
             fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration="org.broadleafcommerce.core.payment.service.type.PaymentType")
+            broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentType")
     protected String type;
+    
+    @Column(name = "GATEWAY_TYPE")
+    @AdminPresentation(friendlyName = "OrderPayment_gatewayType", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentGatewayType")
+    protected String gatewayType;
     
     @OneToMany(mappedBy = "orderPayment", targetEntity = PaymentTransactionImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @AdminPresentationCollection(friendlyName="PaymentInfoImpl_Details",
@@ -217,7 +224,17 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
 
     @Override
     public void setType(PaymentType type) {
-        this.type = type.getType();
+        this.type = type == null ? null : type.getType();
+    }
+    
+    @Override
+    public PaymentGatewayType getGatewayType() {
+        return PaymentGatewayType.getInstance(gatewayType);
+    }
+
+    @Override
+    public void setPaymentGatewayType(PaymentGatewayType gatewayType) {
+        this.gatewayType = gatewayType == null ? null : gatewayType.getType();
     }
 
     @Override

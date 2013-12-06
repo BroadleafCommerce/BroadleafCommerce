@@ -30,7 +30,7 @@ public interface OrderPaymentDao {
 
     public OrderPayment readPaymentById(Long paymentId);
 
-    public OrderPayment save(OrderPayment transaction);
+    public OrderPayment save(OrderPayment payment);
 
     public PaymentTransaction save(PaymentTransaction transaction);
 
@@ -40,7 +40,7 @@ public interface OrderPaymentDao {
 
     public OrderPayment create();
 
-    public void delete(OrderPayment paymentInfo);
+    public void delete(OrderPayment payment);
 
     public PaymentTransaction createTransaction();
 
