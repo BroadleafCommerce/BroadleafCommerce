@@ -241,6 +241,11 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     }
     
     @Override
+    public void addTransaction(PaymentTransaction transaction) {
+        getTransactions().add(transaction);
+    }
+    
+    @Override
     public Money getTransactionAmountForType(PaymentTransactionType type) {
         Money amount = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
         for (PaymentTransaction trans : getTransactions()){

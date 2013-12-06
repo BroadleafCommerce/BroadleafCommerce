@@ -89,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
     
     /* DAOs */
     @Resource(name = "blOrderPaymentDao")
-    protected OrderPaymentDao paymentInfoDao;
+    protected OrderPaymentDao paymentDao;
     
     @Resource(name = "blOrderDao")
     protected OrderDao orderDao;
@@ -214,7 +214,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderPayment> findPaymentInfosForOrder(Order order) {
-        return paymentInfoDao.readPaymentInfosForOrder(order);
+        return paymentDao.readPaymentInfosForOrder(order);
     }
     
     @Override
@@ -673,30 +673,30 @@ public class OrderServiceImpl implements OrderService {
                 LOG.debug("No secure payment is associated with the OrderPayment", e);
             }
             order.getPayments().remove(paymentInfo);
-            paymentInfo = paymentInfoDao.readPaymentInfoById(paymentInfo.getId());
-            paymentInfoDao.delete(paymentInfo);
+            paymentInfo = paymentDao.readPaymentById(paymentInfo.getId());
+            paymentDao.delete(paymentInfo);
         }
     }
 
     @Override
     @Transactional("blTransactionManager")
-    public void removePaymentFromOrder(Order order, OrderPayment paymentInfo){
-        OrderPayment paymentInfoToRemove = null;
-        for(OrderPayment info : order.getPayments()){
-            if(info.equals(paymentInfo)){
-                paymentInfoToRemove = info;
+    public void removePaymentFromOrder(Order order, OrderPayment payment){
+        OrderPayment paymentToRemove = null;
+        for (OrderPayment info : order.getPayments()){
+            if (info.equals(payment)){
+                paymentToRemove = info;
             }
         }
-        if(paymentInfoToRemove != null){
+        if (paymentToRemove != null){
             try {
-                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfoToRemove.getReferenceNumber(), paymentInfo.getType());
+                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentToRemove.getReferenceNumber(), payment.getType());
             } catch (WorkflowException e) {
                 // do nothing--this is an acceptable condition
                 LOG.debug("No secure payment is associated with the OrderPayment", e);
             }
-            order.getPayments().remove(paymentInfoToRemove);
-            paymentInfo = paymentInfoDao.readPaymentInfoById(paymentInfoToRemove.getId());
-            paymentInfoDao.delete(paymentInfo);
+            order.getPayments().remove(paymentToRemove);
+            payment = paymentDao.readPaymentById(paymentToRemove.getId());
+            paymentDao.delete(payment);
         }
     }
     

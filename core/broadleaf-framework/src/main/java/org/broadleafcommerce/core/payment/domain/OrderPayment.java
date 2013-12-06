@@ -108,18 +108,32 @@ public interface OrderPayment extends Serializable, Status {
     public void setType(PaymentType type);
     
     /**
-     * All of the transactions that have been applied to this particular payment. Transactions are denoted by the various
+     * <p>All of the transactions that have been applied to this particular payment. Transactions are denoted by the various
      * {@link PaymentTransactionType}s. In almost all scenarios (as in, 99.9999% of all cases) there will be a at least one
-     * {@link PaymentTransaction} for every {@link OrderPayment}
+     * {@link PaymentTransaction} for every {@link OrderPayment}.</p>
+     * 
+     * <p>To add a transaction to an {@link OrderPayment} see {@link #addTransaction(PaymentTransaction)}.</p>
+     * 
+     * @see {@link #addTransaction(PaymentTransaction)}
      */
     public List<PaymentTransaction> getTransactions();
 
     /**
-     * All of the transactions that have been applied to this particular payment. Transactions are denoted by the various
+     * <p>All of the transactions that have been applied to this particular payment. Transactions are denoted by the various
      * {@link PaymentTransactionType}s. In almost all scenarios (as in, 99.9999% of all cases) there will be a at least one
-     * {@link PaymentTransaction} for every {@link OrderPayment}
+     * {@link PaymentTransaction} for every {@link OrderPayment}.</p>
+     * 
+     * <p>To add a transaction to an {@link OrderPayment} see {@link #addTransaction(PaymentTransaction)}.</p>
+     * 
+     * @see {@link #addTransaction(PaymentTransaction)}
      */
     public void setTransactions(List<PaymentTransaction> details);
+    
+    /**
+     * A more declarative way to invoke {@link #getTransactions().add()}. This is the preferred way to add a transaction
+     * to this payment.
+     */
+    public void addTransaction(PaymentTransaction transaction);
     
     public Money getTransactionAmountForType(PaymentTransactionType type);
 
@@ -133,6 +147,9 @@ public interface OrderPayment extends Serializable, Status {
      */
     public CustomerPayment getCustomerPayment();
 
+    /**
+     * TODO: consider removing
+     */
     public void setCustomerPayment(CustomerPayment customerPayment);
 
 }

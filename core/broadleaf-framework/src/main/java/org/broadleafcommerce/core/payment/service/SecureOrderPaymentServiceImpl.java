@@ -95,8 +95,9 @@ public class SecureOrderPaymentServiceImpl implements SecureOrderPaymentService 
     }
 
     @Override
-    public void findAndRemoveSecurePaymentInfo(String referenceNumber, PaymentType paymentInfoType) throws WorkflowException {
-        Referenced referenced = findSecurePaymentInfo(referenceNumber, paymentInfoType);
+    @Transactional(TransactionUtils.SECURE_TRANSACTION_MANAGER)
+    public void findAndRemoveSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws WorkflowException {
+        Referenced referenced = findSecurePaymentInfo(referenceNumber, paymentType);
         if (referenced != null) {
             remove(referenced);
         }
