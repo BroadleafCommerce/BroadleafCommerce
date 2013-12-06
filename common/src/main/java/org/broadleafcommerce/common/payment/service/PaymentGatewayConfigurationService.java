@@ -29,30 +29,42 @@ package org.broadleafcommerce.common.payment.service;
  */
 public interface PaymentGatewayConfigurationService {
 
-    public Boolean completeCheckoutOnCallback();
+    public boolean completeCheckoutOnCallback();
 
-    public Boolean handlesAuthorize();
+    public boolean handlesAuthorize();
 
-    public Boolean handlesCapture();
+    public boolean handlesCapture();
 
-    public Boolean handlesAuthorizeAndCapture();
+    public boolean handlesAuthorizeAndCapture();
 
-    public Boolean handlesReverseAuthorize();
+    public boolean handlesReverseAuthorize();
 
-    public Boolean handlesVoid();
+    public boolean handlesVoid();
 
-    public Boolean handlesRefund();
+    public boolean handlesRefund();
 
-    public Boolean handlesPartialCapture();
+    public boolean handlesPartialCapture();
 
-    public Boolean handlesMultipleShipment();
+    public boolean handlesMultipleShipment();
 
-    public Boolean handlesTransactionConfirmation();
+    public boolean handlesTransactionConfirmation();
 
-    public Boolean handlesRecurringPayment();
+    public boolean handlesRecurringPayment();
 
-    public Boolean handlesSavedCustomerPayment();
+    public boolean handlesSavedCustomerPayment();
 
-    public Integer getFailureReportingThreshold();
+    public int getFailureReportingThreshold();
+    
+    /**
+     * <p>Denotes whether or not this payment provider supports multiple payments on an order. For instance, a gift card provider
+     * might want to support multiple gift cards on a single order but a credit card provider may not support payment with
+     * multiple credit cards.</p>
+     * 
+     * <p>If a provider does not support multiple payments in an order then that means that all payments are deleted (archived)
+     * on an order whenever a new payment of that type is attempted to be added to the order.</p>
+     * 
+     * @see {@link PaymentGatewayCheckoutService}
+     */
+    public boolean handlesMultiplePayments();
 
 }

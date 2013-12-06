@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.payment.service;
 import org.broadleafcommerce.common.payment.dto.CreditCardDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
@@ -48,11 +49,11 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
     protected OrderPaymentService orderPaymentService;
     
     @Override
-    public Long applyPaymentToOrder(PaymentResponseDTO responseDTO) {
+    public Long applyPaymentToOrder(PaymentResponseDTO responseDTO, PaymentGatewayConfigurationService configService) {
         
         //Payments can ONLY be parsed into PaymentInfos if they are 'valid'
         if (!responseDTO.getValid()) {
-            throw new IllegalArgumentException("Invalida payment responses cannot be parsed into the order payment domain");
+            throw new IllegalArgumentException("Invalid payment responses cannot be parsed into the order payment domain");
         }
         
         Long orderId = Long.parseLong(responseDTO.getOrderId());
@@ -68,14 +69,8 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             type = PaymentType.CREDIT_CARD;
         }
         
-        // This should not have to remove any order payments; this method should only be additive. This should do nothing
-        // but simply create an order payment and assign it to the order. If there is some sort of failed payment as a result
-        // of all this, it is the job of the individual module to clean itself up by invoking markPaymentAsInvalid
-        
-        // that said, it might be more appropriate to, rather than create an entirely new order payment, to instead look
-        // up the old one and then add another transaction to it. But, in the majority of cases this I don't think makes much
-        // logical sense as the amount of the payment might change between invocations of this method.
-        
+        // ALWAYS create a new order payment for the payment that comes in. Invalid payments should be cleaned up by
+        // invoking {@link #markPaymentaAsInvalid}.
         OrderPayment payment = orderPaymentService.create();
         payment.setType(type);
         payment.setAmount(responseDTO.getAmount());
@@ -92,6 +87,17 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         transaction.setRawResponse(responseDTO.getRawResponse());
         transaction.setSuccess(responseDTO.getSuccessful());
         
+        //TODO: handle payments that have to be confirmed. Scenario:
+        /*
+         * 1. User goes through checkout
+         * 2. User submits payment to gateway which supports a 'confirmation
+         * 3. User is on review order page
+         * 4. User goes back and makes modifications to their cart
+         * 5. The user now has an order payment in the system which has been unconfirmed and is really in this weird, invalid
+         *    state.
+         * 6. 
+         */
+        
         //TODO: get the transaction type from the response DTO
         //transaction.setType(type);
         
@@ -106,7 +112,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
     @Override
     public void markPaymentAsInvalid(Long orderPaymentId) {
-        // TODO Auto-generated method stub
+        // TODO delete (which archives) the given payment id
     }
 
     @Override

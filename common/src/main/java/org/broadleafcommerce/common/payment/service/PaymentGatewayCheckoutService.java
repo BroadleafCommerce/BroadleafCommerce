@@ -37,10 +37,16 @@ import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstrac
  */
 public interface PaymentGatewayCheckoutService {
 
-    /*
-     * @return a unique ID of the payment as it is saved in the Broadleaf domain.
+    /**
+     * @param responseDTO the response that came back from the gateway
+     * @param configService configuration values for the payment gateway
+     * @return a unique ID of the payment as it is saved in the Broadleaf domain. This ID can be referred to to retrieve
+     * the payment on the Broadleaf side for other methods like {@link #markPaymentAsInvalid(Long)}
+     * @throws IllegalArgumentException if the {@link PaymentResponseDTO#getValid()} returns false or if the order that
+     * the {@link PaymentResponseDTO} is attempted to be applied to has already gone through the checkout workflow
      */
-    public Long applyPaymentToOrder(PaymentResponseDTO responseDTO);
+    public Long applyPaymentToOrder(PaymentResponseDTO responseDTO, PaymentGatewayConfigurationService configService)
+        throws IllegalArgumentException;
 
     public void markPaymentAsInvalid(Long orderPaymentId);
 
