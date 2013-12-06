@@ -396,7 +396,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
 
     @Override
     public List<OrderPayment> readPaymentInfosForOrder(Order order) {
-        return paymentInfoDao.readPaymentInfosForOrder(order);
+        return paymentDao.readPaymentInfosForOrder(order);
     }
         
     protected boolean itemMatches(DiscreteOrderItem item1, DiscreteOrderItem item2) {
@@ -620,11 +620,11 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
     }
 
     public OrderPaymentDao getPaymentInfoDao() {
-        return paymentInfoDao;
+        return paymentDao;
     }
 
     public void setPaymentInfoDao(OrderPaymentDao paymentInfoDao) {
-        this.paymentInfoDao = paymentInfoDao;
+        this.paymentDao = paymentInfoDao;
     }
 
     public FulfillmentGroupDao getFulfillmentGroupDao() {

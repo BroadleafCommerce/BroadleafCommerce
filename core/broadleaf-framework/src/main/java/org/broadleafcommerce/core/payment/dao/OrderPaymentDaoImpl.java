@@ -24,14 +24,15 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 @Repository("blOrderPaymentDao")
 public class OrderPaymentDaoImpl implements OrderPaymentDao {
@@ -42,22 +43,27 @@ public class OrderPaymentDaoImpl implements OrderPaymentDao {
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    public OrderPayment save(OrderPayment paymentInfo) {
-        return em.merge(paymentInfo);
+    @Override
+    public OrderPayment save(OrderPayment payment) {
+        return em.merge(payment);
     }
 
-    public PaymentResponseItem save(PaymentResponseItem paymentResponseItem) {
-        return em.merge(paymentResponseItem);
+    @Override
+    public PaymentTransaction save(PaymentTransaction transaction) {
+        return em.merge(transaction);
     }
 
+    @Override
     public PaymentLog save(PaymentLog log) {
         return em.merge(log);
     }
 
-    public OrderPayment readPaymentInfoById(Long paymentId) {
-        return (OrderPayment) em.find(OrderPaymentImpl.class, paymentId);
+    @Override
+    public OrderPayment readPaymentById(Long paymentId) {
+        return em.find(OrderPaymentImpl.class, paymentId);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<OrderPayment> readPaymentInfosForOrder(Order order) {
         Query query = em.createNamedQuery("BC_READ_ORDERS_PAYMENTS_BY_ORDER_ID");
@@ -65,21 +71,25 @@ public class OrderPaymentDaoImpl implements OrderPaymentDao {
         return query.getResultList();
     }
 
+    @Override
     public OrderPayment create() {
-        return ((OrderPayment) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.payment.domain.OrderPayment"));
+        return ((OrderPayment) entityConfiguration.createEntityInstance(OrderPayment.class.getName()));
     }
 
-    public PaymentResponseItem createResponseItem() {
-        return ((PaymentResponseItem) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.payment.domain.PaymentResponseItem"));
+    @Override
+    public PaymentTransaction createTransaction() {
+        return entityConfiguration.createEntityInstance(PaymentTransaction.class.getName(), PaymentTransaction.class);
     }
 
+    @Override
     public PaymentLog createLog() {
-        return ((PaymentLog) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.payment.domain.PaymentLog"));
+        return entityConfiguration.createEntityInstance(PaymentLog.class.getName(), PaymentLog.class);
     }
 
+    @Override
     public void delete(OrderPayment paymentInfo) {
         if (!em.contains(paymentInfo)) {
-            paymentInfo = readPaymentInfoById(paymentInfo.getId());
+            paymentInfo = readPaymentById(paymentInfo.getId());
         }
         em.remove(paymentInfo);
     }

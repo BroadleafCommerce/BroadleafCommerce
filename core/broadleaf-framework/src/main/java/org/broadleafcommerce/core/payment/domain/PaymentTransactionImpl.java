@@ -23,7 +23,6 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -37,13 +36,10 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -56,7 +52,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -114,6 +109,10 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @AdminPresentation(friendlyName = "PaymentTransaction_rawResponse")
     protected String rawResponse;
     
+    @Column(name = "SUCCESS")
+    @AdminPresentation(friendlyName = "PaymentTransaction_success")
+    protected Boolean success = true;
+    
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
     
@@ -142,10 +141,6 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     )
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
-    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentResponseItemImpl.class, cascade = {CascadeType.ALL})
-    @AdminPresentationCollection(friendlyName="PaymentInfoImpl_Payment_Response_Items")
-    protected List<PaymentResponseItem> paymentResponseItems = new ArrayList<PaymentResponseItem>();
-    
     @Override
     public Long getId() {
         return id;
@@ -225,6 +220,15 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     public void setRawResponse(String rawResponse) {
         this.rawResponse = rawResponse;
     }
+    
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(Boolean success) {
+        this.success = success;
+    }
+
 
     @Override
     public Map<String, String> getAdditionalFields() {
@@ -236,16 +240,6 @@ public class PaymentTransactionImpl implements PaymentTransaction {
         this.additionalFields = additionalFields;
     }
 
-    @Override
-    public List<PaymentResponseItem> getPaymentResponseItems() {
-        return paymentResponseItems;
-    }
-
-    @Override
-    public void setPaymentResponseItems(List<PaymentResponseItem> paymentResponseItems) {
-        this.paymentResponseItems = paymentResponseItems;
-    }
-    
     @Override
     public Character getArchived() {
         if (archiveStatus == null) {

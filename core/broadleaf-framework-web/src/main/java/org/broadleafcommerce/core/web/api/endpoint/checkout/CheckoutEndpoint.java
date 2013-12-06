@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.web.api.endpoint.checkout;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
@@ -29,7 +30,7 @@ import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -41,6 +42,7 @@ import org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper;
 import org.broadleafcommerce.core.web.order.CartState;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +84,203 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
                 //CompositePaymentResponse compositePaymentResponse = compositePaymentService.executePayment(cart, payments);
                 //CompositePaymentResponse compositePaymentResponse = new CompositePayme
                 //PaymentResponseItem responseItem = compositePaymentResponse.getPaymentResponse().getResponseItems().get(paymentInfo);
-                PaymentResponseItem responseItem = new PaymentResponseItemImpl();
+                
+                //TODO: FIXME PJV
+                
+                PaymentResponseItem responseItem = new PaymentResponseItem() {
+                    
+                    @Override
+                    public void setUserName(String userName) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setTransactionTimestamp(Date transactionTimestamp) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setTransactionSuccess(Boolean transactionSuccess) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setTransactionId(String transactionId) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setTransactionAmount(Money amount) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setRemainingBalance(Money remainingBalance) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setProcessorResponseText(String processorResponseText) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setProcessorResponseCode(String processorResponseCode) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setPaymentTransaction(PaymentTransaction paymentTransaction) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setMiddlewareResponseText(String middlewareResponseText) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setMiddlewareResponseCode(String middlewareResponseCode) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setImplementorResponseText(String implementorResponseText) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setImplementorResponseCode(String implementorResponseCode) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setAvsCode(String avsCode) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setAuthorizationCode(String authorizationCode) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public void setAdditionalFields(Map<String, String> additionalFields) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+                    
+                    @Override
+                    public String getUserName() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public Date getTransactionTimestamp() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public Boolean getTransactionSuccess() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public String getTransactionId() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public Money getTransactionAmount() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public Money getRemainingBalance() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public String getProcessorResponseText() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public String getProcessorResponseCode() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public PaymentTransaction getPaymentTransaction() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public String getMiddlewareResponseText() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public String getMiddlewareResponseCode() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public String getImplementorResponseText() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public String getImplementorResponseCode() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public String getAvsCode() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public String getAuthorizationCode() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                    
+                    @Override
+                    public Map<String, String> getAdditionalFields() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+                };
                 
                 PaymentResponseItemWrapper paymentResponseItemWrapper = context.getBean(PaymentResponseItemWrapper.class);
                 paymentResponseItemWrapper.wrapDetails(responseItem, request);

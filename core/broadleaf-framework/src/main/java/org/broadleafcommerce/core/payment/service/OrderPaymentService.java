@@ -22,7 +22,7 @@ package org.broadleafcommerce.core.payment.service;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 
 import java.util.List;
 
@@ -30,19 +30,19 @@ public interface OrderPaymentService {
 
     public OrderPayment save(OrderPayment paymentInfo);
 
-    public PaymentResponseItem save(PaymentResponseItem paymentResponseItem);
+    public PaymentTransaction save(PaymentTransaction transaction);
 
     public PaymentLog save(PaymentLog log);
 
-    public OrderPayment readPaymentInfoById(Long paymentId);
+    public OrderPayment readPaymentById(Long paymentId);
 
-    public List<OrderPayment> readPaymentInfosForOrder(Order order);
+    public List<OrderPayment> readPaymentsForOrder(Order order);
 
     public OrderPayment create();
 
-    public void delete(OrderPayment paymentInfo);
+    public void delete(OrderPayment payment);
 
-    public PaymentResponseItem createResponseItem();
+    public PaymentTransaction createTransaction();
 
     public PaymentLog createLog();
 

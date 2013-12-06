@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,44 +36,56 @@ import javax.annotation.Resource;
 public class OrderPaymentServiceImpl implements OrderPaymentService {
 
     @Resource(name = "blOrderPaymentDao")
-    protected OrderPaymentDao paymentInfoDao;
+    protected OrderPaymentDao paymentDao;
 
+    @Override
     @Transactional(value = "blTransactionManager")
     public OrderPayment save(OrderPayment paymentInfo) {
-        return paymentInfoDao.save(paymentInfo);
+        return paymentDao.save(paymentInfo);
     }
 
-    public PaymentResponseItem save(PaymentResponseItem paymentResponseItem) {
-        return paymentInfoDao.save(paymentResponseItem);
+    @Override
+    public PaymentTransaction save(PaymentTransaction transaction) {
+        return paymentDao.save(transaction);
     }
 
+    @Override
     public PaymentLog save(PaymentLog log) {
-        return paymentInfoDao.save(log);
+        return paymentDao.save(log);
     }
 
-    public OrderPayment readPaymentInfoById(Long paymentId) {
-        return paymentInfoDao.readPaymentInfoById(paymentId);
+    @Override
+    public OrderPayment readPaymentById(Long paymentId) {
+        return paymentDao.readPaymentById(paymentId);
     }
 
-    public List<OrderPayment> readPaymentInfosForOrder(Order order) {
-        return paymentInfoDao.readPaymentInfosForOrder(order);
+    @Override
+    public List<OrderPayment> readPaymentsForOrder(Order order) {
+        return paymentDao.readPaymentInfosForOrder(order);
     }
 
+    @Override
     public OrderPayment create() {
-        return paymentInfoDao.create();
+        return paymentDao.create();
     }
 
+    @Override
     public void delete(OrderPayment paymentInfo) {
-        paymentInfoDao.delete(paymentInfo);
+        paymentDao.delete(paymentInfo);
     }
 
+    @Override
     public PaymentLog createLog() {
-        return paymentInfoDao.createLog();
+        return paymentDao.createLog();
     }
 
-    public PaymentResponseItem createResponseItem() {
-        PaymentResponseItem returnItem = paymentInfoDao.createResponseItem();
-        returnItem.setTransactionTimestamp(SystemTime.asDate());
+    @Override
+    public PaymentTransaction createTransaction() {
+        PaymentTransaction returnItem = paymentDao.createTransaction();
+        
+        //TODO: this needs correct timezone conversion, right?
+        returnItem.setDate(SystemTime.asDate());
+        
         return returnItem;
     }
 

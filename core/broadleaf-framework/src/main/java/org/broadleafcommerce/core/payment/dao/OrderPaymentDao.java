@@ -22,17 +22,17 @@ package org.broadleafcommerce.core.payment.dao;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 
 import java.util.List;
 
 public interface OrderPaymentDao {
 
-    public OrderPayment readPaymentInfoById(Long paymentId);
+    public OrderPayment readPaymentById(Long paymentId);
 
-    public OrderPayment save(OrderPayment paymentInfo);
+    public OrderPayment save(OrderPayment transaction);
 
-    public PaymentResponseItem save(PaymentResponseItem paymentResponseItem);
+    public PaymentTransaction save(PaymentTransaction transaction);
 
     public PaymentLog save(PaymentLog log);
 
@@ -42,7 +42,7 @@ public interface OrderPaymentDao {
 
     public void delete(OrderPayment paymentInfo);
 
-    public PaymentResponseItem createResponseItem();
+    public PaymentTransaction createTransaction();
 
     public PaymentLog createLog();
 

@@ -78,7 +78,7 @@ public class PaymentInfoServiceTest extends BaseTest {
 
     @Test(groups={"readPaymentInfoById"}, dependsOnGroups={"createPaymentInfo"})
     public void readPaymentInfoById(){
-        OrderPayment sop = paymentInfoService.readPaymentInfoById(paymentInfo.getId());
+        OrderPayment sop = paymentInfoService.readPaymentById(paymentInfo.getId());
         assert sop !=null;
         assert sop.getId().equals(paymentInfo.getId());
     }
@@ -86,7 +86,7 @@ public class PaymentInfoServiceTest extends BaseTest {
     @Test(groups={"readPaymentInfosByOrder"}, dependsOnGroups={"createPaymentInfo"})
     @Transactional
     public void readPaymentInfoByOrder(){
-        List<OrderPayment> payments = paymentInfoService.readPaymentInfosForOrder(paymentInfo.getOrder());
+        List<OrderPayment> payments = paymentInfoService.readPaymentsForOrder(paymentInfo.getOrder());
         assert payments != null;
         assert payments.size() > 0;
     }
@@ -112,7 +112,7 @@ public class PaymentInfoServiceTest extends BaseTest {
         assert paymentInfo.getId() != null;
         Long paymentInfoId = paymentInfo.getId();
         paymentInfoService.delete(paymentInfo);
-        paymentInfo = paymentInfoService.readPaymentInfoById(paymentInfoId);
+        paymentInfo = paymentInfoService.readPaymentById(paymentInfoId);
         assert paymentInfo == null;
     }
 

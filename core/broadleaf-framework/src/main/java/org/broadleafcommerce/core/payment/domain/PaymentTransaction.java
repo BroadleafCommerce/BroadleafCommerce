@@ -26,7 +26,6 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -120,6 +119,14 @@ public interface PaymentTransaction extends Serializable, Status {
      * Sets the raw response that was returned from the gateway.
      */
     public void setRawResponse(String rawResponse);
+    
+    /**
+     * Gets whether or not this transaction was successful. There are multiple reasons that a transaction could be
+     * unsuccessful such as failed credit card processing or 
+     */
+    public Boolean getSuccess();
+
+    public void setSuccess(Boolean success);
 
     /**
      * @see {@link PaymentAdditionalFieldType}
@@ -127,9 +134,5 @@ public interface PaymentTransaction extends Serializable, Status {
     public Map<String, String> getAdditionalFields();
 
     public void setAdditionalFields(Map<String, String> additionalFields);
-
-    public List<PaymentResponseItem> getPaymentResponseItems();
-
-    public void setPaymentResponseItems(List<PaymentResponseItem> paymentResponseItems);
 
 }

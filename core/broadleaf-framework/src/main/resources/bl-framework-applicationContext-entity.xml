@@ -48,7 +48,6 @@
     <bean id="org.broadleafcommerce.core.order.domain.TaxDetail" class="org.broadleafcommerce.core.order.domain.TaxDetailImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.OrderPayment" class="org.broadleafcommerce.core.payment.domain.OrderPaymentImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.PaymentTransaction" class="org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.payment.domain.PaymentResponseItem" class="org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.PaymentLog" class="org.broadleafcommerce.core.payment.domain.PaymentLogImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.catalog.domain.Product" class="org.broadleafcommerce.core.catalog.domain.ProductImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.ProductBundle" class="org.broadleafcommerce.core.catalog.domain.ProductBundleImpl" scope="prototype" />
