@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.payment.service;
 
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.CreditCardDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
@@ -72,6 +73,8 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         }
         
         if (!configService.handlesMultiplePayments()) {
+            PaymentGatewayType gateway = configService.getGatewayType();
+            //TODO: ONLY mark payments as invalid for a particular gateway
             for (OrderPayment payment : order.getPayments()) {
                 markPaymentAsInvalid(payment.getId());
             }

@@ -20,6 +20,8 @@
 
 package org.broadleafcommerce.common.payment.service;
 
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
+
 /**
  * @author Elbert Bautista (elbertbautista)
  *
@@ -66,5 +68,22 @@ public interface PaymentGatewayConfigurationService {
      * @see {@link PaymentGatewayCheckoutService}
      */
     public boolean handlesMultiplePayments();
+    
+    /**
+     * <p>Each payment module should have a unique subclass of {@link PaymentGatewayType} with only a single type. For instance,
+     * the Braintree module would have a 'BraintreePaymentGatewayType' subclass which adds itself to the global static map.</p>
+     * 
+     * <p>In order to ensure that the class loader loads the extension of {@link PaymentGatewayType}, it is recommended
+     * to add a simple bean definition to a module application context that is utilized by both the site and admin. Using
+     * the Braintree module as an example again, this might look like:
+     * 
+     * <pre>
+     * {@code
+     * <bean class="com.broadleafcommerce.payment.service.gateway.BraintreeGatewayType" />
+     * }
+     * </pre>
+     * </p>
+     */
+    public PaymentGatewayType getGatewayType();
 
 }
