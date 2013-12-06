@@ -47,6 +47,12 @@ public class BLCCollectionUtils {
         return CollectionUtils.collect(inputCollection, transformer);
     }
 
+    /**
+     * The same as {@link #collect(Collection, TypedTransformer)} but returns an ArrayList
+     * @param inputCollection
+     * @param transformer
+     * @return
+     */
     @SuppressWarnings("rawtypes")
     public static <T> List<T> collectList(Collection inputCollection, TypedTransformer<T> transformer) {
         List<T> returnList = new ArrayList<T>();
@@ -55,6 +61,23 @@ public class BLCCollectionUtils {
             returnList.add(transformed);
         }
         return returnList;
+    }
+
+    /**
+     * The same as {@link #collect(Collection, TypedTransformer)} but returns an array
+     * @param inputCollection
+     * @param transformer
+     * @return
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static <T> T[] collectArray(Collection inputCollection, TypedTransformer<T> transformer) {
+        T[] returnArray = (T[]) new Object[inputCollection.size()];
+        int i = 0;
+        for (Object obj : inputCollection) {
+            T transformed = transformer.transform(obj);
+            returnArray[i++] = transformed;
+        }
+        return returnArray;
     }
 
     /**
