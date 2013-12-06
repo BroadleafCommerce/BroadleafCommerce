@@ -28,8 +28,6 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.service.type.PaymentType;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 
@@ -61,9 +59,9 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         
         //TODO: ensure that the order has not already been checked out before applying payments to it
         
-        List<OrderPayment> payments = order.getPayments();
-        
         //TODO: fill out order.getCustomer() values for anonymous customers based on values returned from the response
+        
+        //TODO: support multiple payment types (GIFT_CARD, ACCOUNT_CREDIT, BANK_ACCOUNT, etc)
         PaymentType type = null;
         if (responseDTO.getCreditCard() instanceof CreditCardDTO) {
             type = PaymentType.CREDIT_CARD;
@@ -123,8 +121,12 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
     @Override
     public String lookupOrderNumberFromOrderId(PaymentResponseDTO responseDTO) {
-        // TODO Auto-generated method stub
-        return null;
+        Order order = orderService.findOrderById(Long.parseLong(responseDTO.getOrderId()));
+        if (order == null) {
+            throw new IllegalArgumentException("An order with ID " + responseDTO.getOrderId() + " cannot be found for the" +
+            		" given payment response.");
+        }
+        return order.getOrderNumber();
     }
 
 }

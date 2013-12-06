@@ -43,7 +43,7 @@ public interface PaymentGatewayCheckoutService {
      * @return a unique ID of the payment as it is saved in the Broadleaf domain. This ID can be referred to to retrieve
      * the payment on the Broadleaf side for other methods like {@link #markPaymentAsInvalid(Long)}
      * @throws IllegalArgumentException if the {@link PaymentResponseDTO#getValid()} returns false or if the order that
-     * the {@link PaymentResponseDTO} is attempted to be applied to has already gone through the checkout workflow
+     * the {@link PaymentResponseDTO} is attempted to be applied to has already gone through checkout
      */
     public Long applyPaymentToOrder(PaymentResponseDTO responseDTO, PaymentGatewayConfigurationService configService)
         throws IllegalArgumentException;
@@ -52,6 +52,15 @@ public interface PaymentGatewayCheckoutService {
 
     public String initiateCheckout(Long orderId);
 
-    public String lookupOrderNumberFromOrderId(PaymentResponseDTO responseDTO);
+    /**
+     * Looks up the order number for a particular order id from the {@link PaymentResponseDTO}. This can be used to redirect
+     * the user coming from the payment gateway to the order confirmation page.
+     * 
+     * @param responseDTO the response from the gateway
+     * @return the order number for order id. This method can return null if the order number has not already been set
+     * (which usually means that the order has not already been checked out)
+     * @throws IllegalArgumentException if the order cannot be found from the {@link PaymentResponseDTO}
+     */
+    public String lookupOrderNumberFromOrderId(PaymentResponseDTO responseDTO) throws IllegalArgumentException;
 
 }
