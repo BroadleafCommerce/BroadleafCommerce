@@ -86,21 +86,6 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @Column(name = "PAYMENT_TRANSACTION_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderPaymentImpl.class, optional = false)
-    @JoinColumn(name = "ORDER_PAYMENT")
-    @AdminPresentation(excluded = true)
-    protected OrderPayment orderPayment;
-    
-    /**
-     * Necessary for operations on a payment that require something to have happened beforehand. For instance, an AUTHORIZE
-     * would not have a parent but a CAPTURE must have an AUTHORIZE parent and a REFUND must have a CAPTURE parent
-     */
-    @ManyToOne(targetEntity = PaymentTransactionImpl.class)
-    @JoinColumn(name = "PARENT_TRANSACTION")
-    @AdminPresentation(friendlyName = "Parent Transaction")
-    @AdminPresentationToOneLookup()
-    protected PaymentTransaction parentTransaction;
-
     @Column(name = "TRANSACTION_TYPE")
     @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Type",
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
@@ -120,6 +105,25 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @Column(name = "CUSTOMER_IP_ADDRESS", nullable = true)
     @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_IP_Address", order=4000)
     protected String customerIpAddress;
+    
+    @Column(name = "RAW_RESPONSE")
+    @AdminPresentation(friendlyName = "PaymentTransaction_rawResponse")
+    protected String rawResponse;
+    
+    @ManyToOne(targetEntity = OrderPaymentImpl.class, optional = false)
+    @JoinColumn(name = "ORDER_PAYMENT")
+    @AdminPresentation(excluded = true)
+    protected OrderPayment orderPayment;
+    
+    /**
+     * Necessary for operations on a payment that require something to have happened beforehand. For instance, an AUTHORIZE
+     * would not have a parent but a CAPTURE must have an AUTHORIZE parent and a REFUND must have a CAPTURE parent
+     */
+    @ManyToOne(targetEntity = PaymentTransactionImpl.class)
+    @JoinColumn(name = "PARENT_TRANSACTION")
+    @AdminPresentation(friendlyName = "Parent Transaction")
+    @AdminPresentationToOneLookup()
+    protected PaymentTransaction parentTransaction;
 
     @ElementCollection
     @MapKeyColumn(name="FIELD_NAME")
@@ -203,6 +207,14 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @Override
     public void setCustomerIpAddress(String customerIpAddress) {
         this.customerIpAddress = customerIpAddress;
+    }
+    
+    public String getRawResponse() {
+        return rawResponse;
+    }
+    
+    public void setRawResponse(String rawResponse) {
+        this.rawResponse = rawResponse;
     }
 
     @Override

@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Used to store individual transactions about a particular payment. While an {@link OrderPayment} holds data like what the
+ * <p>Used to store individual transactions about a particular payment. While an {@link OrderPayment} holds data like what the
  * user might be paying with and the total amount they will be paying (like credit card and $10), a {@link PaymentTransaction}
  * is more about what happens with that particular payment. Thus, {@link PaymentTransaction}s do not make sense by
  * themselves and ONLY make sense in the context of an {@link OrderPayment}.</p>
@@ -108,6 +108,17 @@ public interface PaymentTransaction extends Serializable {
      * Sets the {@link Customer} IP address that instigated the transaction. This is an optional field.
      */
     public void setCustomerIpAddress(String customerIpAddress);
+    
+    /**
+     * Gets the string-representation of the serialized response from the gateway. This is usually the complete request
+     * parameter map serialized in string form.
+     */
+    public String getRawResponse();
+
+    /**
+     * Sets the raw response that was returned from the gateway.
+     */
+    public void setRawResponse(String rawResponse);
 
     /**
      * @see {@link PaymentAdditionalFieldType}
