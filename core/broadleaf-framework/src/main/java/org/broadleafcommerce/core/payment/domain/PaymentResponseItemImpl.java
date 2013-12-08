@@ -333,7 +333,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     }
 
     @Override
-    public Money getRemainingBalance() {
+    public Money getRemainingTransactionAmount() {
         return remainingBalance == null ? null : BroadleafCurrencyUtils.getMoney(remainingBalance, getCurrency());
     }
 
@@ -445,7 +445,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         sb.append("transaction id: ").append(this.getTransactionId()).append("\n");
         sb.append("avs code: ").append(this.getAvsCode()).append("\n");
         if (remainingBalance != null) {
-            sb.append("remaining balance: ").append(this.getRemainingBalance());
+            sb.append("remaining balance: ").append(this.getRemainingTransactionAmount());
         }
 
         return sb.toString();

@@ -106,8 +106,7 @@ public interface PaymentResponseItem extends Serializable {
 
     public void setCvvCode(String cvvCode);
 
-    // TODO: Rename to getRemainingTransactionAmount
-    public Money getRemainingBalance();
+    public Money getRemainingTransactionAmount();
 
     public void setRemainingBalance(Money remainingBalance);
 
