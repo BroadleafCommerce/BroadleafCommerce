@@ -26,9 +26,9 @@ import java.util.Map;
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public class CreditCardDTO {
+public class CreditCardDTO<T> {
 
-    protected PaymentRequestDTO parent;
+    protected T parent;
 
     protected Map<String, Object> additionalFields;
     protected String creditCardHolderName;
@@ -44,56 +44,56 @@ public class CreditCardDTO {
         this.additionalFields = new HashMap<String, Object>();
     }
 
-    public CreditCardDTO(PaymentRequestDTO parent) {
+    public CreditCardDTO(T parent) {
         this.additionalFields = new HashMap<String, Object>();
         this.parent = parent;
     }
 
-    public PaymentRequestDTO done() {
+    public T done() {
         return parent;
     }
 
-    public CreditCardDTO additionalFields(String key, Object value) {
+    public CreditCardDTO<T> additionalFields(String key, Object value) {
         additionalFields.put(key, value);
         return this;
     }
 
-    public CreditCardDTO creditCardHolderName(String creditCardHolderName) {
+    public CreditCardDTO<T> creditCardHolderName(String creditCardHolderName) {
         this.creditCardHolderName = creditCardHolderName;
         return this;
     }
 
-    public CreditCardDTO creditCardType(String creditCardType) {
+    public CreditCardDTO<T> creditCardType(String creditCardType) {
         this.creditCardType = creditCardType;
         return this;
     }
 
-    public CreditCardDTO creditCardNum(String creditCardNum) {
+    public CreditCardDTO<T> creditCardNum(String creditCardNum) {
         this.creditCardNum = creditCardNum;
         return this;
     }
 
-    public CreditCardDTO creditCardLastFour(String creditCardLastFour) {
+    public CreditCardDTO<T> creditCardLastFour(String creditCardLastFour) {
         this.creditCardLastFour = creditCardLastFour;
         return this;
     }
 
-    public CreditCardDTO creditCardExpDate(String creditCardExpDate) {
+    public CreditCardDTO<T> creditCardExpDate(String creditCardExpDate) {
         this.creditCardExpDate = creditCardExpDate;
         return this;
     }
 
-    public CreditCardDTO creditCardExpMonth(String creditCardExpMonth) {
+    public CreditCardDTO<T> creditCardExpMonth(String creditCardExpMonth) {
         this.creditCardExpMonth = creditCardExpMonth;
         return this;
     }
 
-    public CreditCardDTO creditCardExpYear(String creditCardExpYear) {
+    public CreditCardDTO<T> creditCardExpYear(String creditCardExpYear) {
         this.creditCardExpYear = creditCardExpYear;
         return this;
     }
 
-    public CreditCardDTO creditCardCvv(String creditCardCvv) {
+    public CreditCardDTO<T> creditCardCvv(String creditCardCvv) {
         this.creditCardCvv = creditCardCvv;
         return this;
     }
@@ -135,7 +135,7 @@ public class CreditCardDTO {
         return creditCardCvv;
     }
 
-    public Boolean creditCardPopulated() {
+    public boolean creditCardPopulated() {
         return ((getAdditionalFields() != null && !getAdditionalFields().isEmpty()) ||
                 getCreditCardHolderName() != null ||
                 getCreditCardType() != null ||

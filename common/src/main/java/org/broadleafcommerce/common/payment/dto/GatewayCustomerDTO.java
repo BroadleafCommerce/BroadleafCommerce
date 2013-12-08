@@ -26,9 +26,9 @@ import java.util.Map;
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public class GatewayCustomerDTO {
+public class GatewayCustomerDTO<T> {
 
-    protected PaymentRequestDTO parent;
+    protected T parent;
 
     protected Map<String, Object> additionalFields;
     protected String customerId;
@@ -45,61 +45,61 @@ public class GatewayCustomerDTO {
         this.additionalFields = new HashMap<String, Object>();
     }
 
-    public GatewayCustomerDTO(PaymentRequestDTO parent) {
+    public GatewayCustomerDTO(T parent) {
         this.additionalFields = new HashMap<String, Object>();
         this.parent = parent;
     }
 
-    public PaymentRequestDTO done() {
+    public T done() {
         return parent;
     }
 
-    public GatewayCustomerDTO additionalFields(String key, Object value) {
+    public GatewayCustomerDTO<T> additionalFields(String key, Object value) {
         additionalFields.put(key, value);
         return this;
     }
 
-    public GatewayCustomerDTO customerId(String customerId) {
+    public GatewayCustomerDTO<T> customerId(String customerId) {
         this.customerId = customerId;
         return this;
     }
 
-    public GatewayCustomerDTO firstName(String firstName) {
+    public GatewayCustomerDTO<T> firstName(String firstName) {
         this.firstName = firstName;
         return this;
     }
 
-    public GatewayCustomerDTO lastName(String lastName) {
+    public GatewayCustomerDTO<T> lastName(String lastName) {
         this.lastName = lastName;
         return this;
     }
 
-    public GatewayCustomerDTO companyName(String companyName) {
+    public GatewayCustomerDTO<T> companyName(String companyName) {
         this.companyName = companyName;
         return this;
     }
 
-    public GatewayCustomerDTO phone(String phone) {
+    public GatewayCustomerDTO<T> phone(String phone) {
         this.phone = phone;
         return this;
     }
 
-    public GatewayCustomerDTO mobile(String mobile) {
+    public GatewayCustomerDTO<T> mobile(String mobile) {
         this.mobile = mobile;
         return this;
     }
 
-    public GatewayCustomerDTO fax(String fax) {
+    public GatewayCustomerDTO<T> fax(String fax) {
         this.fax = fax;
         return this;
     }
 
-    public GatewayCustomerDTO website(String website) {
+    public GatewayCustomerDTO<T> website(String website) {
         this.website = website;
         return this;
     }
 
-    public GatewayCustomerDTO email(String email) {
+    public GatewayCustomerDTO<T> email(String email) {
         this.email = email;
         return this;
     }
@@ -144,7 +144,7 @@ public class GatewayCustomerDTO {
         return email;
     }
 
-    public Boolean customerPopulated() {
+    public boolean customerPopulated() {
         return ((getAdditionalFields() != null && !getAdditionalFields().isEmpty()) ||
                 getCustomerId() != null ||
                 getFirstName() != null ||

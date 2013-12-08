@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Common Libraries
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -24,7 +24,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,28 +33,47 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.checkout.service.workflow;
+package org.broadleafcommerce.common.payment.dto;
 
-import org.broadleafcommerce.core.workflow.BaseActivity;
-import org.broadleafcommerce.core.workflow.ProcessContext;
-
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Write a good comment here when it's done, dawg.
- *
- * @author Phillip Verheyden (phillipuniverse)
+ * @author Elbert Bautista (elbertbautista)
  */
-public class VerifyPaymentActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
+public class GiftCardDTO<T> {
 
+    protected T parent;
 
-    @Override
-    public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
-        //TODO: This should be relatively simple and just loop through the order payments on the order, add up the total
-        // and throw an exception if they don't add up.
-        //
-        // There should also likely be something that says whether the payment was successful or not and this should check
-        // that as well. Currently there isn't really a concept for that
-        return context;
+    protected Map<String, Object> additionalFields;
+    protected String giftCardNum;
+    protected String giftCardMasked;
+
+    public GiftCardDTO() {
+        this.additionalFields = new HashMap<String, Object>();
     }
 
+    public GiftCardDTO(T parent) {
+        this.additionalFields = new HashMap<String, Object>();
+        this.parent = parent;
+    }
+
+    public T done() {
+        return parent;
+    }
+
+    public GiftCardDTO<T> additionalFields(String key, Object value) {
+        additionalFields.put(key, value);
+        return this;
+    }
+
+    public GiftCardDTO<T> giftCardNum(String giftCardNum) {
+        this.giftCardNum = giftCardNum;
+        return this;
+    }
+
+    public GiftCardDTO<T> giftCardMasked(String giftCardMasked) {
+        this.giftCardMasked = giftCardMasked;
+        return this;
+    }
 }

@@ -30,37 +30,16 @@ import java.util.Map;
  */
 public class PaymentRequestDTO {
 
-    protected GatewayCustomerDTO customer;
-    protected CreditCardDTO creditCard;
+    protected GatewayCustomerDTO<PaymentRequestDTO> customer;
+    protected AddressDTO<PaymentRequestDTO> shipTo;
+    protected AddressDTO<PaymentRequestDTO> billTo;
+    protected CreditCardDTO<PaymentRequestDTO> creditCard;
+    protected List<GiftCardDTO<PaymentRequestDTO>> giftCards;
+    protected List<CustomerCreditDTO<PaymentRequestDTO>> customerCredits;
     protected List<LineItemDTO> lineItems;
     protected Map<String, Object> additionalFields;
 
     protected String transactionType;
-
-    protected String shipToFirstName;
-    protected String shipToLastName;
-    protected String shipToCompanyName;
-    protected String shipToAddressLine1;
-    protected String shipToAddressLine2;
-    protected String shipToCityLocality;
-    protected String shipToStateRegion;
-    protected String shipToPostalCode;
-    protected String shipToCountryCode;
-    protected String shipToPhone;
-    protected String shipToEmail;
-
-    protected String billToFirstName;
-    protected String billToLastName;
-    protected String billToCompanyName;
-    protected String billToAddressLine1;
-    protected String billToAddressLine2;
-    protected String billToCityLocality;
-    protected String billToStateRegion;
-    protected String billToPostalCode;
-    protected String billToCountryCode;
-    protected String billToPhone;
-    protected String billToEmail;
-
     protected String orderId;
     protected String orderCurrencyCode;
     protected String orderDescription;
@@ -70,18 +49,42 @@ public class PaymentRequestDTO {
     protected String orderTotal;
 
     public PaymentRequestDTO() {
+        this.giftCards = new ArrayList<GiftCardDTO<PaymentRequestDTO>>();
+        this.customerCredits = new ArrayList<CustomerCreditDTO<PaymentRequestDTO>>();
         this.lineItems = new ArrayList<LineItemDTO>();
         this.additionalFields = new HashMap<String, Object>();
     }
 
-    public GatewayCustomerDTO customer() {
-        customer = new GatewayCustomerDTO(this);
+    public GatewayCustomerDTO<PaymentRequestDTO> customer() {
+        customer = new GatewayCustomerDTO<PaymentRequestDTO>(this);
         return customer;
     }
 
-    public CreditCardDTO creditCard() {
-        creditCard = new CreditCardDTO(this);
+    public CreditCardDTO<PaymentRequestDTO> creditCard() {
+        creditCard = new CreditCardDTO<PaymentRequestDTO>(this);
         return creditCard;
+    }
+
+    public AddressDTO<PaymentRequestDTO> shipTo() {
+        shipTo = new AddressDTO<PaymentRequestDTO>(this);
+        return shipTo;
+    }
+
+    public AddressDTO<PaymentRequestDTO> billTo() {
+        billTo = new AddressDTO<PaymentRequestDTO>(this);
+        return billTo;
+    }
+
+    public GiftCardDTO<PaymentRequestDTO> giftCard() {
+        GiftCardDTO<PaymentRequestDTO> giftCardDTO = new GiftCardDTO<PaymentRequestDTO>(this);
+        giftCards.add(giftCardDTO);
+        return giftCardDTO;
+    }
+
+    public CustomerCreditDTO<PaymentRequestDTO> customerCredit() {
+        CustomerCreditDTO<PaymentRequestDTO> customerCreditDTO = new CustomerCreditDTO<PaymentRequestDTO>(this);
+        customerCredits.add(customerCreditDTO);
+        return customerCreditDTO;
     }
 
     public LineItemDTO lineItem() {
@@ -95,115 +98,6 @@ public class PaymentRequestDTO {
 
     public PaymentRequestDTO transactionType(String transactionType) {
         this.transactionType = transactionType;
-        return this;
-    }
-
-    public PaymentRequestDTO shipToFirstName(String shipToFirstName) {
-        this.shipToFirstName = shipToFirstName;
-        return this;
-    }
-
-    public PaymentRequestDTO shipToLastName(String shipToLastName) {
-        this.shipToLastName = shipToLastName;
-        return this;
-    }
-
-    public PaymentRequestDTO shipToCompanyName(String shipToCompanyName) {
-        this.shipToCompanyName = shipToCompanyName;
-        return this;
-    }
-
-    public PaymentRequestDTO shipToAddressLine1(String shipToAddressLine1) {
-        this.shipToAddressLine1 = shipToAddressLine1;
-        return this;
-    }
-
-    public PaymentRequestDTO shipToAddressLine2(String shipToAddressLine2) {
-        this.shipToAddressLine2 = shipToAddressLine2;
-        return this;
-    }
-
-    public PaymentRequestDTO shipToCityLocality(String shipToCityLocality) {
-        this.shipToCityLocality = shipToCityLocality;
-        return this;
-    }
-
-    public PaymentRequestDTO shipToStateRegion(String shipToStateRegion) {
-        this.shipToStateRegion = shipToStateRegion;
-        return this;
-    }
-
-    public PaymentRequestDTO shipToPostalCode(String shipToPostalCode) {
-        this.shipToPostalCode = shipToPostalCode;
-        return this;
-    }
-
-    public PaymentRequestDTO shipToCountryCode(String shipToCountryCode) {
-        this.shipToCountryCode = shipToCountryCode;
-        return this;
-    }
-
-    public PaymentRequestDTO shipToPhone(String shipToPhone) {
-        this.shipToPhone = shipToPhone;
-        return this;
-    }
-
-    public PaymentRequestDTO shipToEmail(String shipToEmail) {
-        this.shipToEmail = shipToEmail;
-        return this;
-    }
-
-    public PaymentRequestDTO billToFirstName(String billToFirstName) {
-        this.billToFirstName = billToFirstName;
-        return this;
-    }
-
-    public PaymentRequestDTO billToLastName(String billToLastName) {
-        this.billToLastName = billToLastName;
-        return this;
-    }
-    public PaymentRequestDTO billToCompanyName(String billToCompanyName) {
-        this.billToCompanyName = billToCompanyName;
-        return this;
-    }
-
-    public PaymentRequestDTO billToAddressLine1(String billToAddressLine1) {
-        this.billToAddressLine1 = billToAddressLine1;
-        return this;
-    }
-
-    public PaymentRequestDTO billToAddressLine2(String billToAddressLine2) {
-        this.billToAddressLine2 = billToAddressLine2;
-        return this;
-    }
-
-    public PaymentRequestDTO billToCityLocality(String billToCityLocality) {
-        this.billToCityLocality = billToCityLocality;
-        return this;
-    }
-
-    public PaymentRequestDTO billToStateRegion(String billToStateRegion) {
-        this.billToStateRegion = billToStateRegion;
-        return this;
-    }
-
-    public PaymentRequestDTO billToPostalCode(String billToPostalCode) {
-        this.billToPostalCode = billToPostalCode;
-        return this;
-    }
-
-    public PaymentRequestDTO billToCountryCode(String billToCountryCode) {
-        this.billToCountryCode = billToCountryCode;
-        return this;
-    }
-
-    public PaymentRequestDTO billToPhone(String billToPhone) {
-        this.billToPhone = billToPhone;
-        return this;
-    }
-
-    public PaymentRequestDTO billToEmail(String billToEmail) {
-        this.billToEmail = billToEmail;
         return this;
     }
 
@@ -242,13 +136,28 @@ public class PaymentRequestDTO {
         return this;
     }
 
-
     public String getTransactionType() {
         return transactionType;
     }
 
     public List<LineItemDTO> getLineItems() {
         return lineItems;
+    }
+
+    public List<GiftCardDTO<PaymentRequestDTO>> getGiftCards() {
+        return giftCards;
+    }
+
+    public List<CustomerCreditDTO<PaymentRequestDTO>> getCustomerCredits() {
+        return customerCredits;
+    }
+
+    public AddressDTO getShipTo() {
+        return shipTo;
+    }
+
+    public AddressDTO getBillTo() {
+        return billTo;
     }
 
     public CreditCardDTO getCreditCard() {
@@ -261,94 +170,6 @@ public class PaymentRequestDTO {
 
     public Map<String, Object> getAdditionalFields() {
         return additionalFields;
-    }
-
-    public String getShipToFirstName() {
-        return shipToFirstName;
-    }
-
-    public String getShipToLastName() {
-        return shipToLastName;
-    }
-
-    public String getShipToCompanyName() {
-        return shipToCompanyName;
-    }
-
-    public String getShipToAddressLine1() {
-        return shipToAddressLine1;
-    }
-
-    public String getShipToAddressLine2() {
-        return shipToAddressLine2;
-    }
-
-    public String getShipToCityLocality() {
-        return shipToCityLocality;
-    }
-
-    public String getShipToStateRegion() {
-        return shipToStateRegion;
-    }
-
-    public String getShipToPostalCode() {
-        return shipToPostalCode;
-    }
-
-    public String getShipToCountryCode() {
-        return shipToCountryCode;
-    }
-
-    public String getShipToPhone() {
-        return shipToPhone;
-    }
-
-    public String getShipToEmail() {
-        return shipToEmail;
-    }
-
-    public String getBillToFirstName() {
-        return billToFirstName;
-    }
-
-    public String getBillToLastName() {
-        return billToLastName;
-    }
-
-    public String getBillToCompanyName() {
-        return billToCompanyName;
-    }
-
-    public String getBillToAddressLine1() {
-        return billToAddressLine1;
-    }
-
-    public String getBillToAddressLine2() {
-        return billToAddressLine2;
-    }
-
-    public String getBillToCityLocality() {
-        return billToCityLocality;
-    }
-
-    public String getBillToStateRegion() {
-        return billToStateRegion;
-    }
-
-    public String getBillToPostalCode() {
-        return billToPostalCode;
-    }
-
-    public String getBillToCountryCode() {
-        return billToCountryCode;
-    }
-
-    public String getBillToPhone() {
-        return billToPhone;
-    }
-
-    public String getBillToEmail() {
-        return billToEmail;
     }
 
     public String getOrderId() {
@@ -379,32 +200,20 @@ public class PaymentRequestDTO {
         return orderTotal;
     }
 
-    public Boolean billToPopulated() {
-        return (getBillToFirstName() != null ||
-                getBillToLastName() != null ||
-                getBillToCompanyName() != null ||
-                getBillToAddressLine1() != null ||
-                getBillToAddressLine2() != null ||
-                getBillToCityLocality() != null ||
-                getBillToStateRegion() != null ||
-                getBillToPostalCode() != null ||
-                getBillToCountryCode() != null ||
-                getBillToPhone() != null ||
-                getBillToEmail() != null);
+    public boolean shipToPopulated() {
+        return (getShipTo() != null && getShipTo().addressPopulated());
     }
 
-    public Boolean shipToPopulated() {
-        return (getShipToFirstName() != null ||
-                getShipToLastName() != null ||
-                getShipToCompanyName() != null ||
-                getShipToAddressLine1() != null ||
-                getShipToAddressLine2() != null ||
-                getShipToCityLocality() != null ||
-                getShipToStateRegion() != null ||
-                getShipToPostalCode() != null ||
-                getShipToCountryCode() != null ||
-                getShipToPhone() != null ||
-                getShipToEmail() != null);
+    public boolean billToPopulated() {
+        return (getBillTo() != null && getBillTo().addressPopulated());
+    }
+
+    public boolean creditCardPopulated() {
+        return (getCreditCard() != null && getCreditCard().creditCardPopulated());
+    }
+
+    public boolean customerPopulated() {
+        return (getCustomer() != null && getCustomer().customerPopulated());
     }
 
 }

@@ -54,7 +54,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
 
     public Long applyPaymentToOrder(PaymentResponseDTO responseDTO) {
         if (paymentGatewayCheckoutService != null) {
-            return paymentGatewayCheckoutService.applyPaymentToOrder(responseDTO);
+            return paymentGatewayCheckoutService.applyPaymentToOrder(responseDTO, getConfigurationService());
         }
         return null;
     }
@@ -104,11 +104,11 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
         PaymentResponseDTO responseDTO = getWebResponseService().translateWebResponse(request);
         Long orderPaymentId = applyPaymentToOrder(responseDTO);
 
-        if (!responseDTO.getSuccessful()) {
+        if (!responseDTO.isSuccessful()) {
             handleUnsuccessfulTransaction(model, responseDTO);
         }
 
-        if (!responseDTO.getValid()) {
+        if (!responseDTO.isValid()) {
             handleProcessingException(new PaymentException("The validity of the response cannot be confirmed." +
                     "Check the Tamper Proof Seal for more details."));
         }

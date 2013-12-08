@@ -21,8 +21,11 @@
 package org.broadleafcommerce.common.payment.dto;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,30 +40,66 @@ import java.util.Map;
  */
 public class PaymentResponseDTO {
 
+    /**
+     * Any customer information that relates to this transaction
+     */
+    protected GatewayCustomerDTO<PaymentResponseDTO> customer;
+
+    /**
+     * If shipping information is captured on the gateway, the values sent back will be put here
+     */
+    protected AddressDTO<PaymentResponseDTO> shipTo;
+
+    /**
+     * The billing address associated with this transaction
+     */
+    protected AddressDTO<PaymentResponseDTO> billTo;
+
+    /**
+     * for sale/authorize transactions, this will be the Credit Card object that was charged. This data is useful for showing
+     * on an order confirmation screen.
+     */
+    protected CreditCardDTO<PaymentResponseDTO> creditCard;
+
+    /**
+     * Any gift cards that have been processed. This data is useful for showing
+     * on an order confirmation screen
+     */
+    protected List<GiftCardDTO<PaymentResponseDTO>> giftCards;
+
+    /**
+     * Any customer credit accounts that have been processed. This data is useful for showing
+     * on an order confirmation screen
+     */
+    protected List<CustomerCreditDTO<PaymentResponseDTO>> customerCredits;
+
+    /**
+     * The Type of Payment that this transaction response represents
+     */
+    protected PaymentType paymentType;
+
+    /**
+     * The Order ID that this transaction is associated with
+     */
     protected String orderId;
     
     /**
-     * The amount that was sent back from the gateway
+     * If this was a Transaction request, it will be the amount that was sent back from the gateway
      */
     protected Money amount;
     
     /**
      * Whether or not the transaction on the gateway was successful. This should be provided by the gateway alone.
      */
-    protected Boolean successful = true;
+    protected boolean successful = true;
     
     /**
      * Whether or not this response was tampered with. This used to verify that the response that was received on the
      * endpoint (which is intended to only be invoked from the payment gateway) actually came from the gateway and was not
      * otherwise maliciously invoked by a 3rd-party. 
      */
-    protected Boolean valid = true;
-    
-    /**
-     * for sale/authorize transactions, this will be the Credit Card object that was charged. This data is useful for showing
-     * on an order confirmation screen.
-     */
-    protected CreditCardDTO creditCard;
+    protected boolean valid = true;
+
 
     /**
      * A string representation of the response that came from the gateway. This should be a string serialization of
@@ -71,61 +110,126 @@ public class PaymentResponseDTO {
     /**
      * A more convenient representation of {@link #rawResponse} to hold the response from the gateway.
      */
-    protected Map<String, Object> responseMap = new HashMap<String, Object>();
+    protected Map<String, Object> responseMap;
+
+    public PaymentResponseDTO(PaymentType paymentType) {
+        this.paymentType = paymentType;
+        this.giftCards = new ArrayList<GiftCardDTO<PaymentResponseDTO>>();
+        this.customerCredits = new ArrayList<CustomerCreditDTO<PaymentResponseDTO>>();
+        this.responseMap = new HashMap<String, Object>();
+    }
+
+    public GatewayCustomerDTO<PaymentResponseDTO> customer() {
+        customer = new GatewayCustomerDTO<PaymentResponseDTO>(this);
+        return customer;
+    }
+
+    public CreditCardDTO<PaymentResponseDTO> creditCard() {
+        creditCard = new CreditCardDTO<PaymentResponseDTO>(this);
+        return creditCard;
+    }
+
+    public AddressDTO<PaymentResponseDTO> shipTo() {
+        shipTo = new AddressDTO<PaymentResponseDTO>(this);
+        return shipTo;
+    }
+
+    public AddressDTO<PaymentResponseDTO> billTo() {
+        billTo = new AddressDTO<PaymentResponseDTO>(this);
+        return billTo;
+    }
+
+    public GiftCardDTO<PaymentResponseDTO> giftCard() {
+        GiftCardDTO<PaymentResponseDTO> giftCardDTO = new GiftCardDTO<PaymentResponseDTO>(this);
+        giftCards.add(giftCardDTO);
+        return giftCardDTO;
+    }
+
+    public CustomerCreditDTO<PaymentResponseDTO> customerCredit() {
+        CustomerCreditDTO<PaymentResponseDTO> customerCreditDTO = new CustomerCreditDTO<PaymentResponseDTO>(this);
+        customerCredits.add(customerCreditDTO);
+        return customerCreditDTO;
+    }
+
+    public PaymentResponseDTO responseMap(String key, Object value) {
+        responseMap.put(key, value);
+        return this;
+    }
+
+    public PaymentResponseDTO orderId(String orderId) {
+        this.orderId = orderId;
+        return this;
+    }
+
+    public PaymentResponseDTO amount(Money amount) {
+        this.amount = amount;
+        return this;
+    }
+
+    public PaymentResponseDTO successful(boolean successful) {
+        this.successful = successful;
+        return this;
+    }
+
+    public PaymentResponseDTO valid(boolean valid) {
+        this.valid = valid;
+        return this;
+    }
+
+    public PaymentResponseDTO rawResponse(String rawResponse) {
+        this.rawResponse = rawResponse;
+        return this;
+    }
+
+    public GatewayCustomerDTO<PaymentResponseDTO> getCustomer() {
+        return customer;
+    }
+
+    public AddressDTO<PaymentResponseDTO> getShipTo() {
+        return shipTo;
+    }
+
+    public AddressDTO<PaymentResponseDTO> getBillTo() {
+        return billTo;
+    }
+
+    public List<GiftCardDTO<PaymentResponseDTO>> getGiftCards() {
+        return giftCards;
+    }
+
+    public List<CustomerCreditDTO<PaymentResponseDTO>> getCustomerCredits() {
+        return customerCredits;
+    }
+
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
 
     public String getOrderId() {
         return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
     }
 
     public Money getAmount() {
         return amount;
     }
 
-    public void setAmount(Money amount) {
-        this.amount = amount;
-    }
-
-    public Boolean getSuccessful() {
+    public boolean isSuccessful() {
         return successful;
     }
 
-    public void setSuccessful(Boolean successful) {
-        this.successful = successful;
-    }
-
-    public Boolean getValid() {
+    public boolean isValid() {
         return valid;
     }
 
-    public void setValid(Boolean valid) {
-        this.valid = valid;
-    }
-
-    public CreditCardDTO getCreditCard() {
+    public CreditCardDTO<PaymentResponseDTO> getCreditCard() {
         return creditCard;
-    }
-
-    public void setCreditCard(CreditCardDTO creditCard) {
-        this.creditCard = creditCard;
     }
 
     public String getRawResponse() {
         return rawResponse;
     }
 
-    public void setRawResponse(String rawResponse) {
-        this.rawResponse = rawResponse;
-    }
-
     public Map<String, Object> getResponseMap() {
         return responseMap;
-    }
-
-    public void setResponseMap(Map<String, Object> responseMap) {
-        this.responseMap = responseMap;
     }
 }
