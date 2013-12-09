@@ -98,11 +98,14 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             }
         }
         
+        // If this gateway does not support multiple payments then mark all of the existing payments as invalid before adding
+        // the new one
         if (!configService.handlesMultiplePayments()) {
             PaymentGatewayType gateway = configService.getGatewayType();
-            //TODO: ONLY mark payments as invalid for a particular gateway
             for (OrderPayment payment : order.getPayments()) {
-                markPaymentAsInvalid(payment.getId());
+                if (payment.getGatewayType().equals(gateway)) {
+                    markPaymentAsInvalid(payment.getId());
+                }
             }
         }
         
