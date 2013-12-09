@@ -40,6 +40,11 @@ public interface OrderPaymentService {
 
     public OrderPayment create();
 
+    /**
+     * Deletes a payment from the system. Note that this is just a soft-delete and simply archives this entity
+     * 
+     * @see {@link OrderPayment#getArchived()}
+     */
     public void delete(OrderPayment payment);
 
     public PaymentTransaction createTransaction();

@@ -191,13 +191,28 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
     @Override
     public void markPaymentAsInvalid(Long orderPaymentId) {
-        // TODO delete (which archives) the given payment id
+        OrderPayment payment = orderPaymentService.readPaymentById(orderPaymentId);
+        if (payment == null) {
+            throw new IllegalArgumentException("Could not find payment with id " + orderPaymentId);
+        }
+        orderPaymentService.delete(payment);
     }
 
+    //TODO: this should return something more than just a String
     @Override
     public String initiateCheckout(Long orderId) {
-        // TODO Auto-generated method stub
-        return null;
+        Order order = orderService.findOrderById(orderId);
+        if (order == null || order instanceof NullOrderImpl) {
+            throw new IllegalArgumentException("Could not order with id " + orderId);
+        }
+        
+        try {
+            CheckoutResponse response = checkoutService.performCheckout(order);
+        } catch (CheckoutException e) {
+            //TODO: wrap the exception or put CheckoutException in common
+        }
+        
+        return order.getOrderNumber();
     }
 
     @Override
