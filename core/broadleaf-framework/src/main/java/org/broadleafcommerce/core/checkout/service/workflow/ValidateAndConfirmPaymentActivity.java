@@ -40,15 +40,17 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 
 
 /**
- * Write a good comment here when it's done, dawg.
+ * Verifies that there is enough payment on the order and confirms all payments that have not already been confirmed.
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class VerifyPaymentActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
+public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
 
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
+        
+        
         //TODO: This should be relatively simple and just loop through the order payments on the order, add up the total
         // and throw an exception if they don't add up.
         //

@@ -114,6 +114,10 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @AdminPresentation(friendlyName = "PaymentTransaction_success")
     protected Boolean success = true;
     
+    @Column(name = "CONFIRMED")
+    @AdminPresentation(friendlyName = "PaymentTransaction_confirmed")
+    protected Boolean confirmed = true;
+    
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
     
@@ -222,14 +226,25 @@ public class PaymentTransactionImpl implements PaymentTransaction {
         this.rawResponse = rawResponse;
     }
     
+    @Override
     public Boolean getSuccess() {
         return success;
     }
 
+    @Override
     public void setSuccess(Boolean success) {
         this.success = success;
     }
-
+    
+    @Override
+    public Boolean getConfirmed() {
+        return confirmed;
+    }
+    
+    @Override
+    public void setConfirmed(Boolean confirmed) {
+        this.confirmed = confirmed;
+    }
 
     @Override
     public Map<String, String> getAdditionalFields() {
