@@ -35,6 +35,7 @@
 
 package org.broadleafcommerce.core.payment.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.CreditCardDTO;
@@ -83,12 +84,18 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         
         //TODO: ensure that the order has not already been checked out before applying payments to it
         
-        //TODO: fill out order.getCustomer() values for anonymous customers based on values returned from the response
-        
-        //TODO: support multiple payment types (GIFT_CARD, ACCOUNT_CREDIT, BANK_ACCOUNT, etc)
-        PaymentType type = null;
-        if (responseDTO.getCreditCard() instanceof CreditCardDTO) {
-            type = PaymentType.CREDIT_CARD;
+        Customer customer = order.getCustomer();
+        if (customer.isAnonymous()) {
+            GatewayCustomerDTO<PaymentResponseDTO> gatewayCustomer = responseDTO.getCustomer();
+            if (StringUtils.isEmpty(customer.getFirstName())) {
+                customer.setFirstName(gatewayCustomer.getFirstName());
+            }
+            if (StringUtils.isEmpty(customer.getLastName())) {
+                customer.setLastName(gatewayCustomer.getLastName());
+            }
+            if (StringUtils.isEmpty(customer.getEmailAddress())) {
+                customer.setEmailAddress(gatewayCustomer.getEmail());
+            }
         }
         
         if (!configService.handlesMultiplePayments()) {
