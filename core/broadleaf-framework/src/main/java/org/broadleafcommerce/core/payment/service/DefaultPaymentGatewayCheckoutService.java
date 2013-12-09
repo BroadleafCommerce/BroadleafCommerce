@@ -37,17 +37,32 @@ package org.broadleafcommerce.core.payment.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
-import org.broadleafcommerce.common.payment.PaymentType;
-import org.broadleafcommerce.common.payment.dto.CreditCardDTO;
+import org.broadleafcommerce.common.payment.dto.GatewayCustomerDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
+import org.broadleafcommerce.core.checkout.service.CheckoutService;
+import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
+import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
+import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.Phone;
+import org.broadleafcommerce.profile.core.domain.State;
+import org.broadleafcommerce.profile.core.service.AddressService;
+import org.broadleafcommerce.profile.core.service.CountryService;
+import org.broadleafcommerce.profile.core.service.PhoneService;
+import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -66,6 +81,21 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
     
     @Resource(name = "blOrderPaymentService")
     protected OrderPaymentService orderPaymentService;
+    
+    @Resource(name = "blCheckoutService")
+    protected CheckoutService checkoutService;
+    
+    @Resource(name = "blAddressService")
+    protected AddressService addressService;
+    
+    @Resource(name = "blStateService")
+    protected StateService stateService;
+    
+    @Resource(name = "blCountryService")
+    protected CountryService countryService;
+    
+    @Resource(name = "blPhoneService")
+    protected PhoneService phoneService;
     
     @Override
     public Long applyPaymentToOrder(PaymentResponseDTO responseDTO, PaymentGatewayConfigurationService configService) {
@@ -115,12 +145,20 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         payment.setType(responseDTO.getPaymentType());
         payment.setAmount(responseDTO.getAmount());
         
-        //TODO: add billing address fields to the payment response DTO
-        //payment.setBillingAddress(billingAddress)
+        Address billingAddress = addressService.create();
+        billingAddress.setAddressLine1(responseDTO.getBillTo().getAddressLine1());
+        billingAddress.setAddressLine2(responseDTO.getBillTo().getAddressLine2());
+        billingAddress.setCity(responseDTO.getBillTo().getAddressCityLocality());
         
-        //TODO: I think this reference number should be completely optional. OOB I don't think there is any reason it needs
-        //to be set.
-        //payment.setReferenceNumber(referenceNumber)
+        //TODO: what happens if State and Country cannot be found?
+        State state = stateService.findStateByAbbreviation(responseDTO.getBillTo().getAddressStateRegion());
+        billingAddress.setState(state);
+        Country country = countryService.findCountryByAbbreviation(responseDTO.getBillTo().getAddressCountryCode());
+        billingAddress.setCountry(country);
+        
+        Phone billingPhone = phoneService.create();
+        billingPhone.setPhoneNumber(responseDTO.getBillTo().getAddressPhone());
+        billingAddress.setPhonePrimary(billingPhone);
         
         PaymentTransaction transaction = orderPaymentService.createTransaction();
         transaction.setAmount(responseDTO.getAmount());
