@@ -160,10 +160,15 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         billingPhone.setPhoneNumber(responseDTO.getBillTo().getAddressPhone());
         billingAddress.setPhonePrimary(billingPhone);
         
+        // Create the transaction for the payment
         PaymentTransaction transaction = orderPaymentService.createTransaction();
         transaction.setAmount(responseDTO.getAmount());
         transaction.setRawResponse(responseDTO.getRawResponse());
         transaction.setSuccess(responseDTO.isSuccessful());
+        transaction.setType(responseDTO.getPaymentTransactionType());
+        for (Entry<String, Serializable> entry : responseDTO.getResponseMap().entrySet()) {
+            transaction.getAdditionalFields().put(entry.getKey(), entry.getValue());
+        }
         
         //TODO: handle payments that have to be confirmed. Scenario:
         /*
@@ -173,15 +178,9 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
          * 4. User goes back and makes modifications to their cart
          * 5. The user now has an order payment in the system which has been unconfirmed and is really in this weird, invalid
          *    state.
-         * 6. 
          */
         
-        //TODO: get the transaction type from the response DTO
-        //transaction.setType(type);
-        
-        //TODO: copy additional fields from payment response into payment transaction
-        
-        //TODO: validate that this particular type of transaction is valid to be added to the payment (there might already
+        //TODO: validate that this particular type of transaction can be added to the payment (there might already
         // be an AUTHORIZE transaction, for instance)
         payment.addTransaction(transaction);
         payment = orderPaymentService.save(payment);
