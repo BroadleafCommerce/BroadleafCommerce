@@ -31,6 +31,59 @@ import org.broadleafcommerce.common.payment.PaymentGatewayType;
  */
 public interface PaymentGatewayConfigurationService {
 
+    /**
+     * <p> Gets the configured transaction type for this module. </p>
+     * <p> The possible initial transaction types for a gateway can be:
+     * 'Authorize' or 'Authorize and Capture'</p>
+     *
+     * <p>This property is intended to be configurable</p>
+     *
+     * @see {@link org.broadleafcommerce.common.payment.PaymentTransactionType}
+     */
+    public boolean isPerformAuthorizeAndCapture();
+
+    /**
+     * <p> Sets the transaction type to 'AUTHORIZE AND CAPTURE'
+     * for this gateway. If this is set to 'FALSE', then the gateway
+     * will only issue an 'AUTHORIZATION' request.</p>
+     *
+     * <p>This property is intended to be configurable</p>
+     *
+     * @see {@link org.broadleafcommerce.common.payment.PaymentTransactionType}
+     */
+    public void setPerformAuthorizeAndCapture(boolean performAuthorizeAndCapture);
+
+    /**
+     * <p>All payment gateway classes that intend to make an external call, either manually
+     * from an HTTP Post or through an SDK which makes its own external call, should
+     * extend the AbstractExternalPaymentGatewayCall class. One of the configuration parameters
+     * is the failure reporting threshold.</p>
+     *
+     * @see {@link AbstractExternalPaymentGatewayCall}
+     */
+    public int getFailureReportingThreshold();
+
+    /**
+     * <p>All payment gateway classes that intend to make an external call, either manually
+     * from an HTTP Post or through an SDK which makes its own external call, should
+     * extend the AbstractExternalPaymentGatewayCall class. One of the configuration parameters
+     * is the failure reporting threshold.</p>
+     *
+     * @see {@link AbstractExternalPaymentGatewayCall}
+     */
+    public void setFailureReportingThreshold(int failureReportingThreshold);
+
+
+    /**
+     * <p>Sets whether or not this module should complete checkout on callback.
+     * In most Credit Card gateway implementation, this should be set to 'TRUE' and
+     * should not be configurable as the gateway expects it to tbe the final step
+     * in the checkout process.</p>
+     *
+     * <p>In gateways where it does not expect to be the last step in the checkout process,
+     * for example BLC Gift Card Module, PayPal Express Checkout, etc... The callback from
+     * the gateway can be configured whether or not to complete checkout.</p>
+     */
     public boolean completeCheckoutOnCallback();
 
     public boolean handlesAuthorize();
@@ -49,13 +102,9 @@ public interface PaymentGatewayConfigurationService {
 
     public boolean handlesMultipleShipment();
 
-    public boolean handlesTransactionConfirmation();
-
     public boolean handlesRecurringPayment();
 
     public boolean handlesSavedCustomerPayment();
-
-    public int getFailureReportingThreshold();
     
     /**
      * <p>Denotes whether or not this payment provider supports multiple payments on an order. For instance, a gift card provider
