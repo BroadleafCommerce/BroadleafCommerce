@@ -52,7 +52,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
     @Qualifier("blPaymentGatewayCheckoutService")
     protected PaymentGatewayCheckoutService paymentGatewayCheckoutService;
 
-    public Long applyPaymentToOrder(PaymentResponseDTO responseDTO) {
+    public Long applyPaymentToOrder(PaymentResponseDTO responseDTO) throws IllegalArgumentException {
         if (paymentGatewayCheckoutService != null) {
             return paymentGatewayCheckoutService.applyPaymentToOrder(responseDTO, getConfigurationService());
         }
@@ -101,33 +101,37 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
      *
      */
     public String process(Model model, HttpServletRequest request) throws Exception {
-        PaymentResponseDTO responseDTO = getWebResponseService().translateWebResponse(request);
-        Long orderPaymentId = applyPaymentToOrder(responseDTO);
-
-        if (!responseDTO.isSuccessful()) {
-            handleUnsuccessfulTransaction(model, responseDTO);
-        }
-
-        if (!responseDTO.isValid()) {
-            handleProcessingException(new PaymentException("The validity of the response cannot be confirmed." +
-                    "Check the Tamper Proof Seal for more details."));
-        }
-
         try {
-            String orderId = responseDTO.getOrderId();
-            if (orderId == null) {
-                throw new RuntimeException("Order ID must be set on the Payment Response DTO");
+            PaymentResponseDTO responseDTO = getWebResponseService().translateWebResponse(request);
+            Long orderPaymentId = applyPaymentToOrder(responseDTO);
+
+            if (!responseDTO.isSuccessful()) {
+                handleUnsuccessfulTransaction(model, responseDTO);
             }
 
-            if (getConfigurationService().completeCheckoutOnCallback()) {
-                String orderNumber = initiateCheckout(Long.parseLong(orderId));
-                return getConfirmationView(orderNumber);
-            } else {
-                //TODO show review page
+            if (!responseDTO.isValid()) {
+                handleProcessingException(new PaymentException("The validity of the response cannot be confirmed." +
+                        "Check the Tamper Proof Seal for more details."));
             }
 
+            try {
+                String orderId = responseDTO.getOrderId();
+                if (orderId == null) {
+                    throw new RuntimeException("Order ID must be set on the Payment Response DTO");
+                }
+
+                if (getConfigurationService().completeCheckoutOnCallback()) {
+                    String orderNumber = initiateCheckout(Long.parseLong(orderId));
+                    return getConfirmationView(orderNumber);
+                } else {
+                    //TODO show review page
+                }
+
+            } catch (Exception e) {
+                markPaymentAsInvalid(orderPaymentId);
+                handleProcessingException(e);
+            }
         } catch (Exception e) {
-            markPaymentAsInvalid(orderPaymentId);
             handleProcessingException(e);
         }
 
