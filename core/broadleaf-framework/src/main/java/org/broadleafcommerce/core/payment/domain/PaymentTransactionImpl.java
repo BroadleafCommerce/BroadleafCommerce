@@ -36,6 +36,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -139,12 +140,12 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @ElementCollection
     @MapKeyColumn(name="FIELD_NAME")
     @Column(name="FIELD_VALUE")
-    @CollectionTable(name="BLC_PAYINFO_ADDITIONAL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_ID"))
+    @CollectionTable(name="BLC_TRANS_ADDITNL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_ID"))
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "PaymentInfoImpl_Additional_Fields",
         forceFreeFormKeys = true, keyPropertyFriendlyName = "PaymentInfoImpl_Additional_Fields_Name"
     )
-    protected Map<String, String> additionalFields = new HashMap<String, String>();
+    protected Map<String, Serializable> additionalFields = new HashMap<String, Serializable>();
 
     @Override
     public Long getId() {
@@ -247,12 +248,12 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     }
 
     @Override
-    public Map<String, String> getAdditionalFields() {
+    public Map<String, Serializable> getAdditionalFields() {
         return additionalFields;
     }
 
     @Override
-    public void setAdditionalFields(Map<String, String> additionalFields) {
+    public void setAdditionalFields(Map<String, Serializable> additionalFields) {
         this.additionalFields = additionalFields;
     }
 

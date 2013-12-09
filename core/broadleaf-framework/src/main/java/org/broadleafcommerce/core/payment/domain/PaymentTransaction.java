@@ -163,8 +163,8 @@ public interface PaymentTransaction extends Serializable, Status {
     /**
      * @see {@link PaymentAdditionalFieldType}
      */
-    public Map<String, String> getAdditionalFields();
+    public Map<String, Serializable> getAdditionalFields();
 
-    public void setAdditionalFields(Map<String, String> additionalFields);
+    public void setAdditionalFields(Map<String, Serializable> additionalFields);
 
 }
