@@ -112,7 +112,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         // ALWAYS create a new order payment for the payment that comes in. Invalid payments should be cleaned up by
         // invoking {@link #markPaymentaAsInvalid}.
         OrderPayment payment = orderPaymentService.create();
-        payment.setType(type);
+        payment.setType(responseDTO.getPaymentType());
         payment.setAmount(responseDTO.getAmount());
         
         //TODO: add billing address fields to the payment response DTO
