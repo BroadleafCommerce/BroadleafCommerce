@@ -21,6 +21,7 @@
 package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
+import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,6 +43,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface PaymentGatewayWebResponseService {
 
-    public PaymentResponseDTO translateWebResponse(HttpServletRequest request);
+    public PaymentResponseDTO translateWebResponse(HttpServletRequest request) throws PaymentException;
 
 }

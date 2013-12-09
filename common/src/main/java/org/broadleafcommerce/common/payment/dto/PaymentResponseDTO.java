@@ -21,6 +21,7 @@
 package org.broadleafcommerce.common.payment.dto;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 
 import java.io.Serializable;
@@ -80,6 +81,11 @@ public class PaymentResponseDTO {
     protected PaymentType paymentType;
 
     /**
+     * The Transaction Type of the Payment that this response represents
+     */
+    protected PaymentTransactionType paymentTransactionType;
+
+    /**
      * The Order ID that this transaction is associated with
      */
     protected String orderId;
@@ -101,6 +107,17 @@ public class PaymentResponseDTO {
      */
     protected boolean valid = true;
 
+    /**
+     * Whether or not this transaction is confirmed (i.e. the Gateway has processed the transaction).
+     * In most cases, this will be true, as most Credit Card gateway integrations require
+     * that it be the last step in the process.
+     * However, there are certain integrations, (e.g. PayPal Express Checkout, BLC Gift Card Module)
+     * that aren't the final step in the checkout process and allow the customer to review their order
+     * or add another payment method to the order before final submission. In these cases, the response
+     * will be not confirmed. The confirmation for these payments will happen in the Checkout Workflow
+     * where all payments on the order that are not confirmed, should be confirmed.
+     */
+    protected boolean confirmed = true;
 
     /**
      * A string representation of the response that came from the gateway. This should be a string serialization of
@@ -167,6 +184,11 @@ public class PaymentResponseDTO {
         return this;
     }
 
+    public PaymentResponseDTO paymentTransactionType(PaymentTransactionType paymentTransactionType) {
+        this.paymentTransactionType = paymentTransactionType;
+        return this;
+    }
+
     public PaymentResponseDTO successful(boolean successful) {
         this.successful = successful;
         return this;
@@ -174,6 +196,11 @@ public class PaymentResponseDTO {
 
     public PaymentResponseDTO valid(boolean valid) {
         this.valid = valid;
+        return this;
+    }
+
+    public PaymentResponseDTO confirmed(boolean confirmed) {
+        this.confirmed = confirmed;
         return this;
     }
 
@@ -214,12 +241,20 @@ public class PaymentResponseDTO {
         return amount;
     }
 
+    public PaymentTransactionType getPaymentTransactionType() {
+        return paymentTransactionType;
+    }
+
     public boolean isSuccessful() {
         return successful;
     }
 
     public boolean isValid() {
         return valid;
+    }
+
+    public boolean isConfirmed() {
+        return confirmed;
     }
 
     public CreditCardDTO<PaymentResponseDTO> getCreditCard() {
