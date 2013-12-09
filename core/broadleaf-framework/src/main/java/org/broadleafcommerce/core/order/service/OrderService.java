@@ -147,7 +147,7 @@ public interface OrderService {
     public List<OrderPayment> findPaymentInfosForOrder(Order order);
 
     /**
-     * Associates a given OrderPayment with an Order. Note that it is acceptable for the 
+     * Associates a given OrderPayment with an Order and then saves the order. Note that it is acceptable for the 
      * securePaymentInfo to be null. For example, if the secure credit card details are 
      * handled by a third party, a given application may never have associated securePaymentInfos
      * 

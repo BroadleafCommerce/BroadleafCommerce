@@ -34,8 +34,9 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 public class PaymentInfoServiceTest extends BaseTest {
 
@@ -57,7 +58,7 @@ public class PaymentInfoServiceTest extends BaseTest {
     @Test(groups={"createPaymentInfo"}, dataProvider="basicPaymentInfo", dataProviderClass=PaymentInfoDataProvider.class, dependsOnGroups={"readCustomer", "createOrder"})
     @Rollback(false)
     @Transactional
-    public void createPaymentInfo(OrderPayment paymentInfo){
+    public void createPayment(OrderPayment payment){
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         List<CustomerAddress> addresses = customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId());
@@ -66,14 +67,14 @@ public class PaymentInfoServiceTest extends BaseTest {
             address = addresses.get(0).getAddress();
         Order salesOrder = orderService.createNewCartForCustomer(customer);
 
-        paymentInfo.setAddress(address);
-        paymentInfo.setOrder(salesOrder);
-        paymentInfo.setType(PaymentType.CREDIT_CARD);
+        payment.setBillingAddress(address);
+        payment.setOrder(salesOrder);
+        payment.setType(PaymentType.CREDIT_CARD);
 
-        assert paymentInfo.getId() == null;
-        paymentInfo = paymentInfoService.save(paymentInfo);
-        assert paymentInfo.getId() != null;
-        this.paymentInfo = paymentInfo;
+        assert payment.getId() == null;
+        payment = paymentInfoService.save(payment);
+        assert payment.getId() != null;
+        this.paymentInfo = payment;
     }
 
     @Test(groups={"readPaymentInfoById"}, dependsOnGroups={"createPaymentInfo"})
@@ -93,7 +94,7 @@ public class PaymentInfoServiceTest extends BaseTest {
 
     @Test(groups={"testCreatePaymentInfo"}, dependsOnGroups={"createPaymentInfo"})
     @Transactional
-    public void createTestPaymentInfo(){
+    public void createTestPayment(){
         userName = "customer1";
         OrderPayment paymentInfo = paymentInfoService.create();
         Customer customer = customerService.readCustomerByUsername(userName);
@@ -103,7 +104,7 @@ public class PaymentInfoServiceTest extends BaseTest {
             address = addresses.get(0).getAddress();
         Order salesOrder = orderService.findCartForCustomer(customer);
 
-        paymentInfo.setAddress(address);
+        paymentInfo.setBillingAddress(address);
         paymentInfo.setOrder(salesOrder);
         paymentInfo.setType(PaymentType.CREDIT_CARD);
 

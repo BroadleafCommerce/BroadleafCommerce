@@ -56,11 +56,12 @@ import org.broadleafcommerce.test.BaseTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 public class LegacyCheckoutTest extends BaseTest {
 
@@ -214,7 +215,7 @@ public class LegacyCheckoutTest extends BaseTest {
 
     private Map<OrderPayment, Referenced> addPaymentToOrder(Order order, Address address) {
         OrderPayment payment = new OrderPaymentImpl();
-        payment.setAddress(address);
+        payment.setBillingAddress(address);
         payment.setAmount(new Money(15D + (15D * 0.05D)));
         payment.setReferenceNumber("1234");
         payment.setType(PaymentType.CREDIT_CARD);

@@ -687,7 +687,6 @@ public class OrderTest extends OrderBaseTest {
 
         assert order.getSubTotal() == null;
         assert order.getTotal() == null;
-        assert order.getRemainingTotal() == null;
 
         Calendar testCalendar = Calendar.getInstance();
         order.setSubmitDate(testCalendar.getTime());

@@ -58,11 +58,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 @SuppressWarnings("deprecation")
 public class LegacyOrderTest extends LegacyOrderBaseTest {
@@ -513,7 +514,6 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
 
         assert order.getSubTotal() == null;
         assert order.getTotal() == null;
-        assert order.getRemainingTotal() == null;
 
         Calendar testCalendar = Calendar.getInstance();
         order.setSubmitDate(testCalendar.getTime());

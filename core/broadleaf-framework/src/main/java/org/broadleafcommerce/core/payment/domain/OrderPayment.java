@@ -90,7 +90,7 @@ public interface OrderPayment extends Serializable, Status {
     /**
      * The soft link to a {@link Referenced} entity which will be stored in the blSecurePU persistence unit. If you are not
      * attempting to store credit cards in your own database (which is the usual, recommended case) then this will not be
-     * used or set
+     * used or set. If you do use this reference number, this can be anything that is unique (like System.currentTimeMillis()).
      */
     public String getReferenceNumber();
 

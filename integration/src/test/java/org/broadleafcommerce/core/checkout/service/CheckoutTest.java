@@ -57,11 +57,12 @@ import org.broadleafcommerce.test.BaseTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 public class CheckoutTest extends BaseTest {
 
@@ -97,11 +98,11 @@ public class CheckoutTest extends BaseTest {
         FulfillmentGroup group = buildFulfillmentGroup(order, address);
         addSampleItemToOrder(order, group);
         order.setTotalShipping(new Money(0D));
-        Map<OrderPayment, Referenced> map = addPaymentToOrder(order, address);
 
         //execute pricing for this order
         orderService.save(order, true);
-        CheckoutResponse response = checkoutService.performCheckout(order, map);
+        CheckoutResponse response = checkoutService.performCheckout(order);
+        
         //The DummyCreditCardModule changed the reference Number - make sure it's represented
         for(OrderPayment paymentInfo : response.getInfos().keySet()) {
             assert(paymentInfo.getReferenceNumber().equals("abc123"));
@@ -123,9 +124,7 @@ public class CheckoutTest extends BaseTest {
         assert(referenced == null);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));
-        //Removed by Jeff to facilitate merge : assert (order.getTotalTax().equals(order.getSubTotal().add(order.getTotalShipping()).multiply(0.05D)));
         assert (response.getPaymentResponse().getResponseItems().size() > 0);
-        //assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping())));
     }
 
 /*
