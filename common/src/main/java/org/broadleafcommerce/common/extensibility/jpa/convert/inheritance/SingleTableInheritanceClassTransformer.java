@@ -27,16 +27,7 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.IntegerMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.util.StringUtils;
 
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -47,6 +38,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.StringUtils;
 
 /**
  * 
@@ -125,7 +127,7 @@ public class SingleTableInheritanceClassTransformer implements BroadleafClassTra
                     }
                 }
                 Annotation inheritance = new Annotation(Inheritance.class.getName(), constantPool);
-                ClassPool pool = ClassPool.getDefault();
+                ClassPool pool = new ClassPool(true);
                 pool.importPackage("javax.persistence");
                 pool.importPackage("java.lang");
                 EnumMemberValue strategy = (EnumMemberValue) Annotation.createMemberValue(constantPool, pool.makeClass("InheritanceType"));

@@ -109,7 +109,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
             if (!xformTemplates.isEmpty()) {
                 if (xformTemplates.containsKey(xformKey)) {
                     xformVals = xformTemplates.get(xformKey).split(",");
-                    classPool = ClassPool.getDefault();
+                    classPool = new ClassPool(true);
                     clazz = classPool.makeClass(new ByteArrayInputStream(classfileBuffer), false);
                 }
             } else {
@@ -127,7 +127,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                     }
                 }
                 if (isValidPattern) {
-                    classPool = ClassPool.getDefault();
+                    classPool = new ClassPool(true);
                     clazz = classPool.makeClass(new ByteArrayInputStream(classfileBuffer), false);
                     List<?> attributes = clazz.getClassFile().getAttributes();
                     Iterator<?> itr = attributes.iterator();
