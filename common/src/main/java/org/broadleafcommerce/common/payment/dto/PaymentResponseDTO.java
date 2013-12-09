@@ -23,6 +23,7 @@ package org.broadleafcommerce.common.payment.dto;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,13 +111,13 @@ public class PaymentResponseDTO {
     /**
      * A more convenient representation of {@link #rawResponse} to hold the response from the gateway.
      */
-    protected Map<String, Object> responseMap;
+    protected Map<String, Serializable> responseMap;
 
     public PaymentResponseDTO(PaymentType paymentType) {
         this.paymentType = paymentType;
         this.giftCards = new ArrayList<GiftCardDTO<PaymentResponseDTO>>();
         this.customerCredits = new ArrayList<CustomerCreditDTO<PaymentResponseDTO>>();
-        this.responseMap = new HashMap<String, Object>();
+        this.responseMap = new HashMap<String, Serializable>();
     }
 
     public GatewayCustomerDTO<PaymentResponseDTO> customer() {
@@ -151,7 +152,7 @@ public class PaymentResponseDTO {
         return customerCreditDTO;
     }
 
-    public PaymentResponseDTO responseMap(String key, Object value) {
+    public PaymentResponseDTO responseMap(String key, Serializable value) {
         responseMap.put(key, value);
         return this;
     }
@@ -229,7 +230,7 @@ public class PaymentResponseDTO {
         return rawResponse;
     }
 
-    public Map<String, Object> getResponseMap() {
+    public Map<String, Serializable> getResponseMap() {
         return responseMap;
     }
 }
