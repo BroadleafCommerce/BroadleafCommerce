@@ -83,4 +83,11 @@ public class PaymentGatewayFieldVariableExpression implements BroadleafVariableE
         return fieldNameMap.get(fieldName);
     }
 
+    public PaymentGatewayFieldExtensionManager getExtensionManager() {
+        return extensionManager;
+    }
+
+    public void setExtensionManager(PaymentGatewayFieldExtensionManager extensionManager) {
+        this.extensionManager = extensionManager;
+    }
 }

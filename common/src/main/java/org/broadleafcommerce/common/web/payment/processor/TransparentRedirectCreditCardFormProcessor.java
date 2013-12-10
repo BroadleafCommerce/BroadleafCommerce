@@ -105,6 +105,7 @@ public class TransparentRedirectCreditCardFormProcessor extends AbstractElementP
 
         PaymentRequestDTO requestDTO = (PaymentRequestDTO) StandardExpressionProcessor.processExpression(arguments,
                 element.getAttributeValue("paymentRequestDTO"));
+        element.removeAttribute("paymentRequestDTO");
 
         Map<String, Map<String,String>> formParameters = new HashMap<String, Map<String,String>>();
         Map<String, String> configurationSettings = new HashMap<String, String>();
@@ -167,4 +168,11 @@ public class TransparentRedirectCreditCardFormProcessor extends AbstractElementP
         return ProcessorResult.OK;
     }
 
+    public TRCreditCardExtensionManager getExtensionManager() {
+        return extensionManager;
+    }
+
+    public void setExtensionManager(TRCreditCardExtensionManager extensionManager) {
+        this.extensionManager = extensionManager;
+    }
 }
