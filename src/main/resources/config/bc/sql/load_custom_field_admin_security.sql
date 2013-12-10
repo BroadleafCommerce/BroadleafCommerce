@@ -34,7 +34,7 @@ INSERT INTO BLC_ADMIN_ROLE_PERMISSION_XREF (ADMIN_ROLE_ID, ADMIN_PERMISSION_ID) 
 --
 -- Create BLC MODULES (These modules are required for the admin left navigation)
 --
-INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-18900,'Custom Field','BLCCustomField','icon-user',5);
+INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-18900,'Custom Field','BLCCustomField','icon-user',450);
 
 --
 -- Create BLC SECTIONS (These modules are required for the admin left navigation)
