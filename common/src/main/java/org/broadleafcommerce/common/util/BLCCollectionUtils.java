@@ -72,8 +72,7 @@ public class BLCCollectionUtils {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static <T> T[] collectArray(Collection inputCollection, TypedTransformer<T> transformer, Class<T> clazz) {
-        Array.newInstance(clazz, inputCollection.size());
-        T[] returnArray = (T[]) new Object[inputCollection.size()];
+        T[] returnArray = (T[]) Array.newInstance(clazz, inputCollection.size());
         int i = 0;
         for (Object obj : inputCollection) {
             T transformed = transformer.transform(obj);
