@@ -20,6 +20,8 @@
 
 package org.broadleafcommerce.common.web.payment.controller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
@@ -29,15 +31,18 @@ import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
- *
  * <p>Abstract controller that provides convenience methods and resource declarations for Payment Gateway
- * Operations that are shared between all gateway controllers belong here.
+ * Operations that are shared between all gateway controllers belong here.</p>
  *
- * The Core Framework should have an implementation of a "blPaymentGatewayCheckoutService" bean defined.
+ * <p>The Core Framework should have an implementation of a "blPaymentGatewayCheckoutService" bean defined.
  * If you are using the common jars without the framework dependency, you will either have to
  * implement the blPaymentGatewayCheckoutService yourself, or override the applyPaymentToOrder and
  * the markPaymentAsInvalid methods accordingly.</p>
@@ -46,7 +51,15 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class PaymentGatewayAbstractController extends BroadleafAbstractController {
 
-    protected static String baseConfirmationView = "ajaxredirect:/confirmation";
+    protected static final Log LOG = LogFactory.getLog(PaymentGatewayAbstractController.class);
+    protected static final String PAYMENT_PROCESSING_ERROR = "PAYMENT_PROCESSING_ERROR";
+
+    protected static String baseRedirect = "redirect:/";
+    protected static String baseErrorView = "/error";
+    protected static String baseOrderReview = "/review";
+    protected static String baseConfirmationRedirect = "redirect:/confirmation";
+    protected static String baseCartRedirect = "redirect:/cart";
+    protected static String processingErrorMessage = "There was an error processing your request.";
 
     @Autowired(required=false)
     @Qualifier("blPaymentGatewayCheckoutService")
@@ -84,11 +97,10 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
     // ***********************************************
     /**
      *
-     * translate http request to DTO
-     * apply payment to order
-     * check success and validity of response
-     *
      * try {
+     *   translate http request to DTO
+     *   apply payment to order
+     *   check success and validity of response
      *   if (complete checkout on callback == true)
      *     initiateCheckout(order id);
      *   else
@@ -100,45 +112,85 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
      * }
      *
      */
-    public String process(Model model, HttpServletRequest request) throws Exception {
+    public String process(Model model, HttpServletRequest request,
+                          final RedirectAttributes redirectAttributes) throws PaymentException {
+        Long orderPaymentId = null;
+
         try {
             PaymentResponseDTO responseDTO = getWebResponseService().translateWebResponse(request);
-            Long orderPaymentId = applyPaymentToOrder(responseDTO);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("HTTPRequest translated to Raw Response: " +  responseDTO.getRawResponse());
+            }
+
+            orderPaymentId = applyPaymentToOrder(responseDTO);
 
             if (!responseDTO.isSuccessful()) {
-                handleUnsuccessfulTransaction(model, responseDTO);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("The Response DTO is marked as unsuccessful. Delegating to the " +
+                            "payment module to handle an unsuccessful transaction");
+                }
+
+                handleUnsuccessfulTransaction(model, redirectAttributes, responseDTO);
+                return getErrorViewRedirect();
             }
 
             if (!responseDTO.isValid()) {
-                handleProcessingException(new PaymentException("The validity of the response cannot be confirmed." +
-                        "Check the Tamper Proof Seal for more details."));
+                throw new PaymentException("The validity of the response cannot be confirmed." +
+                        "Check the Tamper Proof Seal for more details.");
             }
 
-            try {
-                String orderId = responseDTO.getOrderId();
-                if (orderId == null) {
-                    throw new RuntimeException("Order ID must be set on the Payment Response DTO");
-                }
-
-                if (getConfigurationService().completeCheckoutOnCallback()) {
-                    String orderNumber = initiateCheckout(Long.parseLong(orderId));
-                    return getConfirmationView(orderNumber);
-                } else {
-                    //TODO show review page
-                }
-
-            } catch (Exception e) {
-                markPaymentAsInvalid(orderPaymentId);
-                handleProcessingException(e);
+            String orderId = responseDTO.getOrderId();
+            if (orderId == null) {
+                throw new RuntimeException("Order ID must be set on the Payment Response DTO");
             }
+
+            if (getConfigurationService().completeCheckoutOnCallback()) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("The Gateway is configured to complete checkout on callback. " +
+                            "Initiating Checkout with Order ID: " + orderId);
+                }
+
+                String orderNumber = initiateCheckout(Long.parseLong(orderId));
+                return getConfirmationViewRedirect(orderNumber);
+            } else {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("The Gateway is configured to not complete checkout. " +
+                            "Redirecting to the Order Review Page for Order ID: " + orderId);
+                }
+
+                return getOrderReviewRedirect();
+            }
+
         } catch (Exception e) {
-            handleProcessingException(e);
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("An exception was caught either from processing the response and applying the payment to " +
+                        "the order, or an activity in the checkout workflow threw an exception. Attempting to " +
+                        "mark the payment as invalid and delegating to the payment module to handle any other " +
+                        "exception processing. The error caught was: " + e.getMessage());
+            }
+
+            if (orderPaymentId != null) {
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("The Payment with ID: [" + orderPaymentId + "] has been applied to the order." +
+                            " Attempting to mark it as invalid and continue processing the exception.");
+                }
+
+                markPaymentAsInvalid(orderPaymentId);
+            }
+
+            handleProcessingException(e, redirectAttributes);
         }
 
-        return null;
+        return getErrorViewRedirect();
     }
 
     /**
+     * TODO Move to another controller
+     * should respond to "/checkout" - assumes all payments have been applied to the order.
+     *
+     *
      * If the order has been finalized. i.e. all the payments have been applied to the order,
      * then you can go ahead and call checkout using the passed in order id.
      * This is usually called from a Review Page, the security check is pushed to the framework
@@ -148,31 +200,59 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
      * @return
      * @throws Exception
      */
-    public String processCheckoutOrderFinalized(Long orderId) throws Exception {
+    public String processCheckoutOrderFinalized(Long orderId,
+                                                final RedirectAttributes redirectAttributes) throws PaymentException {
         try {
             String orderNumber = initiateCheckout(orderId);
-            return getConfirmationView(orderNumber);
+            return getConfirmationViewRedirect(orderNumber);
         } catch (Exception e) {
-            handleProcessingException(e);
+            handleProcessingException(e, redirectAttributes);
         }
 
-        return null;
+        return getErrorViewRedirect();
     }
 
-    public abstract void handleProcessingException(Exception e) throws Exception;
+    public abstract void handleProcessingException(Exception e, final RedirectAttributes redirectAttributes)
+            throws PaymentException;
 
-    public abstract void handleUnsuccessfulTransaction(Model model, PaymentResponseDTO responseDTO) throws Exception;
+    public abstract void handleUnsuccessfulTransaction(Model model, final RedirectAttributes redirectAttributes,
+                                                       PaymentResponseDTO responseDTO) throws PaymentException;
+
+    public abstract String getGatewayContextKey();
 
     public abstract PaymentGatewayWebResponseService getWebResponseService();
 
     public abstract PaymentGatewayConfigurationService getConfigurationService();
 
-    public String getBaseConfirmationView() {
-        return baseConfirmationView;
+    public abstract String returnEndpoint(Model model, HttpServletRequest request,
+                                          final RedirectAttributes redirectAttributes,
+                                          Map<String, String> pathVars) throws PaymentException;
+
+    public abstract String errorEndpoint(Model model, HttpServletRequest request,
+                                         final RedirectAttributes redirectAttributes,
+                                         Map<String, String> pathVars) throws PaymentException;
+
+    protected String getOrderReviewRedirect() {
+        return baseRedirect + getGatewayContextKey() + baseOrderReview;
     }
 
-    protected String getConfirmationView(String orderNumber) {
-        return getBaseConfirmationView() + "/" + orderNumber;
+    protected String getErrorViewRedirect() {
+        return baseRedirect + getGatewayContextKey() + baseErrorView;
     }
 
+    protected String getCartViewRedirect() {
+        return baseCartRedirect;
+    }
+
+    public String getBaseConfirmationRedirect() {
+        return baseConfirmationRedirect;
+    }
+
+    protected String getConfirmationViewRedirect(String orderNumber) {
+        return getBaseConfirmationRedirect() + "/" + orderNumber;
+    }
+
+    public static String getProcessingErrorMessage() {
+        return processingErrorMessage;
+    }
 }

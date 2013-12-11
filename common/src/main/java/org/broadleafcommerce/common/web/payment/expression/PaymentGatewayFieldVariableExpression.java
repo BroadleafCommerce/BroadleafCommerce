@@ -42,8 +42,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Elbert Bautista (elbertbautista)
- *
  * <p>A Thymeleaf Variable Expression implementation for Payment Gateway Specific fields.
  * The Payment Module specific names are invoked via the ExtensionManager.
  * Therefore, each module will need to register itself properly.</p>
@@ -65,6 +63,7 @@ import java.util.Map;
  * @see {@link org.broadleafcommerce.common.payment.dto.CreditCardDTO}
  * @see {@link org.broadleafcommerce.common.payment.dto.AddressDTO}
  *
+ * @author Elbert Bautista (elbertbautista)
  */
 public class PaymentGatewayFieldVariableExpression implements BroadleafVariableExpression {
 

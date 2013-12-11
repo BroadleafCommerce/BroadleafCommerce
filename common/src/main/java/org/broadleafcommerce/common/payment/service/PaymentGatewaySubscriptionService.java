@@ -21,11 +21,10 @@
 package org.broadleafcommerce.common.payment.service;
 
 /**
+ * <p>Some gateways allow you to create a form of recurring billing by creating a subscription profile.
+ * Note: Some Gateways charge an extra fee to enable this feature</p>
+ *
  * @author Elbert Bautista (elbertbautista)
- *
- * Some gateways allow you to create a form of recurring billing by creating a subscription profile.
- * Note: Some Gateways charge an extra fee to enable this feature
- *
  */
 public interface PaymentGatewaySubscriptionService {
 }

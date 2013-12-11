@@ -52,8 +52,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Elbert Bautista (elbertbautista)
- *
  * <p>The following processor will modify the declared Credit Card Form
  * and call the Transparent Redirect Service of the configured payment gateway. </p>
  *
@@ -77,13 +75,14 @@ import java.util.Map;
  *     </blc:transparent_credit_form>
  * </code></pre>
  *
- * NOTE: please see {@link org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression}
- * to modify the input "name" fields for a particular gateway
+ * <p>NOTE: please see {@link org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression}
+ * to modify the input "name" fields for a particular gateway</p>
  *
  * @see {@link org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression}
  * @see {@link TRCreditCardExtensionHandler}
  * @see {@link AbstractTRCreditCardExtensionHandler}
  *
+ * @author Elbert Bautista (elbertbautista)
  */
 @Component("blTransparentRedirectCreditCardFormProcessor")
 public class TransparentRedirectCreditCardFormProcessor extends AbstractElementProcessor {

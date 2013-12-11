@@ -23,11 +23,10 @@ package org.broadleafcommerce.common.payment.service;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 
 /**
+ * <p>This API is intended to define the specific configuration parameters
+ * that this gateway implementation currently supports.</p>
+ *
  * @author Elbert Bautista (elbertbautista)
- *
- * This API is intended to define the specific configuration parameters
- * that this gateway implementation currently supports.
- *
  */
 public interface PaymentGatewayConfigurationService {
 

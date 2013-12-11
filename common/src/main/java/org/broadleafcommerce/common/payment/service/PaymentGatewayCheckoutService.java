@@ -33,7 +33,9 @@ import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstrac
  * provider (which should be a subclass of {@link PaymentGatewayAbstractController}).</p>
  * 
  * @see {@link PaymentGatewayAbstractController}
+ *
  * @author Elbert Bautista (elbertbautista)
+ * @author Phillip Verheyden (phillipuniverse)
  */
 public interface PaymentGatewayCheckoutService {
 

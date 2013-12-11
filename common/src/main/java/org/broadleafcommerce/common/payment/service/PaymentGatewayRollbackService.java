@@ -23,12 +23,11 @@ package org.broadleafcommerce.common.payment.service;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 
 /**
- * @author Elbert Bautista (elbertbautista)
- *
- * This API allows each module to provide its own implementation for rollback.
+ * <p>This API allows each module to provide its own implementation for rollback.
  * Each module needs to implement this if for some reason the checkout workflow fails
- * after payments have been finalized and the submitted transaction needs to rollback.
+ * after payments have been finalized and the submitted transaction needs to rollback.</p>
  *
+ * @author Elbert Bautista (elbertbautista)
  */
 public interface PaymentGatewayRollbackService {
 

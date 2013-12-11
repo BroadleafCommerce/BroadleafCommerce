@@ -24,13 +24,12 @@ import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 
 /**
+ * <p>Certain Payment Integrations allow you to use Fraud Services like Address Verification and Buyer Authentication,
+ * such as PayPal Payments Pro (PayFlow Edition)</p>
+ *
+ * <p>This API allows you to call certain fraud prevention APIs exposed from the gateway.</p>
+ *
  * @author Elbert Bautista (elbertbautista)
- *
- * Certain Payment Integrations allow you to use Fraud Services like Address Verification and Buyer Authentication,
- * such as PayPal Payments Pro (PayFlow Edition)
- *
- * This API allows you to call certain fraud prevention APIs exposed from the gateway.
- *
  */
 public interface PaymentGatewayFraudService {
 

@@ -46,12 +46,11 @@ import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import java.util.Map;
 
 /**
- * @author Elbert Bautista (elbertbautista)
- *
- * An Abstract implementation of the TRCreditCardExtensionHandler.
+ * <p>An Abstract implementation of the TRCreditCardExtensionHandler.
  * PaymentGateway Handlers will just need to extend this class and implement
- * the declated abstract methods.
+ * the declated abstract methods.</p>
  *
+ * @author Elbert Bautista (elbertbautista)
  */
 public abstract class AbstractTRCreditCardExtensionHandler extends AbstractExtensionHandler
         implements TRCreditCardExtensionHandler {

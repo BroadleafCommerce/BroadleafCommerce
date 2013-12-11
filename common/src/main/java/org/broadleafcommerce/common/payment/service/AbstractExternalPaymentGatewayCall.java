@@ -25,23 +25,22 @@ import org.broadleafcommerce.common.vendor.service.monitor.ServiceStatusDetectab
 import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
 
 /**
- * @author Elbert Bautista (elbertbautista)
- *
- * All payment gateway classes that intend to make an external call, either manually
+ * <p>All payment gateway classes that intend to make an external call, either manually
  * from an HTTP Post or through an SDK which makes its own external call, should
  * extend this class. The implementations should override the abstract methods:
- * communicateWithVendor(), and getFailureReportingThreshold();
+ * communicateWithVendor(), and getFailureReportingThreshold();</p>
  *
- * The generic Type 'T' represents the payment request object that is going to be sent to the external gateway.
- * The generic Type 'R' reprenents the payment result object that will be returned
+ * <p>The generic Type 'T' represents the payment request object that is going to be sent to the external gateway.
+ * The generic Type 'R' reprenents the payment result object that will be returned</p>
  *
- * This allows anyone using the framework to configure the ServiceMonitor AOP hooks
- * and detect any outages to provide (email/logging) feedback when necessary.
+ * <p>This allows anyone using the framework to configure the ServiceMonitor AOP hooks
+ * and detect any outages to provide (email/logging) feedback when necessary.</p>
  *
  * @see org.broadleafcommerce.common.vendor.service.monitor.ServiceMonitor
  * @see org.broadleafcommerce.common.vendor.service.monitor.StatusHandler
  * @see ServiceStatusDetectable
  *
+ * @author Elbert Bautista (elbertbautista)
  */
 public abstract class AbstractExternalPaymentGatewayCall<T,R> implements ServiceStatusDetectable<T> {
 

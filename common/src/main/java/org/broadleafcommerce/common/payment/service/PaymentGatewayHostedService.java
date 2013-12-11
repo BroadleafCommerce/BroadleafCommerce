@@ -25,13 +25,12 @@ import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 
 /**
- * @author Elbert Bautista (elbertbautista)
- *
- * Certain Payment Integrations allow you to use a Hosted Solution,
+ * <p>Certain Payment Integrations allow you to use a Hosted Solution,
  * such as PayPal Express and SagePay Form.
  * This API allows you to create the call to send a user to the Gateway's Hosted page
- * and to capture and record transaction responses back from them.
+ * and to capture and record transaction responses back from them.</p>
  *
+ * @author Elbert Bautista (elbertbautista)
  */
 public interface PaymentGatewayHostedService {
 
