@@ -132,16 +132,6 @@
     <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
     <bean id="blEmailCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
     
-    <bean id="blEmailTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
-        <property name="prefix" value="/WEB-INF/emailTemplates/" />
-        <property name="suffix" value=".html" />
-        <property name="templateMode" value="HTML5" />
-        <property name="characterEncoding" value="UTF-8" />
-        <property name="cacheable" value="${cache.page.templates}"/>
-        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
-        <property name="order" value="200"/>         
-    </bean>     
-     
     <bean id="blEmailClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
         <property name="prefix" value="emailTemplates/" />
         <property name="suffix" value=".html" />
@@ -182,14 +172,17 @@
         </property>
     </bean> 
     
-    <bean id="blEmailTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
-        <property name="templateResolvers">
+    <bean id="blEmailTemplateResolvers" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
             <set>
-                <ref bean="blEmailTemplateResolver" />
                 <ref bean="blEmailClasspathTemplateResolver" />                
                 <ref bean="blEmailCustomTemplateResolver" />
             </set>
         </property>
+    </bean>
+    
+    <bean id="blEmailTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+        <property name="templateResolvers" ref="blEmailTemplateResolvers" />
         <property name="dialects">
             <set>
                 <ref bean="thymeleafSpringStandardDialect" />
