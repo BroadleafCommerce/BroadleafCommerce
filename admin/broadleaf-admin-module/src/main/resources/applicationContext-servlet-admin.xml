@@ -41,5 +41,4 @@
         <property name="targetRef" value="blAdminTranslationControllerExtensionListeners" />
     </bean>
 
-
 </beans>
