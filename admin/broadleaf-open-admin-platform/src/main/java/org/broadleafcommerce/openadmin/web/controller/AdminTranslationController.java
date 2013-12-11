@@ -20,6 +20,8 @@
 package org.broadleafcommerce.openadmin.web.controller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -54,9 +56,9 @@ public class AdminTranslationController extends AdminAbstractController {
     
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
-    
+
     @Resource(name = "blAdminTranslationControllerExtensionManager")
-    protected AdminTranslationControllerExtensionListener extensionManager;
+    protected AdminTranslationControllerExtensionManager extensionManager;
     
     /**
      * Invoked when the translation button is clicked on a given translatable field
@@ -72,7 +74,9 @@ public class AdminTranslationController extends AdminAbstractController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute(value="form") TranslationForm form, BindingResult result) throws Exception {
-        extensionManager.applyTransformation(form);
+        if (extensionManager != null) {
+            extensionManager.getProxy().applyTransformation(form);
+        }
         
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
 
