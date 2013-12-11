@@ -321,7 +321,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         setModelAttributes(model, sectionKey);
         
-        if (sandBoxHelper.isSandBoxable(sectionClassName)) {
+        if (sandBoxHelper.isSandBoxable(entityForm.getEntityType())) {
             Tab auditTab = new Tab();
             auditTab.setTitle("Audit");
             auditTab.setOrder(Integer.MAX_VALUE);
