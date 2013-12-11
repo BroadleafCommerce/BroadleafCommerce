@@ -52,14 +52,14 @@ import java.util.Map;
 public abstract class PaymentGatewayAbstractController extends BroadleafAbstractController {
 
     protected static final Log LOG = LogFactory.getLog(PaymentGatewayAbstractController.class);
-    protected static final String PAYMENT_PROCESSING_ERROR = "PAYMENT_PROCESSING_ERROR";
+    public static final String PAYMENT_PROCESSING_ERROR = "PAYMENT_PROCESSING_ERROR";
 
+    protected static String processingErrorMessage = "There was an error processing your request.";
     protected static String baseRedirect = "redirect:/";
     protected static String baseErrorView = "/error";
-    protected static String baseOrderReview = "/review";
+    protected static String baseOrderReviewRedirect = "redirect:/review";
     protected static String baseConfirmationRedirect = "redirect:/confirmation";
     protected static String baseCartRedirect = "redirect:/cart";
-    protected static String processingErrorMessage = "There was an error processing your request.";
 
     @Autowired(required=false)
     @Qualifier("blPaymentGatewayCheckoutService")
@@ -232,16 +232,18 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
                                          final RedirectAttributes redirectAttributes,
                                          Map<String, String> pathVars) throws PaymentException;
 
-    protected String getOrderReviewRedirect() {
-        return baseRedirect + getGatewayContextKey() + baseOrderReview;
-    }
 
     protected String getErrorViewRedirect() {
+        //delegate to the modules endpoint as there may be additional processing that is involved
         return baseRedirect + getGatewayContextKey() + baseErrorView;
     }
 
     protected String getCartViewRedirect() {
         return baseCartRedirect;
+    }
+
+    public String getOrderReviewRedirect()  {
+        return baseOrderReviewRedirect;
     }
 
     public String getBaseConfirmationRedirect() {
