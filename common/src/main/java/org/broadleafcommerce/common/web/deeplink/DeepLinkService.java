@@ -21,9 +21,12 @@ package org.broadleafcommerce.common.web.deeplink;
 
 
 import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
+import org.broadleafcommerce.common.web.BaseUrlResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * This abstract class should be extended by services that provide deep links for specific entities.
@@ -32,17 +35,24 @@ import java.util.List;
  */
 public abstract class DeepLinkService<T> {
     
-    protected static final String ADMIN_BASE_URL_PROP = "admin.baseurl";
+    @Resource(name = "blBaseUrlResolver")
+    protected BaseUrlResolver baseUrlResolver;
     
     @Autowired
     protected RuntimeEnvironmentPropertiesManager propMgr;
-    
-    public String getAdminBaseUrl() {
-        return propMgr.getProperty(ADMIN_BASE_URL_PROP);
-    }
 
+    /**
+     * Returns a list of {@link DeepLink} objects that represent the location of 1 or more admin elements
+     * 
+     * @param item
+     * @return the list of DeepLinks
+     */
     public final List<DeepLink> getLinks(T item) {
         return getLinksInternal(item);
+    }
+    
+    protected String getAdminBaseUrl() {
+        return baseUrlResolver.getAdminBaseUrl();
     }
 
     protected abstract List<DeepLink> getLinksInternal(T item);
