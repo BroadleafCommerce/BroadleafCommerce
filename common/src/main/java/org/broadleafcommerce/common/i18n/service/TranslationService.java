@@ -20,11 +20,13 @@
 
 package org.broadleafcommerce.common.i18n.service;
 
-import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
-import org.broadleafcommerce.common.i18n.domain.Translation;
+import net.sf.ehcache.Cache;
 
 import java.util.List;
 import java.util.Locale;
+
+import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
+import org.broadleafcommerce.common.i18n.domain.Translation;
 
 public interface TranslationService {
 
@@ -106,5 +108,10 @@ public interface TranslationService {
      */
     public String getTranslatedValue(Object entity, String property, Locale locale);
 
+    void removeTranslationFromCache(Translation translation);
+
+    Translation findTranslationById(Long id);
+
+    Cache getCache();
 
 }
