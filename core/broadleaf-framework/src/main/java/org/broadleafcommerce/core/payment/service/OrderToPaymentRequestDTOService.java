@@ -17,29 +17,13 @@
  * limitations under the License.
  * #L%
  */
-/*
- * Copyright 2008-2013 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package org.broadleafcommerce.core.payment.service;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.payment.PaymentGatewayType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 
 /**
@@ -47,7 +31,7 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
  */
 public interface OrderToPaymentRequestDTOService {
 
-    public PaymentRequestDTO translateOrder(Order order, PaymentGatewayType paymentGatewayType);
+    public PaymentRequestDTO translateOrder(Order order, PaymentType paymentType);
 
     public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction);
 
