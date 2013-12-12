@@ -106,7 +106,7 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             AdminUser adminInstance = (AdminUser) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             dynamicEntityDao.detach(adminInstance);
-            adminInstance = (AdminUser) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            adminInstance = (AdminUser) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false, false);
             if (entity.getPMap().get("password") != null && StringUtils.isNotEmpty(entity.getPMap().get("password").getValue())) {
                 adminInstance.setUnencodedPassword(adminInstance.getPassword());
                 adminInstance.setPassword(null);
