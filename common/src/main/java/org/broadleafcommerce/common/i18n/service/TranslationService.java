@@ -108,10 +108,26 @@ public interface TranslationService {
      */
     public String getTranslatedValue(Object entity, String property, Locale locale);
 
+    /**
+     * Remove a translation instance from the translation specific cache (different than level-2 hibernate cache)
+     *
+     * @param translation The translation instance to remove
+     */
     void removeTranslationFromCache(Translation translation);
 
+    /**
+     * Find a translation instance by its primary key value.
+     *
+     * @param id the primary key value
+     * @return
+     */
     Translation findTranslationById(Long id);
 
+    /**
+     * Get the translation specific cache (different than the level-2 hibernate cache)
+     *
+     * @return the translation specific cache
+     */
     Cache getCache();
 
 }
