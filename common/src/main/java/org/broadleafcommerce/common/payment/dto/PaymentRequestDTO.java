@@ -26,6 +26,60 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * <p>
+ *     A DTO that is comprised of all the information that is sent to a Payment Gateway
+ *     to complete a transaction. This DTO uses a modified builder pattern in order to
+ *     provide an easy way of constructing the request. You can construct a DTO
+ *     using the following notation:
+ * </p>
+ * <p>
+ *     IMPORTANT: note that some of the convenience methods generate a new instance of the object.
+ *     (e.g. billTo, shipTo, etc...) So, if you need to modify the shipping or billing information
+ *     after you have invoked requestDTO.shipTo()..., use the getShipTo() method to append more information.
+ *     Otherwise, you will overwrite the shipping information with a new instance.
+ * </p>
+ *
+ * <pre><code>
+ *      PaymentRequestDTO requestDTO = new PaymentRequestDTO()
+ *          .orderId(referenceNumber)
+ *          .customer()
+ *              .customerId("1")
+ *              .done()
+ *          .shipTo()
+ *              .addressFirstName("Bill")
+ *              .addressLastName("Broadleaf")
+ *              .addressLine1("123 Test Dr.")
+ *              .addressCityLocality("Austin")
+ *              .addressStateRegion("TX")
+ *              .addressPostalCode("78759")
+ *              .done()
+ *          .billTo()
+ *              .addressFirstName("Bill")
+ *              .addressLastName("Broadleaf")
+ *              .addressLine1("123 Test Dr.")
+ *              .addressCityLocality("Austin")
+ *              .addressStateRegion("TX")
+ *              .addressPostalCode("78759")
+ *              .done()
+ *          .shippingTotal("0")
+ *          .taxTotal("0")
+ *          .orderCurrencyCode("USD")
+ *          .orderDescription("My Order Description")
+ *          .orderSubtotal("10.00")
+ *          .transactionTotal("10.00")
+ *          .lineItem()
+ *              .name("My Product")
+ *              .description("My Product Description")
+ *              .shortDescription("My Product Short Description")
+ *              .systemId("1")
+ *              .amount("10.00")
+ *              .quantity("1")
+ *              .itemTotal("10.00")
+ *              .tax("0")
+ *              .total("10.00")
+ *              .done();
+ * </code></pre>
+ *
  * @author Elbert Bautista (elbertbautista)
  */
 public class PaymentRequestDTO {
@@ -39,14 +93,13 @@ public class PaymentRequestDTO {
     protected List<LineItemDTO> lineItems;
     protected Map<String, Object> additionalFields;
 
-    protected String transactionType;
     protected String orderId;
     protected String orderCurrencyCode;
     protected String orderDescription;
     protected String orderSubtotal;
     protected String shippingTotal;
     protected String taxTotal;
-    protected String orderTotal;
+    protected String transactionTotal;
 
     public PaymentRequestDTO() {
         this.giftCards = new ArrayList<GiftCardDTO<PaymentRequestDTO>>();
@@ -55,32 +108,56 @@ public class PaymentRequestDTO {
         this.additionalFields = new HashMap<String, Object>();
     }
 
+    /**
+     * You should only call this once, as it will create a new customer
+     * if called more than once. Use the getter if you need to append more information later.
+     */
     public GatewayCustomerDTO<PaymentRequestDTO> customer() {
         customer = new GatewayCustomerDTO<PaymentRequestDTO>(this);
         return customer;
     }
 
+    /**
+     * You should only call this once, as it will create a new credit card
+     * if called more than once. Use the getter if you need to append more information later.
+     */
     public CreditCardDTO<PaymentRequestDTO> creditCard() {
         creditCard = new CreditCardDTO<PaymentRequestDTO>(this);
         return creditCard;
     }
 
+    /**
+     * You should only call this once, as it will create a new customer
+     * if called more than once. Use the getter if you need to append more information later.
+     */
     public AddressDTO<PaymentRequestDTO> shipTo() {
         shipTo = new AddressDTO<PaymentRequestDTO>(this);
         return shipTo;
     }
 
+    /**
+     * You should only call this once, as it will create a new bill to address
+     * if called more than once. Use the getter if you need to append more information later.
+     */
     public AddressDTO<PaymentRequestDTO> billTo() {
         billTo = new AddressDTO<PaymentRequestDTO>(this);
         return billTo;
     }
 
+    /**
+     * You should only call this once, as it will create a new gift card
+     * if called more than once. Use the getter if you need to append more information later.
+     */
     public GiftCardDTO<PaymentRequestDTO> giftCard() {
         GiftCardDTO<PaymentRequestDTO> giftCardDTO = new GiftCardDTO<PaymentRequestDTO>(this);
         giftCards.add(giftCardDTO);
         return giftCardDTO;
     }
 
+    /**
+     * You should only call this once, as it will create a new gift card
+     * if called more than once. Use the getter if you need to append more information later.
+     */
     public CustomerCreditDTO<PaymentRequestDTO> customerCredit() {
         CustomerCreditDTO<PaymentRequestDTO> customerCreditDTO = new CustomerCreditDTO<PaymentRequestDTO>(this);
         customerCredits.add(customerCreditDTO);
@@ -93,11 +170,6 @@ public class PaymentRequestDTO {
 
     public PaymentRequestDTO additionalField(String key, Object value) {
         additionalFields.put(key, value);
-        return this;
-    }
-
-    public PaymentRequestDTO transactionType(String transactionType) {
-        this.transactionType = transactionType;
         return this;
     }
 
@@ -131,13 +203,9 @@ public class PaymentRequestDTO {
         return this;
     }
 
-    public PaymentRequestDTO orderTotal(String orderTotal) {
-        this.orderTotal = orderTotal;
+    public PaymentRequestDTO transactionTotal(String transactionTotal) {
+        this.transactionTotal = transactionTotal;
         return this;
-    }
-
-    public String getTransactionType() {
-        return transactionType;
     }
 
     public List<LineItemDTO> getLineItems() {
@@ -196,8 +264,8 @@ public class PaymentRequestDTO {
         return taxTotal;
     }
 
-    public String getOrderTotal() {
-        return orderTotal;
+    public String getTransactionTotal() {
+        return transactionTotal;
     }
 
     public boolean shipToPopulated() {
