@@ -45,7 +45,7 @@ public class PersistenceManagerContext {
     private final Stack<PersistenceManager> persistenceManager = new Stack<PersistenceManager>();
 
     public void addPersistenceManager(PersistenceManager persistenceManager) {
-        this.persistenceManager.push(persistenceManager);
+        this.persistenceManager.add(persistenceManager);
     }
 
     public PersistenceManager getPersistenceManager() {

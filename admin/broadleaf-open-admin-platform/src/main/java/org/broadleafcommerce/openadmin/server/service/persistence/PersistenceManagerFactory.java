@@ -59,9 +59,12 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
     }
 
     public static void startPersistenceManager(TargetModeType targetModeType) {
-        PersistenceManagerContext context = new PersistenceManagerContext();
+        PersistenceManagerContext context = PersistenceManagerContext.getPersistenceManagerContext();
+        if (context == null) {
+            context = new PersistenceManagerContext();
+            PersistenceManagerContext.addPersistenceManagerContext(context);
+        }
         context.addPersistenceManager(getPersistenceManager(targetModeType));
-        PersistenceManagerContext.addPersistenceManagerContext(context);
     }
 
     public static void endPersistenceManager() {
