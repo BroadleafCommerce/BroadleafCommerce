@@ -118,4 +118,8 @@ public class PromotionDiscount implements Serializable{
         finalizedQuantity = qty;
     }
     
+    public boolean isFinalized() {
+        return quantity == finalizedQuantity;
+    }
+
 }

@@ -31,6 +31,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +48,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     protected List<PromotableFulfillmentGroup> fulfillmentGroups;
     protected List<PromotableOrderAdjustment> candidateOrderOfferAdjustments = new ArrayList<PromotableOrderAdjustment>();
     protected boolean includeOrderAndItemAdjustments = false;
+    protected Map<String, Object> extraDataMap = new HashMap<String, Object>();
 
     public PromotableOrderImpl(Order order, PromotableItemFactory itemFactory, boolean includeOrderAndItemAdjustments) {
         this.order = order;
@@ -339,5 +341,10 @@ public class PromotableOrderImpl implements PromotableOrder {
     @Override
     public boolean isIncludeOrderAndItemAdjustments() {
         return includeOrderAndItemAdjustments;
+    }
+
+    @Override
+    public Map<String, Object> getExtraDataMap() {
+        return extraDataMap;
     }
 }

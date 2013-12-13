@@ -199,4 +199,16 @@ public interface PromotableOrderItemPriceDetail {
 
     void setAdjustmentsFinalized(boolean adjustmentsFinalized);
 
+    /**
+     * Copies the {@link PromotableOrderItemPriceDetail} without Qualifiers, Discounts, or Adjustments 
+     * @return
+     */
+    PromotableOrderItemPriceDetail shallowCopy();
+    
+    /**
+     * Copies the {@link PromotableOrderItemPriceDetail} with all Finalized Qualifiers, Discounts, and Adjustments 
+     * @return
+     */
+    PromotableOrderItemPriceDetail copyWithFinalizedData();
+
 }

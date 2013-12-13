@@ -34,6 +34,7 @@ import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.offer.service.OfferServiceImpl;
+import org.broadleafcommerce.core.offer.service.OfferServiceUtilitiesImpl;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
@@ -105,17 +106,23 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         fgProcessor.setOrderItemDao(orderItemDaoMock);
         fgProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 
+        OfferServiceUtilitiesImpl offerServiceUtilities = new OfferServiceUtilitiesImpl();
+        offerServiceUtilities.setOfferDao(offerDaoMock);
+        offerServiceUtilities.setPromotableItemFactory(new PromotableItemFactoryImpl());
+
         OrderOfferProcessorImpl orderProcessor = new OrderOfferProcessorImpl();
         orderProcessor.setOfferDao(offerDaoMock);
         orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
         offerTimeZoneProcessorMock = EasyMock.createMock(OfferTimeZoneProcessor.class);
         orderProcessor.setOfferTimeZoneProcessor(offerTimeZoneProcessorMock);
         orderProcessor.setOrderItemDao(orderItemDaoMock);
+        orderProcessor.setOfferServiceUtilities(offerServiceUtilities);
 
-        ItemOfferProcessor itemProcessor = new ItemOfferProcessorImpl();
+        ItemOfferProcessorImpl itemProcessor = new ItemOfferProcessorImpl();
         itemProcessor.setOfferDao(offerDaoMock);
         itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
         itemProcessor.setOrderItemDao(orderItemDaoMock);
+        itemProcessor.setOfferServiceUtilities(offerServiceUtilities);
 
         offerService.setCustomerOfferDao(customerOfferDaoMock);
         offerService.setOfferCodeDao(offerCodeDaoMock);

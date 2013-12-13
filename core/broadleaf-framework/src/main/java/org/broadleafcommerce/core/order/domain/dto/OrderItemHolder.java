@@ -17,22 +17,29 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.offer.service;
+package org.broadleafcommerce.core.order.domain.dto;
 
-import org.broadleafcommerce.common.extension.ExtensionManager;
-import org.springframework.stereotype.Service;
-
+import org.broadleafcommerce.core.order.domain.OrderItem;
 
 /**
- * @author Andre Azzolini (apazzolini), bpolster
+ * Class that contains a reference to an OrderItem
+ * @author bpolster
+ *
  */
-@Service("blOfferServiceExtensionManager")
-public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceExtensionHandler> {
+public class OrderItemHolder {
 
-    public static final String STOP_PROCESSING = "stopProcessing";
+    private OrderItem orderItem;
 
-    public OfferServiceExtensionManager() {
-        super(OfferServiceExtensionHandler.class);
+    public OrderItemHolder(OrderItem orderItem) {
+        this.orderItem = orderItem;
+    }
+
+    public OrderItem getOrderItem() {
+        return orderItem;
+    }
+
+    public void setOrderItem(OrderItem orderItem) {
+        this.orderItem = orderItem;
     }
 
 }
