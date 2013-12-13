@@ -50,6 +50,8 @@ public class MvelHelper {
     private static final Map DEFAULT_EXPRESSION_CACHE = new LRUMap(5000);
     private static final Log LOG = LogFactory.getLog(MvelHelper.class);
 
+    private static boolean TEST_MODE = false;
+
     /**
      * Converts a field to the specified type.    Useful when 
      * @param type
@@ -143,10 +145,20 @@ public class MvelHelper {
             } catch (Exception e) {
                 //Unable to execute the MVEL expression for some reason
                 //Return false, but notify about the bad expression through logs
-                LOG.info("Unable to parse and/or execute the mvel expression (" + rule + "). Reporting to the logs and returning false for the match expression", e);
+                if (!TEST_MODE) {
+                    LOG.info("Unable to parse and/or execute the mvel expression (" + rule + "). Reporting to the logs and returning false for the match expression", e);
+                }
                 return false;
             }
         }
     }
 
+    /**
+     * When true, LOG.info statement will be suppressed.   Should only be set from within MvelHelperTest.
+     * Prevents an error from displaying during unit test runs.
+     * @param testMode
+     */
+    public static void setTestMode(boolean testMode) {
+        TEST_MODE = testMode;
+    }
 }
