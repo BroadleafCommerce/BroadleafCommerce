@@ -32,91 +32,99 @@ import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
+
 public interface Offer extends Serializable {
 
-    void setId(Long id);
+    public void setId(Long id);
 
-    Long getId();
+    public Long getId();
 
-    String getName();
+    public String getName();
 
-    void setName(String name);
+    public void setName(String name);
 
-    String getDescription();
+    public String getDescription();
 
-    void setDescription(String description);
+    public void setDescription(String description);
 
-    OfferType getType();
+    public OfferType getType();
 
-    void setType(OfferType offerType);
+    public void setType(OfferType offerType);
 
-    OfferDiscountType getDiscountType();
+    public OfferDiscountType getDiscountType();
 
-    void setDiscountType(OfferDiscountType type);
+    public void setDiscountType(OfferDiscountType type);
 
-    BigDecimal getValue();
+    public BigDecimal getValue();
 
-    void setValue(BigDecimal value);
+    public void setValue(BigDecimal value);
 
-    int getPriority();
+    public int getPriority();
 
-    void setPriority(int priority);
+    public void setPriority(int priority);
 
-    Date getStartDate();
+    public Date getStartDate();
 
-    void setStartDate(Date startDate);
+    public void setStartDate(Date startDate);
 
-    Date getEndDate();
+    public Date getEndDate();
 
-    void setEndDate(Date endDate);
+    public void setEndDate(Date endDate);
 
     /**
      * @deprecated
      * Use isCombinable instead.
      * @return
      */
-    boolean isStackable();
+    @Deprecated
+    public boolean isStackable();
 
     /**
      * @deprecated
      * calls {@link #setCombinableWithOtherOffers(boolean)}
      * @param stackable
      */
-    void setStackable(boolean stackable);
+    @Deprecated
+    public void setStackable(boolean stackable);
 
-    String getTargetSystem();
+    public String getTargetSystem();
 
-    void setTargetSystem(String targetSystem);
+    public void setTargetSystem(String targetSystem);
 
-    boolean getApplyDiscountToSalePrice();
+    public boolean getApplyDiscountToSalePrice();
 
-    void setApplyDiscountToSalePrice(boolean applyToSalePrice);
+    public void setApplyDiscountToSalePrice(boolean applyToSalePrice);
 
     @Deprecated
-    String getAppliesToOrderRules();
+    public String getAppliesToOrderRules();
 
     @Deprecated
-    void setAppliesToOrderRules(String appliesToRules);
+    public void setAppliesToOrderRules(String appliesToRules);
 
     @Deprecated
-    String getAppliesToCustomerRules();
+    public String getAppliesToCustomerRules();
 
     @Deprecated
-    void setAppliesToCustomerRules(String appliesToCustomerRules);
+    public void setAppliesToCustomerRules(String appliesToCustomerRules);
 
     @Deprecated
-    boolean isApplyDiscountToMarkedItems();
+    public boolean isApplyDiscountToMarkedItems();
 
     @Deprecated
-    void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems);
+    public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems);
     
-    OfferItemRestrictionRuleType getOfferItemQualifierRuleType();
+    public OfferItemRestrictionRuleType getOfferItemQualifierRuleType();
 
-    void setOfferItemQualifierRuleType(OfferItemRestrictionRuleType restrictionRuleType);
+    public void setOfferItemQualifierRuleType(OfferItemRestrictionRuleType restrictionRuleType);
     
-    OfferItemRestrictionRuleType getOfferItemTargetRuleType();
+    public OfferItemRestrictionRuleType getOfferItemTargetRuleType();
 
-    void setOfferItemTargetRuleType(OfferItemRestrictionRuleType restrictionRuleType);
+    public void setOfferItemTargetRuleType(OfferItemRestrictionRuleType restrictionRuleType);
 
     /**
      * Returns false if this offer is not combinable with other offers of the same type.
@@ -125,9 +133,9 @@ public interface Offer extends Serializable {
      * 
      * @return
      */
-    boolean isCombinableWithOtherOffers();
+    public boolean isCombinableWithOtherOffers();
 
-    void setCombinableWithOtherOffers(boolean combinableWithOtherOffers);
+    public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers);
 
     /**
      * Returns true if the offer system should automatically add this offer for consideration (versus requiring a code or 
@@ -141,14 +149,14 @@ public interface Offer extends Serializable {
      * 
      * @return
      */
-    boolean isAutomaticallyAdded();
+    public boolean isAutomaticallyAdded();
 
     /**
      * Sets whether or not this offer should be automatically considered for consideration (versus requiring a code or 
      * other delivery mechanism).
      * @see #isAutomaticallyAdded()
      */
-    void setAutomaticallyAdded(boolean automaticallyAdded);
+    public void setAutomaticallyAdded(boolean automaticallyAdded);
 
     /**
      * @deprecated Replaced by isAutomaticallyApplied property.   In prior versions of Broadleaf deliveryType was used to 
@@ -156,13 +164,15 @@ public interface Offer extends Serializable {
      * this method will return a delivery type based on the isAutomatic property. 
      * @return
      */
-    OfferDeliveryType getDeliveryType();
+    @Deprecated
+    public OfferDeliveryType getDeliveryType();
 
     /**
      * @deprecated Replaced by setAutomaticallyApplied(boolean val).
      * @param deliveryType
      */
-    void setDeliveryType(OfferDeliveryType deliveryType);
+    @Deprecated
+    public void setDeliveryType(OfferDeliveryType deliveryType);
 
     /**
      * Returns the maximum number of times that this offer
@@ -174,11 +184,11 @@ public interface Offer extends Serializable {
      *
      * @return
      */
-    Long getMaxUsesPerCustomer();
+    public Long getMaxUsesPerCustomer();
 
     /**
      * Sets the maximum number of times that this offer
-       can be used by the same customer.  Intended as a transient
+     * can be used by the same customer.  Intended as a transient
      * field that gets derived from the other persisted max uses fields
      * including maxUsesPerOrder and maxUsesPerCustomer.
      *
@@ -186,7 +196,18 @@ public interface Offer extends Serializable {
      *
      * @param maxUses
      */
-    void setMaxUsesPerCustomer(Long maxUses);
+    public void setMaxUsesPerCustomer(Long maxUses);
+
+    /**
+     * Indicates that there is no limit to how many times a customer can use this offer. By default this is true if
+     * {@link #getMaxUsesPerCustomer()} == 0
+     */
+    public boolean isUnlimitedUsePerCustomer();
+    
+    /**
+     * Whether or not this offer has limited use in an order. By default this is true if {@link #getMaxUsesPerCustomer()} > 0
+     */
+    public boolean isLimitedUsePerCustomer();
 
     /**
      * Returns the maximum number of times that this offer
@@ -194,9 +215,29 @@ public interface Offer extends Serializable {
      *
      * 0 indicates unlimited usage.
      *
-     * @return
+     * @deprecated use {@link #getMaxUsesPerOrder()} directly instead
      */
-    int getMaxUses() ;
+    @Deprecated
+    public int getMaxUses() ;
+
+    /**
+     * Sets the maximum number of times that this offer
+     * can be used in the current order.
+     *
+     * 0 indicates unlimited usage.
+     *
+     * @deprecated use {@link #setMaxUsesPerOrder(int)} directly instead
+     */
+    @Deprecated
+    public void setMaxUses(int maxUses) ;
+
+    /**
+     * Returns the maximum number of times that this offer
+     * can be used in the current order.
+     *
+     * 0 indicates unlimited usage.
+     */
+    public int getMaxUsesPerOrder();
 
     /**
      * Sets the maximum number of times that this offer
@@ -206,33 +247,50 @@ public interface Offer extends Serializable {
      *
      * @param maxUses
      */
-    void setMaxUses(int maxUses) ;
-
+    public void setMaxUsesPerOrder(int maxUsesPerOrder);
+    
+    /**
+     * Indicates that there is no limit to how many times this offer can be applied to the order. By default this is true if
+     * {@link #getMaxUsesPerOrder()} == 0
+     */
+    public boolean isUnlimitedUsePerOrder();
+    
+    /**
+     * Whether or not this offer has limited use in an order. By default this is true if {@link #getMaxUsesPerOrder()} > 0
+     */
+    public boolean isLimitedUsePerOrder();
+    
+    /**
+     * @deprecated replaced by the {@link OfferAudit} table
+     */
     @Deprecated
-    int getUses() ;
+    public int getUses() ;
 
+    /**
+     * @deprecated replaced by the {@link OfferAudit} table
+     */
     @Deprecated
-    void setUses(int uses) ;
+    public void setUses(int uses) ;
 
-    Set<OfferItemCriteria> getQualifyingItemCriteria();
+    public Set<OfferItemCriteria> getQualifyingItemCriteria();
 
-    void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
+    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
 
-    Set<OfferItemCriteria> getTargetItemCriteria();
+    public Set<OfferItemCriteria> getTargetItemCriteria();
 
-    void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria);
+    public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria);
     
-    Boolean isTotalitarianOffer();
+    public Boolean isTotalitarianOffer();
 
-    void setTotalitarianOffer(Boolean totalitarianOffer);
+    public void setTotalitarianOffer(Boolean totalitarianOffer);
     
-    Map<String, OfferRule> getOfferMatchRules();
+    public Map<String, OfferRule> getOfferMatchRules();
 
-    void setOfferMatchRules(Map<String, OfferRule> offerMatchRules);
+    public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules);
     
-    Boolean getTreatAsNewFormat();
+    public Boolean getTreatAsNewFormat();
 
-    void setTreatAsNewFormat(Boolean treatAsNewFormat);
+    public void setTreatAsNewFormat(Boolean treatAsNewFormat);
     
     /**
      * Indicates the amount of items that must be purchased for this offer to
@@ -245,17 +303,25 @@ public interface Offer extends Serializable {
      * not considered by the offer processing algorithm.
      * @return
      */
-    Money getQualifyingItemSubTotal();
+    public Money getQualifyingItemSubTotal();
     
-    void setQualifyingItemSubTotal(Money qualifyingItemSubtotal);
+    public void setQualifyingItemSubTotal(Money qualifyingItemSubtotal);
 
-    void setMarketingMessage(String marketingMessage);
+    public void setMarketingMessage(String marketingMessage);
 
-    String getMarketingMessage();
+    public String getMarketingMessage();
 
-    List<OfferCode> getOfferCodes();
-
-    void setOfferCodes(List<OfferCode> offerCodes);
+    /**
+     * Returns the offer codes that can be used to retrieve this Offer. These codes would be used in situations where
+     * this Offer is not automatically considered (meaning {@link Offer#isAutomaticallyAdded()} is false}
+     */
+    public List<OfferCode> getOfferCodes();
+    
+    /**
+     * Sets the offer codes that can be used to retrieve this Offer. These codes would be used in situations where
+     * this Offer is not automatically considered (meaning {@link Offer#isAutomaticallyAdded()} is false}
+     */
+    public void setOfferCodes(List<OfferCode> offerCodes);
 
     public Boolean getRequiresRelatedTargetAndQualifiers();
 

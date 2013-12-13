@@ -29,17 +29,4 @@
 
     <context:component-scan base-package="org.broadleafcommerce.admin.web.controller" />
 
-    <bean id="blAdminExtendedTranslationControllerExtensionListeners" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <ref bean="blAdminProductTranslationExtensionListener" />
-            </list>
-        </property>
-    </bean>
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blAdminExtendedTranslationControllerExtensionListeners" />
-        <property name="targetRef" value="blAdminTranslationControllerExtensionListeners" />
-    </bean>
-
-
 </beans>

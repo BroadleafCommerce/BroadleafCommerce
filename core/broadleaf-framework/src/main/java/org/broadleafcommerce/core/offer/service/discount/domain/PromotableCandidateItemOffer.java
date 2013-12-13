@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.offer.service.discount.domain;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -33,9 +34,9 @@ public interface PromotableCandidateItemOffer extends Serializable {
 
     public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
 
-    public List<PromotableOrderItem> getCandidateTargets();
+    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateTargetsMap();
 
-    public void setCandidateTargets(List<PromotableOrderItem> candidateTargets);
+    public void setCandidateTargetsMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
 
     public Money getPotentialSavings();
 
@@ -75,5 +76,18 @@ public interface PromotableCandidateItemOffer extends Serializable {
 
     public void addUse();
     
+    /**
+     * Resets the uses for this candidate offer item. This is mainly used in the case where we want to calculate savings
+     * and then actually apply the promotion to an item. Both scenarios run through the same logic that add uses in order
+     * to determine if various quantities of items can be targeted for a particular promotion.
+     * 
+     * @see {@link ItemOfferProcessor#applyAndCompareOrderAndItemOffers(PromotableOrder, List, List)}
+     */
+    public void resetUses();
+    
     public boolean isLegacyOffer();
+
+    public List<PromotableOrderItem> getLegacyCandidateTargets();
+
+    public void setLegacyCandidateTargets(List<PromotableOrderItem> candidateTargets);
 }

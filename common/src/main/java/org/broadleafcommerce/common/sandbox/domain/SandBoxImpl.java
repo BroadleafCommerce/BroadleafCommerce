@@ -19,23 +19,6 @@
  */
 package org.broadleafcommerce.common.sandbox.domain;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -50,6 +33,22 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -76,7 +75,8 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     
     @Column(name = "SANDBOX_NAME")
     @Index(name="SANDBOX_NAME_INDEX", columnNames={"SANDBOX_NAME"})
-    @AdminPresentation(friendlyName = "SandBoxImpl_Name", group = "SandBoxImpl_Description", prominent = true, gridOrder = 1000)
+    @AdminPresentation(friendlyName = "SandBoxImpl_Name", group = "SandBoxImpl_Description", prominent = true, 
+        gridOrder = 1000, order = 1000)
     protected String name;
     
     @Column(name="AUTHOR")
@@ -98,41 +98,30 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     protected List<SandBox> childSandBoxes;
 
     @Column(name = "COLOR")
-    @AdminPresentation(friendlyName = "SandBoxImpl_Color", group = "SandBoxImpl_Description", fieldType = SupportedFieldType.COLOR)
+    @AdminPresentation(friendlyName = "SandBoxImpl_Color", group = "SandBoxImpl_Description", 
+        fieldType = SupportedFieldType.COLOR, order = 2000)
     protected String color;
 
     @Column(name = "GO_LIVE_DATE")
     @AdminPresentation(friendlyName = "SandBoxImpl_Go_Live_Date", group = "SandBoxImpl_Description",
-        prominent = true, gridOrder = 5000)
+        prominent = true, gridOrder = 5000, order = 3000)
     protected Date goLiveDate;
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.openadmin.domain.SandBox#getId()
-     */
     @Override
     public Long getId() {
         return id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.openadmin.domain.SandBox#setId(java.lang.Long)
-     */
     @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.openadmin.domain.SandBox#getName()
-     */
     @Override
     public String getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.openadmin.domain.SandBox#setName(java.lang.String)
-     */
     @Override
     public void setName(String name) {
         this.name = name;

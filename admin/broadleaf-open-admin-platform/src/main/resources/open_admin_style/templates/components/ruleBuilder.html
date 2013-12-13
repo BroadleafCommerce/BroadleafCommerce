@@ -36,7 +36,7 @@
         
         <!-- Normal display -->
         <div class="field-label" th:text="#{${field.friendlyName}}"
-            th:classappend="${!field.required ? 'conditional-rules-header' : ''}"
+            th:classappend="${!field.required ? 'conditional-rules-header' : 'required'}"
             th:style="${((#arrays.isEmpty(field.dataWrapper.data) and !field.required) or field.dataWrapper.error != null) ? 'display: none;' : ''}" />
     
         <div class="conditional-rules-container"
@@ -44,7 +44,7 @@
             th:style="${((#arrays.isEmpty(field.dataWrapper.data) and !field.required) or field.dataWrapper.error != null) ? 'display: none;' : ''}"
             th:id="${field.name}"/>
         
-        <!-- Errors display -->
+        <!-- Rule parsing error display -->
         <div class="field-label conditional-rules-header error"
             th:if="${field.dataWrapper.error != null}"
             th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}"

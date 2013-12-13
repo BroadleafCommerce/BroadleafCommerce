@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 
 public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPriceDetail {
@@ -357,7 +356,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     }
 
     @Override
-    public void addPromotionDiscount(PromotableCandidateItemOffer itemOffer, Set<OfferItemCriteria> itemCriteria, int qtyToMarkAsTarget) {
+    public void addPromotionDiscount(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria, int qtyToMarkAsTarget) {
         PromotionDiscount pd = lookupOrCreatePromotionDiscount(itemOffer);
         if (pd == null) {
             return;
@@ -495,6 +494,38 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         return calculateAdjustmentsUnitValue().multiply(quantity);
     }
 
+    @Override
+    public PromotableOrderItemPriceDetail shallowCopy() {
+        PromotableOrderItemPriceDetail copyDetail = promotableOrderItem.createNewDetail(quantity);
+        return copyDetail;
+    }
+
+    @Override
+    public PromotableOrderItemPriceDetail copyWithFinalizedData() {
+        PromotableOrderItemPriceDetail copyDetail = promotableOrderItem.createNewDetail(quantity);
+
+        for (PromotionDiscount existingDiscount : promotionDiscounts) {
+            if (existingDiscount.isFinalized()) {
+                PromotionDiscount newDiscount = existingDiscount.copy();
+                copyDetail.getPromotionDiscounts().add(newDiscount);
+            }
+        }
+
+        for (PromotionQualifier existingQualifier : promotionQualifiers) {
+            if (existingQualifier.isFinalized()) {
+                PromotionQualifier newQualifier = existingQualifier.copy();
+                copyDetail.getPromotionQualifiers().add(newQualifier);
+            }
+        }
+
+        for (PromotableOrderItemPriceDetailAdjustment existingAdjustment : promotableOrderItemPriceDetailAdjustments) {
+            PromotableOrderItemPriceDetailAdjustment newAdjustment = existingAdjustment.copy();
+            copyDetail.addCandidateItemPriceDetailAdjustment(newAdjustment);
+        }
+
+        return copyDetail;
+    }
+
     protected PromotableOrderItemPriceDetail split(int discountQty, Long offerId) {
         int originalQty = quantity;
         quantity = discountQty;
@@ -550,5 +581,4 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     public boolean useSaleAdjustments() {
         return useSaleAdjustments;
     }
-
 }

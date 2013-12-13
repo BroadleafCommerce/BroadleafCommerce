@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.common.rule;
 
-import junit.framework.TestCase;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import junit.framework.TestCase;
 
 public class MvelHelperTest extends TestCase {
 
@@ -50,7 +50,9 @@ public class MvelHelperTest extends TestCase {
      * Test rule with parse errors
      */
     public void testRuleWithParseErrors() {
+        MvelHelper.setTestMode(true);
         boolean result = MvelHelper.evaluateRule("BadFunction(xyz)", null);
+        MvelHelper.setTestMode(false);
         assertFalse(result);
     }
 

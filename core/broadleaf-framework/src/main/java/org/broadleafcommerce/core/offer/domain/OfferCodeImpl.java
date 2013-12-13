@@ -19,12 +19,28 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,25 +51,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Table(name = "BLC_OFFER_CODE")
@@ -146,12 +143,22 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public int getMaxUses() {
-        return maxUses;
+        return maxUses == null ? 0 : maxUses;
     }
 
     @Override
     public void setMaxUses(int maxUses) {
         this.maxUses = maxUses;
+    }
+    
+    @Override
+    public boolean isUnlimitedUse() {
+        return getMaxUses() == 0;
+    }
+    
+    @Override
+    public boolean isLimitedUse() {
+        return getMaxUses() > 0;
     }
 
     @Override
@@ -198,38 +205,24 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((offer == null) ? 0 : offer.hashCode());
-        result = prime * result + ((offerCode == null) ? 0 : offerCode.hashCode());
-        return result;
+        return new HashCodeBuilder()
+            .append(offer)
+            .append(offerCode)
+            .build();
     }
-
+    
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        OfferCodeImpl other = (OfferCodeImpl) obj;
-
-        if (id != null && other.id != null) {
-            return id.equals(other.id);
+    public boolean equals(Object o) {
+        if (o instanceof OfferCodeImpl) {
+            OfferCodeImpl that = (OfferCodeImpl) o;
+            return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.offer, that.offer)
+                .append(this.offerCode, that.offerCode)
+                .build();
         }
-
-        if (offer == null) {
-            if (other.offer != null)
-                return false;
-        } else if (!offer.equals(other.offer))
-            return false;
-        if (offerCode == null) {
-            if (other.offerCode != null)
-                return false;
-        } else if (!offerCode.equals(other.offerCode))
-            return false;
-        return true;
+        
+        return false;
     }
 
 

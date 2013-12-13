@@ -23,6 +23,9 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -30,7 +33,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.List;
 
 /**
  *
@@ -86,15 +88,15 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     }
     
     protected AdminSection readAdminSectionForClassName(String className) {
-        try {
-            TypedQuery<AdminSection> q = em.createQuery(
-                "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
-            q.setParameter("className", className);
-            q.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
-            return q.getSingleResult();
-        } catch (NoResultException e) {
+        TypedQuery<AdminSection> q = em.createQuery(
+            "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
+        q.setParameter("className", className);
+        q.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        List<AdminSection> result = q.getResultList();
+        if (CollectionUtils.isEmpty(result)) {
             return null;
         }
+        return q.getResultList().get(0);
     }
 
     @Override

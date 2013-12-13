@@ -154,8 +154,8 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             }
 
             request.setAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, sandBox.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
-            brc.setSandbox(sandBox);
-
+            brc.setSandBox(sandBox);
+            
             brc.getAdditionalProperties().put(ADMIN_USER_PROPERTY, adminUser);
         }
     }

@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.offer.service.OfferServiceImpl;
+import org.broadleafcommerce.core.offer.service.OfferServiceUtilitiesImpl;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
@@ -94,11 +95,16 @@ public class ItemOfferProcessorTest extends TestCase {
         multishipOptionServiceMock = EasyMock.createMock(OrderMultishipOptionService.class);
         offerTimeZoneProcessorMock = EasyMock.createMock(OfferTimeZoneProcessor.class);
 
+        OfferServiceUtilitiesImpl offerServiceUtilities = new OfferServiceUtilitiesImpl();
+        offerServiceUtilities.setOfferDao(offerDaoMock);
+        offerServiceUtilities.setPromotableItemFactory(new PromotableItemFactoryImpl());
+
         itemProcessor = new ItemOfferProcessorImpl();
         itemProcessor.setOfferDao(offerDaoMock);
         itemProcessor.setOrderItemDao(orderItemDaoMock);
         itemProcessor.setOfferTimeZoneProcessor(offerTimeZoneProcessorMock);
         itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        itemProcessor.setOfferServiceUtilities(offerServiceUtilities);
 
         offerService = new OfferServiceImpl();
 
@@ -107,6 +113,7 @@ public class ItemOfferProcessorTest extends TestCase {
         orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
         orderProcessor.setOfferTimeZoneProcessor(offerTimeZoneProcessorMock);
         orderProcessor.setOrderItemDao(orderItemDaoMock);
+        orderProcessor.setOfferServiceUtilities(offerServiceUtilities);
 
         offerService.setCustomerOfferDao(customerOfferDaoMock);
         offerService.setOfferCodeDao(offerCodeDaoMock);
@@ -323,7 +330,10 @@ public class ItemOfferProcessorTest extends TestCase {
         CandidatePromotionItems candidates = itemProcessor.couldOfferApplyToOrderItems(offers.get(0), orderItems);
         //test that the valid order item offer is included
         //both cart items are valid for qualification and target
-        assertTrue(candidates.isMatchedQualifier() && candidates.getCandidateQualifiersMap().size() == 1 && candidates.getCandidateQualifiersMap().values().iterator().next().size() == 2 && candidates.isMatchedTarget() && candidates.getCandidateTargets().size() == 2);
+        assertTrue(candidates.isMatchedQualifier() && candidates.getCandidateQualifiersMap().size() == 1 &&
+                candidates.getCandidateQualifiersMap().values().iterator().next().size() == 2 &&
+                candidates.isMatchedTarget() && candidates.getCandidateTargetsMap().size() == 1 &&
+                candidates.getCandidateTargetsMap().values().iterator().next().size() == 2);
 
         offers = dataProvider.createItemBasedOfferWithItemCriteria(
             "order.subTotal.getAmount()>20",

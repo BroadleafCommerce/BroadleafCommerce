@@ -180,7 +180,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
 
         BroadleafRequestContext brc = new BroadleafRequestContext();
         brc.setLocale(determineLocale(request, site));
-        brc.setSandbox(currentSandbox);
+        brc.setSandBox(currentSandbox);
         brc.setRequest(request);
         brc.setResponse(response);
         BroadleafRequestContext.setBroadleafRequestContext(brc);

@@ -39,7 +39,6 @@ import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
 import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessorImpl;
-import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessorImpl;
 import org.broadleafcommerce.core.offer.service.processor.OfferTimeZoneProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessorImpl;
@@ -110,16 +109,23 @@ public class OfferServiceTest extends TestCase {
         multishipOptionServiceMock = EasyMock.createMock(OrderMultishipOptionService.class);
         offerTimeZoneProcessorMock = EasyMock.createMock(OfferTimeZoneProcessor.class);
 
+        OfferServiceUtilitiesImpl offerServiceUtilities = new OfferServiceUtilitiesImpl();
+        offerServiceUtilities.setOfferDao(offerDaoMock);
+        offerServiceUtilities.setPromotableItemFactory(new PromotableItemFactoryImpl());
+
         OrderOfferProcessorImpl orderProcessor = new OrderOfferProcessorImpl();
         orderProcessor.setOfferDao(offerDaoMock);
         orderProcessor.setOrderItemDao(orderItemDaoMock);
         orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
         orderProcessor.setOfferTimeZoneProcessor(offerTimeZoneProcessorMock);
+        orderProcessor.setOfferServiceUtilities(offerServiceUtilities);
         offerService.setOrderOfferProcessor(orderProcessor);
 
-        ItemOfferProcessor itemProcessor = new ItemOfferProcessorImpl();
+
+        ItemOfferProcessorImpl itemProcessor = new ItemOfferProcessorImpl();
         itemProcessor.setOfferDao(offerDaoMock);
         itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        itemProcessor.setOfferServiceUtilities(offerServiceUtilities);
         offerService.setItemOfferProcessor(itemProcessor);
 
         FulfillmentGroupOfferProcessor fgProcessor = new FulfillmentGroupOfferProcessorImpl();

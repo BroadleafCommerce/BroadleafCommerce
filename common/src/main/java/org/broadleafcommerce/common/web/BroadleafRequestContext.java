@@ -80,7 +80,7 @@ public class BroadleafRequestContext {
     protected HttpServletRequest request;
     protected HttpServletResponse response;
     protected WebRequest webRequest;
-    protected SandBox sandbox;
+    protected SandBox sandBox;
     protected Locale locale;
     protected TimeZone timeZone;
     protected BroadleafCurrency broadleafCurrency;
@@ -95,6 +95,8 @@ public class BroadleafRequestContext {
     protected RequestDTO requestDTO;
     protected Boolean isAdmin = false;
     protected Long adminUserId;
+
+    protected Boolean internalIgnoreFilters = false;
 
     /**
      * Gets the current request on the context
@@ -172,23 +174,23 @@ public class BroadleafRequestContext {
         this.site = site;
     }
 
-    public SandBox getSandbox() {
-        return sandbox;
+    public SandBox getSandBox() {
+        return sandBox;
     }
 
     public Long getSandBoxId() {
-        if (sandbox != null) {
-            return sandbox.getId();
+        if (sandBox != null) {
+            return sandBox.getId();
         }
         return null;
     }
 
     public boolean isProductionSandBox() {
-        return sandbox == null || SandBoxType.PRODUCTION == sandbox.getSandBoxType();
+        return sandBox == null || SandBoxType.PRODUCTION == sandBox.getSandBoxType();
     }
 
-    public void setSandbox(SandBox sandbox) {
-        this.sandbox = sandbox;
+    public void setSandBox(SandBox sandBox) {
+        this.sandBox = sandBox;
     }
 
     public Locale getLocale() {
@@ -207,16 +209,20 @@ public class BroadleafRequestContext {
     }
 
     /**
-     * Returns the java.util.Currency constructed from the org.broadleafcommerce.common.currency.domain.BroadleafCurrency
+     * Returns the java.util.Currency constructed from the org.broadleafcommerce.common.currency.domain.BroadleafCurrency.
+     * If there is no BroadleafCurrency specified this will return the currency based on the JVM locale
+     * 
      * @return
      */
     public Currency getJavaCurrency() {
-        if (this.javaCurrency == null) {
+        if (javaCurrency == null) {
             if (getBroadleafCurrency() != null && getBroadleafCurrency().getCurrencyCode() != null) {
-                this.javaCurrency = Currency.getInstance(getBroadleafCurrency().getCurrencyCode());
+                javaCurrency = Currency.getInstance(getBroadleafCurrency().getCurrencyCode());
+            } else {
+                javaCurrency = Currency.getInstance(getJavaLocale());
             }
         }
-        return this.javaCurrency;
+        return javaCurrency;
     }
 
     public void setLocale(Locale locale) {
@@ -245,9 +251,9 @@ public class BroadleafRequestContext {
         
     }
     
-    private java.util.Locale convertLocaleToJavaLocale() {      
+    protected java.util.Locale convertLocaleToJavaLocale() {      
         if (locale == null || locale.getLocaleCode() == null) {
-            return null;
+            return java.util.Locale.getDefault();
         } else {
             String localeString = locale.getLocaleCode();
             String[] components = localeString.split("_");
@@ -268,10 +274,6 @@ public class BroadleafRequestContext {
              secure = ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
         }
         return secure;
-    }
-    
-    public boolean isProductionSandbox() {
-        return (sandbox == null || SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType()));
     }
 
     public Theme getTheme() {
@@ -360,7 +362,20 @@ public class BroadleafRequestContext {
     }
 
     public boolean isAdminMode() {
-        return getSandbox() != null;
+        return getSandBox() != null;
     }
 
+    /**
+     * Intended for internal use only
+     */
+    public Boolean getInternalIgnoreFilters() {
+        return internalIgnoreFilters;
+    }
+
+    /**
+     * Intended for internal use only
+     */
+    public void setInternalIgnoreFilters(Boolean internalIgnoreFilters) {
+        this.internalIgnoreFilters = internalIgnoreFilters;
+    }
 }

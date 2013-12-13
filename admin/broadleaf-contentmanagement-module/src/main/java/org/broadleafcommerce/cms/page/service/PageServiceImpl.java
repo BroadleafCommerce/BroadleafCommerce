@@ -120,7 +120,7 @@ public class PageServiceImpl implements PageService {
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
             //store the language only locale for cache since we have to use the lowest common denominator (i.e. the cache
             //locale and the pageTemplate locale used for cache invalidation can be different countries)
-            String key = buildKey(context.getSandbox(), languageOnlyLocale, uri);
+            String key = buildKey(context.getSandBox(), languageOnlyLocale, uri);
             key = key + "-" + secure;
             if (context.isProductionSandBox()) {
                 returnList = getPageListFromCache(key);

@@ -149,6 +149,7 @@
                 if (condition.data.error != null && !setToOff) {
                     collectedData.error = condition.data.error;
                 }
+                
                 $("#"+hiddenId).val(JSON.stringify(collectedData));
             }
         }

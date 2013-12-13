@@ -20,14 +20,17 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -42,6 +45,8 @@ public class BasicFieldTypeValidator implements PopulateValueRequestValidator {
 
     @Override
     public PropertyValidationResult validate(PopulateValueRequest populateValueRequest, Serializable instance) {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        Locale locale = brc.getJavaLocale();
         switch(populateValueRequest.getMetadata().getFieldType()) {
             case INTEGER:
                 try {
@@ -61,22 +66,28 @@ public class BasicFieldTypeValidator implements PopulateValueRequestValidator {
             case DECIMAL:
                 try {
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
-                        new BigDecimal(populateValueRequest.getRequestedValue());
+                        DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
+                        format.setParseBigDecimal(true);
+                        format.parse(populateValueRequest.getRequestedValue());
+                        format.setParseBigDecimal(false);
                     } else {
-                        Double.parseDouble(populateValueRequest.getRequestedValue());
+                        populateValueRequest.getDataFormatProvider().getDecimalFormatter().parse(populateValueRequest.getRequestedValue());
                     }
-                } catch (NumberFormatException e) {
+                } catch (ParseException e) {
                     return new PropertyValidationResult(false, "Field must be a valid decimal");
                 }
                 break;
             case MONEY:
                 try {
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType()) || Money.class.isAssignableFrom(populateValueRequest.getReturnType())) {
-                        new BigDecimal(populateValueRequest.getRequestedValue());
+                        DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
+                        format.setParseBigDecimal(true);
+                        format.parse(populateValueRequest.getRequestedValue());
+                        format.setParseBigDecimal(false);
                     } else if (Double.class.isAssignableFrom(populateValueRequest.getReturnType())) {
-                        Double.parseDouble(populateValueRequest.getRequestedValue());
+                        populateValueRequest.getDataFormatProvider().getDecimalFormatter().parse(populateValueRequest.getRequestedValue());
                     }
-                } catch (NumberFormatException e) {
+                } catch (ParseException e) {
                     return new PropertyValidationResult(false, "Field must be a valid number");
                 }
                 break;
@@ -116,5 +127,5 @@ public class BasicFieldTypeValidator implements PopulateValueRequestValidator {
         }
         return new PropertyValidationResult(true);
     }
-
+    
 }

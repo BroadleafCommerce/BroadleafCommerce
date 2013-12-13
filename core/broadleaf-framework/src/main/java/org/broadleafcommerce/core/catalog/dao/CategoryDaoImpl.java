@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
@@ -27,7 +29,6 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.hibernate.ejb.QueryHints;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -42,8 +43,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * 
@@ -73,6 +72,10 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
+
+    @Resource(name = "blCategoryDaoExtensionManager")
+    protected CategoryDaoExtensionManager extensionManager;
+
     @Override
     public Category save(Category category) {
         return em.merge(category);
@@ -206,6 +209,7 @@ public class CategoryDaoImpl implements CategoryDao {
     public List<Category> readActiveSubCategoriesByCategory(Category category, int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
         query.setParameter("defaultParentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
+        query.setParameter("currentDate", getCurrentDateAfterFactoringInDateResolution());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         query.setFirstResult(offset);
@@ -237,6 +241,13 @@ public class CategoryDaoImpl implements CategoryDao {
 
     @Override
     public Category findCategoryByURI(String uri) {
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findCategoryByURI(uri, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (Category) holder.getResult();
+            }
+        }
         Query query;
         query = em.createNamedQuery("BC_READ_CATEGORY_OUTGOING_URL");
         query.setParameter("url", uri);

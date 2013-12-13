@@ -213,7 +213,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             shippableFulfillmentGroup.setFulfillmentOption(fulfillmentOption);
 
             cart = orderService.save(cart, true);
-            CartState.setCart(cart);
         }
 
         //Add module specific logic

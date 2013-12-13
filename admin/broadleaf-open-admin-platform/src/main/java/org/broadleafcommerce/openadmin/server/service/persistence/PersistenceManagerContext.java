@@ -45,7 +45,7 @@ public class PersistenceManagerContext {
     private final Stack<PersistenceManager> persistenceManager = new Stack<PersistenceManager>();
 
     public void addPersistenceManager(PersistenceManager persistenceManager) {
-        this.persistenceManager.push(persistenceManager);
+        this.persistenceManager.add(persistenceManager);
     }
 
     public PersistenceManager getPersistenceManager() {
@@ -53,7 +53,9 @@ public class PersistenceManagerContext {
     }
 
     public void remove() {
-        persistenceManager.pop();
+        if (!persistenceManager.empty()) {
+            persistenceManager.pop();
+        }
         if (persistenceManager.empty()) {
             PersistenceManagerContext.clear();
         }

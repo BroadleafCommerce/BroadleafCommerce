@@ -67,6 +67,7 @@
                         <id>default-test</id>
                         <configuration>
                             <skipTests>true</skipTests>
+                            <argLine>-Xmx1024m -XX:MaxPermSize=512m -Dlegacy=true</argLine>
                         </configuration>
                     </execution>
                     <execution>

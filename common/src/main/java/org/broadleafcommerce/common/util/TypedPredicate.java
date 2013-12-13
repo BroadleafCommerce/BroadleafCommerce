@@ -41,7 +41,7 @@ public abstract class TypedPredicate<T> implements Predicate {
     }
     
     public boolean evaluate(Object value) {
-        if (clazz.isAssignableFrom(value.getClass())) {
+        if (value == null || clazz.isAssignableFrom(value.getClass())) {
             return eval((T) value);
         }
         return false;

@@ -136,7 +136,7 @@ public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Or
     /**
      * Whether or not this activity should automatically register a configured RollbackHandler with the ActivityStateManager.
      * It is useful to adjust this value if you plan on using the ActivityStateManager API to register RollbackHandlers
-     * explicitly in your code. The default value is true.
+     * explicitly in your code. The default value is false.
      *
      * @return Whether or not to automatically register a RollbackHandler with the ActivityStateManager
      */
@@ -145,7 +145,7 @@ public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Or
     /**
      * Whether or not this activity should automatically register a configured RollbackHandler with the ActivityStateManager.
      * It is useful to adjust this value if you plan on using the ActivityStateManager API to register RollbackHandlers
-     * explicitly in your code. The default value is true.
+     * explicitly in your code. The default value is false.
      *
      * @param automaticallyRegisterRollbackHandler Whether or not to automatically register a RollbackHandler with the ActivityStateManager
      */

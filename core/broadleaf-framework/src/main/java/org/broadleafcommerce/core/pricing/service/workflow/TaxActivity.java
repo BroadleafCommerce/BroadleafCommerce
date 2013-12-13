@@ -19,12 +19,17 @@
  */
 package org.broadleafcommerce.core.pricing.service.workflow;
 
+import org.broadleafcommerce.core.checkout.service.workflow.CommitTaxActivity;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.TaxService;
 import org.broadleafcommerce.core.pricing.service.module.TaxModule;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
+/**
+ * @deprecated Use {@link CommitTaxActivity} and the corresponding {@link TaxService} instead
+ */
+@Deprecated
 public class TaxActivity extends BaseActivity<ProcessContext<Order>> {
 
     protected TaxModule taxModule;

@@ -129,6 +129,12 @@ public class TypedQueryBuilderTest extends TestCase {
         assertEquals(q.getParamMap().get("p2_1_1"), "456");
         assertEquals(q.getParamMap().size(), 9);
     }
+    
+    public void testCountQuery() {
+        TypedQueryBuilder<String> q = new TypedQueryBuilder<String>(String.class, "test");
+        StringBuilder expected = new StringBuilder("SELECT COUNT(*) FROM " + String.class.getName() + " test");
+        assertEquals(q.toQueryString(true), expected.toString());
+    }
 
 }
 

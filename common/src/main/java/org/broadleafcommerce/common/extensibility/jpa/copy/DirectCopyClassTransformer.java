@@ -96,12 +96,12 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
             ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
         //Be careful with Apache library usage in this class (e.g. ArrayUtils). Usage will likely cause a ClassCircularityError
         //under JRebel. Favor not including outside libraries and unnecessary classes.
+        CtClass clazz = null;
         try {
             boolean mySkipOverlaps = skipOverlaps;
             boolean myRenameMethodOverlaps = renameMethodOverlaps;
             String convertedClassName = className.replace('/', '.');
             ClassPool classPool = null;
-            CtClass clazz = null;
             String xformKey = convertedClassName;
             String[] xformVals = null;
             Boolean[] xformSkipOverlaps = null;
@@ -316,6 +316,10 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
             throw error;
         } catch (Exception e) {
             throw new RuntimeException("Unable to transform class", e);
+        } finally {
+            if (clazz != null) {
+                clazz.detach();
+            }
         }
 
         return null;

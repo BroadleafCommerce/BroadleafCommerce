@@ -136,7 +136,8 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
         }
         
         if (bc == null) {
-            return Money.defaultCurrency();
+            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+            return brc.getJavaCurrency();
         } else {
             return Currency.getInstance(bc.getCurrencyCode());
         }

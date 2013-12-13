@@ -228,7 +228,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        String cacheKey = buildTypeKey(context.getSandbox(), languageOnlyLocale, contentType.getName());
+        String cacheKey = buildTypeKey(context.getSandBox(), languageOnlyLocale, contentType.getName());
         cacheKey = cacheKey+"-"+secure;
         if (context.isProductionSandBox()) {
             contentDTOList = getStructuredContentListFromCache(cacheKey);
@@ -252,7 +252,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        String cacheKey = buildNameKey(context.getSandbox(), languageOnlyLocale, contentType.getName(), contentName);
+        String cacheKey = buildNameKey(context.getSandBox(), languageOnlyLocale, contentType.getName(), contentName);
         cacheKey = cacheKey+"-"+secure;
         if (context.isProductionSandBox()) {
             contentDTOList = getStructuredContentListFromCache(cacheKey);
@@ -276,7 +276,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        String cacheKey = buildNameKey(context.getSandbox(), languageOnlyLocale, "any", contentName);
+        String cacheKey = buildNameKey(context.getSandBox(), languageOnlyLocale, "any", contentName);
         cacheKey = cacheKey+"-"+secure;
         if (context.isProductionSandBox()) {
             contentDTOList = getStructuredContentListFromCache(cacheKey);
@@ -340,11 +340,15 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     public void removeItemFromCache(String nameKey, String typeKey) {
         // Remove secure and non-secure instances of the structured content.
         // Typically the structured content will be in one or the other if at all.
-        getStructuredContentCache().remove(nameKey+"-"+true);
-        getStructuredContentCache().remove(nameKey+"-"+false);
+        if (!StringUtils.isEmpty(nameKey)) {
+            getStructuredContentCache().remove(nameKey+"-"+true);
+            getStructuredContentCache().remove(nameKey+"-"+false);
+        }
 
-        getStructuredContentCache().remove(typeKey+"-"+true);
-        getStructuredContentCache().remove(typeKey+"-"+false);
+        if (!StringUtils.isEmpty(typeKey)) {
+            getStructuredContentCache().remove(typeKey+"-"+true);
+            getStructuredContentCache().remove(typeKey+"-"+false);
+        }
     }
 
     protected String buildRuleExpression(StructuredContent sc) {

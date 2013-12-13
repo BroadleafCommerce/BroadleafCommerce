@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -17,22 +17,17 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.web.controller;
+package org.broadleafcommerce.core.web.processor;
 
-import org.broadleafcommerce.openadmin.web.form.TranslationForm;
+import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
 /**
- * @author Andre Azzolini (apazzolini)
+ * @author Jeff Fischer
  */
-public interface AdminTranslationControllerExtensionListener {
-    
-    /**
-     * Applies any necessary transformations to the given form. For example, some entity fields might need to be 
-     * mapped in a different way.
-     * 
-     * @param form
-     * @return whether or not a transformation was applied
-     */
-    public boolean applyTransformation(TranslationForm form);
+public interface CategoriesProcessorExtensionHandler extends ExtensionHandler {
+
+    public ExtensionResultStatusType findAllPossibleChildCategories(String parentCategory, String maxResults, ExtensionResultHolder resultHolder);
 
 }

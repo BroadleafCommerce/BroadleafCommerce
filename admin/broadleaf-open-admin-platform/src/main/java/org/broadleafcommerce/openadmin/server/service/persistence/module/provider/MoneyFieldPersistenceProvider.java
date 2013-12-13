@@ -21,7 +21,6 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.Property;
@@ -74,7 +73,8 @@ public class MoneyFieldPersistenceProvider extends AbstractMoneyFieldPersistence
                 //do nothing
             }
         }
-        return Money.defaultCurrency();
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        return brc.getJavaCurrency();
     }
     
 }

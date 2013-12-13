@@ -27,7 +27,15 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class CompleteOrderActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
+
+    public CompleteOrderActivity() {
+        //no specific state to set here for the rollback handler; it's always safe for it to run
+        setAutomaticallyRegisterRollbackHandler(true);
+    }
 
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
