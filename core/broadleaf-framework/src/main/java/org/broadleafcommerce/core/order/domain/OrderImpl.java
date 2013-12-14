@@ -333,6 +333,21 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
+    public Money getTotalAfterAppliedPayments() {
+        Money myTotal = getTotal();
+        if (myTotal == null) {
+            return null;
+        }
+        Money totalPayments = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
+        for (OrderPayment payment : getPayments()) {
+            if (payment.getAmount() != null) {
+                totalPayments = totalPayments.add(payment.getAmount());
+            }
+        }
+        return myTotal.subtract(totalPayments);
+    }
+
+    @Override
     public void setTotal(Money orderTotal) {
         this.total = Money.toAmount(orderTotal);
     }

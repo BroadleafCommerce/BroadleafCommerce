@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -18,18 +18,17 @@
  * #L%
  */
 
-package org.broadleafcommerce.common.web.payment.expression;
+package org.broadleafcommerce.sample.web.payment.service.gateway;
 
-import org.broadleafcommerce.common.extension.ExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-
-import java.util.Map;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public interface PaymentGatewayFieldExtensionHandler extends ExtensionHandler {
+public interface NullPaymentGatewayConfigurationService extends PaymentGatewayConfigurationService {
 
-    public ExtensionResultStatusType mapFieldName(String fieldNameKey, Map<String, String> fieldNameMap);
+    public String getTransparentRedirectUrl();
+
+    public String getTransparentRedirectReturnUrl();
 
 }

@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -18,18 +18,15 @@
  * #L%
  */
 
-package org.broadleafcommerce.common.web.payment.expression;
+package org.broadleafcommerce.sample.web.vendor.nullPaymentGateway.service.payment;
 
-import org.broadleafcommerce.common.extension.ExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-
-import java.util.Map;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public interface PaymentGatewayFieldExtensionHandler extends ExtensionHandler {
+public class NullPaymentGatewayType extends PaymentGatewayType {
 
-    public ExtensionResultStatusType mapFieldName(String fieldNameKey, Map<String, String> fieldNameMap);
+    public static final PaymentGatewayType NULL_GATEWAY  = new PaymentGatewayType("NULL_GATEWAY", "Null Payment Gateway Implementation");
 
 }

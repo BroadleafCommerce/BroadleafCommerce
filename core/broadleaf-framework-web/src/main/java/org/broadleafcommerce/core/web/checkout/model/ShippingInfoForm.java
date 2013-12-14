@@ -36,13 +36,15 @@ import java.io.Serializable;
  */
 public class ShippingInfoForm implements Serializable {
 
-	private static final long serialVersionUID = -7895489234675056031L;
+    private static final long serialVersionUID = 1L;
+
 	protected Address address = new AddressImpl();
     protected String addressName;
     protected FulfillmentOption fulfillmentOption;
     protected Long fulfillmentOptionId;
     protected PersonalMessage personalMessage = new PersonalMessageImpl();
     protected String deliveryMessage;
+    protected boolean useBillingAddress;
 
     public ShippingInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
@@ -95,5 +97,12 @@ public class ShippingInfoForm implements Serializable {
     public PersonalMessage getPersonalMessage() {
         return personalMessage;
     }
-    
+
+    public boolean isUseBillingAddress() {
+        return useBillingAddress;
+    }
+
+    public void setUseBillingAddress(boolean useBillingAddress) {
+        this.useBillingAddress = useBillingAddress;
+    }
 }

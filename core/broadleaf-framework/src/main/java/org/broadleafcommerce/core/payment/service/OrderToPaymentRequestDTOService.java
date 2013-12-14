@@ -21,7 +21,6 @@
 package org.broadleafcommerce.core.payment.service;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
@@ -31,7 +30,7 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
  */
 public interface OrderToPaymentRequestDTOService {
 
-    public PaymentRequestDTO translateOrder(Order order, PaymentType paymentType);
+    public PaymentRequestDTO translateOrder(Order order);
 
     public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction);
 

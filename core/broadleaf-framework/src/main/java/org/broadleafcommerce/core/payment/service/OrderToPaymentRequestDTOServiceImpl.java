@@ -42,18 +42,27 @@ import java.util.Map;
 @Service("blOrderToPaymentRequestDTOService")
 public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentRequestDTOService {
 
+    /**
+     * This translates an Order of PaymentType.CREDIT_CARD into a PaymentRequestDTO.
+     * This method assumes that this translation will apply to a final payment.
+     * That is, the transaction amount that is set, will be order.getTotalAfterAppliedPayments();
+     * It assumes that all other payments (e.g. gift cards/account credit) have already
+     * been applied to the order if necessary.
+     *
+     * @param order
+     * @param paymentType
+     * @return
+     */
     @Override
-    public PaymentRequestDTO translateOrder(Order order, PaymentType paymentType) {
+    public PaymentRequestDTO translateOrder(Order order) {
         PaymentRequestDTO requestDTO = new PaymentRequestDTO()
                 .orderId(order.getId().toString())
-                .orderCurrencyCode(order.getCurrency().getCurrencyCode())
-                .transactionTotal(order.getTotal().toString())
-                .shippingTotal(order.getTotalShipping().toString())
-                .taxTotal(order.getTotalTax().toString());
+                .orderCurrencyCode(order.getCurrency().getCurrencyCode());
 
         populateCustomerInfo(order, requestDTO);
         populateShipTo(order, requestDTO);
-        populateBillTo(order, paymentType, requestDTO);
+        populateBillTo(order, requestDTO);
+        populateTotals(order, requestDTO);
         populateDefaultLineItemsAndSubtotal(order, requestDTO);
 
         return requestDTO;
@@ -72,6 +81,10 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         }
 
         return requestDTO;
+    }
+
+    protected void populateTotals(Order order, PaymentRequestDTO requestDTO) {
+        requestDTO.transactionTotal(order.getTotalAfterAppliedPayments().toString());
     }
 
     protected void populateCustomerInfo(Order order, PaymentRequestDTO requestDTO) {
@@ -132,11 +145,11 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         }
     }
 
-    protected void populateBillTo(Order order, PaymentType paymentType,
+    protected void populateBillTo(Order order,
                                   PaymentRequestDTO requestDTO) {
         List<OrderPayment> payments = order.getPayments();
         for (OrderPayment payment : payments) {
-            if (paymentType.equals(payment.getType())) {
+            if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
                 Address billAddress = payment.getBillingAddress();
                 String stateAbbr = null;
                 String countryAbbr = null;

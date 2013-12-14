@@ -83,6 +83,7 @@
                 <ref bean="blToggleFacetLinkProcessor" />
                 <ref bean="blResourceBundleProcessor" />
                 <ref bean="blDataDrivenEnumerationProcessor" />
+                <ref bean="blTransparentRedirectCreditCardFormProcessor"/>
             </set>
         </property>
     </bean>
@@ -98,6 +99,7 @@
                 <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
                 <bean class="org.broadleafcommerce.common.web.expression.BRCVariableExpression" />
                 <bean class="org.broadleafcommerce.common.web.expression.PropertiesVariableExpression" />
+                <bean class="org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression"/>
             </list>
         </property>
     </bean>

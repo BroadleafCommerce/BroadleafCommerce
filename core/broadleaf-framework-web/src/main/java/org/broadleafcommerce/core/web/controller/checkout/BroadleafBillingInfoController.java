@@ -1,0 +1,97 @@
+/*
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+package org.broadleafcommerce.core.web.controller.checkout;
+
+import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.payment.PaymentType;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
+import org.broadleafcommerce.core.web.order.CartState;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * @author Elbert Bautista (elbertbautista)
+ */
+public class BroadleafBillingInfoController extends AbstractCheckoutController {
+
+    /**
+     * Processes the request to save a billing address.
+     *
+     * Note: this default Broadleaf implementation will create an OrderPayment of
+     * type CREDIT_CARD if it doesn't exist and save the passed in billing address
+     *
+     * @param request
+     * @param response
+     * @param model
+     * @param billingForm
+     * @return the return path
+     * @throws org.broadleafcommerce.common.exception.ServiceException
+     */
+    public String saveBillingAddress(HttpServletRequest request, HttpServletResponse response, Model model,
+                                 BillingInfoForm billingForm, BindingResult result) throws PricingException, ServiceException {
+        Order cart = CartState.getCart();
+
+        billingInfoFormValidator.validate(billingForm, result);
+        if (result.hasErrors()) {
+            return getCheckoutView();
+        }
+
+        if ((billingForm.getAddress().getPhonePrimary() != null) &&
+                (StringUtils.isEmpty(billingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
+            billingForm.getAddress().setPhonePrimary(null);
+        }
+
+        boolean found = false;
+        for (OrderPayment p : cart.getPayments()) {
+            if (PaymentType.CREDIT_CARD.equals(p.getType())) {
+                p.setBillingAddress(billingForm.getAddress());
+                found = true;
+            }
+        }
+
+        if (!found) {
+            OrderPayment p = orderPaymentService.create();
+            p.setType(PaymentType.CREDIT_CARD);
+            p.setBillingAddress(billingForm.getAddress());
+            p.setOrder(cart);
+            cart.getPayments().add(p);
+        }
+
+        orderService.save(cart, true);
+
+        if (isAjaxRequest(request)) {
+            //Add module specific model variables
+            checkoutControllerExtensionManager.getProxy().addAdditionalModelVariables(model);
+            return getCheckoutView();
+        } else {
+            return getCheckoutPageRedirect();
+        }
+    }
+
+
+}

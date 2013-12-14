@@ -128,6 +128,20 @@ public interface Order extends Serializable {
     Money getTotal();
 
     /**
+     * This is getTotal() minus the sum of all the {@link OrderPayment} already applied to this order.
+     * For example, Gift Cards, Account Credit, or any Third Party Order Payment that can be applied BEFORE
+     * a final payment (e.g. most Credit Card Gateways) is applied. This {@link OrderPayment} does not
+     * necessarily have to be confirmed (i.e. captured), as it will happen on callback of the final payment
+     * and will be captured in the checkout workflow.
+     *
+     * This method is used in cases where you need to determine the final amount to send to the gateways
+     * of what is left on the order minus what has already been applied.
+     *
+     * @return the total price minus any payments that have been applied to this order already.
+     */
+    Money getTotalAfterAppliedPayments();
+
+    /**
      * Used in {@link TotalActivity} to set the grand total of this {@link Order}. This includes the prices of all of the
      * {@link OrderItem}s as well as any taxes, fees, shipping and adjustments for all 3.
      * 
