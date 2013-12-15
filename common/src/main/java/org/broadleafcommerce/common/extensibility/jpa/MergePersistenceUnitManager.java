@@ -28,10 +28,6 @@ import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 import org.springframework.orm.jpa.persistenceunit.SmartPersistenceUnitInfo;
 import org.springframework.util.ClassUtils;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.spi.PersistenceUnitInfo;
-import javax.sql.DataSource;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -45,6 +41,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.spi.PersistenceUnitInfo;
+import javax.sql.DataSource;
 
 /**
  * Merges jars, class names and mapping file names from several persistence.xml files. The
@@ -246,7 +247,6 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     protected void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo newPU) {
         super.postProcessPersistenceUnitInfo(newPU);
         ConfigurationOnlyState state = ConfigurationOnlyState.getState();
-        newPU.addJarFileUrl(newPU.getPersistenceUnitRootUrl());
         String persistenceUnitName = newPU.getPersistenceUnitName();
         MutablePersistenceUnitInfo temp;
         PersistenceUnitInfo pui = getMergedUnit(persistenceUnitName, newPU);
@@ -259,8 +259,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             // Must be a raw JPA 1.0 SpringPersistenceUnitInfo instance
             temp = (MutablePersistenceUnitInfo) pui;
         }
-        //final URL persistenceUnitRootUrl = newPU.getPersistenceUnitRootUrl();
-        temp.setPersistenceUnitRootUrl(null);
+
         List<String> managedClassNames = newPU.getManagedClassNames();
         for (String managedClassName : managedClassNames){
             if (!temp.getManagedClassNames().contains(managedClassName)) {
@@ -275,7 +274,9 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         }
         temp.setExcludeUnlistedClasses(newPU.excludeUnlistedClasses());
         for (URL url : newPU.getJarFileUrls()) {
-            if (!temp.getJarFileUrls().contains(url)) {
+            // Avoid duplicate class scanning by Ejb3Configuration. Do not re-add the URL to the list of jars for this
+            // persistence unit or duplicate the persistence unit root URL location (both types of locations are scanned)
+            if (!temp.getJarFileUrls().contains(url) && !temp.getPersistenceUnitRootUrl().equals(url)) {
                 temp.addJarFileUrl(url);
             }
         }
