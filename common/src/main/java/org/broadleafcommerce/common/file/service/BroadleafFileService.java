@@ -120,25 +120,37 @@ public interface BroadleafFileService {
      * Takes in a temporary work area and a single File and copies that files to 
      * the configured FileProvider's permanent storage.
      * 
+     * Passing in removeFilesFromWorkArea to true allows for more efficient file processing
+     * when using a local file system as it performs a move operation instead of a copy.
+     * 
      * @param workArea
      * @param fileName
+     * @param removeFilesFromWorkArea
      */
-    void addOrUpdateResource(FileWorkArea workArea, File file);
+    void addOrUpdateResource(FileWorkArea workArea, File file, boolean removeFilesFromWorkArea);
 
     /**
      * Takes in a temporary work area and copies all of the files to the configured FileProvider's permanent storage.
      * 
+     * Passing in removeFilesFromWorkArea to true allows for more efficient file processing
+     * when using a local file system as it performs a move operation instead of a copy.
+     * 
      * @param workArea
+     * @param removeFilesFromWorkArea
      */
-    void addOrUpdateResources(FileWorkArea workArea);
+    void addOrUpdateResources(FileWorkArea workArea, boolean removeFilesFromWorkArea);
 
     /**
      * Takes in a temporary work area and a list of Files and copies them to 
      * the configured FileProvider's permanent storage.
      * 
+     * Passing in removeFilesFromWorkArea to true allows for more efficient file processing
+     * when using a local file system as it performs a move operation instead of a copy.     
+     * 
      * @param workArea
      * @param fileNames
+     * @param removeFilesFromWorkArea
      */
-    void addOrUpdateResources(FileWorkArea workArea, List<File> files);
+    void addOrUpdateResources(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea);
 
 }

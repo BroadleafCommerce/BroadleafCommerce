@@ -57,7 +57,7 @@ public interface FileServiceProvider {
      * @param workArea
      * @param applicationType
      */
-    void addOrUpdateResources(FileWorkArea workArea, List<File> files);
+    void addOrUpdateResources(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea);
 
     /**
      * Removes the resource from the file service.

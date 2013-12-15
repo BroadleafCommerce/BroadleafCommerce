@@ -76,7 +76,7 @@ public class BroadleafFileServiceImplTest extends TestCase {
         fw.append("Test File");
         fw.close();
         
-        bfs.addOrUpdateResource(workArea1, f1);
+        bfs.addOrUpdateResource(workArea1, f1, false);
         
         bfs.closeWorkArea(workArea1);
 
@@ -106,7 +106,7 @@ public class BroadleafFileServiceImplTest extends TestCase {
         files.add(f1);
         files.add(f2);
 
-        bfs.addOrUpdateResources(workArea1, files);
+        bfs.addOrUpdateResources(workArea1, files, false);
         bfs.closeWorkArea(workArea1);
 
         File resource = bfs.getResource("test2.txt");
@@ -134,7 +134,7 @@ public class BroadleafFileServiceImplTest extends TestCase {
         fw2.append("Test File 5");
         fw2.close();
 
-        bfs.addOrUpdateResources(workArea1);
+        bfs.addOrUpdateResources(workArea1, false);
         bfs.closeWorkArea(workArea1);
 
         File resource = bfs.getResource("test4.txt");

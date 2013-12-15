@@ -227,15 +227,19 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     /**
      * Takes in a work area and a fileName. Loads the file onto the provider.
      * 
+     * Passing in removeFilesFromWorkArea to true allows for more efficient file processing
+     * when using a local file system as it performs a move operation instead of a copy.
+     * 
      * @param workArea
      * @param applicationType
      * @param fileNames
+     * @param removeFilesFromWorkArea
      */
     @Override
-    public void addOrUpdateResource(FileWorkArea workArea, File file) {
+    public void addOrUpdateResource(FileWorkArea workArea, File file, boolean removeFilesFromWorkArea) {
         List<File> files = new ArrayList<File>();
         files.add(file);
-        addOrUpdateResources(workArea, files);
+        addOrUpdateResources(workArea, files, removeFilesFromWorkArea);
     }
 
     /**
@@ -245,17 +249,17 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
      * @param applicationType
      */
     @Override
-    public void addOrUpdateResources(FileWorkArea workArea) {
+    public void addOrUpdateResources(FileWorkArea workArea, boolean removeFilesFromWorkArea) {
         File folder = new File(workArea.getFilePathLocation());
         List<File> fileList = new ArrayList<File>();
         buildFileList(folder, fileList);
-        addOrUpdateResources(workArea, fileList);
+        addOrUpdateResources(workArea, fileList, removeFilesFromWorkArea);
     }
     
     @Override
-    public void addOrUpdateResources(FileWorkArea workArea, List<File> files) {
+    public void addOrUpdateResources(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea) {
         checkFiles(workArea, files);
-        selectFileServiceProvider().addOrUpdateResources(workArea, files);
+        selectFileServiceProvider().addOrUpdateResources(workArea, files, removeFilesFromWorkArea);
     }
 
     /**

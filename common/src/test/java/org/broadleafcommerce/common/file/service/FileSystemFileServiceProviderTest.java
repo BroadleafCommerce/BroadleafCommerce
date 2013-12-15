@@ -64,10 +64,6 @@ public class FileSystemFileServiceProviderTest extends TestCase {
         file = provider.getResource("/product/myproductimage.jpg");
         assertTrue(file.getAbsolutePath().equals("/test/7f/site-125/35/ec/myproductimage.jpg"));
 
-        // without slash
-        file = provider.getResource("testwithoutslash");
-        assertTrue(file.getAbsolutePath().equals("/test/7f/site-125/e9/90/testwithoutslash"));
-
         // try with 3 max generated directories
         provider.maxGeneratedDirectoryDepth = 3;
         file = provider.getResource("/product/myproductimage.jpg");

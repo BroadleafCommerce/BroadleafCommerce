@@ -73,7 +73,7 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
     }
 
     @Override
-    public void addOrUpdateResources(FileWorkArea area, List<File> files) {
+    public void addOrUpdateResources(FileWorkArea area, List<File> files, boolean removeResourcesFromWorkArea) {
         for (File srcFile : files) {
             if (!srcFile.getAbsolutePath().startsWith(area.getFilePathLocation())) {
                 throw new FileServiceException("Attempt to update file " + srcFile.getAbsolutePath() +
@@ -89,7 +89,11 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
             }
             
             try {
-                FileUtils.copyFile(srcFile, destFile);
+                if (removeResourcesFromWorkArea) {
+                    FileUtils.moveFile(srcFile, destFile);
+                } else {
+                    FileUtils.copyFile(srcFile, destFile);
+                }
             } catch (IOException ioe) {
                 throw new FileServiceException("Error copying resource named " + fileName + " from workArea " +
                         area.getFilePathLocation() + " to " + resourceName, ioe);

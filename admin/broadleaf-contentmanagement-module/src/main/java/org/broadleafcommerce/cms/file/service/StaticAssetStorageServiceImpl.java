@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.cms.file.service;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.common.AssetNotFoundException;
@@ -98,6 +99,19 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
      * @param path
      * @return
      */
+    protected String appendTrailingSlash(String path) {
+        if (!path.endsWith("/")) {
+            path = "/" + path;
+        }
+
+        return path;
+    }
+
+    /**
+     * Removes trailing "/" and ensures that there is a beginning "/"
+     * @param path
+     * @return
+     */
     protected String removeLeadingSlash(String path) {
         if (path.startsWith("/")) {
             path = path.substring(1);
@@ -141,6 +155,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     
     protected void createLocalFileFromInputStream(InputStream is, File baseLocalFile) throws IOException {
         BufferedOutputStream bos = null;
+        FileWorkArea workArea = null;
         try {
             if (!baseLocalFile.getParentFile().exists()) {
                 if (!baseLocalFile.getParentFile().mkdirs()) {
@@ -148,7 +163,12 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
                             baseLocalFile.getAbsolutePath());
                 }
             }
-            bos = new BufferedOutputStream(new FileOutputStream(baseLocalFile));
+            
+            workArea = broadleafFileService.initializeWorkArea();
+            File tmpFile = new File(appendTrailingSlash(workArea.getFilePathLocation()) +
+                    baseLocalFile.getName());
+
+            bos = new BufferedOutputStream(new FileOutputStream(tmpFile));
             
             boolean eof = false;
             int temp;
@@ -160,10 +180,17 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
                     bos.write(temp);
                 }
             }
+
+            FileUtils.moveFile(tmpFile, baseLocalFile);
         } finally {
             try {
-                bos.flush();
-                bos.close();
+                if (bos != null) {
+                    bos.flush();
+                    bos.close();
+                }
+                if (workArea != null) {
+                    broadleafFileService.closeWorkArea(workArea);
+                }
             } catch (Throwable e) {
                 //do nothing
             }
@@ -356,7 +383,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
                     output.write(buffer, 0, bytesRead);
                 }
 
-                broadleafFileService.addOrUpdateResource(tempWorkArea, destFile);
+                broadleafFileService.addOrUpdateResource(tempWorkArea, destFile, true);
             } finally {
                 output.close();
                 broadleafFileService.closeWorkArea(tempWorkArea);
