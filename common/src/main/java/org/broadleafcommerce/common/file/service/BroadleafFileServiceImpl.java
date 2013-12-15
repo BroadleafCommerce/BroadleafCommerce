@@ -61,7 +61,7 @@ import javax.annotation.Resource;
  * @author bpolster
  *
  */
-@Service("blBroadleafFileService")
+@Service("blFileService")
 public class BroadleafFileServiceImpl implements BroadleafFileService {
     
     private static final Log LOG = LogFactory.getLog(BroadleafFileServiceImpl.class);
@@ -72,15 +72,15 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     @Resource(name = "blDefaultFileServiceProvider")
     protected FileServiceProvider defaultFileServiceProvider;
 
-    private static final String DEFAULT_STORAGE_DIRECTORY = System.getProperty("java.io.tmpdir");   
+    private static final String DEFAULT_STORAGE_DIRECTORY = System.getProperty("java.io.tmpdir");
     
     @Value("${file.service.temp.file.base.directory}")
     protected String tempFileSystemBaseDirectory;    
     
-    @Value("${file.service.max.generated.directory.depth}")
+    @Value("${asset.server.max.generated.file.system.directories}")
     protected int maxGeneratedDirectoryDepth = 0;
     
-    @Value("${file.service.classpath.directory}")
+    @Value("${asset.server.file.classpath.directory}")
     protected String fileServiceClasspathDirectory;
 
     /**
@@ -88,7 +88,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
      * @return
      */
     public FileWorkArea initializeWorkArea() {
-        StringBuilder baseDirectory = getBaseDirectory();
+        StringBuilder baseDirectory = getBaseDirectory(false);
         String tempDirectory = getTempDirectory(baseDirectory);
         FileWorkArea fw = new FileWorkArea();
         fw.setFilePathLocation(tempDirectory);
@@ -135,34 +135,83 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
         return selectFileServiceProvider().getResource(name);
     }
 
+    protected File getLocalResource(String resourceName, boolean skipSite) {
+        StringBuilder baseDirectory = getBaseDirectory(skipSite);
+        String filePath = buildFilePath(baseDirectory.toString(), resourceName);
+        return new File(filePath);
+    }
+
+    @Override
+    public File getLocalResource(String resourceName) {
+        return getLocalResource(resourceName, false);
+    }
+
+    @Override
+    public File getSharedLocalResource(String resourceName) {
+        return getLocalResource(resourceName, false);
+    }
+
+
     @Override
     public File getResource(String name, FileApplicationType applicationType) {
         return selectFileServiceProvider().getResource(name);
     }
 
+    /**
+     * Builds a file path that ensures the directory and filename are separated by a single separator.
+     * @param directory
+     * @param fileName
+     * @return
+     */
+    protected String buildFilePath(String directory, String fileName) {
+        if (directory.endsWith("/")) {
+            return directory + removeLeadingSlash(fileName);
+        } else {
+            return directory + addLeadingSlash(fileName);
+        }
+    }
+
     @Override
-    public InputStream getClasspathResource(String name) {
+    public boolean checkForResourceOnClassPath(String name) {
+        ClassPathResource resource = lookupResourceOnClassPath(name);
+        return (resource != null && resource.exists());
+    }
+
+    protected ClassPathResource lookupResourceOnClassPath(String name) {
         if (fileServiceClasspathDirectory != null && !"".equals(fileServiceClasspathDirectory)) {
             try {
-                ClassPathResource resource = new ClassPathResource(fileServiceClasspathDirectory + fixFileName(name));
-
+                String resourceName = buildFilePath(fileServiceClasspathDirectory, name);
+                ClassPathResource resource = new ClassPathResource(resourceName);
                 if (resource.exists()) {
-                    InputStream assetFile = resource.getInputStream();
-                    BufferedInputStream bufferedStream = new BufferedInputStream(assetFile);
-
-                    // Wrapping the buffered input stream with a globally shared stream allows us to 
-                    // vary the way the file names are generated on the file system.    
-                    // This benefits us (mainly in our demo site but their could be other uses) when we
-                    // have assets that are shared across sites that we also need to resize. 
-                    GloballySharedInputStream globallySharedStream = new GloballySharedInputStream(bufferedStream);
-                    globallySharedStream.mark(0);
-                    return globallySharedStream;
-                } else {
-                    return null;
+                    return resource;
                 }
             } catch (Exception e) {
                 LOG.error("Error getting resource from classpath", e);
             }
+        }
+        return null;
+    }
+
+    @Override
+    public InputStream getClasspathResource(String name) {
+        try {
+            ClassPathResource resource = lookupResourceOnClassPath(name);
+            if (resource != null && resource.exists()) {
+                InputStream assetFile = resource.getInputStream();
+                BufferedInputStream bufferedStream = new BufferedInputStream(assetFile);
+
+                // Wrapping the buffered input stream with a globally shared stream allows us to 
+                // vary the way the file names are generated on the file system.    
+                // This benefits us (mainly in our demo site but their could be other uses) when we
+                // have assets that are shared across sites that we also need to resize. 
+                GloballySharedInputStream globallySharedStream = new GloballySharedInputStream(bufferedStream);
+                globallySharedStream.mark(0);
+                return globallySharedStream;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            LOG.error("Error getting resource from classpath", e);
         }
         return null;
     }
@@ -234,11 +283,18 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
         }
     }
 
-    protected String fixFileName(String fileName) {
+    protected String removeLeadingSlash(String fileName) {
         if (fileName.startsWith("/")) {
             return fileName.substring(1);
         }
         return fileName;
+    }
+
+    protected String addLeadingSlash(String fileName) {
+        if (fileName.startsWith("/")) {
+            return fileName;
+        }
+        return "/" + fileName;
     }
 
     /**
@@ -247,7 +303,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
      * 
      * This method appends a trailing slash to the directory if it does not already have one.  
      */
-    protected StringBuilder getBaseDirectory() {
+    protected StringBuilder getBaseDirectory(boolean skipSite) {
         StringBuilder path = new StringBuilder();
         if (tempFileSystemBaseDirectory == null || "".equals(tempFileSystemBaseDirectory.trim())) {
             path = path.append(DEFAULT_STORAGE_DIRECTORY);
@@ -261,12 +317,14 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
             }
         }
 
-        // Create site specific directory if Multi-site (all site files will be located in the same directory)
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (brc.getSite() != null) {
-            String siteDirectory = "site-" + brc.getSite().getId();
-            String siteHash = DigestUtils.md5Hex(siteDirectory);
-            path = path.append(siteHash.substring(0, 2)).append('/').append(siteDirectory);
+        if (!skipSite) {
+            // Create site specific directory if Multi-site (all site files will be located in the same directory)
+            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+            if (brc.getSite() != null) {
+                String siteDirectory = "site-" + brc.getSite().getId();
+                String siteHash = DigestUtils.md5Hex(siteDirectory);
+                path = path.append(siteHash.substring(0, 2)).append('/').append(siteDirectory);
+            }
         }
 
         return path;
@@ -284,7 +342,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
         // This code is used to ensure that we don't have thousands of sub-directories in a single parent directory.
         for (int i = 0; i < maxGeneratedDirectoryDepth; i++) {
             if (i == 4) {
-                LOG.warn("Property file.service.max.generated.directory.depth set to high, currently set to " +
+                LOG.warn("Property asset.server.max.generated.file.system.directories set to high, currently set to " +
                         maxGeneratedDirectoryDepth);
                 break;
             }
@@ -340,5 +398,13 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
 
     public void setMaxGeneratedDirectoryDepth(int maxGeneratedDirectoryDepth) {
         this.maxGeneratedDirectoryDepth = maxGeneratedDirectoryDepth;
+    }
+
+    public FileServiceProvider getDefaultFileServiceProvider() {
+        return defaultFileServiceProvider;
+    }
+
+    public void setDefaultFileServiceProvider(FileServiceProvider defaultFileServiceProvider) {
+        this.defaultFileServiceProvider = defaultFileServiceProvider;
     }
 }

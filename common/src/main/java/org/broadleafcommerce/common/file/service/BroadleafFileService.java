@@ -48,7 +48,7 @@ public interface BroadleafFileService {
      * using this WorkArea will cause a RuntimeError
      * @param Work Area
      */
-    public void closeWorkArea(FileWorkArea workArea);
+    void closeWorkArea(FileWorkArea workArea);
 
     /**
      * Returns a File representing the passed in name.  This method will always access the file via the FileProvider
@@ -59,7 +59,24 @@ public interface BroadleafFileService {
      * @param applicationType - The type of file being accessed
      * @return
      */
-    public File getResource(String name);
+    File getResource(String name);
+
+    /**
+     * Checks for a resource in the temporary directory of the file-system.    Will check for a site-specific file.
+     * 
+     * @param fullUrl
+     * @return
+     */
+    File getLocalResource(String fullUrl);
+
+    /**
+     * Checks for a resource in the temporary directory of the file-system.    Will check for a global (e.g. not site
+     * specific file). 
+     * 
+     * @param fullUrl
+     * @return
+     */
+    File getSharedLocalResource(String fullUrl);
 
     /**
      * Returns a File representing the passed in name and application type.   The application
@@ -69,7 +86,14 @@ public interface BroadleafFileService {
      * @param applicationType - The type of file being accessed
      * @return
      */
-    public File getResource(String name, FileApplicationType applicationType);
+    File getResource(String name, FileApplicationType applicationType);
+
+    /**
+     * Returns true if the resource is available on the classpath.
+     * @param name
+     * @return
+     */
+    boolean checkForResourceOnClassPath(String name);
 
     /**   
      * Allows assets to be included in the Java classpath.   
@@ -82,7 +106,7 @@ public interface BroadleafFileService {
      * @param name - fully qualified path to the resource
      * @return
      */
-    public InputStream getClasspathResource(String name);
+    InputStream getClasspathResource(String name);
 
     /**
      * Removes the resource from the configured FileProvider
@@ -90,7 +114,7 @@ public interface BroadleafFileService {
      * @param name - fully qualified path to the resource
      * @param applicationType - The type of file being accessed
      */
-    public boolean removeResource(String name);
+    boolean removeResource(String name);
 
     /**
      * Takes in a temporary work area and a single File and copies that files to 
@@ -99,14 +123,14 @@ public interface BroadleafFileService {
      * @param workArea
      * @param fileName
      */
-    public void addOrUpdateResource(FileWorkArea workArea, File file);
+    void addOrUpdateResource(FileWorkArea workArea, File file);
 
     /**
      * Takes in a temporary work area and copies all of the files to the configured FileProvider's permanent storage.
      * 
      * @param workArea
      */
-    public void addOrUpdateResources(FileWorkArea workArea);
+    void addOrUpdateResources(FileWorkArea workArea);
 
     /**
      * Takes in a temporary work area and a list of Files and copies them to 
@@ -115,6 +139,6 @@ public interface BroadleafFileService {
      * @param workArea
      * @param fileNames
      */
-    public void addOrUpdateResources(FileWorkArea workArea, List<File> files);
+    void addOrUpdateResources(FileWorkArea workArea, List<File> files);
 
 }

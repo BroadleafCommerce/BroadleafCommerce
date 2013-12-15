@@ -39,7 +39,7 @@ public interface FileServiceProvider {
      * @param name - fully qualified path to the resource
      * @return
      */
-    public File getResource(String name);
+    File getResource(String name);
 
     /**
      * Returns a File representing the passed in name and application type.   Providers may choose to 
@@ -49,7 +49,7 @@ public interface FileServiceProvider {
      * @param fileApplicationType - applicationType
      * @return
      */
-    public File getResource(String name, FileApplicationType fileApplicationType);
+    File getResource(String name, FileApplicationType fileApplicationType);
 
     /**
      * Takes in a work area and application type and moves all of the files to the configured FileProvider.
@@ -57,7 +57,7 @@ public interface FileServiceProvider {
      * @param workArea
      * @param applicationType
      */
-    public void addOrUpdateResources(FileWorkArea workArea, List<File> files);
+    void addOrUpdateResources(FileWorkArea workArea, List<File> files);
 
     /**
      * Removes the resource from the file service.
@@ -65,5 +65,5 @@ public interface FileServiceProvider {
      * @param name - fully qualified path to the resource
      * @return true if the resource was removed
      */
-    public boolean removeResource(String name);
+    boolean removeResource(String name);
 }

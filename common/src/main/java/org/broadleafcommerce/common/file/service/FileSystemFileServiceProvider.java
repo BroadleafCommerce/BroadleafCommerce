@@ -48,10 +48,10 @@ import java.util.List;
 @Service("blDefaultFileServiceProvider")
 public class FileSystemFileServiceProvider implements FileServiceProvider {
 
-    @Value("${filesystem.provider.base.directory}")
+    @Value("${asset.server.file.system.path}")
     protected String fileSystemBaseDirectory;
 
-    @Value("${filesystem.max.generated.directory.depth}")
+    @Value("${asset.server.max.generated.file.system.directories}")
     protected int maxGeneratedDirectoryDepth;
 
     private static final String DEFAULT_STORAGE_DIRECTORY = System.getProperty("java.io.tmpdir");
@@ -63,14 +63,14 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
 
     @Override
     public File getResource(String name) {
-        return this.getResource(name, FileApplicationType.ALL);
+        return getResource(name, FileApplicationType.ALL);
     }
-    
+
     @Override
-    public File getResource(String name, FileApplicationType applicationType) {        
+    public File getResource(String name, FileApplicationType applicationType) {
         String fileName = buildResourceName(name);
         return new File(getBaseDirectory() + fileName);
-    }    
+    }
 
     @Override
     public void addOrUpdateResources(FileWorkArea area, List<File> files) {
@@ -133,7 +133,13 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
     protected String buildResourceName(String url) {
         StringBuilder resourceName = new StringBuilder();
         // Create directories based on hash
-        String fileHash = DigestUtils.md5Hex(url);
+        String fileHash = null;
+        if (!url.startsWith("/")) {
+            fileHash = DigestUtils.md5Hex("/" + url);
+        } else {
+            fileHash = DigestUtils.md5Hex(url);
+        }
+
         for (int i = 0; i < maxGeneratedDirectoryDepth; i++) {
             if (i == 4) {
                 LOG.warn("Property maxGeneratedDirectoryDepth set to high, ignoring values past 4 - value set to" +
