@@ -40,6 +40,7 @@ import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper;
 import org.broadleafcommerce.core.web.order.CartState;
+import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -279,6 +280,18 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
                     public Map<String, String> getAdditionalFields() {
                         // TODO Auto-generated method stub
                         return null;
+                    }
+
+                    @Override
+                    public Customer getCustomer() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+
+                    @Override
+                    public void setCustomer(Customer customer) {
+                        // TODO Auto-generated method stub
+                        
                     }
                 };
                 

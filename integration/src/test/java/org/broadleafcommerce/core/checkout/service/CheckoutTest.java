@@ -103,12 +103,6 @@ public class CheckoutTest extends BaseTest {
         orderService.save(order, true);
         CheckoutResponse response = checkoutService.performCheckout(order);
         
-        //The DummyCreditCardModule changed the reference Number - make sure it's represented
-        for(OrderPayment paymentInfo : response.getInfos().keySet()) {
-            assert(paymentInfo.getReferenceNumber().equals("abc123"));
-            assert(response.getInfos().get(paymentInfo).getReferenceNumber().equals("abc123"));
-        }
-
         //confirm that the secure payment info items are not persisted
         Referenced referenced = null;
         try {
@@ -124,7 +118,6 @@ public class CheckoutTest extends BaseTest {
         assert(referenced == null);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));
-        assert (response.getPaymentResponse().getResponseItems().size() > 0);
     }
 
 /*
@@ -214,7 +207,7 @@ public class CheckoutTest extends BaseTest {
 
     private Map<OrderPayment, Referenced> addPaymentToOrder(Order order, Address address) {
         OrderPayment payment = new OrderPaymentImpl();
-        payment.setAddress(address);
+        payment.setBillingAddress(address);
         payment.setAmount(new Money(15D + (15D * 0.05D)));
         payment.setReferenceNumber("1234");
         payment.setType(PaymentType.CREDIT_CARD);

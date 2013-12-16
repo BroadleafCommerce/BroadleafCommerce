@@ -102,11 +102,6 @@ public class LegacyCheckoutTest extends BaseTest {
         //execute pricing for this order
         orderService.save(order, true);
         CheckoutResponse response = checkoutService.performCheckout(order, map);
-        //The DummyCreditCardModule changed the reference Number - make sure it's represented
-        for(OrderPayment paymentInfo : response.getInfos().keySet()) {
-            assert(paymentInfo.getReferenceNumber().equals("abc123"));
-            assert(response.getInfos().get(paymentInfo).getReferenceNumber().equals("abc123"));
-        }
 
         //confirm that the secure payment info items are not persisted
         Referenced referenced = null;
@@ -123,9 +118,6 @@ public class LegacyCheckoutTest extends BaseTest {
         assert(referenced == null);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));
-        //Removed by Jeff to facilitate merge : assert (order.getTotalTax().equals(order.getSubTotal().add(order.getTotalShipping()).multiply(0.05D)));
-        assert (response.getPaymentResponse().getResponseItems().size() > 0);
-        //assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping())));
     }
 
 /*

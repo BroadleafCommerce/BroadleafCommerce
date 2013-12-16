@@ -727,7 +727,7 @@ public class OrderTest extends OrderBaseTest {
     public void testOrderPaymentInfos(OrderPayment info) throws PricingException {
         Customer customer = customerService.saveCustomer(createNamedCustomer());
         Order order = orderService.createNewCartForCustomer(customer);
-        orderService.addPaymentToOrder(order, info, null);
+        info = orderService.addPaymentToOrder(order, info, null);
 
         boolean foundInfo = false;
         assert order.getPayments() != null;
