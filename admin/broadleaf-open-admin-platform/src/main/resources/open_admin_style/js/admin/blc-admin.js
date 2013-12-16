@@ -31,6 +31,7 @@ var BLCAdmin = (function($) {
 	    left: 20,
 	    top: 20
 	}
+	var originalStickyBarOffset = $('.sticky-container').offset().top;
 	
 	/**
 	 * Initialize necessary font mappings for Redactor
@@ -435,8 +436,11 @@ var BLCAdmin = (function($) {
     		}
     	    
     		return $form;
+    	},
+    	
+    	getOriginalStickyBarOffset : function() {
+    	    return originalStickyBarOffset;
     	}
- 
 	};
 	
 })(jQuery);
@@ -511,7 +515,7 @@ $(document).ready(function() {
     }
 
     // Ensure that the breadcrumb will render behind the entity form actions
-    var $bcc = $('.breadcrumb-container');
+    var $bcc = $('.sticky-container');
     $bcc.find('ul.breadcrumbs').outerWidth($bcc.outerWidth() - $bcc.find('.entity-form-actions').outerWidth() - 30);
 });
 
@@ -523,4 +527,23 @@ $('body').on('click', '.disabled', function(e) {
 $('body').on('change', 'input.color-picker-value', function() {
     var $this = $(this);
     $this.closest('.field-box').find('input.color-picker').spectrum('set', $this.val());
+});
+
+/**
+ * Make the sticky bar (breadcrumb) lock at the top of the window when it's scrolled off the page
+ */
+$(window).on('scroll', function() {
+    var $sc = $('.sticky-container');
+    var $scp = $('.sticky-container-padding');
+       
+    if ($(window).scrollTop() < BLCAdmin.getOriginalStickyBarOffset()) {
+        $sc.removeClass('sticky-fixed');
+        $sc.width('');
+        $scp.hide();
+    } else {
+        $scp.show();
+        $sc.addClass('sticky-fixed');
+        $sc.outerWidth($('section.main').outerWidth());
+        $('.sticky-container-padding').outerHeight($sc.outerHeight());
+    }
 });

@@ -241,7 +241,7 @@ div.field-label.inline {
 	border-bottom: 2px solid #8EAA2B;
 }
 
-.breadcrumb-container.breadcrumb-fixed {
+.sticky-fixed {
     position: fixed;
 	top: 0;
 	width: 1020px;
