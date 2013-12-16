@@ -29,4 +29,5 @@ public class DateUtil {
         Long date = SystemTime.asMillis(includeTime);
         return !(startDate == null || startDate.getTime() > date || (endDate != null && endDate.getTime() < date));
     }
+
 }

@@ -43,6 +43,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -85,19 +86,19 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     protected Long id;
 
     @Column(name = "MODULE_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Module_Name", order = 2000, prominent = true, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Module_Name", order = 2000, gridOrder = 2, prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected String moduleName;
 
     @Column(name = "ACTIVE_START_DATE", nullable = true)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Active_Start_Date", order = 3000, prominent = true, fieldType = SupportedFieldType.DATE)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Active_Start_Date", order = 3000, gridOrder = 3, prominent = true, fieldType = SupportedFieldType.DATE)
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE", nullable = true)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Active_End_Date", order = 4000, prominent = true, fieldType = SupportedFieldType.DATE)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Active_End_Date", order = 4000, gridOrder = 4, prominent = true, fieldType = SupportedFieldType.DATE)
     protected Date activeEndDate;
 
     @Column(name = "IS_DEFAULT", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Default", order = 5000, prominent = true, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Default", order = 5000, gridOrder = 5, prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected Boolean isDefault = false;
 
     /*
@@ -106,14 +107,14 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
      * But this field must be set via the constructor on the subclass.
      */
     @Column(name = "CONFIG_TYPE", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Config_Type", order = 1000, prominent = true, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Config_Type", order = 1000, gridOrder = 1, prominent = true, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.common.config.service.type.ModuleConfigurationType",
-            requiredOverride = RequiredOverride.NOT_REQUIRED, readOnly = true)
+            requiredOverride = RequiredOverride.NOT_REQUIRED, readOnly = true, visibility = VisibilityEnum.FORM_HIDDEN)
     protected String configType;
 
     @Column(name = "MODULE_PRIORITY", nullable = false)
     @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Priority",
-            order = 6000, prominent = true, requiredOverride = RequiredOverride.REQUIRED, tooltip = "AbstractModuleConfiguration_Priority_Tooltip")
+            order = 6000, gridOrder = 6, prominent = true, requiredOverride = RequiredOverride.REQUIRED, tooltip = "AbstractModuleConfiguration_Priority_Tooltip")
     protected Integer priority = 100;
 
     @Embedded

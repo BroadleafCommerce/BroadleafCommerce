@@ -29,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -126,6 +127,23 @@ public class PageDaoImpl implements PageDao {
         }
     }
     
+    @Override
+    public List<Page> readOnlineAndIncludedPages(int limit, int offset, String sortBy) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Page> criteria = builder.createQuery(Page.class);
+        Root<PageImpl> page = criteria.from(PageImpl.class);
+        criteria.select(page);
+        criteria.where(builder.and(
+                builder.or(builder.isFalse(page.get("offlineFlag").as(Boolean.class)), builder.isNull(page.get("offlineFlag").as(Boolean.class))),
+                builder.or(builder.isFalse(page.get("excludeFromSiteMap").as(Boolean.class)), builder.isNull(page.get("excludeFromSiteMap").as(Boolean.class)))));
+        criteria.orderBy(builder.asc(page.get(sortBy)));
+        TypedQuery<Page> query = em.createQuery(criteria);
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
     @Override
     public List<PageTemplate> readAllPageTemplates() {
         CriteriaBuilder builder = em.getCriteriaBuilder();

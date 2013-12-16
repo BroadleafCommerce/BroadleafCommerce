@@ -1,0 +1,19 @@
+solr.index.product.pageSize=100
+
+pricing.retry.count.for.lock.failure=3
+pricing.retry.wait.interval.for.lock.failure=500
+
+stop.checkout.on.single.payment.failure=false
+
+# If true, if the same item is added to the cart, the quantity will automatically be updated.   
+automatically.merge.like.items=true
+
+<<<<<<< HEAD
+# Max number of rows queried at a time by the CategorySiteMapGenerator
+category.site.map.generator.row.limit=100
+
+# Max number of rows queried at a time by the ProductSiteMapGenerator
+product.site.map.generator.row.limit=100
+=======
+password.site.encoder=org.springframework.security.authentication.encoding.PlaintextPasswordEncoder
+>>>>>>> develop

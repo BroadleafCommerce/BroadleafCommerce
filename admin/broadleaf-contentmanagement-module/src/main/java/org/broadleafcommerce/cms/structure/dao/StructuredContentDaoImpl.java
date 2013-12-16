@@ -92,7 +92,7 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
             return new ArrayList<StructuredContent>();
         }
     }
-
+    
     @Override
     public StructuredContent addOrUpdateContentItem(StructuredContent content) {
         return em.merge(content);
