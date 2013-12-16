@@ -36,6 +36,8 @@ import java.util.List;
  */
 public interface AdminSecurityService {
 
+    public static final String DEFAULT_PERMISSION = "PERMISSION_OTHER_DEFAULT";
+
     List<AdminUser> readAllAdminUsers();
     AdminUser readAdminUserById(Long id);
     AdminUser readAdminUserByUserName(String userName);
