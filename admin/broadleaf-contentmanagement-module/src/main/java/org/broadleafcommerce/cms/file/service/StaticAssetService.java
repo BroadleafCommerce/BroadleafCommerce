@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.cms.file.service;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -45,10 +45,9 @@ public interface StaticAssetService {
      * 
      * Depending on the the implementation, the actual asset may be saved to the DB or to 
      * the file system.    The default implementation {@link StaticAssetServiceImpl} has a 
-     * environment properties that determine this behavior <code>asset.use.filesystem.storage</code>, and 
-     * <code>asset.server.file.system.path</code>.
+     * environment properties that determine this behavior <code>asset.use.filesystem.storage</code>
      * 
-     * The properties allows for implementors to update other Asset properties at the
+     * The properties Map allows for implementors to update other Asset properties at the
      * same time they are uploading a file.  The default implementation uses this for an optional URL to 
      * be specified.
      * 
