@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.rating.domain;
 
 import org.broadleafcommerce.core.rating.service.type.RatingType;
@@ -50,49 +53,65 @@ public class RatingSummaryImpl implements RatingSummary {
         }
     )
     @Column(name = "RATING_SUMMARY_ID")
-    private Long id;
+    protected Long id;
 
     @Column(name = "ITEM_ID", nullable = false)
     @Index(name="RATINGSUMM_ITEM_INDEX", columnNames={"ITEM_ID"})
-    private String itemId;
+    protected String itemId;
 
     @Column(name = "RATING_TYPE", nullable = false)
     @Index(name="RATINGSUMM_TYPE_INDEX", columnNames={"RATING_TYPE"})
-    private String ratingTypeStr;
+    protected String ratingTypeStr;
 
     @Column(name = "AVERAGE_RATING", nullable = false)
-    protected Double averageRating;
+    protected Double averageRating = new Double(0);
 
     @OneToMany(mappedBy = "ratingSummary", targetEntity = RatingDetailImpl.class, cascade = {CascadeType.ALL})
-    protected List<RatingDetail> ratings;
+    protected List<RatingDetail> ratings = new ArrayList<RatingDetail>();
 
     @OneToMany(mappedBy = "ratingSummary", targetEntity = ReviewDetailImpl.class, cascade = {CascadeType.ALL})
-    protected List<ReviewDetail> reviews;
-
-    public RatingSummaryImpl() {}
-
-    public RatingSummaryImpl(String itemId, RatingType ratingType) {
-        super();
-        this.itemId = itemId;
-        this.averageRating = new Double(0);
-        this.ratingTypeStr = ratingType.getType();
-        this.ratings = new ArrayList<RatingDetail>();
-        this.reviews = new ArrayList<ReviewDetail>();
-    }
+    protected List<ReviewDetail> reviews = new ArrayList<ReviewDetail>();
 
     @Override
     public Long getId() {
         return id;
+    }
+    
+    /**
+     * @param id the id to set
+     */
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
     public Double getAverageRating() {
         return averageRating;
     }
+    
+    @Override
+    public void resetAverageRating() {
+        if (ratings == null || ratings.isEmpty()) {
+            this.averageRating = new Double(0);
+        } else {
+            double sum = 0;
+            for (RatingDetail detail : ratings) {
+                sum += detail.getRating();
+            }
+
+            this.averageRating = new Double(sum / ratings.size());
+        }
+    }
 
     @Override
     public String getItemId() {
         return itemId;
+    }
+    
+    @Override
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
     @Override
@@ -109,28 +128,30 @@ public class RatingSummaryImpl implements RatingSummary {
     public RatingType getRatingType() {
         return new RatingType(ratingTypeStr);
     }
+    
+    @Override
+    public void setRatingType(RatingType type) {
+        ratingTypeStr = (type == null) ? null : type.getType();
+    }
 
     @Override
     public List<RatingDetail> getRatings() {
         return ratings == null ? new ArrayList<RatingDetail>() : ratings;
+    }
+    
+    @Override
+    public void setRatings(List<RatingDetail> ratings) {
+        this.ratings = ratings;
     }
 
     @Override
     public List<ReviewDetail> getReviews() {
         return reviews == null ? new ArrayList<ReviewDetail>() : reviews;
     }
-
+    
     @Override
-    public void resetAverageRating() {
-        if (ratings == null || ratings.isEmpty()) {
-            this.averageRating = new Double(0);
-        } else {
-            double sum = 0;
-            for (RatingDetail detail : ratings) {
-                sum += detail.getRating();
-            }
-
-            this.averageRating = new Double(sum / ratings.size());
-        }
+    public void setReviews(List<ReviewDetail> reviews) {
+        this.reviews = reviews;
     }
+
 }

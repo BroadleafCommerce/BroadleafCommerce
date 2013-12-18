@@ -1,17 +1,21 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
 package org.broadleafcommerce.cms.structure.domain;
 
@@ -57,6 +61,8 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.BatchSize;
@@ -114,7 +120,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         prominent = true, gridOrder = 1)
     @Column(name = "CONTENT_NAME", nullable = false)
-    @Index(name="CONTENT_NAME_INDEX", columnNames={"CONTENT_NAME", "SC_TYPE_ID"})
+    @Index(name="CONTENT_NAME_INDEX", columnNames={"CONTENT_NAME", "ARCHIVED_FLAG", "SC_TYPE_ID"})
     protected String contentName;
 
     @ManyToOne(targetEntity = LocaleImpl.class, optional = false)
@@ -171,9 +177,17 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
                     tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
                     group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
                     ruleIdentifier = RuleIdentifier.ORDER, friendlyName = "Generic_Order_Rule")
+                    ),
+            @AdminPresentationMapField(
+                fieldName = RuleIdentifier.CATEGORY,
+                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 6,
+                    tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
+                    group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
+                    ruleIdentifier = RuleIdentifier.CATEGORY, friendlyName = "Generic_Category_Rule")
                     )
         }
     )
+    @ClonePolicyMap
     Map<String, StructuredContentRule> structuredContentMatchRules = new HashMap<String, StructuredContentRule>();
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = StructuredContentItemCriteriaImpl.class, cascade={CascadeType.ALL})
@@ -184,6 +198,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM)
+    @ClonePolicyCollection
     protected Set<StructuredContentItemCriteria> qualifyingItemCriteria = new HashSet<StructuredContentItemCriteria>();
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
@@ -199,6 +214,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @MapKeyColumn(name = "MAP_KEY")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @BatchSize(size = 20)
+    @ClonePolicyMap
     protected Map<String,StructuredContentField> structuredContentFields = new HashMap<String,StructuredContentField>();
 
     @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order = 4, 

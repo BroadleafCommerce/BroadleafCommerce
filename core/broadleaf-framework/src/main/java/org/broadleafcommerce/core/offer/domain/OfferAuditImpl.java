@@ -1,21 +1,28 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -36,6 +43,8 @@ import javax.persistence.Table;
 public class OfferAuditImpl implements OfferAudit {
 
     public static final long serialVersionUID = 1L;
+    
+    protected static final Log LOG = LogFactory.getLog(OfferAuditImpl.class);
 
     @Id
     @GeneratedValue(generator = "OfferAuditId")
@@ -61,7 +70,11 @@ public class OfferAuditImpl implements OfferAudit {
     @Column(name = "ORDER_ID")
     @Index(name="OFFERAUDIT_ORDER_INDEX", columnNames={"ORDER_ID"})
     protected Long orderId;
-
+    
+    @Column(name = "OFFER_CODE_ID")
+    @Index(name="OFFERAUDIT_OFFER_CODE_INDEX", columnNames={"OFFER_CODE_ID"})
+    protected Long offerCodeId;
+    
     @Column(name = "REDEEMED_DATE")
     protected Date redeemedDate;
 
@@ -86,6 +99,16 @@ public class OfferAuditImpl implements OfferAudit {
     }
 
     @Override
+    public Long getOfferCodeId() {
+        return offerCodeId;
+    }
+
+    @Override
+    public void setOfferCodeId(Long offerCodeId) {
+        this.offerCodeId = offerCodeId;
+    }
+
+    @Override
     public Long getCustomerId() {
         return customerId;
     }
@@ -104,7 +127,7 @@ public class OfferAuditImpl implements OfferAudit {
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
-
+    
     @Override
     public Date getRedeemedDate() {
         return redeemedDate;
@@ -117,49 +140,31 @@ public class OfferAuditImpl implements OfferAudit {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
-        result = prime * result + ((offerId == null) ? 0 : offerId.hashCode());
-        result = prime * result + ((redeemedDate == null) ? 0 : redeemedDate.hashCode());
-        result = prime * result + ((orderId == null) ? 0 : orderId.hashCode());
-        return result;
+            return new HashCodeBuilder()
+            .append(customerId)
+            .append(offerId)
+            .append(offerCodeId)
+            .append(redeemedDate)
+            .append(orderId)
+            .build();
     }
-
+    
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        OfferAuditImpl other = (OfferAuditImpl) obj;
-
-        if (id != null && other.id != null) {
-            return id.equals(other.id);
+    public boolean equals(Object o) {
+        if (o instanceof OfferAuditImpl) {
+            OfferAuditImpl that = (OfferAuditImpl) o;
+            
+            return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.customerId, that.customerId)
+                .append(this.offerId, that.offerId)
+                .append(this.offerCodeId, that.offerCodeId)
+                .append(this.redeemedDate, that.redeemedDate)
+                .append(this.orderId, that.orderId)
+                .build();
         }
-
-        if (customerId == null) {
-            if (other.customerId != null)
-                return false;
-        } else if (!customerId.equals(other.customerId))
-            return false;
-        if (offerId == null) {
-            if (other.offerId != null)
-                return false;
-        } else if (!offerId.equals(other.offerId))
-            return false;
-        if (redeemedDate == null) {
-            if (other.redeemedDate != null)
-                return false;
-        } else if (!redeemedDate.equals(other.redeemedDate))
-            return false;
-        if (orderId == null) {
-            if (other.orderId != null)
-                return false;
-        } else if (!orderId.equals(other.orderId))
-            return false;
-        return true;
+        
+        return false;
     }
+
 }

@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.web;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,7 +62,6 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
     protected Boolean sandBoxPreviewEnabled = true;
     
     // Request Parameters and Attributes for Sandbox Mode properties - mostly values to manage dates.
-    private static String SANDBOX_ID_VAR = "blSandboxId";
     private static String SANDBOX_DATE_TIME_VAR = "blSandboxDateTime";
     private static final SimpleDateFormat CONTENT_DATE_FORMATTER = new SimpleDateFormat("yyyyMMddHHmm");
     private static final SimpleDateFormat CONTENT_DATE_DISPLAY_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
@@ -105,7 +107,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
         } else {
             Long sandboxId = null;
             // Clear the sandBox - second parameter is to support legacy implementations.
-            if ( (request.getParameter("blClearSandBox") == null) || (request.getParameter("blSandboxDateTimeRibbonProduction") == null)) {
+            if ((request.getParameter("blClearSandBox") == null) && (request.getParameter("blSandboxDateTimeRibbonProduction") == null)) {
                 sandboxId = lookupSandboxId(request);
             } else {
                 if (LOG.isTraceEnabled()) {
@@ -124,9 +126,9 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
                 }
             }
 
-            if (currentSandbox == null && site != null) {
-                currentSandbox = site.getProductionSandbox();
-            }
+//            if (currentSandbox == null && site != null) {
+//                currentSandbox = site.getProductionSandbox();
+//            }
         }
 
         if (LOG.isTraceEnabled()) {
@@ -152,7 +154,6 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      * Otherwise, the request parameter is checked followed by the session attribute.
      *
      * @param request
-     * @param site
      * @return
      */
     private Long lookupSandboxId(WebRequest request) {
@@ -194,7 +195,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      */
     private void setContentTime(WebRequest request) {
         String sandboxDateTimeParam = request.getParameter(SANDBOX_DATE_TIME_VAR);
-        if (sandBoxPreviewEnabled) {
+        if (!sandBoxPreviewEnabled) {
             sandboxDateTimeParam = null;
         }
         Date overrideTime = null;

@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.controller.checkout;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -210,7 +213,6 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             shippableFulfillmentGroup.setFulfillmentOption(fulfillmentOption);
 
             cart = orderService.save(cart, true);
-            CartState.setCart(cart);
         }
 
         //Add module specific logic
@@ -555,8 +557,12 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                State state = stateService.findStateByAbbreviation(text);
-                setValue(state);
+                if (StringUtils.isNotEmpty(text)) {
+                    State state = stateService.findStateByAbbreviation(text);
+                    setValue(state);
+                } else {
+                    setValue(null);
+                }
             }
         });
 

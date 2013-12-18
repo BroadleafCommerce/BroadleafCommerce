@@ -1,20 +1,25 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.workflow;
+
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,31 +27,24 @@ import org.broadleafcommerce.core.workflow.state.ActivityStateManager;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 import org.broadleafcommerce.core.workflow.state.RollbackStateLocal;
 
-import java.util.List;
-
 public class SequenceProcessor extends BaseProcessor {
 
     private static final Log LOG = LogFactory.getLog(SequenceProcessor.class);
 
     private ProcessContextFactory<Object, Object> processContextFactory;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.iocworkflow.BaseProcessor#supports(java.lang.Class)
-     */
     @Override
-    public boolean supports(Activity<? extends ProcessContext<? extends Object>> activity) {
-        return (activity instanceof BaseActivity);
+    public boolean supports(Activity<? extends ProcessContext<?>> activity) {
+        return true;
     }
 
     @Override
-    public ProcessContext<? extends Object> doActivities() throws WorkflowException {
+    public ProcessContext<?> doActivities() throws WorkflowException {
         return doActivities(null);
     }
 
     @Override
-    public ProcessContext<? extends Object> doActivities(Object seedData) throws WorkflowException {
+    public ProcessContext<?> doActivities(Object seedData) throws WorkflowException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(getBeanName() + " processor is running..");
         }
@@ -54,7 +52,7 @@ public class SequenceProcessor extends BaseProcessor {
         if (activityStateManager == null) {
             throw new IllegalStateException("Unable to find an instance of ActivityStateManager registered under bean id blActivityStateManager");
         }
-        ProcessContext<? extends Object> context = null;
+        ProcessContext<?> context = null;
         RollbackStateLocal rollbackStateLocal = RollbackStateLocal.getRollbackStateLocal();
         if (rollbackStateLocal == null) {
             rollbackStateLocal = new RollbackStateLocal();
@@ -64,12 +62,12 @@ public class SequenceProcessor extends BaseProcessor {
         }
         try {
             //retrieve injected by Spring
-            List<Activity<ProcessContext<? extends Object>>> activities = getActivities();
+            List<Activity<ProcessContext<?>>> activities = getActivities();
 
             //retrieve a new instance of the Workflow ProcessContext
             context = createContext(seedData);
 
-            for (Activity<ProcessContext<? extends Object>> activity : activities) {
+            for (Activity<ProcessContext<?>> activity : activities) {
                 if (activity.shouldExecute(context)) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("running activity:" + activity.getBeanName() + " using arguments:" + context);
@@ -126,7 +124,7 @@ public class SequenceProcessor extends BaseProcessor {
      * @param activity
      *            the current activity in the iteration
      */
-    protected boolean processShouldStop(ProcessContext<? extends Object> context, Activity<? extends ProcessContext<? extends Object>> activity) {
+    protected boolean processShouldStop(ProcessContext<?> context, Activity<? extends ProcessContext<?>> activity) {
         if (context == null || context.isStopped()) {
             LOG.info("Interrupted workflow as requested by:" + activity.getBeanName());
             return true;

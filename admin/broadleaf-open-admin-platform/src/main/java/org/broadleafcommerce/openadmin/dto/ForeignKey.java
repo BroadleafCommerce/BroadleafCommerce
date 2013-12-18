@@ -1,25 +1,28 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.dto;
+
+import java.io.Serializable;
 
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.openadmin.dto.visitor.PersistencePerspectiveItemVisitor;
-
-import java.io.Serializable;
 
 
 /**
@@ -32,6 +35,7 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
     private static final long serialVersionUID = 1L;
     
     private String manyToField;
+    private String originatingField;
     private String foreignKeyClass;
     private String currentValue;
     private String dataSourceName;
@@ -119,6 +123,14 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         this.mutable = mutable;
     }
 
+    public String getOriginatingField() {
+        return originatingField;
+    }
+
+    public void setOriginatingField(String originatingField) {
+        this.originatingField = originatingField;
+    }
+
     public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
     }
@@ -131,6 +143,7 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         sb.append(dataSourceName);
         sb.append(restrictionType);
         sb.append(displayValueProperty);
+        sb.append(originatingField);
 
         return sb.toString();
     }
@@ -144,6 +157,7 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         foreignKey.restrictionType = restrictionType;
         foreignKey.displayValueProperty = displayValueProperty;
         foreignKey.mutable = mutable;
+        foreignKey.originatingField = originatingField;
 
         return foreignKey;
     }
@@ -163,13 +177,16 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         if (currentValue != null ? !currentValue.equals(that.currentValue) : that.currentValue != null) return false;
         if (dataSourceName != null ? !dataSourceName.equals(that.dataSourceName) : that.dataSourceName != null)
             return false;
-        if (displayValueProperty != null ? !displayValueProperty.equals(that.displayValueProperty) : that.displayValueProperty != null)
+        if (displayValueProperty != null ? !displayValueProperty.equals(that.displayValueProperty) : that
+                .displayValueProperty != null)
             return false;
         if (foreignKeyClass != null ? !foreignKeyClass.equals(that.foreignKeyClass) : that.foreignKeyClass != null)
             return false;
         if (manyToField != null ? !manyToField.equals(that.manyToField) : that.manyToField != null) return false;
-        if (restrictionType != that.restrictionType) return false;
         if (mutable != null ? !mutable.equals(that.mutable) : that.mutable != null) return false;
+        if (originatingField != null ? !originatingField.equals(that.originatingField) : that.originatingField != null)
+            return false;
+        if (restrictionType != that.restrictionType) return false;
 
         return true;
     }
@@ -177,6 +194,7 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
     @Override
     public int hashCode() {
         int result = manyToField != null ? manyToField.hashCode() : 0;
+        result = 31 * result + (originatingField != null ? originatingField.hashCode() : 0);
         result = 31 * result + (foreignKeyClass != null ? foreignKeyClass.hashCode() : 0);
         result = 31 * result + (currentValue != null ? currentValue.hashCode() : 0);
         result = 31 * result + (dataSourceName != null ? dataSourceName.hashCode() : 0);

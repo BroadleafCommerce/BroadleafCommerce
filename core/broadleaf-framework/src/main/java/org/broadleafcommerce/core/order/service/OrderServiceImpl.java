@@ -1,29 +1,34 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
+import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
@@ -52,7 +57,7 @@ import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.core.workflow.SequenceProcessor;
+import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.exception.LockAcquisitionException;
@@ -66,10 +71,13 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
+
 
 /**
  * @author apazzolini
@@ -117,16 +125,16 @@ public class OrderServiceImpl implements OrderService {
     
     /* Workflows */
     @Resource(name = "blAddItemWorkflow")
-    protected SequenceProcessor addItemWorkflow;
+    protected Processor addItemWorkflow;
     
     @Resource(name = "blUpdateProductOptionsForItemWorkflow")
-    private SequenceProcessor updateProductOptionsForItemWorkflow;
+    private Processor updateProductOptionsForItemWorkflow;
 
     @Resource(name = "blUpdateItemWorkflow")
-    protected SequenceProcessor updateItemWorkflow;
+    protected Processor updateItemWorkflow;
     
     @Resource(name = "blRemoveItemWorkflow")
-    protected SequenceProcessor removeItemWorkflow;
+    protected Processor removeItemWorkflow;
 
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager transactionManager;
@@ -316,22 +324,32 @@ public class OrderServiceImpl implements OrderService {
     public void cancelOrder(Order order) {
         orderDao.delete(order);
     }
+
     @Override
     @Transactional("blTransactionManager")
     public void deleteOrder(Order order) {
         orderDao.delete(order);
     }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold) {
+        return orderDao.findCarts(names, statuses, dateCreatedMinThreshold);
+    }
+
     @Override
     @Transactional("blTransactionManager")
     public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
-        if( !order.getAddedOfferCodes().contains(offerCode)) {
-            if (! offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode.getOffer())) {
+        Set<Offer> addedOffers = offerService.getUniqueOffersFromOrder(order);
+        //TODO: give some sort of notification that adding the offer code to the order was unsuccessful
+        if (!order.getAddedOfferCodes().contains(offerCode) && !addedOffers.contains(offerCode.getOffer())) {
+            if (!offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode)) {
                 throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
             }
             order.getAddedOfferCodes().add(offerCode);
             order = save(order, priceOrder);
         }
-        return order;   
+        return order;
     }
 
     @Override
@@ -509,7 +527,11 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         try {
-            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+            // We only want to price on the last addition for performance reasons and only if the user asked for it.
+            int numAdditionRequests = priceOrder ? (1 + orderItemRequestDTO.getChildOrderItems().size()) : -1;
+            int currentAddition = 1;
+
+            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, currentAddition == numAdditionRequests);
             ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(cartOpRequest);
 
             List<ActivityMessageDTO> orderMessages = new ArrayList<ActivityMessageDTO>();
@@ -518,8 +540,9 @@ public class OrderServiceImpl implements OrderService {
             if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
                 for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
                     childRequest.setParentOrderItemId(context.getSeedData().getOrderItem().getId());
+                    currentAddition++;
 
-                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, priceOrder);
+                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
                     ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
                     orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
                 }
@@ -775,4 +798,43 @@ public class OrderServiceImpl implements OrderService {
             throw new UpdateCartException("Could not product options", getCartOperationExceptionRootCause(e));
         }
     }
+
+    @Override
+    public void printOrder(Order order, Log log) {
+        if (!log.isDebugEnabled()) {
+            return;
+        }
+        
+        TableCreator tc = new TableCreator(new TableCreator.Col[] {
+            new TableCreator.Col("Order Item", 30),
+            new TableCreator.Col("Qty"),
+            new TableCreator.Col("Unit Price"),
+            new TableCreator.Col("Avg Adj"),
+            new TableCreator.Col("Total Adj"),
+            new TableCreator.Col("Total Price")
+        });
+
+        for (OrderItem oi : order.getOrderItems()) {
+            tc.addRow(new String[] {
+                oi.getName(),
+                String.valueOf(oi.getQuantity()),
+                String.valueOf(oi.getPriceBeforeAdjustments(true)),
+                String.valueOf(oi.getAverageAdjustmentValue()),
+                String.valueOf(oi.getTotalAdjustmentValue()),
+                String.valueOf(oi.getTotalPrice())
+            });
+        }
+        
+        tc.addSeparator()
+            .withGlobalRowHeaderWidth(15)
+            .addRow("Subtotal", order.getSubTotal())
+            .addRow("Order Adj.", order.getOrderAdjustmentsValue())
+            .addRow("Tax", order.getTotalTax())
+            .addRow("Shipping", order.getTotalShipping())
+            .addRow("Total", order.getTotal())
+            .addSeparator();
+        
+        log.debug(tc.toString());
+    }
+
 }

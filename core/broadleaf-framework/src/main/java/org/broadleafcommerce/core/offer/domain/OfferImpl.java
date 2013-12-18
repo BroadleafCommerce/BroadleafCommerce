@@ -1,49 +1,30 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -78,10 +59,36 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 @Entity
 @Table(name = "BLC_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OfferImpl_baseOffer")
 @SQLDelete(sql="UPDATE BLC_OFFER SET ARCHIVED = 'Y' WHERE OFFER_ID = ?")
 @DirectCopyTransform({
@@ -109,13 +116,14 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     protected Long id;
 
     @OneToMany(mappedBy = "offer", targetEntity = OfferCodeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
     @BatchSize(size = 50)
     @AdminPresentationCollection(addType = AddMethodType.PERSIST,
             friendlyName = "offerCodeTitle",
             order = 1,
             tab = Presentation.Tab.Name.Codes,
             tabOrder = Presentation.Tab.Order.Codes)
+    @ClonePolicyCollection(unowned = true)
     protected List<OfferCode> offerCodes = new ArrayList<OfferCode>(100);
 
     @Column(name = "OFFER_NAME", nullable=false)
@@ -124,14 +132,6 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
         prominent = true, gridOrder = 1)
     protected String name;
-
-    public List<OfferCode> getOfferCodes() {
-        return offerCodes;
-    }
-
-    public void setOfferCodes(List<OfferCode> offerCodes) {
-        this.offerCodes = offerCodes;
-    }
 
     @Column(name = "OFFER_DESCRIPTION")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = 2000, 
@@ -160,7 +160,8 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     @Index(name="OFFER_DISCOUNT_INDEX", columnNames={"OFFER_DISCOUNT_TYPE"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type", order = 1000, 
         group = Presentation.Group.Name.Amount, groupOrder = Presentation.Group.Order.Amount,
-        fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, 
+        requiredOverride = RequiredOverride.REQUIRED,
+        fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDiscountType")
     protected String discountType;
 
@@ -278,26 +279,28 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     @JoinTable(name = "BLC_QUAL_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), 
         inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentation(friendlyName = "OfferImpl_Qualifying_Item_Rule",
         group = Presentation.Group.Name.Qualifiers, groupOrder = Presentation.Group.Order.Qualifiers,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, ruleIdentifier = RuleIdentifier.ORDERITEM)
+    @ClonePolicyCollection
     protected Set<OfferItemCriteria> qualifyingItemCriteria = new HashSet<OfferItemCriteria>();
     
     @OneToMany(fetch = FetchType.LAZY, targetEntity = OfferItemCriteriaImpl.class, cascade={CascadeType.ALL})
     @JoinTable(name = "BLC_TAR_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), 
         inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentation(friendlyName = "OfferImpl_Target_Item_Rule",
         group = Presentation.Group.Name.ItemTarget, groupOrder = Presentation.Group.Order.ItemTarget,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM, 
         requiredOverride = RequiredOverride.REQUIRED)
+    @ClonePolicyCollection
     protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
     
     @Column(name = "TOTALITARIAN_OFFER")
-    @AdminPresentation(friendlyName = "OfferImpl_Totalitarian_Offer", 
+    @AdminPresentation(friendlyName = "OfferImpl_Totalitarian_Offer",
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
         visibility = VisibilityEnum.HIDDEN_ALL)
@@ -315,7 +318,7 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
         inverseJoinColumns = @JoinColumn(name = "OFFER_RULE_ID", referencedColumnName = "OFFER_RULE_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentationMapFields(
         mapDisplayFields = {
             @AdminPresentationMapField(
@@ -344,6 +347,7 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
             )
         }
     )
+    @ClonePolicyMap
     Map<String, OfferRule> offerMatchRules = new HashMap<String, OfferRule>();
     
     @Column(name = "USE_NEW_FORMAT")
@@ -414,7 +418,12 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     
     @Override
     public OfferItemRestrictionRuleType getOfferItemQualifierRuleType() {
-        return OfferItemRestrictionRuleType.getInstance(offerItemQualifierRuleType);
+        OfferItemRestrictionRuleType returnType = OfferItemRestrictionRuleType.getInstance(offerItemQualifierRuleType);
+        if (returnType == null) {
+            return OfferItemRestrictionRuleType.NONE;
+        } else {
+            return returnType;
+        }
     }
 
     @Override
@@ -424,7 +433,12 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     
     @Override
     public OfferItemRestrictionRuleType getOfferItemTargetRuleType() {
-        return OfferItemRestrictionRuleType.getInstance(offerItemTargetRuleType);
+        OfferItemRestrictionRuleType returnType = OfferItemRestrictionRuleType.getInstance(offerItemTargetRuleType);
+        if (returnType == null) {
+            return OfferItemRestrictionRuleType.NONE;
+        } else {
+            return returnType;
+        }
     }
 
     @Override
@@ -444,7 +458,9 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
 
     @Override
     public int getPriority() {
-        return priority == null ? 0 : priority;
+        // Treat null as the maximum value minus one to allow for someone to create a
+        // priority that is even less than an unset priority.
+        return priority == null ? Integer.MAX_VALUE - 1 : priority;
     }
 
     @Override
@@ -629,23 +645,46 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
 
     @Override
     public Long getMaxUsesPerCustomer() {
-        return maxUsesPerCustomer;
+        return maxUsesPerCustomer == null ? 0 : maxUsesPerCustomer;
     }
 
     @Override
     public void setMaxUsesPerCustomer(Long maxUsesPerCustomer) {
         this.maxUsesPerCustomer = maxUsesPerCustomer;
     }
+    
+    @Override
+    public boolean isUnlimitedUsePerCustomer() {
+        return getMaxUsesPerCustomer() == 0;
+    }
+    
+    @Override
+    public boolean isLimitedUsePerCustomer() {
+        return getMaxUsesPerCustomer() > 0;
+    }
 
+    @Override
     public int getMaxUsesPerOrder() {
         return maxUsesPerOrder == null ? 0 : maxUsesPerOrder;
     }
 
+    @Override
     public void setMaxUsesPerOrder(int maxUsesPerOrder) {
         this.maxUsesPerOrder = maxUsesPerOrder;
     }
+    
+    @Override
+    public boolean isUnlimitedUsePerOrder() {
+        return getMaxUsesPerOrder() == 0;
+    }
+    
+    @Override
+    public boolean isLimitedUsePerOrder() {
+        return getMaxUsesPerOrder() > 0;
+    }
 
     @Override
+    @Deprecated
     public int getMaxUses() {
         return getMaxUsesPerOrder();
     }
@@ -768,7 +807,17 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     public void setQualifyingItemSubTotal(Money qualifyingItemSubTotal) {
         this.qualifyingItemSubTotal = Money.toAmount(qualifyingItemSubTotal);
     }
-    
+
+    @Override
+    public List<OfferCode> getOfferCodes() {
+        return offerCodes;
+    }
+
+    @Override
+    public void setOfferCodes(List<OfferCode> offerCodes) {
+        this.offerCodes = offerCodes;
+    }
+
     @Override
     public Boolean getRequiresRelatedTargetAndQualifiers() {
         return requiresRelatedTargetAndQualifiers == null ? false : requiresRelatedTargetAndQualifiers;
@@ -786,61 +835,28 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return new HashCodeBuilder()
+            .append(name)
+            .append(startDate)
+            .append(type)
+            .append(value)
+            .build();
     }
-
+    
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        OfferImpl other = (OfferImpl) obj;
-
-        if (id != null && other.id != null) {
-            return id.equals(other.id);
+    public boolean equals(Object o) {
+        if (o instanceof OfferImpl) {
+            OfferImpl that = (OfferImpl) o;
+            return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.name, that.name)
+                .append(this.startDate, that.startDate)
+                .append(this.type, that.type)
+                .append(this.value, that.value)
+                .build();
         }
         
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (startDate == null) {
-            if (other.startDate != null) {
-                return false;
-            }
-        } else if (!startDate.equals(other.startDate)) {
-            return false;
-        }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
-            return false;
-        }
-        if (value == null) {
-            if (other.value != null) {
-                return false;
-            }
-        } else if (!value.equals(other.value)) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     public static class Presentation {

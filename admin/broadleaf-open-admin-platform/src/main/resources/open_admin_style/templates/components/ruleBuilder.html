@@ -13,14 +13,14 @@
             th:if="${field.required}"
             th:attr="data-ruletype=${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}" />
                
-        <div class="custom-checkbox rule-builder-checkbox" th:if="${!field.required and field.dataWrapper.error == null}">
+        <div class="custom-checkbox rule-builder-checkbox" th:if="${!field.required}">
             <label th:for="${field.name + '-true'}" style="font-weight: 400; display: inline-block;">
                 <input type="radio" 
                     th:name="${field.name}" 
                     th:id="${field.name + '-true'}" 
                     th:class="${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}" 
                     th:attr="data-ruletype=${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}" 
-                    th:checked="${!#arrays.isEmpty(field.dataWrapper.data)}" />
+                    th:checked="${!#arrays.isEmpty(field.dataWrapper.data) or field.dataWrapper.error != null}" />
                 <span style="margin-right: 10px;" th:text="#{Yes}" />
             </label>
                 
@@ -29,31 +29,35 @@
                     th:name="${field.name}" 
                     th:id="${field.name + '-false'}" 
                     class="clear-rules"
-                    th:checked="${#arrays.isEmpty(field.dataWrapper.data)}" />
+                    th:checked="${#arrays.isEmpty(field.dataWrapper.data) and field.dataWrapper.error == null }" />
                 <span style="margin-right: 10px;" th:text="#{No}" />
             </label>
         </div>
         
-        <div class="field-label" th:if="${field.dataWrapper.error == null}" th:text="#{${field.friendlyName}}"
-            th:classappend="${!field.required ? 'conditional-rules-header' : ''}"
-            th:style="${(#arrays.isEmpty(field.dataWrapper.data) and !field.required) ? 'display: none;' : ''}" />
+        <!-- Normal display -->
+        <div class="field-label" th:text="#{${field.friendlyName}}"
+            th:classappend="${!field.required ? 'conditional-rules-header' : 'required'}"
+            th:style="${((#arrays.isEmpty(field.dataWrapper.data) and !field.required) or field.dataWrapper.error != null) ? 'display: none;' : ''}" />
     
         <div class="conditional-rules-container"
-            th:if="${field.dataWrapper.error == null}"
             th:classappend="${field.required ? 'required-conditional' : ''}"
-            th:style="${(#arrays.isEmpty(field.dataWrapper.data) and !field.required) ? 'display: none;' : ''}"
+            th:style="${((#arrays.isEmpty(field.dataWrapper.data) and !field.required) or field.dataWrapper.error != null) ? 'display: none;' : ''}"
             th:id="${field.name}"/>
-
+        
+        <!-- Rule parsing error display -->
         <div class="field-label conditional-rules-header error"
             th:if="${field.dataWrapper.error != null}"
-            th:text="#{'ruleErrorTitle'} + ' ' + ${field.dataWrapper.error}"
-            th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}"/>
+            th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}"
+            th:inline="text">
+            [[#{'ruleErrorTitle'}]] [[${field.dataWrapper.error}]]
+            <a href="#" class="rule-reset" th:inline="text">[[#{Reset_Rule}]] <i class="icon-undo"></i></a>
+        </div>
 
         <div class="conditional-rules-container-mvel"
             th:if="${field.dataWrapper.error != null}"
             th:classappend="${field.required ? 'required-conditional' : ''}"
             th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}">
-                <textarea style="width: 98%" th:text="${field.dataWrapper.rawMvel}"/>
+                <textarea disabled="disabled" style="width: 98%;" th:text="${field.dataWrapper.rawMvel}"/>
         </div>
             
         <div class="rule-builder-data" 

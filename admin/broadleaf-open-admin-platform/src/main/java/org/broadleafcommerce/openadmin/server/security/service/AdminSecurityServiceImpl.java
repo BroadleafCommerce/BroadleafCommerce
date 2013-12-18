@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.security.service;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,19 +38,24 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  *
@@ -78,9 +86,18 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     
     /**
      * Optional password salt to be used with the passwordEncoder
+     * @deprecated use {@link #saltSource} instead
      */
+    @Deprecated
     protected String salt;
-
+    
+    /**
+     * Use a Salt Source ONLY if there's one configured
+     */
+    @Autowired(required=false)
+    @Qualifier("blAdminSaltSource")
+    protected SaltSource saltSource;
+    
     @Resource(name="blEmailService")
     protected EmailService emailService;
 
@@ -372,24 +389,33 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         this.resetPasswordEmailInfo = resetPasswordEmailInfo;
     }
     
-    /**
-     * Optionally provide a salt based on a a specific AdminUser.  By default, this returns
-     * the salt property of this class
-     * 
-     * @param customer
-     * @return
-     * @see {@link AdminSecurityServiceImpl#getSalt()}
-     */
-    public String getSalt(AdminUser user) {
-        return getSalt();
+    @Override
+    public Object getSalt(AdminUser user) {
+        Object salt = null;
+        if (saltSource != null) {
+            salt = saltSource.getSalt(new AdminUserDetails(user.getId(), user.getLogin(), user.getUnencodedPassword(), new ArrayList<GrantedAuthority>()));
+        }
+        return salt;
     }
     
+    @Override
     public String getSalt() {
         return salt;
     }
     
+    @Override
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    @Override
+    public SaltSource getSaltSource() {
+        return saltSource;
+    }
+    
+    @Override
+    public void setSaltSource(SaltSource saltSource) {
+        this.saltSource = saltSource;
     }
 
     @Override

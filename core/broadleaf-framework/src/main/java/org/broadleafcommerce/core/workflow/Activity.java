@@ -1,27 +1,30 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.workflow;
+
+import java.util.Map;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.core.Ordered;
-
-import java.util.Map;
 
 /**
  * <p>
@@ -39,7 +42,7 @@ import java.util.Map;
  * @see {@link BaseProcessor}
  * @see {@link SequenceProcessor}
  */
-public interface Activity<T extends ProcessContext<? extends Object>> extends BeanNameAware, Ordered {
+public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Ordered {
 
     /**
      * Called by the encompassing processor to activate
@@ -133,7 +136,7 @@ public interface Activity<T extends ProcessContext<? extends Object>> extends Be
     /**
      * Whether or not this activity should automatically register a configured RollbackHandler with the ActivityStateManager.
      * It is useful to adjust this value if you plan on using the ActivityStateManager API to register RollbackHandlers
-     * explicitly in your code. The default value is true.
+     * explicitly in your code. The default value is false.
      *
      * @return Whether or not to automatically register a RollbackHandler with the ActivityStateManager
      */
@@ -142,7 +145,7 @@ public interface Activity<T extends ProcessContext<? extends Object>> extends Be
     /**
      * Whether or not this activity should automatically register a configured RollbackHandler with the ActivityStateManager.
      * It is useful to adjust this value if you plan on using the ActivityStateManager API to register RollbackHandlers
-     * explicitly in your code. The default value is true.
+     * explicitly in your code. The default value is false.
      *
      * @param automaticallyRegisterRollbackHandler Whether or not to automatically register a RollbackHandler with the ActivityStateManager
      */

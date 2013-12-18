@@ -1,21 +1,29 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -40,7 +48,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -50,6 +57,9 @@ import javax.persistence.Table;
 @Inheritance(strategy=InheritanceType.JOINED)
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferCodeImpl_baseOfferCode")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
+})
 public class OfferCodeImpl implements OfferCode {
 
     public static final long serialVersionUID = 1L;
@@ -97,10 +107,7 @@ public class OfferCodeImpl implements OfferCode {
     @Deprecated
     protected int uses;
     
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OrderImpl.class)
-    @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", 
-        joinColumns = @JoinColumn(name = "OFFER_CODE_ID", referencedColumnName = "OFFER_CODE_ID"), 
-        inverseJoinColumns = @JoinColumn(name = "ORDER_ID", referencedColumnName = "ORDER_ID"))
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy="addedOfferCodes", targetEntity = OrderImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<Order> orders = new ArrayList<Order>();
 
@@ -136,12 +143,22 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public int getMaxUses() {
-        return maxUses;
+        return maxUses == null ? 0 : maxUses;
     }
 
     @Override
     public void setMaxUses(int maxUses) {
         this.maxUses = maxUses;
+    }
+    
+    @Override
+    public boolean isUnlimitedUse() {
+        return getMaxUses() == 0;
+    }
+    
+    @Override
+    public boolean isLimitedUse() {
+        return getMaxUses() > 0;
     }
 
     @Override
@@ -188,38 +205,24 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((offer == null) ? 0 : offer.hashCode());
-        result = prime * result + ((offerCode == null) ? 0 : offerCode.hashCode());
-        return result;
+        return new HashCodeBuilder()
+            .append(offer)
+            .append(offerCode)
+            .build();
     }
-
+    
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        OfferCodeImpl other = (OfferCodeImpl) obj;
-
-        if (id != null && other.id != null) {
-            return id.equals(other.id);
+    public boolean equals(Object o) {
+        if (o instanceof OfferCodeImpl) {
+            OfferCodeImpl that = (OfferCodeImpl) o;
+            return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.offer, that.offer)
+                .append(this.offerCode, that.offerCode)
+                .build();
         }
-
-        if (offer == null) {
-            if (other.offer != null)
-                return false;
-        } else if (!offer.equals(other.offer))
-            return false;
-        if (offerCode == null) {
-            if (other.offerCode != null)
-                return false;
-        } else if (!offerCode.equals(other.offerCode))
-            return false;
-        return true;
+        
+        return false;
     }
 
 

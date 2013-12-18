@@ -1,36 +1,27 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.resource.service;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.resource.GeneratedResource;
-import org.broadleafcommerce.common.web.resource.AbstractGeneratedResourceHandler;
-import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,6 +35,20 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.cache.CacheStatType;
+import org.broadleafcommerce.common.cache.StatisticsService;
+import org.broadleafcommerce.common.resource.GeneratedResource;
+import org.broadleafcommerce.common.web.resource.AbstractGeneratedResourceHandler;
+import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 
 /**
  * @see ResourceBundlingService
@@ -72,7 +77,10 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     
     @javax.annotation.Resource(name = "blResourceMinificationService")
     protected ResourceMinificationService minifyService;
-    
+
+    @javax.annotation.Resource(name="blStatisticsService")
+    protected StatisticsService statisticsService;
+
     @Override
     public Resource getBundle(String versionedBundleName) {
         // If we can find this bundle on the file system, we've already generated it
@@ -166,6 +174,11 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     @Override
     public String getVersionedBundleName(String unversionedBundleName) {
         Element e = getBundleVersionsCache().get(unversionedBundleName);
+        if (e == null) {
+            statisticsService.addCacheStat(CacheStatType.RESOURCE_BUNDLING_CACHE_HIT_RATE.toString(), false);
+        } else {
+            statisticsService.addCacheStat(CacheStatType.RESOURCE_BUNDLING_CACHE_HIT_RATE.toString(), true);
+        }
         return e == null ? null : (String) e.getValue();
     }
     

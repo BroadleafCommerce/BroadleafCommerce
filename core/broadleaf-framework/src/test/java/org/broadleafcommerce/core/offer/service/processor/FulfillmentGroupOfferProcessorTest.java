@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.service.processor;
 
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
@@ -31,6 +34,7 @@ import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.offer.service.OfferServiceImpl;
+import org.broadleafcommerce.core.offer.service.OfferServiceUtilitiesImpl;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableFulfillmentGroup;
@@ -102,17 +106,23 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         fgProcessor.setOrderItemDao(orderItemDaoMock);
         fgProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
 
+        OfferServiceUtilitiesImpl offerServiceUtilities = new OfferServiceUtilitiesImpl();
+        offerServiceUtilities.setOfferDao(offerDaoMock);
+        offerServiceUtilities.setPromotableItemFactory(new PromotableItemFactoryImpl());
+
         OrderOfferProcessorImpl orderProcessor = new OrderOfferProcessorImpl();
         orderProcessor.setOfferDao(offerDaoMock);
         orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
         offerTimeZoneProcessorMock = EasyMock.createMock(OfferTimeZoneProcessor.class);
         orderProcessor.setOfferTimeZoneProcessor(offerTimeZoneProcessorMock);
         orderProcessor.setOrderItemDao(orderItemDaoMock);
+        orderProcessor.setOfferServiceUtilities(offerServiceUtilities);
 
-        ItemOfferProcessor itemProcessor = new ItemOfferProcessorImpl();
+        ItemOfferProcessorImpl itemProcessor = new ItemOfferProcessorImpl();
         itemProcessor.setOfferDao(offerDaoMock);
         itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
         itemProcessor.setOrderItemDao(orderItemDaoMock);
+        itemProcessor.setOfferServiceUtilities(offerServiceUtilities);
 
         offerService.setCustomerOfferDao(customerOfferDaoMock);
         offerService.setOfferCodeDao(offerCodeDaoMock);

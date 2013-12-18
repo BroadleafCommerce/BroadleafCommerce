@@ -1,27 +1,30 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.page.dto;
-
-import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 
 /**
  * Page fields must be pre-processed (for example to fix image paths).
@@ -38,7 +41,6 @@ public class PageDTO implements Serializable {
     protected String localeCode;
     protected String templatePath;
     protected String url;
-    protected Long sandboxId;
     protected Integer priority;
     protected Map<String, String> pageFields = new HashMap<String,String>();
     protected String ruleExpression;
@@ -82,14 +84,6 @@ public class PageDTO implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public Long getSandboxId() {
-        return sandboxId;
-    }
-
-    public void setSandboxId(Long sandboxId) {
-        this.sandboxId = sandboxId;
     }
 
     public Map<String, String> getPageFields() {

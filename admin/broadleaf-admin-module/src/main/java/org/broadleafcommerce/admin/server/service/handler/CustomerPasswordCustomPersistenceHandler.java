@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Admin Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.admin.server.service.handler;
 
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -26,6 +29,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.hibernate.tool.hbm2x.StringUtils;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
@@ -34,16 +38,19 @@ import javax.annotation.Resource;
  * @author jfischer
  *
  */
+@Component("blCustomerPasswordCustomPersistenceHandler")
 public class CustomerPasswordCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
     
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
 
+    @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
         String[] customCriteria = persistencePackage.getCustomCriteria();
         return customCriteria != null && customCriteria.length > 0 && customCriteria[0].equals("passwordUpdate");
     }
 
+    @Override
     public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
         Customer customer = customerService.readCustomerByUsername(entity.findProperty("username").getValue());

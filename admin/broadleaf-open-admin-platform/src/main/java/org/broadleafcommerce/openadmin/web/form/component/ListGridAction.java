@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.form.component;
 
 
@@ -41,6 +44,7 @@ public class ListGridAction implements Cloneable {
     protected String actionId = "";
     protected Boolean forListGridReadOnly = false;
     protected String actionUrlOverride = null;
+    protected Boolean allCapable = false;
     
     public ListGridAction(String actionId) {
         this.actionId = actionId;
@@ -92,8 +96,16 @@ public class ListGridAction implements Cloneable {
     }
     
 
+    /**
+     * @see {@link #setAllCapable(Boolean)}
+     */
+    public ListGridAction withAllCapable(Boolean allCapable) {
+        setAllCapable(allCapable);
+        return this;
+    }
+    
     public String getButtonClass() {
-        return buttonClass;
+        return buttonClass + (allCapable ? " all-capable" : "");
     }
 
     public Boolean getForListGridReadOnly() {
@@ -189,6 +201,22 @@ public class ListGridAction implements Cloneable {
     public String getActionId() {
         return actionId;
     }
+    
+    /**
+     * @return whether or not the given list grid action is capable of acting on rows even when none are selected
+     */
+    public Boolean getAllCapable() {
+        return allCapable;
+    }
+    
+    /**
+     * Sets whether or not the given list grid action is capable of acting on rows even when none are selected
+     * 
+     * @param allCapable
+     */
+    public void setAllCapable(Boolean allCapable) {
+        this.allCapable = allCapable;
+    }
 
     @Override
     public ListGridAction clone() {
@@ -198,6 +226,7 @@ public class ListGridAction implements Cloneable {
         cloned.iconClass = iconClass;
         cloned.urlPostfix = urlPostfix;
         cloned.forListGridReadOnly = forListGridReadOnly;
+        cloned.allCapable = allCapable;
         return cloned;
     }
 }

@@ -1,20 +1,29 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.domain;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,13 +40,8 @@ import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.OperationTypes;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A DTO class used to seed a persistence package.
@@ -55,10 +59,10 @@ public class PersistencePackageRequest {
     protected ForeignKey foreignKey;
     protected Integer startIndex;
     protected Integer maxIndex;
-    protected String sectionEntityClassname;
-    protected String sectionEntityIdValue;
+    protected SectionCrumb[] sectionCrumbs;
     protected String sectionEntityField;
     protected String requestingEntityName;
+    protected String msg;
     protected Map<String, PersistencePackageRequest> subRequests = new LinkedHashMap<String, PersistencePackageRequest>();
     protected boolean validateUnsubmittedProperties = true;
 
@@ -100,7 +104,7 @@ public class PersistencePackageRequest {
      * @param md
      * @return the newly created PersistencePackageRequest
      */
-    public static PersistencePackageRequest fromMetadata(FieldMetadata md) {
+    public static PersistencePackageRequest fromMetadata(FieldMetadata md, List<SectionCrumb> sectionCrumbs) {
         final PersistencePackageRequest request = new PersistencePackageRequest();
 
         md.accept(new MetadataVisitor() {
@@ -151,6 +155,10 @@ public class PersistencePackageRequest {
         
         if (md instanceof CollectionMetadata) {
             request.setCustomCriteria(((CollectionMetadata) md).getCustomCriteria());
+        }
+
+        if (sectionCrumbs != null) {
+            request.setSectionCrumbs(sectionCrumbs.toArray(new SectionCrumb[sectionCrumbs.size()]));
         }
 
         return request;
@@ -231,13 +239,8 @@ public class PersistencePackageRequest {
         return this;
     }
 
-    public PersistencePackageRequest withSectionEntityClassname(String sectionClassname) {
-        setSectionEntityClassname(sectionClassname);
-        return this;
-    }
-
-    public PersistencePackageRequest withSectionEntityIdValue(String sectionIdValue) {
-        setSectionEntityIdValue(sectionIdValue);
+    public PersistencePackageRequest withSectionCrumbs(List<SectionCrumb> sectionCrumbs) {
+        setSectionCrumbs(sectionCrumbs.toArray(new SectionCrumb[sectionCrumbs.size()]));
         return this;
     }
 
@@ -248,6 +251,11 @@ public class PersistencePackageRequest {
     
     public PersistencePackageRequest withRequestingEntityName(String requestingEntityName) {
         setRequestingEntityName(requestingEntityName);
+        return this;
+    }
+
+    public PersistencePackageRequest withMsg(String msg) {
+        setMsg(msg);
         return this;
     }
 
@@ -407,28 +415,12 @@ public class PersistencePackageRequest {
         this.maxIndex = maxIndex;
     }
 
-    public Map<String, PersistencePackageRequest> getSubRequests() {
-        return subRequests;
+    public SectionCrumb[] getSectionCrumbs() {
+        return sectionCrumbs;
     }
 
-    public void setSubRequests(Map<String, PersistencePackageRequest> subRequests) {
-        this.subRequests = subRequests;
-    }
-
-    public String getSectionEntityClassname() {
-        return sectionEntityClassname;
-    }
-
-    public void setSectionEntityClassname(String sectionEntityClassname) {
-        this.sectionEntityClassname = sectionEntityClassname;
-    }
-
-    public String getSectionEntityIdValue() {
-        return sectionEntityIdValue;
-    }
-
-    public void setSectionEntityIdValue(String sectionEntityIdValue) {
-        this.sectionEntityIdValue = sectionEntityIdValue;
+    public void setSectionCrumbs(SectionCrumb[] sectionCrumbs) {
+        this.sectionCrumbs = sectionCrumbs;
     }
 
     public String getSectionEntityField() {
@@ -447,6 +439,21 @@ public class PersistencePackageRequest {
         this.requestingEntityName = requestingEntityName;
     }
     
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public Map<String, PersistencePackageRequest> getSubRequests() {
+        return subRequests;
+    }
+
+    public void setSubRequests(Map<String, PersistencePackageRequest> subRequests) {
+        this.subRequests = subRequests;
+    }
     public boolean isValidateUnsubmittedProperties() {
         return validateUnsubmittedProperties;
     }

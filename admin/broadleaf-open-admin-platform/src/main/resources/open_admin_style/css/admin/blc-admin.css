@@ -1,3 +1,22 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 /* Broadleaf Admin Specific Styles  */
 
 .mCS_no_scrollbar + .mCSB_scrollTools .mCSB_draggerContainer .mCSB_dragger {
@@ -126,6 +145,7 @@ div.errors span {
 }
 
 .entity-form .custom-checkbox {
+	display: inline-block;
 }
 
 div.field-box {
@@ -219,9 +239,10 @@ div.field-label.inline {
     background: linear-gradient(to bottom,  #f1f1f1 0%,#e2e2e2 100%);
     padding: 5px 10px;
 	border-bottom: 2px solid #8EAA2B;
+	height: 49px;
 }
 
-.breadcrumb-container.breadcrumb-fixed {
+.sticky-fixed {
     position: fixed;
 	top: 0;
 	width: 1020px;
@@ -295,6 +316,15 @@ h2#mainEntityName {
 .top-bar .attached > .brand {
     float: left;
     padding: 5px 10px 0px;
+}
+
+.top-bar ul > li.has-dropdown .dropdown li a  {
+    display: inline-block;
+    width: 100%;
+}
+
+.top-bar ul > li.has-dropdown a {
+    display: inline-block;
 }
 
 /* --------------------------------------------------
@@ -1205,6 +1235,10 @@ table.list-grid-table tr.clickable.selected {
 	background-color: #CCDADD;
 }
 
+table.list-grid-table tr.selected.forced {
+	background-color: #C0C6C7;
+}
+
 table.list-grid-table tr.clickable.selected:hover {
 	background-color: #C0DAE0;
 }
@@ -1364,6 +1398,17 @@ a.add-main-condition {
     font-size: 12px;
 }
 
+a.rule-reset {
+    float: right;
+    margin-right: 20px;
+    color: inherit;
+    font-weight: inherit;
+}
+
+a.rule-reset:hover {
+    color: #930007;
+}
+
 form.custom div.conditional div.custom.dropdown {
     display:inline-block;
     margin-right: 10px;
@@ -1399,6 +1444,11 @@ body .redactor_toolbar li a.redactor_btn_font {
 	display: none;
 }
 
+a.show-translations {
+	font-variant: small-caps;
+	font-size: 16px;
+}
+
 /* -----------------------------------------
    Static Assets
 ----------------------------------------- */
@@ -1413,10 +1463,6 @@ div.uploadMessage {
 }
 
 form.uploadFileForm {
-}
-
-form.uploadFileForm input[type="file"] {
-	display: none;
 }
 
 div.imagePreviewContainer {
@@ -1476,4 +1522,9 @@ div#thumbnail-zoom {
 
 .disabled {
 	cursor: default;
+}
+
+#js-warning {
+	line-height: 19px;
+	text-align: center;
 }

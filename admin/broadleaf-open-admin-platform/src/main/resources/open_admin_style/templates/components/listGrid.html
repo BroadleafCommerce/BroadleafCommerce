@@ -20,6 +20,8 @@
                     th:attr="data-columnwidth=${#strings.isEmpty(headerField.columnWidth) ? '' : headerField.columnWidth}"
                     th:style="${#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';'}"
                     scope="col">
+
+                    <span th:if="${headerFieldStat.first}" class="listgrid-icon" />
                     
                     <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
                         <div class="listgrid-title">
@@ -88,6 +90,7 @@
             
             <tr th:each="record : ${listGrid.records}"
                 th:unless="${#lists.isEmpty(listGrid.records)}"
+                th:class="${record.isDirty? 'dirty' : record.isError? 'error' : ''}"
                 th:classappend="${listGrid.clickable}? 'clickable'"
                 th:attr="data-link=@{${record.path}},
                          data-index=${record.index},
@@ -101,6 +104,8 @@
                     th:class="${field.isDerived ? 'derived' : ''}">
                     
                     <span th:case="'main'" th:remove="tag">
+                        <span th:substituteby="components/partials/listGridIcon" />
+                    
                         <a th:if="${headerField.mainEntityLink}" 
                             th:href="@{${record.path}}"
                             th:text="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}" />
@@ -125,6 +130,7 @@
                     </span>
                     
                     <span th:case="*" th:remove="tag">
+                        <span th:substituteby="components/partials/listGridIcon" />
                         
                         <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
                            <span th:remove="tag" th:text="${field.displayValue}" />

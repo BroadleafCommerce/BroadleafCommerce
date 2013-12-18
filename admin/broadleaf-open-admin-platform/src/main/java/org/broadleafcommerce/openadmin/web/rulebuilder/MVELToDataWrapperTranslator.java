@@ -1,20 +1,26 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.rulebuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,9 +37,6 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldS
 import org.broadleafcommerce.openadmin.web.rulebuilder.statement.Expression;
 import org.broadleafcommerce.openadmin.web.rulebuilder.statement.PhraseTranslator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Utility class to convert an MVEL string into a DataWrapper object
  * which can then be serialized on your view.
@@ -44,7 +47,6 @@ public class MVELToDataWrapperTranslator {
 
     private static final Log LOG = LogFactory.getLog(MVELToDataWrapperTranslator.class);
 
-    //TODO remove dependency on Supported Field Type which has a dependency on SmartGWT
     protected GroupingTranslator groupingTranslator = new GroupingTranslator();
     protected PhraseTranslator phraseTranslator = new PhraseTranslator();
 

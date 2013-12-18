@@ -8,8 +8,11 @@
             enctype="multipart/form-data"  
             th:action="@{${'/' + sectionKey + '/' + entityId + '/uploadAsset'}}">
             
-            <input class="ajaxUploadFile" type="file" name="file" />
-            <button class="right small dark radius button uploadButton" type="button" th:text="#{modal.asset.uploadNew}" />            
+            <input class="ajaxUploadFile" type="file" name="file" th:style="${isIE ? '' : 'display: none;'}" />
+            <button class="right small dark radius button uploadButton" 
+                type="button" 
+                th:text="#{modal.asset.uploadNew}"
+                th:style="${isIE ? 'display: none' : ''}" />            
             <div class="uploadMessage">
                 <i class="icon-spin icon-spinner"></i>
             </div>          

@@ -1,3 +1,22 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 (function($, BLCAdmin) {
     
     var adminFormats = {
@@ -37,26 +56,32 @@
         getServerDate : function(displayDate) {
             var server = BLC.dates.getServerDate(displayDate, adminFormats);
             return server == null ? null : server.serverDate + " " + server.serverTime;
+        },
+        
+        initializationHandler : function($container) {
+            $container.find('.datepicker').each(function(index, element) {
+                BLCAdmin.dates.initialize($(element));
+            });
+        },
+        
+        postValidationSubmitHandler : function($form) {
+            $form.find('.datepicker').each(function(index, element) {
+                var name = $(this).attr('name');
+
+                var $hiddenClone = $('<input>', {
+                    type: 'hidden',
+                    name: name,
+                    value: BLCAdmin.dates.getServerDate($(this).val()),
+                    'class': 'datepicker-clone'
+                });
+              
+                $(this).data('previous-name', name).removeAttr('name').after($hiddenClone);
+            });
         }
     };
     
-    BLCAdmin.addInitializationHandler(function($container) {
-        $container.find('.datepicker').each(function(index, element) {
-            BLCAdmin.dates.initialize($(element));
-        });
-    });
-    
-    BLCAdmin.addPostValidationSubmitHandler(function($form) {
-        $form.find('.datepicker').each(function(index, element) {
-            var $hiddenClone = $('<input>', {
-                type: 'hidden',
-                name: $(this).attr('name'),
-                value: BLCAdmin.dates.getServerDate($(this).val())
-            });
-          
-            $(this).removeAttr('name').after($hiddenClone);
-        });
-    });
+    BLCAdmin.addInitializationHandler(BLCAdmin.dates.initializationHandler);
+    BLCAdmin.addPostValidationSubmitHandler(BLCAdmin.dates.postValidationSubmitHandler);
             
 })(jQuery, BLCAdmin);
 

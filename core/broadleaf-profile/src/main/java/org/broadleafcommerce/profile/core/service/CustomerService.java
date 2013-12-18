@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Profile
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.profile.core.service;
 
 import org.broadleafcommerce.common.security.util.PasswordChange;
@@ -22,6 +25,7 @@ import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
+import org.springframework.security.authentication.dao.SaltSource;
 
 import java.util.List;
 
@@ -110,5 +114,40 @@ public interface CustomerService {
     public GenericResponse checkPasswordResetToken(String token);
     
     public Long findNextCustomerId();
+    
+    /**
+     * @deprecated use {@link #getSaltSource()} instead
+     */
+    @Deprecated
+    public String getSalt();
+    
+    /**
+     * @deprecated use {@link #setSaltSource(SaltSource)} instead
+     */
+    @Deprecated
+    public void setSalt(String salt);
+
+    /**
+     * Returns the {@link SaltSource} used with the blPasswordEncoder to encrypt the user password. Usually configured in
+     * applicationContext-security.xml. This is not a required property and will return null if not configured
+     */
+    public SaltSource getSaltSource();
+    
+    /**
+     * Sets the {@link SaltSource} used with blPasswordencoder to encrypt the user password. Usually configured within
+     * applicationContext-security.xml
+     * 
+     * @param saltSource
+     */
+    public void setSaltSource(SaltSource saltSource);
+    
+    /**
+     * Gets the salt object for the current customer. By default this delegates to {@link #getSaltSource()}. If there is
+     * not a {@link SaltSource} configured ({@link #getSaltSource()} returns null) then this also returns null.
+     * 
+     * @param customer
+     * @return the salt for the current customer
+     */
+    public Object getSalt(Customer customer);
     
 }

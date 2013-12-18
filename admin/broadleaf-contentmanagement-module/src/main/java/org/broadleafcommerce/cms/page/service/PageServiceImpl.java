@@ -1,27 +1,36 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.page.service;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +41,8 @@ import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageItemCriteria;
 import org.broadleafcommerce.cms.page.domain.PageRule;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.common.cache.CacheStatType;
+import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
@@ -44,13 +55,6 @@ import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * Created by bpolster.
@@ -76,6 +80,9 @@ public class PageServiceImpl implements PageService {
 
     @Resource(name="blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
+
+    @Resource(name="blStatisticsService")
+    protected StatisticsService statisticsService;
 
     protected Cache pageCache;
     protected final PageDTO NULL_PAGE = new NullPageDTO();
@@ -113,16 +120,16 @@ public class PageServiceImpl implements PageService {
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
             //store the language only locale for cache since we have to use the lowest common denominator (i.e. the cache
             //locale and the pageTemplate locale used for cache invalidation can be different countries)
-            String key = buildKey(context.getSandbox(), languageOnlyLocale, uri);
+            String key = buildKey(context.getSandBox(), languageOnlyLocale, uri);
             key = key + "-" + secure;
             if (context.isProductionSandBox()) {
                 returnList = getPageListFromCache(key);
             }
-            if (CollectionUtils.isEmpty(returnList)) {
+            if (returnList == null) {
                 //TODO does this pull the right sandbox in multitenant?
                 List<Page> pageList = pageDao.findPageByURI(locale, languageOnlyLocale, uri);
                 returnList = buildPageDTOList(pageList, secure);
-                if (context.isProductionSandBox() && !CollectionUtils.isEmpty(returnList)) {
+                if (context.isProductionSandBox()) {
                     Collections.sort(returnList, new BeanComparator("priority"));
                     addPageListToCache(returnList, key);
                 }
@@ -294,7 +301,7 @@ public class PageServiceImpl implements PageService {
     }
 
     protected String buildKey(SandBox currentSandBox, Locale locale, String uri) {
-        StringBuffer key = new StringBuffer(uri);
+        StringBuilder key = new StringBuilder(uri);
         if (locale != null) {
             key.append("-").append(locale.getLocaleCode());
         }
@@ -325,8 +332,10 @@ public class PageServiceImpl implements PageService {
     protected List<PageDTO> getPageListFromCache(String key) {
         Element cacheElement = getPageCache().get(key);
         if (cacheElement != null && cacheElement.getValue() != null) {
+            statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), true);
             return (List<PageDTO>) cacheElement.getValue();
         }
+        statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), false);
         return null;
     }
 

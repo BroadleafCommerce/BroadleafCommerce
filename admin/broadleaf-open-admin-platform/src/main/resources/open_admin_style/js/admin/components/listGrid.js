@@ -1,3 +1,22 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 (function($, BLCAdmin) {
     
     // Add utility functions for list grids to the BLCAdmin object
@@ -81,7 +100,10 @@
             if ($button.attr('data-urlpostfix')) {
                 link += $button.attr('data-urlpostfix');
             }
-            
+            if ($button.attr('data-queryparams')) {
+                link += $button.attr('data-queryparams');
+            }
+
             return link;
         },
         
@@ -111,6 +133,10 @@
                 $listGridContainer.find('button.row-action').removeAttr('disabled');
             } else {
                 $listGridContainer.find('button.row-action').attr('disabled', 'disabled');
+            }
+            
+            if (!$listGridContainer.find('td.list-grid-no-results').length) {
+                $listGridContainer.find('button.row-action.all-capable').removeAttr('disabled');
             }
         },
         
@@ -192,8 +218,13 @@ $(document).ready(function() {
     $('body').on('click', '.list-grid-table tbody tr', function() {
         var $tr = $(this);
         var $table = $tr.closest('table');
-        var link = $tr.data('link');
         var listGridType = $table.data('listgridtype');
+        
+        if (listGridType != 'main' && !$tr.hasClass('clickable')) {
+            return false;
+        }
+        
+        var link = $tr.data('link');
         var currentUrl = $table.data('currenturl');
         var fields = BLCAdmin.listGrid.getRowFields($tr);
         

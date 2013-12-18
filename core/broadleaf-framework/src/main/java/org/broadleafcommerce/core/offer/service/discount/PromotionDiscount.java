@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.service.discount;
 
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -21,7 +24,6 @@ import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * Records the usage of this item as qualifier or target of
@@ -35,7 +37,7 @@ public class PromotionDiscount implements Serializable{
     
     private PromotableCandidateItemOffer candidateItemOffer;
     private Offer promotion;
-    private Set<OfferItemCriteria> itemCriteria;
+    private OfferItemCriteria itemCriteria;
     private int quantity;
     private int finalizedQuantity;
 
@@ -48,11 +50,11 @@ public class PromotionDiscount implements Serializable{
         this.promotion = promotion;
     }
     
-    public Set<OfferItemCriteria> getItemCriteria() {
+    public OfferItemCriteria getItemCriteria() {
         return itemCriteria;
     }
     
-    public void setItemCriteria(Set<OfferItemCriteria> itemCriteria) {
+    public void setItemCriteria(OfferItemCriteria itemCriteria) {
         this.itemCriteria = itemCriteria;
     }
 
@@ -116,4 +118,8 @@ public class PromotionDiscount implements Serializable{
         finalizedQuantity = qty;
     }
     
+    public boolean isFinalized() {
+        return quantity == finalizedQuantity;
+    }
+
 }

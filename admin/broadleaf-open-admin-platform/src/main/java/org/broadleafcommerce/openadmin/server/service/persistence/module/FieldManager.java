@@ -1,27 +1,23 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.hibernate.mapping.PersistentClass;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -31,6 +27,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
+import javax.persistence.EntityManager;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.ejb.HibernateEntityManager;
 
 /**
  * 
@@ -44,12 +52,13 @@ public class FieldManager {
     public static final String MAPFIELDSEPARATOR = "---";
 
     protected EntityConfiguration entityConfiguration;
-    protected DynamicEntityDao dynamicEntityDao;
+    protected EntityManager entityManager;
+    protected DynamicDaoHelper helper = new DynamicDaoHelperImpl();
     protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
 
-    public FieldManager(EntityConfiguration entityConfiguration, DynamicEntityDao dynamicEntityDao) {
+    public FieldManager(EntityConfiguration entityConfiguration, EntityManager entityManager) {
         this.entityConfiguration = entityConfiguration;
-        this.dynamicEntityDao = dynamicEntityDao;
+        this.entityManager = entityManager;
     }
 
     public static Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
@@ -66,6 +75,7 @@ public class FieldManager {
     }
 
     public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
+        SessionFactory sessionFactory = ((HibernateEntityManager) entityManager).getSession().getSessionFactory();
         String[] tokens = fieldName.split("\\.");
         Field field = null;
 
@@ -73,8 +83,8 @@ public class FieldManager {
             String propertyName = tokens[j];
             field = getSingleField(clazz, propertyName);
             if (field != null && j < tokens.length - 1) {
-                Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(field.getType());
-                if (entities.length > 0) {
+                Class<?>[] entities = helper.getAllPolymorphicEntitiesFromCeiling(field.getType(), sessionFactory, true, true);
+                if (!ArrayUtils.isEmpty(entities)) {
                     String peekAheadToken = tokens[j+1];
                     List<Class<?>> matchedClasses = new ArrayList<Class<?>>();
                     for (Class<?> entity : entities) {
@@ -91,19 +101,15 @@ public class FieldManager {
                     if (matchedClasses.size() > 1) {
                         LOG.warn("Found the property (" + peekAheadToken + ") in more than one class of an inheritance hierarchy. This may lead to unwanted behavior, as the system does not know which class was intended. Do not use the same property name in different levels of the inheritance hierarchy. Defaulting to the first class found (" + matchedClasses.get(0).getName() + ")");
                     }
-                    if (getSingleField(entities[0], peekAheadToken) != null) {
-                        Class<?> matchedClass = entities[0];
-                        PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(matchedClass.getName());
-                        if (persistentClass != null && matchedClasses.size() == 1) {
-                            Class<?> entityClass;
+                    if (getSingleField(matchedClasses.get(0), peekAheadToken) != null) {
+                        clazz = matchedClasses.get(0);
+                        Class<?>[] entities2 = helper.getAllPolymorphicEntitiesFromCeiling(clazz, sessionFactory, true, true);
+                        if (!ArrayUtils.isEmpty(entities2) && matchedClasses.size() == 1 && clazz.isInterface()) {
                             try {
-                                entityClass = entityConfiguration.lookupEntityClass(field.getType().getName());
-                                clazz = entityClass;
+                                clazz = entityConfiguration.lookupEntityClass(field.getType().getName());
                             } catch (Exception e) {
-                                clazz = matchedClass;
+                                // Do nothing - we'll use the matchedClass
                             }
-                        } else {
-                            clazz = matchedClass;
                         }
                     } else {
                         clazz = field.getType();
@@ -205,7 +211,8 @@ public class FieldManager {
                         value = newEntity;
                     } catch (Exception e) {
                         //Use the most extended type based on the field type
-                        Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(field.getType());
+                        SessionFactory sessionFactory = entityManager.unwrap(Session.class).getSessionFactory();
+                        Class<?>[] entities = helper.getAllPolymorphicEntitiesFromCeiling(field.getType(), sessionFactory, true, true);
                         if (!ArrayUtils.isEmpty(entities)) {
                             Object newEntity = entities[0].newInstance();
                             SortableValue val = new SortableValue(bean, (Serializable) newEntity, j, sb.toString());
@@ -238,7 +245,7 @@ public class FieldManager {
         
         Collections.sort(middleFields);
         for (SortableValue val : middleFields) {
-            Serializable s = dynamicEntityDao.merge(val.entity);
+            Serializable s = entityManager.merge(val.entity);
             persistedEntities.put(val.getContainingPropertyName(), s);
             setFieldValue(val.getBean(), val.getContainingPropertyName(), s);
         }

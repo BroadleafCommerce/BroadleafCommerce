@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.rule;
 
 import org.apache.commons.collections.map.LRUMap;
@@ -46,6 +49,8 @@ public class MvelHelper {
 
     private static final Map DEFAULT_EXPRESSION_CACHE = new LRUMap(5000);
     private static final Log LOG = LogFactory.getLog(MvelHelper.class);
+
+    private static boolean TEST_MODE = false;
 
     /**
      * Converts a field to the specified type.    Useful when 
@@ -140,10 +145,20 @@ public class MvelHelper {
             } catch (Exception e) {
                 //Unable to execute the MVEL expression for some reason
                 //Return false, but notify about the bad expression through logs
-                LOG.info("Unable to parse and/or execute the mvel expression (" + rule + "). Reporting to the logs and returning false for the match expression", e);
+                if (!TEST_MODE) {
+                    LOG.info("Unable to parse and/or execute the mvel expression (" + rule + "). Reporting to the logs and returning false for the match expression", e);
+                }
                 return false;
             }
         }
     }
 
+    /**
+     * When true, LOG.info statement will be suppressed.   Should only be set from within MvelHelperTest.
+     * Prevents an error from displaying during unit test runs.
+     * @param testMode
+     */
+    public static void setTestMode(boolean testMode) {
+        TEST_MODE = testMode;
+    }
 }

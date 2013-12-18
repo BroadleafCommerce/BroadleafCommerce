@@ -1,28 +1,41 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.i18n.service;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.cache.CacheStatType;
+import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.i18n.dao.TranslationDao;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
@@ -33,12 +46,6 @@ import org.hibernate.type.Type;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
 
 @Service("blTranslationService")
 public class TranslationServiceImpl implements TranslationService {
@@ -46,6 +53,9 @@ public class TranslationServiceImpl implements TranslationService {
     
     @Resource(name = "blTranslationDao")
     protected TranslationDao dao;
+
+    @Resource(name="blStatisticsService")
+    protected StatisticsService statisticsService;
     
     protected Cache cache;
     
@@ -73,6 +83,11 @@ public class TranslationServiceImpl implements TranslationService {
         
         translation.setTranslatedValue(translatedValue);
         return save(translation);
+    }
+
+    @Override
+    public Translation findTranslationById(Long id) {
+        return dao.readTranslationById(id);
     }
     
     @Override
@@ -127,8 +142,10 @@ public class TranslationServiceImpl implements TranslationService {
         String countryCacheKey = getCacheKey(entityType, entityId, property, localeCountryCode);
         Element countryValue = getCache().get(countryCacheKey);
         if (countryValue != null) {
+            statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
             translation = (Translation) countryValue.getObjectValue();
         } else {
+            statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
             translation = getTranslation(entityType, entityId, property, localeCountryCode);
             if (translation == null) {
                 translation = new TranslationImpl();
@@ -141,8 +158,10 @@ public class TranslationServiceImpl implements TranslationService {
             String nonCountryCacheKey = getCacheKey(entityType, entityId, property, localeCode);
             Element nonCountryValue = getCache().get(nonCountryCacheKey);
             if (nonCountryValue != null) {
+                statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
                 translation = (Translation) nonCountryValue.getObjectValue();
             } else {
+                statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
                 translation = getTranslation(entityType, entityId, property, localeCode);
                 if (translation == null) {
                     translation = new TranslationImpl();
@@ -157,6 +176,26 @@ public class TranslationServiceImpl implements TranslationService {
         }
         
         return null;
+    }
+
+    @Override
+    public void removeTranslationFromCache(Translation translation) {
+        String countryCacheKey = getCacheKey(translation.getEntityType(), translation.getEntityId(), translation.getFieldName(), translation.getLocaleCode());
+        String languageOnlyLocaleCode = translation.getLocaleCode();
+        if (languageOnlyLocaleCode.contains("_")) {
+            languageOnlyLocaleCode = languageOnlyLocaleCode.substring(0, languageOnlyLocaleCode.indexOf("_"));
+        }
+        String nonCountryCacheKey = getCacheKey(translation.getEntityType(), translation.getEntityId(), translation.getFieldName(), languageOnlyLocaleCode);
+        getCache().remove(countryCacheKey);
+        getCache().remove(nonCountryCacheKey);
+    }
+
+    @Override
+    public Cache getCache() {
+        if (cache == null) {
+            cache = CacheManager.getInstance().getCache("blTranslationElements");
+        }
+        return cache;
     }
     
     protected TranslatedEntity getEntityType(Class<?> entityClass) {
@@ -214,13 +253,6 @@ public class TranslationServiceImpl implements TranslationService {
     
     protected String getCacheKey(TranslatedEntity entityType, String entityId, String property, String localeCode) {
         return StringUtils.join(new String[] { entityType.getFriendlyType(), entityId, property, localeCode }, "|");
-    }
-    
-    protected Cache getCache() {
-        if (cache == null) {
-            cache = CacheManager.getInstance().getCache("blTranslationElements");
-        }
-        return cache;
     }
 
 }

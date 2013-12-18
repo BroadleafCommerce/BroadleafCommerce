@@ -1,25 +1,31 @@
 /*
- * Copyright 2008-2009 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.security.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -27,7 +33,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.List;
 
 /**
  *
@@ -83,15 +88,15 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     }
     
     protected AdminSection readAdminSectionForClassName(String className) {
-        try {
-            TypedQuery<AdminSection> q = em.createQuery(
-                "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
-            q.setParameter("className", className);
-            q.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
-            return q.getSingleResult();
-        } catch (NoResultException e) {
+        TypedQuery<AdminSection> q = em.createQuery(
+            "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
+        q.setParameter("className", className);
+        q.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        List<AdminSection> result = q.getResultList();
+        if (CollectionUtils.isEmpty(result)) {
             return null;
         }
+        return q.getResultList().get(0);
     }
 
     @Override

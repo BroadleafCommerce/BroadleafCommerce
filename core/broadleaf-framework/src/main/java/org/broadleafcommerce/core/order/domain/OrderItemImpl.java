@@ -1,40 +1,23 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.domain;
-
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -72,6 +55,26 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
+
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 
 @Entity
@@ -461,7 +464,16 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Money getPriceBeforeAdjustments(boolean allowSalesPrice) {
-        if (allowSalesPrice) {
+        boolean retailPriceOverride = false;
+        
+        for (OrderItemPriceDetail oipd : getOrderItemPriceDetails()) {
+            if (oipd.getUseSalePrice() == false) {
+                retailPriceOverride = true;
+                break;
+            }
+        }
+        
+        if (allowSalesPrice && !retailPriceOverride) {
             return getSalePrice();
         } else {
             return getRetailPrice();
@@ -769,6 +781,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         result = prime * result + quantity;
         result = prime * result + ((retailPrice == null) ? 0 : retailPrice.hashCode());
         result = prime * result + ((salePrice == null) ? 0 : salePrice.hashCode());
+        result = prime * result + ((parentOrderItem == null) ? 0 : parentOrderItem.hashCode());
         return result;
     }
 
@@ -846,6 +859,13 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 return false;
             }
         } else if (!salePrice.equals(other.salePrice)) {
+            return false;
+        }
+        if (parentOrderItem == null) {
+            if (other.parentOrderItem != null) {
+                return false;
+            }
+        } else if (!parentOrderItem.equals(other.parentOrderItem)) {
             return false;
         }
         return true;

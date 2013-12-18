@@ -1,30 +1,36 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -39,6 +45,8 @@ public class BasicFieldTypeValidator implements PopulateValueRequestValidator {
 
     @Override
     public PropertyValidationResult validate(PopulateValueRequest populateValueRequest, Serializable instance) {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        Locale locale = brc.getJavaLocale();
         switch(populateValueRequest.getMetadata().getFieldType()) {
             case INTEGER:
                 try {
@@ -58,22 +66,28 @@ public class BasicFieldTypeValidator implements PopulateValueRequestValidator {
             case DECIMAL:
                 try {
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
-                        new BigDecimal(populateValueRequest.getRequestedValue());
+                        DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
+                        format.setParseBigDecimal(true);
+                        format.parse(populateValueRequest.getRequestedValue());
+                        format.setParseBigDecimal(false);
                     } else {
-                        Double.parseDouble(populateValueRequest.getRequestedValue());
+                        populateValueRequest.getDataFormatProvider().getDecimalFormatter().parse(populateValueRequest.getRequestedValue());
                     }
-                } catch (NumberFormatException e) {
+                } catch (ParseException e) {
                     return new PropertyValidationResult(false, "Field must be a valid decimal");
                 }
                 break;
             case MONEY:
                 try {
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType()) || Money.class.isAssignableFrom(populateValueRequest.getReturnType())) {
-                        new BigDecimal(populateValueRequest.getRequestedValue());
+                        DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
+                        format.setParseBigDecimal(true);
+                        format.parse(populateValueRequest.getRequestedValue());
+                        format.setParseBigDecimal(false);
                     } else if (Double.class.isAssignableFrom(populateValueRequest.getReturnType())) {
-                        Double.parseDouble(populateValueRequest.getRequestedValue());
+                        populateValueRequest.getDataFormatProvider().getDecimalFormatter().parse(populateValueRequest.getRequestedValue());
                     }
-                } catch (NumberFormatException e) {
+                } catch (ParseException e) {
                     return new PropertyValidationResult(false, "Field must be a valid number");
                 }
                 break;
@@ -113,5 +127,5 @@ public class BasicFieldTypeValidator implements PopulateValueRequestValidator {
         }
         return new PropertyValidationResult(true);
     }
-
+    
 }

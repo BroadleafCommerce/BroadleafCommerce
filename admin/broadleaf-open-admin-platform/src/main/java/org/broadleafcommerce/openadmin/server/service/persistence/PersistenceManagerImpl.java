@@ -1,22 +1,39 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
@@ -47,25 +64,13 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Inspect
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.hibernate.mapping.PersistentClass;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
 
 @Component("blPersistenceManager")
 @Scope("prototype")
@@ -128,6 +133,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     @Override
     public Class<?>[] getUpDownInheritance(Class<?> testClass) {
         Class<?>[] pEntities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(testClass);
+        if (ArrayUtils.isEmpty(pEntities)) {
+            return pEntities;
+        }
         Class<?> topConcreteClass = pEntities[pEntities.length - 1];
         List<Class<?>> temp = new ArrayList<Class<?>>(pEntities.length);
         temp.addAll(Arrays.asList(pEntities));
@@ -175,7 +183,11 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 if (myProperty.getMetadata().getInheritedFromType().equals(entities[i].getName()) && myProperty.getMetadata().getOrder() != null) {
                     for (Property property : propertiesList) {
                         if (!property.getMetadata().getInheritedFromType().equals(entities[i].getName()) && property.getMetadata().getOrder() != null && property.getMetadata().getOrder() >= myProperty.getMetadata().getOrder()) {
-                            property.getMetadata().setOrder(property.getMetadata().getOrder() + 1);
+                            if (property.getMetadata().getAdditionalMetadata() == null 
+                                    || property.getMetadata().getAdditionalMetadata().get(Field.ALTERNATE_ORDERING) == null
+                                    || ((Boolean) property.getMetadata().getAdditionalMetadata().get(Field.ALTERNATE_ORDERING)) == false) {
+                                property.getMetadata().setOrder(property.getMetadata().getOrder() + 1);
+                            }
                         }
                     }
                 }
@@ -398,7 +410,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             for (Map.Entry<String,PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
                 Entity subResponse;
                 try {
-                    subPackage.getValue().setCustomCriteria(new String[]{subPackage.getValue().getCustomCriteria()[0], idVal});
+                    subPackage.getValue().getCustomCriteria()[1] = idVal;
                     //Run through any subPackages -- add up any validation errors
                     checkHandler: {
                         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {

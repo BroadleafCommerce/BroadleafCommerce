@@ -1,3 +1,22 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 /**
  * Broadleaf Commerce Conditions Rule Builder
  * Javascript Conditions Builder that handles both simple targeting rules
@@ -75,26 +94,41 @@
             dataWrapper.data = [];
             for (var i=0;i<elements.length;i++) {
                 var element = elements[i];
-                dataWrapper.data.push(this.collectDataFromNode($(element)));
+                var data = this.collectDataFromNode($(element));
+                if (data != null) {
+                    dataWrapper.data.push(data);
+                }
             }
             return dataWrapper;
         },
-
-        collectDataFromNode: function(element) {
+        
+        /**
+         * Starting at the given element, traverse down through all the conditional children building a JSON representation
+         * of the conditional nodes with their rules. This method will ONLY collect data from top-level conditionals and
+         * groups where there are actual rules (that reference properties) within them. If there are no rules within the
+         * given element, this will return null. If this is apart of a larger JSON object graph you should have specific
+         * null protection in this case
+         */
+        collectDataFromNode: function($element) {
             var klass = null;
             var id = null;
             var qty = null;
             var _this = this;
-            if(element.is(".conditional")) {
-                klass = element.find("> .all-any-none-wrapper > .all-any-none").val();
+            
+            if ($element.find('.rule').length == 0 && !$element.is('.rule')) {
+                return null;
+            }
+            
+            if ($element.is(".conditional")) {
+                klass = $element.find("> .all-any-none-wrapper > .all-any-none").val();
                 if ("all" == klass) {klass = "AND";}
                 if ("any" == klass) {klass = "OR";}
                 if ("none" == klass) {klass = "NOT";}
-                qty = element.find("> .all-any-none-wrapper > .conditional-qty").val();
-                id = element.find("> .all-any-none-wrapper > .conditional-id").val();
+                qty = $element.find("> .all-any-none-wrapper > .conditional-qty").val();
+                id = $element.find("> .all-any-none-wrapper > .conditional-id").val();
             }
 
-            if(klass) {
+            if (klass) {
                 var out = {};
                 if (qty) {
                     out.quantity = qty;
@@ -108,32 +142,34 @@
                 }
                 out.groupOperator = klass;
                 out.groups = [];
-                element.find("> .conditional-rules > .conditional, > .rule").each(function() {
-                    out.groups.push(_this.collectDataFromNode($(this)));
+                $element.find("> .conditional-rules > .conditional, > .rule").each(function() {
+                    var data = _this.collectDataFromNode($(this));
+                    if (data != null) {
+                        out.groups.push(data);
+                    }
                 });
                 return out;
-            }
-            else {
+            } else {
                 var value;
-                var trueRadio = element.find(".true");
-                var falseRadio = element.find(".false");
+                var trueRadio = $element.find(".true");
+                var falseRadio = $element.find(".false");
                 if (trueRadio != null && trueRadio.is(':checked')) {
                     value = "true";
                 } else if (falseRadio != null && falseRadio.is(':checked')) {
                     value = "false";
                 } else {
-                    value = element.find(".value").val();
+                    value = $element.find(".value").val();
                 }
                 return {
                     id:null,
                     quantity:null,
                     groupOperator:null,
                     groups:[],
-                    name: element.find(".field").val(),
-                    operator: element.find(".operator").val(),
+                    name: $element.find(".field").val(),
+                    operator: $element.find(".operator").val(),
                     value: value,
-                    start: element.find(".start").val(),
-                    end: element.find(".end").val()
+                    start: $element.find(".start").val(),
+                    end: $element.find(".end").val()
                 };
             }
         },

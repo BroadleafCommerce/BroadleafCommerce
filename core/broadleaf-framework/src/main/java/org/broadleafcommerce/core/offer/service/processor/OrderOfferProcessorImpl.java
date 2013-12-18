@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.service.processor;
 
 import org.apache.commons.logging.Log;
@@ -25,6 +28,7 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
+import org.broadleafcommerce.core.offer.service.OfferServiceUtilities;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
@@ -42,18 +46,18 @@ import org.broadleafcommerce.core.order.dao.OrderItemDao;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author jfischer, bpolster
@@ -66,11 +70,14 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     @Resource(name = "blPromotableItemFactory")
     protected PromotableItemFactory promotableItemFactory;
 
+    @Resource(name = "blOrderItemDao")
+    protected OrderItemDao orderItemDao;
+
     @Resource(name = "blOfferDao")
     protected OfferDao offerDao;
 
-    @Resource(name = "blOrderItemDao")
-    protected OrderItemDao orderItemDao;
+    @Resource(name = "blOfferServiceUtilities")
+    protected OfferServiceUtilities offerServiceUtilities;
 
     @Override
     public void filterOrderLevelOffer(PromotableOrder promotableOrder, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
@@ -218,16 +225,18 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         Iterator<PromotableCandidateOrderOffer> orderOfferIterator = orderOffers.iterator();
         while (orderOfferIterator.hasNext()) {
             PromotableCandidateOrderOffer orderOffer = orderOfferIterator.next();
-
+            
             if (promotableOrder.canApplyOrderOffer(orderOffer)) {
                 applyOrderOffer(promotableOrder, orderOffer);
-                if (orderOffer.isTotalitarian()) {
+                
+                if (orderOffer.isTotalitarian() || promotableOrder.isTotalitarianItemOfferApplied()) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Totalitarian Order Offer Applied.   Comparing order and item offers for best outcome.");
                     }
-
                     compareAndAdjustOrderAndItemOffers(promotableOrder);
-                    continue;
+                    // We continue because this could be the first offer and marked as totalitarian, but not as good as an
+                    // item offer. There could be other order offers that are not totalitarian that also qualify.
+                    continue; 
                 }
                 
                 if (!orderOffer.isCombinable()) {
@@ -327,31 +336,13 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
 
-    protected List<OrderItem> buildOrderItemList(Order order) {
-        List<OrderItem> orderItemList = new ArrayList<OrderItem>();
-        for (OrderItem currentItem : order.getOrderItems()) {
-            if (currentItem instanceof OrderItemContainer) {
-                OrderItemContainer container = (OrderItemContainer) currentItem;
-                if (container.isPricingAtContainerLevel()) {
-                    orderItemList.add(currentItem);
-                } else {
-                    for (OrderItem containedItem : container.getOrderItems()) {
-                        orderItemList.add(containedItem);
-                    }
-                }
-            } else {
-                orderItemList.add(currentItem);
-            }
-        }
 
-        return orderItemList;
-    }
 
     protected void synchronizeOrderItems(PromotableOrder promotableOrder) {
         Order order = promotableOrder.getOrder();
-        Map<OrderItem, PromotableOrderItem> promotableItemMap = buildPromotableItemMap(promotableOrder);
+        Map<OrderItem, PromotableOrderItem> promotableItemMap = offerServiceUtilities.buildPromotableItemMap(promotableOrder);
 
-        List<OrderItem> orderItemList = buildOrderItemList(order);
+        List<OrderItem> orderItemList = offerServiceUtilities.buildOrderItemList(order);
 
         for (OrderItem orderItem : orderItemList) {
             PromotableOrderItem promotableItem = promotableItemMap.get(orderItem);
@@ -362,14 +353,6 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             synchronizeItemQualifiers(orderItem, promotableItem);
 
         }
-    }
-
-    protected Map<OrderItem, PromotableOrderItem> buildPromotableItemMap(PromotableOrder promotableOrder) {
-        Map<OrderItem, PromotableOrderItem> promotableItemMap = new HashMap<OrderItem, PromotableOrderItem>();
-        for (PromotableOrderItem item : promotableOrder.getDiscountableOrderItems()) {
-            promotableItemMap.put(item.getOrderItem(), item);
-        }
-        return promotableItemMap;
     }
 
     protected void synchronizeItemPriceDetails(OrderItem orderItem, PromotableOrderItem promotableOrderItem) {
@@ -392,25 +375,24 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             if (unmatchedDetailsIterator.hasNext()) {
                 // Reuse an existing priceDetail
                 OrderItemPriceDetail existingDetail = unmatchedDetailsIterator.next();
-                updatePriceDetail(existingDetail, priceDetail);
+
+                // Reset use Sale flag to true
+                existingDetail.setUseSalePrice(true);
+
+                offerServiceUtilities.updatePriceDetail(existingDetail, priceDetail);
                 unmatchedDetailsIterator.remove();
             } else {
                 // Create a new priceDetail
                 OrderItemPriceDetail newPriceDetail = orderItemDao.createOrderItemPriceDetail();
                 newPriceDetail.setOrderItem(orderItem);
-                updatePriceDetail(newPriceDetail, priceDetail);
+                offerServiceUtilities.updatePriceDetail(newPriceDetail, priceDetail);
                 orderItem.getOrderItemPriceDetails().add(newPriceDetail);
             }
         }
 
         // Remove any unmatched details        
         Iterator<OrderItemPriceDetail> pdIterator = orderItem.getOrderItemPriceDetails().iterator();
-        while (pdIterator.hasNext()) {
-            OrderItemPriceDetail currentDetail = pdIterator.next();
-            if (unmatchedDetailsMap.containsKey(currentDetail.getId())) {
-                pdIterator.remove();
-            }
-        }
+        offerServiceUtilities.removeUnmatchedPriceDetails(unmatchedDetailsMap, pdIterator);
     }
 
     protected void synchronizeItemQualifiers(OrderItem orderItem, PromotableOrderItem promotableOrderItem) {
@@ -450,71 +432,13 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
         // Remove any unmatched qualifiers        
         Iterator<OrderItemQualifier> qIterator = orderItem.getOrderItemQualifiers().iterator();
-        while (qIterator.hasNext()) {
-            OrderItemQualifier currentQualifier = qIterator.next();
-            if (unmatchedQualifiersMap.containsKey(currentQualifier.getId())) {
-                qIterator.remove();
-            }
-        }
-    }
-
-    protected void updatePriceDetail(OrderItemPriceDetail itemDetail,
-            PromotableOrderItemPriceDetail promotableDetail) {
-        Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap = buildItemDetailAdjustmentMap(itemDetail);
-
-        if (itemDetail.getQuantity() != promotableDetail.getQuantity()) {
-            itemDetail.setQuantity(promotableDetail.getQuantity());
-        }
-
-        if (itemDetail.getUseSalePrice() != promotableDetail.useSaleAdjustments()) {
-            itemDetail.setUseSalePrice(promotableDetail.useSaleAdjustments());
-        }
-
-
-        for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableDetail.getCandidateItemAdjustments()) {
-            OrderItemPriceDetailAdjustment itemAdjustment = itemAdjustmentMap.remove(adjustment.getOfferId());
-            if (itemAdjustment != null) {
-                // Update existing adjustment
-                if (!itemAdjustment.getValue().equals(adjustment.getAdjustmentValue())) {
-                    updateItemAdjustment(itemAdjustment, adjustment);
-                }
-            } else {
-                // Add a new adjustment
-                OrderItemPriceDetailAdjustment newItemAdjustment = offerDao.createOrderItemPriceDetailAdjustment();
-                newItemAdjustment.init(itemDetail, adjustment.getOffer(), null);
-                updateItemAdjustment(newItemAdjustment, adjustment);
-                itemDetail.getOrderItemPriceDetailAdjustments().add(newItemAdjustment);
-            }
-        }
-
-        if (itemAdjustmentMap.size() > 0) {
-            // Remove adjustments that were on the order item but no longer needed.
-            List<Long> adjustmentIdsToRemove = new ArrayList<Long>();
-            for (OrderItemPriceDetailAdjustment adjustmentToRemove : itemAdjustmentMap.values()) {
-                adjustmentIdsToRemove.add(adjustmentToRemove.getOffer().getId());
-            }
-
-            Iterator<OrderItemPriceDetailAdjustment> iterator = itemDetail.getOrderItemPriceDetailAdjustments().iterator();
-            while (iterator.hasNext()) {
-                OrderItemPriceDetailAdjustment adj = iterator.next();
-                if (adjustmentIdsToRemove.contains(adj.getOffer().getId())) {
-                    iterator.remove();
-                }
-            }
-        }
-    }
-
-    protected void updateItemAdjustment(OrderItemPriceDetailAdjustment itemAdjustment,
-            PromotableOrderItemPriceDetailAdjustment promotableAdjustment) {
-        itemAdjustment.setValue(promotableAdjustment.getAdjustmentValue());
-        itemAdjustment.setSalesPriceValue(promotableAdjustment.getSaleAdjustmentValue());
-        itemAdjustment.setRetailPriceValue(promotableAdjustment.getRetailAdjustmentValue());
-        itemAdjustment.setAppliedToSalePrice(promotableAdjustment.isAppliedToSalePrice());
+        offerServiceUtilities.removeUnmatchedQualifiers(unmatchedQualifiersMap, qIterator);
     }
 
     protected void processMatchingDetails(OrderItemPriceDetail itemDetail,
             PromotableOrderItemPriceDetail promotableItemDetail) {
-        Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap = buildItemDetailAdjustmentMap(itemDetail);
+        Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap =
+                offerServiceUtilities.buildItemDetailAdjustmentMap(itemDetail);
 
         if (itemDetail.getQuantity() != promotableItemDetail.getQuantity()) {
             itemDetail.setQuantity(promotableItemDetail.getQuantity());
@@ -527,14 +451,6 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                 itemAdjustment.setAppliedToSalePrice(adjustment.isAppliedToSalePrice());
             }
         }
-    }
-
-    protected Map<Long, OrderItemPriceDetailAdjustment> buildItemDetailAdjustmentMap(OrderItemPriceDetail itemDetail) {
-        Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap = new HashMap<Long, OrderItemPriceDetailAdjustment>();
-        for (OrderItemPriceDetailAdjustment adjustment : itemDetail.getOrderItemPriceDetailAdjustments()) {
-            itemAdjustmentMap.put(adjustment.getOffer().getId(), adjustment);
-        }
-        return itemAdjustmentMap;
     }
 
     protected String buildItemPriceDetailKey(OrderItemPriceDetail itemDetail) {
@@ -629,6 +545,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     public void synchronizeAdjustmentsAndPrices(PromotableOrder promotableOrder) {
         synchronizeOrderAdjustments(promotableOrder);
         synchronizeOrderItems(promotableOrder);
+        if (extensionManager != null) {
+            extensionManager.getProxy().synchronizeAdjustmentsAndPrices(promotableOrder);
+        }
         synchronizeFulfillmentGroups(promotableOrder);
     }
 
@@ -640,5 +559,13 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     @Override
     public void setOrderItemDao(OrderItemDao orderItemDao) {
         this.orderItemDao = orderItemDao;
+    }
+
+    public OfferServiceUtilities getOfferServiceUtilities() {
+        return offerServiceUtilities;
+    }
+
+    public void setOfferServiceUtilities(OfferServiceUtilities offerServiceUtilities) {
+        this.offerServiceUtilities = offerServiceUtilities;
     }
 }

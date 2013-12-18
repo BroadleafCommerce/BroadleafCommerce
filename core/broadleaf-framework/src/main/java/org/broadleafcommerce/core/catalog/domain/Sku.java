@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -115,6 +118,14 @@ public interface Sku extends Serializable {
      * @return
      */
     public boolean hasRetailPrice();
+
+    /**
+     * Resolves the price of the Sku. If the Sku is on sale (that is, isOnSale() returns true), the
+     * return value will be the result of getSalePrice(). Otherwise, the return value will be the result of
+     * getRetailPrice().
+     * @return the price of the Sku
+     */
+    public Money getPrice();
 
     /**
      * Returns the List Price of the Sku.  The List Price is the MSRP of the sku.
@@ -368,7 +379,10 @@ public interface Sku extends Serializable {
     public void setProduct(Product product);
 
     /**
-     * A product is on sale provided the sale price is not null, non-zero, and less than the retail price
+     * A product is on sale provided the sale price is not null, non-zero, and less than the retail price.
+     * 
+     * Note that this flag should always be checked before showing or using a sale price as it is possible 
+     * for a sale price to be greater than the retail price from a purely data perspective.
      * 
      * @return whether or not the product is on sale
      */

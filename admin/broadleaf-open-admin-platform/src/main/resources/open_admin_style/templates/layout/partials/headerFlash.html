@@ -1,0 +1,6 @@
+<div class="four columns centered" th:if="${headerFlash}">
+    <div class="alert-box" th:classappend="${headerFlashAlert != null and headerFlashAlert ? 'alert' : 'success'}" th:inline="text">
+        [[#{${headerFlash}}]]
+        <a href="" class="close">&times;</a>
+    </div>
+</div>

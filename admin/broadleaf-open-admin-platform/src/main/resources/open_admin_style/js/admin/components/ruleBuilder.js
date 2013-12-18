@@ -1,3 +1,22 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 /**
  * Broadleaf Commerce Rule Builder
  * This component initializes any JSON data on the page and converts
@@ -72,7 +91,6 @@
         
         hideMainCondition : function($container) {
             var containerId = $container.attr("id");
-            var builder = this.getCondition(containerId).builder;
             $container.hide();
         },
         
@@ -127,9 +145,11 @@
                 }
 
                 var collectedData = builder.collectData();
-                if (condition.data.error != null) {
+                //only send over the error if it hasn't been explicitly turned off
+                if (condition.data.error != null && !setToOff) {
                     collectedData.error = condition.data.error;
                 }
+                
                 $("#"+hiddenId).val(JSON.stringify(collectedData));
             }
         }
@@ -149,15 +169,55 @@ $(document).ready(function() {
         var $ruleTitle = $($(this).closest('.rule-builder-checkbox').next());
         var $container = $($ruleTitle.next());
         $ruleTitle.hide();
+        
+        //Also hide the error divs if they are shown
+        $container.parent().find('.field-label.error').hide();
+        $container.parent().find('.conditional-rules-container-mvel').hide();
         BLCAdmin.conditions.hideMainCondition($container, 'add-main-rule');
     });
     
     $('body').on('change', 'input.add-main-rule, input.add-main-item-rule', function(){
         var $ruleTitle = $($(this).closest('.rule-builder-checkbox').next());
         var $container = $($ruleTitle.next());
-        var ruleType = $(this).data('ruletype');
-        $ruleTitle.show();
-        BLCAdmin.conditions.showOrCreateMainCondition($container, ruleType);
+        
+        //if we are going to attempt to re-show something, if the error fields are around then re-show those rather
+        //than the rule input
+        if ($container.parent().find('.field-label.error').length > 0) {
+            $container.parent().find('.field-label.error').show();
+            $container.parent().find('.conditional-rules-container-mvel').show();
+        } else {
+            var ruleType = $(this).data('ruletype');
+            $ruleTitle.show();
+            BLCAdmin.conditions.showOrCreateMainCondition($container, ruleType);
+        }
+    });
+    
+    /**
+     * Invoked when a rule was in an error state and the 'Reset Rule' button was hit
+     */
+    $('body').on('click', 'a.rule-reset', function(){
+        var $errorLabelContainer = $(this).parent();
+        var $invalidMvelContainer = $($(this).parent().next());
+        var $builderContainer = $($errorLabelContainer.prev());
+        var $validLabelContainer = $($builderContainer.prev());
+        
+        //Remove the error containers
+        $errorLabelContainer.remove();
+        $invalidMvelContainer.remove();
+        //Show the 'real' containers
+        $validLabelContainer.show();
+        $builderContainer.show();
+        
+        //clear out the original faulty input
+        var $fieldContainer = $($builderContainer.parent());
+        var $ruleData = $fieldContainer.find('.rule-builder-data')
+        var hiddenInput = $fieldContainer.find('input#' + $ruleData.data('hiddenid'));
+        hiddenInput.val('');
+        //reset the error as now there isn't one
+        BLCAdmin.conditions.getCondition($ruleData.data('containerid')).data.error = '';
+        
+        BLCAdmin.conditions.addAdditionalMainCondition($builderContainer);
+        return false;
     });
     
 });

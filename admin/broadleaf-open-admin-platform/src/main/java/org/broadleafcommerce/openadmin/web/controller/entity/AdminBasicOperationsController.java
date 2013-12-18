@@ -1,26 +1,36 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.controller.entity;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -31,10 +41,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * The operations in this controller are actions that do not necessarily depend on a section key being present.
@@ -63,12 +69,13 @@ public class AdminBasicOperationsController extends AdminAbstractController {
             @PathVariable(value = "owningClass") String owningClass,
             @PathVariable(value="collectionField") String collectionField,
             @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams);
+        List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, null, null);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams, sectionCrumbs);
         ClassMetadata mainMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
-        ppr = PersistencePackageRequest.fromMetadata(md);
+        ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
         
         ppr.addFilterAndSortCriteria(getCriteria(requestParams));
         ppr.setStartIndex(getStartIndex(requestParams));
@@ -76,7 +83,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         
         if (md instanceof BasicFieldMetadata) {
             DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
-            ListGrid listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, owningClass);
+            ListGrid listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, owningClass, sectionCrumbs);
 
             model.addAttribute("listGrid", listGrid);
             model.addAttribute("viewType", "modal/simpleSelectEntity");

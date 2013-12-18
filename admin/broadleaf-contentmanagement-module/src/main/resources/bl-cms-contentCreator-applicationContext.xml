@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce CMS Module
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -20,14 +40,10 @@
     <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
-                <bean class="org.broadleafcommerce.cms.admin.server.handler.PageTemplateCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentTypeCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.cms.admin.server.handler.SandBoxItemCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.cms.admin.server.handler.PendingSandBoxItemCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.cms.admin.server.handler.TimeDTOCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.cms.admin.server.handler.RequestDTOCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.cms.admin.server.handler.StructuredContentItemCriteriaCustomPersistenceHandler"/>
-                <bean class="org.broadleafcommerce.cms.admin.server.handler.PageItemCriteriaCustomPersistenceHandler"/>
+                <ref bean="blPageTemplateCustomPersistenceHandler" />
+                <ref bean="blStructuredContentTypeCustomPersistenceHandler"/>
+                <ref bean="blTimeDTOCustomPersistenceHandler"/>
+                <ref bean="blRequestDTOCustomPersistenceHandler"/>
             </list>
         </property>
     </bean>

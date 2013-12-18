@@ -1,17 +1,21 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
@@ -23,6 +27,8 @@ import javassist.CtMethod;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.AnnotationMemberValue;
 import javassist.bytecode.annotation.ArrayMemberValue;
@@ -34,13 +40,17 @@ import java.io.ByteArrayInputStream;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityListeners;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
@@ -86,14 +96,16 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
             ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
         //Be careful with Apache library usage in this class (e.g. ArrayUtils). Usage will likely cause a ClassCircularityError
         //under JRebel. Favor not including outside libraries and unnecessary classes.
+        CtClass clazz = null;
         try {
             boolean mySkipOverlaps = skipOverlaps;
             boolean myRenameMethodOverlaps = renameMethodOverlaps;
             String convertedClassName = className.replace('/', '.');
             ClassPool classPool = null;
-            CtClass clazz = null;
             String xformKey = convertedClassName;
             String[] xformVals = null;
+            Boolean[] xformSkipOverlaps = null;
+            Boolean[] xformRenameMethodOverlaps = null;
             if (!xformTemplates.isEmpty()) {
                 if (xformTemplates.containsKey(xformKey)) {
                     xformVals = xformTemplates.get(xformKey).split(",");
@@ -120,6 +132,8 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                     List<?> attributes = clazz.getClassFile().getAttributes();
                     Iterator<?> itr = attributes.iterator();
                     List<String> templates = new ArrayList<String>();
+                    List<Boolean> skips = new ArrayList<Boolean>();
+                    List<Boolean> renames = new ArrayList<Boolean>();
                     check: {
                         while(itr.hasNext()) {
                             Object object = itr.next();
@@ -142,14 +156,20 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                                             }
                                             BooleanMemberValue skipAnnot = (BooleanMemberValue) memberAnnot.getMemberValue("skipOverlaps");
                                             if (skipAnnot != null) {
-                                                mySkipOverlaps = skipAnnot.getValue();
+                                                skips.add(skipAnnot.getValue());
+                                            } else {
+                                                skips.add(mySkipOverlaps);
                                             }
                                             BooleanMemberValue renameAnnot = (BooleanMemberValue) memberAnnot.getMemberValue("renameMethodOverlaps");
                                             if (renameAnnot != null) {
-                                                myRenameMethodOverlaps = renameAnnot.getValue();
+                                                renames.add(renameAnnot.getValue());
+                                            } else {
+                                                renames.add(myRenameMethodOverlaps);
                                             }
-                                            xformVals = templates.toArray(new String[templates.size()]);
                                         }
+                                        xformVals = templates.toArray(new String[templates.size()]);
+                                        xformSkipOverlaps = skips.toArray(new Boolean[skips.size()]);
+                                        xformRenameMethodOverlaps = renames.toArray(new Boolean[renames.size()]);
                                         break check;
                                     }
                                 }
@@ -164,6 +184,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                 // Load the destination class and defrost it so it is eligible for modifications
                 clazz.defrost();
 
+                int index = 0;
                 for (String xformVal : xformVals) {
                     // Load the source class
                     String trimmed = xformVal.trim();
@@ -177,7 +198,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                             CtClass[] myInterfaces = clazz.getInterfaces();
                             for (CtClass myInterface : myInterfaces) {
                                 if (myInterface.getName().equals(i.getName())) {
-                                    if (mySkipOverlaps) {
+                                    if (xformSkipOverlaps[index]) {
                                         break checkInterfaces;
                                     } else {
                                         throw new RuntimeException("Duplicate interface detected " + myInterface.getName());
@@ -189,6 +210,12 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                         }
                     }
 
+                    //copy over any EntityListeners
+                    ClassFile classFile = clazz.getClassFile();
+                    ClassFile templateFile = template.getClassFile();
+                    ConstPool constantPool = classFile.getConstPool();
+                    buildClassLevelAnnotations(classFile, templateFile, constantPool);
+
                     // Copy over all declared fields from the template class
                     // Note that we do not copy over fields with the @NonCopiedField annotation
                     CtField[] fieldsToCopy = template.getDeclaredFields();
@@ -198,7 +225,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                         } else {
                             try {
                                 clazz.getDeclaredField(field.getName());
-                                if (mySkipOverlaps) {
+                                if (xformSkipOverlaps[index]) {
                                     logger.debug(String.format("Skipping overlapped field [%s]", field.getName()));
                                     continue;
                                 }
@@ -247,7 +274,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                                 CtClass[] paramTypes = method.getParameterTypes();
                                 CtMethod originalMethod = clazz.getDeclaredMethod(method.getName(), paramTypes);
 
-                                if (mySkipOverlaps) {
+                                if (xformSkipOverlaps[index]) {
                                     logger.debug(String.format("Skipping overlapped method [%s]", methodDescription(originalMethod)));
                                     continue;
                                 }
@@ -260,7 +287,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                                 }
 
                                 logger.debug(String.format("Removing method [%s]", method.getName()));
-                                if (myRenameMethodOverlaps) {
+                                if (xformRenameMethodOverlaps[index]) {
                                     originalMethod.setName(renameMethodPrefix + method.getName());
                                 } else {
                                     clazz.removeMethod(originalMethod);
@@ -274,6 +301,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                             clazz.addMethod(copiedMethod);
                         }
                     }
+                    index++;
                 }
 
                 if (xformTemplates.isEmpty()) {
@@ -288,9 +316,82 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
             throw error;
         } catch (Exception e) {
             throw new RuntimeException("Unable to transform class", e);
+        } finally {
+            if (clazz != null) {
+                clazz.detach();
+            }
         }
 
         return null;
+    }
+
+    protected void buildClassLevelAnnotations(ClassFile classFile, ClassFile templateClassFile, ConstPool constantPool) throws NotFoundException {
+        List<?> templateAttributes = templateClassFile.getAttributes();
+        Iterator<?> templateItr = templateAttributes.iterator();
+        Annotation templateEntityListeners = null;
+        while(templateItr.hasNext()) {
+            Object object = templateItr.next();
+            if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
+                AnnotationsAttribute attr = (AnnotationsAttribute) object;
+                Annotation[] items = attr.getAnnotations();
+                for (Annotation annotation : items) {
+                    String typeName = annotation.getTypeName();
+                    if (typeName.equals(EntityListeners.class.getName())) {
+                        templateEntityListeners = annotation;
+                    }
+                }
+            }
+        }
+
+        if (templateEntityListeners != null) {
+            AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
+            List<?> attributes = classFile.getAttributes();
+            Iterator<?> itr = attributes.iterator();
+            Annotation existingEntityListeners = null;
+            while(itr.hasNext()) {
+                Object object = itr.next();
+                if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
+                    AnnotationsAttribute attr = (AnnotationsAttribute) object;
+                    Annotation[] items = attr.getAnnotations();
+                    for (Annotation annotation : items) {
+                        String typeName = annotation.getTypeName();
+                        if (typeName.equals(EntityListeners.class.getName())) {
+                            logger.debug("Stripping out previous EntityListeners annotation at the class level - will merge into new EntityListeners");
+                            existingEntityListeners = annotation;
+                            continue;
+                        }
+                        annotationsAttribute.addAnnotation(annotation);
+                    }
+                    itr.remove();
+                }
+            }
+
+            Annotation entityListeners = getEntityListeners(constantPool, existingEntityListeners, templateEntityListeners);
+            annotationsAttribute.addAnnotation(entityListeners);
+
+            classFile.addAttribute(annotationsAttribute);
+        }
+    }
+
+    protected Annotation getEntityListeners(ConstPool constantPool, Annotation existingEntityListeners, Annotation templateEntityListeners) {
+        Annotation listeners = new Annotation(EntityListeners.class.getName(), constantPool);
+        ArrayMemberValue listenerArray = new ArrayMemberValue(constantPool);
+        Set<MemberValue> listenerMemberValues = new HashSet<MemberValue>();
+        {
+            ArrayMemberValue templateListenerValues = (ArrayMemberValue) templateEntityListeners.getMemberValue("value");
+            listenerMemberValues.addAll(Arrays.asList(templateListenerValues.getValue()));
+            logger.debug("Adding template values to new EntityListeners");
+        }
+        if (existingEntityListeners != null) {
+            ArrayMemberValue oldListenerValues = (ArrayMemberValue) existingEntityListeners.getMemberValue("value");
+            listenerMemberValues.addAll(Arrays.asList(oldListenerValues.getValue()));
+            logger.debug("Adding previous values to new EntityListeners");
+        }
+        listenerArray.setValue(listenerMemberValues.toArray(new MemberValue[listenerMemberValues.size()]));
+        listeners.addMemberValue("value", listenerArray);
+
+        return listeners;
+
     }
 
     /**
