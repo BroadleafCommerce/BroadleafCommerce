@@ -151,15 +151,6 @@ public class PhraseTranslator {
             value = value.substring(entityKey.length() + 1, value.length());
         }
         field = field.substring(entityKeyIndex + 1, field.length());
-        //check to see if there's a method call on this field
-        int methodPos = field.lastIndexOf(".");
-        int parenthesisPos = -1;
-        if (methodPos >= 0) {
-            parenthesisPos = field.indexOf("()", methodPos);
-        }
-        if (methodPos >= 0 && parenthesisPos >= 0) {
-            field = field.substring(0, methodPos);
-        }
         Expression expression = new Expression();
         expression.setField(field);
         BLCOperator operatorId = getOperator(field, operator, value, isNegation, isFieldComparison, isIgnoreCase);
