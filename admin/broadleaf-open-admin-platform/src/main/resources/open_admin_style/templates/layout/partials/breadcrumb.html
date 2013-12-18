@@ -1,5 +1,5 @@
 <div class="breadcrumb-container">
-    <ul class="breadcrumbs">
+    <ul class="breadcrumbs" th:if="${currentAdminModule}">
         <li>
             <span th:text="#{${currentAdminModule.moduleKey}}" />
         </li>
@@ -12,6 +12,13 @@
             <span th:text="${entityForm.mainEntityName}" />
         </li>
     </ul>
+
+    <ul class="breadcrumbs" th:unless="${currentAdminModule}">
+        <li>
+            <span th:text="#{breadcrumb.unavailable}" />
+        </li>
+    </ul>
+
     <div th:if="${entityForm}" class="entity-form-actions">
         <button th:each="action : ${entityForm.actions}" 
             class="small button radius dark" 

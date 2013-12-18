@@ -239,6 +239,7 @@ div.field-label.inline {
     background: linear-gradient(to bottom,  #f1f1f1 0%,#e2e2e2 100%);
     padding: 5px 10px;
 	border-bottom: 2px solid #8EAA2B;
+	height: 49px;
 }
 
 .sticky-fixed {
