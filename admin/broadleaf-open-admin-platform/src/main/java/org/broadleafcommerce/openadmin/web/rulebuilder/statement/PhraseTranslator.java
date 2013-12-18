@@ -151,6 +151,14 @@ public class PhraseTranslator {
             value = value.substring(entityKey.length() + 1, value.length());
         }
         field = field.substring(entityKeyIndex + 1, field.length());
+        // If this is a Money field, then DataDTOToMVELTranslator.formatValue() will append .getAmount() onto the end
+        // of the field name. We need to remove that as it should not be considered part of the field name, but we still
+        // want to support other method invocations in MVEL expressions (like for getProductAttributes())
+        String moneyAmountMethod = ".getAmount()";
+        int amountMethodPos = field.lastIndexOf(moneyAmountMethod);
+        if (amountMethodPos >= 0) {
+            field = field.substring(0, amountMethodPos);
+        }
         Expression expression = new Expression();
         expression.setField(field);
         BLCOperator operatorId = getOperator(field, operator, value, isNegation, isFieldComparison, isIgnoreCase);
