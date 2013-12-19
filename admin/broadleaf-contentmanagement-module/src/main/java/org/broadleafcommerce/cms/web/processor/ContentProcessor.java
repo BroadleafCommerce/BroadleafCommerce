@@ -347,7 +347,9 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         String categoryString = element.getAttributeValue("category");
 
         if (categoryString != null) {
-            Object category = StandardExpressionProcessor.processExpression(arguments, categoryString);
+            final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(arguments.getConfiguration());
+            Expression expression = (Expression) expressionParser.parseExpression(arguments.getConfiguration(), arguments, productString);
+            Object category = expression.execute(arguments.getConfiguration(), arguments);
             if (category != null) {
                 mvelParameters.put("category", category);
             }
