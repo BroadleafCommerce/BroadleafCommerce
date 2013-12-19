@@ -37,6 +37,7 @@ public class ModuleConfigurationType implements BroadleafEnumerationType, Serial
     public static final ModuleConfigurationType ADDRESS_VERIFICATION = new ModuleConfigurationType("ADDRESS_VERIFICATION", "Address Verification Module");
     public static final ModuleConfigurationType PAYMENT_PROCESSOR = new ModuleConfigurationType("PAYMENT_PROCESSOR", "Payment Processor Module");
     public static final ModuleConfigurationType CDN_PROVIDER = new ModuleConfigurationType("CDN_PROVIDER", "Content Delivery Network Module");
+    public static final ModuleConfigurationType SITE_MAP = new ModuleConfigurationType("SITE_MAP", "Site Map Generator");
 
     public static ModuleConfigurationType getInstance(final String type) {
         return TYPES.get(type);

@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.cms.web.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.cms.web.PageHandlerMapping;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
@@ -44,17 +45,26 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
     @Qualifier("blPageDeepLinkService")
     protected DeepLinkService<PageDTO> deepLinkService;
 
+
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView model = new ModelAndView();
         PageDTO page = (PageDTO) request.getAttribute(PageHandlerMapping.PAGE_ATTRIBUTE_NAME);
         assert page != null;
 
-        model.addObject(MODEL_ATTRIBUTE_NAME, page);        
-        model.setViewName(page.getTemplatePath());
-        
-        addDeepLink(model, deepLinkService, page);
+        model.addObject(MODEL_ATTRIBUTE_NAME, page);
 
+        String plainTextStr = page.getPageFields().get("plainText");
+
+        if (!StringUtils.isEmpty(plainTextStr)) {
+            if (Boolean.valueOf(plainTextStr)) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/plain");
+            }
+        }
+
+        model.setViewName(page.getTemplatePath());
+        addDeepLink(model, deepLinkService, page);
         return model;
     }
 }

@@ -123,4 +123,19 @@ public interface Page extends Serializable {
      */
     public void setQualifyingItemCriteria(@Nullable Set<PageItemCriteria> qualifyingItemCriteria);
 
+    /**
+     * Returns the excludeFromSiteMap flag.  True indicates that the page should be excluded from the site map.
+     *
+     * @return true if this page is excluded from the site map
+     */
+    @Nullable
+    public boolean getExcludeFromSiteMap();
+
+    /**
+     * Sets the excludeFromSiteMap flag.
+     * 
+     * @param excludeFromSiteMap
+     */
+    public void setExcludeFromSiteMap(boolean excludeFromSiteMap);
+
 }

@@ -20,7 +20,6 @@
 package org.broadleafcommerce.common.file.service;
 
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
-import org.broadleafcommerce.common.file.service.type.FileApplicationType;
 
 import java.io.File;
 import java.io.InputStream;
@@ -52,14 +51,25 @@ public interface BroadleafFileService {
 
     /**
      * Returns a File representing the passed in name.  This method will always access the file via the FileProvider
-     * which might be a remote operation as opposed to the {@link #getResource(String, FileApplicationType)} method
-     * which may access a copy of the file that is stored locally.
+     * which might be a remote operation.
      * 
      * @param name - fully qualified path to the resource
-     * @param applicationType - The type of file being accessed
      * @return
      */
     File getResource(String name);
+
+    /**
+     * Returns a File representing the resource.    This method first checks the local temporary directory for the file.   
+     * If it exists and has been modified within the timeout parameter, it will be returned.   Otherwise, this method
+     * will make a call to {@link #getResource(String)}.
+     * 
+     * If the timeout parameter is null then if the resource exists locally, it will be returned.
+     * 
+     * @param name - fully qualified path to the resource
+     * @param timeout - timeframe that the temporary file is considered valid
+     * @return
+     */
+    File getResource(String name, Long timeout);
 
     /**
      * Checks for a resource in the temporary directory of the file-system.    Will check for a site-specific file.
@@ -77,16 +87,6 @@ public interface BroadleafFileService {
      * @return
      */
     File getSharedLocalResource(String fullUrl);
-
-    /**
-     * Returns a File representing the passed in name and application type.   The application
-     * type provides an opportunity for the provider to cache the file locally for infrequently change files.  
-     * 
-     * @param name - fully qualified path to the resource
-     * @param applicationType - The type of file being accessed
-     * @return
-     */
-    File getResource(String name, FileApplicationType applicationType);
 
     /**
      * Returns true if the resource is available on the classpath.
@@ -152,5 +152,4 @@ public interface BroadleafFileService {
      * @param removeFilesFromWorkArea
      */
     void addOrUpdateResources(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea);
-
 }

@@ -167,4 +167,16 @@
         <property name="targetRef" value="blDialectProcessors" />
     </bean>
 
+    <bean id="blCMSSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blPageSiteMapGenerator" />
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCMSSiteMapGenerators" />
+        <property name="targetRef" value="blSiteMapGenerators" />
+    </bean>
+
 </beans>
