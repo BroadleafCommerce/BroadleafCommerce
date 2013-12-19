@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.file.FileServiceException;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.type.FileApplicationType;
+import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -78,7 +79,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     protected String tempFileSystemBaseDirectory;    
     
     @Value("${asset.server.max.generated.file.system.directories}")
-    protected int maxGeneratedDirectoryDepth = 0;
+    protected int maxGeneratedDirectoryDepth = 2;
     
     @Value("${asset.server.file.classpath.directory}")
     protected String fileServiceClasspathDirectory;
@@ -137,7 +138,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
 
     protected File getLocalResource(String resourceName, boolean skipSite) {
         StringBuilder baseDirectory = getBaseDirectory(skipSite);
-        String filePath = buildFilePath(baseDirectory.toString(), resourceName);
+        String filePath = BroadleafFileUtils.buildFilePath(baseDirectory.toString(), resourceName);
         return new File(filePath);
     }
 
@@ -151,24 +152,22 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
         return getLocalResource(resourceName, false);
     }
 
-
     @Override
-    public File getResource(String name, FileApplicationType applicationType) {
-        return selectFileServiceProvider().getResource(name);
-    }
-
-    /**
-     * Builds a file path that ensures the directory and filename are separated by a single separator.
-     * @param directory
-     * @param fileName
-     * @return
-     */
-    protected String buildFilePath(String directory, String fileName) {
-        if (directory.endsWith("/")) {
-            return directory + removeLeadingSlash(fileName);
-        } else {
-            return directory + addLeadingSlash(fileName);
+    public File getResource(String name, Long localTimeout) {
+        File returnFile = getLocalResource(name);
+        if (returnFile != null && returnFile.exists()) {
+            if (localTimeout != null) {
+                long lastModified = returnFile.lastModified();
+                long now = System.currentTimeMillis();
+                if ((now - lastModified) <= localTimeout.longValue()) {
+                    return returnFile;
+                }
+            } else {
+                return returnFile;
+            }
         }
+
+        return getResource(name);
     }
 
     @Override
@@ -180,7 +179,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     protected ClassPathResource lookupResourceOnClassPath(String name) {
         if (fileServiceClasspathDirectory != null && !"".equals(fileServiceClasspathDirectory)) {
             try {
-                String resourceName = buildFilePath(fileServiceClasspathDirectory, name);
+                String resourceName = BroadleafFileUtils.buildFilePath(fileServiceClasspathDirectory, name);
                 ClassPathResource resource = new ClassPathResource(resourceName);
                 if (resource.exists()) {
                     return resource;
@@ -285,20 +284,6 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
                 throw new FileServiceException("Add or Update Resource called with filename that does not exist.  " + fileName);
             }
         }
-    }
-
-    protected String removeLeadingSlash(String fileName) {
-        if (fileName.startsWith("/")) {
-            return fileName.substring(1);
-        }
-        return fileName;
-    }
-
-    protected String addLeadingSlash(String fileName) {
-        if (fileName.startsWith("/")) {
-            return fileName;
-        }
-        return "/" + fileName;
     }
 
     /**

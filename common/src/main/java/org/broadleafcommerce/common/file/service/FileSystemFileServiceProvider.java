@@ -90,6 +90,9 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
             
             try {
                 if (removeResourcesFromWorkArea) {
+                    if (destFile.exists()) {
+                        FileUtils.deleteQuietly(destFile);
+                    }
                     FileUtils.moveFile(srcFile, destFile);
                 } else {
                     FileUtils.copyFile(srcFile, destFile);
