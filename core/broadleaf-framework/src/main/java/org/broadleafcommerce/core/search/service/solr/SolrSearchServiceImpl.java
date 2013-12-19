@@ -239,7 +239,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     public ProductSearchResult findExplicitProductsByCategory(Category category, ProductSearchCriteria searchCriteria)
             throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
-        String query = shs.getExplicitCategoryFieldName() + ":" + category.getId();
+        String query = shs.getExplicitCategoryFieldName() + ":" + shs.getCategoryId(category.getId());
         return findProducts("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
@@ -247,7 +247,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria)
             throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
-        String query = shs.getCategoryFieldName() + ":" + category.getId();
+        String query = shs.getCategoryFieldName() + ":" + shs.getCategoryId(category.getId());
         return findProducts("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
@@ -264,7 +264,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             ProductSearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getSearchFacets();
 
-        String catFq = shs.getCategoryFieldName() + ":" + category.getId();
+        String catFq = shs.getCategoryFieldName() + ":" + shs.getCategoryId(category.getId());
         query = "(" + sanitizeQuery(query) + ")";
         
         return findProducts(query, facets, searchCriteria, null, catFq);

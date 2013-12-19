@@ -298,7 +298,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         // The explicit categories are the ones defined by the product itself
         for (CategoryProductXref categoryXref : product.getAllParentCategoryXrefs()) {
-            document.addField(shs.getExplicitCategoryFieldName(), categoryXref.getCategory().getId());
+            document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryXref.getCategory().getId()));
 
             String categorySortFieldName = shs.getCategorySortFieldName(categoryXref.getCategory());
             int index = -1;
@@ -322,7 +322,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             fullCategoryHierarchy.addAll(categoryXref.getCategory().buildFullCategoryHierarchy(null));
         }
         for (Category category : fullCategoryHierarchy) {
-            document.addField(shs.getCategoryFieldName(), category.getId());
+            document.addField(shs.getCategoryFieldName(), shs.getCategoryId(category.getId()));
         }
     }
 

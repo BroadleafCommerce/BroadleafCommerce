@@ -99,4 +99,15 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType attachAdditionalBasicFields(Product product, SolrInputDocument document,
             SolrHelperService shs);
+
+    /**
+     * In certain scenarios, the requested category id might not be the one that should be used in Solr.
+     * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
+     * in the returnContainer should be used.
+     * 
+     * @param tentativeId
+     * @param returnContainer
+     * @return the extension result status type
+     */
+    public ExtensionResultStatusType getCategoryId(Long tentativeId, Long[] returnContainer);
 }
