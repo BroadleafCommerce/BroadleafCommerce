@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.payment.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
+import org.broadleafcommerce.common.payment.dto.AddressDTO;
 import org.broadleafcommerce.common.payment.dto.GatewayCustomerDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
@@ -44,6 +45,7 @@ import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.broadleafcommerce.profile.core.service.StateService;
+import org.mortbay.log.Log;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -102,13 +104,13 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         Customer customer = order.getCustomer();
         if (customer.isAnonymous()) {
             GatewayCustomerDTO<PaymentResponseDTO> gatewayCustomer = responseDTO.getCustomer();
-            if (StringUtils.isEmpty(customer.getFirstName())) {
+            if (StringUtils.isEmpty(customer.getFirstName()) && gatewayCustomer != null) {
                 customer.setFirstName(gatewayCustomer.getFirstName());
             }
-            if (StringUtils.isEmpty(customer.getLastName())) {
+            if (StringUtils.isEmpty(customer.getLastName()) && gatewayCustomer != null) {
                 customer.setLastName(gatewayCustomer.getLastName());
             }
-            if (StringUtils.isEmpty(customer.getEmailAddress())) {
+            if (StringUtils.isEmpty(customer.getEmailAddress()) && gatewayCustomer != null) {
                 customer.setEmailAddress(gatewayCustomer.getEmail());
             }
         }
@@ -130,20 +132,33 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         payment.setType(responseDTO.getPaymentType());
         payment.setAmount(responseDTO.getAmount());
         
-        Address billingAddress = addressService.create();
-        billingAddress.setAddressLine1(responseDTO.getBillTo().getAddressLine1());
-        billingAddress.setAddressLine2(responseDTO.getBillTo().getAddressLine2());
-        billingAddress.setCity(responseDTO.getBillTo().getAddressCityLocality());
-        
-        //TODO: what happens if State and Country cannot be found?
-        State state = stateService.findStateByAbbreviation(responseDTO.getBillTo().getAddressStateRegion());
-        billingAddress.setState(state);
-        Country country = countryService.findCountryByAbbreviation(responseDTO.getBillTo().getAddressCountryCode());
-        billingAddress.setCountry(country);
-        
-        Phone billingPhone = phoneService.create();
-        billingPhone.setPhoneNumber(responseDTO.getBillTo().getAddressPhone());
-        billingAddress.setPhonePrimary(billingPhone);
+        Address billingAddress = null;
+        if (responseDTO.getBillTo() != null) {
+            billingAddress = addressService.create();
+            AddressDTO<PaymentResponseDTO> billToDTO = responseDTO.getBillTo();
+            billingAddress.setAddressLine1(billToDTO.getAddressLine1());
+            billingAddress.setAddressLine2(billToDTO.getAddressLine2());
+            billingAddress.setCity(billToDTO.getAddressCityLocality());
+            
+            //TODO: what happens if State and Country cannot be found?
+            State state = stateService.findStateByAbbreviation(billToDTO.getAddressStateRegion());
+            if (state == null) {
+                Log.warn("The given state from the response: " + billToDTO.getAddressStateRegion() + " could not be found"
+                        + " as a state abbreviation in BLC_STATE");
+            }
+            billingAddress.setState(state);
+            
+            Country country = countryService.findCountryByAbbreviation(billToDTO.getAddressCountryCode());
+            if (country == null) {
+                Log.warn("The given country from the response: " + billToDTO.getAddressCountryCode() + " could not be found"
+                        + " as a country abbreviation in BLC_COUNTRY");
+            }
+            billingAddress.setCountry(country);
+            
+            Phone billingPhone = phoneService.create();
+            billingPhone.setPhoneNumber(billToDTO.getAddressPhone());
+            billingAddress.setPhonePrimary(billingPhone);
+        }
         
         // Create the transaction for the payment
         PaymentTransaction transaction = orderPaymentService.createTransaction();
@@ -167,8 +182,11 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         
         //TODO: validate that this particular type of transaction can be added to the payment (there might already
         // be an AUTHORIZE transaction, for instance)
-        payment.addTransaction(transaction);
+        //Persist the order payment as well as its transaction
+        payment.setOrder(order);
         payment = orderPaymentService.save(payment);
+        transaction.setOrderPayment(payment);
+        payment.addTransaction(transaction);
         orderService.addPaymentToOrder(order, payment, null);
         
         return payment.getId();
