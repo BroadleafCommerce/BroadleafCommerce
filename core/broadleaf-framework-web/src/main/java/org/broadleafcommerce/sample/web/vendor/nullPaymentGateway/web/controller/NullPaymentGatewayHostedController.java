@@ -90,7 +90,7 @@ public class NullPaymentGatewayHostedController extends PaymentGatewayAbstractCo
     }
 
     @Override
-    @RequestMapping(value = "/hosted/return", method = RequestMethod.POST)
+    @RequestMapping(value = "/hosted/return", method = RequestMethod.GET)
     public String returnEndpoint(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes,
                                  Map<String, String> pathVars) throws PaymentException {
         return super.process(model, request, redirectAttributes);

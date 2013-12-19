@@ -86,7 +86,7 @@ public class NullPaymentGatewayHostedProcessorController {
                 "they will be redirected back to either a confirmation page or a review page to complete checkout.</p>");
         response.append("<form action=\"" +
                 paymentGatewayConfigurationService.getHostedRedirectReturnUrl() +
-                "\" method=\"POST\" id=\"NullPaymentGatewayRedirectForm\" name=\"NullPaymentGatewayRedirectForm\">");
+                "\" method=\"GET\" id=\"NullPaymentGatewayRedirectForm\" name=\"NullPaymentGatewayRedirectForm\">");
         response.append("<input type=\"hidden\" name=\"" + NullPaymentGatewayConstants.TRANSACTION_AMT
                 +"\" value=\"" + transactionAmount + "\"/>");
         response.append("<input type=\"hidden\" name=\"" + NullPaymentGatewayConstants.ORDER_ID
