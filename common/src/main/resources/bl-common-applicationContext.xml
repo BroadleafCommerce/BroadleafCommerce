@@ -233,6 +233,14 @@
     <bean id="blVariableExpressionEvaluator" class="org.broadleafcommerce.common.web.expression.BroadleafVariableExpressionEvaluator" />
     <bean id="blDataDrivenEnumerationProcessor" class="org.broadleafcommerce.common.web.processor.DataDrivenEnumerationProcessor" />
     <bean id="blResourceBundleProcessor" class="org.broadleafcommerce.common.web.processor.ResourceBundleProcessor" />
+    
+    <bean id="blSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blCustomSiteMapGenerator" />
+            </list>
+        </property>
+    </bean>
 
     <bean id="blStatisticsService" class="org.broadleafcommerce.common.cache.StatisticsServiceImpl">
         <property name="appName">

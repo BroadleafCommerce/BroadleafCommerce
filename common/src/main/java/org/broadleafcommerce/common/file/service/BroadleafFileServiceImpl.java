@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.file.FileServiceException;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.type.FileApplicationType;
+import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -41,7 +42,6 @@ import java.util.List;
 import java.util.Random;
 
 import javax.annotation.Resource;
-
 /**
  * Many components in the Broadleaf Framework can benefit from creating and manipulating temporary files as well
  * as storing and accessing files in a remote repository (such as AmazonS3).
@@ -50,7 +50,7 @@ import javax.annotation.Resource;
  * 
  * This service can be used by any component that needs to write files to an area shared by multiple application servers.
  * 
- * For example usage, see SiteMapGenerator.  The Broadleaf CMS module also uses this component to load, store, and 
+ * For example usage, see {@link SiteMapGenerator}.  The Broadleaf CMS module also uses this component to load, store, and 
  * manipulate images for the file-system.   
  * 
  * Generally, the process to create a new asset in the shared file system is ...

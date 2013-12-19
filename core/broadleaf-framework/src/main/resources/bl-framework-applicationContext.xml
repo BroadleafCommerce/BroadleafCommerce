@@ -119,5 +119,19 @@
                 <bean class="org.broadleafcommerce.common.locale.util.LocaleConverter" />
             </set>
         </property>
-    </bean>                    
+    </bean>
+    
+    <bean id="blFrameworkSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blCategorySiteMapGenerator" />
+                <ref bean="blProductSiteMapGenerator" />
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blFrameworkSiteMapGenerators" />
+        <property name="targetRef" value="blSiteMapGenerators" />
+    </bean>
+                        
 </beans>

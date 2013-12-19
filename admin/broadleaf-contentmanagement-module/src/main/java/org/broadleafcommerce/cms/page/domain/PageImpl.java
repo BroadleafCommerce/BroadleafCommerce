@@ -207,6 +207,11 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     @ClonePolicyCollection
     protected Set<PageItemCriteria> qualifyingItemCriteria = new HashSet<PageItemCriteria>();
 
+    @Column(name = "EXCLUDE_FROM_SITE_MAP")
+    @AdminPresentation(friendlyName = "PageImpl_Exclude_From_Site_Map", order = 6,
+            group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+    protected Boolean excludeFromSiteMap;
+
     @Embedded
     @AdminPresentation(excluded = true)
     protected AdminAuditable auditable = new AdminAuditable();
@@ -318,6 +323,19 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
         this.qualifyingItemCriteria = qualifyingItemCriteria;
     }
     
+    @Override
+    public boolean getExcludeFromSiteMap() {
+        if (this.excludeFromSiteMap == null) {
+            return false;
+        }
+        return excludeFromSiteMap;
+    }
+
+    @Override
+    public void setExcludeFromSiteMap(boolean excludeFromSiteMap) {
+        this.excludeFromSiteMap = excludeFromSiteMap;
+    }
+
     public static class Presentation {
         public static class Tab {
             public static class Name {
