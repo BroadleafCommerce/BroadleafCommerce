@@ -42,17 +42,6 @@ import java.util.Map;
 @Service("blOrderToPaymentRequestDTOService")
 public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentRequestDTOService {
 
-    /**
-     * This translates an Order of PaymentType.CREDIT_CARD into a PaymentRequestDTO.
-     * This method assumes that this translation will apply to a final payment.
-     * That is, the transaction amount that is set, will be order.getTotalAfterAppliedPayments();
-     * It assumes that all other payments (e.g. gift cards/account credit) have already
-     * been applied to the order if necessary.
-     *
-     * @param order
-     * @param paymentType
-     * @return
-     */
     @Override
     public PaymentRequestDTO translateOrder(Order order) {
         PaymentRequestDTO requestDTO = new PaymentRequestDTO()
@@ -71,8 +60,10 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     @Override
     public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction) {
         PaymentRequestDTO requestDTO = new PaymentRequestDTO()
-                .transactionTotal(transactionAmount.toString());
-
+            .transactionTotal(transactionAmount.getAmount().toPlainString())
+            .orderCurrencyCode(paymentTransaction.getOrderPayment().getCurrency().getCurrencyCode())
+            .orderId(paymentTransaction.getOrderPayment().getOrder().getId().toString());
+        
         //Copy Additional Fields from PaymentTransaction into the Request DTO.
         //This will contain any gateway specific information needed to perform actions on this transaction
         Map<String, Serializable> additionalFields = paymentTransaction.getAdditionalFields();
@@ -84,7 +75,8 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     }
 
     protected void populateTotals(Order order, PaymentRequestDTO requestDTO) {
-        requestDTO.transactionTotal(order.getTotalAfterAppliedPayments().toString());
+        requestDTO.transactionTotal(order.getTotalAfterAppliedPayments().toString())
+            .orderCurrencyCode(order.getCurrency().getCurrencyCode());
     }
 
     protected void populateCustomerInfo(Order order, PaymentRequestDTO requestDTO) {
@@ -110,6 +102,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     protected void populateShipTo(Order order, PaymentRequestDTO requestDTO) {
         List<FulfillmentGroup> fgs = order.getFulfillmentGroups();
         if (fgs != null && fgs.size() > 0) {
+            // TODO: Absolutely cannot assume this
             FulfillmentGroup defaultFg = fgs.get(0);
             if (defaultFg.getAddress() != null) {
                 Address fgAddress = defaultFg.getAddress();
@@ -145,8 +138,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         }
     }
 
-    protected void populateBillTo(Order order,
-                                  PaymentRequestDTO requestDTO) {
+    protected void populateBillTo(Order order, PaymentRequestDTO requestDTO) {
         List<OrderPayment> payments = order.getPayments();
         for (OrderPayment payment : payments) {
             if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
@@ -187,21 +179,21 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
     /**
      * IMPORTANT:
-     * If you would like to pass Line Item information to a payment gateway
+     * <p>If you would like to pass Line Item information to a payment gateway
      * so that it shows up on the hosted site, you will need to override this method and
-     * construct line items to conform to the requirements of that particular gateway:
+     * construct line items to conform to the requirements of that particular gateway:</p>
      *
-     * For Example: The Paypal Express Checkout NVP API validates that the order subtotal that you pass in,
+     * <p>For Example: The Paypal Express Checkout NVP API validates that the order subtotal that you pass in,
      * add up to the amount of the line items that you pass in. So,
      * In that case you will need to take into account any additional fees, promotions,
      * credits, gift cards, etc... that are applied to the payment and add them
-     * as additional line items with a negative amount when necessary.
+     * as additional line items with a negative amount when necessary.</p>
      *
-     * Each gateway that accepts line item information may require you to construct
+     * <p>Each gateway that accepts line item information may require you to construct
      * this differently. Please consult the module documentation on how it should
-     * be properly constructed.
+     * be properly constructed.</p>
      *
-     * In this default implementation, just the subtotal is set, without any line item details.
+     * <p>In this default implementation, just the subtotal is set, without any line item details.</p>
      *
      * @param order
      * @param requestDTO
@@ -209,7 +201,5 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     protected void populateDefaultLineItemsAndSubtotal(Order order, PaymentRequestDTO requestDTO) {
         requestDTO.orderSubtotal(order.getSubTotal().toString());
     }
-
-
 
 }
