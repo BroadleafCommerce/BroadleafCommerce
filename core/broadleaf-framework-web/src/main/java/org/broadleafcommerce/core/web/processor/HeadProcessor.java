@@ -19,20 +19,22 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionListener;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Node;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.processor.element.AbstractFragmentHandlingElementProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.IStandardExpressionParser;
+import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will include the standard head element. It will also set the
@@ -47,7 +49,21 @@ import javax.annotation.Resource;
  * </ul>
  * 
  * @author apazzolini
+ *
+ * @deprecated
+ *
+ * The entire FragmentAndTarget class has been deprecated in favor of a completely new system in Thymeleaf 2.1
+ * The referenced issue can be found at https://github.com/thymeleaf/thymeleaf/issues/205
+ *
+ * Use th:include or th:replace within the head tag and include the variables to replicate the behaviour.
+ *
+ * Examples:
+ *
+ * <head th:include="/layout/partials/head (pageTitle='My Page Title')"></head>
+ * <head th:include="/layout/partials/head (twovar=${value2},onevar=${value1})">...</head>
+ *
  */
+@Deprecated
 public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
 
     @Resource(name = "blHeadProcessorExtensionManager")
@@ -84,7 +100,9 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
         
         String pageTitle = element.getAttributeValue("pageTitle");
         try {
-            pageTitle = (String) StandardExpressionProcessor.processExpression(arguments, pageTitle);
+            final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(arguments.getConfiguration());
+            Expression expression = (Expression) expressionParser.parseExpression(arguments.getConfiguration(), arguments, pageTitle);
+            pageTitle = (String) expression.execute(arguments.getConfiguration(), arguments);
         } catch (TemplateProcessingException e) {
             // Do nothing.
         }
@@ -98,7 +116,7 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
         //the referenced issue at https://github.com/thymeleaf/thymeleaf/issues/205
         
         
-        //return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
+//        return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
         return new ArrayList<Node>();
     }
 
