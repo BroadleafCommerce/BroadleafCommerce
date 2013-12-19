@@ -22,14 +22,17 @@ package org.broadleafcommerce.core.web.controller.checkout;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.model.MultiShipInstructionForm;
 import org.broadleafcommerce.core.web.checkout.model.OrderMultishipOptionForm;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
+import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -107,6 +110,10 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
                                  ShippingInfoForm shippingForm, BindingResult result) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
 
+        if (shippingForm.isUseBillingAddress()){
+            copyBillingAddressToShippingAddress(cart, shippingForm);
+        }
+
         shippingInfoFormValidator.validate(shippingForm, result);
         if (result.hasErrors()) {
             return getCheckoutView();
@@ -137,6 +144,35 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
             return getCheckoutView();
         } else {
             return getCheckoutPageRedirect();
+        }
+    }
+
+    /**
+     * This method will copy the billing address of any CREDIT CARD order payment on the order
+     * to the shipping address on the ShippingInfoForm that is passed in.
+     */
+    protected void copyBillingAddressToShippingAddress(Order order, ShippingInfoForm shippingInfoForm) {
+        if (order.getPayments() != null) {
+            for (OrderPayment payment : order.getPayments()) {
+                if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
+                    Address billing = payment.getBillingAddress();
+                    if (billing != null) {
+                        Address shipping = addressService.create();
+                        shipping.setFirstName(billing.getFirstName());
+                        shipping.setLastName(billing.getLastName());
+                        shipping.setAddressLine1(billing.getAddressLine1());
+                        shipping.setAddressLine2(billing.getAddressLine2());
+                        shipping.setCity(billing.getCity());
+                        shipping.setState(billing.getState());
+                        shipping.setPostalCode(billing.getPostalCode());
+                        shipping.setCountry(billing.getCountry());
+                        shipping.setPrimaryPhone(billing.getPrimaryPhone());
+                        shipping.setEmailAddress(billing.getEmailAddress());
+                        shippingInfoForm.setAddress(shipping);
+                    }
+                }
+            }
+
         }
     }
 

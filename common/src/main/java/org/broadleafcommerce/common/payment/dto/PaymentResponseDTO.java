@@ -120,6 +120,18 @@ public class PaymentResponseDTO {
     protected boolean confirmed = true;
 
     /**
+     * <p>Sets whether or not this module should complete checkout on callback.
+     * In most Credit Card gateway implementation, this should be set to 'TRUE' and
+     * should not be configurable as the gateway expects it to tbe the final step
+     * in the checkout process.</p>
+     *
+     * <p>In gateways where it does not expect to be the last step in the checkout process,
+     * for example BLC Gift Card Module, PayPal Express Checkout, etc... The callback from
+     * the gateway can be configured whether or not to complete checkout.</p>
+     */
+    protected boolean completeCheckoutOnCallback = true;
+
+    /**
      * A string representation of the response that came from the gateway. This should be a string serialization of
      * {@link #responseMap}.
      */
@@ -194,6 +206,11 @@ public class PaymentResponseDTO {
         return this;
     }
 
+    public PaymentResponseDTO completeCheckoutOnCallback(boolean completeCheckoutOnCallback) {
+        this.completeCheckoutOnCallback = completeCheckoutOnCallback;
+        return this;
+    }
+
     public PaymentResponseDTO valid(boolean valid) {
         this.valid = valid;
         return this;
@@ -255,6 +272,10 @@ public class PaymentResponseDTO {
 
     public boolean isConfirmed() {
         return confirmed;
+    }
+
+    public boolean isCompleteCheckoutOnCallback() {
+        return completeCheckoutOnCallback;
     }
 
     public CreditCardDTO<PaymentResponseDTO> getCreditCard() {

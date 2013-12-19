@@ -72,19 +72,6 @@ public interface PaymentGatewayConfigurationService {
      */
     public void setFailureReportingThreshold(int failureReportingThreshold);
 
-
-    /**
-     * <p>Sets whether or not this module should complete checkout on callback.
-     * In most Credit Card gateway implementation, this should be set to 'TRUE' and
-     * should not be configurable as the gateway expects it to tbe the final step
-     * in the checkout process.</p>
-     *
-     * <p>In gateways where it does not expect to be the last step in the checkout process,
-     * for example BLC Gift Card Module, PayPal Express Checkout, etc... The callback from
-     * the gateway can be configured whether or not to complete checkout.</p>
-     */
-    public boolean completeCheckoutOnCallback();
-
     public boolean handlesAuthorize();
 
     public boolean handlesCapture();

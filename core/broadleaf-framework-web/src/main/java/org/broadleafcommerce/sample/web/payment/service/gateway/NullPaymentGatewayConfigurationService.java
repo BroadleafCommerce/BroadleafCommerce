@@ -27,6 +27,10 @@ import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationS
  */
 public interface NullPaymentGatewayConfigurationService extends PaymentGatewayConfigurationService {
 
+    public String getHostedRedirectUrl();
+
+    public String getHostedRedirectReturnUrl();
+
     public String getTransparentRedirectUrl();
 
     public String getTransparentRedirectReturnUrl();

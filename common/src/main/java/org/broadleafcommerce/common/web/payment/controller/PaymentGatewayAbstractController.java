@@ -144,9 +144,9 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
                 throw new RuntimeException("Order ID must be set on the Payment Response DTO");
             }
 
-            if (getConfigurationService().completeCheckoutOnCallback()) {
+            if (responseDTO.isCompleteCheckoutOnCallback()) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("The Gateway is configured to complete checkout on callback. " +
+                    LOG.trace("The Response DTO for this Gateway is configured to complete checkout on callback. " +
                             "Initiating Checkout with Order ID: " + orderId);
                 }
 

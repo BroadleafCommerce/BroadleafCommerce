@@ -60,7 +60,9 @@
     <bean id="blRemoveFacetValuesLinkProcessor" class="org.broadleafcommerce.core.web.processor.RemoveFacetValuesLinkProcessor" />
     <bean id="blToggleFacetLinkProcessor" class="org.broadleafcommerce.core.web.processor.ToggleFacetLinkProcessor" />
     <bean id="blHeadProcessorExtensionManager" class="org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionManager" />
-    
+    <bean id="blOnePageCheckoutProcessor" class="org.broadleafcommerce.core.web.processor.OnePageCheckoutProcessor"/>
+    <bean id="blNullPaymentGatewayHostedActionProcessor" class="org.broadleafcommerce.sample.web.vendor.nullPaymentGateway.web.processor.NullPaymentGatewayHostedActionProcessor"/>
+
     <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
     <!-- own dialect and add your processors there. -->
     <bean id="blDialectProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
@@ -81,9 +83,11 @@
                 <ref bean="blRelatedProductProcessor" />
                 <ref bean="blRemoveFacetValuesLinkProcessor" />
                 <ref bean="blToggleFacetLinkProcessor" />
+                <ref bean="blOnePageCheckoutProcessor" />
+                <ref bean="blNullPaymentGatewayHostedActionProcessor"/>
                 <ref bean="blResourceBundleProcessor" />
                 <ref bean="blDataDrivenEnumerationProcessor" />
-                <ref bean="blTransparentRedirectCreditCardFormProcessor"/>
+                <ref bean="blTransparentRedirectCreditCardFormProcessor" />
             </set>
         </property>
     </bean>

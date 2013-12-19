@@ -42,6 +42,16 @@ public class NullPaymentGatewayConfigurationServiceImpl implements NullPaymentGa
     protected boolean performAuthorizeAndCapture = true;
 
     @Override
+    public String getHostedRedirectUrl() {
+        return "/hosted/null-checkout";
+    }
+
+    @Override
+    public String getHostedRedirectReturnUrl() {
+        return "/null-checkout/hosted/return";
+    }
+
+    @Override
     public String getTransparentRedirectUrl() {
         return "/null-checkout/process";
     }
@@ -69,11 +79,6 @@ public class NullPaymentGatewayConfigurationServiceImpl implements NullPaymentGa
     @Override
     public void setFailureReportingThreshold(int failureReportingThreshold) {
         this.failureReportingThreshold = failureReportingThreshold;
-    }
-
-    @Override
-    public boolean completeCheckoutOnCallback() {
-        return true;
     }
 
     @Override

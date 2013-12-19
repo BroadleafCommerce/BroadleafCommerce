@@ -101,6 +101,8 @@ public class PaymentRequestDTO {
     protected String taxTotal;
     protected String transactionTotal;
 
+    protected boolean completeCheckoutOnCallback = true;
+
     public PaymentRequestDTO() {
         this.giftCards = new ArrayList<GiftCardDTO<PaymentRequestDTO>>();
         this.customerCredits = new ArrayList<CustomerCreditDTO<PaymentRequestDTO>>();
@@ -208,6 +210,11 @@ public class PaymentRequestDTO {
         return this;
     }
 
+    public PaymentRequestDTO completeCheckoutOnCallback(boolean completeCheckoutOnCallback) {
+        this.completeCheckoutOnCallback = completeCheckoutOnCallback;
+        return this;
+    }
+
     public List<LineItemDTO> getLineItems() {
         return lineItems;
     }
@@ -266,6 +273,10 @@ public class PaymentRequestDTO {
 
     public String getTransactionTotal() {
         return transactionTotal;
+    }
+
+    public boolean isCompleteCheckoutOnCallback() {
+        return completeCheckoutOnCallback;
     }
 
     public boolean shipToPopulated() {

@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
+import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -55,6 +56,10 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
     public String saveBillingAddress(HttpServletRequest request, HttpServletResponse response, Model model,
                                  BillingInfoForm billingForm, BindingResult result) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
+
+        if (billingForm.isUseShippingAddress()){
+            copyShippingAddressToBillingAddress(cart, billingForm);
+        }
 
         billingInfoFormValidator.validate(billingForm, result);
         if (result.hasErrors()) {
@@ -90,6 +95,30 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
             return getCheckoutView();
         } else {
             return getCheckoutPageRedirect();
+        }
+    }
+
+    /**
+     * This method will copy the shipping address of the first fulfillment group on the order
+     * to the billing address on the BillingInfoForm that is passed in.
+     */
+    protected void copyShippingAddressToBillingAddress(Order order, BillingInfoForm billingInfoForm) {
+        if (order.getFulfillmentGroups().get(0) != null) {
+            Address shipping = order.getFulfillmentGroups().get(0).getAddress();
+            if (shipping != null) {
+                Address billing = addressService.create();
+                billing.setFirstName(shipping.getFirstName());
+                billing.setLastName(shipping.getLastName());
+                billing.setAddressLine1(shipping.getAddressLine1());
+                billing.setAddressLine2(shipping.getAddressLine2());
+                billing.setCity(shipping.getCity());
+                billing.setState(shipping.getState());
+                billing.setPostalCode(shipping.getPostalCode());
+                billing.setCountry(shipping.getCountry());
+                billing.setPrimaryPhone(shipping.getPrimaryPhone());
+                billing.setEmailAddress(shipping.getEmailAddress());
+                billingInfoForm.setAddress(billing);
+            }
         }
     }
 

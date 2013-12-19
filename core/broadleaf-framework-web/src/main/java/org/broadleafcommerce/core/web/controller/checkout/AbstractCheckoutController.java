@@ -19,12 +19,10 @@
  */
 package org.broadleafcommerce.core.web.controller.checkout;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
@@ -53,20 +51,14 @@ import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.StateService;
-import org.joda.time.DateTime;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestDataBinder;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.beans.PropertyEditorSupport;
-import java.text.DateFormatSymbols;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -96,14 +88,11 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
     @Resource(name = "blOrderToPaymentRequestDTOService")
     protected OrderToPaymentRequestDTOService dtoTranslationService;
 
-    @Resource(name = "blFulfillmentOptionService")
-    protected FulfillmentOptionService fulfillmentOptionService;
-    
-    @Resource(name = "blFulfillmentPricingService")
-    protected FulfillmentPricingService fulfillmentPricingService;
-
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
+
+    @Resource(name = "blFulfillmentOptionService")
+    protected FulfillmentOptionService fulfillmentOptionService;
 
     @Resource(name = "blCheckoutService")
     protected CheckoutService checkoutService;
@@ -167,142 +156,9 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
         return getBaseConfirmationView() + "/" + orderNumber;
     }
 
-    /**
-     * A helper method used to determine the validity of order info
-     *
-     * @param cart
-     * @return boolean indicating whether or not the order has valid info
-     */
-    protected boolean hasValidOrderInfo(Order cart) {
-        return StringUtils.isNotBlank(cart.getEmailAddress());
-    }
-
-    /**
-     * A helper method used to determine the validity of the fulfillment groups
-     *
-     * @param cart
-     * @return boolean indicating whether or not the fulfillment groups on the cart have addresses.
-     */
-    protected boolean hasValidShippingAddresses(Order cart) {
-        if (cart.getFulfillmentGroups() == null) {
-            return false;
-        }
-        for (FulfillmentGroup fulfillmentGroup : cart.getFulfillmentGroups()) {
-            if (fulfillmentGroupService.isShippable(fulfillmentGroup.getType())) {
-                if (fulfillmentGroup.getAddress() == null || fulfillmentGroup.getFulfillmentOption() == null) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
-     * A helper method to retrieve all fulfillment options for the cart and estimate the cost of applying
-     * fulfillment options on the first shippable fulfillment group.
-     *
-     */
-    protected void putFulfillmentOptionsAndEstimationOnModel(Model model) {
-        List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
-        Order cart = CartState.getCart();
-
-        if (!(cart instanceof NullOrderImpl) && cart.getFulfillmentGroups().size() > 0 && hasValidShippingAddresses(cart)) {
-            Set<FulfillmentOption> options = new HashSet<FulfillmentOption>();
-            options.addAll(fulfillmentOptions);
-            FulfillmentEstimationResponse estimateResponse = null;
-            try {
-                estimateResponse = fulfillmentPricingService.estimateCostForFulfillmentGroup(fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart), options);
-            } catch (FulfillmentPriceException e) {
-
-            }
-            model.addAttribute("estimateResponse", estimateResponse);
-        }
-        model.addAttribute("fulfillmentOptions", fulfillmentOptions);
-    }
-
     protected void populateModelWithReferenceData(HttpServletRequest request, Model model) {
-        String editOrderInfo = request.getParameter("edit-order-info");
-        boolean hasValidOrderInfo;
-        if (BooleanUtils.toBoolean(editOrderInfo)) {
-            hasValidOrderInfo = false;
-        } else {
-            hasValidOrderInfo = hasValidOrderInfo(CartState.getCart());
-        }
-        model.addAttribute("validOrderInfo", hasValidOrderInfo);
-
-        boolean hasValidShipping = false;
-
-        String editShipping = request.getParameter("edit-shipping");
-
-        if (BooleanUtils.toBoolean(editShipping)) {
-            hasValidShipping = false;
-        } else {
-            hasValidShipping = hasValidShippingAddresses(CartState.getCart());
-        }
-
-        int numShippableFulfillmentGroups = 0;
-        List<FulfillmentGroup> fulfillmentGroups = CartState.getCart().getFulfillmentGroups();
-        if (fulfillmentGroups != null) {
-            for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
-                if (fulfillmentGroupService.isShippable(fulfillmentGroup.getType())) {
-                    numShippableFulfillmentGroups++;
-                }
-            }
-        }
-        if (numShippableFulfillmentGroups == 0) {
-            hasValidShipping = true;
-        }
-        model.addAttribute("numShippableFulfillmentGroups", numShippableFulfillmentGroups);
-        model.addAttribute("validShipping", hasValidShipping);
-
-        putFulfillmentOptionsAndEstimationOnModel(model);
-
-        model.addAttribute("states", stateService.findStates());
-        model.addAttribute("countries", countryService.findCountries());
-        model.addAttribute("expirationMonths", populateExpirationMonths());
-        model.addAttribute("expirationYears", populateExpirationYears());
-
         //Add module specific model variables
         checkoutControllerExtensionManager.getProxy().addAdditionalModelVariables(model);
-    }
-
-    /**
-     * A helper method used to construct a list of Credit Card Expiration Months
-     * Useful for expiration dropdown menus.
-     * Will use locale to determine language if a locale is available.
-     *
-     * @return List containing expiration months of the form "01 - January"
-     */
-    protected List<String> populateExpirationMonths() {
-        DateFormatSymbols dateFormatter;
-        if(BroadleafRequestContext.hasLocale()){
-            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale();
-            dateFormatter = new DateFormatSymbols(locale);
-        } else {
-            dateFormatter = new DateFormatSymbols();
-        }
-        List<String> expirationMonths = new ArrayList<String>();
-        NumberFormat formatter = new DecimalFormat("00");
-        String[] months = dateFormatter.getMonths();
-        for (int i=1; i<months.length; i++) {
-            expirationMonths.add(formatter.format(i) + " - " + months[i-1]);
-        }
-        return expirationMonths;
-    }
-
-    /**
-     * A helper method used to construct a list of Credit Card Expiration Years
-     * Useful for expiration dropdown menus.
-     *
-     * @return List of the next ten years starting with the current year.
-     */
-    protected List<String> populateExpirationYears() {
-        List<String> expirationYears = new ArrayList<String>();
-        DateTime dateTime = new DateTime();
-        for (int i=0; i<10; i++){
-            expirationYears.add(dateTime.plusYears(i).getYear()+"");
-        }
-        return expirationYears;
     }
 
     /**
