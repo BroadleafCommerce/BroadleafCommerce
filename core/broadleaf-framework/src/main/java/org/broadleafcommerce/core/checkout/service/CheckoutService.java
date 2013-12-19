@@ -22,21 +22,22 @@ package org.broadleafcommerce.core.checkout.service;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.payment.domain.OrderPayment;
-import org.broadleafcommerce.core.payment.domain.secure.Referenced;
-
-import java.util.Map;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
 
 public interface CheckoutService {
 
-    public CheckoutResponse performCheckout(Order order) throws CheckoutException;
-
     /**
-     * This method should not be used, and only really made sense if you were storing credit card numbers in your own system
-     * which is not something that Broadleaf recommends. The normal case is 
-     * @deprecated Use {@link #performCheckout(Order)} instead
+     * <p>Checks out an order by executing the blCheckoutWorkflow. The <b>order</b> is saved both before and after the workflow
+     * is executed so that activities can modify the various entities on and related to the <b>order</b>.</p>
+     * 
+     * <p>This method is also thread-safe; 2 requests cannot attempt to check out the same <b>order</b></p>
+     * 
+     * @param order the order to be checked out
+     * @return
+     * @throws CheckoutException if there are any exceptions while executing any of the activities in the workflow (assuming
+     * that the workflow does not already have a preconfigured error handler) or if the given <b>order</b> has already been
+     * checked out (in Broadleaf terms this means the <b>order</b> has already been changed to {@link OrderStatus#SUBMITTED})
      */
-    @Deprecated
-    public CheckoutResponse performCheckout(Order order, Map<OrderPayment, Referenced> payments) throws CheckoutException;
-
+    public CheckoutResponse performCheckout(Order order) throws CheckoutException;
+    
 }

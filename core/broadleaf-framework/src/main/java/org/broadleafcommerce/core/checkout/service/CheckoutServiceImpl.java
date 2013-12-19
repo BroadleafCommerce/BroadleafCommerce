@@ -25,8 +25,7 @@ import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
-import org.broadleafcommerce.core.payment.domain.OrderPayment;
-import org.broadleafcommerce.core.payment.domain.secure.Referenced;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.ProcessContext;
@@ -35,7 +34,8 @@ import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
 
@@ -47,22 +47,31 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Resource(name="blOrderService")
     protected OrderService orderService;
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.core.order.domain.Order, java.util.Map)
+    
+    /**
+     * Map of locks for given order ids. This lock map ensures that only a single request can handle a particular order
+     * at a time
      */
-    @Override
-    @Deprecated
-    public CheckoutResponse performCheckout(Order order, final Map<OrderPayment, Referenced> payments) throws CheckoutException {
-        return performCheckout(order);
-    }
+    protected static ConcurrentMap<Long, Object> lockMap = new ConcurrentHashMap<Long, Object>();
 
     @Override
     public CheckoutResponse performCheckout(Order order) throws CheckoutException {
         CheckoutSeed seed = null;
         try {
-            order = orderService.save(order, false);
             seed = new CheckoutSeed(order, new HashMap<String, Object>());
+            
+            //Immediately fail if another thread is currently attempting to check out the order
+            Object lockObject = putLock(order.getId());
+            if (lockObject != null) {
+                throw new CheckoutException("This order is already in the process of being submitted, unable to checkout order -- id: " + order.getId(), seed);
+            }
+
+            // Immediately fail if this order has already been checked out previously
+            if (hasOrderBeenCompleted(order)) {
+                throw new CheckoutException("This order has already been submitted, unable to checkout order -- id: " + order.getId(), seed);
+            }
+            
+            order = orderService.save(order, false);
 
             ProcessContext<CheckoutSeed> context = (ProcessContext<CheckoutSeed>) checkoutWorkflow.doActivities(seed);
 
@@ -78,7 +87,40 @@ public class CheckoutServiceImpl implements CheckoutService {
             throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e.getRootCause(), seed);
         } catch (RequiredAttributeNotProvidedException e) {
             throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e.getCause(), seed);
+        } finally {
+            // The order has completed processing, remove the order from the processing map
+            removeLock(order.getId());
         }
     }
+    
+    /**
+     * Checks if the <b>order</b> has already been gone through the checkout workflow.
+     * 
+     * @param order
+     * @return
+     */
+    protected boolean hasOrderBeenCompleted(Order order) {
+        return OrderStatus.SUBMITTED.equals(order.getStatus());
+    }
 
+    /**
+    * Get an object to lock on for the given order id
+    * 
+    * @param orderId
+    * @return null if there was not already a lock object available. If an object was already in the map, this will return
+    * that object, which means that there is already a thread attempting to go through the checkout workflow
+    */
+    protected Object putLock(Long orderId) {
+        return lockMap.putIfAbsent(orderId, new Object());
+    }
+    
+    /**
+     * Done with processing the given orderId, remove the lock from the map
+     * 
+     * @param orderId
+     */
+    protected void removeLock(Long orderId) {
+        lockMap.remove(orderId);
+    }
+    
 }
