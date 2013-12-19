@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.checkout.service.legacy;
 
 import org.broadleafcommerce.common.encryption.EncryptionModule;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -40,6 +41,8 @@ import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
+import org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl;
 import org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
@@ -57,9 +60,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -97,11 +98,11 @@ public class LegacyCheckoutTest extends BaseTest {
         FulfillmentGroup group = buildFulfillmentGroup(order, address);
         addSampleItemToOrder(order, group);
         order.setTotalShipping(new Money(0D));
-        Map<OrderPayment, Referenced> map = addPaymentToOrder(order, address);
+        addPaymentToOrder(order, address);
 
         //execute pricing for this order
         orderService.save(order, true);
-        CheckoutResponse response = checkoutService.performCheckout(order, map);
+        CheckoutResponse response = checkoutService.performCheckout(order);
 
         //confirm that the secure payment info items are not persisted
         Referenced referenced = null;
@@ -120,98 +121,16 @@ public class LegacyCheckoutTest extends BaseTest {
         assert (order.getTotal().greaterThan(order.getSubTotal()));
     }
 
-/*
-    @SuppressWarnings("serial")
-    @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
-    @Transactional
-    public void testCustomerMaxUsesPromo() throws Exception {
-        String userName = "customer1";
-        Customer customer = customerService.readCustomerByUsername(userName);
-        Order order = cartService.createNewCartForCustomer(customer);
-        CreateOfferUtility createOfferUtility = new CreateOfferUtility(offerDao, offerCodeDao, offerService);
-
-        OfferCode code = createOfferUtility.createOfferCode("20.5 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20.5, null, null, true, true, 10);
-        Offer offer = createOfferUtility.updateOfferCodeMaxCustomerUses(code, 2l);
-
-        Address address = buildAddress();
-
-        FulfillmentGroup group = buildFulfillmentGroup(order, address);
-        addSampleItemToOrder(order, group);
-        cartService.addOfferCode(order, code, false);
-        order.setTotalShipping(new Money(0D));
-        Map<OrderPayment, Referenced> map = addPaymentToOrder(order, address);
-        CheckoutResponse response = checkoutService.performCheckout(order, map);
-        
-        assert(offerAuditDao.countUsesByCustomer(customer.getId(), offer.getId()) == 1L);
-        assert(offerService.verifyMaxCustomerUsageThreshold(customer, offer) == false);
-
-        // Now enter a 2nd order
-        Order order2 = cartService.createNewCartForCustomer(customer);        
-        cartService.addOfferCode(order2, code, true);
-        
-        Address address2 = buildAddress();
-        FulfillmentGroup group2 = buildFulfillmentGroup(order2, address2);
-        addSampleItemToOrder(order2, group2);
-        order2.setTotalShipping(new Money(0D));
-        Map<OrderPayment, Referenced> map2 = addPaymentToOrder(order2, address2);
-        CheckoutResponse response2 = checkoutService.performCheckout(order2, map2);
-        
-        assert(offerAuditDao.countUsesByCustomer(customer.getId(), offer.getId()) == 2L);
-        assert(offerService.verifyMaxCustomerUsageThreshold(customer, offer) == true);
-
-        // Now, try a 3rd use of the promo (should fail)
-        Order order3 = cartService.createNewCartForCustomer(customer);
-
-        boolean exceptionCaught = false;
-        try {
-            cartService.addOfferCode(order3, code, true);
-        } catch (OfferMaxUseExceededException e) {            
-            exceptionCaught = true;
-        }
-
-        // Add the code to the order directly and bypass the exception
-        order3.addOfferCode(code);
-        Address address3 = buildAddress();
-        FulfillmentGroup group3 = buildFulfillmentGroup(order3, address3);
-        addSampleItemToOrder(order3, group3);
-        order3.setTotalShipping(new Money(0D));
-        Map<OrderPayment, Referenced> map3 = addPaymentToOrder(order3, address3);
-
-        exceptionCaught = false;
-        try {
-            // Exception should get generated in the checkout workflow.
-            CheckoutResponse response3 = checkoutService.performCheckout(order2, map2);
-        } catch (OfferMaxUseExceededException e) {
-            exceptionCaught = true;
-        }
-        assert(exceptionCaught);
-
-        // Finally, create an order for a 2nd customer - should be no problem.
-        String userName2 = "customer2";
-        Customer customer2 = customerService.readCustomerByUsername(userName2);
-        Order order4 = cartService.createNewCartForCustomer(customer2);
-        cartService.addOfferCode(order4, code, true);
-
-        Address address4 = buildAddress();
-        FulfillmentGroup group4 = buildFulfillmentGroup(order4, address4);
-        addSampleItemToOrder(order4, group4);
-        order4.setTotalShipping(new Money(0D));
-        Map<OrderPayment, Referenced> map4 = addPaymentToOrder(order4, address4);
-        CheckoutResponse response4 = checkoutService.performCheckout(order4, map4);
-
-        assert(offerAuditDao.countUsesByCustomer(customer2.getId(), offer.getId()) == 1L);
-        assert(offerService.verifyMaxCustomerUsageThreshold(customer2, offer) == false);
-    }
-    */
-
-
-    private Map<OrderPayment, Referenced> addPaymentToOrder(Order order, Address address) {
+    private OrderPayment addPaymentToOrder(Order order, Address address) {
         OrderPayment payment = new OrderPaymentImpl();
         payment.setBillingAddress(address);
         payment.setAmount(new Money(15D + (15D * 0.05D)));
         payment.setReferenceNumber("1234");
         payment.setType(PaymentType.CREDIT_CARD);
         payment.setOrder(order);
+        PaymentTransaction tx = new PaymentTransactionImpl();
+        tx.setAmount(payment.getAmount());
+        tx.setType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE);
 
         CreditCardPayment cc = new CreditCardPayment() {
 
@@ -301,9 +220,7 @@ public class LegacyCheckoutTest extends BaseTest {
         };
 
         order.getPayments().add(payment);
-        Map<OrderPayment, Referenced> map = new HashMap<OrderPayment, Referenced>();
-        map.put(payment, cc);
-        return map;
+        return payment;
     }
 
     private void addSampleItemToOrder(Order order, FulfillmentGroup group) {

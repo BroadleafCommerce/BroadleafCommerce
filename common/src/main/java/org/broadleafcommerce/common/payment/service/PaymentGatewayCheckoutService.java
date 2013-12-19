@@ -50,8 +50,18 @@ public interface PaymentGatewayCheckoutService {
     public Long applyPaymentToOrder(PaymentResponseDTO responseDTO, PaymentGatewayConfigurationService configService)
         throws IllegalArgumentException;
 
+    /**
+     * Marks a given order payment as invalid. In the default implementation, this archives the payment. This can be
+     * determined from the result of {@link #applyPaymentToOrder(PaymentResponseDTO, PaymentGatewayConfigurationService)}
+     * @param orderPaymentId the payment ID to mark as invalid
+     */
     public void markPaymentAsInvalid(Long orderPaymentId);
 
+    /**
+     * Initiates the checkout process for a given <b>orderId</b>. This is usually from {@link PaymentResponseDTO#getOrderId()}
+     * @param orderId the order to check out
+     * @return the response from checking out the order
+     */
     public String initiateCheckout(Long orderId);
 
     /**
@@ -59,7 +69,7 @@ public interface PaymentGatewayCheckoutService {
      * the user coming from the payment gateway to the order confirmation page.
      * 
      * @param responseDTO the response from the gateway
-     * @return the order number for order id. This method can return null if the order number has not already been set
+     * @return The order number for order id. This method can return null if the order number has not already been set
      * (which usually means that the order has not already been checked out)
      * @throws IllegalArgumentException if the order cannot be found from the {@link PaymentResponseDTO}
      */

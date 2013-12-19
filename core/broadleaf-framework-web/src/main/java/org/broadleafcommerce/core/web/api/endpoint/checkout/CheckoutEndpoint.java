@@ -22,7 +22,6 @@ package org.broadleafcommerce.core.web.api.endpoint.checkout;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
@@ -42,7 +41,6 @@ import org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -314,23 +312,23 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
         if (cart != null) {
             try {
                 if (mapWrappers != null && !mapWrappers.isEmpty()) {
-                    Map<OrderPayment, Referenced> payments = new HashMap<OrderPayment, Referenced>();
-                    orderService.removePaymentsFromOrder(cart, PaymentType.CREDIT_CARD);
+//                    Map<OrderPayment, Referenced> payments = new HashMap<OrderPayment, Referenced>();
+//                    orderService.removePaymentsFromOrder(cart, PaymentType.CREDIT_CARD);
+//
+//                    for (PaymentReferenceMapWrapper mapWrapper : mapWrappers) {
+//                        OrderPayment paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
+//                        paymentInfo.setOrder(cart);
+//                        Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
+//
+//                        if (cart.getPayments() == null) {
+//                            cart.setPayments(new ArrayList<OrderPayment>());
+//                        }
+//
+//                        cart.getPayments().add(paymentInfo);
+//                        payments.put(paymentInfo, referenced);
+//                    }
 
-                    for (PaymentReferenceMapWrapper mapWrapper : mapWrappers) {
-                        OrderPayment paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
-                        paymentInfo.setOrder(cart);
-                        Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
-
-                        if (cart.getPayments() == null) {
-                            cart.setPayments(new ArrayList<OrderPayment>());
-                        }
-
-                        cart.getPayments().add(paymentInfo);
-                        payments.put(paymentInfo, referenced);
-                    }
-
-                    CheckoutResponse response = checkoutService.performCheckout(cart, payments);
+                    CheckoutResponse response = checkoutService.performCheckout(cart);
                     Order order = response.getOrder();
                     OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
                     wrapper.wrapDetails(order, request);
