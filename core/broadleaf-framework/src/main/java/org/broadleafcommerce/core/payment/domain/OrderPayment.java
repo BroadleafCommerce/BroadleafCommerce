@@ -29,7 +29,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 
 import java.io.Serializable;
 import java.util.List;
@@ -157,21 +156,37 @@ public interface OrderPayment extends Serializable, Status {
      */
     public void addTransaction(PaymentTransaction transaction);
     
+    /**
+     * Returns a transaction for given <b>type</b>. This is useful when validating whether or not a {@link PaymentTransaction}
+     * can actually be added to this payment. For instance, there can only be a single {@link PaymentTransactionType#AUTHORIZE}
+     * for a payment.
+     * 
+     * @param type the type of transaction to look for within {@link #getTransactions()}
+     * @return a list of transactions or an empty list if there are no transaction of that type
+     */
+    public List<PaymentTransaction> getTransactionsForType(PaymentTransactionType type);
+    
+    /**
+     * Looks through all of the transactions for this payment and adds up the amount for the given transaction type. This
+     * ignores whether the transaction was successful or not
+     * 
+     * @param type
+     * @return the amount of all of the transactions for the given type
+     * @see {@link #getSuccessfulTransactionAmountForType(PaymentTransactionType)}
+     */
     public Money getTransactionAmountForType(PaymentTransactionType type);
+    
+    /**
+     * Returns all of the transactions on this payment that were successful for the given type.
+     * 
+     * @param type the type of transaction
+     * @return the amount of all of the transaction on this payment for the given type that have been successful
+     */
+    public Money getSuccessfulTransactionAmountForType(PaymentTransactionType type);
 
     /**
      * The currency that this payment should be taken in. This is a delegate to {@link #getOrder()#getCurrency()}.
      */
     public BroadleafCurrency getCurrency();
-
-    /**
-     * TODO: consider removing
-     */
-    public CustomerPayment getCustomerPayment();
-
-    /**
-     * TODO: consider removing
-     */
-    public void setCustomerPayment(CustomerPayment customerPayment);
 
 }

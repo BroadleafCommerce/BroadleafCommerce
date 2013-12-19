@@ -46,8 +46,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
-import org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -153,16 +151,11 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
             broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentGatewayType")
     protected String gatewayType;
     
+    //TODO: add a filter for archived transactions
     @OneToMany(mappedBy = "orderPayment", targetEntity = PaymentTransactionImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @AdminPresentationCollection(friendlyName="PaymentInfoImpl_Details",
             tab = Presentation.Tab.Name.Log, tabOrder = Presentation.Tab.Order.Log)
     protected List<PaymentTransaction> transactions = new ArrayList<PaymentTransaction>();
-    
-    @ManyToOne(targetEntity = CustomerPaymentImpl.class)
-    @JoinColumn(name = "CUSTOMER_PAYMENT_ID")
-    @Index(name="CUSTOMER_PAYMENT", columnNames={"CUSTOMER_PAYMENT_ID"})
-    @AdminPresentation(excluded = true) //don't display the payment token info in the admin by default
-    protected CustomerPayment customerPayment;
     
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -238,16 +231,6 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     }
 
     @Override
-    public CustomerPayment getCustomerPayment() {
-        return customerPayment;
-    }
-
-    @Override
-    public void setCustomerPayment(CustomerPayment customerPayment) {
-        this.customerPayment = customerPayment;
-    }
-
-    @Override
     public List<PaymentTransaction> getTransactions() {
         return transactions;
     }
@@ -263,11 +246,33 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     }
     
     @Override
+    public List<PaymentTransaction> getTransactionsForType(PaymentTransactionType type) {
+        List<PaymentTransaction> result = new ArrayList<PaymentTransaction>();
+        for (PaymentTransaction tx : getTransactions()) {
+            if (tx.getType().equals(type)) {
+                result.add(tx);
+            }
+        }
+        return result;
+    }
+    
+    @Override
     public Money getTransactionAmountForType(PaymentTransactionType type) {
         Money amount = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
-        for (PaymentTransaction trans : getTransactions()){
-            if (type.equals(trans.getType())){
-                amount = amount.add(trans.getAmount());
+        for (PaymentTransaction tx : getTransactions()){
+            if (type.equals(tx.getType())) {
+                amount = amount.add(tx.getAmount());
+            }
+        }
+        return amount;
+    }
+    
+    @Override
+    public Money getSuccessfulTransactionAmountForType(PaymentTransactionType type) {
+        Money amount = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getOrder().getCurrency());
+        for (PaymentTransaction tx : getTransactions()){
+            if (type.equals(tx.getType()) && tx.getSuccess()){
+                amount = amount.add(tx.getAmount());
             }
         }
         return amount;
