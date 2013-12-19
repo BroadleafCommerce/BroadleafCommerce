@@ -36,7 +36,8 @@
                FROM org.broadleafcommerce.cms.page.domain.PageImpl page
                WHERE
                   page.fullUrl = :uri AND
-                  (page.pageTemplate.locale = :fullLocale OR page.pageTemplate.locale = :languageOnlyLocale) AND
+                  (page.pageTemplate.locale is null OR page.pageTemplate.locale = :fullLocale OR 
+                    page.pageTemplate.locale = :languageOnlyLocale) AND
                   (page.offlineFlag is null OR page.offlineFlag = false)
         </query>
     </named-query>
