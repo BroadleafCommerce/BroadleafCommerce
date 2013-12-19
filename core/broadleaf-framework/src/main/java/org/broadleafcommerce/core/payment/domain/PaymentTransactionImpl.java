@@ -35,6 +35,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Type;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -52,6 +53,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
@@ -107,7 +109,9 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_IP_Address", order=4000)
     protected String customerIpAddress;
     
-    @Column(name = "RAW_RESPONSE")
+    @Column(name = "RAW_RESPONSE", length = Integer.MAX_VALUE - 1)
+    @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     @AdminPresentation(friendlyName = "PaymentTransaction_rawResponse")
     protected String rawResponse;
     
