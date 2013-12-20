@@ -160,3 +160,5 @@ If you see a bug in Broadleaf then the best way to ensure it's resolved is to fi
 Broadleaf Commerce core is released under the terms of the Apache Software License 2 (see license.txt). However, various commercial modules that are also available (for instance, price list management) are released under a different commercial license. These are not included with the core Broadleaf framework.
 
 We also offer various levels of [enterprise support licenses](http://broadleafcommerce.com/support). Please [contact us](http://broadleafcommerce.com/contact) for information.
+
+//testing this
