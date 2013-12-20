@@ -23,11 +23,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.deeplink.DeepLink;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its  children
@@ -79,6 +85,10 @@ public abstract class BroadleafAbstractController {
     }
     
     protected <T> void addDeepLink(ModelAndView model, DeepLinkService<T> service, T item) {
+        if (service == null) {
+            return;
+        }
+
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.isAdminMode()) {
             List<DeepLink> links = service.getLinks(item);
@@ -88,6 +98,26 @@ public abstract class BroadleafAbstractController {
                 model.addObject("adminDeepLink", links);
             }
         }
+    }
+    
+    /**
+     * Typically, controller methods are set to return a String that points to the necessary template path.
+     * 
+     * However, there may be occasions where the error state for a controller action should instead return
+     * JSON instead of a fully rendered template. This convenience method will achieve that by setting the
+     * appropriate headers and serializing the given map.
+     * 
+     * @param response
+     * @param responseMap
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    protected String jsonResponse(HttpServletResponse response, Map<String, Object> responseMap) 
+            throws JsonGenerationException, JsonMappingException, IOException {
+        response.setHeader("Content-Type", "application/json");
+        new ObjectMapper().writeValue(response.getWriter(), responseMap);
+        return null;
     }
 
 }

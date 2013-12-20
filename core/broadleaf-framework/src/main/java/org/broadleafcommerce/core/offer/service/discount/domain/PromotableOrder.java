@@ -198,4 +198,9 @@ public interface PromotableOrder extends Serializable {
     public boolean isTotalitarianItemOfferApplied();
 
     public boolean isTotalitarianFgOfferApplied();
+
+    /**
+     * Map available to implementations to store data needed for custom logic.
+     */
+    Map<String, Object> getExtraDataMap();
 }

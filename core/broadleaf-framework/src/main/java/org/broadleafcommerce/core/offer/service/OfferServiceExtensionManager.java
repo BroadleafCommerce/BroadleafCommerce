@@ -28,6 +28,9 @@ import org.springframework.stereotype.Service;
  */
 @Service("blOfferServiceExtensionManager")
 public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceExtensionHandler> {
+
+    public static final String STOP_PROCESSING = "stopProcessing";
+
     public OfferServiceExtensionManager() {
         super(OfferServiceExtensionHandler.class);
     }

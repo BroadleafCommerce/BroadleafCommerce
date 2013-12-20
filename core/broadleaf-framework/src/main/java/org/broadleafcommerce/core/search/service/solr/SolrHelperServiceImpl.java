@@ -27,6 +27,7 @@ import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -164,6 +165,16 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             }
         }
         return prefixString.toString();
+    }
+    
+    @Override
+    public Long getCategoryId(Long tentativeCategoryId) {
+        Long[] returnId = new Long[1];
+        ExtensionResultStatusType result = extensionManager.getProxy().getCategoryId(tentativeCategoryId, returnId);
+        if (result.equals(ExtensionResultStatusType.HANDLED)) {
+            return returnId[0];
+        }
+        return tentativeCategoryId;
     }
 
     @Override

@@ -48,6 +48,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     protected PromotableItemFactory itemFactory;
     protected List<PromotableOrderItemPriceDetail> itemPriceDetails = new ArrayList<PromotableOrderItemPriceDetail>();
     protected boolean includeAdjustments;
+    protected Map<String, Object> extraDataMap = new HashMap<String, Object>();
 
     public PromotableOrderItemImpl(OrderItem orderItem, PromotableOrder promotableOrder, PromotableItemFactory itemFactory,
             boolean includeAdjustments) {
@@ -252,5 +253,10 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 
     public OrderItem getOrderItem() {
         return orderItem;
+    }
+
+    @Override
+    public Map<String, Object> getExtraDataMap() {
+        return extraDataMap;
     }
 }

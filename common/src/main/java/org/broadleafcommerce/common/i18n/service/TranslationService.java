@@ -20,11 +20,13 @@
 
 package org.broadleafcommerce.common.i18n.service;
 
-import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
-import org.broadleafcommerce.common.i18n.domain.Translation;
+import net.sf.ehcache.Cache;
 
 import java.util.List;
 import java.util.Locale;
+
+import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
+import org.broadleafcommerce.common.i18n.domain.Translation;
 
 public interface TranslationService {
 
@@ -106,5 +108,26 @@ public interface TranslationService {
      */
     public String getTranslatedValue(Object entity, String property, Locale locale);
 
+    /**
+     * Remove a translation instance from the translation specific cache (different than level-2 hibernate cache)
+     *
+     * @param translation The translation instance to remove
+     */
+    void removeTranslationFromCache(Translation translation);
+
+    /**
+     * Find a translation instance by its primary key value.
+     *
+     * @param id the primary key value
+     * @return
+     */
+    Translation findTranslationById(Long id);
+
+    /**
+     * Get the translation specific cache (different than the level-2 hibernate cache)
+     *
+     * @return the translation specific cache
+     */
+    Cache getCache();
 
 }

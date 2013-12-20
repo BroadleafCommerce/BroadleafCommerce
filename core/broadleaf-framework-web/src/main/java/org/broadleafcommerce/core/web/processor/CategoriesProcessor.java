@@ -19,19 +19,20 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.springframework.util.ReflectionUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the desired categories to the model. It does this by
@@ -44,6 +45,9 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
     
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
+
+    @Resource(name = "blCategoriesProcessorExtensionManager")
+    protected CategoriesProcessorExtensionManager extensionManager;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -62,7 +66,16 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
         String resultVar = element.getAttributeValue("resultVar");
         String parentCategory = element.getAttributeValue("parentCategory");
         String unparsedMaxResults = element.getAttributeValue("maxResults");
-        
+
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findAllPossibleChildCategories(parentCategory, unparsedMaxResults, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                addToModel(arguments, resultVar, holder.getResult());
+                return;
+            }
+        }
+
         // TODO: Potentially write an algorithm that will pick the minimum depth category
         // instead of the first category in the list
         List<Category> categories = catalogService.findCategoriesByName(parentCategory);

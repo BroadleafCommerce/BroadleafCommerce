@@ -22,6 +22,9 @@ package org.broadleafcommerce.common.util;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.xml.datatype.DatatypeConfigurationException;
 
 /**
  * @author Jeff Fischer
@@ -49,4 +52,17 @@ public class FormatUtil {
         formatter.setTimeZone(BroadleafRequestContext.getBroadleafRequestContext().getTimeZone());
         return formatter;
     }
+
+    /**
+     * Use to produce date Strings in the W3C date format
+     * 
+     * @param date
+     * @return
+     * @throws DatatypeConfigurationException 
+     */
+    public static String formatDateUsingW3C(Date date) {
+        String w3cDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(date);
+        return w3cDate = w3cDate.substring(0, 22) + ":" + w3cDate.substring(22, 24);
+    }
+
 }

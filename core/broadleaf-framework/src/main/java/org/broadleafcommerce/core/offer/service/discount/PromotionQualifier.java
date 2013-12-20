@@ -99,4 +99,8 @@ public class PromotionQualifier implements Serializable{
         return returnQualifier;
     }
 
+    public boolean isFinalized() {
+        return quantity == finalizedQuantity;
+    }
+
 }

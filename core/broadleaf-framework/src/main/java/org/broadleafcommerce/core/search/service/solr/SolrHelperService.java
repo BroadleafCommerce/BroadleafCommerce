@@ -19,8 +19,6 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import java.util.List;
-
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -28,6 +26,8 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
+
+import java.util.List;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -175,6 +175,15 @@ public interface SolrHelperService {
      * @return the default locale
      */
     public Locale getDefaultLocale();
+
+    /**
+     * In certain cases, the category id used for Solr indexing is different than the direct id on the product.
+     * This method provides a hook to substitute the category id if necessary.
+     * 
+     * @param tentativeCategoryId
+     * @return the category id to use
+     */
+    public Long getCategoryId(Long tentativeCategoryId);
 
 
 }

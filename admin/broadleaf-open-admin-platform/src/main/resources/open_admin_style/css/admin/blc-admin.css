@@ -145,6 +145,7 @@ div.errors span {
 }
 
 .entity-form .custom-checkbox {
+	display: inline-block;
 }
 
 div.field-box {
@@ -238,9 +239,10 @@ div.field-label.inline {
     background: linear-gradient(to bottom,  #f1f1f1 0%,#e2e2e2 100%);
     padding: 5px 10px;
 	border-bottom: 2px solid #8EAA2B;
+	height: 49px;
 }
 
-.breadcrumb-container.breadcrumb-fixed {
+.sticky-fixed {
     position: fixed;
 	top: 0;
 	width: 1020px;
@@ -314,6 +316,15 @@ h2#mainEntityName {
 .top-bar .attached > .brand {
     float: left;
     padding: 5px 10px 0px;
+}
+
+.top-bar ul > li.has-dropdown .dropdown li a  {
+    display: inline-block;
+    width: 100%;
+}
+
+.top-bar ul > li.has-dropdown a {
+    display: inline-block;
 }
 
 /* --------------------------------------------------
@@ -1224,6 +1235,10 @@ table.list-grid-table tr.clickable.selected {
 	background-color: #CCDADD;
 }
 
+table.list-grid-table tr.selected.forced {
+	background-color: #C0C6C7;
+}
+
 table.list-grid-table tr.clickable.selected:hover {
 	background-color: #C0DAE0;
 }
@@ -1448,6 +1463,7 @@ div.uploadMessage {
 }
 
 form.uploadFileForm {
+	display: none;
 }
 
 div.imagePreviewContainer {

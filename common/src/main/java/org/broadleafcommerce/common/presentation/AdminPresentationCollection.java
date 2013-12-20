@@ -149,10 +149,10 @@ public @interface AdminPresentationCollection {
     int tabOrder() default 100;
 
     /**
-     * <p>Optional - only required if you need to specially handle crud operations for this
+     * <p>Optional - only required if you need to specially handle CRUD operations for this
      * specific collection on the server</p>
      *
-     * <p>Custom string values that will be passed to the server during CRUB operations on this
+     * <p>Custom string values that will be passed to the server during CRUD operations on this
      * collection. These criteria values can be detected in a custom persistence handler
      * (@CustomPersistenceHandler) in order to engage special handling through custom server
      * side code for this collection.</p>

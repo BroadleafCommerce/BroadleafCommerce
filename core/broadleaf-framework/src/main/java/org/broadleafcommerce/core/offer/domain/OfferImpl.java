@@ -296,6 +296,7 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM, 
         requiredOverride = RequiredOverride.REQUIRED)
+    @ClonePolicyCollection
     protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
     
     @Column(name = "TOTALITARIAN_OFFER")
@@ -457,7 +458,9 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
 
     @Override
     public int getPriority() {
-        return priority == null ? 0 : priority;
+        // Treat null as the maximum value minus one to allow for someone to create a
+        // priority that is even less than an unset priority.
+        return priority == null ? Integer.MAX_VALUE - 1 : priority;
     }
 
     @Override

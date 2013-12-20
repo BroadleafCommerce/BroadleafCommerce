@@ -16,6 +16,9 @@
       th:action="@{${currentUrl}}"
       th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
       
+    <span style="display: none;" id="previewurl" 
+        th:attr="data-href=@{/sandbox/preview(ceilingEntity=*{ceilingEntityClassname}, id=*{id})}" />
+
     <input type="hidden" th:field="*{ceilingEntityClassname}" />
     <input type="hidden" th:field="*{entityType}" />
     <input type="hidden" th:field="*{id}" />
@@ -34,14 +37,16 @@
     <div class="tabs-container" th:if="${renderTabs}">
         <dl class="tabs" th:classappend="${additionalTabClasses}">
             <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'">
-                <a th:href="'#tab' + ${tabStat.count}" th:text="#{${tab.title}}" />
+                <a th:href="'#tab' + ${tabStat.count}" 
+                   th:classappend="${tab.tabClass}"
+                   th:text="#{${tab.title}}" /> 
             </dd>
         </dl> 
     </div>
     
     <ul class="tabs-content" th:style="${verticalTabs}? 'margin-left: 250px;'">
         <li th:each="tab : ${entityForm.tabs}" 
-            th:class="'tab' + ${tabStat.count} + 'Tab entityFormTab'" 
+            th:class="'tab' + ${tabStat.count} + 'Tab entityFormTab' + ${tab.tabClass}" 
             th:classappend="${tabStat.first}? 'active'"
             th:inline="text">
             
@@ -50,7 +55,7 @@
 
                 <div th:each="field : ${group.fields}" 
                      th:if="${field.name}" 
-                     class="field-box" 
+                     th:class="${'field-box' + (field.isDirty ? ' dirty' : '')}" 
                      blc_admin:component_id="${field}"
                      th:classappend="${!field.isVisible}? 'hidden'">
 

@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce CMS Module
+ * BroadleafCommerce Common Libraries
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -17,7 +17,8 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.cms.file.service;
+
+package org.broadleafcommerce.common.file.service;
 
 import java.io.IOException;
 import java.io.InputStream;

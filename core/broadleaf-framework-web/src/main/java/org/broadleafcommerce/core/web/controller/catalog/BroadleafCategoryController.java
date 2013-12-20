@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
@@ -29,6 +30,8 @@ import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -63,6 +66,10 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
     
     @Resource(name = "blSearchFacetDTOService")
     protected SearchFacetDTOService facetService;
+    
+    @Autowired(required = false)
+    @Qualifier("blCategoryDeepLinkService")
+    protected DeepLinkService<Category> deepLinkService;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -117,6 +124,8 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
             model.addObject(PRODUCTS_ATTRIBUTE_NAME, result.getProducts());
             model.addObject(FACETS_ATTRIBUTE_NAME, result.getFacets());
             model.addObject(PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME, result);
+            
+            addDeepLink(model, deepLinkService, category);
     
             if (StringUtils.isNotEmpty(category.getDisplayTemplate())) {
                 model.setViewName(category.getDisplayTemplate());   

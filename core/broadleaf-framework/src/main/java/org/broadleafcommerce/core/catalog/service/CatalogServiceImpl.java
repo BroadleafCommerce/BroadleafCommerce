@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.service;
 
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
@@ -57,6 +59,9 @@ public class CatalogServiceImpl implements CatalogService {
     
     @Resource(name="blProductOptionDao")
     protected ProductOptionDao productOptionDao;
+
+    @Resource(name = "blCatalogServiceExtensionManager")
+    protected CatalogServiceExtensionManager extensionManager;
 
     @Override
     public Product findProductById(Long productId) {
@@ -311,11 +316,25 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Category findCategoryByURI(String uri) {
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findCategoryByURI(uri, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (Category) holder.getResult();
+            }
+        }
         return categoryDao.findCategoryByURI(uri);
     }
 
     @Override
     public Product findProductByURI(String uri) {
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findProductByURI(uri, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (Product) holder.getResult();
+            }
+        }
         List<Product> products = productDao.findProductByURI(uri);
         if (products == null || products.size() == 0) {
             return null;

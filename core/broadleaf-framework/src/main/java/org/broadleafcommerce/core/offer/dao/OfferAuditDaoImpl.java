@@ -25,7 +25,6 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.domain.OfferAuditImpl;
-import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -74,8 +73,6 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
                 .addRestriction("offerAudit.customerId", "=", customerId)
                 .addRestriction("offerAudit.offerId", "=", offerId)
                 .toCountQuery(em);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
         Long result = query.getSingleResult();
         return result;
@@ -86,8 +83,6 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         TypedQuery<Long> query = new TypedQueryBuilder<OfferAudit>(OfferAudit.class, "offerAudit")
                 .addRestriction("offerAudit.offerCodeId", "=", offerCodeId)
                 .toCountQuery(em);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Offer");
 
         Long result =  query.getSingleResult();
         return result;

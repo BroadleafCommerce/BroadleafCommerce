@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.util;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -47,6 +48,12 @@ public class BLCCollectionUtils {
         return CollectionUtils.collect(inputCollection, transformer);
     }
 
+    /**
+     * The same as {@link #collect(Collection, TypedTransformer)} but returns an ArrayList
+     * @param inputCollection
+     * @param transformer
+     * @return
+     */
     @SuppressWarnings("rawtypes")
     public static <T> List<T> collectList(Collection inputCollection, TypedTransformer<T> transformer) {
         List<T> returnList = new ArrayList<T>();
@@ -55,6 +62,23 @@ public class BLCCollectionUtils {
             returnList.add(transformed);
         }
         return returnList;
+    }
+
+    /**
+     * The same as {@link #collect(Collection, TypedTransformer)} but returns an array
+     * @param inputCollection
+     * @param transformer
+     * @return
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static <T> T[] collectArray(Collection inputCollection, TypedTransformer<T> transformer, Class<T> clazz) {
+        T[] returnArray = (T[]) Array.newInstance(clazz, inputCollection.size());
+        int i = 0;
+        for (Object obj : inputCollection) {
+            T transformed = transformer.transform(obj);
+            returnArray[i++] = transformed;
+        }
+        return returnArray;
     }
 
     /**

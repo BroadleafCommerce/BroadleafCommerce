@@ -169,11 +169,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 documents.add(buildDocument(product, fields, locales));
             }
 
-            if (LOG.isTraceEnabled()) {
-                for (SolrInputDocument document : documents) {
-                    LOG.trace(document);
-                }
-            }
+            logDocuments(documents);
 
             if (!CollectionUtils.isEmpty(documents)) {
                 SolrServer server = useReindexServer ? SolrContext.getReindexServer() : SolrContext.getServer();
@@ -223,23 +219,13 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         return productDao.readAllActiveProducts(page, pageSize);
     }
 
-    /**
-     * @return a list of all possible locale prefixes to consider
-     */
-    protected List<Locale> getAllLocales() {
+    @Override
+    public List<Locale> getAllLocales() {
         return localeService.findAllLocales();
     }
 
-    /**
-     * Given a product, fields that relate to that product, and a list of locales and pricelists, builds a 
-     * SolrInputDocument to be added to the Solr index.
-     * 
-     * @param product
-     * @param fields
-     * @param locales
-     * @return the document
-     */
-    protected SolrInputDocument buildDocument(Product product, List<Field> fields, List<Locale> locales) {
+    @Override
+    public SolrInputDocument buildDocument(Product product, List<Field> fields, List<Locale> locales) {
         SolrInputDocument document = new SolrInputDocument();
 
         attachBasicDocumentFields(product, document);
@@ -312,7 +298,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         // The explicit categories are the ones defined by the product itself
         for (CategoryProductXref categoryXref : product.getAllParentCategoryXrefs()) {
-            document.addField(shs.getExplicitCategoryFieldName(), categoryXref.getCategory().getId());
+            document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryXref.getCategory().getId()));
 
             String categorySortFieldName = shs.getCategorySortFieldName(categoryXref.getCategory());
             int index = -1;
@@ -336,7 +322,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             fullCategoryHierarchy.addAll(categoryXref.getCategory().buildFullCategoryHierarchy(null));
         }
         for (Category category : fullCategoryHierarchy) {
-            document.addField(shs.getCategoryFieldName(), category.getId());
+            document.addField(shs.getCategoryFieldName(), shs.getCategoryId(category.getId()));
         }
     }
 
@@ -366,9 +352,18 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             ExtensionResultStatusType result = extensionManager.getProxy().addPropertyValues(product, field, fieldType, values, propertyName, locales);
 
             if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-                final Object propertyValue;
+                Object propertyValue;
                 if (propertyName.contains(ATTR_MAP)) {
                     propertyValue = PropertyUtils.getMappedProperty(product, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
+                    // It's possible that the value is an actual object, like ProductAttribute. We'll attempt to pull the 
+                    // value field out of it if it exists.
+                    if (propertyValue != null) {
+                        try {
+                            propertyValue = PropertyUtils.getProperty(propertyValue, "value");
+                        } catch (NoSuchMethodException e) {
+                            // Do nothing, we'll keep the existing value
+                        }
+                    }
                 } else {
                     propertyValue = PropertyUtils.getProperty(product, propertyName);
                 }
@@ -443,5 +438,14 @@ public class SolrIndexServiceImpl implements SolrIndexService {
              throw new ServiceException("Could not optimize index", e);
          }
      }
+    
+    @Override
+    public void logDocuments(Collection<SolrInputDocument> documents) {
+        if (LOG.isTraceEnabled()) {
+            for (SolrInputDocument document : documents) {
+                LOG.trace(document);
+            }
+        }
+    }
 
 }

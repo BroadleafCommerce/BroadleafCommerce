@@ -24,6 +24,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -57,6 +58,9 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
         }
         for (AdminPermission permission : adminUser.getAllPermissions()) {
             authorities.add(new SimpleGrantedAuthority(permission.getName()));
+        }
+        for (String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
+            authorities.add(new GrantedAuthorityImpl(perm));
         }
         return new AdminUserDetails(adminUser.getId(), username, adminUser.getPassword(), true, true, true, true, authorities);
     }

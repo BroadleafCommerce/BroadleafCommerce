@@ -88,5 +88,6 @@
     <bean id="org.broadleafcommerce.core.util.domain.CodeType" class="org.broadleafcommerce.core.util.domain.CodeTypeImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.offer.domain.OfferItemCriteria" class="org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.offer.domain.OfferAudit" class="org.broadleafcommerce.core.offer.domain.OfferAuditImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfiguration" class="org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfigurationImpl" scope="prototype" />
 
 </beans>

@@ -19,41 +19,17 @@
  */
 package org.broadleafcommerce.openadmin.web.controller;
 
-import org.broadleafcommerce.openadmin.web.form.TranslationForm;
+import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blAdminTranslationControllerExtensionManager")
-public class AdminTranslationControllerExtensionManager implements AdminTranslationControllerExtensionListener {
-    
-    @Resource(name = "blAdminTranslationControllerExtensionListeners")
-    protected List<AdminTranslationControllerExtensionListener> listeners = new ArrayList<AdminTranslationControllerExtensionListener>();
-    
-    @Override
-    public boolean applyTransformation(TranslationForm form) {
-        boolean applied = false;
-        for (AdminTranslationControllerExtensionListener listener : listeners) {
-            if (listener.applyTransformation(form)) {
-                applied = true;
-                break;
-            }
-        }
-        return applied;
-    }
-    
-    public List<AdminTranslationControllerExtensionListener> getListeners() {
-        return listeners;
-    }
+public class AdminTranslationControllerExtensionManager extends ExtensionManager<AdminTranslationControllerExtensionHandler> {
 
-    public void setListeners(List<AdminTranslationControllerExtensionListener> listeners) {
-        this.listeners = listeners;
+    public AdminTranslationControllerExtensionManager() {
+        super(AdminTranslationControllerExtensionHandler.class);
     }
 
 }

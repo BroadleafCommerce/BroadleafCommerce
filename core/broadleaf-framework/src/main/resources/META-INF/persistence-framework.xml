@@ -124,11 +124,11 @@
         <class>org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl</class>
         <class>org.broadleafcommerce.core.social.domain.UserConnectionImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfigurationImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.transaction.flush_before_completion" value="false"/>
-            <property name="hibernate.connection.autocommit" value="false"/>
             <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory"/>
             <property name="hibernate.cache.use_second_level_cache" value="true"/>
             <property name="hibernate.cache.use_query_cache" value="true"/>
@@ -151,7 +151,6 @@
         <properties>
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.transaction.flush_before_completion" value="false"/>
-            <property name="hibernate.connection.autocommit" value="false"/>
             <property name="hibernate.cache.use_second_level_cache" value="false"/>
             <property name="hibernate.cache.use_query_cache" value="false"/>
             <property name="hibernate.archive.autodetection" value="false" />

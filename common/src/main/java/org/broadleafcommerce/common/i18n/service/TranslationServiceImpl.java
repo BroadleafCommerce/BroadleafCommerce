@@ -84,6 +84,11 @@ public class TranslationServiceImpl implements TranslationService {
         translation.setTranslatedValue(translatedValue);
         return save(translation);
     }
+
+    @Override
+    public Translation findTranslationById(Long id) {
+        return dao.readTranslationById(id);
+    }
     
     @Override
     @Transactional("blTransactionManager")
@@ -172,6 +177,26 @@ public class TranslationServiceImpl implements TranslationService {
         
         return null;
     }
+
+    @Override
+    public void removeTranslationFromCache(Translation translation) {
+        String countryCacheKey = getCacheKey(translation.getEntityType(), translation.getEntityId(), translation.getFieldName(), translation.getLocaleCode());
+        String languageOnlyLocaleCode = translation.getLocaleCode();
+        if (languageOnlyLocaleCode.contains("_")) {
+            languageOnlyLocaleCode = languageOnlyLocaleCode.substring(0, languageOnlyLocaleCode.indexOf("_"));
+        }
+        String nonCountryCacheKey = getCacheKey(translation.getEntityType(), translation.getEntityId(), translation.getFieldName(), languageOnlyLocaleCode);
+        getCache().remove(countryCacheKey);
+        getCache().remove(nonCountryCacheKey);
+    }
+
+    @Override
+    public Cache getCache() {
+        if (cache == null) {
+            cache = CacheManager.getInstance().getCache("blTranslationElements");
+        }
+        return cache;
+    }
     
     protected TranslatedEntity getEntityType(Class<?> entityClass) {
         for (Entry<String, TranslatedEntity> entry : TranslatedEntity.getTypes().entrySet()) {
@@ -228,13 +253,6 @@ public class TranslationServiceImpl implements TranslationService {
     
     protected String getCacheKey(TranslatedEntity entityType, String entityId, String property, String localeCode) {
         return StringUtils.join(new String[] { entityType.getFriendlyType(), entityId, property, localeCode }, "|");
-    }
-    
-    protected Cache getCache() {
-        if (cache == null) {
-            cache = CacheManager.getInstance().getCache("blTranslationElements");
-        }
-        return cache;
     }
 
 }

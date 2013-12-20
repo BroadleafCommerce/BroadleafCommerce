@@ -56,26 +56,32 @@
         getServerDate : function(displayDate) {
             var server = BLC.dates.getServerDate(displayDate, adminFormats);
             return server == null ? null : server.serverDate + " " + server.serverTime;
+        },
+        
+        initializationHandler : function($container) {
+            $container.find('.datepicker').each(function(index, element) {
+                BLCAdmin.dates.initialize($(element));
+            });
+        },
+        
+        postValidationSubmitHandler : function($form) {
+            $form.find('.datepicker').each(function(index, element) {
+                var name = $(this).attr('name');
+
+                var $hiddenClone = $('<input>', {
+                    type: 'hidden',
+                    name: name,
+                    value: BLCAdmin.dates.getServerDate($(this).val()),
+                    'class': 'datepicker-clone'
+                });
+              
+                $(this).data('previous-name', name).removeAttr('name').after($hiddenClone);
+            });
         }
     };
     
-    BLCAdmin.addInitializationHandler(function($container) {
-        $container.find('.datepicker').each(function(index, element) {
-            BLCAdmin.dates.initialize($(element));
-        });
-    });
-    
-    BLCAdmin.addPostValidationSubmitHandler(function($form) {
-        $form.find('.datepicker').each(function(index, element) {
-            var $hiddenClone = $('<input>', {
-                type: 'hidden',
-                name: $(this).attr('name'),
-                value: BLCAdmin.dates.getServerDate($(this).val())
-            });
-          
-            $(this).removeAttr('name').after($hiddenClone);
-        });
-    });
+    BLCAdmin.addInitializationHandler(BLCAdmin.dates.initializationHandler);
+    BLCAdmin.addPostValidationSubmitHandler(BLCAdmin.dates.postValidationSubmitHandler);
             
 })(jQuery, BLCAdmin);
 
