@@ -38,6 +38,14 @@
             </list>
         </property>
     </bean>
+
+    <bean id="blMergedEntityContexts" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:bl-custom-field-applicationContext-entity.xml</value>
+            </list>
+        </property>
+    </bean>
     
     <!--
         These beans are responsible for contributing functionality to the multitenant module. They are dormant
