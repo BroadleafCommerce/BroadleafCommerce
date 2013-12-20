@@ -111,7 +111,6 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
 
         extensionManager.processAttributeValues(arguments, element);
         
-        //TODO: The entire FragmentAndTarget class has been deprecated in favor of a completely new system. See
         //the commit at https://github.com/thymeleaf/thymeleaf/commit/b214d9b5660369c41538e023d4b8d7223ebcbc22 along with
         //the referenced issue at https://github.com/thymeleaf/thymeleaf/issues/205
         
