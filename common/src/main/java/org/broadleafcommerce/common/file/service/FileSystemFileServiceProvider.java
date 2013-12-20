@@ -21,6 +21,7 @@ package org.broadleafcommerce.common.file.service;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.file.FileServiceException;
@@ -173,14 +174,14 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
      */
     protected String getBaseDirectory() {
         if (baseDirectory == null) {
-            if (fileSystemBaseDirectory != null && !"".equals(fileSystemBaseDirectory)) {
+            if (StringUtils.isNotEmpty(fileSystemBaseDirectory)) {
                 baseDirectory = fileSystemBaseDirectory;
             } else {
                 baseDirectory = DEFAULT_STORAGE_DIRECTORY;
             }
 
             if (!baseDirectory.endsWith("/")) {
-                baseDirectory = fileSystemBaseDirectory.trim() + "/";
+                baseDirectory = baseDirectory.trim() + "/";
             }
         }
 
