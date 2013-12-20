@@ -19,19 +19,22 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
-import org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionListener;
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.exceptions.TemplateProcessingException;
-import org.thymeleaf.fragment.FragmentAndTarget;
-import org.thymeleaf.fragment.WholeFragmentSpec;
-import org.thymeleaf.processor.element.AbstractFragmentHandlingElementProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
-import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+
+import org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionListener;
+import org.thymeleaf.Arguments;
+import org.thymeleaf.dom.Element;
+import org.thymeleaf.dom.Node;
+import org.thymeleaf.exceptions.TemplateProcessingException;
+import org.thymeleaf.processor.element.AbstractFragmentHandlingElementProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.IStandardExpressionParser;
+import org.thymeleaf.standard.expression.StandardExpressions;
+import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
 /**
  * A Thymeleaf processor that will include the standard head element. It will also set the
@@ -46,7 +49,21 @@ import javax.annotation.Resource;
  * </ul>
  * 
  * @author apazzolini
+ *
+ * @deprecated
+ *
+ * The entire FragmentAndTarget class has been deprecated in favor of a completely new system in Thymeleaf 2.1
+ * The referenced issue can be found at https://github.com/thymeleaf/thymeleaf/issues/205
+ *
+ * Use th:include or th:replace within the head tag and include the variables to replicate the behaviour.
+ *
+ * Examples:
+ *
+ * <head th:include="/layout/partials/head (pageTitle='My Page Title')"></head>
+ * <head th:include="/layout/partials/head (twovar=${value2},onevar=${value1})">...</head>
+ *
  */
+@Deprecated
 public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
 
     @Resource(name = "blHeadProcessorExtensionManager")
@@ -68,13 +85,13 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
     }
 
     @Override
-    protected boolean getSubstituteInclusionNode(Arguments arguments, Element element) {
+    protected boolean getRemoveHostNode(final Arguments arguments, final Element element) {
         return true;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected FragmentAndTarget getFragmentAndTarget(Arguments arguments, Element element, boolean substituteInclusionNode) {
+    protected List<Node> computeFragment(final Arguments arguments, final Element element) {
         // The pageTitle attribute could be an expression that needs to be evaluated. Try to evaluate, but fall back
         // to its text value if the expression wasn't able to be processed. This will allow things like
         // pageTitle="Hello this is a string"
@@ -83,7 +100,9 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
         
         String pageTitle = element.getAttributeValue("pageTitle");
         try {
-            pageTitle = (String) StandardExpressionProcessor.processExpression(arguments, pageTitle);
+            final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(arguments.getConfiguration());
+            Expression expression = (Expression) expressionParser.parseExpression(arguments.getConfiguration(), arguments, pageTitle);
+            pageTitle = (String) expression.execute(arguments.getConfiguration(), arguments);
         } catch (TemplateProcessingException e) {
             // Do nothing.
         }
@@ -91,8 +110,13 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
         ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("additionalCss", element.getAttributeValue("additionalCss"));
 
         extensionManager.processAttributeValues(arguments, element);
-
-        return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
+        
+        //the commit at https://github.com/thymeleaf/thymeleaf/commit/b214d9b5660369c41538e023d4b8d7223ebcbc22 along with
+        //the referenced issue at https://github.com/thymeleaf/thymeleaf/issues/205
+        
+        
+//        return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
+        return new ArrayList<Node>();
     }
 
 }
