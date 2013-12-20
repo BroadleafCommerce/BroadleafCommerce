@@ -102,6 +102,6 @@ public class NullPaymentGatewayHostedController extends PaymentGatewayAbstractCo
                                 Map<String, String> pathVars) throws PaymentException {
         redirectAttributes.addAttribute(PAYMENT_PROCESSING_ERROR,
                 request.getParameter(PAYMENT_PROCESSING_ERROR));
-        return getCartViewRedirect();
+        return getOrderReviewRedirect();
     }
 }

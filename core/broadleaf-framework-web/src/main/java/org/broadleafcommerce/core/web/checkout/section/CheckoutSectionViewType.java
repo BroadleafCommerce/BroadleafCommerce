@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -17,8 +17,7 @@
  * limitations under the License.
  * #L%
  */
-
-package org.broadleafcommerce.common.payment;
+package org.broadleafcommerce.core.web.checkout.section;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
@@ -26,52 +25,47 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
 /**
- * <p>This is designed such that individual payment modules will extend this to add their own type. For instance, while
- * this class does not explicitly have a 'Braintree' payment gateway type, the Braintree module will provide an extension
- * to this class and add itself in the list of types.</p>
- * 
- * <p>This is especially useful in auditing scenarios so that, at a glance, you can easily see what gateway a particular
- * order payment was processed by.</p>
- * 
- * @author Phillip Verheyden (phillipuniverse)
+ * @author Elbert Bautista (elbertbautista)
  */
-public class PaymentGatewayType implements Serializable, BroadleafEnumerationType {
+public class CheckoutSectionViewType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, PaymentGatewayType> TYPES = new LinkedHashMap<String, PaymentGatewayType>();
+    private static final Map<String, CheckoutSectionViewType> TYPES = new LinkedHashMap<String, CheckoutSectionViewType>();
 
-    public static PaymentGatewayType getInstance(final String type) {
+    public static final CheckoutSectionViewType ORDER_INFO = new CheckoutSectionViewType("ORDER_INFO", "Order Info (Contact Info) View");
+    public static final CheckoutSectionViewType BILLING_INFO = new CheckoutSectionViewType("BILLING_INFO", "Billing Info View");
+    public static final CheckoutSectionViewType SHIPPING_INFO = new CheckoutSectionViewType("SHIPPING_INFO", "Shipping Info View");
+    public static final CheckoutSectionViewType PAYMENT_INFO = new CheckoutSectionViewType("PAYMENT_INFO", "Payment Info View");
+
+    public static CheckoutSectionViewType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
     private String friendlyType;
 
-    public PaymentGatewayType() {
-        // do nothing
+    public CheckoutSectionViewType() {
+        //do nothing
     }
 
-    public PaymentGatewayType(String type, String friendlyType) {
+    public CheckoutSectionViewType(final String type, final String friendlyType) {
         this.friendlyType = friendlyType;
         setType(type);
     }
 
-   @Override
-     public String getType() {
+    public String getType() {
         return type;
     }
 
-   @Override
-     public String getFriendlyType() {
+    public String getFriendlyType() {
         return friendlyType;
     }
 
     private void setType(final String type) {
         this.type = type;
-        if (!TYPES.containsKey(type)){
+        if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
     }
@@ -92,7 +86,7 @@ public class PaymentGatewayType implements Serializable, BroadleafEnumerationTyp
             return false;
         if (getClass() != obj.getClass())
             return false;
-        PaymentGatewayType other = (PaymentGatewayType) obj;
+        CheckoutSectionViewType other = (CheckoutSectionViewType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;
@@ -101,3 +95,4 @@ public class PaymentGatewayType implements Serializable, BroadleafEnumerationTyp
         return true;
     }
 }
+

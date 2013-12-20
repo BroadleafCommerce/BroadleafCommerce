@@ -76,18 +76,20 @@ public class NullPaymentGatewayHostedActionProcessor extends AbstractAttributeMo
         PaymentRequestDTO requestDTO = (PaymentRequestDTO) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
         String url = "";
 
-        if ( element.getAttributeValue("complete_checkout") != null) {
-            Boolean completeCheckout = (Boolean) StandardExpressionProcessor.processExpression(arguments,
-                    element.getAttributeValue("complete_checkout"));
-            element.removeAttribute("complete_checkout");
-            requestDTO.completeCheckoutOnCallback(completeCheckout);
-        }
+        if (requestDTO != null) {
+            if ( element.getAttributeValue("complete_checkout") != null) {
+                Boolean completeCheckout = (Boolean) StandardExpressionProcessor.processExpression(arguments,
+                        element.getAttributeValue("complete_checkout"));
+                element.removeAttribute("complete_checkout");
+                requestDTO.completeCheckoutOnCallback(completeCheckout);
+            }
 
-        try {
-            PaymentResponseDTO responseDTO = paymentGatewayHostedService.requestHostedEndpoint(requestDTO);
-            url = responseDTO.getResponseMap().get(NullPaymentGatewayConstants.HOSTED_REDIRECT_URL).toString();
-        } catch (PaymentException e) {
-            throw new RuntimeException("Unable to Create Null Payment Gateway Hosted Link", e);
+            try {
+                PaymentResponseDTO responseDTO = paymentGatewayHostedService.requestHostedEndpoint(requestDTO);
+                url = responseDTO.getResponseMap().get(NullPaymentGatewayConstants.HOSTED_REDIRECT_URL).toString();
+            } catch (PaymentException e) {
+                throw new RuntimeException("Unable to Create Null Payment Gateway Hosted Link", e);
+            }
         }
 
         attrs.put("action", url);

@@ -57,7 +57,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
     protected static String processingErrorMessage = "There was an error processing your request.";
     protected static String baseRedirect = "redirect:/";
     protected static String baseErrorView = "/error";
-    protected static String baseOrderReviewRedirect = "redirect:/review";
+    protected static String baseOrderReviewRedirect = "redirect:/checkout";
     protected static String baseConfirmationRedirect = "redirect:/confirmation";
     protected static String baseCartRedirect = "redirect:/cart";
 

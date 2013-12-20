@@ -36,6 +36,9 @@ import org.broadleafcommerce.core.pricing.service.fulfillment.provider.Fulfillme
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.OrderInfoForm;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
+import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionDTO;
+import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionStateType;
+import org.broadleafcommerce.core.web.checkout.section.CheckoutSectionViewType;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.core.service.CountryService;
@@ -56,7 +59,9 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -185,10 +190,6 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         return numShippableFulfillmentGroups;
     }
 
-    public enum ViewState {
-        SHOW_FORM_VIEW, SHOW_SAVED_VIEW, SHOW_HELP_VIEW
-    }
-
     /**
      * This method is responsible of populating the variables necessary to draw the checkout page.
      * This logic is highly dependent on your layout. If your layout does not follow the same flow
@@ -205,13 +206,12 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         localVars.put("billingPopulated", billingPopulated);
         localVars.put("shippingPopulated", shippingPopulated);
 
-        //show all sections including header unless specifically hidden
+        //Logic to show/hide sections based on state of the order
+        // show all sections including header unless specifically hidden
         // (e.g. hide shipping if no shippable items in order or hide billing section if the order payment doesn't need
         // an address i.e. PayPal Express)
-        boolean showOrderInfoSection = true;
         boolean showBillingInfoSection = true;
         boolean showShippingInfoSection = true;
-        boolean showPaymentInfoSection = true;
         boolean showAllPaymentMethods = true;
 
         int numShippableFulfillmentGroups = calculateNumShippableFulfillmentGroups();
@@ -233,63 +233,60 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
             showAllPaymentMethods = false;
         }
 
-        localVars.put("showOrderInfoSection", showOrderInfoSection);
         localVars.put("showBillingInfoSection", showBillingInfoSection);
-        localVars.put("showShippingInfoSection", showShippingInfoSection);
-        localVars.put("showPaymentInfoSection", showPaymentInfoSection);
         localVars.put("showAllPaymentMethods", showAllPaymentMethods);
 
-        //Logic to toggle state between form view, saved view, and help view
+        List<CheckoutSectionDTO> drawnSections = new LinkedList<CheckoutSectionDTO>();
+        drawnSections.add(new CheckoutSectionDTO(CheckoutSectionViewType.ORDER_INFO, orderInfoPopulated));
+        if (showBillingInfoSection) {
+            drawnSections.add(new CheckoutSectionDTO(CheckoutSectionViewType.BILLING_INFO, billingPopulated));
+        }
+        if (showShippingInfoSection) {
+            drawnSections.add(new CheckoutSectionDTO(CheckoutSectionViewType.SHIPPING_INFO, shippingPopulated));
+        }
+        drawnSections.add(new CheckoutSectionDTO(CheckoutSectionViewType.PAYMENT_INFO, false));
+
+        //Logic to toggle state between form view, saved view, and inactive view
         //This is dependent on the layout of your checkout form. Override this if layout is different.
 
-        //Initialize State
-        ViewState orderInfoViewState = ViewState.SHOW_FORM_VIEW;
-        ViewState billingInfoViewState = ViewState.SHOW_HELP_VIEW;
-        ViewState shippingInfoViewState = ViewState.SHOW_HELP_VIEW;
-        ViewState paymentInfoViewState = ViewState.SHOW_HELP_VIEW;
+        //initialize first view to always be a FORM view
+        CheckoutSectionDTO firstSection = drawnSections.get(0);
+        firstSection.setState(CheckoutSectionStateType.FORM);
+        //iterate through all the drawn sections and set their state based on the state of the other sections.
 
-        if (orderInfoPopulated && billingPopulated && shippingPopulated) {
-            paymentInfoViewState = ViewState.SHOW_FORM_VIEW;
-        } else if (orderInfoPopulated && billingPopulated){
-            shippingInfoViewState = ViewState.SHOW_FORM_VIEW;
-        } else if (orderInfoPopulated) {
-            billingInfoViewState = ViewState.SHOW_FORM_VIEW;
+        for (ListIterator<CheckoutSectionDTO> itr = drawnSections.listIterator(); itr.hasNext();) {
+            CheckoutSectionDTO previousSection = null;
+            if (itr.hasPrevious()) {
+                previousSection = drawnSections.get(itr.previousIndex());
+            }
+            CheckoutSectionDTO section = itr.next();
+
+            //if the previous section is populated, set this section to a Form View
+            if (previousSection != null && previousSection.isPopulated()) {
+                section.setState(CheckoutSectionStateType.FORM);
+            }
+            //If this sections is populated then set this section to the Saved View
+            if (section.isPopulated()) {
+                section.setState(CheckoutSectionStateType.SAVED);
+            }
+            //Finally, if the edit button is explicitly clicked, set the section to Form View
+            BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
+            HttpServletRequest request = blcContext.getRequest();
+            boolean editOrderInfo = BooleanUtils.toBoolean(request.getParameter("edit-order-info"));
+            boolean editBillingInfo = BooleanUtils.toBoolean(request.getParameter("edit-billing"));
+            boolean editShippingInfo = BooleanUtils.toBoolean(request.getParameter("edit-shipping"));
+
+            if (CheckoutSectionViewType.ORDER_INFO.equals(section.getView()) && editOrderInfo) {
+                section.setState(CheckoutSectionStateType.FORM);
+            } else if (CheckoutSectionViewType.BILLING_INFO.equals(section.getView()) && editBillingInfo) {
+                section.setState(CheckoutSectionStateType.FORM);
+            } else if (CheckoutSectionViewType.SHIPPING_INFO.equals(section.getView()) && editShippingInfo) {
+                section.setState(CheckoutSectionStateType.FORM);
+            }
         }
 
-        if (orderInfoPopulated) {
-            orderInfoViewState = ViewState.SHOW_SAVED_VIEW;
-        }
+        localVars.put("checkoutSectionDTOs", drawnSections);
 
-        if (billingPopulated) {
-            billingInfoViewState = ViewState.SHOW_SAVED_VIEW;
-        }
-
-        if (shippingPopulated) {
-            shippingInfoViewState = ViewState.SHOW_SAVED_VIEW;
-        }
-
-        BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
-        HttpServletRequest request = blcContext.getRequest();
-
-        String editOrderInfo = request.getParameter("edit-order-info");
-        if (BooleanUtils.toBoolean(editOrderInfo)) {
-            orderInfoViewState = ViewState.SHOW_FORM_VIEW;
-        }
-
-        String editBilling = request.getParameter("edit-billing");
-        if (BooleanUtils.toBoolean(editBilling)) {
-            billingInfoViewState = ViewState.SHOW_FORM_VIEW;
-        }
-
-        String editShipping = request.getParameter("edit-shipping");
-        if (BooleanUtils.toBoolean(editShipping)) {
-            shippingInfoViewState = ViewState.SHOW_FORM_VIEW;
-        }
-
-        localVars.put("orderInfoViewState", orderInfoViewState);
-        localVars.put("billingInfoViewState", billingInfoViewState);
-        localVars.put("shippingInfoViewState", shippingInfoViewState);
-        localVars.put("paymentInfoViewState", paymentInfoViewState);
     }
 
 

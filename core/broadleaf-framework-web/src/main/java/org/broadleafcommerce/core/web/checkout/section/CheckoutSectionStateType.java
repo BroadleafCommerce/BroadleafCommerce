@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -17,8 +17,7 @@
  * limitations under the License.
  * #L%
  */
-
-package org.broadleafcommerce.common.payment;
+package org.broadleafcommerce.core.web.checkout.section;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
@@ -26,52 +25,46 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
 /**
- * <p>This is designed such that individual payment modules will extend this to add their own type. For instance, while
- * this class does not explicitly have a 'Braintree' payment gateway type, the Braintree module will provide an extension
- * to this class and add itself in the list of types.</p>
- * 
- * <p>This is especially useful in auditing scenarios so that, at a glance, you can easily see what gateway a particular
- * order payment was processed by.</p>
- * 
- * @author Phillip Verheyden (phillipuniverse)
+ * @author Elbert Bautista (elbertbautista)
  */
-public class PaymentGatewayType implements Serializable, BroadleafEnumerationType {
+public class CheckoutSectionStateType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, PaymentGatewayType> TYPES = new LinkedHashMap<String, PaymentGatewayType>();
+    private static final Map<String, CheckoutSectionStateType> TYPES = new LinkedHashMap<String, CheckoutSectionStateType>();
 
-    public static PaymentGatewayType getInstance(final String type) {
+    public static final CheckoutSectionStateType FORM  = new CheckoutSectionStateType("FORM", "Show Form State");
+    public static final CheckoutSectionStateType SAVED  = new CheckoutSectionStateType("SAVED", "Show Saved State");
+    public static final CheckoutSectionStateType INACTIVE  = new CheckoutSectionStateType("INACTIVE", "Show Inactive State");
+
+    public static CheckoutSectionStateType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
     private String friendlyType;
 
-    public PaymentGatewayType() {
-        // do nothing
+    public CheckoutSectionStateType() {
+        //do nothing
     }
 
-    public PaymentGatewayType(String type, String friendlyType) {
+    public CheckoutSectionStateType(final String type, final String friendlyType) {
         this.friendlyType = friendlyType;
         setType(type);
     }
 
-   @Override
-     public String getType() {
+    public String getType() {
         return type;
     }
 
-   @Override
-     public String getFriendlyType() {
+    public String getFriendlyType() {
         return friendlyType;
     }
 
     private void setType(final String type) {
         this.type = type;
-        if (!TYPES.containsKey(type)){
+        if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
     }
@@ -92,7 +85,7 @@ public class PaymentGatewayType implements Serializable, BroadleafEnumerationTyp
             return false;
         if (getClass() != obj.getClass())
             return false;
-        PaymentGatewayType other = (PaymentGatewayType) obj;
+        CheckoutSectionStateType other = (CheckoutSectionStateType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;
@@ -101,3 +94,4 @@ public class PaymentGatewayType implements Serializable, BroadleafEnumerationTyp
         return true;
     }
 }
+
