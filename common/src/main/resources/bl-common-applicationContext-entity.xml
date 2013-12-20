@@ -38,5 +38,6 @@
     <bean id="org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration" class="org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.sitemap.domain.SiteMapUrlEntry" class="org.broadleafcommerce.common.sitemap.domain.SiteMapUrlEntryImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfiguration" class="org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfigurationImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.sandbox.domain.SandBoxManagement" class="org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl" scope="prototype" />
 
 </beans>

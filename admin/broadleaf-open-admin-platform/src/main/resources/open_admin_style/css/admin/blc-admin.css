@@ -1463,6 +1463,7 @@ div.uploadMessage {
 }
 
 form.uploadFileForm {
+	display: none;
 }
 
 div.imagePreviewContainer {
