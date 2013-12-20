@@ -19,10 +19,12 @@ package org.broadleafcommerce.profile.core.service;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.profile.core.dao.AddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.service.exception.AddressVerificationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -41,6 +43,7 @@ public class AddressServiceImpl implements AddressService {
     protected List<AddressVerificationProvider> providers;
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Address saveAddress(Address address) {
         return addressDao.save(address);
     }
@@ -51,11 +54,13 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Address create() {
         return addressDao.create();
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void delete(Address address) {
         addressDao.delete(address);
     }

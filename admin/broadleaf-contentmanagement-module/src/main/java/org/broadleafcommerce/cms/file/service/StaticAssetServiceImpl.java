@@ -29,6 +29,7 @@ import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.openadmin.server.dao.SandBoxItemDao;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItem;
 import org.broadleafcommerce.openadmin.server.domain.SandBoxItemType;
@@ -177,7 +178,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     }
 
     @Override
-    @Transactional("blTransactionManager")
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public StaticAsset createStaticAssetFromFile(MultipartFile file, Map<String, String> properties) {
         
         if (properties == null) {
@@ -280,6 +281,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public StaticAsset addStaticAsset(StaticAsset staticAsset, SandBox destinationSandbox) {
         
         if (automaticallyApproveAndPromoteStaticAssets) {           
@@ -303,6 +305,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public StaticAsset updateStaticAsset(StaticAsset staticAsset, SandBox destSandbox) {
         if (staticAsset.getLockedFlag()) {
             throw new IllegalArgumentException("Unable to update a locked record");
@@ -389,6 +392,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public void deleteStaticAsset(StaticAsset staticAsset, SandBox destinationSandbox) {
         staticAsset.setDeletedFlag(true);
         updateStaticAsset(staticAsset, destinationSandbox);
