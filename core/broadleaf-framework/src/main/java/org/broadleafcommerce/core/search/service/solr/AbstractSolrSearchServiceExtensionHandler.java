@@ -78,4 +78,8 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
+    @Override
+    public ExtensionResultStatusType getCategoryId(Long tentativeId, Long[] returnContainer) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }

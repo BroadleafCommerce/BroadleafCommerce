@@ -18,7 +18,9 @@
                     th:inline="text"
                     th:classappend="${#strings.isEmpty(headerField.columnWidth) ? '' : 'explicit-size'}"
                     th:attr="data-columnwidth=${#strings.isEmpty(headerField.columnWidth) ? '' : headerField.columnWidth}"
-                    th:style="${#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';'}"
+                    th:style="${(#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';') 
+                              + ' ' + 
+                              (headerFieldStat.first ? 'padding-right: 20px;' : '')}"
                     scope="col">
 
                     <span th:if="${headerFieldStat.first}" class="listgrid-icon" />

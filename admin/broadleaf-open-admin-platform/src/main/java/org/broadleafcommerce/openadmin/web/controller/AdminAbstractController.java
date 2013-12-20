@@ -19,16 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.web.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -63,6 +53,16 @@ import org.broadleafcommerce.openadmin.web.handler.AdminNavigationHandlerMapping
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for the Admin
@@ -102,6 +102,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     
     @Resource(name = "blMainEntityActionsExtensionManager")
     protected MainEntityActionsExtensionManager mainEntityActionsExtensionManager;
+
+    @Resource(name = "blAdminAbstractControllerExtensionManager")
+    protected AdminAbstractControllerExtensionManager extensionManager;
     
     // *********************************************************
     // UNBOUND CONTROLLER METHODS (USED BY DIFFERENT SECTIONS) *
@@ -579,6 +582,8 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME, section.getModule());
             model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME, section);
         }
+        
+        extensionManager.getProxy().setAdditionalModelAttributes(model, sectionKey);
     }
 
     /**
