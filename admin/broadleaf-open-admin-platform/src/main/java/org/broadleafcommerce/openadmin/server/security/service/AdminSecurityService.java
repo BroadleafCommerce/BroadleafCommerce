@@ -36,7 +36,7 @@ import java.util.List;
  */
 public interface AdminSecurityService {
 
-    public static final String DEFAULT_PERMISSION = "PERMISSION_OTHER_DEFAULT";
+    public static final String[] DEFAULT_PERMISSIONS = { "PERMISSION_OTHER_DEFAULT", "PERMISSION_ALL_USER_SANDBOX" };
 
     List<AdminUser> readAllAdminUsers();
     AdminUser readAdminUserById(Long id);

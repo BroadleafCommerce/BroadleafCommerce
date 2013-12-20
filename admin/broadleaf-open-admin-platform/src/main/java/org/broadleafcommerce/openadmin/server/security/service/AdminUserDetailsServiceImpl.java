@@ -59,7 +59,9 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
         for (AdminPermission permission : adminUser.getAllPermissions()) {
             authorities.add(new SimpleGrantedAuthority(permission.getName()));
         }
-        authorities.add(new GrantedAuthorityImpl(AdminSecurityService.DEFAULT_PERMISSION));
+        for (String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
+            authorities.add(new GrantedAuthorityImpl(perm));
+        }
         return new AdminUserDetails(adminUser.getId(), username, adminUser.getPassword(), true, true, true, true, authorities);
     }
 
