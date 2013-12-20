@@ -44,7 +44,6 @@ import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl;
 import org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment;
-import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -104,20 +103,6 @@ public class LegacyCheckoutTest extends BaseTest {
         orderService.save(order, true);
         CheckoutResponse response = checkoutService.performCheckout(order);
 
-        //confirm that the secure payment info items are not persisted
-        Referenced referenced = null;
-        try {
-            referenced = securePaymentInfoService.findSecurePaymentInfo("abc123", PaymentType.CREDIT_CARD);
-        } catch (Exception e) {
-            //do nothing
-        }
-        try {
-            referenced = securePaymentInfoService.findSecurePaymentInfo("1234", PaymentType.CREDIT_CARD);
-        } catch (Exception e) {
-            //do nothing
-        }
-        assert(referenced == null);
-
         assert (order.getTotal().greaterThan(order.getSubTotal()));
     }
 
@@ -131,7 +116,8 @@ public class LegacyCheckoutTest extends BaseTest {
         PaymentTransaction tx = new PaymentTransactionImpl();
         tx.setAmount(payment.getAmount());
         tx.setType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE);
-
+        tx.setOrderPayment(payment);
+        payment.getTransactions().add(tx);
         CreditCardPayment cc = new CreditCardPayment() {
 
             private static final long serialVersionUID = 1L;
