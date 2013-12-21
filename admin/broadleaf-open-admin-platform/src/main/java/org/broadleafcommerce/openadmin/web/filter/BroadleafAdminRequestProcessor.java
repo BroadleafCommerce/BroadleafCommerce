@@ -16,18 +16,15 @@
 
 package org.broadleafcommerce.openadmin.web.filter;
 
-import java.lang.reflect.Field;
-import java.util.TimeZone;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
+import org.broadleafcommerce.common.web.BroadleafCurrencyResolver;
 import org.broadleafcommerce.common.web.BroadleafLocaleResolver;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
@@ -36,6 +33,11 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 import org.thymeleaf.TemplateEngine;
+
+import java.lang.reflect.Field;
+import java.util.TimeZone;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -59,6 +61,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     
     @Resource(name = "blAdminTimeZoneResolver")
     protected BroadleafTimeZoneResolver broadleafTimeZoneResolver;
+    
+    @Resource(name = "blCurrencyResolver")
+    protected BroadleafCurrencyResolver currencyResolver;
 
     @Override
     public void process(WebRequest request) throws SiteNotFoundException {
@@ -78,6 +83,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         
         TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
         brc.setTimeZone(timeZone);
+        
+        BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
+        brc.setBroadleafCurrency(currency);
     }
 
     @Override
