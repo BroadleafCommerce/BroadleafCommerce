@@ -33,7 +33,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.util.LRUMap;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -74,7 +75,9 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-        Long productId = (Long) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("productId"));
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("productId"));
+        Long productId = (Long) expression.execute(arguments.getConfiguration(), arguments);
         Product product = catalogService.findProductById(productId);
         if (product != null) {
             addAllProductOptionsToModel(arguments, product);

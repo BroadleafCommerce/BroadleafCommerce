@@ -28,7 +28,8 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
 import org.thymeleaf.spring3.context.SpringWebContext;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,9 +68,10 @@ public class AdminFieldBuilderProcessor extends AbstractLocalVariableDefinitionE
     protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
         initServices(arguments);
         FieldWrapper fieldWrapper = new FieldWrapper();
-
-        String fieldBuilder = (String) StandardExpressionProcessor.processExpression(arguments,
-            element.getAttributeValue("fieldBuilder"));
+        
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("fieldBuilder"));
+        String fieldBuilder = (String) expression.execute(arguments.getConfiguration(), arguments);
 
         if (fieldBuilder != null) {
             RuleBuilderFieldService ruleBuilderFieldService = ruleBuilderFieldServiceFactory.createInstance(fieldBuilder);

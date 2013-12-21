@@ -20,11 +20,13 @@
 package org.broadleafcommerce.cms.web.processor;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,8 +43,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor {
     
-    @Resource(name = "blStaticAssetService")
-    protected StaticAssetService staticAssetService;
+    @Resource(name = "blStaticAssetPathService")
+    protected StaticAssetPathService staticAssetPathService;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -70,28 +72,14 @@ public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor 
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         
         boolean secureRequest = isRequestSecure(request);
-        String assetPath = (String) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-        //String assetPath = element.getAttributeValue(attributeName);
         
-        assetPath = staticAssetService.convertAssetPath(assetPath, request.getContextPath(), secureRequest);
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
+        String assetPath = (String) expression.execute(arguments.getConfiguration(), arguments);
+        
+        assetPath = staticAssetPathService.convertAssetPath(assetPath, request.getContextPath(), secureRequest);
         
         attrs.put("src", assetPath);
-        
-        
-        /*
-        SearchFacetResultDTO result = (SearchFacetResultDTO) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
-        String value = result.getFacet().getSearchFacet().getFieldName() + "[RESULT-VALUE]";
-        if (result.getValue() != null) {
-            value = value.replace("RESULT-VALUE", result.getValue());
-        } else {
-            value = value.replace("RESULT-VALUE", result.getMinValue() + "-" + result.getMaxValue());
-        }
-        */
-        
-        /*
-        attrs.put("id", value);
-        attrs.put("name", value);
-        */
         
         return attrs;
     }

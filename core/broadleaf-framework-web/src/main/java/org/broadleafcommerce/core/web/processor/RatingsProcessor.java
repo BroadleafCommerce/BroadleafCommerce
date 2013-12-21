@@ -29,7 +29,8 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import javax.annotation.Resource;
 
@@ -61,7 +62,9 @@ public class RatingsProcessor extends AbstractModelVariableModifierProcessor {
 
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-        String itemId = String.valueOf(StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("itemId")));
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("itemId"));
+        String itemId = String.valueOf(expression.execute(arguments.getConfiguration(), arguments));
         RatingSummary ratingSummary = ratingService.readRatingSummary(itemId, RatingType.PRODUCT);
         if (ratingSummary != null) {
             addToModel(arguments, getRatingsVar(element), ratingSummary);

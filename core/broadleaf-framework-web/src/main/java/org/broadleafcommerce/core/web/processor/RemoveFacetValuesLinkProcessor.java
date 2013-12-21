@@ -26,7 +26,8 @@ import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,12 +66,13 @@ public class RemoveFacetValuesLinkProcessor extends AbstractAttributeModifierAtt
         String baseUrl = request.getRequestURL().toString();
         Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
         
-        SearchFacetDTO facet = (SearchFacetDTO) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
+        SearchFacetDTO facet = (SearchFacetDTO) expression.execute(arguments.getConfiguration(), arguments);
         
         String key = facet.getFacet().getField().getAbbreviation();
         params.remove(key);
         params.remove(ProductSearchCriteria.PAGE_NUMBER);
-
         
         String url = ProcessorUtils.getUrl(baseUrl, params);
         

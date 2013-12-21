@@ -27,7 +27,8 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.attr.AbstractAttrProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -43,8 +44,11 @@ public class ProductOptionValueProcessor extends AbstractAttrProcessor  {
     
     @Override
     protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
+        
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
+        ProductOptionValue productOptionValue = (ProductOptionValue) expression.execute(arguments.getConfiguration(), arguments);
 
-        ProductOptionValue productOptionValue = (ProductOptionValue) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
         ProductOptionValueDTO dto = new ProductOptionValueDTO();
         dto.setOptionId(productOptionValue.getProductOption().getId());
         dto.setValueId(productOptionValue.getId());

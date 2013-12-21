@@ -29,7 +29,8 @@ import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.NestableNode;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.element.AbstractElementProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -80,8 +81,9 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
                     throw new RuntimeException(e);
                 }
             }
-            
-            String value = (String) StandardExpressionProcessor.processExpression(arguments, "@{'" + mappingPrefix + versionedBundle + "'}");
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                    .parseExpression(arguments.getConfiguration(), arguments, "@{'" + mappingPrefix + versionedBundle + "'}");
+            String value = (String) expression.execute(arguments.getConfiguration(), arguments);
             Element e = getElement(value);
             parent.insertAfter(element, e);
         } else {
@@ -91,7 +93,9 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
             }
             for (String file : files) {
                 file = file.trim();
-                String value = (String) StandardExpressionProcessor.processExpression(arguments, "@{'" + mappingPrefix + file + "'}");
+                Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                        .parseExpression(arguments.getConfiguration(), arguments, "@{'" + mappingPrefix + file + "'}");
+                String value = (String) expression.execute(arguments.getConfiguration(), arguments);
                 Element e = getElement(value);
                 parent.insertBefore(element, e);
             }

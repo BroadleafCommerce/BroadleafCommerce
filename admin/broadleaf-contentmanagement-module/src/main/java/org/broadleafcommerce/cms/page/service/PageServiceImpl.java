@@ -258,9 +258,9 @@ public class PageServiceImpl implements PageService {
         }
 
         // First check to see if we have a page that matches on the full locale.
-        for(PageDTO page : pageDTOList) {
+        for (PageDTO page : pageDTOList) {
             if (locale != null && locale.getLocaleCode() != null) {
-                if (page.getLocaleCode().equals(locale.getLocaleCode())) {
+                if (locale.getLocaleCode().equals(page.getLocaleCode())) {
                     if (passesPageRules(page, ruleDTOs)) {
                         return page;
                     }
@@ -269,7 +269,7 @@ public class PageServiceImpl implements PageService {
         }
 
         // Otherwise, we look for a match using just the language.
-        for(PageDTO page : pageDTOList) {
+        for (PageDTO page : pageDTOList) {
             if (passesPageRules(page, ruleDTOs)) {
                 return page;
             }

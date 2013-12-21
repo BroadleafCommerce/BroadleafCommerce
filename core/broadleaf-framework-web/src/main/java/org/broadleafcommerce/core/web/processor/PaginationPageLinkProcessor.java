@@ -25,7 +25,8 @@ import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,7 +65,9 @@ public class PaginationPageLinkProcessor extends AbstractAttributeModifierAttrPr
         String baseUrl = request.getRequestURL().toString();
         Map<String, String[]> params = new HashMap<String, String[]>(request.getParameterMap());
         
-        Integer page = (Integer) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
+        Integer page = (Integer) expression.execute(arguments.getConfiguration(), arguments);
         if (page != null && page > 1) {
             params.put(ProductSearchCriteria.PAGE_NUMBER, new String[] { page.toString() });
         } else {
