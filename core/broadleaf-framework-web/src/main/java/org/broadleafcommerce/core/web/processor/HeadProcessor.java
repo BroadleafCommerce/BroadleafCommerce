@@ -19,12 +19,6 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionListener;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -32,9 +26,14 @@ import org.thymeleaf.dom.Node;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.processor.element.AbstractFragmentHandlingElementProcessor;
 import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will include the standard head element. It will also set the
@@ -100,8 +99,8 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
         
         String pageTitle = element.getAttributeValue("pageTitle");
         try {
-            final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(arguments.getConfiguration());
-            Expression expression = (Expression) expressionParser.parseExpression(arguments.getConfiguration(), arguments, pageTitle);
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                    .parseExpression(arguments.getConfiguration(), arguments, pageTitle);
             pageTitle = (String) expression.execute(arguments.getConfiguration(), arguments);
         } catch (TemplateProcessingException e) {
             // Do nothing.

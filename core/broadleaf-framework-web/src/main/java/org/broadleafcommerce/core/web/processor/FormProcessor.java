@@ -26,7 +26,8 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.element.AbstractElementProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import javax.annotation.Resource;
 
@@ -68,7 +69,9 @@ public class FormProcessor extends AbstractElementProcessor {
 
                 //detect multipart form
                 if ("multipart/form-data".equalsIgnoreCase(element.getAttributeValueFromNormalizedName("enctype"))) {
-                    String action = (String) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValueFromNormalizedName("th:action"));
+                    Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                            .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValueFromNormalizedName("th:action"));
+                    String action = (String) expression.execute(arguments.getConfiguration(), arguments);
                     String csrfQueryParameter = "?" + eps.getCsrfTokenParameter() + "=" + csrfToken;
                     element.removeAttribute("th:action");
                     element.setAttribute("action", action + csrfQueryParameter);

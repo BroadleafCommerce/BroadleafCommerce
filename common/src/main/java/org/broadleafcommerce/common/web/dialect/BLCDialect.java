@@ -21,11 +21,8 @@ package org.broadleafcommerce.common.web.dialect;
 
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.processor.IProcessor;
-import org.thymeleaf.standard.StandardDialect;
 import org.thymeleaf.standard.expression.IStandardVariableExpressionEvaluator;
-import org.thymeleaf.standard.expression.StandardExpressionExecutor;
-import org.thymeleaf.standard.expression.StandardExpressionParser;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -62,13 +59,8 @@ public class BLCDialect extends AbstractDialect {
     
     @Override
     public Map<String, Object> getExecutionAttributes() {
-        final StandardExpressionExecutor executor = StandardExpressionProcessor.createStandardExpressionExecutor(expressionEvaluator);
-        final StandardExpressionParser parser = StandardExpressionProcessor.createStandardExpressionParser(executor);
-        
         final Map<String,Object> executionAttributes = new LinkedHashMap<String, Object>();
-        executionAttributes.put(StandardDialect.EXPRESSION_EVALUATOR_EXECUTION_ATTRIBUTE, expressionEvaluator);
-        executionAttributes.put(StandardExpressionProcessor.STANDARD_EXPRESSION_EXECUTOR_ATTRIBUTE_NAME, executor);
-        executionAttributes.put(StandardExpressionProcessor.STANDARD_EXPRESSION_PARSER_ATTRIBUTE_NAME, parser);
+        executionAttributes.put(StandardExpressions.STANDARD_VARIABLE_EXPRESSION_EVALUATOR_ATTRIBUTE_NAME, expressionEvaluator);
         return executionAttributes;
     }
 

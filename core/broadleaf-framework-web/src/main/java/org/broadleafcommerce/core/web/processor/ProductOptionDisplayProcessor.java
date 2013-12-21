@@ -25,7 +25,8 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +50,6 @@ public class ProductOptionDisplayProcessor extends AbstractLocalVariableDefiniti
 
     protected void initServices(Arguments arguments) {
 
-
     }
 
     @Override
@@ -57,11 +57,11 @@ public class ProductOptionDisplayProcessor extends AbstractLocalVariableDefiniti
         initServices(arguments);
         HashMap<String, String> productOptionDisplayValues = new HashMap<String, String>();
         Map<String, Object> newVars = new HashMap<String, Object>();
-        if (StandardExpressionProcessor.processExpression(arguments,
-                element.getAttributeValue("orderItem")) instanceof DiscreteOrderItem) {
-
-            DiscreteOrderItem orderItem = (DiscreteOrderItem) StandardExpressionProcessor.processExpression(arguments,
-                    element.getAttributeValue("orderItem"));
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("orderItem"));
+        Object item = expression.execute(arguments.getConfiguration(), arguments);
+        if (item instanceof DiscreteOrderItem) {
+            DiscreteOrderItem orderItem = (DiscreteOrderItem) item;
 
             for (String i : orderItem.getOrderItemAttributes().keySet()) {
                 for (ProductOption option : orderItem.getProduct().getProductOptions()) {

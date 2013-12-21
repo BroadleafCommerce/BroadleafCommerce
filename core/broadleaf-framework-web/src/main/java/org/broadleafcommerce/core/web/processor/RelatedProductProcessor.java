@@ -27,7 +27,8 @@ import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -117,7 +118,9 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         String typeStr = element.getAttributeValue("type"); 
         
         if (productIdStr != null) {
-            Object productId = StandardExpressionProcessor.processExpression(args, productIdStr);
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
+                    .parseExpression(args.getConfiguration(), args, productIdStr);
+            Object productId = expression.execute(args.getConfiguration(), args);
             if (productId instanceof BigDecimal) {
                 productId = new Long(((BigDecimal) productId).toPlainString());
             }
@@ -125,7 +128,9 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         }
         
         if (categoryIdStr != null) {
-            Object categoryId = StandardExpressionProcessor.processExpression(args, categoryIdStr);
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
+                    .parseExpression(args.getConfiguration(), args, categoryIdStr);
+            Object categoryId = expression.execute(args.getConfiguration(), args);
             if (categoryId instanceof BigDecimal) {
                 categoryId = new Long(((BigDecimal) categoryId).toPlainString());
             }
@@ -133,7 +138,10 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         }
         
         if (quantityStr != null) {
-            relatedProductDTO.setQuantity(((BigDecimal) StandardExpressionProcessor.processExpression(args, quantityStr)).intValue());          
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
+                    .parseExpression(args.getConfiguration(), args, quantityStr);
+            int quantity = ((BigDecimal)expression.execute(args.getConfiguration(), args)).intValue();
+            relatedProductDTO.setQuantity(quantity);          
         }       
                 
         if (typeStr != null && RelatedProductTypeEnum.getInstance(typeStr) != null) {

@@ -24,7 +24,8 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractTextChildModifierAttrProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.text.NumberFormat;
 
@@ -56,9 +57,13 @@ public class PriceTextDisplayProcessor extends AbstractTextChildModifierAttrProc
         Money price;
         
         try {
-            price = (Money) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                    .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
+            price = (Money) expression.execute(arguments.getConfiguration(), arguments);
         } catch (ClassCastException e) {
-            Number value = (Number) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                    .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
+            Number value = (Number) expression.execute(arguments.getConfiguration(), arguments);
             price = new Money(value.doubleValue());
         }
 

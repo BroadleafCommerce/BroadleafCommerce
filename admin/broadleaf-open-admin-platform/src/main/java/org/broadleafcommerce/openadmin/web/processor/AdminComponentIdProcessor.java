@@ -26,7 +26,8 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +54,9 @@ public class AdminComponentIdProcessor extends AbstractAttributeModifierAttrProc
 
     @Override
     protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
-        Object component = StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
+        Object component = expression.execute(arguments.getConfiguration(), arguments);
 
         String fieldName = "";
         String id = "";
