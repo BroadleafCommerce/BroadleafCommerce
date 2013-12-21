@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
@@ -102,21 +101,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
     protected String login;
 
     @Column(name = "PASSWORD", nullable=false)
-    @AdminPresentation(
-        friendlyName = "AdminUserImpl_Admin_Password",
-        order = 3, 
-        group = "AdminUserImpl_User", 
-        fieldType = SupportedFieldType.PASSWORD,
-        validationConfigurations={
-            @ValidationConfiguration(
-                            validationImplementation = "org.broadleafcommerce.openadmin.server.service.persistence.validation.MatchesFieldValidator",
-                configurationItems = {
-                        @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "passwordNotMatchError"),
-                        @ConfigurationItem(itemName="otherField", itemValue="passwordConfirm")
-                }
-            )
-        }
-    )
+    @AdminPresentation(excluded = true)
     protected String password;
 
     @Column(name = "EMAIL", nullable=false)
