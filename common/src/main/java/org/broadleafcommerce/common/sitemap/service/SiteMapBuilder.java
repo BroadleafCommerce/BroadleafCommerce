@@ -58,12 +58,14 @@ public class SiteMapBuilder {
     protected SiteMapURLSetWrapper currentURLSetWrapper;
     protected List<String> indexedFileNames = new ArrayList<String>();
     protected String baseUrl;
+    protected boolean gzipSiteMapFiles = true;
 
-    public SiteMapBuilder(SiteMapConfiguration siteMapConfig, FileWorkArea fileWorkArea, String baseUrl) {
+    public SiteMapBuilder(SiteMapConfiguration siteMapConfig, FileWorkArea fileWorkArea, String baseUrl, boolean gzipSiteMapFiles) {
         this.fileWorkArea = fileWorkArea;
         this.siteMapConfig = siteMapConfig;
         this.currentURLSetWrapper = new SiteMapURLSetWrapper();
         this.baseUrl = baseUrl;
+        this.gzipSiteMapFiles = gzipSiteMapFiles;
     }
 
     /**
@@ -172,7 +174,12 @@ public class SiteMapBuilder {
     protected String createNextIndexedFileName() {
         String pattern = siteMapConfig.getSiteMapIndexFilePattern();
         int indexFileNumber = indexedFileNames.size() + 1;
-        return pattern.replaceFirst("###", String.valueOf(indexFileNumber));
+        String fileName = pattern.replaceFirst("###", String.valueOf(indexFileNumber));
+        if (gzipSiteMapFiles) {
+            return fileName + ".gz";
+        } else {
+            return fileName;
+        }
     }
 
     protected void persistSiteMap() {
@@ -190,4 +197,5 @@ public class SiteMapBuilder {
     public String getBaseUrl() {
         return baseUrl;
     }
+
 }
