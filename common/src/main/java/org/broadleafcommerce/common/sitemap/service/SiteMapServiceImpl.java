@@ -91,7 +91,7 @@ public class SiteMapServiceImpl implements SiteMapService {
         }
 
         FileWorkArea fileWorkArea = broadleafFileService.initializeWorkArea();
-        SiteMapBuilder siteMapBuilder = new SiteMapBuilder(smc, fileWorkArea, baseUrlResolver.getSiteBaseUrl());
+        SiteMapBuilder siteMapBuilder = new SiteMapBuilder(smc, fileWorkArea, baseUrlResolver.getSiteBaseUrl(), gzipSiteMapFiles);
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("File work area initalized with path " + fileWorkArea.getFilePathLocation());
