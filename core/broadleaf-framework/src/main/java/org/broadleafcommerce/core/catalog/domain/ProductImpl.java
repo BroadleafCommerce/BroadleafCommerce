@@ -34,6 +34,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -131,7 +132,8 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
     @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order = Presentation.FieldOrder.URL,
         group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General, 
         prominent = true, gridOrder = 3, columnWidth = "200px",
-        requiredOverride = RequiredOverride.REQUIRED)
+            requiredOverride = RequiredOverride.REQUIRED,
+            validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     protected String url;
 
     @Column(name = "URL_KEY")
