@@ -49,10 +49,9 @@ import org.joda.time.DateTime;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -65,6 +64,9 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -107,12 +109,17 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
     protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
 
         //Pre-populate the command objects
-        OrderInfoForm orderInfoForm = (OrderInfoForm) StandardExpressionProcessor.processExpression(arguments,
-                element.getAttributeValue("orderInfoForm"));
-        ShippingInfoForm shippingInfoForm = (ShippingInfoForm) StandardExpressionProcessor.processExpression(arguments,
-                element.getAttributeValue("shippingInfoForm"));
-        BillingInfoForm billingInfoForm = (BillingInfoForm) StandardExpressionProcessor.processExpression(arguments,
-                element.getAttributeValue("billingInfoForm"));
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("orderInfoForm"));
+        OrderInfoForm orderInfoForm = (OrderInfoForm) expression.execute(arguments.getConfiguration(), arguments);
+
+        expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("shippingInfoForm"));
+        ShippingInfoForm shippingInfoForm = (ShippingInfoForm) expression.execute(arguments.getConfiguration(), arguments);
+        
+        expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("billingInfoForm"));
+        BillingInfoForm billingInfoForm = (BillingInfoForm) expression.execute(arguments.getConfiguration(), arguments);
 
         prepopulateCheckoutForms(CartState.getCart(), orderInfoForm, shippingInfoForm, billingInfoForm);
 

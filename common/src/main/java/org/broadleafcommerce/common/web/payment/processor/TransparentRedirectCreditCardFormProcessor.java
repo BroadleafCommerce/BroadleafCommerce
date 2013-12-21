@@ -28,13 +28,15 @@ import org.thymeleaf.dom.Attribute;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.element.AbstractElementProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * <p>The following processor will modify the declared Credit Card Form
@@ -86,9 +88,10 @@ public class TransparentRedirectCreditCardFormProcessor extends AbstractElementP
 
     @Override
     protected ProcessorResult processElement(Arguments arguments, Element element) {
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("paymentRequestDTO"));
+        PaymentRequestDTO requestDTO = (PaymentRequestDTO) expression.execute(arguments.getConfiguration(), arguments);
 
-        PaymentRequestDTO requestDTO = (PaymentRequestDTO) StandardExpressionProcessor.processExpression(arguments,
-                element.getAttributeValue("paymentRequestDTO"));
         element.removeAttribute("paymentRequestDTO");
 
         Map<String, Map<String,String>> formParameters = new HashMap<String, Map<String,String>>();
