@@ -16,15 +16,12 @@
 package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.security.MergeCartProcessor;
-import org.broadleafcommerce.core.web.order.security.extension.AuthSuccessHandlerExtensionManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,19 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 @Component("blAuthenticationSuccessHandler")
 public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    @Resource(name="blMergeCartProcessor")
-    private MergeCartProcessor mergeCartProcessor;
-
-    @Resource(name = "blAuthSuccessHandlerExtensionManager")
-    protected AuthSuccessHandlerExtensionManager extensionManager;
-
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-        if (extensionManager != null) {
-            extensionManager.getProxy().preMergeCartExecution(request, response, authentication);
-        }
-        
-        mergeCartProcessor.execute(request, response, authentication);
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) throws ServletException, IOException {
         
         String targetUrl = request.getParameter(getTargetUrlParameter());
         if (StringUtils.isNotBlank(targetUrl) && targetUrl.contains(":")) {

@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.extension.ExtensionResultHolder;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
@@ -143,19 +144,34 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
     @Override
     public void validateCart(Order cart) {
-        if (BroadleafRequestContext.hasLocale()) {
-            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-            String validationMsg;
-            if (!brc.getLocale().getLocaleCode().matches(cart.getLocale().getLocaleCode())) {
-                validationMsg = "The cart Locale [" + cart.getLocale().getLocaleCode() +
-                        "] does not match the current locale [" + brc.getLocale().getLocaleCode() + "]";
-                LOG.error(validationMsg);
-                throw new IllegalArgumentException(validationMsg);
-            }
-        }
-        
+        // hook to allow override
+    }
+
+    @Override
+    public void updateAndValidateCart(Order cart) {
         if (extensionManager != null) {
-            extensionManager.getProxy().validateCart(cart);
+            ExtensionResultHolder erh = new ExtensionResultHolder();
+            extensionManager.getProxy().updateAndValidateCart(cart, erh);
+            Boolean clearCart = (Boolean) erh.getContextMap().get("clearCart");
+            Boolean repriceCart = (Boolean) erh.getContextMap().get("repriceCart");
+            Boolean saveCart = (Boolean) erh.getContextMap().get("saveCart");
+            if (clearCart != null && clearCart.booleanValue()) {
+                orderService.cancelOrder(cart);
+                cart = orderService.createNewCartForCustomer(cart.getCustomer());
+            } else {
+                try {
+                    if (repriceCart != null && repriceCart.booleanValue()) {
+                        cart.updatePrices();
+                        orderService.save(cart, true);
+                    } else if (saveCart != null && saveCart.booleanValue()) {
+                        orderService.save(cart, false);
+                    }
+                } catch (PricingException pe) {
+                    LOG.error("Pricing Exception while validating cart.   Clearing cart.", pe);
+                    orderService.cancelOrder(cart);
+                    cart = orderService.createNewCartForCustomer(cart.getCustomer());
+                }
+            }
         }
     }
 
@@ -168,13 +184,8 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
     protected boolean checkAvailabilityInLocale(DiscreteOrderItem doi, BroadleafCurrency currency) {
         if (doi.getSku() != null && extensionManager != null) {
-            ExtensionResultHolder erh = new ExtensionResultHolder();
-            extensionManager.getProxy().isAvailable(doi, currency, erh);
-            Object result = erh.getResult();
-            if (result != null && result instanceof Boolean) {
-                return ((Boolean) result).booleanValue();
-            }
-
+            Sku sku = doi.getSku();
+            return sku.isAvailable();
         }
         
         return false;
