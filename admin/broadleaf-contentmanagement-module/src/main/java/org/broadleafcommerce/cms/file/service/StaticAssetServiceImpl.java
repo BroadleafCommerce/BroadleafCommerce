@@ -28,6 +28,7 @@ import org.broadleafcommerce.cms.file.domain.ImageStaticAssetImpl;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.ImageArtifactProcessor;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.ImageMetadata;
 import org.springframework.beans.factory.annotation.Value;
@@ -159,7 +160,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     }
 
     @Override
-    @Transactional("blTransactionManager")
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public StaticAsset createStaticAssetFromFile(MultipartFile file, Map<String, String> properties) {
         
         if (properties == null) {
@@ -259,6 +260,25 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             throw new RuntimeException("Unsupported encoding to decode fullUrl", e);
         }
         return staticAssetDao.readStaticAssetByFullUrl(fullUrl);
+    }
+
+    @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
+    public StaticAsset addStaticAsset(StaticAsset staticAsset) {
+        StaticAsset newAsset = staticAssetDao.addOrUpdateStaticAsset(staticAsset, true);
+        return newAsset;
+    }
+
+    @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
+    public StaticAsset updateStaticAsset(StaticAsset staticAsset) {
+        return staticAssetDao.addOrUpdateStaticAsset(staticAsset, true);
+    }
+
+    @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
+    public void deleteStaticAsset(StaticAsset staticAsset) {
+        staticAssetDao.delete(staticAsset);
     }
 
     @Override

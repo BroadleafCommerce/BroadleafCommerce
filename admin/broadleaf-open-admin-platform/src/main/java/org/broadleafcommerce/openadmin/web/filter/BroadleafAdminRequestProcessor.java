@@ -19,16 +19,11 @@
  */
 package org.broadleafcommerce.openadmin.web.filter;
 
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.TimeZone;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -36,6 +31,7 @@ import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.sandbox.service.SandBoxService;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
+import org.broadleafcommerce.common.web.BroadleafCurrencyResolver;
 import org.broadleafcommerce.common.web.BroadleafLocaleResolver;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafSandBoxResolver;
@@ -47,7 +43,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
-import org.thymeleaf.TemplateEngine;
+
+import java.util.List;
+import java.util.TimeZone;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -74,6 +74,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     
     @Resource(name = "blAdminTimeZoneResolver")
     protected BroadleafTimeZoneResolver broadleafTimeZoneResolver;
+
+    @Resource(name = "blCurrencyResolver")
+    protected BroadleafCurrencyResolver currencyResolver;
 
     @Resource(name="blSandBoxService")
     protected SandBoxService sandBoxService;
@@ -106,6 +109,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         
         TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
         brc.setTimeZone(timeZone);
+
+        BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
+        brc.setBroadleafCurrency(currency);
 
         AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
         if (adminUser == null) {

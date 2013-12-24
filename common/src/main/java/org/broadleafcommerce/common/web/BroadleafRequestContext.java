@@ -20,14 +20,8 @@
 package org.broadleafcommerce.common.web;
 
 
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -41,6 +35,14 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * Convenient holder class for various objects to be automatically available on thread local without invoking the various
  * services yourself
@@ -48,6 +50,8 @@ import org.springframework.web.context.request.WebRequest;
  * @see {@link BroadleafRequestProcessor}
  */
 public class BroadleafRequestContext {
+    
+    protected static final Log LOG = LogFactory.getLog(BroadleafRequestContext.class);
     
     private static final ThreadLocal<BroadleafRequestContext> BROADLEAF_REQUEST_CONTEXT = ThreadLocalManager.createThreadLocal(BroadleafRequestContext.class);
     
@@ -216,10 +220,21 @@ public class BroadleafRequestContext {
      */
     public Currency getJavaCurrency() {
         if (javaCurrency == null) {
-            if (getBroadleafCurrency() != null && getBroadleafCurrency().getCurrencyCode() != null) {
-                javaCurrency = Currency.getInstance(getBroadleafCurrency().getCurrencyCode());
-            } else {
-                javaCurrency = Currency.getInstance(getJavaLocale());
+            try {
+                if (getBroadleafCurrency() != null && getBroadleafCurrency().getCurrencyCode() != null) {
+                    javaCurrency = Currency.getInstance(getBroadleafCurrency().getCurrencyCode());
+                } else {
+                    javaCurrency = Currency.getInstance(getJavaLocale());
+                }
+            } catch (IllegalArgumentException e) {
+                LOG.warn("There was an error processing the configured locale into the java currency. This is likely because the default" +
+                		" locale is set to something like 'en' (which is NOT apart of ISO 3166 and does not have a currency" +
+                		" associated with it) instead of 'en_US' (which IS apart of ISO 3166 and has a currency associated" +
+                		" with it). Because of this, the currency is now set to the default locale of the JVM");
+                LOG.warn("To fully resolve this, update the default entry in the BLC_LOCALE table to take into account the" +
+                		" country code as well as the language. Alternatively, you could also update the BLC_CURRENCY table" +
+                		" to contain a default currency.");
+                javaCurrency = Currency.getInstance(java.util.Locale.getDefault());
             }
         }
         return javaCurrency;

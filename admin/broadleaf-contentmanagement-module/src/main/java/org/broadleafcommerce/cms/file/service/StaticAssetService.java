@@ -84,5 +84,28 @@ public interface StaticAssetService {
      */
     public String convertAssetPath(String assetPath, String contextPath, boolean secureRequest);
 
+    /**
+     * Add an asset outside of Broadleaf Admin.  
+     * 
+     * @param staticAsset
+     * @return
+     */
+    public StaticAsset addStaticAsset(StaticAsset staticAsset);
+
+    /**
+     * Update an asset outside of Broadleaf Admin.  
+     * 
+     * @param staticAsset
+     * @return
+     */
+    public StaticAsset updateStaticAsset(StaticAsset staticAsset);
+
+    /**
+     * Delete an asset outside of Broadleaf Admin.  
+     * 
+     * @param staticAsset
+     * @return
+     */
+    public void deleteStaticAsset(StaticAsset staticAsset);
 
 }

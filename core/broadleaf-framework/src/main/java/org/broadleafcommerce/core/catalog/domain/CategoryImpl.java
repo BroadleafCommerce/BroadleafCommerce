@@ -78,6 +78,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.OptionFilterParam;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
@@ -183,7 +184,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Column(name = "URL")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order = 2000,
             group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
-            prominent = true, gridOrder = 2, columnWidth = "300px")
+            prominent = true, gridOrder = 2, columnWidth = "300px",
+            validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     @Index(name="CATEGORY_URL_INDEX", columnNames={"URL"})
     protected String url;
 
