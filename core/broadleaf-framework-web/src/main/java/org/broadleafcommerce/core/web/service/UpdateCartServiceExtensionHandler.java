@@ -17,13 +17,12 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.service;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 
 
@@ -39,16 +38,6 @@ public interface UpdateCartServiceExtensionHandler extends ExtensionHandler {
      * @param resultHolder
      * @return
      */
-    public ExtensionResultStatusType validateCart(Order cart);
-    
-    /**
-     * 
-     * @param doi
-     * @param currency
-     * @param resultHolder
-     * @return
-     */
-    public ExtensionResultStatusType isAvailable(DiscreteOrderItem doi, BroadleafCurrency currency,
-            ExtensionResultHolder resultHolder);
+    public ExtensionResultStatusType updateAndValidateCart(Order cart, ExtensionResultHolder resultHolder);
 
 }

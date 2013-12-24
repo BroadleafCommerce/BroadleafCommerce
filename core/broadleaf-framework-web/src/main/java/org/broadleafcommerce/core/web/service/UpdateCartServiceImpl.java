@@ -17,6 +17,22 @@
  * limitations under the License.
  * #L%
  */
+/*
+ * Copyright 2008-2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.broadleafcommerce.core.web.service;
 
 import org.apache.commons.logging.Log;
@@ -24,6 +40,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -146,19 +163,34 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
     @Override
     public void validateCart(Order cart) {
-        if (BroadleafRequestContext.hasLocale()) {
-            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-            String validationMsg;
-            if (!brc.getLocale().getLocaleCode().matches(cart.getLocale().getLocaleCode())) {
-                validationMsg = "The cart Locale [" + cart.getLocale().getLocaleCode() +
-                        "] does not match the current locale [" + brc.getLocale().getLocaleCode() + "]";
-                LOG.error(validationMsg);
-                throw new IllegalArgumentException(validationMsg);
-            }
-        }
-        
+        // hook to allow override
+    }
+
+    @Override
+    public void updateAndValidateCart(Order cart) {
         if (extensionManager != null) {
-            extensionManager.getProxy().validateCart(cart);
+            ExtensionResultHolder erh = new ExtensionResultHolder();
+            extensionManager.getProxy().updateAndValidateCart(cart, erh);
+            Boolean clearCart = (Boolean) erh.getContextMap().get("clearCart");
+            Boolean repriceCart = (Boolean) erh.getContextMap().get("repriceCart");
+            Boolean saveCart = (Boolean) erh.getContextMap().get("saveCart");
+            if (clearCart != null && clearCart.booleanValue()) {
+                orderService.cancelOrder(cart);
+                cart = orderService.createNewCartForCustomer(cart.getCustomer());
+            } else {
+                try {
+                    if (repriceCart != null && repriceCart.booleanValue()) {
+                        cart.updatePrices();
+                        orderService.save(cart, true);
+                    } else if (saveCart != null && saveCart.booleanValue()) {
+                        orderService.save(cart, false);
+                    }
+                } catch (PricingException pe) {
+                    LOG.error("Pricing Exception while validating cart.   Clearing cart.", pe);
+                    orderService.cancelOrder(cart);
+                    cart = orderService.createNewCartForCustomer(cart.getCustomer());
+                }
+            }
         }
     }
 
@@ -171,13 +203,8 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
     protected boolean checkAvailabilityInLocale(DiscreteOrderItem doi, BroadleafCurrency currency) {
         if (doi.getSku() != null && extensionManager != null) {
-            ExtensionResultHolder erh = new ExtensionResultHolder();
-            extensionManager.getProxy().isAvailable(doi, currency, erh);
-            Object result = erh.getResult();
-            if (result != null && result instanceof Boolean) {
-                return ((Boolean) result).booleanValue();
-            }
-
+            Sku sku = doi.getSku();
+            return sku.isAvailable();
         }
         
         return false;
