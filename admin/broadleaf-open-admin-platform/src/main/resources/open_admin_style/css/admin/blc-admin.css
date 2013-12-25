@@ -1444,7 +1444,11 @@ div.uploadMessage {
 	display: none;
 }
 
-form.uploadFileForm {
+form.uploadFileForm { 
+}
+
+form.uploadFileForm.entityListWithUpload {
+	display: none;
 }
 
 div.imagePreviewContainer {
