@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
@@ -32,8 +33,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -55,6 +58,9 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
 
     @Resource(name = "blTranslationService")
     protected TranslationService translationService;
+
+    @Resource(name = "blLocaleService")
+    protected LocaleService localeService;
 
     @Value("${i18n.translation.enabled}")
     protected boolean translationEnabled = false;
@@ -89,6 +95,8 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
     public ExtensionResultStatusType addPropertyValues(Product product, Field field, FieldType fieldType,
             Map<String, Object> values, String propertyName, List<Locale> locales)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        
+        Set<String> processedLocaleCodes = new HashSet<String>();
 
         ExtensionResultStatusType result = ExtensionResultStatusType.NOT_HANDLED;
         if (field.getTranslatable()) {
@@ -96,6 +104,20 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
 
             for (Locale locale : locales) {
                 String localeCode = locale.getLocaleCode();
+                if (! Boolean.TRUE.equals(locale.getUseCountryInSearchIndex())) {
+                    int pos = localeCode.indexOf("_");
+                    if (pos > 0) {
+                        localeCode = localeCode.substring(0, pos);
+                        if (processedLocaleCodes.contains(localeCode)) {
+                            continue;
+                        } else {
+                            locale = localeService.findLocaleByCode(localeCode);
+                        }
+                    }
+                }
+                
+                processedLocaleCodes.add(localeCode);
+                
                 TranslationConsiderationContext.setTranslationConsiderationContext(translationEnabled);
                 TranslationConsiderationContext.setTranslationService(translationService);
                 BroadleafRequestContext tempContext = BroadleafRequestContext.getBroadleafRequestContext();
@@ -128,7 +150,14 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
             if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
                 Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
                 if (locale != null) {
-                    prefixList.add(locale.getLocaleCode());
+                    String localeCode = locale.getLocaleCode();
+                    if (!Boolean.TRUE.equals(locale.getUseCountryInSearchIndex())) {
+                        int pos = localeCode.indexOf("_");
+                        if (pos > 0) {
+                            localeCode = localeCode.substring(0, pos);
+                        }
+                    }
+                    prefixList.add(localeCode);
                     return ExtensionResultStatusType.HANDLED_CONTINUE;
                 }
             }

@@ -124,12 +124,12 @@ public class LocaleImpl implements Locale {
     }
     
     @Override
-    public Boolean getUseInSearchIndex() {
+    public Boolean getUseCountryInSearchIndex() {
         return useInSearchIndex == null ? false : useInSearchIndex;
     }
 
     @Override
-    public void setUseInSearchIndex(Boolean useInSearchIndex) {
+    public void setUseCountryInSearchIndex(Boolean useInSearchIndex) {
         this.useInSearchIndex = useInSearchIndex;
     }
 
