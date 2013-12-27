@@ -19,6 +19,16 @@
  */
 package org.broadleafcommerce.openadmin.security;
 
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.service.SandBoxService;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.SandBoxContext;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
+import org.broadleafcommerce.openadmin.server.service.SandBoxMode;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
 
 import javax.annotation.Resource;
@@ -27,15 +37,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.service.SandBoxService;
-import org.broadleafcommerce.common.web.SandBoxContext;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
-import org.broadleafcommerce.openadmin.server.service.SandBoxMode;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * @author Jeff Fischer
@@ -62,6 +63,11 @@ public class AdminSandBoxFilter extends OncePerRequestFilter {
             session.removeAttribute(SANDBOX_ADMIN_ID_VAR);
             SandBoxContext.setSandBoxContext(null);
         } else {
+            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+            if (brc != null) {
+                brc.getAdditionalProperties().put("adminUser", adminUser);
+            }
+
             Long overrideSandBoxId = adminUser.getOverrideSandBox() == null ? null : adminUser.getOverrideSandBox().getId();
             SandBox sandBox = sandBoxService.retrieveUserSandBox(adminUser.getId(), overrideSandBoxId, adminUser.getLogin());
             session.setAttribute(SANDBOX_ADMIN_ID_VAR, sandBox.getId());

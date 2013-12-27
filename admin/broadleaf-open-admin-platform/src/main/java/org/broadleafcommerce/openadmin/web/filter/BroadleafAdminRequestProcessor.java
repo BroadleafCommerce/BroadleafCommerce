@@ -33,7 +33,6 @@ import org.broadleafcommerce.common.web.BroadleafLocaleResolver;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.broadleafcommerce.common.web.BroadleafTimeZoneResolver;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -52,7 +51,6 @@ import javax.annotation.Resource;
 @Component("blAdminRequestProcessor")
 public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestProcessor {
 
-    public static final String ADMIN_USER_PROPERTY = "adminUser";
     public static final String SANDBOX_REQ_PARAM = "blSandBoxId";
 
     protected final Log LOG = LogFactory.getLog(getClass());
@@ -103,11 +101,6 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
 
         BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
         brc.setBroadleafCurrency(currency);
-
-        AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
-        if (adminUser != null) {
-            brc.getAdditionalProperties().put(ADMIN_USER_PROPERTY, adminUser);
-        }
     }
 
     @Override

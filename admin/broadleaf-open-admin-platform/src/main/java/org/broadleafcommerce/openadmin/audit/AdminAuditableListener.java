@@ -19,6 +19,10 @@
  */
 package org.broadleafcommerce.openadmin.audit;
 
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+
 import java.lang.reflect.Field;
 import java.util.Calendar;
 
@@ -26,11 +30,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-
-import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.web.filter.BroadleafAdminRequestProcessor;
 
 public class AdminAuditableListener {
 
@@ -85,7 +84,7 @@ public class AdminAuditableListener {
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
             if (context != null && context.getAdmin()) {
                 field.setAccessible(true);
-                field.set(entity, ((AdminUser) context.getAdditionalProperties().get(BroadleafAdminRequestProcessor.ADMIN_USER_PROPERTY)).getId());
+                field.set(entity, ((AdminUser) context.getAdditionalProperties().get("adminUser")).getId());
             }
         } catch (IllegalStateException e) {
             //do nothing
