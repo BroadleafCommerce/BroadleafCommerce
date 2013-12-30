@@ -48,10 +48,9 @@ import org.broadleafcommerce.profile.core.service.StateService;
 import org.mortbay.log.Log;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -114,18 +113,22 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
                 customer.setEmailAddress(gatewayCustomer.getEmail());
             }
         }
-        
+
         // If this gateway does not support multiple payments then mark all of the existing payments as invalid before adding
         // the new one
         if (!configService.handlesMultiplePayments()) {
             PaymentGatewayType gateway = configService.getGatewayType();
             for (OrderPayment payment : order.getPayments()) {
-                if (payment.getGatewayType().equals(gateway)) {
+                // There may be an Order Payment on the order that doesn't have a gateway set (e.g. to save the billing address)
+                // This will be marked as invalid, as the billing address that will be saved on the order will be coming off the
+                // Response DTO sent back from the Gateway
+                if (payment.getGatewayType() == null ||
+                        (payment.getGatewayType() != null && payment.getGatewayType().equals(gateway))) {
                     markPaymentAsInvalid(payment.getId());
                 }
             }
         }
-        
+
         // ALWAYS create a new order payment for the payment that comes in. Invalid payments should be cleaned up by
         // invoking {@link #markPaymentaAsInvalid}.
         OrderPayment payment = orderPaymentService.create();
