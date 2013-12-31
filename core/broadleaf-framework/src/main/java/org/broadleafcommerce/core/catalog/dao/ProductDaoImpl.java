@@ -474,6 +474,7 @@ public class ProductDaoImpl implements ProductDao {
         query = em.createNamedQuery("BC_READ_PRODUCTS_BY_OUTGOING_URL");
         query.setParameter("url", uri);
         query.setParameter("urlKey", urlKey);
+        query.setParameter("currentDate", getCurrentDateAfterFactoringInDateResolution());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
     
