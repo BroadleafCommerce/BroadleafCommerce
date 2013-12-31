@@ -21,7 +21,9 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 
@@ -31,8 +33,8 @@ import java.util.List;
 public class CandidatePromotionItems {
     
     protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateTargetsMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
     protected boolean isMatchedQualifier = false;
-    protected List<PromotableOrderItem> candidateTargets = new ArrayList<PromotableOrderItem>();
     protected boolean isMatchedTarget = false;
     
     public void addQualifier(OfferItemCriteria criteria, PromotableOrderItem item) {
@@ -40,6 +42,15 @@ public class CandidatePromotionItems {
         if (itemList == null) {
             itemList = new ArrayList<PromotableOrderItem>();
             candidateQualifiersMap.put(criteria, itemList);
+        }
+        itemList.add(item);
+    }
+
+    public void addTarget(OfferItemCriteria criteria, PromotableOrderItem item) {
+        List<PromotableOrderItem> itemList = candidateTargetsMap.get(criteria);
+        if (itemList == null) {
+            itemList = new ArrayList<PromotableOrderItem>();
+            candidateTargetsMap.put(criteria, itemList);
         }
         itemList.add(item);
     }
@@ -56,8 +67,8 @@ public class CandidatePromotionItems {
         return candidateQualifiersMap;
     }
     
-    public void addTarget(PromotableOrderItem item) {
-        candidateTargets.add(item);
+    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateTargetsMap() {
+        return candidateTargetsMap;
     }
 
     public boolean isMatchedTarget() {
@@ -68,8 +79,11 @@ public class CandidatePromotionItems {
         this.isMatchedTarget = isMatchedCandidate;
     }
 
-    public List<PromotableOrderItem> getCandidateTargets() {
-        return candidateTargets;
+    public Set<PromotableOrderItem> getAllCandidateTargets() {
+        Set<PromotableOrderItem> promotableOrderItemSet = new HashSet<PromotableOrderItem>();
+        for (List<PromotableOrderItem> orderItems : getCandidateTargetsMap().values()) {
+            promotableOrderItemSet.addAll(orderItems);
+        }
+        return promotableOrderItemSet;
     }
-
 }

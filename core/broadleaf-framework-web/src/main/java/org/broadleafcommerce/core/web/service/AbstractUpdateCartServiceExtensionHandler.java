@@ -16,11 +16,9 @@
 
 package org.broadleafcommerce.core.web.service;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.core.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.core.extension.ExtensionResultHolder;
 import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 
 
@@ -29,7 +27,7 @@ import org.broadleafcommerce.core.order.domain.Order;
  */
 public abstract class AbstractUpdateCartServiceExtensionHandler extends AbstractExtensionHandler
         implements UpdateCartServiceExtensionHandler {
-    
+
     /**
      * Throws an exception if cart is invalid.
      * 
@@ -37,20 +35,7 @@ public abstract class AbstractUpdateCartServiceExtensionHandler extends Abstract
      * @param resultHolder
      * @return
      */
-    public ExtensionResultStatusType validateCart(Order cart) {
+    public ExtensionResultStatusType updateAndValidateCart(Order cart, ExtensionResultHolder resultHolder) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-    
-    /**
-     * 
-     * @param doi
-     * @param currency
-     * @param resultHolder
-     * @return
-     */
-    public ExtensionResultStatusType isAvailable(DiscreteOrderItem doi, BroadleafCurrency currency,
-            ExtensionResultHolder resultHolder) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
 }

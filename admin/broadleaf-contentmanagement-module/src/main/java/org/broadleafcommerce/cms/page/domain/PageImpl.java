@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
@@ -120,7 +121,8 @@ public class PageImpl implements Page, AdminMainEntity {
     @Index(name="PAGE_FULL_URL_INDEX", columnNames={"FULL_URL"})
     @AdminPresentation(friendlyName = "PageImpl_Full_Url", order = 1, 
         group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
-        prominent = true, gridOrder = 2)
+            prominent = true, gridOrder = 2,
+            validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     protected String fullUrl;
 
     @ManyToMany(targetEntity = PageFieldImpl.class, cascade = CascadeType.ALL)

@@ -16,8 +16,6 @@ var blcOperators_Date = [
 ];
 
 var blcOperators_Numeric = [      
-	{label: "is present", name: "NOT_NULL", fieldType: "NONE"},
-	{label: "is blank", name: "IS_NULL", fieldType: "NONE"},
 	{label: "is equal to", name: "EQUALS", fieldType: "TEXT"},
 	{label: "is not equal to", name: "NOT_EQUAL", fieldType: "TEXT"},
 	{label: "is greater than", name: "GREATER_THAN", fieldType: "TEXT"},

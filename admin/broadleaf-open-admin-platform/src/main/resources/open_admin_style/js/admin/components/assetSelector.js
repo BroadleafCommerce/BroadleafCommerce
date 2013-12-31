@@ -37,7 +37,9 @@
             
             $redactor.on('assetInfoSelected', function(event, fields) {
                 currentRedactor.selectionRestore();
-                var $img = $('<img>', { 'src' : fields['assetUrl'] });
+                var assetUrl =   fields['assetUrl'];
+                if (assetUrl.charAt(0) == "/") assetUrl = assetUrl.substr(1);
+                var $img = $('<img>', { 'src' : assetUrl });
                 currentRedactor.insertHtml($img.outerHTML());
                 BLCAdmin.hideCurrentModal();
             });

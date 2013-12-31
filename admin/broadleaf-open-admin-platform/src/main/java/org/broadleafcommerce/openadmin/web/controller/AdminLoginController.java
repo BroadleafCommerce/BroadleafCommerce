@@ -22,8 +22,8 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
+import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.web.form.ResetPasswordForm;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -36,10 +36,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * AdminLoginController handles login related needs for the BLC admin including:
@@ -69,6 +70,7 @@ public class AdminLoginController extends BroadleafAbstractController {
     protected static String changePasswordView  = "login/changePassword";
     protected static String loginRedirect = "login";
     protected static String resetPasswordRedirect = "resetPassword";
+    protected static String noAccessView = "noAccess";
 
     @RequestMapping(value="/login", method=RequestMethod.GET)
     public String baseLogin(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -86,7 +88,7 @@ public class AdminLoginController extends BroadleafAbstractController {
                 return "redirect:" + adminSection.getUrl();
             }
         }
-        return null;
+        return "noAccess";
     }
    
     @RequestMapping(value="/forgotPassword", method=RequestMethod.GET)

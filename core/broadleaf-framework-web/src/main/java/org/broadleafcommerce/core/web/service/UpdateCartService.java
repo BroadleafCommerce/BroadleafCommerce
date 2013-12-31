@@ -65,4 +65,12 @@ public interface UpdateCartService {
      */
     public void validateCart (Order cart) throws IllegalArgumentException;
 
+    /**
+     * Updates the cart (locale, pricing) and performs validation.
+     *
+     * @param cart
+     * @throws IllegalArgumentException
+     */
+    public void updateAndValidateCart(Order cart);
+
 }

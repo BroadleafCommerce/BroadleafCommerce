@@ -24,6 +24,7 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -103,10 +104,17 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             AdminUser adminInstance = (AdminUser) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             dynamicEntityDao.detach(adminInstance);
+
+            String passwordBefore = adminInstance.getPassword();
             adminInstance = (AdminUser) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            if (StringUtils.isNotEmpty(adminInstance.getPassword())) {
-                adminInstance.setUnencodedPassword(adminInstance.getPassword());
-                adminInstance.setPassword(null);
+            Property passwordProperty = entity.getPMap().get("password");
+            if (passwordProperty != null) {
+                if (StringUtils.isNotEmpty(passwordProperty.getValue())) {
+                    adminInstance.setUnencodedPassword(passwordProperty.getValue());
+                    adminInstance.setPassword(null);
+                } else {
+                    adminInstance.setPassword(passwordBefore);
+                }
             }
             
             // The current user can update their data, but they cannot update other user's data.

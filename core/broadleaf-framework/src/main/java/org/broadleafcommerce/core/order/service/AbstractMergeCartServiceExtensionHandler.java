@@ -31,4 +31,7 @@ public abstract class AbstractMergeCartServiceExtensionHandler extends AbstractE
         return ExtensionResultStatusType.NOT_HANDLED;
     }
     
+    public ExtensionResultStatusType updateMergedOrder(Order cart, Customer customer) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }

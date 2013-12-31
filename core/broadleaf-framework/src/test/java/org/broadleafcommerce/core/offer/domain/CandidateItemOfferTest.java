@@ -16,7 +16,6 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
@@ -46,6 +45,8 @@ import org.broadleafcommerce.core.order.service.type.OrderItemType;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import junit.framework.TestCase;
 
 /**
  * 
@@ -134,7 +135,7 @@ public class CandidateItemOfferTest extends TestCase {
         
         promotableCandidate = new PromotableCandidateItemOfferImpl(promotableOrder, offer);
         
-        promotableCandidate.getCandidateTargets().addAll(items);
+        promotableCandidate.getCandidateTargetsMap().put(offer.getTargetItemCriteria().iterator().next(), items);
     }
     
     public void testCalculateSavingsForOrderItem() throws Exception {

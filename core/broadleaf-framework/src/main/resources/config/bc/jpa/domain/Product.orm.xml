@@ -48,8 +48,9 @@
     <named-query name="BC_READ_PRODUCTS_BY_OUTGOING_URL" >
         <query>SELECT product
                FROM org.broadleafcommerce.core.catalog.domain.Product product
-               WHERE
-                 (product.url = :url) OR (product.urlKey = :urlKey) 
+               WHERE (product.url = :url OR product.urlKey = :urlKey)
+               AND (product.defaultSku.activeEndDate &gt; :currentDate OR product.defaultSku.activeEndDate = null)
+               AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')
         </query>
     </named-query>
     

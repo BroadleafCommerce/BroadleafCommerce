@@ -16,11 +16,15 @@
 
 package org.broadleafcommerce.core.extension;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * If a service extension using the {@link ExtensionManager} pattern expects a result from the extension, it should
  * pass in an instance of this class into the method call.   
  * 
- * The extension points can examine or update this class with response information.
+ * The extension points can examine or update this class with response information and set a single return value with
+ * {@link #setResult(Object)} or add values via the contextMap provided with {@link #getContextMap()}
  * 
  * @author bpolster
  *
@@ -29,6 +33,7 @@ public class ExtensionResultHolder {
 
     Object result;
     Throwable throwable;
+    Map<String, Object> contextMap = new HashMap<String, Object>();
 
     public Object getResult() {
         return result;
@@ -44,5 +49,9 @@ public class ExtensionResultHolder {
 
     public void setThrowable(Throwable throwable) {
         this.throwable = throwable;
+    }
+
+    public Map<String, Object> getContextMap() {
+        return contextMap;
     }
 }

@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -159,10 +160,32 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Override
     @Transactional("blTransactionManager")
     public AdminUser saveAdminUser(AdminUser user) {
+        boolean encodePasswordNeeded = false;
+        String unencodedPassword = user.getUnencodedPassword();
+
         if (user.getUnencodedPassword() != null) {
-            user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), getSalt(user)));
+            encodePasswordNeeded = true;
+            user.setPassword(unencodedPassword);
         }
-        return adminUserDao.saveAdminUser(user);
+
+        // If no password is set, default to a secure password.
+        if (user.getPassword() == null) {
+            user.setPassword(generateSecurePassword());
+        }
+
+        AdminUser returnUser = adminUserDao.saveAdminUser(user);
+
+        if (encodePasswordNeeded) {
+            returnUser.setPassword(passwordEncoder.encodePassword(unencodedPassword, getSalt(returnUser, unencodedPassword)));
+        }
+
+
+
+        return adminUserDao.saveAdminUser(returnUser);
+    }
+
+    protected String generateSecurePassword() {
+        return RandomStringUtils.randomAlphanumeric(16);
     }
 
     @Override
@@ -333,7 +356,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
     
     protected void checkExistingPassword(String password, AdminUser user, GenericResponse response) {
-        if (!passwordEncoder.isPasswordValid(user.getPassword(), password, getSalt(user))) {
+        if (!passwordEncoder.isPasswordValid(user.getPassword(), password, getSalt(user, password))) {
             response.addErrorCode("invalidPassword");
         }
     }
@@ -387,10 +410,10 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
     
     @Override
-    public Object getSalt(AdminUser user) {
+    public Object getSalt(AdminUser user, String unencodedPassword) {
         Object salt = null;
         if (saltSource != null) {
-            salt = saltSource.getSalt(new AdminUserDetails(user.getId(), user.getLogin(), user.getUnencodedPassword(), new ArrayList<GrantedAuthority>()));
+            salt = saltSource.getSalt(new AdminUserDetails(user.getId(), user.getLogin(), unencodedPassword, new ArrayList<GrantedAuthority>()));
         }
         return salt;
     }
