@@ -34,6 +34,7 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
 
     public static final PaymentAdditionalFieldType NAME_ON_CARD = new PaymentAdditionalFieldType("NAME_ON_CARD", "Cardholders Name");
     public static final PaymentAdditionalFieldType CARD_TYPE = new PaymentAdditionalFieldType("CARD_TYPE", "Card Type");
+    public static final PaymentAdditionalFieldType EXP_DATE = new PaymentAdditionalFieldType("EXP_DATE", "Expiration Date");
     public static final PaymentAdditionalFieldType EXP_MONTH = new PaymentAdditionalFieldType("EXP_MONTH", "Expiration Month");
     public static final PaymentAdditionalFieldType EXP_YEAR = new PaymentAdditionalFieldType("EXP_YEAR", "Expiration Year");
     

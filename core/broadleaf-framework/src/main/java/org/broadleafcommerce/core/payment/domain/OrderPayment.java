@@ -165,6 +165,15 @@ public interface OrderPayment extends Serializable, Status {
      * @return a list of transactions or an empty list if there are no transaction of that type
      */
     public List<PaymentTransaction> getTransactionsForType(PaymentTransactionType type);
+
+    /**
+     * Returns the initial transaction for this order payment. This would either be an {@link PaymentTransactionType#AUTHORIZE}
+     * or {@link PaymentTransactionType#AUTHORIZE_AND_CAPTURE}. Implementation-wise this would
+     * be any PaymentTransaction whose parentTransaction is NULL.
+     *
+     * @return the initial transaction for this order payment or null if there isn't any
+     */
+    public PaymentTransaction getInitialTransaction();
     
     /**
      * Looks through all of the transactions for this payment and adds up the amount for the given transaction type. This

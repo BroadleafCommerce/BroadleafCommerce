@@ -21,7 +21,9 @@
 package org.broadleafcommerce.core.payment.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.AddressDTO;
 import org.broadleafcommerce.common.payment.dto.GatewayCustomerDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
@@ -50,6 +52,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 
@@ -116,6 +120,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
         // If this gateway does not support multiple payments then mark all of the existing payments as invalid before adding
         // the new one
+        List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
         if (!configService.handlesMultiplePayments()) {
             PaymentGatewayType gateway = configService.getGatewayType();
             for (OrderPayment payment : order.getPayments()) {
@@ -124,13 +129,18 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
                 // Response DTO sent back from the Gateway
                 if (payment.getGatewayType() == null ||
                         (payment.getGatewayType() != null && payment.getGatewayType().equals(gateway))) {
-                    markPaymentAsInvalid(payment.getId());
+                    paymentsToInvalidate.add(payment);
                 }
             }
         }
 
+        for (OrderPayment payment : paymentsToInvalidate) {
+            order.getPayments().remove(payment);
+            markPaymentAsInvalid(payment.getId());
+        }
+
         // ALWAYS create a new order payment for the payment that comes in. Invalid payments should be cleaned up by
-        // invoking {@link #markPaymentaAsInvalid}.
+        // invoking {@link #markPaymentAsInvalid}.
         OrderPayment payment = orderPaymentService.create();
         payment.setType(responseDTO.getPaymentType());
         payment.setAmount(responseDTO.getAmount());
@@ -139,6 +149,8 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         if (responseDTO.getBillTo() != null) {
             billingAddress = addressService.create();
             AddressDTO<PaymentResponseDTO> billToDTO = responseDTO.getBillTo();
+            billingAddress.setFirstName(billToDTO.getAddressFirstName());
+            billingAddress.setLastName(billToDTO.getAddressLastName());
             billingAddress.setAddressLine1(billToDTO.getAddressLine1());
             billingAddress.setAddressLine2(billToDTO.getAddressLine2());
             billingAddress.setCity(billToDTO.getAddressCityLocality());
@@ -150,6 +162,8 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
                         + " as a state abbreviation in BLC_STATE");
             }
             billingAddress.setState(state);
+
+            billingAddress.setPostalCode(billToDTO.getAddressPostalCode());
             
             Country country = countryService.findCountryByAbbreviation(billToDTO.getAddressCountryCode());
             if (country == null) {
@@ -157,10 +171,14 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
                         + " as a country abbreviation in BLC_COUNTRY");
             }
             billingAddress.setCountry(country);
-            
-            Phone billingPhone = phoneService.create();
-            billingPhone.setPhoneNumber(billToDTO.getAddressPhone());
-            billingAddress.setPhonePrimary(billingPhone);
+
+            if (billToDTO.getAddressPhone() != null) {
+                Phone billingPhone = phoneService.create();
+                billingPhone.setPhoneNumber(billToDTO.getAddressPhone());
+                billingAddress.setPhonePrimary(billingPhone);
+            }
+
+            payment.setBillingAddress(billingAddress);
         }
         
         // Create the transaction for the payment
@@ -172,7 +190,21 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         for (Entry<String, Serializable> entry : responseDTO.getResponseMap().entrySet()) {
             transaction.getAdditionalFields().put(entry.getKey(), entry.getValue());
         }
-        
+
+        //Set the Credit Card Info on the Additional Fields Map
+        if (PaymentType.CREDIT_CARD.equals(responseDTO.getPaymentType()) &&
+                responseDTO.getCreditCard().creditCardPopulated()) {
+
+            transaction.getAdditionalFields().put(PaymentAdditionalFieldType.NAME_ON_CARD.getType(),
+                    responseDTO.getCreditCard().getCreditCardHolderName());
+            transaction.getAdditionalFields().put(PaymentAdditionalFieldType.CARD_TYPE.getType(),
+                    responseDTO.getCreditCard().getCreditCardType());
+            transaction.getAdditionalFields().put(PaymentAdditionalFieldType.EXP_DATE.getType(),
+                    responseDTO.getCreditCard().getCreditCardExpDate());
+            transaction.getAdditionalFields().put(PaymentAdditionalFieldType.LAST_FOUR.getType(),
+                    responseDTO.getCreditCard().getCreditCardLastFour());
+        }
+
         //TODO: handle payments that have to be confirmed. Scenario:
         /*
          * 1. User goes through checkout

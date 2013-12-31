@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
@@ -139,6 +140,9 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         localVars.put("expirationMonths", populateExpirationMonths());
         localVars.put("expirationYears", populateExpirationYears());
 
+        //Populate any Payment Processing Errors
+        populateProcessingError(localVars);
+
         return localVars;
     }
 
@@ -195,6 +199,19 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
             }
         }
         return numShippableFulfillmentGroups;
+    }
+
+    /**
+     * This method is responsible for populating any Payment Procecessing Errors that may have been put
+     * as a Redirect Attribute when attempting to checkout.
+     *
+     * @param localVars
+     */
+    protected void populateProcessingError(Map<String, Object> localVars) {
+        BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
+        HttpServletRequest request = blcContext.getRequest();
+        String processorError = request.getParameter(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR);
+        localVars.put(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR, processorError );
     }
 
     /**

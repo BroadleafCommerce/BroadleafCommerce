@@ -80,11 +80,14 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
         }
 
         if (!found) {
-            OrderPayment p = orderPaymentService.create();
-            p.setType(PaymentType.CREDIT_CARD);
-            p.setBillingAddress(billingForm.getAddress());
-            p.setOrder(cart);
-            cart.getPayments().add(p);
+            // A Temporary Order Payment will be created to hold the billing address.
+            // The Payment Gateway will send back any validated address and
+            // the PaymentGatewayCheckoutService will persist a new payment of type CREDIT_CARD when it applies it to the Order
+            OrderPayment tempOrderPayment = orderPaymentService.create();
+            tempOrderPayment.setType(PaymentType.CREDIT_CARD);
+            tempOrderPayment.setBillingAddress(billingForm.getAddress());
+            tempOrderPayment.setOrder(cart);
+            cart.getPayments().add(tempOrderPayment);
         }
 
         orderService.save(cart, true);
