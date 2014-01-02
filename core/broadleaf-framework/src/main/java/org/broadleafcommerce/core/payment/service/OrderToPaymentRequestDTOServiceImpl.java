@@ -42,25 +42,35 @@ import java.util.Map;
 @Service("blOrderToPaymentRequestDTOService")
 public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentRequestDTOService {
 
+    public static final String ZERO_TOTAL = "0";
+
     @Override
     public PaymentRequestDTO translateOrder(Order order) {
-        PaymentRequestDTO requestDTO = new PaymentRequestDTO()
-                .orderId(order.getId().toString())
-                .orderCurrencyCode(order.getCurrency().getCurrencyCode());
+        if (order != null) {
+            PaymentRequestDTO requestDTO = new PaymentRequestDTO()
+                    .orderId(order.getId().toString())
+                    .orderCurrencyCode(order.getCurrency().getCurrencyCode());
 
-        populateCustomerInfo(order, requestDTO);
-        populateShipTo(order, requestDTO);
-        populateBillTo(order, requestDTO);
-        populateTotals(order, requestDTO);
-        populateDefaultLineItemsAndSubtotal(order, requestDTO);
+            populateCustomerInfo(order, requestDTO);
+            populateShipTo(order, requestDTO);
+            populateBillTo(order, requestDTO);
+            populateTotals(order, requestDTO);
+            populateDefaultLineItemsAndSubtotal(order, requestDTO);
 
-        return requestDTO;
+            return requestDTO;
+        }
+
+        return null;
     }
 
     @Override
     public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction) {
+        //Will set the full amount to be charged on the transaction total/subtotal and not worry about shipping/tax breakdown
         PaymentRequestDTO requestDTO = new PaymentRequestDTO()
             .transactionTotal(transactionAmount.getAmount().toPlainString())
+            .orderSubtotal(transactionAmount.getAmount().toPlainString())
+            .shippingTotal(ZERO_TOTAL)
+            .taxTotal(ZERO_TOTAL)
             .orderCurrencyCode(paymentTransaction.getOrderPayment().getCurrency().getCurrencyCode())
             .orderId(paymentTransaction.getOrderPayment().getOrder().getId().toString());
         
@@ -75,8 +85,26 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     }
 
     protected void populateTotals(Order order, PaymentRequestDTO requestDTO) {
-        requestDTO.transactionTotal(order.getTotalAfterAppliedPayments().toString())
-            .orderCurrencyCode(order.getCurrency().getCurrencyCode());
+        String total = ZERO_TOTAL;
+        String shippingTotal = ZERO_TOTAL;
+        String taxTotal = ZERO_TOTAL;
+
+        if (order.getTotalAfterAppliedPayments() != null) {
+            total = order.getTotalAfterAppliedPayments().toString();
+        }
+
+        if (order.getTotalShipping() != null) {
+            shippingTotal = order.getTotalShipping().toString();
+        }
+
+        if (order.getTotalTax() != null) {
+            taxTotal = order.getTotalTax().toString();
+        }
+
+        requestDTO.transactionTotal(total)
+                .shippingTotal(shippingTotal)
+                .taxTotal(taxTotal)
+                .orderCurrencyCode(order.getCurrency().getCurrencyCode());
     }
 
     protected void populateCustomerInfo(Order order, PaymentRequestDTO requestDTO) {

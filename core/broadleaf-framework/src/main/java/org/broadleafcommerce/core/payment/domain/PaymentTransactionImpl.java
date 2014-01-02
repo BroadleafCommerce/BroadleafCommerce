@@ -33,6 +33,7 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
@@ -143,6 +144,8 @@ public class PaymentTransactionImpl implements PaymentTransaction {
 
     @ElementCollection
     @MapKeyColumn(name="FIELD_NAME")
+    @MapKeyType(@Type(type = "java.lang.String"))
+    @Lob
     @Column(name="FIELD_VALUE")
     @CollectionTable(name="BLC_TRANS_ADDITNL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_ID"))
     @BatchSize(size = 50)
