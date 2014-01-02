@@ -36,6 +36,7 @@ import java.util.Map;
  * @see {@link #REFUND}
  * @see {@link #VOID}
  * @see {@link #REVERSE_AUTH}
+ * @see {@link #CONFIRMED}
  *
  * @author Jerry Ocanas (jocanas)
  * @author Phillip Verheyden (phillipuniverse)
@@ -93,6 +94,13 @@ public class PaymentTransactionType implements Serializable, BroadleafEnumeratio
      * {@link #AUTHORIZE}d but <b>BEFORE</b> funds have been {@link #CAPTURE}d.
      */
     public static final PaymentTransactionType REVERSE_AUTH = new PaymentTransactionType("REVERSE_AUTH", "Reverse Auth");
+
+    /**
+     * This occurs for Payment Types like PayPal Express Checkout where a payment must be confirmed
+     * after it has been {@link #AUTHORIZE} or {@link #AUTHORIZE_AND_CAPTURE}
+     */
+    public static final PaymentTransactionType CONFIRMED = new PaymentTransactionType("CONFIRMED", "Confirmed");
+
 
     public static PaymentTransactionType getInstance(final String type) {
         return TYPES.get(type);

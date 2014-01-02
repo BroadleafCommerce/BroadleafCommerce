@@ -54,12 +54,14 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
     protected static final Log LOG = LogFactory.getLog(PaymentGatewayAbstractController.class);
     public static final String PAYMENT_PROCESSING_ERROR = "PAYMENT_PROCESSING_ERROR";
 
-    protected static String processingErrorMessage = "There was an error processing your request.";
     protected static String baseRedirect = "redirect:/";
     protected static String baseErrorView = "/error";
     protected static String baseOrderReviewRedirect = "redirect:/checkout";
     protected static String baseConfirmationRedirect = "redirect:/confirmation";
     protected static String baseCartRedirect = "redirect:/cart";
+
+    //TODO externalize this
+    protected static String processingErrorMessage = "There was an error processing your request.";
 
     @Autowired(required=false)
     @Qualifier("blPaymentGatewayCheckoutService")
@@ -78,7 +80,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
         }
     }
 
-    public String initiateCheckout(Long orderId) {
+    public String initiateCheckout(Long orderId) throws Exception {
         if (paymentGatewayCheckoutService != null && orderId != null) {
             return paymentGatewayCheckoutService.initiateCheckout(orderId);
         }
@@ -180,32 +182,6 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
                 markPaymentAsInvalid(orderPaymentId);
             }
 
-            handleProcessingException(e, redirectAttributes);
-        }
-
-        return getErrorViewRedirect();
-    }
-
-    /**
-     * TODO Move to another controller
-     * should respond to "/checkout" - assumes all payments have been applied to the order.
-     *
-     *
-     * If the order has been finalized. i.e. all the payments have been applied to the order,
-     * then you can go ahead and call checkout using the passed in order id.
-     * This is usually called from a Review Page, the security check is pushed to the framework
-     * to see if the current request has the permission to do this.
-     *
-     * @param orderId
-     * @return
-     * @throws Exception
-     */
-    public String processCheckoutOrderFinalized(Long orderId,
-                                                final RedirectAttributes redirectAttributes) throws PaymentException {
-        try {
-            String orderNumber = initiateCheckout(orderId);
-            return getConfirmationViewRedirect(orderNumber);
-        } catch (Exception e) {
             handleProcessingException(e, redirectAttributes);
         }
 

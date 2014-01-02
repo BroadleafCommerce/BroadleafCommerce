@@ -39,21 +39,24 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
+import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -72,6 +75,9 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     @Resource(name = "blOrderToPaymentRequestDTOService")
     protected OrderToPaymentRequestDTOService orderToPaymentRequestService;
 
+    @Resource(name = "blOrderPaymentService")
+    protected OrderPaymentService orderPaymentService;
+
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         Order order = context.getSeedData().getOrder();
@@ -80,6 +86,11 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         // Unconfirmed payments could be added for things like gift cards and account credits; they are not actually
         // decremented from the user's account until checkout. This could also be used in some credit card processing
         // situations
+        // Important: The payment.getAmount() must be the final amount that is going to be confirmed. If the order total
+        // changed, the order payments need to be adjusted to reflect this and must add up to the order total.
+        // This can happen in the case of PayPal Express or other hosted gateways where the unconfirmed payment comes back
+        // to a review page, the customer selects shipping and the order total is adjusted.
+        Map<OrderPayment, PaymentTransaction> additionalTransactions = new HashMap<OrderPayment, PaymentTransaction>();
         for (OrderPayment payment : order.getPayments()) {
             for (PaymentTransaction tx : payment.getTransactions()) {
                 if (!tx.getConfirmed()) {
@@ -89,21 +100,42 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         LOG.error(msg);
                         throw new CheckoutException(msg, context.getSeedData());
                     } else {
-                        PaymentResponseDTO response = paymentGatewayConfiguration.getTransactionConfirmationService()
-                            .confirmTransaction(orderToPaymentRequestService.translatePaymentTransaction(tx.getAmount(), tx));
-                        if (response.isSuccessful()) {
-                            
+                        PaymentResponseDTO responseDTO = paymentGatewayConfiguration.getTransactionConfirmationService()
+                            .confirmTransaction(orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx));
+                        if (responseDTO.isSuccessful()) {
+                            PaymentTransaction transaction = orderPaymentService.createTransaction();
+                            transaction.setAmount(responseDTO.getAmount());
+                            transaction.setRawResponse(responseDTO.getRawResponse());
+                            transaction.setSuccess(responseDTO.isSuccessful());
+                            transaction.setType(responseDTO.getPaymentTransactionType());
+                            transaction.setParentTransaction(tx);
+                            transaction.setOrderPayment(payment);
+                            additionalTransactions.put(payment, transaction);
+                        } else {
+                            String msg = "Unable to Confirm Transaction with id: " + tx.getId();
+                            LOG.error(msg);
+                            throw new CheckoutException(msg, context.getSeedData());
                         }
                     }
                 }
+            }
+        }
+
+        for (OrderPayment payment : order.getPayments()) {
+            if (additionalTransactions.containsKey(payment)) {
+                payment.addTransaction(additionalTransactions.get(payment));
             }
         }
         
         // Add authorize and authorize_and_capture; there should only be one or the other in the payment
         Money paymentSum = new Money(BigDecimal.ZERO);
         for (OrderPayment payment : order.getPayments()) {
-            paymentSum = paymentSum.add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE))
+            if (PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType())) {
+                paymentSum = paymentSum.add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.CONFIRMED));
+            } else {
+                paymentSum = paymentSum.add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE))
                                    .add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE));
+            }
         }
         
         if (paymentSum.lessThan(order.getTotal())) {

@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.web.controller.checkout;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
@@ -52,6 +53,8 @@ import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.StateService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestDataBinder;
 
@@ -78,6 +81,11 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
     protected static String checkoutView = "checkout/checkout";
     protected static String checkoutPageRedirect = "redirect:/checkout";
     protected static String baseConfirmationView = "ajaxredirect:/confirmation";
+
+    /* Optional Service */
+    @Autowired(required=false)
+    @Qualifier("blPaymentGatewayCheckoutService")
+    protected PaymentGatewayCheckoutService paymentGatewayCheckoutService;
 
     /* Services */
     @Resource(name = "blOrderService")

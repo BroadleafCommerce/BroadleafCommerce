@@ -23,6 +23,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.payment.PaymentType;
+import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
+import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -45,6 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 public class BroadleafCheckoutController extends AbstractCheckoutController {
 
     private static final Log LOG = LogFactory.getLog(BroadleafCheckoutController.class);
+    protected static String baseConfirmationRedirect = "redirect:/confirmation";
 
     /**
      * Renders the default checkout page and allows modules to add variables to the model.
@@ -106,7 +109,54 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         return getCheckoutPageRedirect();   
     }
 
-    
+    /**
+     * If the order has been finalized. i.e. all the payments have been applied to the order,
+     * then you can go ahead and call checkout using the passed in order id.
+     * This is usually called from a Review Page or if enough Payments have been applied to the Order to complete checkout.
+     * (e.g. Gift Cards cover the entire amount and there is no need to call an external Payment Gateway, or
+     * a Payment from a Hosted Gateway has already been applied to the order like Paypal Express Checkout)
+     *
+     * @return
+     * @throws Exception
+     */
+    public String processCompleteCheckoutOrderFinalized(final RedirectAttributes redirectAttributes) throws PaymentException {
+        Order cart = CartState.getCart();
+
+        if (cart != null && !(cart instanceof NullOrderImpl)) {
+            try {
+                String orderNumber = initiateCheckout(cart.getId());
+                return getConfirmationViewRedirect(orderNumber);
+            } catch (Exception e) {
+                handleProcessingException(e, redirectAttributes);
+            }
+        }
+
+        return getCheckoutPageRedirect();
+    }
+
+    public String initiateCheckout(Long orderId) throws Exception{
+        if (paymentGatewayCheckoutService != null && orderId != null) {
+            return paymentGatewayCheckoutService.initiateCheckout(orderId);
+        }
+        return null;
+    }
+
+    public void handleProcessingException(Exception e, RedirectAttributes redirectAttributes) throws PaymentException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("A Processing Exception Occurred finalizing the order. Adding Error to Redirect Attributes.");
+        }
+
+        redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
+                PaymentGatewayAbstractController.getProcessingErrorMessage());
+    }
+
+    public String getBaseConfirmationRedirect() {
+        return baseConfirmationRedirect;
+    }
+
+    protected String getConfirmationViewRedirect(String orderNumber) {
+        return getBaseConfirmationRedirect() + "/" + orderNumber;
+    }
     /**
      * Processes the request to complete checkout.
      * 

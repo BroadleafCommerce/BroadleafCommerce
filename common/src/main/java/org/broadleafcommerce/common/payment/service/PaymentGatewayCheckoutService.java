@@ -62,7 +62,7 @@ public interface PaymentGatewayCheckoutService {
      * @param orderId the order to check out
      * @return the response from checking out the order
      */
-    public String initiateCheckout(Long orderId);
+    public String initiateCheckout(Long orderId) throws Exception;
 
     /**
      * Looks up the order number for a particular order id from the {@link PaymentResponseDTO}. This can be used to redirect

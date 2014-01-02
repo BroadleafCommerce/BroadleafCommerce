@@ -186,6 +186,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         transaction.setAmount(responseDTO.getAmount());
         transaction.setRawResponse(responseDTO.getRawResponse());
         transaction.setSuccess(responseDTO.isSuccessful());
+        transaction.setConfirmed(responseDTO.isConfirmed());
         transaction.setType(responseDTO.getPaymentTransactionType());
         for (Entry<String, Serializable> entry : responseDTO.getResponseMap().entrySet()) {
             transaction.getAdditionalFields().put(entry.getKey(), entry.getValue());
@@ -238,7 +239,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
     //TODO: this should return something more than just a String
     @Override
-    public String initiateCheckout(Long orderId) {
+    public String initiateCheckout(Long orderId) throws Exception{
         Order order = orderService.findOrderById(orderId);
         if (order == null || order instanceof NullOrderImpl) {
             throw new IllegalArgumentException("Could not order with id " + orderId);
@@ -248,8 +249,9 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             CheckoutResponse response = checkoutService.performCheckout(order);
         } catch (CheckoutException e) {
             //TODO: wrap the exception or put CheckoutException in common
+            throw new Exception(e);
         }
-        
+
         return order.getOrderNumber();
     }
 

@@ -64,6 +64,8 @@
         <property name="taxService" ref="blTaxService"/>
     </bean>
     <bean p:order="8000" id="blTotalActivity" class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity" />
+    <bean p:order="9000" id="blAdjustOrderPaymentsActivity" class="org.broadleafcommerce.core.pricing.service.workflow.AdjustOrderPaymentsActivity" />
+
 
     <bean id="blPricingWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
@@ -79,6 +81,7 @@
                 <ref bean="blShippingOfferActivity" />
                 <ref bean="blTaxActivity" />
                 <ref bean="blTotalActivity"/>
+                <ref bean="blAdjustOrderPaymentsActivity"/>
             </list>
         </property>
         <property name="defaultErrorHandler">
