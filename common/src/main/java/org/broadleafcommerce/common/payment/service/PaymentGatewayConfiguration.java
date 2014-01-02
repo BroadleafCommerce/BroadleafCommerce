@@ -17,21 +17,6 @@
  * limitations under the License.
  * #L%
  */
-/*
- * Copyright 2008-2013 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package org.broadleafcommerce.common.payment.service;
 
@@ -50,6 +35,10 @@ public class PaymentGatewayConfiguration {
     protected PaymentGatewayCreditCardService creditCardService;
     protected PaymentGatewayCustomerService customerService;
     protected PaymentGatewaySubscriptionService subscriptionService;
+    protected PaymentGatewayFraudService fraudService;
+    protected PaymentGatewayHostedService hostedService;
+    protected PaymentGatewayRollbackService rollbackService;
+    protected PaymentGatewayWebResponseService webResponseService;
 
     protected TRCreditCardExtensionHandler creditCardExtensionHandler;
     protected PaymentGatewayFieldExtensionHandler fieldExtensionHandler;
@@ -108,6 +97,38 @@ public class PaymentGatewayConfiguration {
 
     public void setSubscriptionService(PaymentGatewaySubscriptionService subscriptionService) {
         this.subscriptionService = subscriptionService;
+    }
+
+    public PaymentGatewayFraudService getFraudService() {
+        return fraudService;
+    }
+
+    public void setFraudService(PaymentGatewayFraudService fraudService) {
+        this.fraudService = fraudService;
+    }
+
+    public PaymentGatewayHostedService getHostedService() {
+        return hostedService;
+    }
+
+    public void setHostedService(PaymentGatewayHostedService hostedService) {
+        this.hostedService = hostedService;
+    }
+
+    public PaymentGatewayRollbackService getRollbackService() {
+        return rollbackService;
+    }
+
+    public void setRollbackService(PaymentGatewayRollbackService rollbackService) {
+        this.rollbackService = rollbackService;
+    }
+
+    public PaymentGatewayWebResponseService getWebResponseService() {
+        return webResponseService;
+    }
+
+    public void setWebResponseService(PaymentGatewayWebResponseService webResponseService) {
+        this.webResponseService = webResponseService;
     }
 
     public TRCreditCardExtensionHandler getCreditCardExtensionHandler() {
