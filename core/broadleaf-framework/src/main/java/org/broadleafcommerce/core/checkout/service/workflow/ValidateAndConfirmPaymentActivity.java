@@ -17,21 +17,6 @@
  * limitations under the License.
  * #L%
  */
-/*
- * Copyright 2008-2013 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package org.broadleafcommerce.core.checkout.service.workflow;
 
@@ -94,6 +79,10 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         for (OrderPayment payment : order.getPayments()) {
             for (PaymentTransaction tx : payment.getTransactions()) {
                 if (!tx.getConfirmed()) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Transaction is not confirmed. Proceeding to confirm transaction.");
+                    }
+
                     if (paymentGatewayConfiguration == null || paymentGatewayConfiguration.getTransactionConfirmationService() == null) {
                         String msg = "There are unconfirmed payment transactions on this payment but no payment gateway" +
                                 " configuration or transaction confirmation service configured";
@@ -102,6 +91,11 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                     } else {
                         PaymentResponseDTO responseDTO = paymentGatewayConfiguration.getTransactionConfirmationService()
                             .confirmTransaction(orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx));
+
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Transaction Confirmation Raw Response: " +  responseDTO.getRawResponse());
+                        }
+
                         if (responseDTO.isSuccessful()) {
                             PaymentTransaction transaction = orderPaymentService.createTransaction();
                             transaction.setAmount(responseDTO.getAmount());
