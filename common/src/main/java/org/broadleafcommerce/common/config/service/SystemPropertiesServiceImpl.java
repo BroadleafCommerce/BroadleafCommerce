@@ -24,8 +24,9 @@ import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * To change this template use File | Settings | File Templates.
@@ -40,6 +41,16 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     protected SystemPropertiesDao systemPropertiesDao;
 
     @Override
+    public String resolveSystemProperty(String name, String defaultValue) {
+        SystemProperty property = systemPropertiesDao.readSystemPropertyByName(name);
+        if (property == null || property.getValue() == null) {
+            return defaultValue;
+        } else {
+            return property.getValue();
+        }
+    }
+
+    @Override
     @Transactional("blTransactionManager")
     public SystemProperty saveSystemProperty(SystemProperty systemProperty) {
         return systemPropertiesDao.saveSystemProperty(systemProperty);
@@ -52,13 +63,11 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     }
 
     @Override
-    @Transactional("blTransactionManager")
     public List<SystemProperty> findAllSystemProperties() {
         return systemPropertiesDao.readAllSystemProperties();
     }
 
     @Override
-    @Transactional("blTransactionManager")
     public SystemProperty findSystemPropertyByName(String name) {
         return systemPropertiesDao.readSystemPropertyByName(name);
     }

@@ -31,6 +31,16 @@ import java.util.List;
  */
 public interface SystemPropertiesService {
 
+    /**
+     * Preferred method for looking up String properties.   The method will return the configured value or 
+     * if no override value is found, it will return the value passed in to the method as the default value.
+     * 
+     * @param name
+     * @param defaultValue
+     * @return
+     */
+    public String resolveSystemProperty(String name, String defaultValue);
+
     public SystemProperty saveSystemProperty(SystemProperty systemProperty);
 
     public void deleteSystemProperty(SystemProperty systemProperty);
