@@ -366,7 +366,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
 
     @Override
     public String getMainEntityName() {
-        return getFullUrl();
+        return getDescription();
     }
 
     @Override
