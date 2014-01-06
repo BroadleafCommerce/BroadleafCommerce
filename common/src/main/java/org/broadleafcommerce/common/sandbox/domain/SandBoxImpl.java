@@ -102,9 +102,13 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
         fieldType = SupportedFieldType.COLOR, order = 2000)
     protected String color;
 
+    /*
+     * This field should not be used until logic for it is implemented.
+     * 
+     * @AdminPresentation(friendlyName = "SandBoxImpl_Go_Live_Date", group = "SandBoxImpl_Description",
+     *   prominent = true, gridOrder = 5000, order = 3000)
+    */
     @Column(name = "GO_LIVE_DATE")
-    @AdminPresentation(friendlyName = "SandBoxImpl_Go_Live_Date", group = "SandBoxImpl_Description",
-        prominent = true, gridOrder = 5000, order = 3000)
     protected Date goLiveDate;
 
     @Override
