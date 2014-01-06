@@ -250,6 +250,7 @@ public class CategoryDaoImpl implements CategoryDao {
         }
         Query query;
         query = em.createNamedQuery("BC_READ_CATEGORY_OUTGOING_URL");
+        query.setParameter("currentDate", getCurrentDateAfterFactoringInDateResolution());
         query.setParameter("url", uri);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");

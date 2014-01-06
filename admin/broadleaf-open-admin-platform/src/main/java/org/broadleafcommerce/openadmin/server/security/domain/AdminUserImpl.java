@@ -51,6 +51,7 @@ import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
@@ -96,33 +97,42 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
 
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINUSER_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Name", order = 1, group = "AdminUserImpl_User", prominent = true,
-            validationConfigurations = { @ValidationConfiguration(
-                    validationImplementation = "org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator",
-                    configurationItems = { @ConfigurationItem(itemName = "regularExpression", itemValue = "\\w+"),
-                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "Only word characters are allowed") }
-                    ) })
+    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Name", gridOrder = 1000, order = 1000,
+            group = "AdminUserImpl_User", prominent = true)
     protected String name;
 
     @Column(name = "LOGIN", nullable=false)
-    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Login", order=2, group = "AdminUserImpl_User", prominent=true)
+    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Login", gridOrder = 2000, order = 2000,
+            group = "AdminUserImpl_User", prominent = true)
     protected String login;
 
-    @Column(name = "PASSWORD", nullable=false)
-    @AdminPresentation(excluded = true)
+    @Column(name = "PASSWORD")
+    @AdminPresentation(
+            friendlyName = "AdminUserImpl_Admin_Password", order = 6000,
+            group = "AdminUserImpl_User",
+            fieldType = SupportedFieldType.PASSWORD,
+            validationConfigurations = { @ValidationConfiguration(
+                    validationImplementation = "org.broadleafcommerce.openadmin.server.service.persistence.validation.MatchesFieldValidator",
+                    configurationItems = {
+                            @ConfigurationItem(itemName = ConfigurationItem.ERROR_MESSAGE, itemValue = "passwordNotMatchError"),
+                            @ConfigurationItem(itemName = "otherField", itemValue = "passwordConfirm")
+                    }
+                    )
+            })
     protected String password;
 
     @Column(name = "EMAIL", nullable=false)
     @Index(name="ADMINPERM_EMAIL_INDEX", columnNames={"EMAIL"})
-    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Email_Address", order=4, group = "AdminUserImpl_User")
+    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Email_Address", order = 3000, group = "AdminUserImpl_User")
     protected String email;
 
     @Column(name = "PHONE_NUMBER")
-    @AdminPresentation(friendlyName = "AdminUserImpl_Phone_Number", order=5, group = "AdminUserImpl_User")
+    @AdminPresentation(friendlyName = "AdminUserImpl_Phone_Number", order = 5000, group = "AdminUserImpl_User")
     protected String phoneNumber;
 
     @Column(name = "ACTIVE_STATUS_FLAG")
-    @AdminPresentation(friendlyName = "AdminUserImpl_Active_Status", order=6, group = "AdminUserImpl_User")
+    @AdminPresentation(friendlyName = "AdminUserImpl_Active_Status",
+            order = 4000, group = "AdminUserImpl_User")
     protected Boolean activeStatusFlag = Boolean.TRUE;
 
     /** All roles that this user has */

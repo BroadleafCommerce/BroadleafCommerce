@@ -121,8 +121,9 @@ public interface AdminSecurityService {
      * not a {@link SaltSource} configured ({@link #getSaltSource()} returns null) then this also returns null.
      * 
      * @param user
+     * @param unencodedPassword
      * @return the salt for the current admin user
      */
-    public Object getSalt(AdminUser user);
+    public Object getSalt(AdminUser user, String unencodedPassword);
 
 }
