@@ -21,6 +21,7 @@
 package org.broadleafcommerce.common.payment.dto;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 
@@ -74,6 +75,11 @@ public class PaymentResponseDTO {
      * on an order confirmation screen
      */
     protected List<CustomerCreditDTO<PaymentResponseDTO>> customerCredits;
+
+    /**
+     * The Payment Gateway Type that this transaction response represents
+     */
+    protected PaymentGatewayType paymentGatewayType;
 
     /**
      * The Type of Payment that this transaction response represents
@@ -142,8 +148,9 @@ public class PaymentResponseDTO {
      */
     protected Map<String, String> responseMap;
 
-    public PaymentResponseDTO(PaymentType paymentType) {
+    public PaymentResponseDTO(PaymentType paymentType, PaymentGatewayType gatewayType) {
         this.paymentType = paymentType;
+        this.paymentGatewayType = gatewayType;
         this.giftCards = new ArrayList<GiftCardDTO<PaymentResponseDTO>>();
         this.customerCredits = new ArrayList<CustomerCreditDTO<PaymentResponseDTO>>();
         this.responseMap = new HashMap<String, String>();
@@ -248,6 +255,10 @@ public class PaymentResponseDTO {
 
     public PaymentType getPaymentType() {
         return paymentType;
+    }
+
+    public PaymentGatewayType getPaymentGatewayType() {
+        return paymentGatewayType;
     }
 
     public String getOrderId() {

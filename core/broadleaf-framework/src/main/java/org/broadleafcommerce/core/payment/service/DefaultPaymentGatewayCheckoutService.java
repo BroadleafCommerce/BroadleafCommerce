@@ -143,6 +143,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         // invoking {@link #markPaymentAsInvalid}.
         OrderPayment payment = orderPaymentService.create();
         payment.setType(responseDTO.getPaymentType());
+        payment.setPaymentGatewayType(responseDTO.getPaymentGatewayType());
         payment.setAmount(responseDTO.getAmount());
         
         Address billingAddress = null;
