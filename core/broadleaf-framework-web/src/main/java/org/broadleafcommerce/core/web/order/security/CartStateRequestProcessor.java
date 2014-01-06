@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.order.service.exception.RemoveFromCartExceptio
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.service.UpdateCartService;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.broadleafcommerce.profile.web.core.security.CustomerStateRequestProcessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -74,24 +75,22 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
     @Resource(name = "blMergeCartService")
     private MergeCartService mergeCartService;
 
-    @Resource(name = "blCustomerStateRequestProcessor")
-    protected CustomerStateRequestProcessor customerStateRequestProcessor;
-
     protected static String cartRequestAttributeName = "cart";
         
     @Override
     public void process(WebRequest request) {
-        Customer customer = (Customer) request.getAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName(),
-                WebRequest.SCOPE_REQUEST);
+        Customer customer = CustomerState.getCustomer();
 
         if (customer == null) {
+            LOG.warn("No customer was found on the current request, no cart will be added to the current request. Ensure that the"
+                    + " blCustomerStateFilter occurs prior to the blCartStateFilter");
             return;
         }
 
         Order cart = null;
         if (mergeCartNeeded(customer, request)) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Merge cart required, calling mergeCart " + customer.getId());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Merge cart required, calling mergeCart " + customer.getId());
             }
             cart = mergeCart(customer, request);
         } else {
@@ -121,12 +120,12 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
     }
     
     public boolean mergeCartNeeded(Customer customer, WebRequest request) {
-        Customer anonymousCustomer = customerStateRequestProcessor.resolveAnonymousCustomer(request);
+        Customer anonymousCustomer = CustomerStateRequestProcessor.getAnonymousCustomer(request);
         return (anonymousCustomer != null && customer.getId() != null && !customer.getId().equals(anonymousCustomer.getId()));
     }
 
     public Order mergeCart(Customer customer, WebRequest request) {
-        Customer anonymousCustomer = customerStateRequestProcessor.resolveAnonymousCustomer(request);
+        Customer anonymousCustomer = CustomerStateRequestProcessor.getAnonymousCustomer(request);
         MergeCartResponse mergeCartResponse;
         try {
             Order cart = orderService.findCartForCustomer(anonymousCustomer);

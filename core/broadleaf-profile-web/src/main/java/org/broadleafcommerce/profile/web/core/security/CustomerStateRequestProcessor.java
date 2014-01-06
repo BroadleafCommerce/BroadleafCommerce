@@ -143,26 +143,39 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
     }
 
     /**
-     * Implementors can subclass to change how anonymous customers are created. The intended behavior is as follows:
+     * <p>Implementors can subclass to change how anonymous customers are created. Note that this method is intended to actually create the anonymous
+     * customer if one does not exist. If you are looking to just get the current anonymous customer (if it exists) then instead use the
+     * {@link #getAnonymousCustomer(WebRequest)} method.<p>
      * 
-     * 1. Look for a {@link Customer} on the session
-     *   - If a customer is found in session, keep using the session-based customer
-     *   - If a customer is not found in session
-     *       - Look for a customer ID in session
-     *            - If a customer ID is found in session:
-     *                  Look up the customer in the database
-     *       - If no there is no customer ID in session (and thus no {@link Customer})
-     *           1. Create a new customer
-     *           2. Put the newly-created {@link Customer} in session
+     * <p>The intended behavior of this method is as follows:</p>
+     * 
+     * <ul>
+     *  <li>Look for a {@link Customer} on the session</li>
+     *  <ul>
+     *      <li>If a customer is found in session, keep using the session-based customer</li>
+     *      <li>If a customer is not found in session</li>
+     *      <ul>
+     *          <li>Look for a customer ID in session</li>
+     *          <li>If a customer ID is found in session:</li>
+     *          <ul><li>Look up the customer in the database</ul></li>
+     *      </ul>
+     *      <li>If no there is no customer ID in session (and thus no {@link Customer})</li>
+     *      <ol>
+     *          <li>Create a new customer</li>
+     *          <li>Put the newly-created {@link Customer} in session</li>
+     *      </ol>
+     *  </ul>
+     * </ul>
      * 
      * @param request
      * @return
+     * @see {@link #getAnonymousCustomer(WebRequest)}
      * @see {@link #getAnonymousCustomerAttributeName()}
      * @see {@link #getAnonymousCustomerIdAttributeName()}
      */
     public Customer resolveAnonymousCustomer(WebRequest request) {
         Customer customer;
-        customer = (Customer) request.getAttribute(getAnonymousCustomerSessionAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION);
+        customer = getAnonymousCustomer(request);
         if (customer == null) {
             //Customer is not in session, see if we have just a customer ID in session (the anonymous customer might have
             //already been persisted)
@@ -184,6 +197,16 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
         customer.setAnonymous(true);
 
         return customer;
+    }
+    
+    /**
+     * Returns the anonymous customer that was saved in session or null if none exists.
+     * 
+     * @param request - the current request
+     * @return the anonymous customer that has not been persisted in the database but is available as a session object
+     */
+    public static Customer getAnonymousCustomer(WebRequest request) {
+        return (Customer) request.getAttribute(getAnonymousCustomerSessionAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION);
     }
     
     /**

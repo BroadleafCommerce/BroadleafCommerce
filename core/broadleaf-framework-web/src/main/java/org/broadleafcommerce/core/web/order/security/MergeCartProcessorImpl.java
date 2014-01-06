@@ -49,9 +49,6 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
     @Resource(name="blMergeCartService")
     private MergeCartService mergeCartService;
     
-    @Resource(name = "blCustomerStateRequestProcessor")
-    protected CustomerStateRequestProcessor customerStateRequestProcessor;
-
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         execute(new ServletWebRequest(request, response), authResult);
@@ -59,7 +56,7 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
     
     public void execute(WebRequest request, Authentication authResult) {
         Customer loggedInCustomer = customerService.readCustomerByUsername(authResult.getName());
-        Customer anonymousCustomer = customerStateRequestProcessor.resolveAnonymousCustomer(request);
+        Customer anonymousCustomer = CustomerStateRequestProcessor.getAnonymousCustomer(request);
         
         Order cart = null;
         if (anonymousCustomer != null) {
