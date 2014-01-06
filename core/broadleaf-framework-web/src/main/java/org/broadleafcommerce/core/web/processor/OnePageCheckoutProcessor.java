@@ -70,6 +70,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * This is a Thymeleaf Processor that aids in rendering a dynamic One Page Checkout screen.
+ * These sections are driven by the state of the order and whether or not certain integrated payment
+ * modules are enabled (e.g. PayPal Express Review Page etc...). For example, if there are no shippable fulfillment
+ * groups on the order, then the shipping section should not be shown. Or, if the user is redirected
+ * back from a Third Party Payment gateway to complete the order (e.g. PayPal Express Checkout), then
+ * the billing section will not be shown.
+ *
  * @author Elbert Bautista (elbertbautista)
  */
 public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionElementProcessor {
@@ -122,6 +129,19 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
                 .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("billingInfoForm"));
         BillingInfoForm billingInfoForm = (BillingInfoForm) expression.execute(arguments.getConfiguration(), arguments);
 
+        expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("orderInfoHelpMessage"));
+        String orderInfoHelpMessage = (String) expression.execute(arguments.getConfiguration(), arguments);
+
+        expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("billingInfoHelpMessage"));
+        String billingInfoHelpMessage = (String) expression.execute(arguments.getConfiguration(), arguments);
+
+        expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("shippingInfoHelpMessage"));
+        String shippingInfoHelpMessage = (String) expression.execute(arguments.getConfiguration(), arguments);
+
+
         prepopulateCheckoutForms(CartState.getCart(), orderInfoForm, shippingInfoForm, billingInfoForm);
 
         Map<String, Object> localVars = new HashMap<String, Object>();
@@ -132,6 +152,10 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         populateFulfillmentOptionsAndEstimationOnModel(localVars);
 
         //Initialize View States
+        localVars.put("orderInfoHelpMessage", orderInfoHelpMessage);
+        localVars.put("billingInfoHelpMessage", billingInfoHelpMessage);
+        localVars.put("shippingInfoHelpMessage", shippingInfoHelpMessage);
+
         populateSectionViewStates(localVars);
 
         //Helpful lists to populate dropdowns on a checkout page
@@ -260,15 +284,48 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         localVars.put("showBillingInfoSection", showBillingInfoSection);
         localVars.put("showAllPaymentMethods", showAllPaymentMethods);
 
+        //The Sections are all initialized to INACTIVE view
         List<CheckoutSectionDTO> drawnSections = new LinkedList<CheckoutSectionDTO>();
-        drawnSections.add(new CheckoutSectionDTO(CheckoutSectionViewType.ORDER_INFO, orderInfoPopulated));
+        CheckoutSectionDTO orderInfoSection = new CheckoutSectionDTO(CheckoutSectionViewType.ORDER_INFO, orderInfoPopulated);
+        CheckoutSectionDTO billingInfoSection = new CheckoutSectionDTO(CheckoutSectionViewType.BILLING_INFO, billingPopulated);
+        CheckoutSectionDTO shippingInfoSection = new CheckoutSectionDTO(CheckoutSectionViewType.SHIPPING_INFO, shippingPopulated);
+        CheckoutSectionDTO paymentInfoSection = new CheckoutSectionDTO(CheckoutSectionViewType.PAYMENT_INFO, false);
+
+        String orderInfoHelpMessage = (String) localVars.get("orderInfoHelpMessage");
+        String billingInfoHelpMessage = (String) localVars.get("billingInfoHelpMessage");
+        String shippingInfoHelpMessage  = (String) localVars.get("shippingInfoHelpMessage");
+
+        //Add the Order Info Section
+        drawnSections.add(orderInfoSection);
+
+        //Add the Billing Section
         if (showBillingInfoSection) {
-            drawnSections.add(new CheckoutSectionDTO(CheckoutSectionViewType.BILLING_INFO, billingPopulated));
+            billingInfoSection.setHelpMessage(orderInfoHelpMessage);
+            drawnSections.add(billingInfoSection);
         }
+
+        //Add the Shipping Section
         if (showShippingInfoSection) {
-            drawnSections.add(new CheckoutSectionDTO(CheckoutSectionViewType.SHIPPING_INFO, shippingPopulated));
+
+            if (showBillingInfoSection) {
+                shippingInfoSection.setHelpMessage(billingInfoHelpMessage);
+            } else {
+                shippingInfoSection.setHelpMessage(orderInfoHelpMessage);
+            }
+
+            drawnSections.add(shippingInfoSection);
         }
-        drawnSections.add(new CheckoutSectionDTO(CheckoutSectionViewType.PAYMENT_INFO, false));
+
+        //Add the Payment Section
+        if (showShippingInfoSection) {
+            paymentInfoSection.setHelpMessage(shippingInfoHelpMessage);
+        } else if (showBillingInfoSection) {
+            paymentInfoSection.setHelpMessage(billingInfoHelpMessage);
+        } else {
+            paymentInfoSection.setHelpMessage(orderInfoHelpMessage);
+        }
+
+        drawnSections.add(paymentInfoSection);
 
         //Logic to toggle state between form view, saved view, and inactive view
         //This is dependent on the layout of your checkout form. Override this if layout is different.
