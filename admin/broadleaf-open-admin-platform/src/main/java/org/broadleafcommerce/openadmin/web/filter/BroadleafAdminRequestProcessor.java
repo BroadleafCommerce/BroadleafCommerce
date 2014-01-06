@@ -19,25 +19,31 @@
  */
 package org.broadleafcommerce.openadmin.web.filter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.sandbox.service.SandBoxService;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.BroadleafCurrencyResolver;
 import org.broadleafcommerce.common.web.BroadleafLocaleResolver;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.BroadleafSandBoxResolver;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.broadleafcommerce.common.web.BroadleafTimeZoneResolver;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.List;
 import java.util.TimeZone;
 
 import javax.annotation.Resource;
@@ -101,6 +107,57 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
 
         BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
         brc.setBroadleafCurrency(currency);
+
+        AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
+        if (adminUser == null) {
+            //clear any sandbox
+            request.removeAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+        } else {
+            SandBox sandBox = null;
+            if (StringUtils.isNotBlank(request.getParameter(SANDBOX_REQ_PARAM))) {
+                Long sandBoxId = Long.parseLong(request.getParameter(SANDBOX_REQ_PARAM));
+                sandBox = sandBoxService.retrieveUserSandBoxForParent(adminUser.getId(), sandBoxId);
+                if (sandBox == null) {
+                    SandBox approvalOrUserSandBox = sandBoxService.retrieveSandBoxById(sandBoxId);
+                    if (approvalOrUserSandBox.getSandBoxType().equals(SandBoxType.USER)) {
+                        sandBox = approvalOrUserSandBox;
+                    } else {
+                        sandBox = sandBoxService.createUserSandBox(adminUser.getId(), approvalOrUserSandBox);
+                    }
+                }
+            }
+
+            if (sandBox == null) {
+                Long previouslySetSandBoxId = (Long) request.getAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR,
+                        WebRequest.SCOPE_GLOBAL_SESSION);
+                if (previouslySetSandBoxId != null) {
+                    sandBox = sandBoxService.retrieveSandBoxById(previouslySetSandBoxId);
+                }
+            }
+
+            if (sandBox == null) {
+                List<SandBox> defaultSandBoxes = sandBoxService.retrieveSandBoxesByType(SandBoxType.DEFAULT);
+                if (defaultSandBoxes.size() > 1) {
+                    throw new IllegalStateException("Only one sandbox should be configured as default");
+                }
+
+                SandBox defaultSandBox;
+                if (defaultSandBoxes.size() == 1) {
+                    defaultSandBox = defaultSandBoxes.get(0);
+                } else {
+                    defaultSandBox = sandBoxService.createDefaultSandBox();
+                }
+
+                sandBox = sandBoxService.retrieveUserSandBoxForParent(adminUser.getId(), defaultSandBox.getId());
+                if (sandBox == null) {
+                    sandBox = sandBoxService.createUserSandBox(adminUser.getId(), defaultSandBox);
+                }
+            }
+
+            request.setAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, sandBox.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
+            brc.setSandBox(sandBox);
+            brc.getAdditionalProperties().put("adminUser", adminUser);
+        }
     }
 
     @Override
