@@ -76,7 +76,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         
         //Copy Additional Fields from PaymentTransaction into the Request DTO.
         //This will contain any gateway specific information needed to perform actions on this transaction
-        Map<String, Serializable> additionalFields = paymentTransaction.getAdditionalFields();
+        Map<String, String> additionalFields = paymentTransaction.getAdditionalFields();
         for (String key : additionalFields.keySet()) {
             requestDTO.additionalField(key, additionalFields.get(key));
         }

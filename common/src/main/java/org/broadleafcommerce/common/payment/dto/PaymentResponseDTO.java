@@ -140,13 +140,13 @@ public class PaymentResponseDTO {
     /**
      * A more convenient representation of {@link #rawResponse} to hold the response from the gateway.
      */
-    protected Map<String, Serializable> responseMap;
+    protected Map<String, String> responseMap;
 
     public PaymentResponseDTO(PaymentType paymentType) {
         this.paymentType = paymentType;
         this.giftCards = new ArrayList<GiftCardDTO<PaymentResponseDTO>>();
         this.customerCredits = new ArrayList<CustomerCreditDTO<PaymentResponseDTO>>();
-        this.responseMap = new HashMap<String, Serializable>();
+        this.responseMap = new HashMap<String, String>();
     }
 
     public GatewayCustomerDTO<PaymentResponseDTO> customer() {
@@ -181,7 +181,7 @@ public class PaymentResponseDTO {
         return customerCreditDTO;
     }
 
-    public PaymentResponseDTO responseMap(String key, Serializable value) {
+    public PaymentResponseDTO responseMap(String key, String value) {
         responseMap.put(key, value);
         return this;
     }
@@ -286,7 +286,7 @@ public class PaymentResponseDTO {
         return rawResponse;
     }
 
-    public Map<String, Serializable> getResponseMap() {
+    public Map<String, String> getResponseMap() {
         return responseMap;
     }
 }

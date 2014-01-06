@@ -38,12 +38,6 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -58,6 +52,11 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Jerry Ocanas (jocanas)
@@ -146,13 +145,14 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @MapKeyColumn(name="FIELD_NAME")
     @MapKeyType(@Type(type = "java.lang.String"))
     @Lob
-    @Column(name="FIELD_VALUE")
+    @Type(type = "org.hibernate.type.StringClobType")
+    @Column(name="FIELD_VALUE", length = Integer.MAX_VALUE - 1)
     @CollectionTable(name="BLC_TRANS_ADDITNL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_ID"))
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "PaymentInfoImpl_Additional_Fields",
         forceFreeFormKeys = true, keyPropertyFriendlyName = "PaymentInfoImpl_Additional_Fields_Name"
     )
-    protected Map<String, Serializable> additionalFields = new HashMap<String, Serializable>();
+    protected Map<String, String> additionalFields = new HashMap<String, String>();
 
     @Override
     public Long getId() {
@@ -255,12 +255,12 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     }
 
     @Override
-    public Map<String, Serializable> getAdditionalFields() {
+    public Map<String, String> getAdditionalFields() {
         return additionalFields;
     }
 
     @Override
-    public void setAdditionalFields(Map<String, Serializable> additionalFields) {
+    public void setAdditionalFields(Map<String, String> additionalFields) {
         this.additionalFields = additionalFields;
     }
 
