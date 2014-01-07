@@ -40,6 +40,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionType;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.IsNotNullPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.IsNullPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
@@ -509,7 +510,10 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             List<String> specialValues = fasc.getSpecialFilterValues();
             if (specialValues.contains(FilterAndSortCriteria.IS_NULL_FILTER_VALUE)) {
                 filterMapping.setRestriction(new Restriction().withPredicateProvider(new IsNullPredicateProvider()));
-            }
+            } 
+            if (specialValues.contains(FilterAndSortCriteria.IS_NOT_NULL_FILTER_VALUE)) {
+                filterMapping.setRestriction(new Restriction().withPredicateProvider(new IsNotNullPredicateProvider()));
+            } 
         } else {
             switch (metadata.getFieldType()) {
             case BOOLEAN:

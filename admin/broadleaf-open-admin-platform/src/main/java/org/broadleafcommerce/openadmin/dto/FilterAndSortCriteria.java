@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.TypedPredicate;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class FilterAndSortCriteria {
 
@@ -37,6 +37,7 @@ public class FilterAndSortCriteria {
     public static final String MAX_INDEX_PARAMETER = "maxIndex";
     
     public static final String IS_NULL_FILTER_VALUE = new String("BLC_SPECIAL_FILTER_VALUE:NULL").intern();
+    public static final String IS_NOT_NULL_FILTER_VALUE = new String("BLC_SPECIAL_FILTER_VALUE:NOT_NULL").intern();
 
     protected String propertyId;
     protected List<String> filterValues = new ArrayList<String>();
@@ -132,9 +133,9 @@ public class FilterAndSortCriteria {
                 // safe to compare with == while still allowing the user to specify a filter for the actual value of this
                 // string.
                 if (inclusive) {
-                    return IS_NULL_FILTER_VALUE == value;
+                    return IS_NULL_FILTER_VALUE == value || IS_NOT_NULL_FILTER_VALUE == value;
                 } else {
-                    return IS_NULL_FILTER_VALUE != value;
+                    return IS_NULL_FILTER_VALUE != value && IS_NOT_NULL_FILTER_VALUE != value;
                 }
             }
         };
