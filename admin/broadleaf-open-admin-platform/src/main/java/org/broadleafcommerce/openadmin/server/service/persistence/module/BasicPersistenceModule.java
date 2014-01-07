@@ -19,6 +19,32 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -68,31 +94,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
 
 /**
  * @author jfischer
@@ -315,8 +316,21 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 Entity invalid = getRecords(mergedProperties, entityList, null, null)[0];
                 invalid.setValidationErrors(entity.getValidationErrors());
                 invalid.overridePropertyValues(entity);
+
+                StringBuilder sb = new StringBuilder();
+                for (Map.Entry<String, List<String>> entry : invalid.getValidationErrors().entrySet()) {
+                    Iterator<String> itr = entry.getValue().iterator();
+                    while(itr.hasNext()) {
+                        sb.append(entry.getKey());
+                        sb.append(" : ");
+                        sb.append(itr.next());
+                        if (itr.hasNext()) {
+                            sb.append(" / ");
+                        }
+                    }
+                }
                 
-                throw new ValidationException(invalid, "The entity has failed validation");
+                throw new ValidationException(invalid, "The entity has failed validation - " + sb.toString());
             }
             else {
                 fieldManager.persistMiddleEntities();

@@ -294,8 +294,7 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     @AdminPresentation(friendlyName = "OfferImpl_Target_Item_Rule",
         group = Presentation.Group.Name.ItemTarget, groupOrder = Presentation.Group.Order.ItemTarget,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
-        ruleIdentifier = RuleIdentifier.ORDERITEM, 
-        requiredOverride = RequiredOverride.REQUIRED)
+        ruleIdentifier = RuleIdentifier.ORDERITEM)
     @ClonePolicyCollection
     protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
     
