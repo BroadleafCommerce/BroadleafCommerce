@@ -76,7 +76,7 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     @Column(name = "SANDBOX_NAME")
     @Index(name="SANDBOX_NAME_INDEX", columnNames={"SANDBOX_NAME"})
     @AdminPresentation(friendlyName = "SandBoxImpl_Name", group = "SandBoxImpl_Description", prominent = true, 
-        gridOrder = 1000, order = 1000)
+        gridOrder = 2000, order = 1000)
     protected String name;
     
     @Column(name="AUTHOR")
@@ -99,8 +99,13 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
 
     @Column(name = "COLOR")
     @AdminPresentation(friendlyName = "SandBoxImpl_Color", group = "SandBoxImpl_Description", 
-        fieldType = SupportedFieldType.COLOR, order = 2000)
+        prominent = true, gridOrder = 1000, fieldType = SupportedFieldType.COLOR, order = 2000)
     protected String color;
+
+    @Column(name = "DESCRIPTION")
+    @AdminPresentation(friendlyName = "SandBoxImpl_Description", group = "SandBoxImpl_Description",
+        prominent = true, gridOrder = 3000, order = 3000)
+    protected String description;
 
     /*
      * This field should not be used until logic for it is implemented.

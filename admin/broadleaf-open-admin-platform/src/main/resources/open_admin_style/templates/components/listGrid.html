@@ -124,10 +124,16 @@
                                 th:src="@{${field.value + record.getField('thumbnailKey').value}}"
                                 th:attr="data-fullurl=@{${field.value}}" />
                         </span>
+
+                        <span th:if="${field.fieldType == 'COLOR'}">
+                            <span class="sandbox-color-square" 
+                                th:style="${'background-color: ' + field.value + ';'}" />
+                        </span>
                             
                         <span th:unless="${headerField.mainEntityLink 
                                 or headerField.canLinkToExternalEntity 
-                                or field.fieldType == 'IMAGE'}"
+                                or field.fieldType == 'IMAGE'
+                                or field.fieldType == 'COLOR'}"
                               th:text="${field.displayValue}" th:remove="tag"/>
                     </span>
                     
@@ -150,10 +156,16 @@
                                 th:src="@{${field.value + record.getField('thumbnailKey').value}}"
                                 th:attr="data-fullurl=@{${field.value}}" />
                         </span>
+
+                        <span th:if="${field.fieldType == 'COLOR'}">
+                            <span class="sandbox-color-square" 
+                                th:style="${'background-color: ' + field.value + ';'}" />
+                        </span>
                         
                         <span th:unless="${(headerField.mainEntityLink and record.canLinkToExternalEntity)
                                 or headerField.canLinkToExternalEntity
-                                or field.fieldType == 'IMAGE'}"
+                                or field.fieldType == 'IMAGE'
+                                or field.fieldType == 'COLOR'}"
                               th:remove="tag" th:text="${field.displayValue}" />
                     </span>
                 </td>
