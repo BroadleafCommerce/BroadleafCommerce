@@ -20,11 +20,16 @@
 
 package org.broadleafcommerce.core.checkout.service.workflow;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
-import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
@@ -35,23 +40,28 @@ import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
 
 /**
- * Verifies that there is enough payment on the order and confirms all payments that have not already been confirmed.
+ * <p>Verifies that there is enough payment on the order via the <i>successful</i> amount on {@link PaymentTransactionType.AUTHORIZE} and
+ * {@link PaymentTransactionType.AUTHORIZE_AND_CAPTURE} transactions. This will also confirm any {@link PaymentTransactionType.UNCONFIRMED} transactions
+ * that exist on am {@link OrderPayment}.</p>
+ * 
+ * <p>If there is an exception (either in this activity or later downstream) the confirmed payments are rolled back via {@link ConfirmPaymentsRollbackHandler}
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
 public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
     
     protected static final Log LOG = LogFactory.getLog(ValidateAndConfirmPaymentActivity.class);
+    
+    /**
+     * Used by the {@link ConfirmPaymentsRollbackHandler} to roll back transactions that this activity confirms.
+     */
+    public static final String CONFIRMED_TRANSACTIONS = "confirmedTransactions";
 
     @Autowired(required = false)
     @Qualifier("blPaymentGatewayConfiguration")
@@ -67,6 +77,8 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         Order order = context.getSeedData().getOrder();
         
+        Map<String, Object> rollbackState = new HashMap<String, Object>(); 
+        
         // There are definitely enough payments on the order. We now need to confirm each unconfirmed payment on the order.
         // Unconfirmed payments could be added for things like gift cards and account credits; they are not actually
         // decremented from the user's account until checkout. This could also be used in some credit card processing
@@ -80,17 +92,19 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
             for (PaymentTransaction tx : payment.getTransactions()) {
                 if (PaymentTransactionType.UNCONFIRMED.equals(tx.getType())) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Transaction is not confirmed. Proceeding to confirm transaction.");
+                        LOG.trace("Transaction " + tx.getId() + " is not confirmed. Proceeding to confirm transaction.");
                     }
-
-                    if (paymentGatewayConfiguration == null || paymentGatewayConfiguration.getTransactionConfirmationService() == null) {
+                    
+                    if (paymentGatewayConfiguration == null && paymentGatewayConfiguration.getRollbackService() == null) {
                         String msg = "There are unconfirmed payment transactions on this payment but no payment gateway" +
                                 " configuration or transaction confirmation service configured";
                         LOG.error(msg);
                         throw new CheckoutException(msg, context.getSeedData());
-                    } else {
+                    }
+
+                    if (paymentGatewayConfiguration != null && paymentGatewayConfiguration.getTransactionConfirmationService() != null) {
                         PaymentResponseDTO responseDTO = paymentGatewayConfiguration.getTransactionConfirmationService()
-                            .confirmTransaction(orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx));
+                                .confirmTransaction(orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx));
 
                         if (LOG.isTraceEnabled()) {
                             LOG.trace("Transaction Confirmation Raw Response: " +  responseDTO.getRawResponse());
@@ -106,15 +120,23 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                             transaction.setOrderPayment(payment);
                             additionalTransactions.put(payment, transaction);
                         } else {
-                            String msg = "Unable to Confirm Transaction with id: " + tx.getId();
+                            // Since there was a problems processing the 
+                            String msg = "Transaction confirmation attempt with id: " + tx.getId() + " was unsuccessful";
                             LOG.error(msg);
                             throw new CheckoutException(msg, context.getSeedData());
                         }
                     }
+                    
+                    // After each transaction is confirmed, associate the new list of confirmed transactions to the rollback state. This has the added
+                    // advantage of being able to invoke the rollback handler if there is an exception thrown at some point while confirming multiple
+                    // transactions
+                    rollbackState.put(CONFIRMED_TRANSACTIONS, additionalTransactions.values());
+                    ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), rollbackState);
                 }
             }
         }
 
+        // Add the new transactions to this payment
         for (OrderPayment payment : order.getPayments()) {
             if (additionalTransactions.containsKey(payment)) {
                 payment.addTransaction(additionalTransactions.get(payment));
