@@ -19,6 +19,14 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -34,14 +42,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
 
 
 /**
@@ -82,6 +82,16 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
         } else {
             //This is for an update, as the submittedEntity instance will likely only contain the dirty properties
             entity = recordHelper.getRecord(propertiesMetadata, instance, null, null);
+            //acquire any missing properties not harvested from the instance and add to the entity. A use case for this
+            //would be the confirmation field for a password validation
+            for (Map.Entry<String, FieldMetadata> entry : propertiesMetadata.entrySet()) {
+                if (entity.findProperty(entry.getKey()) == null) {
+                    Property myProperty = submittedEntity.findProperty(entry.getKey());
+                    if (myProperty != null) {
+                        entity.addProperty(myProperty);
+                    }
+                }
+            }
         }
         List<String> types = getTypeHierarchy(entity);
         //validate each individual property according to their validation configuration
