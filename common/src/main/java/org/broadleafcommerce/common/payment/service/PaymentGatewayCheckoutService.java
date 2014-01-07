@@ -47,12 +47,12 @@ public interface PaymentGatewayCheckoutService {
      * @throws IllegalArgumentException if the {@link PaymentResponseDTO#getValid()} returns false or if the order that
      * the {@link PaymentResponseDTO} is attempted to be applied to has already gone through checkout
      */
-    public Long applyPaymentToOrder(PaymentResponseDTO responseDTO, PaymentGatewayConfigurationService configService)
+    public Long applyPaymentToOrder(PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config)
         throws IllegalArgumentException;
 
     /**
      * Marks a given order payment as invalid. In the default implementation, this archives the payment. This can be
-     * determined from the result of {@link #applyPaymentToOrder(PaymentResponseDTO, PaymentGatewayConfigurationService)}
+     * determined from the result of {@link #applyPaymentToOrder(PaymentResponseDTO, PaymentGatewayConfiguration)}
      * @param orderPaymentId the payment ID to mark as invalid
      */
     public void markPaymentAsInvalid(Long orderPaymentId);

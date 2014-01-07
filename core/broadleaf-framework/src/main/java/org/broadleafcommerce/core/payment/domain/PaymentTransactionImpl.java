@@ -38,6 +38,11 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -52,11 +57,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Jerry Ocanas (jocanas)
@@ -162,6 +162,9 @@ public class PaymentTransactionImpl implements PaymentTransaction {
 
     @Override
     public OrderPayment getOrderPayment() {
+        if (orderPayment == null && parentTransaction != null) {
+            return parentTransaction.getOrderPayment();
+        }
         return orderPayment;
     }
 

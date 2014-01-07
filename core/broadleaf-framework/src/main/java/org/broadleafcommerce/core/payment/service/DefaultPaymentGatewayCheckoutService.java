@@ -28,7 +28,7 @@ import org.broadleafcommerce.common.payment.dto.AddressDTO;
 import org.broadleafcommerce.common.payment.dto.GatewayCustomerDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
@@ -88,14 +88,14 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
     protected PhoneService phoneService;
     
     @Override
-    public Long applyPaymentToOrder(PaymentResponseDTO responseDTO, PaymentGatewayConfigurationService configService) {
+    public Long applyPaymentToOrder(PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config) {
         
         //Payments can ONLY be parsed into PaymentInfos if they are 'valid'
         if (!responseDTO.isValid()) {
             throw new IllegalArgumentException("Invalid payment responses cannot be parsed into the order payment domain");
         }
         
-        if (configService == null) {
+        if (config == null) {
             throw new IllegalArgumentException("Config service cannot be null");
         }
         
@@ -121,8 +121,8 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         // If this gateway does not support multiple payments then mark all of the existing payments as invalid before adding
         // the new one
         List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
-        if (!configService.handlesMultiplePayments()) {
-            PaymentGatewayType gateway = configService.getGatewayType();
+        if (!config.handlesMultiplePayments()) {
+            PaymentGatewayType gateway = config.getGatewayType();
             for (OrderPayment payment : order.getPayments()) {
                 // There may be an Order Payment on the order that doesn't have a gateway set (e.g. to save the billing address)
                 // This will be marked as invalid, as the billing address that will be saved on the order will be coming off the

@@ -19,16 +19,15 @@
  */
 package org.broadleafcommerce.core.payment.domain;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Map;
+
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity;
 import org.broadleafcommerce.profile.core.domain.Customer;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * <p>Used to store individual transactions about a particular payment. While an {@link OrderPayment} holds data like what the
@@ -45,12 +44,14 @@ import java.util.Map;
  * 
  * <ul>
  *  <li>{@link PaymentTransactionType#CAPTURE} -> {@link PaymentTransactionType#AUTHORIZE}</li>
- *  <li>{@link PaymentTransactionType#REFUND} -> {@link PaymentTransactionType#CAPTURE} or {@link PaymentTransactionType#SETTLED}</li>
+ *  <li>{@link PaymentTransactionType#REFUND} -> {@link PaymentTransactionType#CAPTURE} OR {@link PaymentTransactionType#SETTLED}</li>
  *  <li>{@link PaymentTransactionType#SETTLED} -> {@link PaymentTransactionType#CAPTURE}</li>
  *  <li>{@link PaymentTransactionType#VOID} -> {@link PaymentTransactionType#CAPTURE}</li>
  *  <li>{@link PaymentTransactionType#REVERSE_AUTH} -> {@link PaymentTransactionType#AUTHORIZE}</li>
  * </ul>
  * 
+ * <p>For {@link PaymentTransactionType#UNCONFIRMED}, they will have children that will be either {@link PaymentTransactionType#AUTHORIZE}
+ * or {@link PaymentTransactionType#AUTHORIZE_AND_CAPTURE}.</p> * 
  * @author Phillip Verheyden (phillipuniverse)
  */
 public interface PaymentTransaction extends Serializable, Status {
@@ -59,8 +60,10 @@ public interface PaymentTransaction extends Serializable, Status {
 
     public void setId(Long id);
 
-    /*
-     * The overall payment that this transaction applies to
+    /**
+     * The overall payment that this transaction applies to. Note that if the relationship to an order payment is unset on
+     * this particular transaction, then this will automatically attempt to obtain the {@link OrderPayment} from
+     * {@link #getParentTransaction()}.
      */
     public OrderPayment getOrderPayment();
 
@@ -69,6 +72,21 @@ public interface PaymentTransaction extends Serializable, Status {
      */
     public void setOrderPayment(OrderPayment payment);
     
+    /**
+     * Transactions can have a parent-child relationship for modifying transactions that can occur. Examples of this:
+     * <ul>
+     *  <li>{@link PaymentTransactionType#CAPTURE} -> {@link PaymentTransactionType#AUTHORIZE}</li>
+     *  <li>{@link PaymentTransactionType#REFUND} -> {@link PaymentTransactionType#CAPTURE} OR {@link PaymentTransactionType#SETTLED}</li>
+     *  <li>{@link PaymentTransactionType#SETTLED} -> {@link PaymentTransactionType#CAPTURE}</li>
+     *  <li>{@link PaymentTransactionType#VOID} -> {@link PaymentTransactionType#CAPTURE}</li>
+     *  <li>{@link PaymentTransactionType#REVERSE_AUTH} -> {@link PaymentTransactionType#AUTHORIZE}</li>
+     * </ul>
+     * 
+     * <p>For {@link PaymentTransactionType#UNCONFIRMED}, they will have children that will be either {@link PaymentTransactionType#AUTHORIZE}
+     * or {@link PaymentTransactionType#AUTHORIZE_AND_CAPTURE}.</p>
+     * 
+     * @return
+     */
     public PaymentTransaction getParentTransaction();
 
     public void setParentTransaction(PaymentTransaction parentTransaction);

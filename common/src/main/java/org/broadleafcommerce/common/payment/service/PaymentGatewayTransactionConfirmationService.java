@@ -50,7 +50,7 @@ import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
  *
  * <p>
  * Not all Gateways allow confirmation. That setting can be found on the
- * PaymentGatewayConfigurationService.completeCheckoutOnCallback(). If this value is set to true,
+ * PaymentGatewayConfiguration.completeCheckoutOnCallback(). If this value is set to true,
  * then the gateway does not support confirming the transaction, as it assumes to be the final step
  * in the completion process. Most Credit Card integrations do not support confirming the transaction,
  * Third Party providers like PayPal Express, or the BLC Gift Card Module do and should implement
@@ -58,7 +58,7 @@ import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
  * </p>
  *
  * @see {@link PaymentGatewayRollbackService}
- * @see {@link PaymentGatewayConfigurationService}
+ * @see {@link PaymentGatewayConfiguration}
  *
  * @author Elbert Bautista (elbertbautista)
  */

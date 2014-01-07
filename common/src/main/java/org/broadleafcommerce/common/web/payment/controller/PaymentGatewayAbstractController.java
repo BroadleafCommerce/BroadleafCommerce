@@ -24,19 +24,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayWebResponseService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
+
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 /**
  * <p>Abstract controller that provides convenience methods and resource declarations for Payment Gateway
@@ -69,7 +68,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
 
     public Long applyPaymentToOrder(PaymentResponseDTO responseDTO) throws IllegalArgumentException {
         if (paymentGatewayCheckoutService != null) {
-            return paymentGatewayCheckoutService.applyPaymentToOrder(responseDTO, getConfigurationService());
+            return paymentGatewayCheckoutService.applyPaymentToOrder(responseDTO, getConfiguration());
         }
         return null;
     }
@@ -198,7 +197,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
 
     public abstract PaymentGatewayWebResponseService getWebResponseService();
 
-    public abstract PaymentGatewayConfigurationService getConfigurationService();
+    public abstract PaymentGatewayConfiguration getConfiguration();
 
     public abstract String returnEndpoint(Model model, HttpServletRequest request,
                                           final RedirectAttributes redirectAttributes,

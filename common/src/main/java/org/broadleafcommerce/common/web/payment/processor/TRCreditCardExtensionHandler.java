@@ -36,7 +36,7 @@ public interface TRCreditCardExtensionHandler extends ExtensionHandler {
      * <p>The implementing modules should take into consideration the passed in configuration settings map
      * and call their implementing TransparentRedirectService to generate either an Authorize
      * or Authorize and Capture Form. The decision should be based on the implementing
-     * PaymentGatewayConfigurationService.isPerformAuthorizeAndCapture();
+     * PaymentGatewayConfiguration.isPerformAuthorizeAndCapture();
      * </p>
      * <p>
      * This method accepts a RequestDTO that represents the order along with a map of

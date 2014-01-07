@@ -31,7 +31,8 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationServiceProvider;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
@@ -64,8 +65,8 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     public static final String CONFIRMED_TRANSACTIONS = "confirmedTransactions";
 
     @Autowired(required = false)
-    @Qualifier("blPaymentGatewayConfiguration")
-    protected PaymentGatewayConfiguration paymentGatewayConfiguration;
+    @Qualifier("blPaymentGatewayConfigurationServiceProvider")
+    protected PaymentGatewayConfigurationServiceProvider paymentConfigurationServiceProvider;
     
     @Resource(name = "blOrderToPaymentRequestDTOService")
     protected OrderToPaymentRequestDTOService orderToPaymentRequestService;
@@ -95,36 +96,36 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         LOG.trace("Transaction " + tx.getId() + " is not confirmed. Proceeding to confirm transaction.");
                     }
                     
-                    if (paymentGatewayConfiguration == null && paymentGatewayConfiguration.getRollbackService() == null) {
+                    // Cannot confirm anything here if there is no provider
+                    if (paymentConfigurationServiceProvider == null) {
                         String msg = "There are unconfirmed payment transactions on this payment but no payment gateway" +
                                 " configuration or transaction confirmation service configured";
                         LOG.error(msg);
                         throw new CheckoutException(msg, context.getSeedData());
                     }
+                    
+                    PaymentGatewayConfigurationService cfg = paymentConfigurationServiceProvider.getGatewayConfigurationService(tx.getOrderPayment().getGatewayType());
+                    PaymentResponseDTO responseDTO = cfg.getTransactionConfirmationService()
+                            .confirmTransaction(orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx));
 
-                    if (paymentGatewayConfiguration != null && paymentGatewayConfiguration.getTransactionConfirmationService() != null) {
-                        PaymentResponseDTO responseDTO = paymentGatewayConfiguration.getTransactionConfirmationService()
-                                .confirmTransaction(orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx));
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Transaction Confirmation Raw Response: " +  responseDTO.getRawResponse());
+                    }
 
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Transaction Confirmation Raw Response: " +  responseDTO.getRawResponse());
-                        }
-
-                        if (responseDTO.isSuccessful()) {
-                            PaymentTransaction transaction = orderPaymentService.createTransaction();
-                            transaction.setAmount(responseDTO.getAmount());
-                            transaction.setRawResponse(responseDTO.getRawResponse());
-                            transaction.setSuccess(responseDTO.isSuccessful());
-                            transaction.setType(responseDTO.getPaymentTransactionType());
-                            transaction.setParentTransaction(tx);
-                            transaction.setOrderPayment(payment);
-                            additionalTransactions.put(payment, transaction);
-                        } else {
-                            // Since there was a problems processing the 
-                            String msg = "Transaction confirmation attempt with id: " + tx.getId() + " was unsuccessful";
-                            LOG.error(msg);
-                            throw new CheckoutException(msg, context.getSeedData());
-                        }
+                    if (responseDTO.isSuccessful()) {
+                        PaymentTransaction transaction = orderPaymentService.createTransaction();
+                        transaction.setAmount(responseDTO.getAmount());
+                        transaction.setRawResponse(responseDTO.getRawResponse());
+                        transaction.setSuccess(responseDTO.isSuccessful());
+                        transaction.setType(responseDTO.getPaymentTransactionType());
+                        transaction.setParentTransaction(tx);
+                        transaction.setOrderPayment(payment);
+                        additionalTransactions.put(payment, transaction);
+                    } else {
+                        // Since there was a problems processing the 
+                        String msg = "Transaction confirmation attempt with id: " + tx.getId() + " was unsuccessful";
+                        LOG.error(msg);
+                        throw new CheckoutException(msg, context.getSeedData());
                     }
                     
                     // After each transaction is confirmed, associate the new list of confirmed transactions to the rollback state. This has the added

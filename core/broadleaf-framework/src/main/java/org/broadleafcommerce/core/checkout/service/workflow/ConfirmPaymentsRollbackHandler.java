@@ -28,7 +28,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationServiceProvider;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
@@ -51,8 +52,8 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
     protected static final Log LOG = LogFactory.getLog(ConfirmPaymentsRollbackHandler.class);
     
     @Autowired(required = false)
-    @Qualifier("blPaymentGatewayConfiguration")
-    protected PaymentGatewayConfiguration paymentGatewayConfiguration;
+    @Qualifier("blPaymentGatewayConfigurationServiceProvider")
+    protected PaymentGatewayConfigurationServiceProvider paymentConfigurationServiceProvider;
     
     @Resource(name = "blOrderToPaymentRequestDTOService")
     protected OrderToPaymentRequestDTOService transactionToPaymentRequestDTOService;
@@ -61,7 +62,7 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
     public void rollbackState(Activity<? extends ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
         CheckoutSeed seed = processContext.getSeedData();
         
-        if (paymentGatewayConfiguration == null && paymentGatewayConfiguration.getRollbackService() == null) {
+        if (paymentConfigurationServiceProvider == null) {
             throw new RollbackFailureException("There is no rollback service configured for the payment gateway configuration, cannot rollback unconfirmed"
                     + " payments");
         }
@@ -70,11 +71,12 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
         for (PaymentTransaction tx : transactions) {
             PaymentRequestDTO rollbackRequest = transactionToPaymentRequestDTOService.translatePaymentTransaction(tx.getAmount(), tx);
             
+            PaymentGatewayConfigurationService cfg = paymentConfigurationServiceProvider.getGatewayConfigurationService(tx.getOrderPayment().getGatewayType());
             try {
                 if (PaymentTransactionType.AUTHORIZE.equals(tx.getType())) {
-                    paymentGatewayConfiguration.getRollbackService().rollbackAuthorize(rollbackRequest);
+                    cfg.getRollbackService().rollbackAuthorize(rollbackRequest);
                 } else if (PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType())) {
-                    paymentGatewayConfiguration.getRollbackService().rollbackAuthorizeAndCapture(rollbackRequest);
+                    cfg.getRollbackService().rollbackAuthorizeAndCapture(rollbackRequest);
                 } else {
                     LOG.warn("The transaction with id " + tx.getId() + " will NOT rolled back as it is not an AUTHORIZE or AUTHORIZE_AND_CAPTURE transaction but is"
                             + " of type " + tx.getType() + ". If you need to roll back transactions of this type then provide a customized rollback handler for"

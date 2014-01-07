@@ -24,7 +24,7 @@ import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayTransparentRedirectService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 
@@ -67,7 +67,7 @@ public abstract class AbstractTRCreditCardExtensionHandler extends AbstractExten
             }
 
             PaymentResponseDTO responseDTO;
-            if (getConfigurationService().isPerformAuthorizeAndCapture()) {
+            if (getConfiguration().isPerformAuthorizeAndCapture()) {
                 responseDTO = getTransparentRedirectService().createAuthorizeAndCaptureForm(requestDTO);
             } else {
                 responseDTO = getTransparentRedirectService().createAuthorizeForm(requestDTO);
@@ -84,7 +84,7 @@ public abstract class AbstractTRCreditCardExtensionHandler extends AbstractExten
 
     public abstract String getHiddenParamsKey();
 
-    public abstract PaymentGatewayConfigurationService getConfigurationService();
+    public abstract PaymentGatewayConfiguration getConfiguration();
 
     public abstract PaymentGatewayTransparentRedirectService getTransparentRedirectService();
 
