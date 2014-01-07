@@ -29,125 +29,36 @@ import org.broadleafcommerce.common.web.payment.processor.TRCreditCardExtensionH
  * delegation to the right gateway to perform operations against via different order payments on an order.
  * 
  * @author Elbert Bautista (elbertbautista)
+ * @author Phillip Verheyden (phillipuniverse)
  */
-public class PaymentGatewayConfigurationService {
+public interface PaymentGatewayConfigurationService {
 
-    protected PaymentGatewayConfiguration configuration;
-    protected PaymentGatewayTransactionService transactionService;
-    protected PaymentGatewayTransactionConfirmationService transactionConfirmationService;
-    protected PaymentGatewayReportingService reportingService;
-    protected PaymentGatewayCreditCardService creditCardService;
-    protected PaymentGatewayCustomerService customerService;
-    protected PaymentGatewaySubscriptionService subscriptionService;
-    protected PaymentGatewayFraudService fraudService;
-    protected PaymentGatewayHostedService hostedService;
-    protected PaymentGatewayRollbackService rollbackService;
-    protected PaymentGatewayWebResponseService webResponseService;
+    public PaymentGatewayConfiguration getConfiguration();
 
-    protected TRCreditCardExtensionHandler creditCardExtensionHandler;
-    protected PaymentGatewayFieldExtensionHandler fieldExtensionHandler;
+    public PaymentGatewayTransactionService getTransactionService();
 
-    public PaymentGatewayConfiguration getConfiguration() {
-        return configuration;
-    }
+    public PaymentGatewayTransactionConfirmationService getTransactionConfirmationService();
 
-    public void setConfiguration(PaymentGatewayConfiguration configuration) {
-        this.configuration = configuration;
-    }
+    public PaymentGatewayReportingService getReportingService();
 
-    public PaymentGatewayTransactionService getTransactionService() {
-        return transactionService;
-    }
+    public PaymentGatewayCreditCardService getCreditCardService();
 
-    public void setTransactionService(PaymentGatewayTransactionService transactionService) {
-        this.transactionService = transactionService;
-    }
+    public PaymentGatewayCustomerService getCustomerService();
 
-    public PaymentGatewayTransactionConfirmationService getTransactionConfirmationService() {
-        return transactionConfirmationService;
-    }
+    public PaymentGatewaySubscriptionService getSubscriptionService();
 
-    public void setTransactionConfirmationService(PaymentGatewayTransactionConfirmationService transactionConfirmationService) {
-        this.transactionConfirmationService = transactionConfirmationService;
-    }
+    public PaymentGatewayFraudService getFraudService();
 
-    public PaymentGatewayReportingService getReportingService() {
-        return reportingService;
-    }
+    public PaymentGatewayHostedService getHostedService();
 
-    public void setReportingService(PaymentGatewayReportingService reportingService) {
-        this.reportingService = reportingService;
-    }
+    public PaymentGatewayRollbackService getRollbackService();
 
-    public PaymentGatewayCreditCardService getCreditCardService() {
-        return creditCardService;
-    }
+    public PaymentGatewayWebResponseService getWebResponseService();
 
-    public void setCreditCardService(PaymentGatewayCreditCardService creditCardService) {
-        this.creditCardService = creditCardService;
-    }
+    public PaymentGatewayTransparentRedirectService getTransparentRedirectService();
 
-    public PaymentGatewayCustomerService getCustomerService() {
-        return customerService;
-    }
+    public TRCreditCardExtensionHandler getCreditCardExtensionHandler();
 
-    public void setCustomerService(PaymentGatewayCustomerService customerService) {
-        this.customerService = customerService;
-    }
+    public PaymentGatewayFieldExtensionHandler getFieldExtensionHandler();
 
-    public PaymentGatewaySubscriptionService getSubscriptionService() {
-        return subscriptionService;
-    }
-
-    public void setSubscriptionService(PaymentGatewaySubscriptionService subscriptionService) {
-        this.subscriptionService = subscriptionService;
-    }
-
-    public PaymentGatewayFraudService getFraudService() {
-        return fraudService;
-    }
-
-    public void setFraudService(PaymentGatewayFraudService fraudService) {
-        this.fraudService = fraudService;
-    }
-
-    public PaymentGatewayHostedService getHostedService() {
-        return hostedService;
-    }
-
-    public void setHostedService(PaymentGatewayHostedService hostedService) {
-        this.hostedService = hostedService;
-    }
-
-    public PaymentGatewayRollbackService getRollbackService() {
-        return rollbackService;
-    }
-
-    public void setRollbackService(PaymentGatewayRollbackService rollbackService) {
-        this.rollbackService = rollbackService;
-    }
-
-    public PaymentGatewayWebResponseService getWebResponseService() {
-        return webResponseService;
-    }
-
-    public void setWebResponseService(PaymentGatewayWebResponseService webResponseService) {
-        this.webResponseService = webResponseService;
-    }
-
-    public TRCreditCardExtensionHandler getCreditCardExtensionHandler() {
-        return creditCardExtensionHandler;
-    }
-
-    public void setCreditCardExtensionHandler(TRCreditCardExtensionHandler creditCardExtensionHandler) {
-        this.creditCardExtensionHandler = creditCardExtensionHandler;
-    }
-
-    public PaymentGatewayFieldExtensionHandler getFieldExtensionHandler() {
-        return fieldExtensionHandler;
-    }
-
-    public void setFieldExtensionHandler(PaymentGatewayFieldExtensionHandler fieldExtensionHandler) {
-        this.fieldExtensionHandler = fieldExtensionHandler;
-    }
 }
