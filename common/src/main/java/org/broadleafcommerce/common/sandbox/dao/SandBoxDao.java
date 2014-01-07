@@ -32,8 +32,6 @@ public interface SandBoxDao {
     
     public List<SandBox> retrieveAllSandBoxes();
 
-    public SandBox retrieveSandBoxByType(SandBoxType sandboxType);
-
     public List<SandBox> retrieveSandBoxesByType(SandBoxType sandboxType);
 
     public List<SandBox> retrieveSandBoxesForAuthor(Long authorId);

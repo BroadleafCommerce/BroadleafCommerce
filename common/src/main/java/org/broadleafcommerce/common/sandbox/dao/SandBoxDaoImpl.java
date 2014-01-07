@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.sandbox.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +31,17 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxManagement;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.util.TransactionUtils;
-import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionDefinition;
@@ -52,31 +58,46 @@ public class SandBoxDaoImpl implements SandBoxDao {
 
     @Override
     public SandBox retrieve(Long id) {
+        //Need to not create a query through SandBoxManagement here. Otherwise, a Hibernate exception can occur
+        //(i.e. org.hibernate.HibernateException: Found two representations of same collection: org.broadleafcommerce.core.catalog.domain.ProductImpl.additionalSkus
+        //when saving a change to product).
         return sandBoxEntityManager.find(SandBoxImpl.class, id);
     }
     
     @Override
     public List<SandBox> retrieveAllSandBoxes() {
-        TypedQuery<SandBox> query = new TypedQueryBuilder<SandBox>(SandBox.class, "sandbox")
-                .toQuery(sandBoxEntityManager);
+        CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
+        CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
+        Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
+        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
         return query.getResultList();
     }
 
     @Override
     public List<SandBox> retrieveSandBoxesByType(SandBoxType sandboxType) {
-        TypedQuery<SandBox> query = new TypedQueryBuilder<SandBox>(SandBox.class, "sandbox")
-            .addRestriction("sandbox.sandboxType", "=", sandboxType.getType())
-            .toQuery(sandBoxEntityManager);
+        CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
+        CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
+        Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
+        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        criteria.where(builder.equal(sandbox.get("sandBox").get("sandboxType"), sandboxType.getType()));
+        TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
         return query.getResultList();
     }
 
     @Override
     public SandBox retrieveUserSandBoxForParent(Long authorId, Long parentSandBoxId) {
-        TypedQuery<SandBox> query = new TypedQueryBuilder<SandBox>(SandBox.class, "sandbox")
-            .addRestriction("sandbox.sandboxType", "=", SandBoxType.USER.getType())
-            .addRestriction("sandbox.author", "=", authorId)
-            .addRestriction("sandbox.parentSandBox.id", "=", parentSandBoxId)
-            .toQuery(sandBoxEntityManager);
+        CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
+        CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
+        Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
+        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(builder.equal(sandbox.get("sandBox").get("sandboxType"), SandBoxType.USER.getType()));
+        restrictions.add(builder.equal(sandbox.get("sandBox").get("author"), authorId));
+        restrictions.add(builder.equal(sandbox.get("sandBox").get("parentSandBox").get("id"), parentSandBoxId));
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
         try {
             return query.getSingleResult();
         } catch (NoResultException e) {
@@ -84,43 +105,33 @@ public class SandBoxDaoImpl implements SandBoxDao {
         }
     }
 
-
-    @Override
-    public SandBox retrieveSandBoxByType(SandBoxType sandboxType) {
-        TypedQuery<SandBox> query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_TYPE", SandBox.class);
-        query.setParameter("sandboxType", sandboxType.getType());
-        SandBox response = null;
-        try {
-            response = query.getSingleResult();
-        } catch (NoResultException e) {
-            //do nothing - there is no sandbox
-        }
-        return response;
-    }
-
     @Override
     public SandBox retrieveNamedSandBox(SandBoxType sandboxType, String sandboxName) {
-        Query query = sandBoxEntityManager.createNamedQuery("BC_READ_SANDBOX_BY_TYPE_AND_NAME");
-        query.setParameter("sandboxType", sandboxType.getType());
-        query.setParameter("sandboxName", sandboxName);
-        SandBox response = null;
+        CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
+        CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
+        Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
+        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(builder.equal(sandbox.get("sandBox").get("sandboxType"), SandBoxType.USER.getType()));
+        restrictions.add(builder.equal(sandbox.get("sandBox").get("name"), sandboxName));
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
         try {
-            response = (SandBox) query.getSingleResult();
+            return query.getSingleResult();
         } catch (NoResultException e) {
-            //do nothing - there is no sandbox
+            return null;
         }
-        return response;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Map<Long, String> retrieveAuthorNamesForSandBoxes(Set<Long> sandBoxIds) {
         Query query = sandBoxEntityManager.createQuery(
-                "SELECT sb.id, au.name " +
-                "FROM org.broadleafcommerce.common.sandbox.domain.SandBoxImpl sb, " +
+                "SELECT sb.sandBox.id, au.name " +
+                "FROM org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl sb, " +
                     "org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl au " +
-                "WHERE sb.author = au.id " +
-                "AND sb.id IN :sandBoxIds");
+                "WHERE sb.sandBox.author = au.id " +
+                "AND sb.sandBox.id IN :sandBoxIds");
         query.setParameter("sandBoxIds", sandBoxIds);
         List<Object[]> results = query.getResultList();
 
@@ -134,9 +145,12 @@ public class SandBoxDaoImpl implements SandBoxDao {
 
     @Override
     public List<SandBox> retrieveSandBoxesForAuthor(Long authorId) {
-        TypedQuery<SandBox> query = new TypedQueryBuilder<SandBox>(SandBox.class, "sb")
-            .addRestriction("sb.author", "=", authorId)
-            .toQuery(sandBoxEntityManager);
+        CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
+        CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
+        Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
+        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        criteria.where(builder.equal(sandbox.get("sandBox").get("author"), authorId));
+        TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
         return query.getResultList();
     }
 
@@ -158,6 +172,11 @@ public class SandBoxDaoImpl implements SandBoxDao {
                 approvalSandbox.setName(sandBoxName);
                 approvalSandbox.setSandBoxType(sandBoxType);
                 approvalSandbox = persist(approvalSandbox);
+
+                SandBoxManagement mgmt = new SandBoxManagementImpl();
+                mgmt.setSandBox(approvalSandbox);
+                sandBoxEntityManager.persist(mgmt);
+                sandBoxEntityManager.flush();
             }
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
             return approvalSandbox;
@@ -179,6 +198,11 @@ public class SandBoxDaoImpl implements SandBoxDao {
             userSandBox.setSandBoxType(SandBoxType.USER);
             userSandBox = persist(userSandBox);
 
+            SandBoxManagement mgmt = new SandBoxManagementImpl();
+            mgmt.setSandBox(userSandBox);
+            sandBoxEntityManager.persist(mgmt);
+            sandBoxEntityManager.flush();
+
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
             return userSandBox;
         } catch (Exception ex) {
@@ -197,6 +221,11 @@ public class SandBoxDaoImpl implements SandBoxDao {
             defaultSB.setSandBoxType(SandBoxType.DEFAULT);
             defaultSB.setColor("#0B9098");
             defaultSB = persist(defaultSB);
+
+            SandBoxManagement mgmt = new SandBoxManagementImpl();
+            mgmt.setSandBox(defaultSB);
+            sandBoxEntityManager.persist(mgmt);
+            sandBoxEntityManager.flush();
 
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
             return defaultSB;
