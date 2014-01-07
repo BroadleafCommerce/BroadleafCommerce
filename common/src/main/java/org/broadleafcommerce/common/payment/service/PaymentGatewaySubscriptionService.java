@@ -20,6 +20,9 @@
 
 package org.broadleafcommerce.common.payment.service;
 
+import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
+import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
+
 /**
  * <p>Some gateways allow you to create a form of recurring billing by creating a subscription profile.
  * Note: Some Gateways charge an extra fee to enable this feature</p>
@@ -27,4 +30,11 @@ package org.broadleafcommerce.common.payment.service;
  * @author Elbert Bautista (elbertbautista)
  */
 public interface PaymentGatewaySubscriptionService {
+
+    public PaymentResponseDTO createGatewaySubscription(PaymentRequestDTO requestDTO);
+
+    public PaymentResponseDTO updateGatewaySubscription(PaymentRequestDTO requestDTO);
+
+    public PaymentResponseDTO cancelGatewaySubscription(PaymentRequestDTO requestDTO);
+
 }
