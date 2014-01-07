@@ -114,18 +114,6 @@ public class PaymentResponseDTO {
     protected boolean valid = true;
 
     /**
-     * Whether or not this transaction is confirmed (i.e. the Gateway has processed the transaction).
-     * In most cases, this will be true, as most Credit Card gateway integrations require
-     * that it be the last step in the process.
-     * However, there are certain integrations, (e.g. PayPal Express Checkout, BLC Gift Card Module)
-     * that aren't the final step in the checkout process and allow the customer to review their order
-     * or add another payment method to the order before final submission. In these cases, the response
-     * will be not confirmed. The confirmation for these payments will happen in the Checkout Workflow
-     * where all payments on the order that are not confirmed, should be confirmed.
-     */
-    protected boolean confirmed = true;
-
-    /**
      * <p>Sets whether or not this module should complete checkout on callback.
      * In most Credit Card gateway implementation, this should be set to 'TRUE' and
      * should not be configurable as the gateway expects it to tbe the final step
@@ -223,11 +211,6 @@ public class PaymentResponseDTO {
         return this;
     }
 
-    public PaymentResponseDTO confirmed(boolean confirmed) {
-        this.confirmed = confirmed;
-        return this;
-    }
-
     public PaymentResponseDTO rawResponse(String rawResponse) {
         this.rawResponse = rawResponse;
         return this;
@@ -279,10 +262,6 @@ public class PaymentResponseDTO {
 
     public boolean isValid() {
         return valid;
-    }
-
-    public boolean isConfirmed() {
-        return confirmed;
     }
 
     public boolean isCompleteCheckoutOnCallback() {

@@ -78,7 +78,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         Map<OrderPayment, PaymentTransaction> additionalTransactions = new HashMap<OrderPayment, PaymentTransaction>();
         for (OrderPayment payment : order.getPayments()) {
             for (PaymentTransaction tx : payment.getTransactions()) {
-                if (!tx.getConfirmed()) {
+                if (PaymentTransactionType.UNCONFIRMED.equals(tx.getType())) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Transaction is not confirmed. Proceeding to confirm transaction.");
                     }
@@ -124,19 +124,14 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         // Add authorize and authorize_and_capture; there should only be one or the other in the payment
         Money paymentSum = new Money(BigDecimal.ZERO);
         for (OrderPayment payment : order.getPayments()) {
-            if (PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType())) {
-                paymentSum = paymentSum.add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.CONFIRMED));
-            } else {
-                paymentSum = paymentSum.add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE))
-                                   .add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE));
-            }
+            paymentSum = paymentSum.add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE))
+                               .add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE));
         }
         
         if (paymentSum.lessThan(order.getTotal())) {
             throw new IllegalArgumentException("There are not enough payments to pay for the total order. The sum of " + 
                     "the payments is " + paymentSum.getAmount().toPlainString() + " and the order total is " + order.getTotal().getAmount().toPlainString());
         }
-
         
         // There should also likely be something that says whether the payment was successful or not and this should check
         // that as well. Currently there isn't really a concept for that

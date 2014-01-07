@@ -96,10 +96,17 @@ public class PaymentTransactionType implements Serializable, BroadleafEnumeratio
     public static final PaymentTransactionType REVERSE_AUTH = new PaymentTransactionType("REVERSE_AUTH", "Reverse Auth");
 
     /**
-     * This occurs for Payment Types like PayPal Express Checkout where a payment must be confirmed
-     * after it has been {@link #AUTHORIZE} or {@link #AUTHORIZE_AND_CAPTURE}
+     * <p>This occurs for Payment Types like PayPal Express Checkout where a transaction must be confirmed at a later stage. A transaction is confirmed if the gateway
+     * has actually communicated something to hit against the user's card. There might be instances where payments have not
+     * been confirmed at the moment that those payments have actually been added to the order. For instance, there might be
+     * a scenario where it is desired to show a 'confirmation' page to the user before actually hitting 'submit' and
+     * completing the checkout workflow that actually takes funds away from the user account (this is also the desired case
+     * with gift cards and account credits). When the user adds all of the payments to their order, all of those payments
+     * may not have been confirmed by the gateway but they should be on checkout.</p>
+     * 
+     * <p>Unconfirmed transactions are confirmed in the checkout workflow via the {@link ValidateAndConfirmPaymentActivity}.</p>
      */
-    public static final PaymentTransactionType CONFIRMED = new PaymentTransactionType("CONFIRMED", "Confirmed");
+    public static final PaymentTransactionType UNCONFIRMED = new PaymentTransactionType("UNCONFIRMED", "Not Confirmed");
 
 
     public static PaymentTransactionType getInstance(final String type) {

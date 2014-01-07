@@ -131,36 +131,6 @@ public interface PaymentTransaction extends Serializable, Status {
     public void setSuccess(Boolean success);
     
     /**
-     * Gets if this transaction has been confirmed by the payment gateway or not. A transaction is confirmed if the gateway
-     * has actually communicated something to hit against the user's card. There might be instances where payments have not
-     * been confirmed at the moment that those payments have actually been added to the order. For instance, there might be
-     * a scenario where it is desired to show a 'confirmation' page to the user before actually hitting 'submit' and
-     * completing the checkout workflow that actually takes funds away from the user account (this is also the desired case
-     * with gift cards and account credits). When the user adds all of the payments to their order, all of those payments
-     * may not have been confirmed by the gateway but they should be on checkout.</p>
-     * 
-     * <p>This defaults to 'true'</p>
-     * 
-     * @see {@link ValidateAndConfirmPaymentActivity}
-     */
-    public Boolean getConfirmed();
-    
-    /**
-     * Sets if this transaction has been confirmed by the payment gateway or not. A transaction is confirmed if the gateway
-     * has actually communicated something to hit against the user's card. There might be instances where payments have not
-     * been confirmed at the moment that those payments have actually been added to the order. For instance, there might be
-     * a scenario where it is desired to show a 'confirmation' page to the user before actually hitting 'submit' and
-     * completing the checkout workflow that actually takes funds away from the user account (this is also the desired case
-     * with gift cards and account credits). When the user adds all of the payments to their order, all of those payments
-     * may not have been confirmed by the gateway but they should be on checkout.</p>
-     * 
-     * <p>This defaults to 'true'</p>
-     * 
-     * @see {@link ValidateAndConfirmPaymentActivity}
-     */
-    public void setConfirmed(Boolean confirmed);
-
-    /**
      * @see {@link PaymentAdditionalFieldType}
      */
     public Map<String, String> getAdditionalFields();

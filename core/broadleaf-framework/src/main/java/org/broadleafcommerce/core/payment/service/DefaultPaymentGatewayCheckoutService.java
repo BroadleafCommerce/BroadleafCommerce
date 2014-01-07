@@ -187,7 +187,6 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         transaction.setAmount(responseDTO.getAmount());
         transaction.setRawResponse(responseDTO.getRawResponse());
         transaction.setSuccess(responseDTO.isSuccessful());
-        transaction.setConfirmed(responseDTO.isConfirmed());
         transaction.setType(responseDTO.getPaymentTransactionType());
         for (Entry<String, String> entry : responseDTO.getResponseMap().entrySet()) {
             transaction.getAdditionalFields().put(entry.getKey(), entry.getValue());
