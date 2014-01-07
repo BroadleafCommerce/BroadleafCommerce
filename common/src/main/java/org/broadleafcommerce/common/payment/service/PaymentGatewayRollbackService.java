@@ -20,7 +20,9 @@
 
 package org.broadleafcommerce.common.payment.service;
 
+import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
+import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 
 /**
  * <p>This API allows each module to provide its own implementation for rollback.
@@ -31,12 +33,12 @@ import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
  */
 public interface PaymentGatewayRollbackService {
 
-    public PaymentResponseDTO rollbackAuthorize(PaymentResponseDTO originalResponse);
+    public PaymentResponseDTO rollbackAuthorize(PaymentRequestDTO transactionToBeRolledBack) throws PaymentException;
 
-    public PaymentResponseDTO rollbackCapture(PaymentResponseDTO originalResponse);
+    public PaymentResponseDTO rollbackCapture(PaymentRequestDTO transactionToBeRolledBack) throws PaymentException;
 
-    public PaymentResponseDTO rollbackAuthorizeAndCapture(PaymentResponseDTO originalResponse);
+    public PaymentResponseDTO rollbackAuthorizeAndCapture(PaymentRequestDTO transactionToBeRolledBack) throws PaymentException;
 
-    public PaymentResponseDTO rollbackRefund(PaymentResponseDTO originalResponse);
+    public PaymentResponseDTO rollbackRefund(PaymentRequestDTO transactionToBeRolledBack) throws PaymentException;
 
 }
