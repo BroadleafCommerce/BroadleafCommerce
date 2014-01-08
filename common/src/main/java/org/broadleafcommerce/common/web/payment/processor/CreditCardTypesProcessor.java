@@ -70,7 +70,9 @@ public class CreditCardTypesProcessor extends AbstractLocalVariableDefinitionEle
         Map<String, Object> localVars = new HashMap<String, Object>();
 
         Map<String, String> creditCardTypes = new HashMap<String, String>();
-        extensionManager.getProxy().populateCreditCardMap(creditCardTypes);
+        if (extensionManager != null && extensionManager.getProxy()!=null) {
+            extensionManager.getProxy().populateCreditCardMap(creditCardTypes);
+        }
 
         if (!creditCardTypes.isEmpty()) {
             localVars.put("paymentGatewayCardTypes", creditCardTypes);
