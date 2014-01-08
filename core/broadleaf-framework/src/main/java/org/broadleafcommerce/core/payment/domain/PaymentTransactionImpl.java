@@ -200,7 +200,9 @@ public class PaymentTransactionImpl implements PaymentTransaction {
 
     @Override
     public void setAmount(Money amount) {
-        this.amount = amount.getAmount();
+        if (amount != null) {
+            this.amount = amount.getAmount();
+        }
     }
 
     @Override
