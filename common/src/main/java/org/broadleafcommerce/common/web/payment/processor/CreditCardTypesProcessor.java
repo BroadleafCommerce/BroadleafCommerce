@@ -42,7 +42,14 @@ import java.util.Map;
  * <p>Here is an example:</p>
  *
  * <pre><code>
- *     <blc:credit_card_types />
+ *  <blc:credit_card_types >
+ *      <div th:if="${paymentGatewayCardTypes != null}" class="form-group">
+ *          <label for="cardNumber">Card Type</label>
+ *          <select th:name="${#paymentGatewayField.mapName('creditCard.creditCardType')}">
+ *              <option th:each="entry : ${paymentGatewayCardTypes}" th:value="${entry.key}" th:text="${entry.value}"></option>
+ *          </select>
+ *      </div>
+ *  </blc:credit_card_types>
  * </code></pre>
  *
  * @author Elbert Bautista (elbertbautista)
@@ -78,7 +85,7 @@ public class CreditCardTypesProcessor extends AbstractLocalVariableDefinitionEle
         try {
             extensionManager.getProxy().populateCreditCardMap(creditCardTypes);
         } catch (Exception e) {
-            LOG.warn("Unable to Populate Credit Card Types Map for this Payment Module");
+            LOG.warn("Unable to Populate Credit Card Types Map for this Payment Module, or card type is not needed.");
         }
 
         if (!creditCardTypes.isEmpty()) {
