@@ -73,9 +73,14 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
     protected UpdateCartService updateCartService;
 
     @Resource(name = "blMergeCartService")
-    private MergeCartService mergeCartService;
+    protected MergeCartService mergeCartService;
+    
+    @Resource(name = "blCustomerStateRequestProcessor")
+    protected CustomerStateRequestProcessor customerStateRequestProcessor;
 
     protected static String cartRequestAttributeName = "cart";
+    
+    protected static String anonymousCartSessionAttributeName = "anonymousCart";
         
     @Override
     public void process(WebRequest request) {
@@ -120,12 +125,12 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
     }
     
     public boolean mergeCartNeeded(Customer customer, WebRequest request) {
-        Customer anonymousCustomer = CustomerStateRequestProcessor.getAnonymousCustomer(request);
+        Customer anonymousCustomer = customerStateRequestProcessor.getAnonymousCustomer(request);
         return (anonymousCustomer != null && customer.getId() != null && !customer.getId().equals(anonymousCustomer.getId()));
     }
 
     public Order mergeCart(Customer customer, WebRequest request) {
-        Customer anonymousCustomer = CustomerStateRequestProcessor.getAnonymousCustomer(request);
+        Customer anonymousCustomer = customerStateRequestProcessor.getAnonymousCustomer(request);
         MergeCartResponse mergeCartResponse;
         try {
             Order cart = orderService.findCartForCustomer(anonymousCustomer);
@@ -135,6 +140,12 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
         } catch (RemoveFromCartException e) {
             throw new RuntimeException(e);
         }
+        
+        // The anonymous customer from session is no longer needed; it can be safely removed
+        request.removeAttribute(CustomerStateRequestProcessor.getAnonymousCustomerSessionAttributeName(),
+                WebRequest.SCOPE_GLOBAL_SESSION);
+        request.removeAttribute(CustomerStateRequestProcessor.getAnonymousCustomerIdSessionAttributeName(),
+                WebRequest.SCOPE_GLOBAL_SESSION);
 
         request.setAttribute(mergeCartResponseKey, mergeCartResponse, WebRequest.SCOPE_GLOBAL_SESSION);
         return mergeCartResponse.getOrder();
