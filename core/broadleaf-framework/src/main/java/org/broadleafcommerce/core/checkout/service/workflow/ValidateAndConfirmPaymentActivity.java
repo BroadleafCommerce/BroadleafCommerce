@@ -20,12 +20,6 @@
 
 package org.broadleafcommerce.core.checkout.service.workflow;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
@@ -44,6 +38,11 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -120,6 +119,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         transaction.setType(responseDTO.getPaymentTransactionType());
                         transaction.setParentTransaction(tx);
                         transaction.setOrderPayment(payment);
+                        transaction.setAdditionalFields(responseDTO.getResponseMap());
                         additionalTransactions.put(payment, transaction);
                     } else {
                         // Since there was a problems processing the 
