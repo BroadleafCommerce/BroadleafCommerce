@@ -64,6 +64,8 @@ public class PaymentTransactionType implements Serializable, BroadleafEnumeratio
      * implement from an order management perspective, the recommended approach is to {@link #AUTHORIZE} and then {@link #CAPTURE}
      * in separate transactions and at separate times. For instance, an {@link AUTHORIZE} would happen once the {@link Order}
      * has completed checkout but then a {@link CAPTURE} would happen once the {@link Order} has shipped.</p>
+     *
+     * <p>NOTE: Many Gateways like to refer to this as also a SALE transaction.</p>
      * 
      * <p>This should be treated the exact same as a {@link #CAPTURE}.</p>
      */

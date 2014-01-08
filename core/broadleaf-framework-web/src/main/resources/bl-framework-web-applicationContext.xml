@@ -90,6 +90,7 @@
                 <ref bean="blResourceBundleProcessor" />
                 <ref bean="blDataDrivenEnumerationProcessor" />
                 <ref bean="blTransparentRedirectCreditCardFormProcessor" />
+                <ref bean="blCreditCardTypesProcessor" />
             </set>
         </property>
     </bean>

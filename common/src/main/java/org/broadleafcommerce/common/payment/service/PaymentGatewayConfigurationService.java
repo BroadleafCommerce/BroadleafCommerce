@@ -21,6 +21,7 @@
 package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldExtensionHandler;
+import org.broadleafcommerce.common.web.payment.processor.CreditCardTypesExtensionHandler;
 import org.broadleafcommerce.common.web.payment.processor.TRCreditCardExtensionHandler;
 
 /**
@@ -60,5 +61,7 @@ public interface PaymentGatewayConfigurationService {
     public TRCreditCardExtensionHandler getCreditCardExtensionHandler();
 
     public PaymentGatewayFieldExtensionHandler getFieldExtensionHandler();
+
+    public CreditCardTypesExtensionHandler getCreditCardTypesExtensionHandler();
 
 }
