@@ -19,14 +19,6 @@
  */
 package org.broadleafcommerce.core.checkout.service.workflow;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
@@ -49,6 +41,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Rolls back all payments that have been processed or were confirmed in {@link ValidateAndConfirmPaymentActivity}.
  *
@@ -69,7 +68,7 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
     @Resource(name = "blOrderPaymentService")
     protected OrderPaymentService orderPaymentService;
 
-    @Qualifier("blPaymentGatewayCheckoutService")
+    @Resource(name = "blPaymentGatewayCheckoutService")
     protected PaymentGatewayCheckoutService paymentGatewayCheckoutService;
     
     @Override
@@ -113,7 +112,7 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
 
                     if (!responseDTO.isSuccessful()) {
                         LOG.fatal("Unable to rollback transaction with id " + tx.getId() + ". The call was unsuccessful with"
-                         + " raw response: " + responseDTO.getRawResponse());
+                                + " raw response: " + responseDTO.getRawResponse());
                     }
                 }
 
@@ -148,8 +147,8 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
                     "attempted to roll back a transaction on one of the payments. Please see LOG for details.");
         } else {
             for (OrderPayment payment : paymentsToInvalidate) {
-                order.getPayments().remove(payment);
                 paymentGatewayCheckoutService.markPaymentAsInvalid(payment.getId());
+                order.getPayments().remove(payment);
             }
         }
     }

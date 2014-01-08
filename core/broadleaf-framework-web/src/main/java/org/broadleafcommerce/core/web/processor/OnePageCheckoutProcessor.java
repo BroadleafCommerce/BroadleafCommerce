@@ -270,7 +270,8 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         boolean orderContainsThirdPartyPayment = false;
         if (CartState.getCart().getPayments() != null) {
             for (OrderPayment payment : CartState.getCart().getPayments()) {
-                if (PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType())) {
+                if (PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType())
+                        && payment.isActive()) {
                     orderContainsThirdPartyPayment = true;
                 }
             }
