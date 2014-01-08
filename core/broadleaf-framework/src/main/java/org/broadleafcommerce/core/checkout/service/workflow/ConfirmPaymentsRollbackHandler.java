@@ -50,8 +50,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
- * Rolls back all payments that were confirmed in {@link ValidateAndConfirmPaymentActivity}.
- * 
+ * Rolls back all payments that have been processed or were confirmed in {@link ValidateAndConfirmPaymentActivity}.
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blConfirmPaymentsRollbackHandler")
@@ -95,7 +95,7 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
                 } else if (PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType())) {
                     responseDTO = cfg.getRollbackService().rollbackAuthorizeAndCapture(rollbackRequest);
                 } else {
-                    LOG.warn("The transaction with id " + tx.getId() + " will NOT rolled back as it is not an AUTHORIZE or AUTHORIZE_AND_CAPTURE transaction but is"
+                    LOG.warn("The transaction with id " + tx.getId() + " will NOT be rolled back as it is not an AUTHORIZE or AUTHORIZE_AND_CAPTURE transaction but is"
                             + " of type " + tx.getType() + ". If you need to roll back transactions of this type then provide a customized rollback handler for"
                                     + " confirming transactions.");
                 }
@@ -112,7 +112,7 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
                     rollbackResponseTransactions.put(tx.getOrderPayment(), transaction);
 
                     if (!responseDTO.isSuccessful()) {
-                        LOG.error("Unable to rollback transaction with id " + tx.getId() + ". The call was unsuccessful with"
+                        LOG.fatal("Unable to rollback transaction with id " + tx.getId() + ". The call was unsuccessful with"
                          + " raw response: " + responseDTO.getRawResponse());
                     }
                 }
@@ -128,18 +128,30 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
         List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
 
         // Add the new rollback transactions to the appropriate payment and mark the payment as invalid.
+        // If there was a failed transaction rolling back we will need to throw a RollbackFailureException after saving the
+        // Transaction Response to the DB
+        boolean rollbackFailure = false;
         for (OrderPayment payment : order.getPayments()) {
             if (rollbackResponseTransactions.containsKey(payment)) {
-                payment.addTransaction(rollbackResponseTransactions.get(payment));
+                PaymentTransaction rollbackTX = rollbackResponseTransactions.get(payment);
+                payment.addTransaction(rollbackTX);
+                orderPaymentService.save(payment);
                 paymentsToInvalidate.add(payment);
+                if (!rollbackTX.getSuccess()) {
+                    rollbackFailure = true;
+                }
             }
         }
 
-        for (OrderPayment payment : paymentsToInvalidate) {
-            order.getPayments().remove(payment);
-            paymentGatewayCheckoutService.markPaymentAsInvalid(payment.getId());
+        if (rollbackFailure) {
+            throw new RollbackFailureException("The ConfirmPaymentsRollbackHandler encountered and exception when it " +
+                    "attempted to roll back a transaction on one of the payments. Please see LOG for details.");
+        } else {
+            for (OrderPayment payment : paymentsToInvalidate) {
+                order.getPayments().remove(payment);
+                paymentGatewayCheckoutService.markPaymentAsInvalid(payment.getId());
+            }
         }
-
     }
 
 }
