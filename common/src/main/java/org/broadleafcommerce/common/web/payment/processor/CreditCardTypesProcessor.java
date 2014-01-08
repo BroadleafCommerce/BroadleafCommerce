@@ -20,6 +20,8 @@
 
 package org.broadleafcommerce.common.web.payment.processor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -48,6 +50,8 @@ import java.util.Map;
 @Component("blCreditCardTypesProcessor")
 public class CreditCardTypesProcessor extends AbstractLocalVariableDefinitionElementProcessor {
 
+    protected static final Log LOG = LogFactory.getLog(CreditCardTypesProcessor.class);
+
     @Resource(name = "blCreditCardTypesExtensionManager")
     protected CreditCardTypesExtensionManager extensionManager;
 
@@ -70,8 +74,11 @@ public class CreditCardTypesProcessor extends AbstractLocalVariableDefinitionEle
         Map<String, Object> localVars = new HashMap<String, Object>();
 
         Map<String, String> creditCardTypes = new HashMap<String, String>();
-        if (extensionManager != null && extensionManager.getProxy()!=null) {
+
+        try {
             extensionManager.getProxy().populateCreditCardMap(creditCardTypes);
+        } catch (Exception e) {
+            LOG.warn("Unable to Populate Credit Card Types Map for this Payment Module");
         }
 
         if (!creditCardTypes.isEmpty()) {
