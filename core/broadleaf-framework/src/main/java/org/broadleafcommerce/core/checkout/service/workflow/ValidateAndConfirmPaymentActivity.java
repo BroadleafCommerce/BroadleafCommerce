@@ -39,10 +39,13 @@ import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -88,6 +91,9 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         // This can happen in the case of PayPal Express or other hosted gateways where the unconfirmed payment comes back
         // to a review page, the customer selects shipping and the order total is adjusted.
         Map<OrderPayment, PaymentTransaction> additionalTransactions = new HashMap<OrderPayment, PaymentTransaction>();
+        // Used for the rollback handler; we want to make sure that we roll back transactions that have already been confirmed
+        // as well as transctions that we are about to confirm here
+        List<PaymentTransaction> confirmedTransactions = new ArrayList<PaymentTransaction>();
         for (OrderPayment payment : order.getPayments()) {
             for (PaymentTransaction tx : payment.getTransactions()) {
                 if (PaymentTransactionType.UNCONFIRMED.equals(tx.getType())) {
@@ -127,15 +133,19 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         LOG.error(msg);
                         throw new CheckoutException(msg, context.getSeedData());
                     }
-                    
-                    // After each transaction is confirmed, associate the new list of confirmed transactions to the rollback state. This has the added
-                    // advantage of being able to invoke the rollback handler if there is an exception thrown at some point while confirming multiple
-                    // transactions
-                    rollbackState.put(CONFIRMED_TRANSACTIONS, additionalTransactions.values());
-                    ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), rollbackState);
                 }
+                
+                // After each transaction is confirmed, associate the new list of confirmed transactions to the rollback state. This has the added
+                // advantage of being able to invoke the rollback handler if there is an exception thrown at some point while confirming multiple
+                // transactions. This is outside of the transaction confirmation block in order to capture transactions
+                // that were already confirmed prior to this activity running
+                confirmedTransactions.add(tx);
             }
         }
+        
+        // Once all transactions have been confirmed, add the final
+        rollbackState.put(CONFIRMED_TRANSACTIONS, confirmedTransactions);
+        ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), rollbackState);
 
         // Add the new transactions to this payment
         for (OrderPayment payment : order.getPayments()) {
