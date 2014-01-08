@@ -21,7 +21,6 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
@@ -29,7 +28,6 @@ import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerVa
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
 import org.broadleafcommerce.profile.web.core.service.login.LoginService;
-import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -62,9 +60,6 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
     @Resource(name="blRegisterCustomerValidator")
     protected RegisterCustomerValidator registerCustomerValidator;
 
-    @Resource(name="blMergeCartProcessor")
-    protected MergeCartProcessor mergeCartProcessor;
-    
     @Resource(name="blLoginService")
     protected LoginService loginService;    
     
@@ -94,8 +89,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
             
             // The next line needs to use the customer from the input form and not the customer returned after registration
             // so that we still have the unencoded password for use by the authentication mechanism.
-            Authentication auth = loginService.loginCustomer(registerCustomerForm.getCustomer());
-            mergeCartProcessor.execute(request, response, auth);            
+            loginService.loginCustomer(registerCustomerForm.getCustomer());
             
             String redirectUrl = registerCustomerForm.getRedirectUrl();
             if (StringUtils.isNotBlank(redirectUrl) && redirectUrl.contains(":")) {

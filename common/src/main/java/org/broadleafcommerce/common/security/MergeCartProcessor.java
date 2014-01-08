@@ -30,7 +30,9 @@ import javax.servlet.http.HttpServletResponse;
  * Responsible for merging an anonymous cart with the currently logged in user's cart
  * 
  * @see {@link BroadleafAuthenticationSuccessHandler}
+ * @deprecated this has been replaced by invoking the merge cart service explicitly within the cart state request processor
  */
+@Deprecated
 public interface MergeCartProcessor {
 
     /**

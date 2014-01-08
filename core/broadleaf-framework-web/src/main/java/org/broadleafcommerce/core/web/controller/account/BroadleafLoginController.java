@@ -21,13 +21,11 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.validator.ResetPasswordValidator;
 import org.broadleafcommerce.profile.web.core.service.login.LoginService;
-import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -54,9 +52,6 @@ public class BroadleafLoginController extends BroadleafAbstractController {
     
     @Resource(name="blLoginService")
     protected LoginService loginService;
-    
-    @Resource(name="blMergeCartProcessor")
-    protected MergeCartProcessor mergeCartProcessor;
     
     protected static String loginView = "authentication/login";
     protected static String forgotPasswordView = "authentication/forgotPassword";
@@ -204,8 +199,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
             return getResetPasswordView();
         } else {            
             // The reset password was successful, so log this customer in.          
-            Authentication auth = loginService.loginCustomer(resetPasswordForm.getUsername(), resetPasswordForm.getPassword());
-            mergeCartProcessor.execute(request, response, auth);            
+            loginService.loginCustomer(resetPasswordForm.getUsername(), resetPasswordForm.getPassword());
 
             return getResetPasswordSuccessView();
         }

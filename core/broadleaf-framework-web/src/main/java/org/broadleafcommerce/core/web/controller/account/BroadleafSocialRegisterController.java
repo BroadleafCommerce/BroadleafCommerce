@@ -23,7 +23,6 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
-import org.springframework.security.core.Authentication;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.UserProfile;
 import org.springframework.social.connect.web.ProviderSignInUtils;
@@ -86,8 +85,7 @@ public class BroadleafSocialRegisterController extends BroadleafRegisterControll
 
             // The next line needs to use the customer from the input form and not the customer returned after registration
             // so that we still have the unencoded password for use by the authentication mechanism.
-            Authentication auth = loginService.loginCustomer(registerCustomerForm.getCustomer());
-            mergeCartProcessor.execute(request, response, auth);
+            loginService.loginCustomer(registerCustomerForm.getCustomer());
 
             String redirectUrl = registerCustomerForm.getRedirectUrl();
             if (StringUtils.isNotBlank(redirectUrl) && redirectUrl.contains(":")) {

@@ -179,37 +179,43 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
     public Customer resolveAnonymousCustomer(WebRequest request) {
         Customer customer;
         customer = getAnonymousCustomer(request);
+        
+        //If there is no Customer object in session, AND no customer id in session, create a new customer
+        //and store the entire customer in session (don't persist to DB just yet)
         if (customer == null) {
-            //Customer is not in session, see if we have just a customer ID in session (the anonymous customer might have
-            //already been persisted)
-            Long customerId = (Long) request.getAttribute(getAnonymousCustomerIdSessionAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION);
-            if (customerId != null) {
-                //we have a customer ID in session, look up the customer from the database to ensure we have an up-to-date
-                //customer to store in CustomerState
-                customer = customerService.readCustomerById(customerId);
-            }
-
-            //If there is no Customer object in session, AND no customer id in session, create a new customer
-            //and store the entire customer in session (don't persist to DB just yet)
-            if (customer == null) {
-                customer = customerService.createNewCustomer();
-                request.setAttribute(getAnonymousCustomerSessionAttributeName(), customer, WebRequest.SCOPE_GLOBAL_SESSION);
-            }
+            customer = customerService.createNewCustomer();
+            request.setAttribute(getAnonymousCustomerSessionAttributeName(), customer, WebRequest.SCOPE_GLOBAL_SESSION);
         }
-
         customer.setAnonymous(true);
 
         return customer;
     }
     
     /**
-     * Returns the anonymous customer that was saved in session or null if none exists.
+     * Returns the anonymous customer that was saved in session. This first checks for a full customer in session (meaning
+     * that the customer has not already been persisted) and returns that. If there is no full customer in session (and
+     * there is instead just an anonymous customer ID) then this will look up the customer from the database using that and
+     * return it.
      * 
-     * @param request - the current request
-     * @return the anonymous customer that has not been persisted in the database but is available as a session object
+     * @param request the current request
+     * @return the anonymous customer in session or null if there is no anonymous customer represented in session
+     * @see {@link #getAnonymousCustomerSessionAttributeName()} 
+     * @see {@link #getAnonymousCustomerIdSessionAttributeName()}
      */
-    public static Customer getAnonymousCustomer(WebRequest request) {
-        return (Customer) request.getAttribute(getAnonymousCustomerSessionAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION);
+    public Customer getAnonymousCustomer(WebRequest request) {
+        Customer anonymousCustomer = (Customer) request.getAttribute(getAnonymousCustomerSessionAttributeName(),
+                WebRequest.SCOPE_GLOBAL_SESSION);
+        if (anonymousCustomer == null) {
+            //Customer is not in session, see if we have just a customer ID in session (the anonymous customer might have
+            //already been persisted)
+            Long customerId = (Long) request.getAttribute(getAnonymousCustomerIdSessionAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION);
+            if (customerId != null) {
+                //we have a customer ID in session, look up the customer from the database to ensure we have an up-to-date
+                //customer to store in CustomerState
+                anonymousCustomer = customerService.readCustomerById(customerId);
+            }
+        }
+        return anonymousCustomer;
     }
     
     /**
@@ -227,15 +233,15 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
     }
 
     /**
-     * Returns the session attribute to store the anonymous customer ID. This session attribute should be used to track
+     * <p>Returns the session attribute to store the anonymous customer ID. This session attribute should be used to track
      * anonymous customers that have not registered but have state in the database. When users first visit the Broadleaf
      * site, a new {@link Customer} is instantiated but is <b>only saved in session</b> and not persisted to the database. However,
      * once that user adds something to the cart, that {@link Customer} is now saved in the database and it no longer makes
      * sense to pull back a full {@link Customer} object from session, as any session-based {@link Customer} will be out of
-     * date in regards to Hibernate (specifically with lists).
+     * date in regards to Hibernate (specifically with lists).</p>
      * 
-     * So, once Broadleaf detects that the session-based {@link Customer} has been persisted, it should remove the session-based
-     * {@link Customer} and then utilize just the customer ID from session.
+     * <p>So, once Broadleaf detects that the session-based {@link Customer} has been persisted, it should remove the session-based
+     * {@link Customer} and then utilize just the customer ID from session.</p>
      * 
      * @see {@link CustomerStateRefresher}
      */
