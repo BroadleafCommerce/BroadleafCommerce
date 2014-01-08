@@ -39,6 +39,7 @@ import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.broadleafcommerce.common.web.BroadleafTimeZoneResolver;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
@@ -76,11 +77,14 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     @Resource(name = "blCurrencyResolver")
     protected BroadleafCurrencyResolver currencyResolver;
 
-    @Resource(name="blSandBoxService")
+    @Resource(name = "blSandBoxService")
     protected SandBoxService sandBoxService;
 
-    @Resource(name="blAdminSecurityRemoteService")
+    @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
+    
+    @Resource(name = "blAdminSecurityService")
+    protected AdminSecurityService adminSecurityService;
 
     @Override
     public void process(WebRequest request) throws SiteNotFoundException {
@@ -152,6 +156,13 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 if (sandBox == null) {
                     sandBox = sandBoxService.createUserSandBox(adminUser.getId(), defaultSandBox);
                 }
+            }
+
+            // If the user just changed sandboxes, we want to update the database record.
+            Long previouslySetSandBoxId = (Long) request.getAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            if (previouslySetSandBoxId != null && !sandBox.getId().equals(previouslySetSandBoxId)) {
+                adminUser.setLastUsedSandBoxId(sandBox.getId());
+                adminUser = adminSecurityService.saveAdminUser(adminUser);
             }
 
             request.setAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, sandBox.getId(), WebRequest.SCOPE_GLOBAL_SESSION);

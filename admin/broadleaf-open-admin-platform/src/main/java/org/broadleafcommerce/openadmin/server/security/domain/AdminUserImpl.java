@@ -19,24 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -46,6 +29,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
@@ -62,6 +46,29 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * 
@@ -80,6 +87,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
 
     private static final Log LOG = LogFactory.getLog(AdminUserImpl.class);
     private static final long serialVersionUID = 1L;
+    protected static final String LAST_USED_SANDBOX = "LAST_USED_SANDBOX";
 
     @Id
     @GeneratedValue(generator = "AdminUserId")
@@ -164,6 +172,16 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
     @JoinTable(name = "BLC_ADMIN_USER_SANDBOX", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID", referencedColumnName = "SANDBOX_ID"))
     @AdminPresentation(excluded = true)
     protected SandBox overrideSandBox;
+
+    @ElementCollection
+    @MapKeyColumn(name = "FIELD_NAME")
+    @Column(name = "FIELD_VALUE")
+    @CollectionTable(name = "BLC_ADMIN_USER_ADDTL_FIELDS", joinColumns = @JoinColumn(name="ADMIN_USER_ID"))
+    @BatchSize(size = 50)
+    @AdminPresentationMap(friendlyName = "AdminUserImpl_Additional_Fields",
+        forceFreeFormKeys = true, keyPropertyFriendlyName = "AdminUserImpl_Additional_Fields_Name"
+    )
+    protected Map<String, String> additionalFields = new HashMap<String, String>();
 
     @Override
     public void setUnencodedPassword(String unencodedPassword) {
@@ -288,6 +306,30 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
     @Override
     public void setContextKey(String contextKey) {
         //do nothing
+    }
+    
+    @Override
+    public Map<String, String> getAdditionalFields() {
+        return additionalFields;
+    }
+
+    @Override
+    public void setAdditionalFields(Map<String, String> additionalFields) {
+        this.additionalFields = additionalFields;
+    }
+    
+    @Override
+    public Long getLastUsedSandBoxId() {
+        String sandBox = getAdditionalFields().get(LAST_USED_SANDBOX);
+        if (StringUtils.isNotBlank(sandBox)) {
+            return Long.parseLong(sandBox);
+        }
+        return null;
+    }
+    
+    @Override
+    public void setLastUsedSandBoxId(Long sandBoxId) {
+        getAdditionalFields().put(LAST_USED_SANDBOX, String.valueOf(sandBoxId));
     }
 
     @Override

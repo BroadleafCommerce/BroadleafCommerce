@@ -21,6 +21,7 @@ package org.broadleafcommerce.openadmin.server.security.domain;
 
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -96,4 +97,21 @@ public interface AdminUser extends AdminSecurityContext {
     public Set<AdminPermission> getAllPermissions();
     public void setAllPermissions(Set<AdminPermission> allPermissions);
     //public AdminUser clone();
+
+    public Map<String, String> getAdditionalFields();
+
+    public void setAdditionalFields(Map<String, String> additionalFields);
+    
+    /**
+     * @return the id of the last sandbox this admin user used
+     */
+    public Long getLastUsedSandBoxId();
+
+    /**
+     * Sets the last used sandbox for this admin user
+     * 
+     * @param sandBoxId
+     */
+    public void setLastUsedSandBoxId(Long sandBoxId);
+
 }
