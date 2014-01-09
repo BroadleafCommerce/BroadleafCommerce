@@ -9,7 +9,7 @@
     </div>
     
     <div class="modal-body">
-        <span th:text="${exceptionMessage}" />
+        <span th:text="${exceptionMessage}" style="display: block; padding-bottom: 20px;" />
         
         <pre class="exception" th:text="${debugMessage}" th:if="${showDebugMessage}" />
     </div>
