@@ -29,7 +29,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
@@ -178,9 +177,6 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
     @Column(name = "FIELD_VALUE")
     @CollectionTable(name = "BLC_ADMIN_USER_ADDTL_FIELDS", joinColumns = @JoinColumn(name="ADMIN_USER_ID"))
     @BatchSize(size = 50)
-    @AdminPresentationMap(friendlyName = "AdminUserImpl_Additional_Fields",
-        forceFreeFormKeys = true, keyPropertyFriendlyName = "AdminUserImpl_Additional_Fields_Name"
-    )
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
     @Override
