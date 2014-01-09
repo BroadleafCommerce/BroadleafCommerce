@@ -23,7 +23,6 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,12 +38,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * 
+ * ***********************************************
+ * IMPORTANT NOTE:
+ * 
+ * This controller is purposefully disabled. We will eventually want to bring it back when an AJAX
+ * based category tree is implemented, but for now the category tree is disabled. I'm not deleting 
+ * this file along with categoryTree.html because they will find their way back in the future.
+ * ***********************************************
+ * 
  * Handles admin operations for the {@link Category} entity.
  * 
  * @author Andre Azzolini (apazzolini)
  */
-@Controller("blAdminCategoryController")
-@RequestMapping("/" + AdminCategoryController.SECTION_KEY)
+//@Controller("blAdminCategoryController")
+//@RequestMapping("/" + AdminCategoryController.SECTION_KEY)
 public class AdminCategoryController extends AdminBasicEntityController {
     
     protected static final String SECTION_KEY = "category";
