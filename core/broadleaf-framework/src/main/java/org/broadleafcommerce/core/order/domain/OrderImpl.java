@@ -340,7 +340,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         }
         Money totalPayments = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderPayment payment : getPayments()) {
-            if (payment.getAmount() != null) {
+            if (payment.isActive() && payment.getAmount() != null) {
                 totalPayments = totalPayments.add(payment.getAmount());
             }
         }

@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
 import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentEstimationResponse;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
@@ -99,6 +100,9 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
     @Resource(name = "blFulfillmentPricingService")
     protected FulfillmentPricingService fulfillmentPricingService;
 
+    @Resource(name = "blOrderToPaymentRequestDTOService")
+    protected OrderToPaymentRequestDTOService orderToPaymentRequestDTOService;
+
     public OnePageCheckoutProcessor() {
         super("one_page_checkout");
     }
@@ -145,6 +149,9 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         prepopulateCheckoutForms(CartState.getCart(), orderInfoForm, shippingInfoForm, billingInfoForm);
 
         Map<String, Object> localVars = new HashMap<String, Object>();
+
+        //Add PaymentRequestDTO to the model in the case of errors or other cases
+        localVars.put("paymentRequestDTO", orderToPaymentRequestDTOService.translateOrder(CartState.getCart()));
 
         //Initialize Fulfillment Group Vars
         int numShippableFulfillmentGroups = calculateNumShippableFulfillmentGroups();
