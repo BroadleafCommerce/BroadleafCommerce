@@ -90,33 +90,33 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     protected Long id;
 
     @Column(name = "TRANSACTION_TYPE")
-    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Type",
+    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Type",
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.core.payment.domain.PaymentTransactionType",
+            broadleafEnumeration = "org.broadleafcommerce.common.payment.PaymentTransactionType",
             prominent = true, gridOrder = 1000)
     protected String type;
 
     @Column(name = "TRANSACTION_AMOUNT")
-    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Amount", fieldType = SupportedFieldType.MONEY,
+    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Amount", fieldType = SupportedFieldType.MONEY,
         prominent = true, gridOrder = 2000)
     protected BigDecimal amount;
 
     @Column(name = "DATE_RECORDED")
-    @AdminPresentation(friendlyName = "PaymentInfoDetailTypeImpl_Date", prominent = true, gridOrder = 3000)
+    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Date", prominent = true, gridOrder = 3000)
     protected Date date;
     
     @Column(name = "CUSTOMER_IP_ADDRESS", nullable = true)
-    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_IP_Address", order=4000)
+    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Payment_IP_Address", order=4000)
     protected String customerIpAddress;
     
     @Column(name = "RAW_RESPONSE", length = Integer.MAX_VALUE - 1)
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @AdminPresentation(friendlyName = "PaymentTransaction_rawResponse")
+    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Raw_Response")
     protected String rawResponse;
     
     @Column(name = "SUCCESS")
-    @AdminPresentation(friendlyName = "PaymentTransaction_success")
+    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Success")
     protected Boolean success = true;
     
     @Embedded
@@ -145,8 +145,8 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @Column(name="FIELD_VALUE", length = Integer.MAX_VALUE - 1)
     @CollectionTable(name="BLC_TRANS_ADDITNL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_ID"))
     @BatchSize(size = 50)
-    @AdminPresentationMap(friendlyName = "PaymentInfoImpl_Additional_Fields",
-        forceFreeFormKeys = true, keyPropertyFriendlyName = "PaymentInfoImpl_Additional_Fields_Name"
+    @AdminPresentationMap(friendlyName = "PaymentTransactionImpl_Additional_Fields",
+        forceFreeFormKeys = true, keyPropertyFriendlyName = "PaymentTransactionImpl_Additional_Fields_Name"
     )
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 

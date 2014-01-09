@@ -176,15 +176,15 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @Column(name = "ORDER_SUBTOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = Presentation.Group.Name.General,
-            order=Presentation.FieldOrder.SUBTOTAL, fieldType=SupportedFieldType.MONEY,prominent=true,
-            groupOrder = Presentation.Group.Order.General,
-            gridOrder = 4000)
+            order=Presentation.FieldOrder.SUBTOTAL, fieldType=SupportedFieldType.MONEY,
+            groupOrder = Presentation.Group.Order.General)
     protected BigDecimal subTotal;
 
     @Column(name = "ORDER_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = Presentation.Group.Name.General,
-            order=Presentation.FieldOrder.TOTAL, fieldType= SupportedFieldType.MONEY,
-            groupOrder = Presentation.Group.Order.General)
+            order=Presentation.FieldOrder.TOTAL, fieldType= SupportedFieldType.MONEY, prominent=true,
+            groupOrder = Presentation.Group.Order.General,
+            gridOrder = 4000)
     protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")
@@ -244,7 +244,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @OneToMany(mappedBy = "order", targetEntity = OrderPaymentImpl.class, cascade = { CascadeType.ALL },
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    @AdminPresentationCollection(friendlyName="OrderImpl_Payment_Infos",
+    @AdminPresentationCollection(friendlyName="OrderImpl_Payments",
                 tab = Presentation.Tab.Name.Payment, tabOrder = Presentation.Tab.Order.Payment)
     protected List<OrderPayment> payments = new ArrayList<OrderPayment>();
 

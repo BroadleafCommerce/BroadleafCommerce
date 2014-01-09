@@ -96,7 +96,7 @@ import javax.persistence.Table;
         })
     }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PaymentInfoImpl_basePaymentInfo")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderPaymentImpl_baseOrderPayment")
 @SQLDelete(sql="UPDATE BLC_ORDER_PAYMENT SET ARCHIVED = 'Y' WHERE ORDER_PAYMENT_ID = ?")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
@@ -130,30 +130,30 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     protected Address billingAddress;
 
     @Column(name = "AMOUNT", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Amount", order=2000, gridOrder = 2000, prominent=true,
+    @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Amount", order=2000, gridOrder = 2000, prominent=true,
             fieldType=SupportedFieldType.MONEY)
     protected BigDecimal amount;
 
     @Index(name="ORDERPAYMENT_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
-    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Reference_Number", order=1000, prominent=true,
-            gridOrder = 1000)
+    @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Reference_Number")
     protected String referenceNumber;
 
     @Column(name = "PAYMENT_TYPE", nullable = false)
     @Index(name="ORDERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
-    @AdminPresentation(friendlyName = "PaymentInfoImpl_Payment_Type", order=3000, gridOrder = 3000, prominent=true,
+    @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Type", order=3000, gridOrder = 3000, prominent=true,
             fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentType")
     protected String type;
     
     @Column(name = "GATEWAY_TYPE")
-    @AdminPresentation(friendlyName = "OrderPayment_gatewayType", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+    @AdminPresentation(friendlyName = "OrderPaymentImpl_Gateway_Type", order=1000, gridOrder = 1000, prominent=true,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration="org.broadleafcommerce.common.payment.PaymentGatewayType")
     protected String gatewayType;
     
     //TODO: add a filter for archived transactions
     @OneToMany(mappedBy = "orderPayment", targetEntity = PaymentTransactionImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @AdminPresentationCollection(friendlyName="PaymentInfoImpl_Details",
+    @AdminPresentationCollection(friendlyName="OrderPaymentImpl_Details",
             tab = Presentation.Tab.Name.Log, tabOrder = Presentation.Tab.Order.Log)
     protected List<PaymentTransaction> transactions = new ArrayList<PaymentTransaction>();
     
