@@ -65,7 +65,10 @@ public class BroadleafCartController extends AbstractCartController {
      * @throws PricingException
      */
     public String cart(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
-        model.addAttribute("paymentRequestDTO", dtoTranslationService.translateOrder(CartState.getCart()));
+        Order cart = CartState.getCart();
+        if (cart != null && !(cart instanceof NullOrderImpl)) {
+            model.addAttribute("paymentRequestDTO", dtoTranslationService.translateOrder(CartState.getCart()));
+        }
         return getCartView();
     }
     

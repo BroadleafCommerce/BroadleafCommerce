@@ -36,7 +36,7 @@ import java.util.Map;
  * @see {@link #REFUND}
  * @see {@link #VOID}
  * @see {@link #REVERSE_AUTH}
- * @see {@link #CONFIRMED}
+ * @see {@link #UNCONFIRMED}
  *
  * @author Jerry Ocanas (jocanas)
  * @author Phillip Verheyden (phillipuniverse)

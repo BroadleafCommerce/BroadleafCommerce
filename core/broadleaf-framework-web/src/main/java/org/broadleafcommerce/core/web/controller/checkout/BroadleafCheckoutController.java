@@ -22,11 +22,15 @@ package org.broadleafcommerce.core.web.controller.checkout;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.model.OrderInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
@@ -36,6 +40,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * In charge of performing the various checkout operations
@@ -110,6 +116,78 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     }
 
     /**
+     * Creates a pass-through payment of the PaymentType passed in with
+     * an amount equal to the order total after any non-final applied payments.
+     * (for example gift cards, customer credit, or third party accounts)
+     *
+     * This intended to be used in cases like COD and other Payment Types where implementations wish
+     * to just checkout without having to do any payment processing.
+     *
+     * This default implementations assumes that the pass-through payment is the only
+     * "final" payment, as this will remove any payments that are not PaymentTransactionType.UNCONFIRMED
+     * That means that it will look at all transactions on the order payment and see if it has unconfirmed transactions.
+     * If it does, it will not remove it.
+     *
+     * Make sure not to expose this method in your extended Controller if you do not wish to
+     * have this feature enabled.
+     *
+     * @param redirectAttributes
+     * @param paymentType
+     * @return
+     * @throws PaymentException
+     * @throws PricingException
+     */
+    public String processPassthroughCheckout(final RedirectAttributes redirectAttributes,
+                                             PaymentType paymentType) throws PaymentException, PricingException {
+        Order cart = CartState.getCart();
+
+        //Invalidate any payments already on the order that do not have transactions on them that are UNCONFIRMED
+        List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
+        for (OrderPayment payment : cart.getPayments()) {
+            if (payment.isActive()) {
+                if (payment.getTransactions() == null || payment.getTransactions().isEmpty()) {
+                    paymentsToInvalidate.add(payment);
+                } else {
+                    for (PaymentTransaction transaction : payment.getTransactions()) {
+                        if (!PaymentTransactionType.UNCONFIRMED.equals(transaction.getType())) {
+                             paymentsToInvalidate.add(payment);
+                        }
+                    }
+                }
+            }
+        }
+
+        for (OrderPayment payment : paymentsToInvalidate) {
+            cart.getPayments().remove(payment);
+            if (paymentGatewayCheckoutService != null) {
+                paymentGatewayCheckoutService.markPaymentAsInvalid(payment.getId());
+            }
+        }
+
+        //Create a new Order Payment of the passed in type
+        OrderPayment passthroughPayment = orderPaymentService.create();
+        passthroughPayment.setType(paymentType);
+        passthroughPayment.setPaymentGatewayType(PaymentGatewayType.PASSTHROUGH);
+        passthroughPayment.setAmount(cart.getTotalAfterAppliedPayments());
+        passthroughPayment.setOrder(cart);
+
+        // Create the transaction for the payment
+        PaymentTransaction transaction = orderPaymentService.createTransaction();
+        transaction.setAmount(cart.getTotalAfterAppliedPayments());
+        transaction.setRawResponse("Passthrough Payment");
+        transaction.setSuccess(true);
+        transaction.setType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE);
+
+        transaction.setOrderPayment(passthroughPayment);
+        passthroughPayment.addTransaction(transaction);
+        orderService.addPaymentToOrder(cart, passthroughPayment, null);
+
+        orderService.save(cart, true);
+
+        return processCompleteCheckoutOrderFinalized(redirectAttributes);
+    }
+
+    /**
      * If the order has been finalized. i.e. all the payments have been applied to the order,
      * then you can go ahead and call checkout using the passed in order id.
      * This is usually called from a Review Page or if enough Payments have been applied to the Order to complete checkout.
@@ -157,83 +235,5 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     protected String getConfirmationViewRedirect(String orderNumber) {
         return getBaseConfirmationRedirect() + "/" + orderNumber;
     }
-    /**
-     * Processes the request to complete checkout.
-     * 
-     * An extension manager is used to collect payment methods.  A default
-     * Collect On Delivery(COD) extension handler and a default credit card extension
-     * handler are included in the framework.
-     * 
-     * The paymentInfoTypeList stores the types of payments that should be added to the
-     * payments map.  An extension handler will need to match a type in the paymentInfoTypeList
-     * in order for that extension handler to execute its addAdditionalPaymentInfos method.
-     * An exception to this pattern is the customer credit extension handler.  The customer
-     * credit extension handler will always be run regardless of whether or not CUSTOMER_CREDIT is
-     * in the paymentInfoTypeList.
-     *
-     * This method assumes that a credit card payment info
-     * will be either sent to a third party gateway or saved in a secure schema.
-     * If the transaction is successful, the order will be assigned an order number,
-     * its status change to SUBMITTED, and given a submit date. The method then
-     * returns the default confirmation path "/confirmation/{orderNumber}"
-     *
-     * If the transaction is unsuccessful, (e.g. the gateway declines payment)
-     * processFailedOrderCheckout() is called and reverses the state of the order.
-     *
-     * Note: this method removes any existing PaymentInfos not of type CUSTOMER_CREDIT or
-     * GIFT_CARD before running the extension manager to add new PaymentInfos.
-     *
-     * @param request
-     * @param response
-     * @param model
-     * @param billingForm
-     * @return the return path
-     * @throws ServiceException 
-     */
-/*    public String completeCheckout(HttpServletRequest request, HttpServletResponse response, Model model, BillingInfoForm billingForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
-        Order cart = CartState.getCart();
-        if (cart != null && !(cart instanceof NullOrderImpl)) {
-            Map<OrderPayment, Referenced> payments = new HashMap<OrderPayment, Referenced>();
-            
-            Iterator<OrderPayment> paymentInfoItr = cart.getPayments().iterator();
-            while (paymentInfoItr.hasNext()) {
-                OrderPayment paymentInfo = paymentInfoItr.next();
-                if (!PaymentType.CUSTOMER_CREDIT.equals(paymentInfo.getType()) && !PaymentType.GIFT_CARD.equals(paymentInfo.getType())) {
-                    paymentInfoItr.remove();
-                    orderService.removePaymentFromOrder(cart, paymentInfo);
-                }
-            }
-
-            //Create list of PaymentInfoTypes that will determine which extension handler will run
-            List<PaymentType> paymentInfoTypes = createPaymentInfoTypeList(billingForm);
-
-            //Extension handlers add PaymentInfos to the payments map and the order
-            paymentInfoServiceExtensionManager.getProxy().addAdditionalPaymentInfos(payments, paymentInfoTypes, request, response, model, billingForm, result);
-            
-            //Check for validation errors
-            if (result.hasErrors()) {
-                return handleCheckoutError(request, model);
-            }
-            
-            try {
-                CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart);
-                //Map<OrderPayment, PaymentResponseItem> paymentResponseItemMap = checkoutResponse.getPaymentResponse().getResponseItems();
-                //for (PaymentResponseItem paymentResponseItem : paymentResponseItemMap.values()) {
-                //    if (!paymentResponseItem.getTransactionSuccess()) {
-                //        return handleCheckoutError(request, model);
-                //    }
-                //}
-            } catch (CheckoutException workflowException) {
-                return handleCheckoutError(request, model);
-            }
-
-            return getConfirmationView(cart.getOrderNumber());
-        }
-
-        return getCartPageRedirect();
-    }*/
-
-
-
 
 }

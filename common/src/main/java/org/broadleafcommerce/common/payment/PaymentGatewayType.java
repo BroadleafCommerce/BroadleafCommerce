@@ -57,6 +57,8 @@ public class PaymentGatewayType implements Serializable, BroadleafEnumerationTyp
 
     private static final Map<String, PaymentGatewayType> TYPES = new LinkedHashMap<String, PaymentGatewayType>();
 
+    public static final PaymentGatewayType PASSTHROUGH  = new PaymentGatewayType("Passthrough", "Passthrough Payment");
+
     public static PaymentGatewayType getInstance(final String type) {
         return TYPES.get(type);
     }
