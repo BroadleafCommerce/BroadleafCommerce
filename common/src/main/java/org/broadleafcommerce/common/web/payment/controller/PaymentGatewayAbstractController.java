@@ -59,8 +59,8 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
     protected static String baseConfirmationRedirect = "redirect:/confirmation";
     protected static String baseCartRedirect = "redirect:/cart";
 
-    //TODO externalize this
-    protected static String processingErrorMessage = "There was an error processing your request.";
+    //Externalized Generic Payment Error Message
+    protected static String processingErrorMessage = "cart.paymentProcessingError";
 
     @Autowired(required=false)
     @Qualifier("blPaymentGatewayCheckoutService")
