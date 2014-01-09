@@ -51,6 +51,10 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -63,9 +67,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -92,7 +93,7 @@ import java.util.List;
         @AdminPresentationMergeOverride(name = "billingAddress.isBusiness", mergeEntries = {
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
                         booleanOverrideValue = true)
-        }),
+        })
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PaymentInfoImpl_basePaymentInfo")
