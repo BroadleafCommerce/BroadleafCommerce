@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.core.checkout.service;
 
+import org.broadleafcommerce.common.currency.BroadleafCurrencyProvider;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.service.BroadleafCurrencyService;
 import org.broadleafcommerce.common.encryption.EncryptionModule;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
@@ -46,6 +49,7 @@ import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl;
 import org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment;
+import org.broadleafcommerce.core.payment.service.NullPaymentGatewayType;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
@@ -65,7 +69,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 public class CheckoutTest extends BaseTest {
-
+    
     @Resource(name="blCheckoutService")
     private CheckoutService checkoutService;
     
@@ -86,13 +90,18 @@ public class CheckoutTest extends BaseTest {
 
     @Resource(name = "blSecureOrderPaymentService")
     private SecureOrderPaymentService securePaymentInfoService;
+    
+    @Resource(name = "blCurrencyService")
+    protected BroadleafCurrencyService currencyService;
 
-    @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
+    @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" }, dataProvider = "USCurrency", dataProviderClass = BroadleafCurrencyProvider.class)
     @Transactional
-    public void testCheckout() throws Exception {
+    public void testCheckout(BroadleafCurrency usCurrency) throws Exception {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Order order = orderService.createNewCartForCustomer(customer);
+        usCurrency = currencyService.save(usCurrency);
+        order.setCurrency(usCurrency);
 
         Address address = buildAddress();
         FulfillmentGroup group = buildFulfillmentGroup(order, address);
@@ -115,6 +124,7 @@ public class CheckoutTest extends BaseTest {
         payment.setAmount(new Money(15D + (15D * 0.05D)));
         payment.setReferenceNumber("1234");
         payment.setType(PaymentType.CREDIT_CARD);
+        payment.setPaymentGatewayType(NullPaymentGatewayType.NULL_GATEWAY);
         payment.setOrder(order);
         PaymentTransaction tx = new PaymentTransactionImpl();
         tx.setAmount(payment.getAmount());

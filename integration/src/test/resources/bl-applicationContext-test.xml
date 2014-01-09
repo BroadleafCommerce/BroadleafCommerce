@@ -54,11 +54,23 @@
     <bean id="blTaxModule" class="org.broadleafcommerce.core.pricing.service.module.SimpleTaxModule">
         <property name="factor" value="0.05"/>
     </bean>
+    
+    <bean id="blTestPaymentConfigurationServices" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blNullPaymentGatewayConfigurationService"/>
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blTestPaymentConfigurationServices"/>
+        <property name="targetRef" value="blPaymentGatewayConfigurationServices"/>
+    </bean>
 
     <!-- Configuration used in WorkflowTests -->
     <bean p:order="8080" id="blTotalActivity"
           class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity"/>
-
+          
     <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
             <bean class="org.broadleafcommerce.core.checkout.service.workflow.CheckoutProcessContextFactory"/>
