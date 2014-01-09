@@ -31,7 +31,7 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -98,7 +98,7 @@ public interface LegacyOrderService extends OrderService {
      */
     public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
 
-    public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment);
+    public OrderPayment addPaymentToOrder(Order order, OrderPayment payment);
 
     public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest) throws PricingException;
     
@@ -166,7 +166,7 @@ public interface LegacyOrderService extends OrderService {
 
     public void removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException;
 
-    public List<PaymentInfo> readPaymentInfosForOrder(Order order);
+    public List<OrderPayment> readPaymentInfosForOrder(Order order);
 
     public Order removeItemFromOrder(Long orderId, Long itemId) throws PricingException;
     

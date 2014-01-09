@@ -42,9 +42,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class PaymentResponseItemWrapper extends BaseWrapper implements APIWrapper<PaymentResponseItem> {
 
     @XmlElement
-    protected Long paymentInfoId;
-
-    @XmlElement
     protected Boolean transactionSuccess;
 
     @XmlElement
@@ -56,7 +53,6 @@ public class PaymentResponseItemWrapper extends BaseWrapper implements APIWrappe
 
     @Override
     public void wrapDetails(PaymentResponseItem model, HttpServletRequest request) {
-        this.paymentInfoId = model.getPaymentInfoId();
         this.processorResponseCode = model.getProcessorResponseCode();
         this.transactionSuccess = model.getTransactionSuccess();
         if (model.getAdditionalFields() != null && !model.getAdditionalFields().isEmpty()) {

@@ -31,12 +31,13 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import java.io.IOException;
+
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-import java.io.IOException;
 
 public class GoogleAnalyticsTag extends SimpleTagSupport {
     
@@ -91,7 +92,7 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
         sb.append("_gaq.push(['_trackPageview']);");
         
         if (order != null) {
-            Address paymentAddress = order.getPaymentInfos().get(0).getAddress();
+            Address paymentAddress = order.getPayments().get(0).getBillingAddress();
 
             sb.append("_gaq.push(['_addTrans','" + order.getId() + "'");
             sb.append(",'" + order.getName() + "'");

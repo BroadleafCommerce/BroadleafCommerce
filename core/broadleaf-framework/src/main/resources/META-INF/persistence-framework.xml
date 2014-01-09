@@ -35,7 +35,7 @@
         <mapping-file>config/bc/jpa/domain/Order.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/OrderItem.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/OrderMultishipOption.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/PaymentInfo.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/OrderPayment.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Offer.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/FulfillmentGroup.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/FulfillmentGroupItem.orm.xml</mapping-file>
@@ -100,11 +100,10 @@
         <class>org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePriceImpl</class>
         <class>org.broadleafcommerce.core.order.domain.PersonalMessageImpl</class>
         <class>org.broadleafcommerce.core.order.domain.TaxDetailImpl</class>
-        <class>org.broadleafcommerce.core.payment.domain.PaymentInfoImpl</class>
-        <class>org.broadleafcommerce.core.payment.domain.PaymentInfoDetailImpl</class>
-        <class>org.broadleafcommerce.core.payment.domain.AmountItemImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.OrderPaymentImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl</class>
+
         <class>org.broadleafcommerce.core.payment.domain.PaymentLogImpl</class>
-        <class>org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl</class>
         <class>org.broadleafcommerce.core.pricing.domain.ShippingRateImpl</class>
         <class>org.broadleafcommerce.core.store.domain.StoreImpl</class>
         <class>org.broadleafcommerce.core.store.domain.ZipCodeImpl</class>
@@ -144,9 +143,9 @@
         <mapping-file>config/bc/jpa/domain/GiftCardPaymentInfo.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/CreditCardPaymentInfo.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/BankAccountPaymentInfo.orm.xml</mapping-file>
-        <class>org.broadleafcommerce.core.payment.domain.BankAccountPaymentInfoImpl</class>
-        <class>org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfoImpl</class>
-        <class>org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.secure.BankAccountPaymentImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.secure.CreditCardPaymentInfoImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.secure.GiftCardPaymentImpl</class>
     
         <exclude-unlisted-classes/>
         <properties>

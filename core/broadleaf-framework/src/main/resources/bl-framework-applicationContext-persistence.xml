@@ -69,49 +69,19 @@
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blLegacyCartServiceOperation" order="1"/>
     </aop:config>
 
-    <!--<aop:config>
-        <aop:pointcut id="blOrderDaoOperation" expression="execution(* org.broadleafcommerce.core.order.dao.OrderDao.save(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation"/>
-    </aop:config>-->
-    
-    <!--<aop:config>
-        <aop:pointcut id="blOrderDaoOperation2" expression="execution(* org.broadleafcommerce.core.order.dao.OrderDao.delete(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation2"/>
-    </aop:config>-->
-    
-    <!--<aop:config>
-        <aop:pointcut id="blOrderDaoOperation3" expression="execution(* org.broadleafcommerce.core.order.dao.OrderDao.submit*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation3"/>
-    </aop:config>-->
-    
-    <!--<aop:config>
-        <aop:pointcut id="blOrderDaoOperation4" expression="execution(* org.broadleafcommerce.core.order.dao.OrderDao.create*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation4"/>
-    </aop:config>-->
-    
     <aop:config>
         <aop:pointcut id="blOrderDaoOperation5" expression="execution(* org.broadleafcommerce.core.order.dao.OrderDao.update*(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation5"/>
     </aop:config>
 
     <aop:config>
-        <aop:pointcut id="blSecurePaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.core.payment.service.SecurePaymentInfoService.save(..))"/>
-        <aop:advisor advice-ref="blTxAdviceSecureInfo" pointcut-ref="blSecurePaymentInfoServiceOperation"/>
+        <aop:pointcut id="blOrderPaymentServiceOperation" expression="execution(* org.broadleafcommerce.core.payment.service.OrderPaymentService.save(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderPaymentServiceOperation"/>
     </aop:config>
     
     <aop:config>
-        <aop:pointcut id="blSecurePaymentInfoServiceOperation2" expression="execution(* org.broadleafcommerce.core.payment.service.SecurePaymentInfoService.remove(..))"/>
-        <aop:advisor advice-ref="blTxAdviceSecureInfo" pointcut-ref="blSecurePaymentInfoServiceOperation2"/>
-    </aop:config>
-
-    <aop:config>
-        <aop:pointcut id="blPaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.core.payment.service.PaymentInfoService.save(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPaymentInfoServiceOperation"/>
-    </aop:config>
-    
-    <aop:config>
-        <aop:pointcut id="blPaymentInfoServiceOperation2" expression="execution(* org.broadleafcommerce.core.payment.service.PaymentInfoService.delete(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPaymentInfoServiceOperation2"/>
+        <aop:pointcut id="blOrderPaymentServiceOperation2" expression="execution(* org.broadleafcommerce.core.payment.service.OrderPaymentService.delete(..))"/>
+        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderPaymentServiceOperation2"/>
     </aop:config>
 
     <aop:config>
@@ -139,26 +109,6 @@
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderItemDaoOperation3"/>
     </aop:config>
 
-    <!--<aop:config>
-        <aop:pointcut id="blOfferServiceOperation" expression="execution(* org.broadleafcommerce.core.offer.service.OfferService.save*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOfferServiceOperation"/>
-    </aop:config>
-    
-    <aop:config>
-        <aop:pointcut id="blOfferServiceOperation2" expression="execution(* org.broadleafcommerce.core.offer.service.OfferService.save(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOfferServiceOperation2"/>
-    </aop:config>
-    
-    <aop:config>
-        <aop:pointcut id="blOfferServiceOperation3" expression="execution(* org.broadleafcommerce.core.offer.service.OfferService.apply*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOfferServiceOperation3"/>
-    </aop:config>
-    
-    <aop:config>
-        <aop:pointcut id="blOfferServiceOperation4" expression="execution(* org.broadleafcommerce.core.offer.service.OfferService.build*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOfferServiceOperation4"/>
-    </aop:config>-->
-    
     <aop:config>
         <aop:pointcut id="blShippingRateServiceOperation" expression="execution(* org.broadleafcommerce.core.pricing.service.ShippingRateService.*(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blShippingRateServiceOperation"/>

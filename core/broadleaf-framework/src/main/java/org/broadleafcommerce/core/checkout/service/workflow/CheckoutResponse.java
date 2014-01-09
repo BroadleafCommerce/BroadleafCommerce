@@ -20,18 +20,9 @@
 package org.broadleafcommerce.core.checkout.service.workflow;
 
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.module.PaymentResponse;
-
-import java.util.Map;
 
 public interface CheckoutResponse {
 
-    public Map<PaymentInfo, Referenced> getInfos();
-
     public Order getOrder();
-
-    public PaymentResponse getPaymentResponse();
 
 }

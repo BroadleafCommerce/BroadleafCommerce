@@ -43,7 +43,7 @@ import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.PaymentInfoDataProvider;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.ShippingRateDataProvider;
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 import org.broadleafcommerce.core.pricing.service.ShippingRateService;
@@ -58,11 +58,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 @SuppressWarnings("deprecation")
 public class LegacyOrderTest extends LegacyOrderBaseTest {
@@ -278,12 +279,12 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
     @Test(groups = { "addPaymentToOrderLegacy" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class, dependsOnGroups = { "checkOrderItemsLegacy" })
     @Rollback(false)
     @Transactional
-    public void addPaymentToOrder(PaymentInfo paymentInfo) {
+    public void addPaymentToOrder(OrderPayment paymentInfo) {
         Order order = cartService.findOrderById(orderId);
         cartService.addPaymentToOrder(order, paymentInfo, null);
 
         order = cartService.findOrderById(orderId);
-        PaymentInfo payment = order.getPaymentInfos().get(order.getPaymentInfos().indexOf(paymentInfo));
+        OrderPayment payment = order.getPayments().get(order.getPayments().indexOf(paymentInfo));
         assert payment != null;
         //assert payment.getId() != null;
         assert payment.getOrder() != null;
@@ -513,7 +514,6 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
 
         assert order.getSubTotal() == null;
         assert order.getTotal() == null;
-        assert order.getRemainingTotal() == null;
 
         Calendar testCalendar = Calendar.getInstance();
         order.setSubmitDate(testCalendar.getTime());
@@ -584,14 +584,14 @@ public class LegacyOrderTest extends LegacyOrderBaseTest {
 
     @Test(groups = { "testOrderPaymentInfosLegacy" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class)
     @Transactional
-    public void testOrderPaymentInfos(PaymentInfo info) throws PricingException {
+    public void testOrderPaymentInfos(OrderPayment info) throws PricingException {
         Customer customer = customerService.saveCustomer(createNamedCustomer());
         Order order = cartService.createNewCartForCustomer(customer);
         cartService.addPaymentToOrder(order, info);
 
         boolean foundInfo = false;
-        assert order.getPaymentInfos() != null;
-        for (PaymentInfo testInfo : order.getPaymentInfos())
+        assert order.getPayments() != null;
+        for (OrderPayment testInfo : order.getPayments())
         {
             if (testInfo.equals(info))
             {

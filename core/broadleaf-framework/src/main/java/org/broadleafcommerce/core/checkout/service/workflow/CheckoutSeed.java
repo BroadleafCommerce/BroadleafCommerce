@@ -20,40 +20,26 @@
 package org.broadleafcommerce.core.checkout.service.workflow;
 
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.module.PaymentResponse;
-import org.broadleafcommerce.core.payment.service.module.PaymentResponseImpl;
 
 import java.util.Map;
 
 public class CheckoutSeed implements CheckoutResponse {
 
-    private Map<PaymentInfo, Referenced> infos;
-    private Order order;
-    private PaymentResponse paymentResponse = new PaymentResponseImpl();
-    private Map<String, Object> userDefinedFields;
+    protected Order order;
+    protected final Map<String, Object> userDefinedFields;
 
-    public CheckoutSeed(Order order, Map<PaymentInfo, Referenced> infos, Map<String, Object> userDefinedFields) {
+    public CheckoutSeed(Order order, Map<String, Object> userDefinedFields) {
         this.order = order;
-        this.infos = infos;
         this.userDefinedFields = userDefinedFields;
     }
 
-    public Map<PaymentInfo, Referenced> getInfos() {
-        return infos;
-    }
-
+    @Override
     public Order getOrder() {
         return order;
     }
     
     public void setOrder(Order order) {
         this.order = order;
-    }
-
-    public PaymentResponse getPaymentResponse() {
-        return paymentResponse;
     }
 
     public Map<String, Object> getUserDefinedFields() {

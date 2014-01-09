@@ -32,10 +32,16 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 public class TransactionUtils {
 
     /**
-     * Intended for use in all @Transactional definitions. For instance:
+     * Intended for use in all @Transactional definitions that operate against the <pre>blPU</pre> persistence unit. For instance:
      * <pre>@Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)</pre>
      */
     public static final String DEFAULT_TRANSACTION_MANAGER = "blTransactionManager";
+
+    /**
+     * Intended for use in all @Transactional definitions that operate against the <pre>blSecurePU</pre> persistence unit. For instance:
+     * <pre>@Transactional(TransactionUtils.SECURE_TRANSACTION_MANAGER)</pre>
+     */
+    public static final String SECURE_TRANSACTION_MANAGER = "blTransactionManagerSecureInfo";
     
     private static final Log LOG = LogFactory.getLog(TransactionUtils.class);
 
