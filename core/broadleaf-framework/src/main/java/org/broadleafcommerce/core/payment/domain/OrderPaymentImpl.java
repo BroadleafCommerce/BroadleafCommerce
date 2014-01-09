@@ -322,7 +322,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
 
     @Override
     public boolean isActive() {
-        return 'N' == getArchived();
+        return 'Y' != getArchived();
     }
     
     @Override

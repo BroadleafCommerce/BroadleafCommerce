@@ -273,7 +273,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
 
     @Override
     public boolean isActive() {
-        return 'N' == getArchived();
+        return 'Y' != getArchived();
     }
 
 
