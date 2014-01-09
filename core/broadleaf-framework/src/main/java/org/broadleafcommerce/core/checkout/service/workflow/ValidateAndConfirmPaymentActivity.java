@@ -126,6 +126,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         transaction.setParentTransaction(tx);
                         transaction.setOrderPayment(payment);
                         transaction.setAdditionalFields(responseDTO.getResponseMap());
+                        confirmedTransactions.add(transaction);
                         additionalTransactions.put(payment, transaction);
                     } else {
                         // Since there was a problems processing the 
@@ -133,13 +134,14 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         LOG.error(msg);
                         throw new CheckoutException(msg, context.getSeedData());
                     }
+                } else if (PaymentTransactionType.AUTHORIZE.equals(tx.getType()) ||
+                        PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType())) {
+                    // After each transaction is confirmed, associate the new list of confirmed transactions to the rollback state. This has the added
+                    // advantage of being able to invoke the rollback handler if there is an exception thrown at some point while confirming multiple
+                    // transactions. This is outside of the transaction confirmation block in order to capture transactions
+                    // that were already confirmed prior to this activity running
+                    confirmedTransactions.add(tx);
                 }
-                
-                // After each transaction is confirmed, associate the new list of confirmed transactions to the rollback state. This has the added
-                // advantage of being able to invoke the rollback handler if there is an exception thrown at some point while confirming multiple
-                // transactions. This is outside of the transaction confirmation block in order to capture transactions
-                // that were already confirmed prior to this activity running
-                confirmedTransactions.add(tx);
             }
         }
         

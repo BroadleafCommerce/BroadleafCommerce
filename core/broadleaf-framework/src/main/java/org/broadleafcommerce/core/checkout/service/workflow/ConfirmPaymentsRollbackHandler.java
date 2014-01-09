@@ -29,10 +29,12 @@ import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationS
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationServiceProvider;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.RollbackFailureException;
@@ -70,6 +72,9 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
 
     @Resource(name = "blPaymentGatewayCheckoutService")
     protected PaymentGatewayCheckoutService paymentGatewayCheckoutService;
+
+    @Resource(name = "blOrderService")
+    protected OrderService orderService;
     
     @Override
     public void rollbackState(Activity<? extends ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
@@ -147,8 +152,14 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
                     "attempted to roll back a transaction on one of the payments. Please see LOG for details.");
         } else {
             for (OrderPayment payment : paymentsToInvalidate) {
-                paymentGatewayCheckoutService.markPaymentAsInvalid(payment.getId());
                 order.getPayments().remove(payment);
+                paymentGatewayCheckoutService.markPaymentAsInvalid(payment.getId());
+            }
+
+            try {
+                orderService.save(order, false);
+            } catch (PricingException e) {
+                throw new RollbackFailureException("Unable to save the order with invalidated payments.");
             }
         }
     }
