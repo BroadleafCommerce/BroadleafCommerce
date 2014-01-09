@@ -35,23 +35,29 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * 
+ * @deprecated this has been replaced by invoking {@link MergeCartService} explicitly within the
+ * {@link CartStateRequestProcessor}
+ */
+@Deprecated
 @Component("blMergeCartProcessor")
 public class MergeCartProcessorImpl implements MergeCartProcessor {
 
-    private String mergeCartResponseKey = "bl_merge_cart_response";
+    protected String mergeCartResponseKey = "bl_merge_cart_response";
 
     @Resource(name="blCustomerService")
-    private CustomerService customerService;
+    protected CustomerService customerService;
 
     @Resource(name="blOrderService")
-    private OrderService orderService;
+    protected OrderService orderService;
     
     @Resource(name="blMergeCartService")
-    private MergeCartService mergeCartService;
+    protected MergeCartService mergeCartService;
     
     @Resource(name = "blCustomerStateRequestProcessor")
     protected CustomerStateRequestProcessor customerStateRequestProcessor;
-
+    
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         execute(new ServletWebRequest(request, response), authResult);
@@ -59,7 +65,7 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
     
     public void execute(WebRequest request, Authentication authResult) {
         Customer loggedInCustomer = customerService.readCustomerByUsername(authResult.getName());
-        Customer anonymousCustomer = customerStateRequestProcessor.resolveAnonymousCustomer(request);
+        Customer anonymousCustomer = customerStateRequestProcessor.getAnonymousCustomer(request);
         
         Order cart = null;
         if (anonymousCustomer != null) {
