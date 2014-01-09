@@ -227,6 +227,8 @@ public class ListGridAction implements Cloneable {
         cloned.urlPostfix = urlPostfix;
         cloned.forListGridReadOnly = forListGridReadOnly;
         cloned.allCapable = allCapable;
+        cloned.actionId = actionId;
+        cloned.actionUrlOverride = actionUrlOverride;
         return cloned;
     }
 }
