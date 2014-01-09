@@ -151,7 +151,10 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         Map<String, Object> localVars = new HashMap<String, Object>();
 
         //Add PaymentRequestDTO to the model in the case of errors or other cases
-        localVars.put("paymentRequestDTO", orderToPaymentRequestDTOService.translateOrder(CartState.getCart()));
+        Order cart = CartState.getCart();
+        if (cart != null && !(cart instanceof NullOrderImpl)) {
+            localVars.put("paymentRequestDTO", orderToPaymentRequestDTOService.translateOrder(cart));
+        }
 
         //Initialize Fulfillment Group Vars
         int numShippableFulfillmentGroups = calculateNumShippableFulfillmentGroups();
