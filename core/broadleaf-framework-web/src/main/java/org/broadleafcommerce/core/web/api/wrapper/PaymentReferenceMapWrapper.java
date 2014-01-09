@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * <p>
  * This is a JAXB wrapper that
- * encapsulates the mapping between a PaymentInfoWrapper and a ReferencedWrapper
+ * encapsulates the mapping between a OrderPaymentWrapper and a ReferencedWrapper
  *
  * This is just a container, and will not be wrapped or unwrapped from a BLC entity
  *
@@ -40,16 +40,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class PaymentReferenceMapWrapper extends BaseWrapper {
 
     @XmlElement
-    protected PaymentInfoWrapper paymentInfo;
+    protected OrderPaymentWrapper paymentInfo;
 
     @XmlElement
     protected ReferencedWrapper referenced;
 
-    public PaymentInfoWrapper getPaymentInfoWrapper() {
+    public OrderPaymentWrapper getPaymentInfoWrapper() {
         return paymentInfo;
     }
 
-    public void setPaymentInfoWrapper(PaymentInfoWrapper paymentInfo) {
+    public void setPaymentInfoWrapper(OrderPaymentWrapper paymentInfo) {
         this.paymentInfo = paymentInfo;
     }
 

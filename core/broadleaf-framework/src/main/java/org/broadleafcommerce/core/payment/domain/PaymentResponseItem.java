@@ -19,9 +19,7 @@
  */
 package org.broadleafcommerce.core.payment.domain;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.io.Serializable;
@@ -49,22 +47,6 @@ public interface PaymentResponseItem extends Serializable {
     public String getProcessorResponseText();
 
     public void setProcessorResponseText(String processorResponseText);
-
-    public String getReferenceNumber();
-
-    public void setReferenceNumber(String referenceNumber);
-
-    /**
-     * @deprecated
-     * @see #getTransactionAmount()
-     */
-    public Money getAmountPaid();
-
-    /**
-     * @deprecated  setTransactionAmount() instead.
-     * @see #setTransactionAmount(org.broadleafcommerce.common.money.Money)
-     */
-    public void setAmountPaid(Money amount);
 
     /**
      * The amount that the system processed. For example, when submitting an order, this would be the order.getTotal.
@@ -105,26 +87,14 @@ public interface PaymentResponseItem extends Serializable {
 
     public void setAvsCode(String avsCode);
 
-    public String getCvvCode();
-
-    public void setCvvCode(String cvvCode);
-
     // TODO: Rename to getRemainingTransactionAmount
     public Money getRemainingBalance();
 
     public void setRemainingBalance(Money remainingBalance);
 
-    public TransactionType getTransactionType();
-
-    public void setTransactionType(TransactionType transactionType);
-
     public Map<String, String> getAdditionalFields();
 
     public void setAdditionalFields(Map<String, String> additionalFields);
-
-    public Long getPaymentInfoId();
-
-    public void setPaymentInfoId(Long paymentInfoId);
 
     public String getUserName();
 
@@ -134,16 +104,8 @@ public interface PaymentResponseItem extends Serializable {
 
     public void setCustomer(Customer customer);
 
-    public String getPaymentInfoReferenceNumber();
+    public void setPaymentTransaction(PaymentTransaction paymentTransaction);
 
-    public void setPaymentInfoReferenceNumber(String paymentInfoReferenceNumber);
-
-    public void setCurrency(BroadleafCurrency currency);
-
-    public BroadleafCurrency getCurrency();
-
-    public void setPaymentInfo(PaymentInfo paymentInfo);
-
-    public PaymentInfo getPaymentInfo();
+    public PaymentTransaction getPaymentTransaction();
 
 }

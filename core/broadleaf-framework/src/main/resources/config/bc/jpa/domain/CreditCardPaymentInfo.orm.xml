@@ -24,7 +24,7 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
     
     <named-query name="BC_READ_CREDIT_CARD_BY_REFERENCE_NUMBER" >
-        <query>SELECT creditCard FROM org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo creditCard
+        <query>SELECT creditCard FROM org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment creditCard
                WHERE  creditCard.referenceNumber = :referenceNumber
         </query>
     </named-query>

@@ -26,7 +26,6 @@
     <!-- The following beans are for API Wrappers.  They must be prototype scoped..  Override for extensibility.  Unlike the other Broadleaf classes that are keyed by their interface name,
                these are keyed by their base implementation name. JAXB doesn't like interfaces too much, so we use a base wrapper class that can be extended and overwritten here. -->
     <bean id="org.broadleafcommerce.core.web.api.wrapper.AddressWrapper" class="org.broadleafcommerce.core.web.api.wrapper.AddressWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.web.api.wrapper.AmountItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.AmountItemWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.CategoriesWrapper" class="org.broadleafcommerce.core.web.api.wrapper.CategoriesWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper" class="org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper" scope="prototype"/>
@@ -45,7 +44,7 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderItemAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderItemAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderAttributeWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.web.api.wrapper.PaymentInfoWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PaymentInfoWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderPaymentWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderPaymentWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper" scope="prototype" />
     <bean id="org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.PhoneWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PhoneWrapper" scope="prototype"/>

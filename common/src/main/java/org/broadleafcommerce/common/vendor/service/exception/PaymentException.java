@@ -20,13 +20,10 @@
 package org.broadleafcommerce.common.vendor.service.exception;
 
 import org.broadleafcommerce.common.exception.BroadleafException;
-import org.broadleafcommerce.common.vendor.service.message.PaymentResponse;
 
 public class PaymentException extends BroadleafException {
 
     private static final long serialVersionUID = 1L;
-
-    protected PaymentResponse paymentResponse;
 
     public PaymentException() {
         super();
@@ -44,11 +41,4 @@ public class PaymentException extends BroadleafException {
         super(cause);
     }
 
-    public PaymentResponse getPaymentResponse() {
-        return paymentResponse;
-    }
-
-    public void setPaymentResponse(PaymentResponse paymentResponse) {
-        this.paymentResponse = paymentResponse;
-    }
 }

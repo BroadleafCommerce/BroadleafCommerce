@@ -55,16 +55,6 @@
         <property name="factor" value="0.05"/>
     </bean>
 
-    <bean p:order="2000" id="blPaymentServiceActivity"
-          class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity">
-        <property name="rollbackHandler" ref="blTestRollbackHandler"/>
-        <property name="stateConfiguration">
-            <map>
-                <entry key="testProperty" value="testValue"/>
-            </map>
-        </property>
-    </bean>
-
     <!-- Configuration used in WorkflowTests -->
     <bean p:order="8080" id="blTotalActivity"
           class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity"/>
@@ -174,8 +164,6 @@
           class="org.broadleafcommerce.common.email.service.info.EmailInfo"
           parent="baseEmailInfo">
     </bean>
-
-    <bean id="blCreditCardModule" class="org.broadleafcommerce.checkout.service.DummyCreditCardModule"/>
 
     <bean id="compositeStatusHandler"
           class="org.broadleafcommerce.common.vendor.service.monitor.handler.CompositeStatusHandler">

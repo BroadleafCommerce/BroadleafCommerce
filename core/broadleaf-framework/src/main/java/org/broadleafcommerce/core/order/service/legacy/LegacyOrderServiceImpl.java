@@ -57,8 +57,8 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
-import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -205,7 +205,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
     }
 
     @Override
-    public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment) {
+    public OrderPayment addPaymentToOrder(Order order, OrderPayment payment) {
         return addPaymentToOrder(order, payment, null);
     }
 
@@ -395,8 +395,8 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
     }
 
     @Override
-    public List<PaymentInfo> readPaymentInfosForOrder(Order order) {
-        return paymentInfoDao.readPaymentInfosForOrder(order);
+    public List<OrderPayment> readPaymentInfosForOrder(Order order) {
+        return paymentDao.readPaymentInfosForOrder(order);
     }
         
     protected boolean itemMatches(DiscreteOrderItem item1, DiscreteOrderItem item2) {
@@ -619,12 +619,12 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
         this.orderDao = orderDao;
     }
 
-    public PaymentInfoDao getPaymentInfoDao() {
-        return paymentInfoDao;
+    public OrderPaymentDao getPaymentInfoDao() {
+        return paymentDao;
     }
 
-    public void setPaymentInfoDao(PaymentInfoDao paymentInfoDao) {
-        this.paymentInfoDao = paymentInfoDao;
+    public void setPaymentInfoDao(OrderPaymentDao paymentInfoDao) {
+        this.paymentDao = paymentInfoDao;
     }
 
     public FulfillmentGroupDao getFulfillmentGroupDao() {

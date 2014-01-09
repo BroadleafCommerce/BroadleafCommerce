@@ -19,13 +19,11 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
-import org.broadleafcommerce.core.payment.service.exception.PaymentException;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 
 public interface PaymentService {
 
-    public Boolean isValidCandidate(PaymentInfoType paymentType);
+    /*
+    public Boolean isValidCandidate(PaymentType paymentType);
 
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException;
 
@@ -37,10 +35,6 @@ public interface PaymentService {
 
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException;
 
-    public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException;
-    
     public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException;
-
-    public PaymentResponseItem partialPayment (PaymentContext paymentContext) throws PaymentException;
-
+    */
 }

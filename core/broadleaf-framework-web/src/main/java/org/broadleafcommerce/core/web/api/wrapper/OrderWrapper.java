@@ -26,7 +26,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderAttribute;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,8 +80,8 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
     protected List<FulfillmentGroupWrapper> fulfillmentGroups;
 
     @XmlElement(name = "paymentInfo")
-    @XmlElementWrapper(name = "paymentInfos")
-    protected List<PaymentInfoWrapper> paymentInfos;
+    @XmlElementWrapper(name = "payments")
+    protected List<OrderPaymentWrapper> paymentInfos;
 
     @XmlElement(name = "orderAdjustment")
     @XmlElementWrapper(name = "orderAdjustments")
@@ -122,10 +122,10 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
             }
         }
 
-        if (model.getPaymentInfos() != null && !model.getPaymentInfos().isEmpty()) {
-            this.paymentInfos = new ArrayList<PaymentInfoWrapper>();
-            for (PaymentInfo paymentInfo : model.getPaymentInfos()) {
-                PaymentInfoWrapper paymentInfoWrapper = (PaymentInfoWrapper) context.getBean(PaymentInfoWrapper.class.getName());
+        if (model.getPayments() != null && !model.getPayments().isEmpty()) {
+            this.paymentInfos = new ArrayList<OrderPaymentWrapper>();
+            for (OrderPayment paymentInfo : model.getPayments()) {
+                OrderPaymentWrapper paymentInfoWrapper = (OrderPaymentWrapper) context.getBean(OrderPaymentWrapper.class.getName());
                 paymentInfoWrapper.wrapSummary(paymentInfo, request);
                 this.paymentInfos.add(paymentInfoWrapper);
             }

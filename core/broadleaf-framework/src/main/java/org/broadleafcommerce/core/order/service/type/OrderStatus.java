@@ -19,22 +19,14 @@
  */
 package org.broadleafcommerce.core.order.service.type;
 
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.core.order.domain.Order;
 
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+
 /**
  * An extendible enumeration of order status types.
- * 
- * <ul>
- *  <li><b>NAMED</b> - Represents a  wishlist</li>
- *  <li><b>IN_PROCESS</b> - Represents a cart (non-submitted {@link Order}s)</li>
- *  <li><b>SUBMITTED</b> - Used to represent a completed {@link Order}. Note that this also means that the {@link Order}
- *  should have its {@link Order#getOrderNumber} set</li>
- * </ul>
  * 
  * @author jfischer
  */
@@ -42,11 +34,24 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OrderStatus> TYPES = new LinkedHashMap<String, OrderStatus>();
+    private static final LinkedHashMap<String, OrderStatus> TYPES = new LinkedHashMap<String, OrderStatus>();
 
+    /**
+     * Represents a wishlist. This also usually means that the {@link Order} has its {@link Order#getName()} set although
+     * not required
+     */
     public static final OrderStatus NAMED = new OrderStatus("NAMED", "Named");
     public static final OrderStatus QUOTE = new OrderStatus("QUOTE", "Quote");
+    
+    /**
+     * Represents a cart (non-submitted {@link Order}s)
+     */
     public static final OrderStatus IN_PROCESS = new OrderStatus("IN_PROCESS", "In Process");
+    
+    /**
+     * Used to represent a completed {@link Order}. Note that this also means that the {@link Order}
+     * should have its {@link Order#getOrderNumber} set
+     */
     public static final OrderStatus SUBMITTED = new OrderStatus("SUBMITTED", "Submitted");
     public static final OrderStatus CANCELLED = new OrderStatus("CANCELLED", "Cancelled");
 
@@ -66,10 +71,12 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getFriendlyType() {
         return friendlyType;
     }
