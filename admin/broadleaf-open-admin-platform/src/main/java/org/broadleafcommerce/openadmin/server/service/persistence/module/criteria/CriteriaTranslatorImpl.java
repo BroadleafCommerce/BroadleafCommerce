@@ -19,6 +19,15 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.exception.NoPossibleResultsException;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
+import org.broadleafcommerce.openadmin.dto.SortDirection;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
+import org.springframework.stereotype.Service;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,15 +41,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.exception.NoPossibleResultsException;
-import org.broadleafcommerce.openadmin.dto.ClassTree;
-import org.broadleafcommerce.openadmin.dto.SortDirection;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Jeff Fischer
@@ -199,23 +199,6 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         }
     }
     
-    /**
-     * This method is deprecated in favor of {@link #addRestrictions(String, List, CriteriaBuilder, Root, List, List, CriteriaQuery)}
-     * It will be removed in Broadleaf version 3.1.0.
-     * 
-     * @param ceilingEntity
-     * @param filterMappings
-     * @param criteriaBuilder
-     * @param original
-     * @param restrictions
-     * @param sorts
-     */
-    @Deprecated
-    protected void addRestrictions(String ceilingEntity, List<FilterMapping> filterMappings, CriteriaBuilder criteriaBuilder,
-                                   Root original, List<Predicate> restrictions, List<Order> sorts) {
-        addRestrictions(ceilingEntity, filterMappings, criteriaBuilder, original, restrictions, sorts, null);
-    }
-    
     protected void addRestrictions(String ceilingEntity, List<FilterMapping> filterMappings, CriteriaBuilder criteriaBuilder,
                                    Root original, List<Predicate> restrictions, List<Order> sorts, CriteriaQuery criteria) {
         for (FilterMapping filterMapping : filterMappings) {
@@ -235,7 +218,7 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
                 }
                 
                 if (directValues != null) {
-                    Predicate predicate = filterMapping.getRestriction().buildPolymorphicRestriction(criteriaBuilder, original,
+                    Predicate predicate = filterMapping.getRestriction().buildRestriction(criteriaBuilder, original,
                             ceilingEntity, filterMapping.getFullPropertyName(), explicitPath, directValues, shouldConvert,
                             criteria, restrictions);
                     restrictions.add(predicate);

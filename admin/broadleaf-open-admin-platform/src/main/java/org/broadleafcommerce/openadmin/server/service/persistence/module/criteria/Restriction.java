@@ -56,23 +56,10 @@ public class Restriction {
     }
     
     /**
-     * This method differs from buildRestriction in that it will return a FieldPathBuilder that could be used by the caller
-     * to establish any additional Roots that might be necessary due to the path living inside of a polymorphic version
-     * of the ceiling entity. The Predicate object that {@link #buildRestriction(...)} returns is also available inside
-     * of the FieldPathBuilder object for the caller's use.
-     */
-    public Predicate buildPolymorphicRestriction(CriteriaBuilder builder, From root, String ceilingEntity, String targetPropertyName, 
-            Path explicitPath, List directValues, boolean shouldConvert, CriteriaQuery criteria, List<Predicate> restrictions) {
-        fieldPathBuilder.setCriteria(criteria);
-        fieldPathBuilder.setRestrictions(restrictions);
-        return buildRestriction(builder, root, ceilingEntity, targetPropertyName, explicitPath, directValues, shouldConvert);
-    }
-    
-    /**
-     * This method is deprecated in favor of {@link #buildPolymorphicRestriction(CriteriaBuilder, From, String, String, 
-     * Path, List, boolean, CriteriaQuery, List)}
-     * 
-     * It will be removed in Broadleaf version 3.1.0 and buildPolymorphicRestriction will be renamed to buildRestriction
+     * This method  will return a FieldPathBuilder that could be used by the caller to establish any additional Roots that 
+     * might be necessary due to the path living inside of a polymorphic version of the ceiling entity. The Predicate 
+     * object that {@link #buildRestriction(...)} returns is also available inside of the FieldPathBuilder object for 
+     * the caller's use.
      * 
      * @param builder
      * @param root
@@ -83,9 +70,10 @@ public class Restriction {
      * @param shouldConvert
      * @return
      */
-    @Deprecated
     public Predicate buildRestriction(CriteriaBuilder builder, From root, String ceilingEntity, String targetPropertyName, 
-            Path explicitPath, List directValues, boolean shouldConvert) {
+            Path explicitPath, List directValues, boolean shouldConvert, CriteriaQuery criteria, List<Predicate> restrictions) {
+        fieldPathBuilder.setCriteria(criteria);
+        fieldPathBuilder.setRestrictions(restrictions);
         List<Object> convertedValues = new ArrayList<Object>();
         if (shouldConvert && filterValueConverter != null) {
             for (Object item : directValues) {
