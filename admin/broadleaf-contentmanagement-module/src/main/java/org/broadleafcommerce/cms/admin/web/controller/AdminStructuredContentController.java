@@ -75,8 +75,8 @@ public class AdminStructuredContentController extends AdminBasicEntityController
         ef.putDynamicFormInfo("structuredContentType", info);
         ef.putDynamicForm("structuredContentType", dynamicForm);
         
-        // Mark the field that will drive this dynamic form
-        ef.findField("structuredContentType").setOnChangeTrigger("dynamicForm-structuredContentType");
+        // We don't want to allow changing types once a structured content item exists
+        ef.findField("structuredContentType").setReadOnly(true);
         
         return returnPath;
     }
