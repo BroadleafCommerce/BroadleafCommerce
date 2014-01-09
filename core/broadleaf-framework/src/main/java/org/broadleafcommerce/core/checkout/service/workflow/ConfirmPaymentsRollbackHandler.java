@@ -95,9 +95,13 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
 
                 PaymentResponseDTO responseDTO = null;
                 if (PaymentTransactionType.AUTHORIZE.equals(tx.getType())) {
-                    responseDTO = cfg.getRollbackService().rollbackAuthorize(rollbackRequest);
+                    if (cfg.getRollbackService() != null) {
+                        responseDTO = cfg.getRollbackService().rollbackAuthorize(rollbackRequest);
+                    }
                 } else if (PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType())) {
-                    responseDTO = cfg.getRollbackService().rollbackAuthorizeAndCapture(rollbackRequest);
+                    if (cfg.getRollbackService() != null) {
+                        responseDTO = cfg.getRollbackService().rollbackAuthorizeAndCapture(rollbackRequest);
+                    }
                 } else {
                     LOG.warn("The transaction with id " + tx.getId() + " will NOT be rolled back as it is not an AUTHORIZE or AUTHORIZE_AND_CAPTURE transaction but is"
                             + " of type " + tx.getType() + ". If you need to roll back transactions of this type then provide a customized rollback handler for"
