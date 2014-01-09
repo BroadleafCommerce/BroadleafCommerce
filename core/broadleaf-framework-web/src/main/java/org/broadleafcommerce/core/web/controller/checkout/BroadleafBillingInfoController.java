@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.web.controller.checkout;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
@@ -85,6 +86,7 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
             // the PaymentGatewayCheckoutService will persist a new payment of type CREDIT_CARD when it applies it to the Order
             OrderPayment tempOrderPayment = orderPaymentService.create();
             tempOrderPayment.setType(PaymentType.CREDIT_CARD);
+            tempOrderPayment.setPaymentGatewayType(PaymentGatewayType.TEMPORARY);
             tempOrderPayment.setBillingAddress(billingForm.getAddress());
             tempOrderPayment.setOrder(cart);
             cart.getPayments().add(tempOrderPayment);
