@@ -118,16 +118,16 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             }
         }
 
-        // If this gateway does not support multiple payments then mark all of the existing payments as invalid before adding
-        // the new one
+        // If this gateway does not support multiple payments then mark all of the existing payments
+        // as invalid before adding the new one
         List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
         if (!config.handlesMultiplePayments()) {
             PaymentGatewayType gateway = config.getGatewayType();
             for (OrderPayment payment : order.getPayments()) {
-                // There may be an Order Payment on the order that doesn't have a gateway set (e.g. to save the billing address)
-                // This will be marked as invalid, as the billing address that will be saved on the order will be coming off the
+                // There may be a temporary Order Payment on the Order (e.g. to save the billing address)
+                // This will be marked as invalid, as the billing address that will be saved on the order will be parsed off the
                 // Response DTO sent back from the Gateway
-                if (payment.getGatewayType() == null ||
+                if (payment.getGatewayType() == PaymentGatewayType.TEMPORARY ||
                         (payment.getGatewayType() != null && payment.getGatewayType().equals(gateway))) {
                     paymentsToInvalidate.add(payment);
                 }
