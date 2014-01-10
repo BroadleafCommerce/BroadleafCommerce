@@ -42,7 +42,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -285,7 +284,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Object getSalt(Customer customer) {
         Object salt = null;
         if (saltSource != null) {
-            salt = saltSource.getSalt(new User(customer.getUsername(), customer.getUnencodedPassword(), new ArrayList<GrantedAuthority>()));
+            salt = saltSource.getSalt(new CustomerUserDetails(customer.getId(), customer.getUsername(), customer.getUnencodedPassword(), new ArrayList<GrantedAuthority>()));
         }
         return salt;
     }
