@@ -1,5 +1,8 @@
 <div class="asset-selector-container">  
-    <div class="field-label" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+    <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+    <div th:substituteby="components/fieldTooltip" />
+    <br />
+
     <input type="hidden" class="mediaItem" th:field="*{fields['__${field.name}__'].value}" />
     
     <a th:if="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}"

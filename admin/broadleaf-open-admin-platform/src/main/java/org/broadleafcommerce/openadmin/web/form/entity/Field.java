@@ -17,6 +17,7 @@
 package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
 
@@ -49,6 +50,9 @@ public class Field {
     protected Boolean isFilterSortDisabled;
     protected Boolean isDerived;
     protected Boolean isLargeEntry;
+    protected String hint;
+    protected String tooltip;
+    protected String help;
     
     /* ************ */
     /* WITH METHODS */
@@ -143,9 +147,24 @@ public class Field {
         setDerived(isDerived);
         return this;
     }
-    
+
     public Field withLargeEntry(Boolean isLargeEntry) {
         setLargeEntry(isLargeEntry);
+        return this;
+    }
+    
+    public Field withHint(String hint) {
+        setHint(hint);
+        return this;
+    }
+
+    public Field withHelp(String help) {
+        setHelp(help);
+        return this;
+    }
+
+    public Field withTooltip(String tooltip) {
+        setTooltip(tooltip);
         return this;
     }
 
@@ -348,5 +367,28 @@ public class Field {
     public void setLargeEntry(Boolean isLargeEntry) {
         this.isLargeEntry = isLargeEntry;
     }
-
+    
+    public String getHint() {
+        return StringUtils.isBlank(hint) ? null : hint;
+    }
+    
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
+    
+    public String getTooltip() {
+        return StringUtils.isBlank(tooltip) ? null : tooltip;
+    }
+    
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
+    }
+    
+    public String getHelp() {
+        return StringUtils.isBlank(help) ? null : help;
+    }
+    
+    public void setHelp(String help) {
+        this.help = help;
+    }
 }
