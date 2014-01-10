@@ -32,14 +32,9 @@ INSERT INTO BLC_ADMIN_PERMISSION_ENTITY (ADMIN_PERMISSION_ENTITY_ID, CEILING_ENT
 INSERT INTO BLC_ADMIN_ROLE_PERMISSION_XREF (ADMIN_ROLE_ID, ADMIN_PERMISSION_ID) VALUES (-1,-18904);
 
 --
--- Create BLC MODULES (These modules are required for the admin left navigation)
---
-INSERT INTO BLC_ADMIN_MODULE (ADMIN_MODULE_ID, NAME, MODULE_KEY, ICON, DISPLAY_ORDER) VALUES (-18900,'Custom Field','BLCCustomField','icon-user',450);
-
---
 -- Create BLC SECTIONS (These modules are required for the admin left navigation)
 --
-INSERT INTO BLC_ADMIN_SECTION (ADMIN_SECTION_ID, ADMIN_MODULE_ID, NAME, SECTION_KEY, URL, USE_DEFAULT_HANDLER, CEILING_ENTITY) VALUES (-18900,-18900,'Custom Field Management','CustomFieldManagement','/custom-field-management',FALSE,'com.broadleafcommerce.customfield.domain.CustomField');
+INSERT INTO BLC_ADMIN_SECTION (ADMIN_SECTION_ID, DISPLAY_ORDER, ADMIN_MODULE_ID, NAME, SECTION_KEY, URL, USE_DEFAULT_HANDLER, CEILING_ENTITY) VALUES (-18900, 2000, -5,'Custom Field Management','CustomFieldManagement','/custom-field-management',FALSE,'com.broadleafcommerce.customfield.domain.CustomField');
 
 --
 --
