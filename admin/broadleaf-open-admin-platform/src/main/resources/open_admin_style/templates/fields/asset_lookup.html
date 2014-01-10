@@ -1,6 +1,8 @@
 <div class="asset-selector-container"
         th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">
     <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+    <div th:substituteby="components/fieldTooltip" />
+
     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
     <a class="show-asset-freeform-url" href="#" th:text="'(' + #{Freeform_URL} + ')'" />
     <br/>

@@ -108,6 +108,12 @@ span.error {
 	color: inherit;
 }
 
+.field-tooltip {
+	color: #8EAA2B;
+	cursor: pointer;
+	padding: 0 3px;
+}
+
 input[type="search"] {
     -webkit-appearance: none;
     padding: 0px;
@@ -124,6 +130,7 @@ input[type="text"], input[type="password"], input[type="date"], input[type="date
 
 .foreign-key-value-container,
 .entity-form .custom.dropdown,
+span.field-help,
 .indented-form-value,
 .entity-form input[type="text"], .entity-form input[type="password"], .entity-form input[type="date"], .entity-form input[type="datetime"], .entity-form input[type="email"], .entity-form input[type="number"], .entity-form input[type="search"], .entity-form input[type="tel"], .entity-form input[type="time"], .entity-form input[type="url"], .entity-form textarea {
     margin: 7px 0 0px 0px;
@@ -156,9 +163,14 @@ fieldset div.field-box:last-child {
 	margin-bottom: 0;
 }
 
+span.field-help,
 .indented-form-value {
 	display: block;
 	font-size: 12px;
+}
+
+span.field-help {
+	color: #555;
 }
 
 fieldset {

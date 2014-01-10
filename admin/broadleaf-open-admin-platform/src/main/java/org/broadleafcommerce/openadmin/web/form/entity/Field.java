@@ -53,6 +53,9 @@ public class Field {
     protected Boolean isDerived;
     protected Boolean isLargeEntry;
     protected Boolean isDirty;
+    protected String hint;
+    protected String tooltip;
+    protected String help;
 
     /* ************ */
     /* WITH METHODS */
@@ -150,6 +153,21 @@ public class Field {
     
     public Field withLargeEntry(Boolean isLargeEntry) {
         setLargeEntry(isLargeEntry);
+        return this;
+    }
+    
+    public Field withHint(String hint) {
+        setHint(hint);
+        return this;
+    }
+
+    public Field withHelp(String help) {
+        setHelp(help);
+        return this;
+    }
+
+    public Field withTooltip(String tooltip) {
+        setTooltip(tooltip);
         return this;
     }
 
@@ -361,4 +379,27 @@ public class Field {
         this.isDirty = isDirty;
     }
 
+    public String getHint() {
+        return StringUtils.isBlank(hint) ? null : hint;
+    }
+    
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
+    
+    public String getTooltip() {
+        return StringUtils.isBlank(tooltip) ? null : tooltip;
+    }
+    
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
+    }
+    
+    public String getHelp() {
+        return StringUtils.isBlank(help) ? null : help;
+    }
+    
+    public void setHelp(String help) {
+        this.help = help;
+    }
 }

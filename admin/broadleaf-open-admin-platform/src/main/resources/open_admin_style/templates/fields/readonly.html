@@ -1,4 +1,5 @@
 <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+<div th:substituteby="components/fieldTooltip" />
 <div class="twelve" style="margin-left: 20px; margin-bottom: 10px;" th:switch="*{fields['__${field.name}__'].fieldType}">
 
     <span th:case="'MEDIA'" th:remove="tag">

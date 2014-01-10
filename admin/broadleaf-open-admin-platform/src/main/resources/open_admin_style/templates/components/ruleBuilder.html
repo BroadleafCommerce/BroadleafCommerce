@@ -1,6 +1,7 @@
 <blc_admin:admin_field_builder fieldBuilder="${field.fieldBuilder}">
 
-    <div class="field-label" th:if="${!field.required}" th:text="#{${field.friendlyName + '_Question'}}" />
+    <div class="field-label inline" th:if="${!field.required}" th:text="#{${field.friendlyName + '_Question'}}" />
+    <div th:substituteby="components/fieldTooltip" />
  
     <div th:classappend="${field.styleClass}">
     

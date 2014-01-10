@@ -65,6 +65,9 @@
                     <div th:unless="${field.readOnly}" th:remove="tag">
                         <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
                     </div>
+
+                    <span th:if="${field.help}" class="field-help" th:text="#{${field.help}}" />
+
                 </div>
             </fieldset>
             

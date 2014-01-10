@@ -497,7 +497,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withReadOnly(fmd.getReadOnly())
                          .withTranslatable(fmd.getTranslatable())
                          .withAlternateOrdering((Boolean) fmd.getAdditionalMetadata().get(Field.ALTERNATE_ORDERING))
-                         .withLargeEntry(fmd.isLargeEntry());
+                         .withLargeEntry(fmd.isLargeEntry())
+                         .withHint(fmd.getHint())
+                         .withTooltip(fmd.getTooltip())
+                         .withHelp(fmd.getHelpText());
 
                     if (StringUtils.isBlank(f.getFriendlyName())) {
                         f.setFriendlyName(f.getName());
