@@ -50,7 +50,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_ADDRESS", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "ADDRESS_NAME" }))
+@Table(name = "BLC_CUSTOMER_ADDRESS", uniqueConstraints = @UniqueConstraint(name = "CSTMR_ADDR_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "ADDRESS_NAME" }))
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "address.firstName", mergeEntries =

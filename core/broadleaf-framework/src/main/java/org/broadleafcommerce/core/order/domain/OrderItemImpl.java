@@ -232,7 +232,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "PARENT_ORDER_ITEM_ID")
-    @Index(name="ORDERITEM_PARENTORDERITEM_INDEX", columnNames={"PARENT_ORDER_ITEM_ID"})
+    @Index(name="ORDERITEM_PARENT_INDEX", columnNames={"PARENT_ORDER_ITEM_ID"})
     protected OrderItem parentOrderItem;
     
     @Override

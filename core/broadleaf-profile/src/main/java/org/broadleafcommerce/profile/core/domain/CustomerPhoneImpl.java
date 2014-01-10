@@ -45,7 +45,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "PHONE_NAME" }))
+@Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(name="CSTMR_PHONE_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PHONE_NAME" }))
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries =
