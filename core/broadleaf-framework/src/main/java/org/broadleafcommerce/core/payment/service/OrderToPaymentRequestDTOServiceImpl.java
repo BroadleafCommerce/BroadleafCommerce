@@ -118,11 +118,13 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
             }
         }
 
+        String orderEmail = (customer.getEmailAddress() == null)? order.getEmailAddress() : customer.getEmailAddress();
+
         requestDTO.customer()
                 .customerId(customer.getId().toString())
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
-                .email(customer.getEmailAddress())
+                .email(orderEmail)
                 .phone(phoneNumber);
 
     }
