@@ -80,6 +80,15 @@
         </query>
     </named-query>
 
+    <named-query name="BC_COUNT_BY_PERMISSION_AND_CEILING_ENTITY" >
+        <query>SELECT COUNT(adminPermission)
+               FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermission adminPermission
+               LEFT OUTER JOIN adminPermission.qualifiedEntities qualifiedEntity
+               WHERE adminPermission.name IN (:permissionNames) AND
+                     qualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity
+        </query>
+    </named-query>
+
     <named-query name="BC_COUNT_PERMISSIONS_BY_TYPE_AND_CEILING_ENTITY" >
         <query>SELECT COUNT(adminPermission)
                FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermission adminPermission

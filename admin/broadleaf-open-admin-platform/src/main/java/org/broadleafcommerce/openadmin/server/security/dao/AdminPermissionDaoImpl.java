@@ -19,16 +19,8 @@
  */
 package org.broadleafcommerce.openadmin.server.security.dao;
 
-import org.apache.commons.lang.ClassUtils;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -39,6 +31,16 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang.ClassUtils;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
+import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
 
 /**
  * 
@@ -113,6 +115,33 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
             Query query = em.createNamedQuery("BC_COUNT_PERMISSIONS_FOR_USER_BY_TYPE_AND_CEILING_ENTITY");
             query.setParameter("adminUser", adminUser);
             query.setParameter("type", permissionType.getType());
+            query.setParameter("ceilingEntity", testClass);
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
+
+            Long count = (Long) query.getSingleResult();
+            if (count > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(String ceilingEntityFullyQualifiedName) {
+        //the ceiling may be an impl, which will fail because entity permission is normally specified for the interface
+        //try the passed in ceiling first, but also try an interfaces implemented
+        List<String> testClasses = new ArrayList<String>();
+        testClasses.add(ceilingEntityFullyQualifiedName);
+        try {
+            for (Object interfaze : ClassUtils.getAllInterfaces(Class.forName(ceilingEntityFullyQualifiedName))) {
+                testClasses.add(((Class<?>) interfaze).getName());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        for (String testClass : testClasses) {
+            Query query = em.createNamedQuery("BC_COUNT_BY_PERMISSION_AND_CEILING_ENTITY");
+            query.setParameter("permissionNames", Arrays.asList(AdminSecurityService.DEFAULT_PERMISSIONS));
             query.setParameter("ceilingEntity", testClass);
             query.setHint(QueryHints.HINT_CACHEABLE, true);
 

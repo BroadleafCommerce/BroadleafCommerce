@@ -19,6 +19,13 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service.navigation;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -32,13 +39,8 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * This service is used to build the left hand navigation for the admin
@@ -148,6 +150,14 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
             if (!CollectionUtils.isEmpty(adminUser.getAllPermissions())) {
                 for (AdminPermission permission : adminUser.getAllPermissions()){
                     if (checkPermissions(authorizedPermissions, permission)) {
+                        response = true;
+                        break checkAuth;
+                    }
+                }
+            }
+            for (String defaultPermission : AdminSecurityService.DEFAULT_PERMISSIONS) {
+                for (AdminPermission authorizedPermission : authorizedPermissions) {
+                    if (authorizedPermission.getName().equals(defaultPermission)) {
                         response = true;
                         break checkAuth;
                     }

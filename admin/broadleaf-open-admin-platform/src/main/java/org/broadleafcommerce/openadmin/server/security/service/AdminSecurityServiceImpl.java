@@ -80,7 +80,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     protected ForgotPasswordSecurityTokenDao forgotPasswordSecurityTokenDao;
 
     @Resource(name = "blAdminPermissionDao")
-    AdminPermissionDao adminPermissionDao;
+    protected AdminPermissionDao adminPermissionDao;
 
     @Resource(name="blPasswordEncoder")
     protected PasswordEncoder passwordEncoder;
@@ -206,7 +206,11 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     @Override
     public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
-        return adminPermissionDao.isUserQualifiedForOperationOnCeilingEntity(adminUser, permissionType, ceilingEntityFullyQualifiedName);
+        boolean response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntity(adminUser, permissionType, ceilingEntityFullyQualifiedName);
+        if (!response) {
+            response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(ceilingEntityFullyQualifiedName);
+        }
+        return response;
     }
 
     @Override

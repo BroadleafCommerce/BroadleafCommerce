@@ -19,11 +19,11 @@
  */
 package org.broadleafcommerce.openadmin.server.security.dao;
 
+import java.util.List;
+
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
-
-import java.util.List;
 
 /**
  * 
@@ -38,6 +38,7 @@ public interface AdminPermissionDao {
     public AdminPermission saveAdminPermission(AdminPermission permission);
     public void deleteAdminPermission(AdminPermission permission);
     public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName);
+    public boolean isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(String ceilingEntityFullyQualifiedName);
     public boolean doesOperationExistForCeilingEntity(PermissionType permissionType, String ceilingEntityFullyQualifiedName);
 
 }
