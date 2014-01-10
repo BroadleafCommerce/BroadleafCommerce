@@ -20,6 +20,7 @@
 package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
 
