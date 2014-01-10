@@ -50,13 +50,6 @@
         </sec:authentication-provider>
     </sec:authentication-manager>
 
-    <sec:jdbc-user-service 
-            data-source-ref="blDS"
-            id="blUserDetailsService" 
-            users-by-username-query="select user_name,password,true from blc_customer where user_name=?"
-            authorities-by-username-query="select c.user_name,r.role_name from blc_customer c join blc_customer_role cr on c.customer_id = cr.customer_id join blc_role r on cr.role_id = r.role_id where user_name=?"
-     /> 
-                               
     <bean id="blCustomerStateFilter" class="org.broadleafcommerce.profile.web.core.security.CustomerStateFilter"/>
                                                                           
 </beans>

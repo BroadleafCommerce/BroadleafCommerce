@@ -19,69 +19,64 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
+import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+/**
+ * This class is being un-deprecated because we want the query for the customer to happen through Hibernate instead of
+ * through raw JDBC, which is the case when <sec:jdbc-user-service /> is used. We need the query to go through Hibernate
+ * so that we are able to attach the necessary filters in certain circumstances.
+ * 
+ * @author Andre Azzolini (apazzolini)
+ */
 @Service("blUserDetailsService")
-@Deprecated
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Resource(name="blCustomerService")
+    @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 
-    @Resource(name="blRoleService")
+    @Resource(name = "blRoleService")
     protected RoleService roleService;
 
-    protected boolean forcePasswordChange = false;
-
-    public void setForcePasswordChange(boolean forcePasswordChange) {
-        this.forcePasswordChange = forcePasswordChange;
-    }
-
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        org.broadleafcommerce.profile.core.domain.Customer customer = customerService.readCustomerByUsername(username);
+        Customer customer = customerService.readCustomerByUsername(username);
         if (customer == null) {
             throw new UsernameNotFoundException("The customer was not found");
         }
 
-        User returnUser = null;
-
-        boolean pwChangeRequired = customer.isPasswordChangeRequired();
         List<GrantedAuthority> grantedAuthorities = createGrantedAuthorities(roleService.findCustomerRolesByCustomerId(customer.getId()));
-        if (pwChangeRequired) {
-            if (forcePasswordChange) {
-                returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, grantedAuthorities);
-            } else {
-                grantedAuthorities.add(new GrantedAuthorityImpl("ROLE_PASSWORD_CHANGE_REQUIRED"));
-                returnUser = new User(username, customer.getPassword(), true, true, true, true, grantedAuthorities);
-            }
-        } else {
-            returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, grantedAuthorities);
-        }
-        return returnUser;
-    }
-
-    public void setCustomerService(CustomerService customerService) {
-        this.customerService = customerService;
+        return new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, grantedAuthorities);
     }
 
     protected List<GrantedAuthority> createGrantedAuthorities(List<CustomerRole> customerRoles) {
+        boolean roleUserFound = false;
+
         List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-        grantedAuthorities.add(new GrantedAuthorityImpl("ROLE_USER"));
         for (CustomerRole role : customerRoles) {
-            grantedAuthorities.add(new GrantedAuthorityImpl(role.getRoleName()));
+            grantedAuthorities.add(new SimpleGrantedAuthority(role.getRoleName()));
+            if (role.getRoleName().equals("ROLE_USER")) {
+                roleUserFound = true;
+            }
         }
+
+        if (!roleUserFound) {
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+
         return grantedAuthorities;
     }
+
 }
