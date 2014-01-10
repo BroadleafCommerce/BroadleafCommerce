@@ -66,7 +66,7 @@
                         <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
                     </div>
 
-                    <span th:if="${field.help}" class="field-help" th:text="#{${field.help}}" />
+                    <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
 
                 </div>
             </fieldset>
