@@ -361,6 +361,20 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
             if (section.isPopulated()) {
                 section.setState(CheckoutSectionStateType.SAVED);
             }
+
+            //Custom Logic to handle a state where there may have been an error on the Payment Gateway
+            //and the customer is booted back to the checkout page and will have to re-enter their billing address
+            //and payment information as there may have been an error on either. Since, to handle all gateways with the same layout
+            //we are breaking the Billing Address Form from the Payment Info Form, to serve a better UX, we will have hide the payment info as
+            //the customer will need to re-enter their billing address to try again.
+            //{@see DefaultPaymentGatewayCheckoutService where payments are invalidated on an unsuccessful transaction}
+            if (CheckoutSectionViewType.PAYMENT_INFO.equals(section.getView())) {
+                if (showBillingInfoSection && !billingPopulated){
+                    section.setState(CheckoutSectionStateType.INACTIVE);
+                    section.setHelpMessage(billingInfoHelpMessage);
+                }
+            }
+
             //Finally, if the edit button is explicitly clicked, set the section to Form View
             BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
             HttpServletRequest request = blcContext.getRequest();
@@ -430,7 +444,8 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         }
 
         for (OrderPayment payment : cart.getPayments()) {
-            if (PaymentType.CREDIT_CARD.equals(payment.getType()) &&
+            if (payment.isActive() &&
+                    PaymentType.CREDIT_CARD.equals(payment.getType()) &&
                     payment.getBillingAddress() != null) {
                 return true;
             }

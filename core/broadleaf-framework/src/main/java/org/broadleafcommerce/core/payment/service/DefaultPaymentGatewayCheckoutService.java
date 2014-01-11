@@ -223,7 +223,14 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         payment = orderPaymentService.save(payment);
         transaction.setOrderPayment(payment);
         payment.addTransaction(transaction);
-        orderService.addPaymentToOrder(order, payment, null);
+
+        if (transaction.getSuccess()) {
+            orderService.addPaymentToOrder(order, payment, null);
+        } else {
+            // We will have to mark the entire payment as invalid and boot the user to re-enter their
+            // billing info and payment information as there may be an error either with the billing address/or credit card
+            markPaymentAsInvalid(payment.getId());
+        }
         
         return payment.getId();
     }

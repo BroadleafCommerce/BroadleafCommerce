@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayWebResponsePrintService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayWebResponseService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
@@ -35,6 +36,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -66,17 +68,14 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
     @Qualifier("blPaymentGatewayCheckoutService")
     protected PaymentGatewayCheckoutService paymentGatewayCheckoutService;
 
+    @Resource(name = "blPaymentGatewayWebResponsePrintService")
+    protected PaymentGatewayWebResponsePrintService webResponsePrintService;
+
     public Long applyPaymentToOrder(PaymentResponseDTO responseDTO) throws IllegalArgumentException {
         if (paymentGatewayCheckoutService != null) {
             return paymentGatewayCheckoutService.applyPaymentToOrder(responseDTO, getConfiguration());
         }
         return null;
-    }
-
-    public void markPaymentAsInvalid(Long orderPaymentId) {
-        if (paymentGatewayCheckoutService != null) {
-            paymentGatewayCheckoutService.markPaymentAsInvalid(orderPaymentId);
-        }
     }
 
     public String initiateCheckout(Long orderId) throws Exception {
@@ -108,7 +107,6 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
      *     show review page;
      * } catch (Exception e) {
      *     notify admin user of failure
-     *     mark payment as invalid
      *     handle processing exception
      * }
      *
@@ -165,20 +163,12 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
         } catch (Exception e) {
 
             if (LOG.isTraceEnabled()) {
+                LOG.trace("HTTPRequest - " + webResponsePrintService.printRequest(request)) ;
+
                 LOG.trace("An exception was caught either from processing the response and applying the payment to " +
                         "the order, or an activity in the checkout workflow threw an exception. Attempting to " +
                         "mark the payment as invalid and delegating to the payment module to handle any other " +
-                        "exception processing. The error caught was: " + e.getMessage());
-            }
-
-            if (orderPaymentId != null) {
-
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("The Payment with ID: [" + orderPaymentId + "] has been applied to the order." +
-                            " Attempting to mark it as invalid and continue processing the exception.");
-                }
-
-                markPaymentAsInvalid(orderPaymentId);
+                        "exception processing. The error caught was: " + e.getMessage() + " : " + e.toString());
             }
 
             handleProcessingException(e, redirectAttributes);
