@@ -20,13 +20,14 @@
 
 package org.broadleafcommerce.openadmin.web.form.component;
 
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.openadmin.web.form.entity.Field;
 
 public class ListGridRecord {
 
@@ -37,6 +38,7 @@ public class ListGridRecord {
     protected Boolean isDirty;
     protected Boolean isError;
     protected String errorKey;
+    protected ListGridRecordIcon icon;
 
     /**
      * Convenience map keyed by the field name. Used to guarantee field ordering with header fields within a ListGrid
@@ -172,5 +174,33 @@ public class ListGridRecord {
     public void setErrorKey(String errorKey) {
         this.errorKey = errorKey;
     }
+    
+    public ListGridRecordIcon getIcon() {
+        if (icon != null) {
+            return icon;
+        }
+        
+        if (getIsError()) {
+            return new ListGridRecordIcon()
+                .withCssClass("icon-exclamation-sign")
+                .withMessage(BLCMessageUtils.getMessage(getErrorKey()));
+        }
 
+        if (getIsDirty()) {
+            return new ListGridRecordIcon()
+                .withCssClass("icon-pencil")
+                .withMessage(BLCMessageUtils.getMessage("listgrid.record.edited"));
+        }
+        
+        return null;
+    }
+    
+    public void setIcon(ListGridRecordIcon icon) {
+        this.icon = icon;
+    }
+    
+    public Boolean getHasIcon() {
+        return icon != null || getIsError() || getIsDirty();
+    }
+    
 }
