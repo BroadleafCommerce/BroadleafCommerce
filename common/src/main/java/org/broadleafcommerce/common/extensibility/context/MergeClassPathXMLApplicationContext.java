@@ -21,8 +21,6 @@ import org.broadleafcommerce.common.extensibility.context.merge.exceptions.Merge
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.core.io.Resource;
 
 /**
  * Standalone XML application context, taking the locations of one or more
@@ -42,12 +40,10 @@ import org.springframework.core.io.Resource;
  * @author jfischer
  *
  */
-public class MergeClassPathXMLApplicationContext extends AbstractXmlApplicationContext {
+public class MergeClassPathXMLApplicationContext extends AbstractMergeXMLApplicationContext {
 
-    protected Resource[] configResources;
-    
-    protected Resource[] getConfigResources() {
-        return this.configResources;
+    public MergeClassPathXMLApplicationContext(ApplicationContext parent) {
+        super(parent);
     }
     
     /**
@@ -78,16 +74,16 @@ public class MergeClassPathXMLApplicationContext extends AbstractXmlApplicationC
      * @throws BeansException
      */
     public MergeClassPathXMLApplicationContext(String[] sourceLocations, String[] patchLocations, ApplicationContext parent) throws BeansException {
-        super(parent);
+        this(parent);
         
         ResourceInputStream[] sources = new ResourceInputStream[sourceLocations.length];
         for (int j=0;j<sourceLocations.length;j++){
-            sources[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(sourceLocations[j]), sourceLocations[j]);
+            sources[j] = new ResourceInputStream(getClassLoader(parent).getResourceAsStream(sourceLocations[j]), sourceLocations[j]);
         }
         
         ResourceInputStream[] patches = new ResourceInputStream[patchLocations.length];
         for (int j=0;j<patches.length;j++){
-            patches[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(patchLocations[j]), patchLocations[j]);
+            patches[j] = new ResourceInputStream(getClassLoader(parent).getResourceAsStream(patchLocations[j]), patchLocations[j]);
         }
 
         ImportProcessor importProcessor = new ImportProcessor(this);
@@ -101,5 +97,13 @@ public class MergeClassPathXMLApplicationContext extends AbstractXmlApplicationC
         this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);
         refresh();
     }
-
+    
+    /**
+     * This could be advantageous for subclasses to override in order to utilize the parent application context. By default,
+     * this utilizes the class loader for the current class.
+     */
+    protected ClassLoader getClassLoader(ApplicationContext parent) {
+        return MergeClassPathXMLApplicationContext.class.getClassLoader();
+    }
+    
 }
