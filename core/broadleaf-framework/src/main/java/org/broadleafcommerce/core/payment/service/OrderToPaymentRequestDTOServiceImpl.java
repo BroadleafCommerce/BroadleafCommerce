@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -32,9 +33,10 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -43,6 +45,9 @@ import java.util.Map;
 public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentRequestDTOService {
 
     public static final String ZERO_TOTAL = "0";
+    
+    @Resource(name = "blFulfillmentGroupService")
+    protected FulfillmentGroupService fgService;
 
     @Override
     public PaymentRequestDTO translateOrder(Order order) {
@@ -129,11 +134,16 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
     }
 
+    /**
+     * Uses the first shippable fulfillment group to populate the {@link PaymentRequestDTO#shipTo()} object
+     * @param order the {@link Order} to get data from
+     * @param requestDTO the {@link PaymentRequestDTO} that should be populated
+     * @see {@link FulfillmentGroupService#getFirstShippableFulfillmentGroup(Order)}
+     */
     protected void populateShipTo(Order order, PaymentRequestDTO requestDTO) {
         List<FulfillmentGroup> fgs = order.getFulfillmentGroups();
         if (fgs != null && fgs.size() > 0) {
-            // TODO: Absolutely cannot assume this
-            FulfillmentGroup defaultFg = fgs.get(0);
+            FulfillmentGroup defaultFg = fgService.getFirstShippableFulfillmentGroup(order);
             if (defaultFg.getAddress() != null) {
                 Address fgAddress = defaultFg.getAddress();
                 String stateAbbr = null;
