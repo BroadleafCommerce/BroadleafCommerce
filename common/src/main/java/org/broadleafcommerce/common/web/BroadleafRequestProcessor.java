@@ -19,12 +19,6 @@
  */
 package org.broadleafcommerce.common.web;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,7 +33,16 @@ import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 
@@ -52,6 +55,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     protected final Log LOG = LogFactory.getLog(getClass());
 
     private static String REQUEST_DTO_PARAM_NAME = BroadleafRequestFilter.REQUEST_DTO_PARAM_NAME;
+    public static String REPROCESS_PARAM_NAME = "REPROCESS_BLC_REQUEST";
 
     @Resource(name = "blSiteResolver")
     protected BroadleafSiteResolver siteResolver;
@@ -102,6 +106,28 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         }
 
         SandBox currentSandbox = sandboxResolver.resolveSandBox(request, site);
+        
+        // When a user elects to switch his sandbox, we want to invalidate the current session. We'll then redirect the 
+        // user to the current URL so that the configured filters trigger again appropriately.
+        Boolean reprocessRequest = (Boolean) request.getAttribute(BroadleafRequestProcessor.REPROCESS_PARAM_NAME, WebRequest.SCOPE_REQUEST);
+        if (reprocessRequest != null && reprocessRequest) {
+            if (request instanceof ServletWebRequest) {
+                HttpServletRequest hsr = ((ServletWebRequest) request).getRequest();
+                hsr.getSession(false).invalidate();
+                StringBuffer url = hsr.getRequestURL();
+                if (hsr.getQueryString() != null) {
+                    url.append('?').append(hsr.getQueryString());
+                }
+                try {
+                    ((ServletWebRequest) request).getResponse().sendRedirect(url.toString());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return;
+            }
+        }
+        
+        
         if (currentSandbox != null) {
             SandBoxContext previewSandBoxContext = new SandBoxContext();
             previewSandBoxContext.setSandBoxId(currentSandbox.getId());

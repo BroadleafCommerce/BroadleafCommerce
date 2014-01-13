@@ -98,6 +98,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
     
     @Override
     public SandBox resolveSandBox(WebRequest request, Site site) {
+        Long previousSandBoxId = (Long) request.getAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
         SandBox currentSandbox = null;
         if (!sandBoxPreviewEnabled) {
             if (LOG.isTraceEnabled()) {
@@ -119,6 +120,10 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
                 }
             }
             if (sandboxId != null) {
+                if (previousSandBoxId != null && !previousSandBoxId.equals(sandboxId)) {
+                    request.setAttribute(BroadleafRequestProcessor.REPROCESS_PARAM_NAME, true, WebRequest.SCOPE_REQUEST);
+                }
+
                 currentSandbox = sandBoxDao.retrieve(sandboxId);
                 request.setAttribute(SANDBOX_VAR, currentSandbox, WebRequest.SCOPE_REQUEST);
                 if (currentSandbox != null && !SandBoxType.PRODUCTION.equals(currentSandbox.getSandBoxType())) {
