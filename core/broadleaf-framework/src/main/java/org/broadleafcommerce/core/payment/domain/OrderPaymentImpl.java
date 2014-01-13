@@ -37,6 +37,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
@@ -93,6 +94,16 @@ import javax.persistence.Table;
         @AdminPresentationMergeOverride(name = "billingAddress.isBusiness", mergeEntries = {
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
                         booleanOverrideValue = true)
+        }),
+        @AdminPresentationMergeOverride(name = "archiveStatus.archived", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                        overrideValue = "VISIBLE_ALL"),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT,
+                        booleanOverrideValue = true),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
+                        intOverrideValue = 4000),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER,
+                        intOverrideValue = 4000)
         })
     }
 )

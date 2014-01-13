@@ -220,9 +220,9 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         // be an AUTHORIZE transaction, for instance)
         //Persist the order payment as well as its transaction
         payment.setOrder(order);
-        payment = orderPaymentService.save(payment);
         transaction.setOrderPayment(payment);
         payment.addTransaction(transaction);
+        payment = orderPaymentService.save(payment);
 
         if (transaction.getSuccess()) {
             orderService.addPaymentToOrder(order, payment, null);
