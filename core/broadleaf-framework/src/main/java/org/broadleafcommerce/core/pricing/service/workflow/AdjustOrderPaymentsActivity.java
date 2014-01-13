@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
@@ -40,7 +41,29 @@ import java.math.BigDecimal;
  * we complete checkout and confirm the payment with PayPal again.
  *
  * For this default implementation,
- * the remaining difference is added to the the Order Payment of PaymentType.THIRD_PARTY_ACCOUNT.
+ * This algorithm will add up all the active applied payments to the order that are not of type
+ * 'UNCONFIRMED' and payment type 'THIRD_PARTY_ACCOUNT'
+ * The order.getTotal() minus all the applied payments that are NOT Unconfirmed and of a Third Party account
+ * will then be set as the new amount that should be processed by the Third Party Account.
+ *
+ * Example:
+ * 1) Initial Checkout Step
+ * Order - Total = $30
+ * - Order Payment (PayPal Express Checkout) - [Unconfirmed] $10
+ * - Gift Card - [Unconfirmed] $10
+ * - Customer Credit - [Unconfirmed] $10
+ *
+ * 2) Shipping Method picked and changes the order total
+ * Order - Total = $35
+ * - Order Payment (PayPal Express Checkout) - [Unconfirmed] $10
+ * - Gift Card - [Unconfirmed] $10
+ * - Customer Credit - [Unconfirmed] $10
+ *
+ * 3) Adjust Order Payment Activity ($35 - ($10 + $10)) = $15
+ * Order - Total = $35
+ * - Order Payment (PayPal Express Checkout) - [Unconfirmed] $15
+ * - Gift Card - [Unconfirmed] $10
+ * - Customer Credit - [Unconfirmed] $10
  *
  * @author Elbert Bautista (elbertbautista)
  */
@@ -50,21 +73,24 @@ public class AdjustOrderPaymentsActivity extends BaseActivity<ProcessContext<Ord
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
 
-        Money difference = new Money(BigDecimal.ZERO);
-        // Add authorize and authorize_and_capture; there should only be one or the other in the payment
-        Money paymentSum = new Money(BigDecimal.ZERO);
+        OrderPayment unconfirmedThirdParty = null;
+        Money appliedPaymentsWithoutThirdParty = Money.ZERO;
         for (OrderPayment payment : order.getPayments()) {
-            paymentSum = paymentSum.add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE))
-                    .add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE));
+            PaymentTransaction initialTransaction = payment.getInitialTransaction();
+
+            if (initialTransaction != null &&
+                    PaymentTransactionType.UNCONFIRMED.equals(initialTransaction.getType()) &&
+                    PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType()))  {
+                unconfirmedThirdParty = payment;
+            } else if (payment.isActive() && payment.getAmount() != null) {
+                appliedPaymentsWithoutThirdParty.add(payment.getAmount());
+            }
+
         }
 
-        if (!paymentSum.equals(order.getTotal())) {
-            difference = order.getTotal().subtract(paymentSum);
-            for (OrderPayment payment: order.getPayments()) {
-                if (PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType())) {
-                    payment.setAmount(payment.getAmount().add(difference));
-                }
-            }
+        if (unconfirmedThirdParty != null) {
+            Money difference = order.getTotal().subtract(appliedPaymentsWithoutThirdParty);
+            unconfirmedThirdParty.setAmount(difference);
         }
 
         context.setSeedData(order);

@@ -168,7 +168,8 @@ public interface OrderPayment extends Serializable, Status {
 
     /**
      * Returns the initial transaction for this order payment. This would either be an {@link PaymentTransactionType#AUTHORIZE}
-     * or {@link PaymentTransactionType#AUTHORIZE_AND_CAPTURE}. Implementation-wise this would
+     * or {@link PaymentTransactionType#AUTHORIZE_AND_CAPTURE} or {@link PaymentTransactionType#UNCONFIRMED}.
+     * Implementation-wise this would
      * be any PaymentTransaction whose parentTransaction is NULL.
      *
      * @return the initial transaction for this order payment or null if there isn't any
