@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -90,7 +91,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
     @Override
     public Long applyPaymentToOrder(PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config) {
         
-        //Payments can ONLY be parsed into PaymentInfos if they are 'valid'
+        //Payments can ONLY be parsed into Order Payments if they are 'valid'
         if (!responseDTO.isValid()) {
             throw new IllegalArgumentException("Invalid payment responses cannot be parsed into the order payment domain");
         }
@@ -102,7 +103,9 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         Long orderId = Long.parseLong(responseDTO.getOrderId());
         Order order = orderService.findOrderById(orderId);
         
-        //TODO: ensure that the order has not already been checked out before applying payments to it
+        if (!OrderStatus.IN_PROCESS.equals(order.getStatus())) {
+            throw new IllegalArgumentException("Cannont apply another payment to an Order that is not IN_PROCESS");
+        }
         
         Customer customer = order.getCustomer();
         if (customer.isAnonymous()) {
@@ -205,16 +208,6 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             transaction.getAdditionalFields().put(PaymentAdditionalFieldType.LAST_FOUR.getType(),
                     responseDTO.getCreditCard().getCreditCardLastFour());
         }
-
-        //TODO: handle payments that have to be confirmed. Scenario:
-        /*
-         * 1. User goes through checkout
-         * 2. User submits payment to gateway which supports a 'confirmation
-         * 3. User is on review order page
-         * 4. User goes back and makes modifications to their cart
-         * 5. The user now has an order payment in the system which has been unconfirmed and is really in this weird, invalid
-         *    state.
-         */
         
         //TODO: validate that this particular type of transaction can be added to the payment (there might already
         // be an AUTHORIZE transaction, for instance)
@@ -229,10 +222,24 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         } else {
             // We will have to mark the entire payment as invalid and boot the user to re-enter their
             // billing info and payment information as there may be an error either with the billing address/or credit card
-            markPaymentAsInvalid(payment.getId());
+            handleUnsuccessfulTransaction(payment);
         }
         
         return payment.getId();
+    }
+
+    /**
+     * This default implementation will mark the entire payment as invalid and boot the user to re-enter their
+     * billing info and payment information as there may be an error with either the billing address or credit card.
+     * This is the safest method, because depending on the implementation of the Gateway, we may not know exactly where
+     * the error occurred (e.g. Address Verification enabled, etc...) So, we will assume that the error invalidates
+     * the entire Order Payment, and the customer will have to re-enter their billing and credit card information to be
+     * processed again.
+     *
+     * @param payment
+     */
+    protected void handleUnsuccessfulTransaction(OrderPayment payment) {
+        markPaymentAsInvalid(payment.getId());
     }
 
     @Override
