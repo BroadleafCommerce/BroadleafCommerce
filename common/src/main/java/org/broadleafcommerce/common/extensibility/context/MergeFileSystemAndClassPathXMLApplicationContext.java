@@ -24,8 +24,6 @@ import org.broadleafcommerce.common.extensibility.context.merge.exceptions.Merge
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.core.io.Resource;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -52,27 +50,25 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class MergeFileSystemAndClassPathXMLApplicationContext extends AbstractXmlApplicationContext {
+public class MergeFileSystemAndClassPathXMLApplicationContext extends AbstractMergeXMLApplicationContext {
 
-    protected Resource[] configResources;
-
-    protected Resource[] getConfigResources() {
-        return this.configResources;
+    public MergeFileSystemAndClassPathXMLApplicationContext(ApplicationContext parent) {
+        super(parent);
     }
-
+    
     public MergeFileSystemAndClassPathXMLApplicationContext(String[] classPathLocations, String[] fileSystemLocations) throws BeansException {
         this(classPathLocations, fileSystemLocations, null);
     }
 
     public MergeFileSystemAndClassPathXMLApplicationContext(LinkedHashMap<String, ResourceType> locations, ApplicationContext parent) throws BeansException {
-        super(parent);
+        this(parent);
 
         ResourceInputStream[] resources = new ResourceInputStream[locations.size()];
         int j = 0;
         for (Map.Entry<String, ResourceType> entry : locations.entrySet()) {
             switch (entry.getValue()) {
                 case CLASSPATH:
-                    resources[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(entry.getKey()), entry.getKey());
+                    resources[j] = new ResourceInputStream(getClassLoader(parent).getResourceAsStream(entry.getKey()), entry.getKey());
                     break;
                 case FILESYSTEM:
                     try {
@@ -98,14 +94,14 @@ public class MergeFileSystemAndClassPathXMLApplicationContext extends AbstractXm
     }
 
     public MergeFileSystemAndClassPathXMLApplicationContext(String[] classPathLocations, String[] fileSystemLocations, ApplicationContext parent) throws BeansException {
-        super(parent);
+        this(parent);
 
         ResourceInputStream[] classPathSources;
         ResourceInputStream[] fileSystemSources;
         try {
             classPathSources = new ResourceInputStream[classPathLocations.length];
             for (int j=0;j<classPathLocations.length;j++){
-                classPathSources[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(classPathLocations[j]), classPathLocations[j]);
+                classPathSources[j] = new ResourceInputStream(getClassLoader(parent).getResourceAsStream(classPathLocations[j]), classPathLocations[j]);
             }
 
             fileSystemSources = new ResourceInputStream[fileSystemLocations.length];
@@ -127,6 +123,14 @@ public class MergeFileSystemAndClassPathXMLApplicationContext extends AbstractXm
 
         this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(classPathSources, fileSystemSources);
         refresh();
+    }
+    
+    /**
+     * This could be advantageous for subclasses to override in order to utilize the parent application context. By default,
+     * this utilizes the class loader for the current class.
+     */
+    protected ClassLoader getClassLoader(ApplicationContext parent) {
+        return MergeFileSystemAndClassPathXMLApplicationContext.class.getClassLoader();
     }
 
     public enum ResourceType {

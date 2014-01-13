@@ -24,8 +24,6 @@ import org.broadleafcommerce.common.extensibility.context.merge.exceptions.Merge
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.core.io.Resource;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -50,12 +48,10 @@ import java.io.FileNotFoundException;
  * @author jfischer
  *
  */
-public class MergeFileSystemXMLApplicationContext extends AbstractXmlApplicationContext {
+public class MergeFileSystemXMLApplicationContext extends AbstractMergeXMLApplicationContext {
 
-    protected Resource[] configResources;
-    
-    protected Resource[] getConfigResources() {
-        return this.configResources;
+    public MergeFileSystemXMLApplicationContext(ApplicationContext parent) {
+        super(parent);
     }
     
     /**
@@ -86,7 +82,7 @@ public class MergeFileSystemXMLApplicationContext extends AbstractXmlApplication
      * @throws BeansException
      */
     public MergeFileSystemXMLApplicationContext(String[] sourceLocations, String[] patchLocations, ApplicationContext parent) throws BeansException {
-        super(parent);
+        this(parent);
         
         ResourceInputStream[] sources;
         ResourceInputStream[] patches;
