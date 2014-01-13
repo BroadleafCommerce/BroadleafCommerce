@@ -45,6 +45,7 @@ public class ListGridAction implements Cloneable {
     protected Boolean forListGridReadOnly = false;
     protected String actionUrlOverride = null;
     protected Boolean allCapable = false;
+    protected Boolean singleActionOnly = false;
     
     public ListGridAction(String actionId) {
         this.actionId = actionId;
@@ -103,9 +104,17 @@ public class ListGridAction implements Cloneable {
         setAllCapable(allCapable);
         return this;
     }
+
+    /**
+     * @see {@link #setSingleActionOnly(Boolean)}
+     */
+    public ListGridAction withSingleActionOnly(Boolean singleActionOnly) {
+        setSingleActionOnly(singleActionOnly);
+        return this;
+    }
     
     public String getButtonClass() {
-        return buttonClass + (allCapable ? " all-capable" : "");
+        return buttonClass + (allCapable ? " all-capable" : "") + (singleActionOnly ? " single-action-only" : "");
     }
 
     public Boolean getForListGridReadOnly() {
@@ -217,6 +226,24 @@ public class ListGridAction implements Cloneable {
     public void setAllCapable(Boolean allCapable) {
         this.allCapable = allCapable;
     }
+    
+    /**
+     * @return whether or not this action can be performed only on a single item, regardless of whether the list grid
+     * is multi-select capable or not.
+     */
+    public Boolean getSingleActionOnly() {
+        return singleActionOnly;
+    }
+
+    /**
+     * Sets where or not this action can only be performed on a single item. This is used to override multi-select
+     * list grids for certain actions.
+     * 
+     * @param singleActionOnly
+     */
+    public void setSingleActionOnly(Boolean singleActionOnly) {
+        this.singleActionOnly = singleActionOnly;
+    }
 
     @Override
     public ListGridAction clone() {
@@ -229,6 +256,7 @@ public class ListGridAction implements Cloneable {
         cloned.allCapable = allCapable;
         cloned.actionId = actionId;
         cloned.actionUrlOverride = actionUrlOverride;
+        cloned.singleActionOnly = singleActionOnly;
         return cloned;
     }
 }

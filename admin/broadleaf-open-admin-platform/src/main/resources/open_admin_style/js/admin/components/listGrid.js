@@ -128,8 +128,8 @@
         },
         
         updateToolbarRowActionButtons : function($listGridContainer) {
-            var hasSelected = $listGridContainer.find('tr.selected').length > 0;
-            if (hasSelected) {
+            var numSelected = $listGridContainer.find('tr.selected').length;
+            if (numSelected) {
                 $listGridContainer.find('button.row-action').removeAttr('disabled');
             } else {
                 $listGridContainer.find('button.row-action').attr('disabled', 'disabled');
@@ -137,6 +137,10 @@
             
             if (!$listGridContainer.find('td.list-grid-no-results').length) {
                 $listGridContainer.find('button.row-action.all-capable').removeAttr('disabled');
+            }
+            
+            if (numSelected > 1) {
+                $listGridContainer.find('button.row-action.single-action-only').attr('disabled', 'disabled');
             }
         },
         
