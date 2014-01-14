@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
-import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.BroadleafFileService;
@@ -32,6 +31,7 @@ import org.broadleafcommerce.common.file.service.BroadleafFileUtils;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
 import org.springframework.stereotype.Service;
@@ -60,13 +60,10 @@ public class SiteMapServiceImpl implements SiteMapService {
 
     protected static final Log LOG = LogFactory.getLog(SiteMapServiceImpl.class);
 
-    @Resource(name = "blSystemPropertiesService")
-    protected SystemPropertiesService systemPropertiesService;
-
     protected Boolean gzipSiteMapFiles;
 
     protected boolean getGzipSiteMapFilesDefault() {
-        return systemPropertiesService.resolveBooleanSystemProperty("sitemap.gzip.files");
+        return BLCSystemProperty.resolveBooleanSystemProperty("sitemap.gzip.files");
     }
 
     protected Long siteMapTimeout = DateUtil.ONE_WEEK_MILLIS;

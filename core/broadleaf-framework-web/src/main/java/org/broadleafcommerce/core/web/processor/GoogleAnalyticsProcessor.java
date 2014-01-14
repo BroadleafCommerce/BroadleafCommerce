@@ -20,7 +20,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections.MapUtils;
-import org.broadleafcommerce.common.config.service.SystemPropertiesService;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -58,17 +58,14 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 
-    @Resource(name = "blSystemPropertiesService")
-    protected SystemPropertiesService systemPropertiesService;
-    
     protected String affiliation;
 
     protected String getWebPropertyId() {
-        return systemPropertiesService.resolveSystemProperty("googleAnalytics.webPropertyId");
+        return BLCSystemProperty.resolveSystemProperty("googleAnalytics.webPropertyId");
     }
 
     protected String getAffiliationDefault() {
-        return systemPropertiesService.resolveSystemProperty("googleAnalytics.affiliation");
+        return BLCSystemProperty.resolveSystemProperty("googleAnalytics.affiliation");
     }
     
     /**

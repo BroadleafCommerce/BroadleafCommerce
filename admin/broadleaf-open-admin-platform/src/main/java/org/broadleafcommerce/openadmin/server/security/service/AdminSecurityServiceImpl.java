@@ -23,13 +23,13 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.email.service.EmailService;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordUtils;
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminPermissionDao;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminRoleDao;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminUserDao;
@@ -108,16 +108,12 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Resource(name="blSendAdminUsernameEmailInfo")
     protected EmailInfo sendUsernameEmailInfo;
 
-    @Resource(name = "blSystemPropertiesService")
-    protected SystemPropertiesService systemPropertiesService;
-
-    
     protected int getTokenExpiredMinutes() {
-        return systemPropertiesService.resolveIntSystemProperty("tokenExpiredMinutes");
+        return BLCSystemProperty.resolveIntSystemProperty("tokenExpiredMinutes");
     }    
 
     protected String getResetPasswordURL() {
-        return systemPropertiesService.resolveSystemProperty("resetPasswordURL");
+        return BLCSystemProperty.resolveSystemProperty("resetPasswordURL");
     }
 
     @Override

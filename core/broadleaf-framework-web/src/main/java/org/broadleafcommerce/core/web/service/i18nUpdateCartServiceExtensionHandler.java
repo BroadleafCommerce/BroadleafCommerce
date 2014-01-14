@@ -21,9 +21,9 @@ package org.broadleafcommerce.core.web.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -48,11 +48,8 @@ public class i18nUpdateCartServiceExtensionHandler extends AbstractUpdateCartSer
 
     protected static final Log LOG = LogFactory.getLog(i18nUpdateCartServiceExtensionHandler.class);
 
-    @Resource(name = "blSystemPropertiesService")
-    protected SystemPropertiesService systemPropertiesService;
-
     protected boolean getClearCartOnLocaleSwitch() {
-        return systemPropertiesService.resolveBooleanSystemProperty("clearCartOnLocaleSwitch");
+        return BLCSystemProperty.resolveBooleanSystemProperty("clearCartOnLocaleSwitch");
     }
 
     @Resource(name = "blCatalogService")

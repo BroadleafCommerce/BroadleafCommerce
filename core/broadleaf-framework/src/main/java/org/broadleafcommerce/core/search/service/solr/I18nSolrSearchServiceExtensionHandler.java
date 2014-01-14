@@ -20,12 +20,12 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
@@ -62,11 +62,8 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
     @Resource(name = "blLocaleService")
     protected LocaleService localeService;
 
-    @Resource(name = "blSystemPropertiesService")
-    protected SystemPropertiesService systemPropertiesService;
-
     protected boolean getTranslationEnabled() {
-        return systemPropertiesService.resolveBooleanSystemProperty("i18n.translation.enabled");
+        return BLCSystemProperty.resolveBooleanSystemProperty("i18n.translation.enabled");
     }
 
     private static String ATTR_MAP = SolrIndexServiceImpl.ATTR_MAP;

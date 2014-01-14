@@ -21,7 +21,7 @@ package org.broadleafcommerce.core.web.catalog.taglib;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.config.service.SystemPropertiesService;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -33,7 +33,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.io.IOException;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
@@ -44,13 +43,10 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
     
     private static final Log LOG = LogFactory.getLog(GoogleAnalyticsTag.class);
 
-    @Resource(name = "blSystemPropertiesService")
-    protected SystemPropertiesService systemPropertiesService;
-    
     protected String webPropertyId;
     
     protected String getWebPropertyIdDefault() {
-        return systemPropertiesService.resolveSystemProperty("googleAnalytics.webPropertyId");
+        return BLCSystemProperty.resolveSystemProperty("googleAnalytics.webPropertyId");
     }
 
     private Order order;

@@ -20,7 +20,7 @@
 package org.broadleafcommerce.core.web.service;
 
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.config.service.SystemPropertiesService;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
@@ -32,21 +32,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 @Service("blSearchFacetDTOService")
 public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
     
-    @Resource(name = "blSystemPropertiesService")
-    protected SystemPropertiesService systemPropertiesService;
-    
     protected int getDefaultPageSize() {
-        return systemPropertiesService.resolveIntSystemProperty("web.defaultPageSize");
+        return BLCSystemProperty.resolveIntSystemProperty("web.defaultPageSize");
     }
 
     protected int getMaxPageSize() {
-        return systemPropertiesService.resolveIntSystemProperty("web.maxPageSize");
+        return BLCSystemProperty.resolveIntSystemProperty("web.maxPageSize");
     }
     
     @Override

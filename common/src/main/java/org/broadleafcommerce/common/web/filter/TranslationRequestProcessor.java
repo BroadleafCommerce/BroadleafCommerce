@@ -19,9 +19,9 @@
  */
 package org.broadleafcommerce.common.web.filter;
 
-import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
@@ -41,11 +41,8 @@ public class TranslationRequestProcessor extends AbstractBroadleafWebRequestProc
     @Resource(name = "blTranslationService")
     protected TranslationService translationService;
     
-    @Resource(name = "blSystemPropertiesService")
-    protected SystemPropertiesService systemPropertiesService;
-
     protected boolean getTranslationEnabled() {
-        return systemPropertiesService.resolveBooleanSystemProperty("i18n.translation.enabled");
+        return BLCSystemProperty.resolveBooleanSystemProperty("i18n.translation.enabled");
     }
 
     @Override
