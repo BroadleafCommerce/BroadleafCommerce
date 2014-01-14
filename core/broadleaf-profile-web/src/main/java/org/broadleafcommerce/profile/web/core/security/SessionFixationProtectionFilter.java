@@ -104,11 +104,8 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
 
     protected void abortUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         SecurityContextHolder.clearContext();
-
         cookieUtils.invalidateCookie(response, SessionFixationProtectionCookie.COOKIE_NAME);
-
-        cookieUtils.setCookieValue(response, "JSESSIONID", "-1", "/", 0, false);
-        
+        request.getSession().invalidate();
         response.sendRedirect("/"); 
     }
 

@@ -255,7 +255,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         try {
             fullUrl = URLDecoder.decode(fullUrl, "UTF-8");
             //strip out the jsessionid if it's there
-            fullUrl = fullUrl.replaceAll(";jsessionid=.*?(?=\\?|$)", "");
+            fullUrl = fullUrl.replaceAll("(?i);jsessionid.*?=.*?(?=\\?|$)", "");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Unsupported encoding to decode fullUrl", e);
         }
