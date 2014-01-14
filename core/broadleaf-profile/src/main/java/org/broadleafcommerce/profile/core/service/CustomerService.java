@@ -150,4 +150,13 @@ public interface CustomerService {
      */
     public Object getSalt(Customer customer);
     
+    /**
+     * Encodes the clear text parameter, using the customer as a potential Salt. Does not change the customer properties. 
+     * This method only encodes the password and returns the encoded result.
+     * @param clearText
+     * @param customer
+     * @return
+     */
+    public String encodePassword(String clearText, Customer customer);
+
 }

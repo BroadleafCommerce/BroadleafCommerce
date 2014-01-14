@@ -20,11 +20,14 @@
 package org.broadleafcommerce.core.web.controller.account.validator;
 
 import org.broadleafcommerce.common.security.util.PasswordChange;
+import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+
+import javax.annotation.Resource;
 
 @Component("blChangePasswordValidator")
 public class ChangePasswordValidator implements Validator {
@@ -32,6 +35,9 @@ public class ChangePasswordValidator implements Validator {
     public static final String DEFAULT_VALID_PASSWORD_REGEX = "[0-9A-Za-z]{4,15}";
 
     private String validPasswordRegex = DEFAULT_VALID_PASSWORD_REGEX;
+
+    @Resource(name = "blCustomerService")
+    protected CustomerService customerService;
 
     public void validate(PasswordChange passwordChange, Errors errors) {
 
@@ -45,7 +51,8 @@ public class ChangePasswordValidator implements Validator {
 
         if (!errors.hasErrors()) {
             //validate current password
-            if (!currentPassword.equals(CustomerState.getCustomer().getPassword())) {
+            String encryptedCurrentPassword = customerService.encodePassword(currentPassword, CustomerState.getCustomer());
+            if (!encryptedCurrentPassword.equals(CustomerState.getCustomer().getPassword())) {
                 errors.rejectValue("currentPassword", "currentPassword.invalid");
             }
             //password and confirm password fields must be equal

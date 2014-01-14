@@ -294,6 +294,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
     
     @Override
+    public String encodePassword(String clearText, Customer customer) {
+        return passwordEncoder.encodePassword(clearText, getSalt(customer));
+    }
+
+    @Override
     public String getSalt() {
         return salt;
     }
