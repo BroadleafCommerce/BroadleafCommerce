@@ -21,18 +21,19 @@ package org.broadleafcommerce.core.web.catalog.taglib;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Address;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.io.IOException;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
@@ -42,14 +43,28 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 public class GoogleAnalyticsTag extends SimpleTagSupport {
     
     private static final Log LOG = LogFactory.getLog(GoogleAnalyticsTag.class);
+
+    @Resource(name = "blSystemPropertiesService")
+    protected SystemPropertiesService systemPropertiesService;
     
-    @Value("${googleAnalytics.webPropertyId}")
-    private String webPropertyId;
+    protected String webPropertyId;
     
+    protected String getWebPropertyIdDefault() {
+        return systemPropertiesService.resolveSystemProperty("googleAnalytics.webPropertyId");
+    }
+
     private Order order;
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    public String getWebPropertyId() {
+        if (this.webPropertyId == null) {
+            return getWebPropertyIdDefault();
+        } else {
+            return this.webPropertyId;
+        }
     }
 
     public void setWebPropertyId(String webPropertyId) {
@@ -59,6 +74,7 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
+        String webPropertyId = getWebPropertyId();
         
         if (webPropertyId == null) {
             ServletContext sc = ((PageContext) getJspContext()).getServletContext();

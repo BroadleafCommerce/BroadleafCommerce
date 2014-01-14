@@ -19,20 +19,21 @@
  */
 package org.broadleafcommerce.common.config.service;
 
+import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
 import org.broadleafcommerce.common.config.dao.SystemPropertiesDao;
 import org.broadleafcommerce.common.config.domain.SystemProperty;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import javax.annotation.Resource;
 
 /**
- * To change this template use File | Settings | File Templates.
- * <p/>
- * User: Kelly Tisdell
- * Date: 6/25/12
+ * Service that retrieves property settings from the database.   If not set in 
+ * the DB then returns the value from property files.
+ *  
+ * @author bpolster
+ *
  */
 @Service("blSystemPropertiesService")
 public class SystemPropertiesServiceImpl implements SystemPropertiesService{
@@ -40,41 +41,60 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     @Resource(name="blSystemPropertiesDao")
     protected SystemPropertiesDao systemPropertiesDao;
 
+    @Resource(name = "blSystemPropertyServiceExtensionManager")
+    protected SystemPropertyServiceExtensionManager extensionManager;
+
+    @Autowired
+    protected RuntimeEnvironmentPropertiesManager propMgr;
+
     @Override
-    public String resolveSystemProperty(String name, String defaultValue) {
+    public String resolveSystemProperty(String name) {
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            extensionManager.getProxy().resolveProperty(name, holder);
+            if (holder.getResult() != null) {
+                if (holder.getResult() instanceof String) {
+                    return holder.getResult().toString();
+                } else if (holder.getResult() instanceof SystemProperty) {
+                    return ((SystemProperty) holder.getResult()).getValue();
+                }
+            }
+        }
+
         SystemProperty property = systemPropertiesDao.readSystemPropertyByName(name);
         if (property == null || property.getValue() == null) {
-            return defaultValue;
+            return propMgr.getProperty(name);
         } else {
             return property.getValue();
         }
     }
 
     @Override
-    @Transactional("blTransactionManager")
-    public SystemProperty saveSystemProperty(SystemProperty systemProperty) {
-        return systemPropertiesDao.saveSystemProperty(systemProperty);
+    public int resolveIntSystemProperty(String name) {
+        String systemProperty = resolveSystemProperty(name);
+        if (systemProperty == null) {
+            return 0;
+        }
+
+        return Integer.valueOf(systemProperty).intValue();
     }
 
     @Override
-    @Transactional("blTransactionManager")
-    public void deleteSystemProperty(SystemProperty systemProperty) {
-        systemPropertiesDao.deleteSystemProperty(systemProperty);
+    public boolean resolveBooleanSystemProperty(String name) {
+        String systemProperty = resolveSystemProperty(name);
+        if (systemProperty == null) {
+            return false;
+        }
+        return Boolean.valueOf(systemProperty).booleanValue();
     }
 
     @Override
-    public List<SystemProperty> findAllSystemProperties() {
-        return systemPropertiesDao.readAllSystemProperties();
-    }
+    public long resolveLongSystemProperty(String name) {
+        String systemProperty = resolveSystemProperty(name);
+        if (systemProperty == null) {
+            return 0l;
+        }
 
-    @Override
-    public SystemProperty findSystemPropertyByName(String name) {
-        return systemPropertiesDao.readSystemPropertyByName(name);
-    }
-
-    @Override
-    @Transactional("blTransactionManager")
-    public SystemProperty createNewSystemProperty() {
-        return systemPropertiesDao.createNewSystemProperty();
+        return Long.valueOf(systemProperty).longValue();
     }
 }

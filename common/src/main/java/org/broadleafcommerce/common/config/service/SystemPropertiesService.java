@@ -19,9 +19,6 @@
  */
 package org.broadleafcommerce.common.config.service;
 
-import org.broadleafcommerce.common.config.domain.SystemProperty;
-
-import java.util.List;
 
 /**
  * To change this template use File | Settings | File Templates.
@@ -32,27 +29,38 @@ import java.util.List;
 public interface SystemPropertiesService {
 
     /**
-     * Preferred method for looking up String properties.   The method will return the configured value or 
+     * Preferred method for looking up properties.   The method will return the configured value or 
      * if no override value is found, it will return the value passed in to the method as the default value.
      * 
      * @param name
-     * @param defaultValue
      * @return
      */
-    public String resolveSystemProperty(String name, String defaultValue);
-
-    public SystemProperty saveSystemProperty(SystemProperty systemProperty);
-
-    public void deleteSystemProperty(SystemProperty systemProperty);
-
-    public List<SystemProperty> findAllSystemProperties();
-
-    public SystemProperty findSystemPropertyByName(String name);
+    String resolveSystemProperty(String name);
 
     /**
-     * This method should not persist anything to the database. It should simply return the correct implementation of
-     * the SystemProperty interface.
+     * Resolves an int system property.  Returns 0 when no matching property
+     * is found.
+     * 
+     * @param name
      * @return
      */
-    public SystemProperty createNewSystemProperty();
+    int resolveIntSystemProperty(String name);
+
+    /**
+     * Resolves a boolean system property.   Returns false when no matching
+     * system property is found. 
+     * 
+     * @param name
+     * @return
+     */
+    boolean resolveBooleanSystemProperty(String name);
+
+    /**
+     * Resolves an long system property. Returns 0 when no matching property
+     * is found.
+     * @param name
+     * @return
+     */
+    long resolveLongSystemProperty(String name);
+
 }

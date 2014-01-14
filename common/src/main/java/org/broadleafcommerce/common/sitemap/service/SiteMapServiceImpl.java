@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.BroadleafFileService;
@@ -33,7 +34,6 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -60,8 +60,14 @@ public class SiteMapServiceImpl implements SiteMapService {
 
     protected static final Log LOG = LogFactory.getLog(SiteMapServiceImpl.class);
 
-    @Value("${gzip.site.map.files}")
-    protected boolean gzipSiteMapFiles = true;
+    @Resource(name = "blSystemPropertiesService")
+    protected SystemPropertiesService systemPropertiesService;
+
+    protected Boolean gzipSiteMapFiles;
+
+    protected boolean getGzipSiteMapFilesDefault() {
+        return systemPropertiesService.resolveBooleanSystemProperty("sitemap.gzip.files");
+    }
 
     protected Long siteMapTimeout = DateUtil.ONE_WEEK_MILLIS;
 
@@ -91,7 +97,7 @@ public class SiteMapServiceImpl implements SiteMapService {
         }
 
         FileWorkArea fileWorkArea = broadleafFileService.initializeWorkArea();
-        SiteMapBuilder siteMapBuilder = new SiteMapBuilder(smc, fileWorkArea, baseUrlResolver.getSiteBaseUrl(), gzipSiteMapFiles);
+        SiteMapBuilder siteMapBuilder = new SiteMapBuilder(smc, fileWorkArea, baseUrlResolver.getSiteBaseUrl(), getGzipSiteMapFiles());
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("File work area initalized with path " + fileWorkArea.getFilePathLocation());
@@ -115,7 +121,7 @@ public class SiteMapServiceImpl implements SiteMapService {
         }
 
         siteMapBuilder.persistSiteMap();
-        if (gzipSiteMapFiles) {
+        if (getGzipSiteMapFiles()) {
             gzipAndDeleteFiles(fileWorkArea, siteMapBuilder.getIndexedFileNames());
         }
 
@@ -249,11 +255,15 @@ public class SiteMapServiceImpl implements SiteMapService {
         this.siteMapTimeout = siteMapTimeout;
     }
 
-    public boolean isGzipSiteMapFiles() {
-        return gzipSiteMapFiles;
+    public void setGzipSiteMapFiles(Boolean gzipSiteMapFiles) {
+        this.gzipSiteMapFiles = gzipSiteMapFiles;
     }
 
-    public void setGzipSiteMapFiles(boolean gzipSiteMapFiles) {
-        this.gzipSiteMapFiles = gzipSiteMapFiles;
+    public boolean getGzipSiteMapFiles() {
+        if (this.gzipSiteMapFiles != null) {
+            return this.gzipSiteMapFiles.booleanValue();
+        } else {
+            return getGzipSiteMapFilesDefault();
+        }
     }
 }

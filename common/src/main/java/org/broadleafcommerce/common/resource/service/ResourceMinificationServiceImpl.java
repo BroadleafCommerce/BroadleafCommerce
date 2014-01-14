@@ -21,6 +21,7 @@ package org.broadleafcommerce.common.resource.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
+import javax.annotation.Resource;
 
 /**
  * @see ResourceMinificationService 
@@ -46,9 +48,13 @@ import java.io.OutputStreamWriter;
 public class ResourceMinificationServiceImpl implements ResourceMinificationService {
     protected static final Log LOG = LogFactory.getLog(ResourceMinificationServiceImpl.class);
     
-    @Value("${minify.enabled}")
-    protected boolean enabled;
+    @Resource(name = "blSystemPropertiesService")
+    protected SystemPropertiesService systemPropertiesService;
     
+    protected boolean getEnabled() {
+        return systemPropertiesService.resolveBooleanSystemProperty("minify.enabled");
+    }
+
     @Value("${minify.linebreak}")
     protected int linebreak;
     
@@ -66,7 +72,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     
     @Override
     public byte[] minify(String filename, byte[] bytes) {
-        if (!enabled) {
+        if (!getEnabled()) {
             return bytes;
         }
         

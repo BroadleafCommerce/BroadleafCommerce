@@ -23,6 +23,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.email.service.EmailService;
 import org.broadleafcommerce.common.email.service.info.EmailInfo;
 import org.broadleafcommerce.common.security.util.PasswordChange;
@@ -41,7 +42,6 @@ import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecu
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
@@ -108,12 +108,17 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Resource(name="blSendAdminUsernameEmailInfo")
     protected EmailInfo sendUsernameEmailInfo;
 
-    // Variables to set via external configuration.
-    @Value("${tokenExpiredMinutes}")
-    protected int tokenExpiredMinutes = 30;
+    @Resource(name = "blSystemPropertiesService")
+    protected SystemPropertiesService systemPropertiesService;
 
-    @Value("${resetPasswordURL}")
-    protected String resetPasswordURL;
+    
+    protected int getTokenExpiredMinutes() {
+        return systemPropertiesService.resolveIntSystemProperty("tokenExpiredMinutes");
+    }    
+
+    protected String getResetPasswordURL() {
+        return systemPropertiesService.resolveSystemProperty("resetPasswordURL");
+    }
 
     @Override
     @Transactional("blTransactionManager")
@@ -373,15 +378,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         long currentTimeInMillis = now.getTime();
         long tokenSaveTimeInMillis = fpst.getCreateDate().getTime();
         long minutesSinceSave = (currentTimeInMillis - tokenSaveTimeInMillis)/60000;
-        return minutesSinceSave > tokenExpiredMinutes;
-    }
-
-    public int getTokenExpiredMinutes() {
-        return tokenExpiredMinutes;
-    }
-
-    public void setTokenExpiredMinutes(int tokenExpiredMinutes) {
-        this.tokenExpiredMinutes = tokenExpiredMinutes;
+        return minutesSinceSave > getTokenExpiredMinutes();
     }
 
     public static int getPASSWORD_TOKEN_LENGTH() {
@@ -390,14 +387,6 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     public static void setPASSWORD_TOKEN_LENGTH(int PASSWORD_TOKEN_LENGTH) {
         AdminSecurityServiceImpl.PASSWORD_TOKEN_LENGTH = PASSWORD_TOKEN_LENGTH;
-    }
-
-    public String getResetPasswordURL() {
-        return resetPasswordURL;
-    }
-
-    public void setResetPasswordURL(String resetPasswordURL) {
-        this.resetPasswordURL = resetPasswordURL;
     }
 
     public EmailInfo getSendUsernameEmailInfo() {

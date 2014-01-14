@@ -19,8 +19,10 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.converter;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
@@ -28,12 +30,16 @@ import org.springframework.stereotype.Component;
 @Component("blStringLikeFilterValueConverter")
 public class StringLikeFilterValueConverter implements FilterValueConverter<String> {
     
-    @Value("${admin.search.string.onlyStartsWith}")
-    protected boolean onlyStartsWith;
+    @Resource(name = "blSystemPropertiesService")
+    protected SystemPropertiesService systemPropertiesService;
+
+    protected boolean getOnlyStartsWith() {
+        return systemPropertiesService.resolveBooleanSystemProperty("admin.search.string.onlyStartsWith");
+    }
 
     @Override
     public String convert(String stringValue) {
-        return onlyStartsWith ? stringValue.toLowerCase() + "%" : "%" + stringValue.toLowerCase() + "%";
+        return getOnlyStartsWith() ? stringValue.toLowerCase() + "%" : "%" + stringValue.toLowerCase() + "%";
     }
 
 }

@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections.MapUtils;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -32,7 +33,6 @@ import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
-import org.springframework.beans.factory.annotation.Value;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
@@ -58,11 +58,18 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 
-    @Value("${googleAnalytics.webPropertyId}")
-    protected String webPropertyId;
+    @Resource(name = "blSystemPropertiesService")
+    protected SystemPropertiesService systemPropertiesService;
     
-    @Value("${googleAnalytics.affiliation}")
-    protected String affiliation = "";
+    protected String affiliation;
+
+    protected String getWebPropertyId() {
+        return systemPropertiesService.resolveSystemProperty("googleAnalytics.webPropertyId");
+    }
+
+    protected String getAffiliationDefault() {
+        return systemPropertiesService.resolveSystemProperty("googleAnalytics.affiliation");
+    }
     
     /**
      * This will force the domain to 127.0.0.1 which is useful to determine if the Google Analytics tag is sending
@@ -90,7 +97,7 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
         if (orderNumber != null) {
             order = orderService.findOrderByOrderNumber(orderNumber);
         }
-        addToModel(arguments, "analytics", analytics(webPropertyId, order));
+        addToModel(arguments, "analytics", analytics(getWebPropertyId(), order));
     }
 
     /**
@@ -120,7 +127,7 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
             Address paymentAddress = getBillingAddress(order);
             if (paymentAddress != null) {
                 sb.append("_gaq.push(['_addTrans','" + order.getOrderNumber() + "'");
-                sb.append(",'" + affiliation + "'");
+                sb.append(",'" + getAffiliation() + "'");
                 sb.append(",'" + order.getTotal() + "'");
                 sb.append(",'" + order.getTotalTax() + "'");
                 sb.append(",'" + order.getTotalShipping() + "'");
@@ -210,7 +217,11 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
     }
     
     public String getAffiliation() {
-        return affiliation;
+        if (affiliation == null) {
+            return getAffiliationDefault();
+        } else {
+            return affiliation;
+        }
     }
     
     public void setAffiliation(String affiliation) {

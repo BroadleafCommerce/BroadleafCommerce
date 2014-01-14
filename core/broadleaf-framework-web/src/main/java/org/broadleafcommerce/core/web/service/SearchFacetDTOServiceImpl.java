@@ -20,33 +20,40 @@
 package org.broadleafcommerce.core.web.service;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 @Service("blSearchFacetDTOService")
 public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
     
-    @Value("${web.defaultPageSize}")
-    protected Integer defaultPageSize;
+    @Resource(name = "blSystemPropertiesService")
+    protected SystemPropertiesService systemPropertiesService;
     
-    @Value("${web.maxPageSize}")
-    protected Integer maxPageSize;
+    protected int getDefaultPageSize() {
+        return systemPropertiesService.resolveIntSystemProperty("web.defaultPageSize");
+    }
+
+    protected int getMaxPageSize() {
+        return systemPropertiesService.resolveIntSystemProperty("web.maxPageSize");
+    }
     
     @Override
     @SuppressWarnings("unchecked")
     public ProductSearchCriteria buildSearchCriteria(HttpServletRequest request, List<SearchFacetDTO> availableFacets) {
         ProductSearchCriteria searchCriteria = new ProductSearchCriteria();
-        searchCriteria.setPageSize(defaultPageSize);
+        searchCriteria.setPageSize(getDefaultPageSize());
         
         Map<String, String[]> facets = new HashMap<String, String[]>();
         
@@ -60,9 +67,7 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
                 searchCriteria.setPage(Integer.parseInt(entry.getValue()[0]));
             } else if (key.equals(ProductSearchCriteria.PAGE_SIZE_STRING)) {
                 int requestedPageSize = Integer.parseInt(entry.getValue()[0]);
-                if (maxPageSize == null) {
-                    maxPageSize = requestedPageSize;
-                }
+                int maxPageSize = getMaxPageSize();
                 searchCriteria.setPageSize(Math.min(requestedPageSize, maxPageSize));
             } else if (key.equals(ProductSearchCriteria.QUERY_STRING)) {
                 continue; // This is handled by the controller

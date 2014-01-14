@@ -20,10 +20,10 @@
 package org.broadleafcommerce.common.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.broadleafcommerce.common.web.util.ProcessorUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.NestableNode;
@@ -49,9 +49,13 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
     @Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
     
-    @Value("${bundle.enabled}")
-    protected boolean bundleEnabled;
+    @Resource(name = "blSystemPropertiesService")
+    protected SystemPropertiesService systemPropertiesService;
     
+    protected boolean getBundleEnabled() {
+        return systemPropertiesService.resolveBooleanSystemProperty("bundle.enabled");
+    }
+
     public ResourceBundleProcessor() {
         super("bundle");
     }
@@ -71,7 +75,7 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
             files.add(file.trim());
         }
         
-        if (bundleEnabled) {
+        if (getBundleEnabled()) {
             String versionedBundle = bundlingService.getVersionedBundleName(name);
             if (StringUtils.isBlank(versionedBundle)) {
                 BroadleafResourceHttpRequestHandler reqHandler = getRequestHandler(name, arguments);

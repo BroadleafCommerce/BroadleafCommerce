@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.config.domain;
 
+import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -61,11 +62,14 @@ public class SystemPropertyImpl implements SystemProperty {
     @Column(name = "BLC_SYSTEM_PROPERTY_ID")
     protected Long id;
 
-    @Column(name= "PROPERTY_NAME", unique = true, nullable = false)
+    @Column(name = "PROPERTY_NAME", nullable = false)
     protected String name;
 
     @Column(name= "PROPERTY_VALUE", nullable = false)
     protected String value;
+
+    @Column(name = "PROPERTY_TYPE")
+    protected String propertyType;
 
     @Override
     public Long getId() {
@@ -96,4 +100,19 @@ public class SystemPropertyImpl implements SystemProperty {
     public void setValue(String value) {
         this.value = value;
     }
+
+    public SystemPropertyFieldType getPropertyType() {
+        if (propertyType != null) {
+            SystemPropertyFieldType returnType = SystemPropertyFieldType.getInstance(propertyType);
+            if (returnType != null) {
+                return returnType;
+            }
+        }
+        return SystemPropertyFieldType.STRING_TYPE;
+    }
+
+    public void setPropertyType(SystemPropertyFieldType propertyType) {
+        this.propertyType = propertyType.getType();
+    }
+
 }

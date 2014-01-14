@@ -37,15 +37,16 @@ package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Map;
 
+import javax.annotation.Resource;
 
 /**
  * Validates a field as being a valid URI to ensure compatibility with Broadleaf handlers including
@@ -69,15 +70,20 @@ public class UriPropertyValidator extends ValidationConfigurationBasedPropertyVa
     protected String ERROR_KEY_BEGIN_WITH_SLASH = "uriPropertyValidatorMustBeginWithSlashError";
     protected String ERROR_KEY_CANNOT_END_WITH_SLASH = "uriPropertyValidatorCannotEndWithSlashError";
 
-    @Value("${uriPropertyValidator.ignoreFullUrls}")
-    protected boolean ignoreFullUrls = true;
-
-    @Value("${uriPropertyValidator.requireLeadingSlash}")
-    protected boolean requireLeadingSlash = true;
-
-    @Value("${uriPropertyValidator.allowTrailingSlash}")
-    protected boolean allowTrailingSlash = false;
+    @Resource(name = "blSystemPropertiesService")
+    protected SystemPropertiesService systemPropertiesService;
     
+    protected boolean getIgnoreFullUrls() {
+        return systemPropertiesService.resolveBooleanSystemProperty("uriPropertyValidator.ignoreFullUrls");
+    }
+
+    protected boolean getRequireLeadingSlash() {
+        return systemPropertiesService.resolveBooleanSystemProperty("uriPropertyValidator.requireLeadingSlash");
+    }
+
+    protected boolean getAllowTrailingSlash() {
+        return systemPropertiesService.resolveBooleanSystemProperty("uriPropertyValidator.allowTrailingSlash");
+    }
 
     public boolean isFullUrl(String url) {
         return (url.startsWith("http") || url.startsWith("ftp"));
@@ -102,15 +108,15 @@ public class UriPropertyValidator extends ValidationConfigurationBasedPropertyVa
             return new PropertyValidationResult(succeedForNullValues);
         }
         
-        if (isFullUrl(value) && ignoreFullUrls) {
+        if (isFullUrl(value) && getIgnoreFullUrls()) {
             return new PropertyValidationResult(true);
         }
 
-        if (requireLeadingSlash && !value.startsWith("/")) {
+        if (getRequireLeadingSlash() && !value.startsWith("/")) {
             return new PropertyValidationResult(false, ERROR_KEY_BEGIN_WITH_SLASH);
         }
 
-        if (!allowTrailingSlash && value.endsWith("/")) {
+        if (!getAllowTrailingSlash() && value.endsWith("/")) {
             return new PropertyValidationResult(false, ERROR_KEY_CANNOT_END_WITH_SLASH);
         }
 

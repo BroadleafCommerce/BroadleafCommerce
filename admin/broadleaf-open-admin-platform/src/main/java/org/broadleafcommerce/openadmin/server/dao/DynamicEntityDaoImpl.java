@@ -20,33 +20,11 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -76,9 +54,31 @@ import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 /**
  * 
@@ -119,8 +119,12 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
 
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
-    @Value("${cache.entity.dao.metadata.ttl}")
-    protected int cacheEntityMetaDataTtl;
+    @Resource(name = "blSystemPropertiesService")
+    protected SystemPropertiesService systemPropertiesService;
+
+    protected int getCacheEntityMetaDataTtl() {
+        return systemPropertiesService.resolveIntSystemProperty("cache.entity.dao.metadata.ttl");
+    }
 
     protected long lastCacheFlushTime = System.currentTimeMillis();
 
@@ -185,6 +189,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     }
 
     protected boolean useCache() {
+        int cacheEntityMetaDataTtl = getCacheEntityMetaDataTtl();
         if (cacheEntityMetaDataTtl < 0) {
             return true;
         }
