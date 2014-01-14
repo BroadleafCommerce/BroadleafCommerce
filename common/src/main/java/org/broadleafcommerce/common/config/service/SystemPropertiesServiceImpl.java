@@ -19,10 +19,15 @@
  */
 package org.broadleafcommerce.common.config.service;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
 import org.broadleafcommerce.common.config.dao.SystemPropertiesDao;
 import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +43,8 @@ import javax.annotation.Resource;
 @Service("blSystemPropertiesService")
 public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
+    protected Cache systemPropertyCache;
+
     @Resource(name="blSystemPropertiesDao")
     protected SystemPropertiesDao systemPropertiesDao;
 
@@ -47,26 +54,85 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     @Autowired
     protected RuntimeEnvironmentPropertiesManager propMgr;
 
+
     @Override
     public String resolveSystemProperty(String name) {
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
             extensionManager.getProxy().resolveProperty(name, holder);
             if (holder.getResult() != null) {
-                if (holder.getResult() instanceof String) {
-                    return holder.getResult().toString();
-                } else if (holder.getResult() instanceof SystemProperty) {
-                    return ((SystemProperty) holder.getResult()).getValue();
-                }
+                return (String) holder.getResult();
             }
+        }
+
+        String result = getPropertyFromCache(name);
+        if (result != null) {
+            return result;
         }
 
         SystemProperty property = systemPropertiesDao.readSystemPropertyByName(name);
         if (property == null || property.getValue() == null) {
-            return propMgr.getProperty(name);
+            result = propMgr.getProperty(name);
         } else {
-            return property.getValue();
+            result = property.getValue();
         }
+
+        if (result != null) {
+            addPropertyToCache(name, result);
+        }
+        return result;
+    }
+
+    protected void addPropertyToCache(String propertyName, String propertyValue) {
+        if (!isInSandbox()) {
+            String key = buildKey(propertyName);
+            getSystemPropertyCache().put(new Element(key, propertyValue));
+        }
+    }
+
+    protected String getPropertyFromCache(String propertyName) {
+        if (!isInSandbox()) {
+            String key = buildKey(propertyName);
+            Element cacheElement = getSystemPropertyCache().get(key);
+            if (cacheElement != null && cacheElement.getObjectValue() != null) {
+                return (String) cacheElement.getObjectValue();
+            }
+        }
+        return null;
+    }
+
+    protected boolean isInSandbox() {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc != null) {
+            return brc.getSandBox() != null;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Properties can vary by site.   If a site is found on the request, use the site id as part of the
+     * cache-key.
+     * 
+     * @param propertyName
+     * @return
+     */
+    protected String buildKey(String propertyName) {
+        String key = propertyName;
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc != null) {
+            if (brc.getSite() != null) {
+                key = brc.getSite().getId() + "-" + key;
+            }
+        }
+        return key;
+    }
+
+    protected Cache getSystemPropertyCache() {
+        if (systemPropertyCache == null) {
+            systemPropertyCache = CacheManager.getInstance().getCache("blSystemPropertyElements");
+        }
+        return systemPropertyCache;
     }
 
     @Override
