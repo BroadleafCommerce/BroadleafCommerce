@@ -222,6 +222,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
             List<ClassTree> entityTypes = getAddEntityTypes(cmd.getPolymorphicEntities());
             model.addAttribute("entityTypes", entityTypes);
             model.addAttribute("viewType", "modal/entityTypeSelection");
+            String requestUri = request.getRequestURI();
+            if (!request.getContextPath().equals("/") && requestUri.startsWith(request.getContextPath())) {
+                requestUri = requestUri.substring(request.getContextPath().length() + 1, requestUri.length());
+            }
+            model.addAttribute("currentUri", requestUri);
         } else {
             EntityForm entityForm = formService.createEntityForm(cmd, sectionCrumbs);
             
@@ -655,24 +660,64 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{id}/{collectionField:.*}/add", method = RequestMethod.GET)
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @PathVariable(value="id") String id,
-            @PathVariable(value="collectionField") String collectionField,
-            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+                                        @PathVariable Map<String, String> pathVars,
+                                        @PathVariable(value = "id") String id,
+                                        @PathVariable(value = "collectionField") String collectionField,
+                                        @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs)).getDynamicResultSet().getClassMetaData();
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName,
+                sectionCrumbs)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
-        
-        //service.getContextSpecificRelationshipId(mainMetadata, entity, prefix);
 
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
                 .withFilterAndSortCriteria(getCriteria(requestParams))
                 .withStartIndex(getStartIndex(requestParams))
                 .withMaxIndex(getMaxIndex(requestParams));
-        
+
+        if (md instanceof BasicCollectionMetadata) {
+            BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
+            if (fmd.getAddMethodType().equals(AddMethodType.PERSIST)) {
+                ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+                // If the entity type isn't specified, we need to determine if there are various polymorphic types
+                // for this entity.
+                String entityType = null;
+                if (requestParams.containsKey("entityType")) {
+                    entityType = requestParams.get("entityType").get(0);
+                }
+                if (StringUtils.isBlank(entityType)) {
+                    if (cmd.getPolymorphicEntities().getChildren().length == 0) {
+                        entityType = cmd.getPolymorphicEntities().getFullyQualifiedClassname();
+                    } else {
+                        entityType = getDefaultEntityType();
+                    }
+                } else {
+                    entityType = URLDecoder.decode(entityType, "UTF-8");
+                }
+
+                if (StringUtils.isBlank(entityType)) {
+                    List<ClassTree> entityTypes = getAddEntityTypes(cmd.getPolymorphicEntities());
+                    model.addAttribute("entityTypes", entityTypes);
+                    model.addAttribute("viewType", "modal/entityTypeSelection");
+                    model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
+                    String requestUri = request.getRequestURI();
+                    if (!request.getContextPath().equals("/") && requestUri.startsWith(request.getContextPath())) {
+                        requestUri = requestUri.substring(request.getContextPath().length() + 1, requestUri.length());
+                    }
+                    model.addAttribute("currentUri", requestUri);
+                    model.addAttribute("modalHeaderType", "addEntity");
+                    setModelAttributes(model, sectionKey);
+                    return "modules/modalContainer";
+                } else {
+                    ppr = ppr.withCeilingEntityClassname(entityType);
+                }
+            }
+        }
+
+        //service.getContextSpecificRelationshipId(mainMetadata, entity, prefix);
+
         model.addAttribute("currentParams", new ObjectMapper().writeValueAsString(requestParams));
 
         return buildAddCollectionItemModel(request, response, model, id, collectionField, sectionKey, collectionProperty, md, ppr, null, null);
@@ -765,10 +810,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
                 if (entityForm == null) {
                     entityForm = formService.createEntityForm(collectionMetadata,sectionCrumbs);
+                    entityForm.setCeilingEntityClassname(ppr.getCeilingEntityClassname());
+                    entityForm.setEntityType(ppr.getCeilingEntityClassname());
                 } else {
                     formService.populateEntityForm(collectionMetadata, entityForm, sectionCrumbs);
                     formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm);
                 }
+                formService.removeNonApplicableFields(collectionMetadata, entityForm, ppr.getCeilingEntityClassname());
                 entityForm.getTabs().iterator().next().getIsVisible();
 
                 model.addAttribute("entityForm", entityForm);
