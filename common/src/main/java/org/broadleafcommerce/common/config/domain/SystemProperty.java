@@ -79,4 +79,28 @@ public interface SystemProperty extends Serializable {
      */
     public void setPropertyType(SystemPropertyFieldType type);
 
+    /**
+     * @return the friendly name of this property
+     */
+    public String getFriendlyName();
+
+    /**
+     * Sets the friendly name of this property
+     * 
+     * @param friendlyName
+     */
+    public void setFriendlyName(String friendlyName);
+
+    /**
+     * @return the griendly group name of this property
+     */
+    public String getFriendlyGroup();
+
+    /**
+     * Sets the friendly group name of this property
+     * 
+     * @param friendlyGroup
+     */
+    public void setFriendlyGroup(String friendlyGroup);
+
 }

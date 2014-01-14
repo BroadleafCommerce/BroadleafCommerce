@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -73,21 +74,31 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity {
     protected Long id;
 
     @Column(name = "PROPERTY_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "SystemPropertyImpl_name", order = 1000,
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_name", order = 1000, readOnly = true,
         group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 1000)
     protected String name;
 
     @Column(name= "PROPERTY_VALUE", nullable = false)
-    @AdminPresentation(friendlyName = "SystemPropertyImpl_value", order = 2000,
-        group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 2000)
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_value", order = 3000,
+        group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 3000)
     protected String value;
 
     @Column(name = "PROPERTY_TYPE")
-    @AdminPresentation(friendlyName = "SystemPropertyImpl_propertyType", order = 3000,
-        group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 3000,
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_propertyType", order = 2000, readOnly = true,
+        group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 2000,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType")
     protected String propertyType;
+
+    @Column(name = "FRIENDLY_NAME")
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_friendlyName", order = 4000, readOnly = true,
+        group = "SystemPropertyImpl_general", groupOrder = 1000, visibility = VisibilityEnum.HIDDEN_ALL)
+    protected String friendlyName;
+
+    @Column(name = "FRIENDLY_GROUP")
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_friendlyGroup", order = 5000, readOnly = true,
+        group = "SystemPropertyImpl_general", groupOrder = 1000, visibility = VisibilityEnum.HIDDEN_ALL)
+    protected String friendlyGroup;
 
     @Override
     public Long getId() {
@@ -117,6 +128,26 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity {
     @Override
     public void setValue(String value) {
         this.value = value;
+    }
+    
+    @Override
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+
+    @Override
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
+    }
+
+    @Override
+    public String getFriendlyGroup() {
+        return friendlyGroup;
+    }
+
+    @Override
+    public void setFriendlyGroup(String friendlyGroup) {
+        this.friendlyGroup = friendlyGroup;
     }
 
     public SystemPropertyFieldType getPropertyType() {

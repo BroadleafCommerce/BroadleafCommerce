@@ -34,6 +34,7 @@ public class SystemPropertyFieldType implements BroadleafEnumerationType, Serial
 
     public static final SystemPropertyFieldType INT_TYPE = new SystemPropertyFieldType("INT_TYPE", "Integer value");
     public static final SystemPropertyFieldType LONG_TYPE = new SystemPropertyFieldType("LONG_TYPE", "Long value");
+    public static final SystemPropertyFieldType DOUBLE_TYPE = new SystemPropertyFieldType("DOUBLE_TYPE", "Double value");
     public static final SystemPropertyFieldType BOOLEAN_TYPE = new SystemPropertyFieldType("BOOLEAN_TYPE", "Boolean value");
     public static final SystemPropertyFieldType STRING_TYPE = new SystemPropertyFieldType("STRING", "String value");
 
