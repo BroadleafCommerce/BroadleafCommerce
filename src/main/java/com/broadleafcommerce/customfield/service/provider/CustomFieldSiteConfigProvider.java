@@ -25,6 +25,9 @@ public class CustomFieldSiteConfigProvider implements SiteConfigProvider {
     @Resource(name = "blAdminPermissionDao")
     protected AdminPermissionDao adminPermissionDao;
 
+    @Resource(name = "blDefaultCustomFieldAccessRoles")
+    protected List<String> defaultAccessRoles;
+
     @Override
     public void configSite(Site site) {
     }
@@ -36,13 +39,12 @@ public class CustomFieldSiteConfigProvider implements SiteConfigProvider {
     @SuppressWarnings("unchecked")
     public void init(Map<String, Object> map) {
         List<AdminRole> templateRoles = (List<AdminRole>) map.get("TEMPLATE_ROLES");
-        
-        String[] targetRoles = { "ROLE_ADMIN" };
+
         String[] targetPerms = { "PERMISSION_ALL_CUSTOM_FIELD" };
         
         for (AdminRole ar : templateRoles) {
             Map<String, Boolean> alreadyCreatedPerms = new HashMap<String, Boolean>();
-            if (ArrayUtils.contains(targetRoles, ar.getName())) {
+            if (defaultAccessRoles.contains(ar.getName())) {
                 for (AdminPermission perm : ar.getAllPermissions()) {
                     if (ArrayUtils.contains(targetPerms, perm.getName())) {
                         alreadyCreatedPerms.put(perm.getName(), true);

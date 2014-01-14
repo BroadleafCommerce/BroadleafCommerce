@@ -57,6 +57,14 @@
         <property name="statusProvider" ref="blMultiTenantMergeBeanStatusProvider"/>
     </bean>
 
+    <bean id="blDefaultCustomFieldAccessRoles" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>ROLE_ADMIN</value>
+            </list>
+        </property>
+    </bean>
+
     <bean id="blCustomFieldSiteConfigProviders" class="org.springframework.beans.factory.config.ListFactoryBean" lazy-init="true">
         <property name="sourceList">
             <list>
