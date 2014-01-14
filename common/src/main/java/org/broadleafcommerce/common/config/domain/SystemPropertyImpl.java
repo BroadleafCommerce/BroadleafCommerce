@@ -19,11 +19,14 @@
  */
 package org.broadleafcommerce.common.config.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -52,7 +55,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-public class SystemPropertyImpl implements SystemProperty {
+public class SystemPropertyImpl implements SystemProperty, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -70,12 +73,20 @@ public class SystemPropertyImpl implements SystemProperty {
     protected Long id;
 
     @Column(name = "PROPERTY_NAME", nullable = false)
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_name", order = 1000,
+        group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 1000)
     protected String name;
 
     @Column(name= "PROPERTY_VALUE", nullable = false)
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_value", order = 2000,
+        group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 2000)
     protected String value;
 
     @Column(name = "PROPERTY_TYPE")
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_propertyType", order = 3000,
+        group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 3000,
+        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
+        broadleafEnumeration = "org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType")
     protected String propertyType;
 
     @Override
@@ -120,6 +131,11 @@ public class SystemPropertyImpl implements SystemProperty {
 
     public void setPropertyType(SystemPropertyFieldType propertyType) {
         this.propertyType = propertyType.getType();
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getName();
     }
 
 }
