@@ -5,7 +5,7 @@
         blcDateFormat : "yy.mm.dd",
         blcTimeFormat : "HH:mm:ss",
         displayDateFormat : 'mm/dd/yy',
-        displayTimeFormat : 'HH:mm',
+        displayTimeFormat : 'HH:mm:ss',
         
         /**
          * This function should be called for any element that wants to be a rulebuilder
@@ -15,12 +15,15 @@
             $element.val(this.getDisplayDate($element.val()));
           
             // Make it a date-time picker
-            $element.datetimepicker();
+            $element.datetimepicker({
+                showSecond: true,
+                timeFormat: 'HH:mm:ss'
+            });
         },
         
         /**
          * serverDate should be in the Broadleaf datetime format, "yyyy.MM.dd HH:mm:ss" (Java spec)
-         * returns the display format, "mm/dd/yy HH:mm" (JavaScript spec)
+         * returns the display format, "mm/dd/yy HH:mm:ss" (JavaScript spec)
          */
         getDisplayDate : function(serverDate) {
             if (serverDate) {
@@ -34,7 +37,8 @@
                     var displayDate = $.datepicker.formatDate(this.displayDateFormat, result);
                     var displayTime = $.datepicker.formatTime(this.displayTimeFormat, {
                         hour : result.getHours(),
-                        minute : result.getMinutes()
+                        minute : result.getMinutes(),
+                        second : result.getSeconds()
                     });
                     
                     return displayDate + " " + displayTime;
@@ -61,6 +65,7 @@
                 var serverTime = $.datepicker.formatTime(this.blcTimeFormat, {
                     hour : result.getHours(),
                     minute : result.getMinutes(),
+                    second : result.getSeconds()
                 });
                 
                 return serverDate + " " + serverTime;
