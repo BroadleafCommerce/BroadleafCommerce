@@ -19,19 +19,23 @@
  */
 package org.broadleafcommerce.admin.web.controller.entity;
 
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -91,7 +95,7 @@ public class AdminProductController extends AdminBasicEntityController {
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
                 .withCustomCriteria(new String[] { id });
         BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
-        ClassMetadata cmd = service.getClassMetadata(ppr);
+        ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         // If the entity type isn't specified, we need to determine if there are various polymorphic types
         // for this entity.
         String entityType = null;
@@ -125,8 +129,8 @@ public class AdminProductController extends AdminBasicEntityController {
             ppr = ppr.withCeilingEntityClassname(entityType);
         }
 
-        ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-        EntityForm entityForm = formService.createEntityForm(collectionMetadata);
+        ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+        EntityForm entityForm = formService.createEntityForm(collectionMetadata, sectionCrumbs);
         entityForm.setCeilingEntityClassname(ppr.getCeilingEntityClassname());
         entityForm.setEntityType(ppr.getCeilingEntityClassname());
         formService.removeNonApplicableFields(collectionMetadata, entityForm, ppr.getCeilingEntityClassname());
