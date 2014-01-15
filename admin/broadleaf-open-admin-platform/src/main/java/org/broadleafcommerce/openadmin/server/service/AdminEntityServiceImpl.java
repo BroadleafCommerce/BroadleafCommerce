@@ -16,6 +16,19 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
@@ -43,22 +56,8 @@ import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -336,23 +335,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
-            Class<?> listClass = Class.forName(fmd.getCollectionCeilingEntity());
-            //try to find an override, if available
-            List<Class<?>> testClasses = new ArrayList<Class<?>>();
-            testClasses.add(listClass);
-            if (!listClass.isInterface()) {
-                testClasses.addAll(Arrays.asList(listClass.getInterfaces()));
-            }
-            String overrideClass = listClass.getName();
-            for (Class<?> clazz : testClasses) {
-                try {
-                    overrideClass = entityConfiguration.lookupEntityClass(clazz.getName()).getName();
-                    break;
-                } catch (NoSuchBeanDefinitionException e) {
-                    //no override defined
-                }
-            }
-            ppr.getEntity().setType(new String[] { overrideClass });
+            ppr.getEntity().setType(new String[] { entityForm.getEntityType() });
             
             // If we're looking up an entity instead of trying to create one on the fly, let's make sure 
             // that we're not changing the target entity at all and only creating the association to the id

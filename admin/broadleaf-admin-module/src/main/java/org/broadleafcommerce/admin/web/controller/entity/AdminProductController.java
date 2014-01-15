@@ -16,13 +16,23 @@
 
 package org.broadleafcommerce.admin.web.controller.entity;
 
+import java.net.URLDecoder;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -41,11 +51,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Handles admin operations for the {@link Product} entity. Editing a product requires custom criteria in order to properly
@@ -84,14 +89,47 @@ public class AdminProductController extends AdminBasicEntityController {
         
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md)
                 .withCustomCriteria(new String[] { id });
+        BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
+        ClassMetadata cmd = service.getClassMetadata(ppr);
+        // If the entity type isn't specified, we need to determine if there are various polymorphic types
+        // for this entity.
+        String entityType = null;
+        if (request.getParameter("entityType") != null) {
+            entityType = request.getParameter("entityType");
+        }
+        if (StringUtils.isBlank(entityType)) {
+            if (cmd.getPolymorphicEntities().getChildren().length == 0) {
+                entityType = cmd.getPolymorphicEntities().getFullyQualifiedClassname();
+            } else {
+                entityType = getDefaultEntityType();
+            }
+        } else {
+            entityType = URLDecoder.decode(entityType, "UTF-8");
+        }
+
+        if (StringUtils.isBlank(entityType)) {
+            List<ClassTree> entityTypes = getAddEntityTypes(cmd.getPolymorphicEntities());
+            model.addAttribute("entityTypes", entityTypes);
+            model.addAttribute("viewType", "modal/entityTypeSelection");
+            model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
+            String requestUri = request.getRequestURI();
+            if (!request.getContextPath().equals("/") && requestUri.startsWith(request.getContextPath())) {
+                requestUri = requestUri.substring(request.getContextPath().length() + 1, requestUri.length());
+            }
+            model.addAttribute("currentUri", requestUri);
+            model.addAttribute("modalHeaderType", "addEntity");
+            setModelAttributes(model, SECTION_KEY);
+            return "modules/modalContainer";
+        } else {
+            ppr = ppr.withCeilingEntityClassname(entityType);
+        }
 
         ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-        if (collectionMetadata.getCeilingType().equals(SkuImpl.class.getName())) {
-            collectionMetadata.setCeilingType(Sku.class.getName());
-        }
-        
         EntityForm entityForm = formService.createEntityForm(collectionMetadata);
-        
+        entityForm.setCeilingEntityClassname(ppr.getCeilingEntityClassname());
+        entityForm.setEntityType(ppr.getCeilingEntityClassname());
+        formService.removeNonApplicableFields(collectionMetadata, entityForm, ppr.getCeilingEntityClassname());
+
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
 
         removeRequiredValidation(entityForm);
