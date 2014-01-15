@@ -19,7 +19,10 @@
  */
 package org.broadleafcommerce.common.util;
 
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.web.context.request.WebRequest;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -68,5 +71,23 @@ public class BLCRequestUtils {
             returnValue = request.getParameter(varName);
         }
         return returnValue;
+    }
+
+    /**
+     * Convenience method to obtain the server prefix of the current request.
+     * Useful for many modules that configure Relative URL's and need to send absolute URL's
+     * to Third Party Gateways.
+     */
+    public static String getRequestedServerPrefix() {
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        String scheme = request.getScheme();
+        StringBuilder serverPrefix = new StringBuilder(scheme);
+        serverPrefix.append("://");
+        serverPrefix.append(request.getServerName());
+        if ((scheme.equalsIgnoreCase("http") && request.getServerPort() != 80) || (scheme.equalsIgnoreCase("https") && request.getServerPort() != 443)) {
+            serverPrefix.append(":");
+            serverPrefix.append(request.getServerPort());
+        }
+        return serverPrefix.toString();
     }
 }
