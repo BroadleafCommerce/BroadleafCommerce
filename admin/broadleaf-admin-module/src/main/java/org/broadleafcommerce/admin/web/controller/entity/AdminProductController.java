@@ -90,14 +90,47 @@ public class AdminProductController extends AdminBasicEntityController {
         
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
                 .withCustomCriteria(new String[] { id });
-
-        ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
-        if (collectionMetadata.getCeilingType().equals(SkuImpl.class.getName())) {
-            collectionMetadata.setCeilingType(Sku.class.getName());
+        BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
+        ClassMetadata cmd = service.getClassMetadata(ppr);
+        // If the entity type isn't specified, we need to determine if there are various polymorphic types
+        // for this entity.
+        String entityType = null;
+        if (request.getParameter("entityType") != null) {
+            entityType = request.getParameter("entityType");
         }
-        
-        EntityForm entityForm = formService.createEntityForm(collectionMetadata, sectionCrumbs);
-        
+        if (StringUtils.isBlank(entityType)) {
+            if (cmd.getPolymorphicEntities().getChildren().length == 0) {
+                entityType = cmd.getPolymorphicEntities().getFullyQualifiedClassname();
+            } else {
+                entityType = getDefaultEntityType();
+            }
+        } else {
+            entityType = URLDecoder.decode(entityType, "UTF-8");
+        }
+
+        if (StringUtils.isBlank(entityType)) {
+            List<ClassTree> entityTypes = getAddEntityTypes(cmd.getPolymorphicEntities());
+            model.addAttribute("entityTypes", entityTypes);
+            model.addAttribute("viewType", "modal/entityTypeSelection");
+            model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
+            String requestUri = request.getRequestURI();
+            if (!request.getContextPath().equals("/") && requestUri.startsWith(request.getContextPath())) {
+                requestUri = requestUri.substring(request.getContextPath().length() + 1, requestUri.length());
+            }
+            model.addAttribute("currentUri", requestUri);
+            model.addAttribute("modalHeaderType", "addEntity");
+            setModelAttributes(model, SECTION_KEY);
+            return "modules/modalContainer";
+        } else {
+            ppr = ppr.withCeilingEntityClassname(entityType);
+        }
+
+        ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
+        EntityForm entityForm = formService.createEntityForm(collectionMetadata);
+        entityForm.setCeilingEntityClassname(ppr.getCeilingEntityClassname());
+        entityForm.setEntityType(ppr.getCeilingEntityClassname());
+        formService.removeNonApplicableFields(collectionMetadata, entityForm, ppr.getCeilingEntityClassname());
+
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
 
         removeRequiredValidation(entityForm);
