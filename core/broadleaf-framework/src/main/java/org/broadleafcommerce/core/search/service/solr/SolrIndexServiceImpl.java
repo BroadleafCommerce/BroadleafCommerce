@@ -166,7 +166,13 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
             Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
             for (Product product : products) {
-                documents.add(buildDocument(product, fields, locales));
+                SolrInputDocument doc = buildDocument(product, fields, locales);
+                //If someone overrides the buildDocument method and determines that they don't want a product 
+                //indexed, then they can return null. If the document is null it does not get added to 
+                //to the index.
+                if (doc != null) {
+                    documents.add(doc);
+                }
             }
 
             logDocuments(documents);
