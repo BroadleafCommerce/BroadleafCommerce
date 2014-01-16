@@ -19,12 +19,12 @@
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder.statement;
 
+import java.text.ParseException;
+
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.rulebuilder.BLCOperator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.RuleBuilderFormatUtil;
-
-import java.text.ParseException;
 
 /**
  * @author jfischer
@@ -162,6 +162,14 @@ public class PhraseTranslator {
         if (amountMethodPos >= 0) {
             field = field.substring(0, amountMethodPos);
         }
+
+        // Same as above, but for Enumeration types
+        String typeMethod = ".getType()";
+        int typeMethodPos = field.lastIndexOf(typeMethod);
+        if (typeMethodPos >= 0) {
+           field = field.substring(0, typeMethodPos);
+        }
+        
         Expression expression = new Expression();
         expression.setField(field);
         BLCOperator operatorId = getOperator(field, operator, value, isNegation, isFieldComparison, isIgnoreCase);

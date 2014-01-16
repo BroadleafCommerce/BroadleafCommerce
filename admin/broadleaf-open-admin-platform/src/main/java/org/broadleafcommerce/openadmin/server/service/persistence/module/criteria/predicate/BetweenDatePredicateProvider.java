@@ -22,11 +22,13 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.criter
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
-import java.util.List;
 
 /**
  * @author Jeff Fischer
@@ -52,7 +54,11 @@ public class BetweenDatePredicateProvider implements PredicateProvider<Comparabl
             }
             return builder.between(path, directValues.get(0), directValues.get(1));
         } else {
-            return builder.equal(path, directValues.get(0));
+            // The user passed in a single date which is only down to the second granularity. The database stores things
+            // down to the millisecond, so we can't just do equals we have to filter dates between the date provided and
+            // 1000 milliseconds later than the date provided to get all records for that particular second
+            Date secondFromNow = new Date(((Date)directValues.get(0)).getTime() + 1000);
+            return builder.between(path, directValues.get(0), secondFromNow);
         }
     }
 }

@@ -23,12 +23,11 @@
         blcDateFormat : "yy.mm.dd",
         blcTimeFormat : "HH:mm:ss",
         displayDateFormat : 'mm/dd/yy',
-        displayTimeFormat : 'HH:mm'
+        displayTimeFormat : 'HH:mm:ss'
     };
-    
+
     // Add utility functions for dates to the BLCAdmin object
     BLCAdmin.dates = {
-        
         /**
          * This function should be called for any element that wants to be a rulebuilder
          */
@@ -37,12 +36,15 @@
             $element.val(this.getDisplayDate($element.val()));
           
             // Make it a date-time picker
-            $element.datetimepicker();
+            $element.datetimepicker({
+                showSecond: true,
+                timeFormat: 'HH:mm:ss'
+            });
         },
         
         /**
          * serverDate should be in the Broadleaf datetime format, "yyyy.MM.dd HH:mm:ss" (Java spec)
-         * returns the display format, "mm/dd/yy HH:mm" (JavaScript spec)
+         * returns the display format, "mm/dd/yy HH:mm:ss" (JavaScript spec)
          */
         getDisplayDate : function(serverDate) {
             var display = BLC.dates.getDisplayDate(serverDate, adminFormats);

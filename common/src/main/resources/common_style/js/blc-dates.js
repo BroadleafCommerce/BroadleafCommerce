@@ -31,7 +31,7 @@
         
         /**
          * serverDate should be in the Broadleaf datetime format, "yyyy.MM.dd HH:mm:ss" (Java spec)
-         * returns the display format, "mm/dd/yy HH:mm" (JavaScript spec)
+         * returns the display format, "mm/dd/yy HH:mm:ss" (JavaScript spec)
          */
         getDisplayDate : function(serverDate, formats) {
             if (serverDate) {
@@ -47,7 +47,8 @@
                     var displayDate = $.datepicker.formatDate(formats.displayDateFormat, result);
                     var displayTime = $.datepicker.formatTime(formats.displayTimeFormat, {
                         hour : result.getHours(),
-                        minute : result.getMinutes()
+                        minute : result.getMinutes(),
+                        second : result.getSeconds()
                     });
                     
                     return {
@@ -79,6 +80,7 @@
                 var serverTime = $.datepicker.formatTime(formats.blcTimeFormat, {
                     hour : result.getHours(),
                     minute : result.getMinutes(),
+                    second : result.getSeconds()
                 });
                 
                 return {
