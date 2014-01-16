@@ -21,6 +21,10 @@ package org.broadleafcommerce.common.web.expression;
 
 import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This Thymeleaf variable expression class provides access to runtime configuration properties that are configured
@@ -44,6 +48,15 @@ public class PropertiesVariableExpression implements BroadleafVariableExpression
 
     public int getAsInt(String propertyName) {
         return Integer.parseInt(propMgr.getProperty(propertyName));
+    }
+    
+    public boolean getForceShowIdColumns() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+
+        boolean forceShow = Boolean.parseBoolean(propMgr.getProperty("listGrid.forceShowIdColumns"));
+        forceShow = forceShow || "true".equals(request.getParameter("showIds"));
+        
+        return forceShow;
     }
 
 }

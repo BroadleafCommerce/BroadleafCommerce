@@ -109,6 +109,11 @@
         
         getRowFields : function($tr) {
             var fields = {};
+
+            // add the id to the array
+            if ($tr.data('rowid')) {
+                fields['id'] = $tr.data('rowid');
+            }
             
             $tr.find('td').each(function() {
                 var fieldName = $(this).data('fieldname');
@@ -123,6 +128,7 @@
                 var value = hiddenFields.hiddenFields[j].val;
                 fields[fieldName] = value;
             }
+            
             
             return fields;
         },
