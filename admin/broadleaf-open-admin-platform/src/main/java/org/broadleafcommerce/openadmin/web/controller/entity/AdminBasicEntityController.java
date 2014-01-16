@@ -151,6 +151,14 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param mainActions
      */
     protected void addAddActionIfAllowed(String sectionClassName, ClassMetadata cmd, List<EntityFormAction> mainActions) {
+        if (isAddActionAllowed(sectionClassName, cmd)) {
+            mainActions.add(DefaultMainActions.ADD);
+        }
+        
+        mainEntityActionsExtensionManager.getProxy().modifyMainActions(cmd, mainActions);
+    }
+    
+    protected boolean isAddActionAllowed(String sectionClassName, ClassMetadata cmd) {
         // If the user does not have create permissions, we will not add the "Add New" button
         boolean canCreate = true;
         try {
@@ -160,6 +168,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 canCreate = false;
             }
         }
+        
         if (canCreate) {
             checkReadOnly: {
                 //check if all the metadata is read only
@@ -174,11 +183,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 canCreate = false;
             }
         }
-        if (canCreate) {
-            mainActions.add(DefaultMainActions.ADD);
-        }
         
-        mainEntityActionsExtensionManager.getProxy().modifyMainActions(cmd, mainActions);
+        return canCreate;
     }
 
     /**

@@ -23,6 +23,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 
 /**
@@ -57,6 +60,7 @@ public class Field {
     protected String hint;
     protected String tooltip;
     protected String help;
+    protected Map<String, Object> attributes = new HashMap<String, Object>();
 
     /* ************ */
     /* WITH METHODS */
@@ -171,6 +175,11 @@ public class Field {
         setTooltip(tooltip);
         return this;
     }
+    
+    public Field withAttribute(String key, Object value) {
+        getAttributes().put(key, value);
+        return this;
+    }
 
     /* ************************ */
     /* CUSTOM GETTERS / SETTERS */
@@ -230,6 +239,10 @@ public class Field {
     
     public Boolean getFilterSortDisabled() {
         return isFilterSortDisabled == null ? false : isFilterSortDisabled;
+    }
+    
+    public Object getAttribute(String key) {
+        return getAttributes().get(key);
     }
     
     /* ************************** */
@@ -403,4 +416,13 @@ public class Field {
     public void setHelp(String help) {
         this.help = help;
     }
+    
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+    
 }

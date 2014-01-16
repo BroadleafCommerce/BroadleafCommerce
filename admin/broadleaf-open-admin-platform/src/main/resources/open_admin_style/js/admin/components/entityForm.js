@@ -22,7 +22,7 @@ $(document).ready(function() {
 	var $tabs = $('dl.tabs.entity-form');
 	if ($tabs.length > 0) {
 	    var $lastTab = $tabs.find('dd:last');
-	    if ($lastTab.width() + $lastTab.position().left + 15 > $tabs.width()) {
+	    if ($lastTab.length && $lastTab.width() + $lastTab.position().left + 15 > $tabs.width()) {
             $tabs.mCustomScrollbar({
                 theme: 'dark',
                 autoHideScrollbar: true,

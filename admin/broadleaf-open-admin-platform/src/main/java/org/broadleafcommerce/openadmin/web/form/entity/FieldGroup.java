@@ -61,6 +61,16 @@ public class FieldGroup {
     public void setOrder(Integer order) {
         this.order = order;
     }
+    
+    public FieldGroup withTitle(String title) {
+        setTitle(title);
+        return this;
+    }
+    
+    public FieldGroup withOrder(Integer order) {
+        setOrder(order);
+        return this;
+    }
 
     public boolean addField(Field field) {
         if (field.getAlternateOrdering()) {
