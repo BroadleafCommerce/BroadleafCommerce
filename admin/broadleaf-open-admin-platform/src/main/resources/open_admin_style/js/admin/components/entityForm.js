@@ -23,6 +23,7 @@ $(document).ready(function() {
 	});
 	
 	$('body').on('click', 'button.submit-button', function(event) {
+            $('body').click(); // Defocus any current elements in case they need to act prior to form submission
 	    var $form = BLCAdmin.getForm($(this));
 	    $form.submit();
 		event.preventDefault();
