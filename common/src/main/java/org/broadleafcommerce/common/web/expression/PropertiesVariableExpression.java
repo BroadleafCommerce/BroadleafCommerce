@@ -19,7 +19,7 @@
  */
 package org.broadleafcommerce.common.web.expression;
 
-import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class PropertiesVariableExpression implements BroadleafVariableExpression {
     
     @Autowired
-    protected RuntimeEnvironmentPropertiesManager propMgr;
+    protected SystemPropertiesService service;
     
     @Override
     public String getName() {
@@ -39,11 +39,11 @@ public class PropertiesVariableExpression implements BroadleafVariableExpression
     }
     
     public String get(String propertyName) {
-        return propMgr.getProperty(propertyName);
+        return service.resolveSystemProperty(propertyName);
     }
 
     public int getAsInt(String propertyName) {
-        return Integer.parseInt(propMgr.getProperty(propertyName));
+        return service.resolveIntSystemProperty(propertyName);
     }
 
 }
