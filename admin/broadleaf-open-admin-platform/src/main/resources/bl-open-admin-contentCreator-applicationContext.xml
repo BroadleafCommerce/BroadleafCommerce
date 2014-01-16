@@ -41,6 +41,7 @@
     <bean id="blPersistenceManagerEventHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
+                <ref bean="blArchiveStatusPersistenceEventHandler" />
             </list>
         </property>
     </bean>
