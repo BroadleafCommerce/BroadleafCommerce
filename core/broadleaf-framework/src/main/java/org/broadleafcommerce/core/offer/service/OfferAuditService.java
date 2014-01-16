@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2012 the original author or authors.
+ * Copyright 2008-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.broadleafcommerce.core.offer.dao;
+package org.broadleafcommerce.core.offer.service;
 
+import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
-import org.broadleafcommerce.core.offer.service.OfferService;
-import org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity;
-import org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity;
+import org.broadleafcommerce.profile.core.domain.Customer;
+
 
 /**
- * DAO for auditing what went on with offers being added to an order
+ * Service for managing {@link OfferAudit}s. An {@link OfferAudit} is used to track usage of an offer and offer code
+ * for a particular {@link Order} and {@link Customer}. This provides easy and fast tracking of verifying max uses on
+ * particular {@link Offer}s.
  *
  * @author Phillip Verheyden (phillipuniverse)
- * @see {@link VerifyCustomerMaxOfferUsesActivity}, {@link RecordOfferUsageActivity},
- * {@link OfferService#verifyMaxCustomerUsageThreshold(org.broadleafcommerce.profile.core.domain.Customer, org.broadleafcommerce.core.offer.domain.OfferCode)}
  */
-public interface OfferAuditDao {
-    
+public interface OfferAuditService {
+
     public OfferAudit readAuditById(Long offerAuditId);
     
     /**
@@ -60,5 +60,5 @@ public interface OfferAuditDao {
      * @return
      */
     public Long countOfferCodeUses(Long offerCodeId);
-
+    
 }

@@ -44,15 +44,45 @@ public interface OfferCode extends Serializable {
 
     public void setEndDate(Date endDate);
 
-    public int getMaxUses() ;
+    /**
+     * Returns the maximum number of times that this code can be used regardless of Order or Customer
+     *
+     * 0 indicates unlimited usage.
+     *
+     * @return
+     */
+    public int getMaxUses();
 
-    public void setMaxUses(int maxUses) ;
+    /**
+     * Sets the maximum number of times that this code can be used regardless of Order or Customer
+     *
+     * 0 indicates unlimited usage.
+     *
+     * @param maxUses
+     */
+    public void setMaxUses(int maxUses);
 
+    /**
+     * Indicates that this is an unlimited-use code. By default this is true if {@link #getMaxUses()} == 0
+     */
+    public boolean isUnlimitedUse();
+    
+    /**
+     * Indicates that this code has a limit on how many times it can be used. By default this is true if {@link #getMaxUses()} > 0
+     */
+    public boolean isLimitedUse();
+    
+    /**
+     * @deprecated replaced by the {@link OfferAudit} table
+     */
     @Deprecated
     public int getUses() ;
 
+    /**
+     * @deprecated replaced by the {@link OfferAudit} table
+     */
     @Deprecated
-    public void setUses(int uses) ;
+    public void setUses(int uses);
 
     public List<Order> getOrders();
 

@@ -16,18 +16,23 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.util.Date;
 
 @Entity
 @Table(name = "BLC_OFFER_AUDIT")
@@ -35,10 +40,19 @@ import java.util.Date;
 public class OfferAuditImpl implements OfferAudit {
 
     public static final long serialVersionUID = 1L;
+    
+    protected static final Log LOG = LogFactory.getLog(OfferAuditImpl.class);
 
     @Id
-    @GeneratedValue(generator = "OfferAuditId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OfferAuditId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OfferAuditImpl", allocationSize = 50)
+    @GeneratedValue(generator = "OfferAuditId")
+    @GenericGenerator(
+        name="OfferAuditId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="OfferAuditImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferAuditImpl")
+        }
+    )
     @Column(name = "OFFER_AUDIT_ID")
     protected Long id;
 
@@ -57,91 +71,111 @@ public class OfferAuditImpl implements OfferAudit {
     @Column(name = "REDEEMED_DATE")
     protected Date redeemedDate;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public Long getOfferId() {
         return offerId;
     }
 
+    @Override
     public void setOfferId(Long offerId) {
         this.offerId = offerId;
     }
 
+    @Override
+    public Long getOfferCodeId() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setOfferCodeId(Long offerCodeId) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Long getCustomerId() {
         return customerId;
     }
 
+    @Override
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }
 
+    @Override
     public Long getOrderId() {
         return orderId;
     }
 
+    @Override
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 
+    @Override
     public Date getRedeemedDate() {
         return redeemedDate;
     }
 
+    @Override
     public void setRedeemedDate(Date redeemedDate) {
         this.redeemedDate = redeemedDate;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
-        result = prime * result + ((offerId == null) ? 0 : offerId.hashCode());
-        result = prime * result + ((redeemedDate == null) ? 0 : redeemedDate.hashCode());
-        result = prime * result + ((orderId == null) ? 0 : orderId.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        OfferAuditImpl other = (OfferAuditImpl) obj;
-
-        if (id != null && other.id != null) {
-            return id.equals(other.id);
+        try {
+            return new HashCodeBuilder()
+                .append(customerId)
+                .append(offerId)
+                .append(getOfferCodeId())
+                .append(redeemedDate)
+                .append(orderId)
+                .build();
+        } catch (UnsupportedOperationException e) {
+            return new HashCodeBuilder()
+            .append(customerId)
+            .append(offerId)
+            .append(redeemedDate)
+            .append(orderId)
+            .build();
         }
-
-        if (customerId == null) {
-            if (other.customerId != null)
-                return false;
-        } else if (!customerId.equals(other.customerId))
-            return false;
-        if (offerId == null) {
-            if (other.offerId != null)
-                return false;
-        } else if (!offerId.equals(other.offerId))
-            return false;
-        if (redeemedDate == null) {
-            if (other.redeemedDate != null)
-                return false;
-        } else if (!redeemedDate.equals(other.redeemedDate))
-            return false;
-        if (orderId == null) {
-            if (other.orderId != null)
-                return false;
-        } else if (!orderId.equals(other.orderId))
-            return false;
-        return true;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof OfferAuditImpl) {
+            OfferAuditImpl that = (OfferAuditImpl) o;
+            
+            try {
+                return new EqualsBuilder()
+                    .append(this.id, that.id)
+                    .append(this.customerId, that.customerId)
+                    .append(this.offerId, that.offerId)
+                    .append(this.getOfferCodeId(), that.getOfferCodeId())
+                    .append(this.redeemedDate, that.redeemedDate)
+                    .append(this.orderId, that.orderId)
+                    .build();
+            } catch (UnsupportedOperationException e) {
+                return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.customerId, that.customerId)
+                .append(this.offerId, that.offerId)
+                .append(this.redeemedDate, that.redeemedDate)
+                .append(this.orderId, that.orderId)
+                .build();
+            }
+        }
+        
+        return false;
     }
 }
