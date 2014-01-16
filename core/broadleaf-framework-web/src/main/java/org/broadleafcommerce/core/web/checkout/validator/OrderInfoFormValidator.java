@@ -31,7 +31,7 @@ public class OrderInfoFormValidator implements Validator {
 
     @SuppressWarnings("rawtypes")
     public boolean supports(Class clazz) {
-        return clazz.equals(OrderInfoFormValidator.class);
+        return clazz.equals(OrderInfoForm.class);
     }
 
     public void validate(Object obj, Errors errors) {

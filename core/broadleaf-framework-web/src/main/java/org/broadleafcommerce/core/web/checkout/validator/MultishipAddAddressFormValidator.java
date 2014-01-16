@@ -30,7 +30,7 @@ public class MultishipAddAddressFormValidator implements Validator {
 
     @SuppressWarnings("rawtypes")
     public boolean supports(Class clazz) {
-        return clazz.equals(MultishipAddAddressFormValidator.class);
+        return clazz.equals(ShippingInfoForm.class);
     }
 
     public void validate(Object obj, Errors errors) {

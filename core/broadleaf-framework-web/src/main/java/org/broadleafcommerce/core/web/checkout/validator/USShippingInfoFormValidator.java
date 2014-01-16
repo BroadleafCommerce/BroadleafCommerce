@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.web.checkout.validator;
 
+import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -28,7 +29,7 @@ public class USShippingInfoFormValidator extends ShippingInfoFormValidator {
 
     @SuppressWarnings("rawtypes")
     public boolean supports(Class clazz) {
-        return clazz.equals(USShippingInfoFormValidator.class);
+        return clazz.equals(ShippingInfoForm.class);
     }
 
     public void validate(Object obj, Errors errors) {

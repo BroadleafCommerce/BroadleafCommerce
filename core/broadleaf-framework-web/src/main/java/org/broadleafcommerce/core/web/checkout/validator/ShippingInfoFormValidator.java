@@ -30,7 +30,7 @@ public class ShippingInfoFormValidator implements Validator {
 
     @SuppressWarnings("rawtypes")
     public boolean supports(Class clazz) {
-        return clazz.equals(ShippingInfoFormValidator.class);
+        return clazz.equals(ShippingInfoForm.class);
     }
 
     public void validate(Object obj, Errors errors) {
