@@ -24,7 +24,6 @@ import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -41,6 +40,7 @@ import javax.annotation.Resource;
  * so that we are able to attach the necessary filters in certain circumstances.
  * 
  * @author Andre Azzolini (apazzolini)
+ * @author Phillip Verheyden (phillipuniverse)
  */
 @Service("blUserDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -51,6 +51,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Resource(name = "blRoleService")
     protected RoleService roleService;
 
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
         Customer customer = customerService.readCustomerByUsername(username);
         if (customer == null) {
@@ -58,7 +59,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         List<GrantedAuthority> grantedAuthorities = createGrantedAuthorities(roleService.findCustomerRolesByCustomerId(customer.getId()));
-        return new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, grantedAuthorities);
+        return new CustomerUserDetails(customer.getId(), username, customer.getPassword(), !customer.isDeactivated(), true, !customer.isPasswordChangeRequired(), true, grantedAuthorities);
     }
 
     protected List<GrantedAuthority> createGrantedAuthorities(List<CustomerRole> customerRoles) {
@@ -78,5 +79,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return grantedAuthorities;
     }
-
+    
 }
