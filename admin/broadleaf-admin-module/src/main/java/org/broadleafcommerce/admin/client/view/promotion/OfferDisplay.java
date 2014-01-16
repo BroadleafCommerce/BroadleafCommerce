@@ -16,6 +16,11 @@
 
 package org.broadleafcommerce.admin.client.view.promotion;
 
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
+import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
+
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.ImgButton;
@@ -25,13 +30,8 @@ import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.form.fields.FloatItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
-import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEditDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.DynamicEntityListDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-import org.broadleafcommerce.openadmin.client.view.dynamic.form.DynamicFormDisplay;
 
 import java.util.List;
 
@@ -42,12 +42,13 @@ import java.util.List;
  */
 public interface OfferDisplay extends DynamicEditDisplay {
 
+    @Override
     public DynamicFormDisplay getDynamicFormDisplay();
+    @Override
     public DynamicEntityListDisplay getListDisplay();
     public ToolStripButton getAdvancedButton();
     public ImgButton getHelpButtonType();
     public RadioGroupItem getDeliveryTypeRadio();
-    public TextItem getCodeField();
     public FilterBuilder getCustomerFilterBuilder();
     public RadioGroupItem getCustomerRuleRadio();
     public FilterBuilder getFulfillmentGroupFilterBuilder();

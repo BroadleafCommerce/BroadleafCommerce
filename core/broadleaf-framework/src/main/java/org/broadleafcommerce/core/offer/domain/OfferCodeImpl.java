@@ -63,7 +63,7 @@ import javax.persistence.Table;
         @AdminPresentationOverride(name="offer.targetItemCriteria", value=@AdminPresentation(excluded = true))
     }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OfferCodeImpl_baseOfferCode")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferCodeImpl_baseOfferCode")
 public class OfferCodeImpl implements OfferCode {
 
     public static final long serialVersionUID = 1L;
@@ -85,7 +85,6 @@ public class OfferCodeImpl implements OfferCode {
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     @Index(name="OFFERCODE_OFFER_INDEX", columnNames={"OFFER_ID"})
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer", group = "OfferCodeImpl_Description")
     protected Offer offer;
 
     @Column(name = "OFFER_CODE", nullable=false)
@@ -106,7 +105,7 @@ public class OfferCodeImpl implements OfferCode {
     protected int maxUses;
 
     @Column(name = "USES")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Uses", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(excluded=true)
     @Deprecated
     protected int uses;
     

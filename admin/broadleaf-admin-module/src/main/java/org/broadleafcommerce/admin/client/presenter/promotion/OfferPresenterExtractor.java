@@ -16,9 +16,12 @@
 
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
+import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemTargetCriteriaListDataSourceFactory;
+import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
+import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
+import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -27,15 +30,9 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
-import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.admin.client.datasource.promotion.OfferItemTargetCriteriaListDataSourceFactory;
-import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
-import org.broadleafcommerce.openadmin.client.translation.AdvancedCriteriaToMVELTranslator;
-import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * 
@@ -68,6 +65,7 @@ public class OfferPresenterExtractor {
     public void removeItemQualifer(final ItemBuilderDisplay builder) {
         if (builder.getRecord() != null) {
             presenter.getPresenterSequenceSetupManager().getDataSource("offerItemCriteriaDS").removeData(builder.getRecord(), new DSCallback() {
+                @Override
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                     getDisplay().removeItemBuilder(builder);
                     stateManager.finishWatchedItem(CriteriaType.QUALIFIER);
@@ -82,6 +80,7 @@ public class OfferPresenterExtractor {
     public void removeItemTarget(final ItemBuilderDisplay builder) {
         if (builder.getRecord() != null) {
             presenter.getPresenterSequenceSetupManager().getDataSource("offerItemTargetCriteriaDS").removeData(builder.getRecord(), new DSCallback() {
+                @Override
                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                     getDisplay().removeTargetItemBuilder(builder);
                     stateManager.finishWatchedItem(CriteriaType.TARGET);
@@ -116,9 +115,6 @@ public class OfferPresenterExtractor {
             
             setData(tempRecord, "totalitarianOffer", getDisplay().getRestrictRuleRadio().getValue().equals("YES"), dirtyValues);
             setData(tempRecord, "deliveryType",getDisplay().getDeliveryTypeRadio().getValue(), dirtyValues);
-            if (getDisplay().getDeliveryTypeRadio().getValue().equals("CODE")) {
-                setData(tempRecord, "offerCode.offerCode", getDisplay().getCodeField().getValue().toString().trim(), dirtyValues);
-            }
             setData(tempRecord, "qualifyingItemSubTotal", getDisplay().getQualifyingItemSubTotal().getValue().toString().trim(), dirtyValues);
             final String type = getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("type").getValue().toString();
             
@@ -153,6 +149,7 @@ public class OfferPresenterExtractor {
 
             if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().validate() && getDisplay().getQualifyingItemSubTotalForm().validate()) {
                 getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().updateData(tempRecord, new DSCallback() {
+                    @Override
                     public void execute(DSResponse response, Object rawData, DSRequest request) {
                         try {
                             stateManager.start();
@@ -197,6 +194,7 @@ public class OfferPresenterExtractor {
                             setData(builder.getRecord(), "quantity", quantity, dirtyValues);
                             setData(builder.getRecord(), "orderItemMatchRule", mvel, dirtyValues);
                             presenter.getPresenterSequenceSetupManager().getDataSource("offerItemCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
+                                @Override
                                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                                     builder.setDirty(false);
                                     stateManager.finishWatchedItem(CriteriaType.QUALIFIER);
@@ -210,6 +208,7 @@ public class OfferPresenterExtractor {
                             temp.setAttribute(OfferItemCriteriaListDataSourceFactory.foreignKeyName, presenter.getPresenterSequenceSetupManager().getDataSource("offerDS").getPrimaryKeyValue(selectedRecord));
                             temp.setAttribute("id", "");
                             presenter.getPresenterSequenceSetupManager().getDataSource("offerItemCriteriaDS").addData(temp, new DSCallback() {
+                                @Override
                                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                                     builder.setDirty(false);
                                     builder.setRecord(temp);
@@ -258,6 +257,7 @@ public class OfferPresenterExtractor {
                             setData(builder.getRecord(), "quantity", quantity, dirtyValues);
                             setData(builder.getRecord(), "orderItemMatchRule", mvel, dirtyValues);
                             presenter.getPresenterSequenceSetupManager().getDataSource("offerItemTargetCriteriaDS").updateData(builder.getRecord(), new DSCallback() {
+                                @Override
                                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                                     builder.setDirty(false);
                                     stateManager.finishWatchedItem(CriteriaType.TARGET);
@@ -271,6 +271,7 @@ public class OfferPresenterExtractor {
                             temp.setAttribute(OfferItemTargetCriteriaListDataSourceFactory.foreignKeyName, presenter.getPresenterSequenceSetupManager().getDataSource("offerDS").getPrimaryKeyValue(selectedRecord));
                             temp.setAttribute("id", "");
                             presenter.getPresenterSequenceSetupManager().getDataSource("offerItemTargetCriteriaDS").addData(temp, new DSCallback() {
+                                @Override
                                 public void execute(DSResponse response, Object rawData, DSRequest request) {
                                     builder.setDirty(false);
                                     builder.setRecord(temp);
