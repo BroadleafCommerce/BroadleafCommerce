@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.config.service;
 
+import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
+
 
 /**
  * To change this template use File | Settings | File Templates.
@@ -62,5 +64,14 @@ public interface SystemPropertiesService {
      * @return
      */
     long resolveLongSystemProperty(String name);
+
+    /**
+     * Determines if the given value is valid for the specified type
+     * 
+     * @param sp
+     * @return whether or not the SystemProperty is in a valid state
+     */
+    public boolean isValueValidForType(String value, SystemPropertyFieldType type);
+
 
 }

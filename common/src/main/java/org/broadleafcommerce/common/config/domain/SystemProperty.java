@@ -103,4 +103,16 @@ public interface SystemProperty extends Serializable {
      */
     public void setFriendlyGroup(String friendlyGroup);
 
+    /**
+     * @return the friendly tab of this property
+     */
+    public String getFriendlyTab();
+
+    /**
+     * Sets the friendly tab of this property
+     * 
+     * @param friendlyTab
+     */
+    public void setFriendlyTab(String friendlyTab);
+
 }

@@ -26,6 +26,7 @@ import net.sf.ehcache.Element;
 import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
 import org.broadleafcommerce.common.config.dao.SystemPropertiesDao;
 import org.broadleafcommerce.common.config.domain.SystemProperty;
+import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,5 +163,40 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
         }
 
         return Long.valueOf(systemProperty).longValue();
+    }
+    
+    @Override
+    public boolean isValueValidForType(String value, SystemPropertyFieldType type) {
+        if (type.equals(SystemPropertyFieldType.BOOLEAN_TYPE)) {
+            value = value.toUpperCase();
+            if (value != null && (value.equals("TRUE") || value.equals("FALSE"))) {
+                return true;
+            }
+        } else if (type.equals(SystemPropertyFieldType.INT_TYPE)) {
+            try {
+                Integer.parseInt(value);
+                return true;
+            } catch (Exception e) {
+                // Do nothing - we will fail on validation
+            }
+        } else if (type.equals(SystemPropertyFieldType.LONG_TYPE)) {
+            try {
+                Long.parseLong(value);
+                return true;
+            } catch (Exception e) {
+                // Do nothing - we will fail on validation
+            }
+        } else if (type.equals(SystemPropertyFieldType.DOUBLE_TYPE)) {
+            try {
+                Double.parseDouble(value);
+                return true;
+            } catch (Exception e) {
+                // Do nothing - we will fail on validation
+            }
+        } else if (type.equals(SystemPropertyFieldType.STRING_TYPE)) {
+            return true;
+        }
+
+        return false;
     }
 }
