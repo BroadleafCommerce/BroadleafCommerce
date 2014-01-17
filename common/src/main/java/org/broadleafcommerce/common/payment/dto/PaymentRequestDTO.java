@@ -88,6 +88,7 @@ public class PaymentRequestDTO {
     protected AddressDTO<PaymentRequestDTO> shipTo;
     protected AddressDTO<PaymentRequestDTO> billTo;
     protected CreditCardDTO<PaymentRequestDTO> creditCard;
+    protected SubscriptionDTO<PaymentRequestDTO> subscription;
     protected List<GiftCardDTO<PaymentRequestDTO>> giftCards;
     protected List<CustomerCreditDTO<PaymentRequestDTO>> customerCredits;
     protected List<LineItemDTO> lineItems;
@@ -126,6 +127,15 @@ public class PaymentRequestDTO {
     public CreditCardDTO<PaymentRequestDTO> creditCard() {
         creditCard = new CreditCardDTO<PaymentRequestDTO>(this);
         return creditCard;
+    }
+
+    /**
+     * You should only call this once, as it will create a new subscription
+     * if called more than once. Use the getter if you need to append more information later.
+     */
+    public SubscriptionDTO<PaymentRequestDTO> subscription() {
+        subscription = new SubscriptionDTO<PaymentRequestDTO>(this);
+        return subscription;
     }
 
     /**
@@ -237,6 +247,10 @@ public class PaymentRequestDTO {
 
     public CreditCardDTO getCreditCard() {
         return creditCard;
+    }
+
+    public SubscriptionDTO getSubscription() {
+        return subscription;
     }
 
     public GatewayCustomerDTO getCustomer() {

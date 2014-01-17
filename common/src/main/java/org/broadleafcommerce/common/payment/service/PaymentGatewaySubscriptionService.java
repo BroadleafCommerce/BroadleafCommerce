@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
+import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 
 /**
  * <p>Some gateways allow you to create a form of recurring billing by creating a subscription profile.
@@ -31,10 +32,10 @@ import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
  */
 public interface PaymentGatewaySubscriptionService {
 
-    public PaymentResponseDTO createGatewaySubscription(PaymentRequestDTO requestDTO);
+    public PaymentResponseDTO createGatewaySubscription(PaymentRequestDTO requestDTO) throws PaymentException;
 
-    public PaymentResponseDTO updateGatewaySubscription(PaymentRequestDTO requestDTO);
+    public PaymentResponseDTO updateGatewaySubscription(PaymentRequestDTO requestDTO) throws PaymentException;
 
-    public PaymentResponseDTO cancelGatewaySubscription(PaymentRequestDTO requestDTO);
+    public PaymentResponseDTO cancelGatewaySubscription(PaymentRequestDTO requestDTO) throws PaymentException;
 
 }
