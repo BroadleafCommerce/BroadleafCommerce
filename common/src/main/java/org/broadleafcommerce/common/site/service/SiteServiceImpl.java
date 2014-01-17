@@ -19,15 +19,15 @@
  */
 package org.broadleafcommerce.common.site.service;
 
-import org.broadleafcommerce.common.site.dao.SiteDao;
-import org.broadleafcommerce.common.site.domain.Site;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+
+import org.broadleafcommerce.common.site.dao.SiteDao;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("blSiteService")
 public class SiteServiceImpl implements SiteService {
@@ -36,6 +36,7 @@ public class SiteServiceImpl implements SiteService {
     protected SiteDao siteDao;
 
     @Override
+    @Transactional(value = "blTransactionManager", readOnly = true)
     public Site retrieveSiteById(Long id) {
         Site response = siteDao.retrieve(id);
         if (response != null) {
