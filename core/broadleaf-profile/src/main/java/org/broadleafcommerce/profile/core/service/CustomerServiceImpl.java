@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -123,7 +124,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
         
         if (customer.getUnencodedPassword() != null) {
-            customer.setPassword(passwordEncoder.encodePassword(customer.getUnencodedPassword(), getSalt(customer)));
+            customer.setPassword(passwordEncoder.encodePassword(customer.getUnencodedPassword(), getSalt(customer, customer.getUnencodedPassword())));
         }
 
         // let's make sure they entered a new challenge answer (we will populate
@@ -135,6 +136,9 @@ public class CustomerServiceImpl implements CustomerService {
         return customerDao.save(customer);
     }
     
+    protected String generateSecurePassword() {
+        return RandomStringUtils.randomAlphanumeric(16);
+    }
 
     @Override
     public Customer registerCustomer(Customer customer, String password, String passwordConfirm) {
@@ -276,6 +280,16 @@ public class CustomerServiceImpl implements CustomerService {
     }
     
     /**
+     * 
+     * @deprecated use {@link #getSalt(Customer, String)} instead
+     */
+    @Deprecated
+    @Override
+    public Object getSalt(Customer customer) {
+        return getSalt(customer, "");
+    }
+    
+    /**
      * Optionally provide a salt based on a customer.  By default, this returns
      * the salt property
      * 
@@ -284,10 +298,10 @@ public class CustomerServiceImpl implements CustomerService {
      * @see {@link CustomerServiceImpl#getSalt()}
      */
     @Override
-    public Object getSalt(Customer customer) {
+    public Object getSalt(Customer customer, String unencodedPassword) {
         Object salt = null;
         if (saltSource != null) {
-            salt = saltSource.getSalt(new CustomerUserDetails(customer.getId(), customer.getUsername(), customer.getUnencodedPassword(), new ArrayList<GrantedAuthority>()));
+            salt = saltSource.getSalt(new CustomerUserDetails(customer.getId(), customer.getUsername(), unencodedPassword, new ArrayList<GrantedAuthority>()));
         }
         return salt;
     }
@@ -298,11 +312,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Deprecated
     public String getSalt() {
         return salt;
     }
     
     @Override
+    @Deprecated
     public void setSalt(String salt) {
         this.salt = salt;
     }

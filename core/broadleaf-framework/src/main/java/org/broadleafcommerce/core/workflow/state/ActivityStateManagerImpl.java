@@ -23,12 +23,10 @@ import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.annotation.PostConstruct;
 
@@ -44,7 +42,7 @@ public class ActivityStateManagerImpl implements ActivityStateManager {
         return ACTIVITY_STATE_MANAGER;
     }
 
-    protected Map<String, List<StateContainer>> stateMap = Collections.synchronizedMap(new HashMap<String, List<StateContainer>>());
+    protected Map<String, Stack<StateContainer>> stateMap = Collections.synchronizedMap(new HashMap<String, Stack<StateContainer>>());
 
     @PostConstruct
     public void init() {
@@ -60,13 +58,11 @@ public class ActivityStateManagerImpl implements ActivityStateManager {
     @Override
     public void clearRegionState(String region) {
         RollbackStateLocal rollbackStateLocal = getRollbackStateLocal();
-        List<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
+        Stack<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
         if (containers != null) {
-            Iterator<StateContainer> itr = containers.iterator();
-            while(itr.hasNext()) {
-                String myRegion = itr.next().getRegion();
+            while (!containers.empty()) {
+                String myRegion = containers.pop().getRegion();
                 if ((region == null && myRegion == null) || (region != null && region.equals(myRegion))) {
-                    itr.remove();
                     break;
                 }
             }
@@ -86,9 +82,9 @@ public class ActivityStateManagerImpl implements ActivityStateManager {
     @Override
     public void registerState(Activity<? extends ProcessContext> activity, ProcessContext processContext, String region, RollbackHandler rollbackHandler, Map<String, Object> stateItems) {
         RollbackStateLocal rollbackStateLocal = getRollbackStateLocal();
-        List<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
+        Stack<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
         if (containers == null) {
-            containers = new ArrayList<StateContainer>();
+            containers = new Stack<StateContainer>();
             stateMap.put(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId(), containers);
         }
 
@@ -99,19 +95,17 @@ public class ActivityStateManagerImpl implements ActivityStateManager {
         stateContainer.setActivity(activity);
         stateContainer.setProcessContext(processContext);
 
-        containers.add(stateContainer);
+        containers.push(stateContainer);
     }
 
     @Override
     public void rollbackAllState() throws RollbackFailureException {
         RollbackStateLocal rollbackStateLocal = getRollbackStateLocal();
-        List<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
+        Stack<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
         if (containers != null) {
-            Iterator<StateContainer> itr = containers.iterator();
-            while (itr.hasNext()) {
-                StateContainer stateContainer = itr.next();
+            while (!containers.empty()) {
+                StateContainer stateContainer = containers.pop();
                 stateContainer.getRollbackHandler().rollbackState(stateContainer.getActivity(), stateContainer.getProcessContext(), stateContainer.getStateItems());
-                itr.remove();
             }
         }
     }
@@ -119,14 +113,12 @@ public class ActivityStateManagerImpl implements ActivityStateManager {
     @Override
     public void rollbackRegionState(String region) throws RollbackFailureException {
         RollbackStateLocal rollbackStateLocal = getRollbackStateLocal();
-        List<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
+        Stack<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
         if (containers != null) {
-            Iterator<StateContainer> itr = containers.iterator();
-            while (itr.hasNext()) {
-                StateContainer stateContainer = itr.next();
+            while (!containers.empty()) {
+                StateContainer stateContainer = containers.pop();
                 if ((region == null && stateContainer.getRegion() == null) || (region != null && region.equals(stateContainer.getRegion()))) {
                     stateContainer.getRollbackHandler().rollbackState(stateContainer.getActivity(), stateContainer.getProcessContext(), stateContainer.getStateItems());
-                    itr.remove();
                 }
             }
         }
