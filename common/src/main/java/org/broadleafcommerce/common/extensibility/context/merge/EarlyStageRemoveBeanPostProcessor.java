@@ -29,7 +29,7 @@ import org.springframework.core.PriorityOrdered;
  * @see org.broadleafcommerce.common.extensibility.context.merge.AbstractRemoveBeanPostProcessor
  * @author Jeff Fischer
  */
-public class EarlyStageRemoveBeanPostProcessor extends AbstractMergeBeanPostProcessor implements PriorityOrdered {
+public class EarlyStageRemoveBeanPostProcessor extends AbstractRemoveBeanPostProcessor implements PriorityOrdered {
 
     protected int order = Integer.MIN_VALUE;
 
