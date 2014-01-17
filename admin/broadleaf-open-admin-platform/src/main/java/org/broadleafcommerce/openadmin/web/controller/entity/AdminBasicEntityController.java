@@ -666,10 +666,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{id}/{collectionField:.*}/add", method = RequestMethod.GET)
     public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-                                        @PathVariable Map<String, String> pathVars,
-                                        @PathVariable(value = "id") String id,
-                                        @PathVariable(value = "collectionField") String collectionField,
-                                        @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value = "id") String id,
+            @PathVariable(value = "collectionField") String collectionField,
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
@@ -753,6 +753,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        
+        if (StringUtils.isBlank(entityForm.getEntityType())) {
+            FieldMetadata fmd = collectionProperty.getMetadata();
+            if (fmd instanceof BasicCollectionMetadata) {
+                entityForm.setEntityType(((BasicCollectionMetadata) fmd).getCollectionCeilingEntity());
+            }
+        }
 
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs);
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
@@ -796,11 +803,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @throws ServiceException
      */
     protected String buildAddCollectionItemModel(HttpServletRequest request, HttpServletResponse response,
-            Model model,
-            String id,
-            String collectionField,
-            String sectionKey,
-            Property collectionProperty,
+            Model model, String id, String collectionField, String sectionKey, Property collectionProperty,
             FieldMetadata md, PersistencePackageRequest ppr, EntityForm entityForm, Entity entity) throws ServiceException {
         
         if (entityForm != null) {
