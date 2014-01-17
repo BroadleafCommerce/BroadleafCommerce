@@ -139,13 +139,19 @@ public interface CustomerService {
     public void setSaltSource(SaltSource saltSource);
     
     /**
+     * @deprecated use {@link #getSalt(Customer, String)} instead
+     */
+    @Deprecated
+    public Object getSalt(Customer customer);
+    
+    /**
      * Gets the salt object for the current customer. By default this delegates to {@link #getSaltSource()}. If there is
      * not a {@link SaltSource} configured ({@link #getSaltSource()} returns null) then this also returns null.
      * 
      * @param customer
      * @return the salt for the current customer
      */
-    public Object getSalt(Customer customer);
+    public Object getSalt(Customer customer, String unencodedPassword);
     
     /**
      * Encodes the clear text parameter, using the customer as a potential Salt. Does not change the customer properties. 
