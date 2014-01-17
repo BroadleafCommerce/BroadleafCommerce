@@ -96,6 +96,7 @@
                 th:classappend="${listGrid.clickable}? 'clickable'"
                 th:attr="data-link=@{${record.path}},
                          data-index=${record.index},
+                         data-rowid=${record.id},
                          data-hiddenfields=${record.getHiddenFieldsJson()}">
                 
                 <td th:each="headerField : ${record.listGrid.headerFields}"
