@@ -94,5 +94,16 @@ public class BLCCollectionUtils {
         CollectionUtils.select(inputCollection, predicate, answer);
         return answer;
     }
+    
+    /**
+     * It is common to want to make sure that a collection you receive is not null. Instead, we'd rather have
+     * an empty list.
+     * 
+     * @param list
+     * @return the passed in list if not null, otherwise a new ArrayList of the same type
+     */
+    public static <T> List<T> createIfNull(List<T> list) {
+        return (list == null) ? new ArrayList<T>() : list;
+    }
 
 }
