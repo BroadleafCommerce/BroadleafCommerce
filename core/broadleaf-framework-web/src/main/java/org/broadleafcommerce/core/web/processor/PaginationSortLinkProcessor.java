@@ -67,6 +67,10 @@ public class PaginationSortLinkProcessor extends AbstractAttributeModifierAttrPr
             params.remove(ProductSearchCriteria.SORT_STRING);
         }
 
+        // If there is a page number parameter, remove it. This ensures that when the search results refresh the
+        // first page of results will be displayed.
+        params.remove(ProductSearchCriteria.PAGE_NUMBER);
+
         String url = ProcessorUtils.getUrl(baseUrl, params);
 
         attributes.put("href", url);
