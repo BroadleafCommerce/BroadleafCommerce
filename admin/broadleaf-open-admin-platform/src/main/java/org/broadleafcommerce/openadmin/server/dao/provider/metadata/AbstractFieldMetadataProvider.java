@@ -16,19 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
-import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.BroadleafEnumerationType;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.OptionFilterParamType;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
-import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -45,6 +32,21 @@ import javax.annotation.Resource;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
+
+import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.OptionFilterParamType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
+import org.omg.CORBA.UNKNOWN;
+import org.quartz.utils.ExceptionHelper;
 
 /**
  * @author Jeff Fischer
@@ -109,9 +111,47 @@ public abstract class AbstractFieldMetadataProvider implements FieldMetadataProv
         return info;
     }
 
+    /**
+     * @deprecated use the overloaded method that takes DynamicEntityDao as well. This version does not always properly detect the override from xml.
+     * @param configurationKey
+     * @param ceilingEntityFullyQualifiedClassname
+     * @return override value
+     */
+    @Deprecated
     protected Map<String, FieldMetadataOverride> getTargetedOverride(String configurationKey, String ceilingEntityFullyQualifiedClassname) {
         if (metadataOverrides != null && (configurationKey != null || ceilingEntityFullyQualifiedClassname != null)) {
             return metadataOverrides.containsKey(configurationKey)?metadataOverrides.get(configurationKey):metadataOverrides.get(ceilingEntityFullyQualifiedClassname);
+        }
+        return null;
+    }
+
+    protected Map<String, FieldMetadataOverride> getTargetedOverride(DynamicEntityDao dynamicEntityDao, String configurationKey, String ceilingEntityFullyQualifiedClassname) {
+        if (metadataOverrides != null && (configurationKey != null || ceilingEntityFullyQualifiedClassname != null)) {
+            if (metadataOverrides.containsKey(configurationKey)) {
+                return metadataOverrides.get(configurationKey);
+            }
+            if (metadataOverrides.containsKey(ceilingEntityFullyQualifiedClassname)) {
+                return metadataOverrides.get(ceilingEntityFullyQualifiedClassname);
+            }
+            Class<?> test;
+            try {
+                test = Class.forName(ceilingEntityFullyQualifiedClassname);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            if (test.isInterface()) {
+                //if it's an interface, get the least derive polymorphic concrete implementation
+                Class<?>[] types = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(test);
+                return metadataOverrides.get(types[types.length-1].getName());
+            } else {
+                //if it's a concrete implementation, try the interfaces
+                Class<?>[] types = test.getInterfaces();
+                for (Class<?> type : types) {
+                    if (metadataOverrides.containsKey(type.getName())) {
+                        return metadataOverrides.get(type.getName());
+                    }
+                }
+            }
         }
         return null;
     }
