@@ -89,7 +89,7 @@
                 hiddenId = $this.data('hiddenid'),
                 containerId = $this.data('containerid'),
                 fields = $this.data('fields'),
-                data = $this.data('data'),
+                data = $this.data('data')
                 condition = BLCAdmin.conditions.addCondition(hiddenId, containerId, fields, data);
             
             BLCAdmin.conditions.initializeCondition($this.parent(), condition);
@@ -196,8 +196,6 @@ $(document).ready(function() {
         hiddenInput.val('');
         //reset the error as now there isn't one
         BLCAdmin.conditions.getCondition($ruleData.data('containerid')).data.error = '';
-        
-        BLCAdmin.conditions.addAdditionalMainCondition($builderContainer);
         return false;
     });
     
