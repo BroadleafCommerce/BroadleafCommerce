@@ -22,7 +22,7 @@
     <div th:if="${entityForm}" class="entity-form-actions">
         <button th:each="action : ${entityForm.actions}" 
             class="small button radius dark" 
-            th:attr="data-url=@{${sectionKey + action.urlPostfix}}"
+            th:attr="data-url=@{${sectionKey + action.urlPostfix}},data-action=${action.urlPostfix}"
             th:type="${action.buttonType}"
             th:classappend="${action.buttonClass}">
             <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
