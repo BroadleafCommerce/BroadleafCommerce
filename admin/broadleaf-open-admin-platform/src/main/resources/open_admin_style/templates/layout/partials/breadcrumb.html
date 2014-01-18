@@ -24,6 +24,7 @@
             class="small button radius dark" 
             th:attr="data-url=@{${sectionKey + action.urlPostfix}}"
             th:type="${action.buttonType}"
+            th:attr="data-action=${action.urlPostfix}"
             th:classappend="${action.buttonClass}">
             <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
         </button>

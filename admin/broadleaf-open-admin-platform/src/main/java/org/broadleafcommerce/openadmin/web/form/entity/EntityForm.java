@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -240,6 +241,17 @@ public class EntityForm {
         tabs.remove(tab);
     }
     
+    public void removeTab(String tabName) {
+        if (tabs != null) {
+            Iterator<Tab> tabIterator = tabs.iterator();
+            while (tabIterator.hasNext()) {
+                Tab currentTab = tabIterator.next();
+                if (tabName.equals(currentTab.getTitle())) {
+                    tabIterator.remove();
+                }
+            }
+        }
+    }
     public ListGrid removeListGrid(String subCollectionFieldName) {
         ListGrid lgToRemove = null;
         Tab containingTab = null;
@@ -317,6 +329,19 @@ public class EntityForm {
         }
 
         tab.getListGrids().add(listGrid);
+    }
+
+    /**
+     * Uses a zero based position.   Use 0 to add to the top of the list.
+     * @param position
+     * @param action
+     */
+    public void addAction(int position, EntityFormAction action) {
+        if (actions.size() > position) {
+            actions.add(position, action);
+        } else {
+            actions.add(action);
+        }
     }
 
     public void addAction(EntityFormAction action) {

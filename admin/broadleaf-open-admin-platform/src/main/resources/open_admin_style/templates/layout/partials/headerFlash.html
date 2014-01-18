@@ -1,6 +1,6 @@
-<div class="four columns centered" th:if="${headerFlash}">
-    <div class="alert-box" th:classappend="${headerFlashAlert != null and headerFlashAlert ? 'alert' : 'success'}" th:inline="text">
-        [[#{${headerFlash}}]]
+<div id="headerFlashAlertBoxContainer" class="four columns centered"  th:classappend= "${headerFlashAlert == null ? 'hidden' : ''}">
+    <div id="headerFlashAlertBox" class="alert-box" th:classappend="${headerFlashAlert != null and headerFlashAlert ? 'alert' : 'success'}" th:inline="text">
+        <span class="alert-box-message">[[#{${headerFlash}}]]</span>
         <a href="" class="close">&times;</a>
     </div>
 </div>
