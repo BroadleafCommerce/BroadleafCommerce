@@ -20,11 +20,14 @@
 package org.broadleafcommerce.common.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GenericResponse {
     
     private List<String> errorCodes = new ArrayList<String>();
+    private Map<String, List<String>> errorCodeMap = new HashMap<String, List<String>>();
 
     /**
      * Returns true if
@@ -39,8 +42,12 @@ public class GenericResponse {
     }
 
     public void addErrorCode(String errorCode) {
-        if (errorCode != null) {
-            errorCodes.add(errorCode);
-        }
+        errorCodes.add(errorCode);
+        errorCodeMap.put(errorCode, new ArrayList<String>());
+    }
+
+    public void addErrorCode(String errorCode, List<String> arguments) {
+        errorCodes.add(errorCode);
+        errorCodeMap.put(errorCode, arguments);
     }
 }
