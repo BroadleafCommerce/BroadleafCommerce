@@ -54,6 +54,7 @@ public class Field {
     protected Boolean isTranslatable;
     protected Boolean isMainEntityLink;
     protected Boolean isFilterSortDisabled;
+    protected Boolean isResizeDisabled;
     protected Boolean isDerived;
     protected Boolean isLargeEntry;
     protected Boolean isDirty;
@@ -241,6 +242,10 @@ public class Field {
         return isFilterSortDisabled == null ? false : isFilterSortDisabled;
     }
     
+    public Boolean getResizeDisabled() {
+        return isResizeDisabled == null ? false : isResizeDisabled;
+    }
+    
     public Object getAttribute(String key) {
         return getAttributes().get(key);
     }
@@ -367,6 +372,10 @@ public class Field {
 
     public void setFilterSortDisabled(Boolean isFilterSortDisabled) {
         this.isFilterSortDisabled = isFilterSortDisabled;
+    }
+
+    public void setResizeDisabled(Boolean isResizeDisabled) {
+        this.isResizeDisabled = isResizeDisabled;
     }
     
     public Boolean getIsDerived() {

@@ -29,7 +29,7 @@
                         <div class="listgrid-title">
                             [[#{${headerField.friendlyName}}]]
                         </div>
-                        <div class="resizer">||</div>
+                        <div class="resizer" th:unless="${headerField.resizeDisabled}">||</div>
                     </div>
     
                     <div href="#" class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
@@ -41,7 +41,7 @@
                             </div>
                         </div>
     
-                        <div class="resizer">||</div>
+                        <div class="resizer" th:unless="${headerField.resizeDisabled}">||</div>
                         <ul th:include="${'components/partials/listGridHeaderFilter'}"
                             class="no-hover"
                             th:classappend="${headerField.mainEntityLink ? 'first' : ''}"
@@ -69,7 +69,7 @@
                             </div>
                         </div>
                         
-                        <div class="resizer">||</div>
+                        <div class="resizer" th:unless="${headerField.resizeDisabled}">||</div>
                         <ul th:include="${'components/partials/listGridHeaderFilter'}"
                             class="no-hover end"
                             th:with="fieldType=${'id'},
