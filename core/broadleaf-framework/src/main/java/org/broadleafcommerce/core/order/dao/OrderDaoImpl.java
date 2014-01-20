@@ -34,6 +34,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
 
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
@@ -211,11 +212,34 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold) {
+    public List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview) {
+        TypedQuery<Order> query = buildCartQuery(names, statuses, dateCreatedMinThreshold, isPreview, Order.class);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview, int startPos, int length) {
+        TypedQuery<Order> query = buildCartQuery(names, statuses, dateCreatedMinThreshold, isPreview, Order.class);
+        query.setFirstResult(startPos);
+        query.setMaxResults(length);
+        return query.getResultList();
+    }
+
+    @Override
+    public Long findCartsCount(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview) {
+        TypedQuery<Long> query = buildCartQuery(names, statuses, dateCreatedMinThreshold, isPreview, Long.class);
+        return query.getSingleResult();
+    }
+
+    protected <T> TypedQuery<T> buildCartQuery(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview, Class<T> returnType) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        CriteriaQuery<T> criteria = builder.createQuery(returnType);
         Root<OrderImpl> root = criteria.from(OrderImpl.class);
-        criteria.select(root);
+        if (Long.class.equals(returnType)) {
+            criteria.select((Selection<? extends T>) builder.count(root));
+        } else {
+            criteria.select((Selection<? extends T>) root);
+        }
         List<Predicate> restrictions = new ArrayList<Predicate>();
         List<String> statusList = new ArrayList<String>();
         if (statuses != null) {
@@ -232,8 +256,15 @@ public class OrderDaoImpl implements OrderDao {
         if (dateCreatedMinThreshold != null) {
             restrictions.add(builder.lessThan(root.get("auditable").get("dateCreated").as(Date.class), dateCreatedMinThreshold));
         }
+        if (isPreview != null) {
+            if (isPreview) {
+                restrictions.add(builder.isTrue(root.get("previewable").get("isPreview").as(Boolean.class)));
+            } else {
+                restrictions.add(builder.or(builder.isNull(root.get("previewable").get("isPreview")),
+                        builder.isFalse(root.get("previewable").get("isPreview").as(Boolean.class))));
+            }
+        }
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        TypedQuery<Order> query = em.createQuery(criteria);
-        return query.getResultList();
+        return em.createQuery(criteria);
     }
 }
