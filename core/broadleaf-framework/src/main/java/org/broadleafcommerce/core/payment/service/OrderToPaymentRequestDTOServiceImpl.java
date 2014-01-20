@@ -144,7 +144,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         List<FulfillmentGroup> fgs = order.getFulfillmentGroups();
         if (fgs != null && fgs.size() > 0) {
             FulfillmentGroup defaultFg = fgService.getFirstShippableFulfillmentGroup(order);
-            if (defaultFg.getAddress() != null) {
+            if (defaultFg != null && defaultFg.getAddress() != null) {
                 Address fgAddress = defaultFg.getAddress();
                 String stateAbbr = null;
                 String countryAbbr = null;
