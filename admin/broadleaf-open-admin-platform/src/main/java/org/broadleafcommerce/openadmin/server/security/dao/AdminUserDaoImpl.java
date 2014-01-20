@@ -20,15 +20,18 @@
 package org.broadleafcommerce.openadmin.server.security.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.util.List;
 
 /**
  * 
@@ -53,6 +56,14 @@ public class AdminUserDaoImpl implements AdminUserDao {
 
     public AdminUser readAdminUserById(Long id) {
         return em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminUser", AdminUser.class), id);
+    }
+    
+    @Override
+    public List<AdminUser> readAdminUsersByIds(Set<Long> ids) {
+        TypedQuery<AdminUser> query = new TypedQueryBuilder<AdminUser>(AdminUser.class, "au")
+                .addRestriction("au.id", "in", ids)
+                .toQuery(em);
+        return query.getResultList();
     }
 
     public AdminUser saveAdminUser(AdminUser user) {
