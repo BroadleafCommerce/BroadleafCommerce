@@ -309,4 +309,8 @@ public class PaymentRequestDTO {
         return (getCustomer() != null && getCustomer().customerPopulated());
     }
 
+    public boolean subscriptionPopulated() {
+        return (getSubscription() != null && getSubscription().subscriptionPopulated());
+    }
+
 }

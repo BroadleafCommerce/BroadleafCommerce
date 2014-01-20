@@ -104,7 +104,7 @@ public class SubscriptionDTO<T> {
         return startDate;
     }
 
-    public boolean isPopulated() {
+    public boolean subscriptionPopulated() {
         return ((getAdditionalFields() != null && !getAdditionalFields().isEmpty()) ||
                 getRecurringAmount() != null ||
                 getFrequency() != null ||
