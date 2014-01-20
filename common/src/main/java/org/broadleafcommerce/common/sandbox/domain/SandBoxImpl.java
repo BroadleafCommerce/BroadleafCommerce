@@ -81,7 +81,7 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     
     @Column(name="AUTHOR")
     @AdminPresentation(friendlyName = "SandBoxImpl_Author", group = "SandBoxImpl_Description", prominent = true, 
-        gridOrder = 3000, order = 3000)
+        gridOrder = 3000, order = 3000, visibility = VisibilityEnum.FORM_HIDDEN)
     protected Long author;
 
     @Column(name = "SANDBOX_TYPE")

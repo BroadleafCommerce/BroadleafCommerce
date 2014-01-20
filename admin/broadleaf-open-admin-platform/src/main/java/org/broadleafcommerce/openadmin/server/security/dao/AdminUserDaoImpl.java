@@ -60,9 +60,13 @@ public class AdminUserDaoImpl implements AdminUserDao {
     
     @Override
     public List<AdminUser> readAdminUsersByIds(Set<Long> ids) {
-        TypedQuery<AdminUser> query = new TypedQueryBuilder<AdminUser>(AdminUser.class, "au")
-                .addRestriction("au.id", "in", ids)
-                .toQuery(em);
+        TypedQueryBuilder<AdminUser> tqb = new TypedQueryBuilder<AdminUser>(AdminUser.class, "au");
+
+        if (ids != null && !ids.isEmpty()) {
+            tqb.addRestriction("au.id", "in", ids);
+        }
+
+        TypedQuery<AdminUser> query = tqb.toQuery(em);
         return query.getResultList();
     }
 

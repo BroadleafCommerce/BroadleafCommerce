@@ -19,10 +19,13 @@
  */
 package org.broadleafcommerce.common.sandbox.domain;
 
+import java.io.Serializable;
+
 /**
  * @author Jeff Fischer
  */
-public interface SandBoxManagement {
+public interface SandBoxManagement extends Serializable {
+
     SandBox getSandBox();
 
     void setSandBox(SandBox sandBox);
