@@ -80,6 +80,8 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     protected String name;
     
     @Column(name="AUTHOR")
+    @AdminPresentation(friendlyName = "SandBoxImpl_Author", group = "SandBoxImpl_Description", prominent = true, 
+        gridOrder = 3000, order = 3000)
     protected Long author;
 
     @Column(name = "SANDBOX_TYPE")
@@ -104,7 +106,7 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
 
     @Column(name = "DESCRIPTION")
     @AdminPresentation(friendlyName = "SandBoxImpl_Description", group = "SandBoxImpl_Description",
-        prominent = true, gridOrder = 3000, order = 3000)
+        prominent = true, gridOrder = 4000, order = 4000)
     protected String description;
 
     /*
