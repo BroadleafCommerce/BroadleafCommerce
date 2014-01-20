@@ -22,6 +22,20 @@ package org.broadleafcommerce.common.payment.dto;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Chad Harchar (charchar)
+ *
+ * Many payment solutions allow you to set up subscriptions (recurring payments)
+ * with payment transactions.
+ *
+ * The following DTO represent the usual parameters that you may wish to pass:
+ *
+ * recurringAmount: the amount that you charge for every recurring payment
+ * frequency: the frequency of the recurring payment
+ * numberOfInstallments: the number of payments for this subscription
+ * startDate: the start date for this subscription
+ *
+ */
 public class SubscriptionDTO<T> {
 
     protected T parent;
@@ -90,4 +104,11 @@ public class SubscriptionDTO<T> {
         return startDate;
     }
 
+    public boolean isPopulated() {
+        return ((getAdditionalFields() != null && !getAdditionalFields().isEmpty()) ||
+                getRecurringAmount() != null ||
+                getFrequency() != null ||
+                getNumberOfInstallments() != null ||
+                getStartDate() != null);
+    }
 }
