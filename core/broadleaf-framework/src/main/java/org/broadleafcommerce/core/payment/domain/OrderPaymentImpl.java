@@ -94,16 +94,6 @@ import javax.persistence.Table;
         @AdminPresentationMergeOverride(name = "billingAddress.isBusiness", mergeEntries = {
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
                         booleanOverrideValue = true)
-        }),
-        @AdminPresentationMergeOverride(name = "archiveStatus.archived", mergeEntries = {
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY,
-                        overrideValue = "VISIBLE_ALL"),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT,
-                        booleanOverrideValue = true),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
-                        intOverrideValue = 4000),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER,
-                        intOverrideValue = 4000)
         })
     }
 )
