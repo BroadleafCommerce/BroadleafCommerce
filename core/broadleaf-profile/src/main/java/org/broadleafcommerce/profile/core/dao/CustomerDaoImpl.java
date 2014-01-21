@@ -19,16 +19,17 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
+
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.springframework.stereotype.Repository;
 
 @Repository("blCustomerDao")
 public class CustomerDaoImpl implements CustomerDao {
@@ -39,41 +40,53 @@ public class CustomerDaoImpl implements CustomerDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @Override
     public Customer readCustomerById(Long id) {
         return em.find(CustomerImpl.class, id);
     }
 
+    @Override
     public Customer readCustomerByUsername(String username) {        
         List<Customer> customers = readCustomersByUsername(username);
         return customers == null || customers.isEmpty() ? null : customers.get(0);
     }
    
-    @SuppressWarnings("unchecked")
+    @Override
     public List<Customer> readCustomersByUsername(String username) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_USER_NAME");
         query.setParameter("username", username);        
         return query.getResultList();        
     }
 
+    @Override
     public Customer readCustomerByEmail(String emailAddress) {
         List<Customer> customers = readCustomersByEmail(emailAddress);
         return customers == null || customers.isEmpty() ? null : customers.get(0);
     }
     
-    @SuppressWarnings("unchecked")
+    @Override
     public List<Customer> readCustomersByEmail(String emailAddress) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_EMAIL");
         query.setParameter("email", emailAddress);
         return query.getResultList();        
     }
 
+    @Override
     public Customer save(Customer customer) {
         return em.merge(customer);
     }
 
+    @Override
     public Customer create() {
         Customer customer =  (Customer) entityConfiguration.createEntityInstance(Customer.class.getName());
         return customer;
     }
 
+    @Override
+    public void delete(Customer customer) {
+        if (!em.contains(customer)) {
+            customer = readCustomerById(customer.getId());
+        }
+        em.remove(customer);
+    }
 }

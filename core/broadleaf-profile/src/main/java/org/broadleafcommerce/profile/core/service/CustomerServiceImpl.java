@@ -55,6 +55,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.TypedQuery;
 
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
@@ -230,8 +231,6 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer createCustomer() {
         return createCustomerFromId(null);
     }
-    
-    
 
     @Override
     public Customer createCustomerFromId(Long customerId) {
@@ -259,6 +258,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer createNewCustomer() {
         return createCustomerFromId(null);
+    }
+
+    @Override
+    public void deleteCustomer(Customer customer) {
+        customerDao.delete(customer);
     }
 
     @Override

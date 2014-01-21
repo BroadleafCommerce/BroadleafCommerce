@@ -332,21 +332,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview) {
-        return orderDao.findCarts(names, statuses, dateCreatedMinThreshold, isPreview);
-    }
-
-    @Override
-    public List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview, int startPos, int length) {
-        return orderDao.findCarts(names, statuses, dateCreatedMinThreshold, isPreview, startPos, length);
-    }
-
-    @Override
-    public Long findCartsCount(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold, Boolean isPreview) {
-        return orderDao.findCartsCount(names, statuses, dateCreatedMinThreshold, isPreview);
-    }
-
-    @Override
     @Transactional("blTransactionManager")
     public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
         Set<Offer> addedOffers = offerService.getUniqueOffersFromOrder(order);

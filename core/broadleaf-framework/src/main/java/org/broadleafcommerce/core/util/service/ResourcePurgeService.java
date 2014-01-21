@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.order.service;
+package org.broadleafcommerce.core.util.service;
 
 import java.util.Map;
 
@@ -38,6 +38,8 @@ public interface ResourcePurgeService {
      * @param config Map of params used to drive the selection of carts to purge
      */
     void purgeCarts(Map<String, String> config);
+
+    void purgeCustomers(final Map<String, String> config);
 
     /**
      * Override the default page size (set by property streaming.transaction.item.page.size) by which entities will be purged.

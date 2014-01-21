@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.order.service.type;
+package org.broadleafcommerce.core.util.service.type;
 
 /**
  * @author Jeff Fischer

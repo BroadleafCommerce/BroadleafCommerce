@@ -19,9 +19,9 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
-import org.broadleafcommerce.profile.core.domain.Customer;
-
 import java.util.List;
+
+import org.broadleafcommerce.profile.core.domain.Customer;
 
 public interface CustomerDao {
 
@@ -63,4 +63,10 @@ public interface CustomerDao {
 
     public Customer create();
 
+    /**
+     * Remove a customer from the persistent store
+     *
+     * @param customer the customer entity to remove
+     */
+    void delete(Customer customer);
 }
