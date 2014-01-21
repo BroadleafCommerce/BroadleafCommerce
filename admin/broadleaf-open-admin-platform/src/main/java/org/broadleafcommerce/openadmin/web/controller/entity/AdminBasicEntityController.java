@@ -17,6 +17,8 @@
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -47,6 +49,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,6 +63,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.URLDecoder;
@@ -83,6 +88,7 @@ import javax.servlet.http.HttpServletResponse;
 @Controller("blAdminBasicEntityController")
 @RequestMapping("/{sectionKey:.+}")
 public class AdminBasicEntityController extends AdminAbstractController {
+    protected static final Log LOG = LogFactory.getLog(AdminBasicEntityController.class);
     
     // ******************************************
     // REQUEST-MAPPING BOUND CONTROLLER METHODS *
@@ -429,7 +435,25 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable(value="id") String id,
             @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
         String sectionKey = getSectionKey(pathVars);
-        service.removeEntity(entityForm, getSectionCustomCriteria());
+
+        try {
+            service.removeEntity(entityForm, getSectionCustomCriteria());
+        } catch (ServiceException e) {
+            if (e.containsCause(ConstraintViolationException.class)) {
+                // Create a flash attribute for the unsuccessful delete
+                FlashMap fm = new FlashMap();
+                fm.put("headerFlash", "delete.unsuccessful");
+                fm.put("headerFlashAlert", true);
+                request.setAttribute(DispatcherServlet.OUTPUT_FLASH_MAP_ATTRIBUTE, fm);
+                
+                // Make sure we have this error show up in our logs
+                LOG.error("Could not delete record", e);
+
+                // Refresh the page
+                return "redirect:/" + sectionKey + "/" + id;
+            }
+            throw e;
+        }
 
         return "redirect:/" + sectionKey;
     }
