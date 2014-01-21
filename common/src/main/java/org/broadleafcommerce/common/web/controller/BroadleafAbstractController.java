@@ -113,7 +113,7 @@ public abstract class BroadleafAbstractController {
      * @throws JsonMappingException
      * @throws IOException
      */
-    protected String jsonResponse(HttpServletResponse response, Map<String, Object> responseMap) 
+    protected String jsonResponse(HttpServletResponse response, Map<?, ?> responseMap) 
             throws JsonGenerationException, JsonMappingException, IOException {
         response.setHeader("Content-Type", "application/json");
         new ObjectMapper().writeValue(response.getWriter(), responseMap);
