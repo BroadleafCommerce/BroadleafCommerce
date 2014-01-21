@@ -42,7 +42,6 @@ import org.broadleafcommerce.core.util.service.type.PurgeCustomerVariableNames;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionDefinition;
 
 /**
  * Service capable of deleting old or defunct entities from the persistence layer (e.g. Carts and anonymous Customers).
@@ -107,7 +106,7 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
     @Override
     public void purgeCarts(final Map<String, String> config) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Purging carts (non-submitted orders)");
+            LOG.debug("Purging carts");
         }
         if (MapUtils.isEmpty(config)) {
             throw new IllegalArgumentException("Cannot purge carts since there was no configuration provided. " +
