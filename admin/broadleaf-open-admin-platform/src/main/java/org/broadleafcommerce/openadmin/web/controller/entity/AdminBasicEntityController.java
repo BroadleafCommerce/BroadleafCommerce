@@ -20,6 +20,8 @@
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -54,6 +56,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,6 +70,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.URLDecoder;
