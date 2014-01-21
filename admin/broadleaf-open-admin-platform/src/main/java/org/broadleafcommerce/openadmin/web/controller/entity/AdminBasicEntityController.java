@@ -91,6 +91,7 @@ import javax.servlet.http.HttpServletResponse;
 @Controller("blAdminBasicEntityController")
 @RequestMapping("/{sectionKey:.+}")
 public class AdminBasicEntityController extends AdminAbstractController {
+    protected static final Log LOG = LogFactory.getLog(AdminBasicEntityController.class);
 
     @Resource(name="blSandBoxHelper")
     SandBoxHelper sandBoxHelper;
@@ -457,7 +458,25 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
-        service.removeEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs);
+
+        try {
+            service.removeEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs);
+        } catch (ServiceException e) {
+            if (e.containsCause(ConstraintViolationException.class)) {
+                // Create a flash attribute for the unsuccessful delete
+                FlashMap fm = new FlashMap();
+                fm.put("headerFlash", "delete.unsuccessful");
+                fm.put("headerFlashAlert", true);
+                request.setAttribute(DispatcherServlet.OUTPUT_FLASH_MAP_ATTRIBUTE, fm);
+                
+                // Make sure we have this error show up in our logs
+                LOG.error("Could not delete record", e);
+
+                // Refresh the page
+                return "redirect:/" + sectionKey + "/" + id;
+            }
+            throw e;
+        }
 
         return "redirect:/" + sectionKey;
     }

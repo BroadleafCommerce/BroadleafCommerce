@@ -62,6 +62,8 @@ public class AdminCsrfFilter extends CsrfFilter {
                 if (SecurityContextHolder.getContext().getAuthentication() == null) {
                     baseHttpRequest.setAttribute("sessionTimeout", true);
                     failureHandler.onAuthenticationFailure((HttpServletRequest) baseRequest, (HttpServletResponse) baseResponse, new SessionAuthenticationException("Session Time Out"));
+                } else {
+                    throw e;
                 }
             } else {
                 throw e;

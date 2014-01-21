@@ -44,5 +44,25 @@ public class ServiceException extends Exception {
     public ServiceException(Throwable cause) {
         super(cause);
     }
+    
+    /**
+     * Checks to see if any of the causes of the chain of exceptions that led to this ServiceException are an instance
+     * of the given class.
+     * 
+     * @param clazz
+     * @return whether or not this exception's causes includes the given class.
+     */
+    public boolean containsCause(Class<? extends Throwable> clazz) {
+        Throwable current = this;
+
+        do {
+            if (clazz.isAssignableFrom(current.getClass())) {
+                return true;
+            }
+            current = current.getCause();
+        } while (current.getCause() != null);
+
+        return false;
+    }
 
 }
