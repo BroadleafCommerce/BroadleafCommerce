@@ -50,4 +50,13 @@ public class GenericResponse {
         errorCodes.add(errorCode);
         errorCodeMap.put(errorCode, arguments);
     }
+
+    public Object[] getErrorCodeArguments(String errorCode) {
+        List<String> errorCodes = errorCodeMap.get(errorCode);
+        if (errorCodes == null) {
+            return new Object[0];
+        } else {
+            return errorCodes.toArray(new String[0]);
+        }
+    }
 }
