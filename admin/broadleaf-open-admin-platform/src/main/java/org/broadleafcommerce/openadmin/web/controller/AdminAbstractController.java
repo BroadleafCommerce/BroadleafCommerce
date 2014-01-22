@@ -49,7 +49,6 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityFormValidator;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
-import org.broadleafcommerce.openadmin.web.handler.AdminNavigationHandlerMapping;
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -77,6 +76,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     
     public static final String FILTER_VALUE_SEPARATOR = "|";
     public static final String FILTER_VALUE_SEPARATOR_REGEX = "\\|";
+
+    public static final String CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME = "currentAdminModule";
+    public static final String CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME = "currentAdminSection";
 
     // ***********************
     // RESOURCE DECLARATIONS *
@@ -579,8 +581,8 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
         if (section != null) {
             model.addAttribute("sectionKey", sectionKey);
-            model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME, section.getModule());
-            model.addAttribute(AdminNavigationHandlerMapping.CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME, section);
+            model.addAttribute(CURRENT_ADMIN_MODULE_ATTRIBUTE_NAME, section.getModule());
+            model.addAttribute(CURRENT_ADMIN_SECTION_ATTRIBUTE_NAME, section);
         }
         
         extensionManager.getProxy().setAdditionalModelAttributes(model, sectionKey);
