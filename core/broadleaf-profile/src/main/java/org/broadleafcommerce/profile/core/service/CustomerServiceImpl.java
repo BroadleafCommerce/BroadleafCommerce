@@ -55,7 +55,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.persistence.TypedQuery;
 
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
@@ -125,14 +124,14 @@ public class CustomerServiceImpl implements CustomerService {
         }
         
         if (customer.getUnencodedPassword() != null) {
-            customer.setPassword(passwordEncoder.encodePassword(customer.getUnencodedPassword(), getSalt(customer, customer.getUnencodedPassword())));
+            customer.setPassword(encodePassword(customer.getUnencodedPassword(), customer));
         }
 
         // let's make sure they entered a new challenge answer (we will populate
         // the password field with hashed values so check that they have changed
         // id
         if (customer.getUnencodedChallengeAnswer() != null && !customer.getUnencodedChallengeAnswer().equals(customer.getChallengeAnswer())) {
-            customer.setChallengeAnswer(passwordEncoder.encodePassword(customer.getUnencodedChallengeAnswer(), getSalt(customer)));
+            customer.setChallengeAnswer(encodePassword(customer.getUnencodedChallengeAnswer(), customer));
         }
         return customerDao.save(customer);
     }
@@ -304,7 +303,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Object getSalt(Customer customer, String unencodedPassword) {
         Object salt = null;
-        if (saltSource != null) {
+        if (saltSource != null && customer != null) {
             salt = saltSource.getSalt(new CustomerUserDetails(customer.getId(), customer.getUsername(), unencodedPassword, new ArrayList<GrantedAuthority>()));
         }
         return salt;
@@ -312,7 +311,7 @@ public class CustomerServiceImpl implements CustomerService {
     
     @Override
     public String encodePassword(String clearText, Customer customer) {
-        return passwordEncoder.encodePassword(clearText, getSalt(customer));
+        return passwordEncoder.encodePassword(clearText, getSalt(customer, clearText));
     }
 
     @Override
@@ -404,7 +403,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             CustomerForgotPasswordSecurityToken fpst = new CustomerForgotPasswordSecurityTokenImpl();
             fpst.setCustomerId(customer.getId());
-            fpst.setToken(passwordEncoder.encodePassword(token, null));
+            fpst.setToken(encodePassword(token, null));
             fpst.setCreateDate(SystemTime.asDate());
             customerForgotPasswordSecurityTokenDao.saveToken(fpst);
 
@@ -438,7 +437,7 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerForgotPasswordSecurityToken fpst = null;
         if (! response.getHasErrors()) {
             token = token.toLowerCase();
-            fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(token, null));
+            fpst = customerForgotPasswordSecurityTokenDao.readToken(encodePassword(token, null));
             if (fpst == null) {
                 response.addErrorCode("invalidToken");
             } else if (fpst.isTokenUsedFlag()) {
