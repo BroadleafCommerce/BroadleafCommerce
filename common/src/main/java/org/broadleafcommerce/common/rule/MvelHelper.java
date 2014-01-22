@@ -22,8 +22,12 @@ package org.broadleafcommerce.common.rule;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.RequestDTO;
+import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.FormatUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
@@ -32,6 +36,8 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Helper class for some common rule functions that can be called from mvel as well as utility functions
@@ -51,6 +57,11 @@ public class MvelHelper {
     private static final Log LOG = LogFactory.getLog(MvelHelper.class);
 
     private static boolean TEST_MODE = false;
+    
+    public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
+
+    // The following attribute is set in BroadleafProcessURLFilter
+    public static final String REQUEST_DTO = "blRequestDTO";    
 
     /**
      * Converts a field to the specified type.    Useful when 
@@ -161,4 +172,33 @@ public class MvelHelper {
     public static void setTestMode(boolean testMode) {
         TEST_MODE = testMode;
     }
+    
+    /**
+     * Builds parameters using time, request, customer, and cart.
+     * 
+     * Should be called from within a valid web request.
+     *
+     * @param request
+     * @return
+     */
+    public static Map<String, Object> buildMvelParameters() {
+        Map<String, Object> mvelParameters = new HashMap<String, Object>();
+       BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc != null && brc.getRequest() != null) {
+           TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar());
+            HttpServletRequest request = brc.getRequest();
+            RequestDTO requestDto = (RequestDTO) brc.getRequestDTO();
+            mvelParameters.put("time", timeDto);
+            mvelParameters.put("request", requestDto);
+
+            Map<String, Object> blcRuleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
+            if (blcRuleMap != null) {
+                for (String mapKey : blcRuleMap.keySet()) {
+                    mvelParameters.put(mapKey, blcRuleMap.get(mapKey));
+                }
+           }
+       }
+
+       return mvelParameters;
+   }    
 }
