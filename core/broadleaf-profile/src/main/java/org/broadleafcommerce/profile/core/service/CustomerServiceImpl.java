@@ -309,6 +309,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public boolean isPasswordValid(String rawPassword, String encodedPassword, Customer customer) {
+        return passwordEncoder.isPasswordValid(encodedPassword, rawPassword, getSalt(customer, rawPassword));
+    }
+
+    @Override
     @Deprecated
     public String getSalt() {
         return salt;
