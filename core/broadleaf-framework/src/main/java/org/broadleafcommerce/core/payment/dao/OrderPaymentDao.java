@@ -36,13 +36,15 @@ public interface OrderPaymentDao {
 
     public PaymentLog save(PaymentLog log);
 
-    public List<OrderPayment> readPaymentInfosForOrder(Order order);
+    public List<OrderPayment> readPaymentsForOrder(Order order);
 
     public OrderPayment create();
 
     public void delete(OrderPayment payment);
 
     public PaymentTransaction createTransaction();
+
+    public PaymentTransaction readTransactionById(Long transactionId);
 
     public PaymentLog createLog();
 

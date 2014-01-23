@@ -144,7 +144,7 @@ public interface OrderService {
      * @param order
      * @return the list of all OrderPayment objects
      */
-    public List<OrderPayment> findPaymentInfosForOrder(Order order);
+    public List<OrderPayment> findPaymentsForOrder(Order order);
 
     /**
      * Associates a given OrderPayment with an Order and then saves the order. Note that it is acceptable for the 

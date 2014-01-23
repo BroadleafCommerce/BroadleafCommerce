@@ -396,7 +396,7 @@ public class LegacyOrderServiceImpl extends OrderServiceImpl implements LegacyOr
 
     @Override
     public List<OrderPayment> readPaymentInfosForOrder(Order order) {
-        return paymentDao.readPaymentInfosForOrder(order);
+        return paymentDao.readPaymentsForOrder(order);
     }
         
     protected boolean itemMatches(DiscreteOrderItem item1, DiscreteOrderItem item2) {

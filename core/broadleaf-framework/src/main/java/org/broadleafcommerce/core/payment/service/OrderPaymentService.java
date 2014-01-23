@@ -49,6 +49,8 @@ public interface OrderPaymentService {
 
     public PaymentTransaction createTransaction();
 
+    public PaymentTransaction readTransactionById(Long transactionId);
+
     public PaymentLog createLog();
 
 }

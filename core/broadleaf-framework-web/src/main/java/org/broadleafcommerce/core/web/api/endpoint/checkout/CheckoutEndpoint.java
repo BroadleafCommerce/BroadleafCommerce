@@ -21,34 +21,24 @@ package org.broadleafcommerce.core.web.api.endpoint.checkout;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
-import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
-import org.broadleafcommerce.core.payment.domain.secure.Referenced;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
+import org.broadleafcommerce.core.web.api.wrapper.OrderPaymentWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper;
 import org.broadleafcommerce.core.web.order.CartState;
-import org.broadleafcommerce.profile.core.domain.Customer;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This endpoint depends on JAX-RS to provide checkout services.  It should be extended by components that actually wish 
@@ -69,284 +59,87 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
     @Resource(name="blOrderService")
     protected OrderService orderService;
 
-    //This should only be called for modules that need to engage the workflow directly without doing a complete checkout.
-    //e.g. PayPal for doing an authorize and retrieving the redirect: url to PayPal
-    public PaymentResponseItemWrapper executePayment(HttpServletRequest request, PaymentReferenceMapWrapper mapWrapper) {
+    @Resource(name="blOrderPaymentService")
+    protected OrderPaymentService orderPaymentService;
+
+    public List<OrderPaymentWrapper> findPaymentsForOrder(HttpServletRequest request) {
+        Order cart = CartState.getCart();
+        if (cart != null && cart.getPayments() != null && !cart.getPayments().isEmpty()) {
+            List<OrderPayment> payments = cart.getPayments();
+            List<OrderPaymentWrapper> paymentWrappers = new ArrayList<OrderPaymentWrapper>();
+            for (OrderPayment payment : payments) {
+                OrderPaymentWrapper orderPaymentWrapper = (OrderPaymentWrapper) context.getBean(OrderPaymentWrapper.class.getName());
+                orderPaymentWrapper.wrapSummary(payment, request);
+                paymentWrappers.add(orderPaymentWrapper);
+            }
+            return paymentWrappers;
+        }
+
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
+    }
+
+    public OrderPaymentWrapper addPaymentToOrder(HttpServletRequest request,
+                                                              OrderPaymentWrapper wrapper) {
         Order cart = CartState.getCart();
         if (cart != null) {
-            //try {
-                Map<OrderPayment, Referenced> payments = new HashMap<OrderPayment, Referenced>();
-                OrderPayment paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
-                Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
-                payments.put(paymentInfo, referenced);
+            OrderPayment orderPayment = wrapper.unwrap(request, context);
 
-                //CompositePaymentResponse compositePaymentResponse = compositePaymentService.executePayment(cart, payments);
-                //CompositePaymentResponse compositePaymentResponse = new CompositePayme
-                //PaymentResponseItem responseItem = compositePaymentResponse.getPaymentResponse().getResponseItems().get(paymentInfo);
-                
-                //TODO: FIXME PJV
-                
-                PaymentResponseItem responseItem = new PaymentResponseItem() {
-                    
-                    @Override
-                    public void setUserName(String userName) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setTransactionTimestamp(Date transactionTimestamp) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setTransactionSuccess(Boolean transactionSuccess) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setTransactionId(String transactionId) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setTransactionAmount(Money amount) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setRemainingBalance(Money remainingBalance) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setProcessorResponseText(String processorResponseText) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setProcessorResponseCode(String processorResponseCode) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setPaymentTransaction(PaymentTransaction paymentTransaction) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setMiddlewareResponseText(String middlewareResponseText) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setMiddlewareResponseCode(String middlewareResponseCode) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setImplementorResponseText(String implementorResponseText) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setImplementorResponseCode(String implementorResponseCode) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setAvsCode(String avsCode) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setAuthorizationCode(String authorizationCode) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public void setAdditionalFields(Map<String, String> additionalFields) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                    
-                    @Override
-                    public String getUserName() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public Date getTransactionTimestamp() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public Boolean getTransactionSuccess() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public String getTransactionId() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public Money getTransactionAmount() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public Money getRemainingBalance() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public String getProcessorResponseText() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public String getProcessorResponseCode() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public PaymentTransaction getPaymentTransaction() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public String getMiddlewareResponseText() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public String getMiddlewareResponseCode() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public String getImplementorResponseText() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public String getImplementorResponseCode() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public String getAvsCode() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public String getAuthorizationCode() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                    
-                    @Override
-                    public Map<String, String> getAdditionalFields() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-
-                    @Override
-                    public Customer getCustomer() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-
-                    @Override
-                    public void setCustomer(Customer customer) {
-                        // TODO Auto-generated method stub
-                        
-                    }
-                };
-                
-                PaymentResponseItemWrapper paymentResponseItemWrapper = context.getBean(PaymentResponseItemWrapper.class);
-                paymentResponseItemWrapper.wrapDetails(responseItem, request);
-
-                return paymentResponseItemWrapper;
-
-            //} catch (PaymentException e) {
-            //    throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e);
-            //}
+            if (orderPayment.getOrder() != null && orderPayment.getOrder().getId().equals(cart.getId())) {
+                orderPayment = orderPaymentService.save(orderPayment);
+                OrderPayment savedPayment = orderService.addPaymentToOrder(cart, orderPayment, null);
+                OrderPaymentWrapper orderPaymentWrapper = (OrderPaymentWrapper) context.getBean(OrderPaymentWrapper.class.getName());
+                orderPaymentWrapper.wrapSummary(savedPayment, request);
+                return orderPaymentWrapper;
+            }
         }
+
         throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
                 .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
 
     }
 
-    public OrderWrapper performCheckout(HttpServletRequest request, List<PaymentReferenceMapWrapper> mapWrappers) {
+    public OrderWrapper removePaymentFromOrder(HttpServletRequest request, OrderPaymentWrapper wrapper) {
+
+        Order cart = CartState.getCart();
+        if (cart != null) {
+            OrderPayment orderPayment = wrapper.unwrap(request, context);
+
+            if (orderPayment.getOrder() != null && orderPayment.getOrder().getId().equals(cart.getId())) {
+                OrderPayment paymentToRemove = null;
+                for (OrderPayment payment : cart.getPayments()) {
+                    if (payment.getId().equals(orderPayment.getId())) {
+                        paymentToRemove = payment;
+                    }
+                }
+
+                orderService.removePaymentFromOrder(cart, paymentToRemove);
+
+                OrderWrapper orderWrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                orderWrapper.wrapDetails(cart, request);
+                return orderWrapper;
+            }
+        }
+
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
+    }
+
+    public OrderWrapper performCheckout(HttpServletRequest request) {
         Order cart = CartState.getCart();
         if (cart != null) {
             try {
-                if (mapWrappers != null && !mapWrappers.isEmpty()) {
-//                    Map<OrderPayment, Referenced> payments = new HashMap<OrderPayment, Referenced>();
-//                    orderService.removePaymentsFromOrder(cart, PaymentType.CREDIT_CARD);
-//
-//                    for (PaymentReferenceMapWrapper mapWrapper : mapWrappers) {
-//                        OrderPayment paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
-//                        paymentInfo.setOrder(cart);
-//                        Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
-//
-//                        if (cart.getPayments() == null) {
-//                            cart.setPayments(new ArrayList<OrderPayment>());
-//                        }
-//
-//                        cart.getPayments().add(paymentInfo);
-//                        payments.put(paymentInfo, referenced);
-//                    }
-
-                    CheckoutResponse response = checkoutService.performCheckout(cart);
-                    Order order = response.getOrder();
-                    OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                    wrapper.wrapDetails(order, request);
-                    return wrapper;
-                }
+                CheckoutResponse response = checkoutService.performCheckout(cart);
+                Order order = response.getOrder();
+                OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                wrapper.wrapDetails(order, request);
+                return wrapper;
             } catch (CheckoutException e) {
-
-                cart.setStatus(OrderStatus.IN_PROCESS);
-
-                try {
-                    orderService.save(cart, false);
-                } catch (PricingException e1) {
-                    LOG.error("An unexpected error occured saving / pricing the cart.", e1);
-                }
-
-                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e);
+                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                        .addMessage(BroadleafWebServicesException.CHECKOUT_PROCESSING_ERROR);
             }
         }
+
         throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
                 .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
 

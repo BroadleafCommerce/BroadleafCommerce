@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * <p/>
  * User: Priyesh Patel
  */
-@XmlRootElement(name = "paymentInfo")
+@XmlRootElement(name = "offer")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class OfferWrapper extends BaseWrapper implements APIWrapper<Offer> {
 
@@ -43,7 +43,7 @@ public class OfferWrapper extends BaseWrapper implements APIWrapper<Offer> {
     @XmlElement
     protected String endDate;
     @XmlElement
-    protected String marketingMessage;;
+    protected String marketingMessage;
     @XmlElement
     protected String description;
     @XmlElement
@@ -51,7 +51,7 @@ public class OfferWrapper extends BaseWrapper implements APIWrapper<Offer> {
     @XmlElement
     protected Boolean automatic;
     @XmlElement
-    protected BroadleafEnumerationTypeWrapper offerType;;
+    protected BroadleafEnumerationTypeWrapper offerType;
 
     @XmlElement
     protected BroadleafEnumerationTypeWrapper discountType;

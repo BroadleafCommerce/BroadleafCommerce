@@ -45,8 +45,7 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.OrderPaymentWrapper" class="org.broadleafcommerce.core.web.api.wrapper.OrderPaymentWrapper" scope="prototype"/>
-    <bean id="org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper" scope="prototype" />
-    <bean id="org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.PaymentTransactionWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PaymentTransactionWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.PhoneWrapper" class="org.broadleafcommerce.core.web.api.wrapper.PhoneWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.DimensionWrapper" class="org.broadleafcommerce.core.web.api.wrapper.DimensionWrapper" scope="prototype"/>

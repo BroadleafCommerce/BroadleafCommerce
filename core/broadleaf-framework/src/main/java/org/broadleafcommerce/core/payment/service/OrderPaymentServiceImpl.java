@@ -61,7 +61,7 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
 
     @Override
     public List<OrderPayment> readPaymentsForOrder(Order order) {
-        return paymentDao.readPaymentInfosForOrder(order);
+        return paymentDao.readPaymentsForOrder(order);
     }
 
     @Override
@@ -87,6 +87,11 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
         returnItem.setDate(SystemTime.asDate());
         
         return returnItem;
+    }
+
+    @Override
+    public PaymentTransaction readTransactionById(Long transactionId) {
+        return paymentDao.readTransactionById(transactionId);
     }
 
 }

@@ -737,7 +737,7 @@ public class OrderTest extends OrderBaseTest {
             }
         }
         assert foundInfo == true;
-        assert orderService.findPaymentInfosForOrder(order) != null;
+        assert orderService.findPaymentsForOrder(order) != null;
     }
 
     @Test

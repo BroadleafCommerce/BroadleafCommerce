@@ -79,9 +79,9 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
     @XmlElementWrapper(name = "fulfillmentGroups")
     protected List<FulfillmentGroupWrapper> fulfillmentGroups;
 
-    @XmlElement(name = "paymentInfo")
+    @XmlElement(name = "payment")
     @XmlElementWrapper(name = "payments")
-    protected List<OrderPaymentWrapper> paymentInfos;
+    protected List<OrderPaymentWrapper> payments;
 
     @XmlElement(name = "orderAdjustment")
     @XmlElementWrapper(name = "orderAdjustments")
@@ -98,7 +98,11 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
     @Override
     public void wrapDetails(Order model, HttpServletRequest request) {
         this.id = model.getId();
-        this.status = model.getStatus().getType();
+
+        if (model.getStatus() != null) {
+            this.status = model.getStatus().getType();
+        }
+
         this.totalTax = model.getTotalTax();
         this.totalShipping = model.getTotalShipping();
         this.subTotal = model.getSubTotal();
@@ -123,11 +127,11 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
         }
 
         if (model.getPayments() != null && !model.getPayments().isEmpty()) {
-            this.paymentInfos = new ArrayList<OrderPaymentWrapper>();
-            for (OrderPayment paymentInfo : model.getPayments()) {
-                OrderPaymentWrapper paymentInfoWrapper = (OrderPaymentWrapper) context.getBean(OrderPaymentWrapper.class.getName());
-                paymentInfoWrapper.wrapSummary(paymentInfo, request);
-                this.paymentInfos.add(paymentInfoWrapper);
+            this.payments = new ArrayList<OrderPaymentWrapper>();
+            for (OrderPayment payment : model.getPayments()) {
+                OrderPaymentWrapper paymentWrapper = (OrderPaymentWrapper) context.getBean(OrderPaymentWrapper.class.getName());
+                paymentWrapper.wrapSummary(payment, request);
+                this.payments.add(paymentWrapper);
             }
         }
 

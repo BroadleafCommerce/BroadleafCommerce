@@ -21,21 +21,27 @@ package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.money.util.CurrencyAdapter;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.xml.BigDecimalRoundingAdapter;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.springframework.context.ApplicationContext;
-
-import java.math.BigDecimal;
-import java.util.Currency;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
 
 /**
  * This is a JAXB wrapper around OrderPayment.
@@ -43,7 +49,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * User: Elbert Bautista
  * Date: 4/26/12
  */
-@XmlRootElement(name = "paymentInfo")
+@XmlRootElement(name = "payment")
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class OrderPaymentWrapper extends BaseWrapper implements APIWrapper<OrderPayment>, APIUnwrapper<OrderPayment> {
 
@@ -70,6 +76,13 @@ public class OrderPaymentWrapper extends BaseWrapper implements APIWrapper<Order
     @XmlElement
     protected String referenceNumber;
 
+    @XmlElement
+    protected String gatewayType;
+
+    @XmlElement(name = "transaction")
+    @XmlElementWrapper(name = "transactions")
+    protected List<PaymentTransactionWrapper> transactions;
+
     @Override
     public void wrapDetails(OrderPayment model, HttpServletRequest request) {
         this.id = model.getId();
@@ -80,6 +93,10 @@ public class OrderPaymentWrapper extends BaseWrapper implements APIWrapper<Order
 
         if (model.getType() != null) {
             this.type = model.getType().getType();
+        }
+
+        if (model.getGatewayType() != null) {
+            this.gatewayType = model.getGatewayType().getType();
         }
 
         if (model.getBillingAddress() != null) {
@@ -93,6 +110,15 @@ public class OrderPaymentWrapper extends BaseWrapper implements APIWrapper<Order
             this.currency = model.getAmount().getCurrency();
         }
 
+        if (model.getTransactions() != null && !model.getTransactions().isEmpty()) {
+            this.transactions = new ArrayList<PaymentTransactionWrapper>();
+            for (PaymentTransaction transaction : model.getTransactions()) {
+                PaymentTransactionWrapper transactionWrapper = (PaymentTransactionWrapper) context.getBean(PaymentTransactionWrapper.class.getName());
+                transactionWrapper.wrapSummary(transaction, request);
+                this.transactions.add(transactionWrapper);
+            }
+        }
+
         this.referenceNumber = model.getReferenceNumber();
     }
 
@@ -103,25 +129,39 @@ public class OrderPaymentWrapper extends BaseWrapper implements APIWrapper<Order
 
     @Override
     public OrderPayment unwrap(HttpServletRequest request, ApplicationContext context) {
-        OrderPaymentService paymentInfoService = (OrderPaymentService) context.getBean("blOrderPaymentService");
-        OrderPayment paymentInfo = paymentInfoService.create();
+        OrderPaymentService orderPaymentService = (OrderPaymentService) context.getBean("blOrderPaymentService");
+        OrderPayment payment = orderPaymentService.create();
 
-        paymentInfo.setType(PaymentType.getInstance(this.type));
+        OrderService orderService = (OrderService) context.getBean("blOrderService");
+        Order order = orderService.findOrderById(this.orderId);
+        if (order != null) {
+            payment.setOrder(order);
+        }
+
+        payment.setType(PaymentType.getInstance(this.type));
+        payment.setPaymentGatewayType(PaymentGatewayType.getInstance(this.gatewayType));
+        payment.setReferenceNumber(this.referenceNumber);
 
         if (this.billingAddress != null) {
-            paymentInfo.setBillingAddress(this.billingAddress.unwrap(request, context));
+            payment.setBillingAddress(this.billingAddress.unwrap(request, context));
         }
 
         if (this.amount != null) {
             if (this.currency != null) {
-                paymentInfo.setAmount(new Money(this.amount, this.currency));
+                payment.setAmount(new Money(this.amount, this.currency));
             } else {
-                paymentInfo.setAmount(new Money(this.amount));
+                payment.setAmount(new Money(this.amount));
             }
         }
 
-        paymentInfo.setReferenceNumber(this.referenceNumber);
+        if (this.transactions != null && !this.transactions.isEmpty()) {
+            for (PaymentTransactionWrapper transactionWrapper : this.transactions) {
+                PaymentTransaction transaction = transactionWrapper.unwrap(request,context);
+                transaction.setOrderPayment(payment);
+                payment.addTransaction(transaction);
+            }
+        }
 
-        return paymentInfo;
+        return payment;
     }
 }

@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
+import org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -65,7 +66,7 @@ public class OrderPaymentDaoImpl implements OrderPaymentDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<OrderPayment> readPaymentInfosForOrder(Order order) {
+    public List<OrderPayment> readPaymentsForOrder(Order order) {
         Query query = em.createNamedQuery("BC_READ_ORDERS_PAYMENTS_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         return query.getResultList();
@@ -79,6 +80,11 @@ public class OrderPaymentDaoImpl implements OrderPaymentDao {
     @Override
     public PaymentTransaction createTransaction() {
         return entityConfiguration.createEntityInstance(PaymentTransaction.class.getName(), PaymentTransaction.class);
+    }
+
+    @Override
+    public PaymentTransaction readTransactionById(Long transactionId) {
+        return em.find(PaymentTransactionImpl.class, transactionId);
     }
 
     @Override

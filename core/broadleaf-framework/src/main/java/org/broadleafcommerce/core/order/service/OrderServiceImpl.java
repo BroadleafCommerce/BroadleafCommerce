@@ -213,8 +213,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderPayment> findPaymentInfosForOrder(Order order) {
-        return paymentDao.readPaymentInfosForOrder(order);
+    public List<OrderPayment> findPaymentsForOrder(Order order) {
+        return paymentDao.readPaymentsForOrder(order);
     }
     
     @Override
