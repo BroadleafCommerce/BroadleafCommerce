@@ -19,8 +19,6 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
-import java.util.List;
-
 import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordReset;
 import org.broadleafcommerce.common.service.GenericResponse;
@@ -28,6 +26,8 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
 import org.springframework.security.authentication.dao.SaltSource;
+
+import java.util.List;
 
 public interface CustomerService {
 
@@ -171,5 +171,16 @@ public interface CustomerService {
      * @return
      */
     public String encodePassword(String clearText, Customer customer);
+
+    /**
+     * Use this to determine if passwords match. Don't encode the password separately since sometimes salts 
+     * are generated randomly and stored with the password.
+     * 
+     * @param rawPassword
+     * @param encodedPassword
+     * @param customer
+     * @return
+     */
+    public boolean isPasswordValid(String rawPassword, String encodedPassword, Customer customer);
 
 }
