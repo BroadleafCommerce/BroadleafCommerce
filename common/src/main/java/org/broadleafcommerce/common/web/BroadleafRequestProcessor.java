@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
+import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -111,9 +112,12 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         // user to the current URL so that the configured filters trigger again appropriately.
         Boolean reprocessRequest = (Boolean) request.getAttribute(BroadleafRequestProcessor.REPROCESS_PARAM_NAME, WebRequest.SCOPE_REQUEST);
         if (reprocessRequest != null && reprocessRequest) {
+            LOG.debug("Reprocessing request");
             if (request instanceof ServletWebRequest) {
                 HttpServletRequest hsr = ((ServletWebRequest) request).getRequest();
-                hsr.getSession(false).invalidate();
+                
+                clearBroadleafSessionAttrs(request);
+                
                 StringBuffer url = hsr.getRequestURL();
                 if (hsr.getQueryString() != null) {
                     url.append('?').append(hsr.getQueryString());
@@ -123,7 +127,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                return;
+                throw new HaltFilterChainException("Reprocess required, redirecting user");
             }
         }
         
@@ -163,5 +167,16 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     @Override
     public void postProcess(WebRequest request) {
         ThreadLocalManager.remove();
+    }
+    
+    protected void clearBroadleafSessionAttrs(WebRequest request) {
+        request.removeAttribute(BroadleafLocaleResolverImpl.LOCALE_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+        request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+        request.removeAttribute(BroadleafTimeZoneResolverImpl.TIMEZONE_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+        request.removeAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+
+        // From CustomerStateRequestProcessorImpl, using explicit String because it's out of module
+        request.removeAttribute("_blc_anonymousCustomer", WebRequest.SCOPE_GLOBAL_SESSION);
+        request.removeAttribute("_blc_anonymousCustomerId", WebRequest.SCOPE_GLOBAL_SESSION);
     }
 }

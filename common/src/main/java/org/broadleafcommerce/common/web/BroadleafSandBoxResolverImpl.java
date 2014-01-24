@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.web;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.crossapp.service.CrossAppAuthService;
 import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
@@ -29,6 +30,8 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.time.FixedTimeSource;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -82,6 +85,10 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
 
     @Resource(name = "blSandBoxDao")
     private SandBoxDao sandBoxDao;
+
+    @Autowired(required = false)
+    @Qualifier("blCrossAppAuthService")
+    protected CrossAppAuthService crossAppAuthService;
     
     /**
      * Determines the current sandbox based on other parameters on the request such as
@@ -103,6 +110,11 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
         if (!sandBoxPreviewEnabled) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Sandbox preview disabled. Setting sandbox to production");
+            }
+            request.setAttribute(SANDBOX_VAR, currentSandbox, WebRequest.SCOPE_REQUEST);
+        } else if (crossAppAuthService != null && !crossAppAuthService.isAuthedFromAdmin()) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Sandbox preview attempted without authentication");
             }
             request.setAttribute(SANDBOX_VAR, currentSandbox, WebRequest.SCOPE_REQUEST);
         } else {
