@@ -19,15 +19,11 @@
  */
 package org.broadleafcommerce.common.extensibility.context.merge;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
-import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.Resource;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Arrays;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,11 +36,16 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
+import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * This class serves to parse any passed in source application context files and
@@ -60,12 +61,12 @@ public class ImportProcessor {
     private static final Log LOG = LogFactory.getLog(ImportProcessor.class);
     private static final String IMPORT_PATH = "/beans/import";
 
-    protected ApplicationContext applicationContext;
+    protected ResourceLoader loader;
     protected DocumentBuilder builder;
     protected XPath xPath;
 
-    public ImportProcessor(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public ImportProcessor(ResourceLoader loader) {
+        this.loader = loader;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             builder = dbf.newDocumentBuilder();
@@ -91,7 +92,7 @@ public class ImportProcessor {
                 int length = nodeList.getLength();
                 for (int j=0;j<length;j++) {
                     Element element = (Element) nodeList.item(j);
-                    Resource resource = applicationContext.getResource(element.getAttribute("resource"));
+                    Resource resource = loader.getResource(element.getAttribute("resource"));
                     ResourceInputStream ris = new ResourceInputStream(resource.getInputStream(), resource.getURL().toString());
                     resourceList.addEmbeddedResource(ris);
                     element.getParentNode().removeChild(element);
