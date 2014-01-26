@@ -208,6 +208,7 @@
                 <ref bean="blTimeOptionsExtensionListener" />
                 <ref bean="blInventoryTypeOptionsExtensionListener" />
                 <ref bean="blFulfillmentTypeOptionsExtensionListener" />
+                <ref bean="blTemplateTypeOptionsExtensionListener" />                
             </list>
         </property>
     </bean>

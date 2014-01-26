@@ -19,12 +19,14 @@
  */
 package org.broadleafcommerce.cms.web;
 
+import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.service.PageService;
 import org.broadleafcommerce.cms.web.controller.BroadleafPageController;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.page.dto.NullPageDTO;
 import org.broadleafcommerce.common.page.dto.PageDTO;
+import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -100,4 +102,20 @@ public class PageHandlerMapping extends BLCAbstractHandlerMapping {
         return mvelParameters;
     }
 
+    @Override
+    public String getExpectedTemplateName(HttpServletRequest request) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null) {
+            Page page = (Page) context.getRequest().getAttribute(PAGE_ATTRIBUTE_NAME);
+            if (page != null && page.getPageTemplate() != null) {
+                return page.getPageTemplate().getTemplatePath();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public TemplateType getTemplateType(HttpServletRequest request) {
+        return TemplateType.PRODUCT;
+    }
 }

@@ -19,13 +19,14 @@
  */
 package org.broadleafcommerce.core.web.catalog;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
+import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This handler mapping works with the Category entity to determine if a category has been configured for
@@ -46,6 +47,8 @@ public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
     @Resource(name = "blCatalogService")
     private CatalogService catalogService;
 
+    protected String defaultTemplateName = "catalog/product";
+
     public static final String CURRENT_PRODUCT_ATTRIBUTE_NAME = "currentProduct";
 
     @Override
@@ -60,4 +63,30 @@ public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
         }
         return null;
     }
+
+    @Override
+    public String getExpectedTemplateName(HttpServletRequest request) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null) {
+            Product product = (Product) context.getRequest().getAttribute(CURRENT_PRODUCT_ATTRIBUTE_NAME);
+            if (product != null && product.getDisplayTemplate() != null) {
+                return product.getDisplayTemplate();
+            }
+        }
+        return getDefaultTemplateName();
+    }
+
+    @Override
+    public TemplateType getTemplateType(HttpServletRequest request) {
+        return TemplateType.PRODUCT;
+    }
+
+    public String getDefaultTemplateName() {
+        return defaultTemplateName;
+    }
+
+    public void setDefaultTemplateName(String defaultTemplateName) {
+        this.defaultTemplateName = defaultTemplateName;
+    }
+
 }
