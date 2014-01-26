@@ -40,6 +40,11 @@ public abstract class AbstractModelVariableModifierProcessor extends AbstractEle
         super(elementName);
     }
 
+    @Override
+    public int getPrecedence() {
+        return 1000;
+    }
+
     /**
      * This method will handle calling the modifyModelAttributes abstract method and return
      * an "OK" processor result
