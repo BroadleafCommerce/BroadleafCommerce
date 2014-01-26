@@ -19,13 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.web.controller;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
@@ -46,6 +39,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 @Controller("blAdminTranslationController")
@@ -151,7 +151,16 @@ public class AdminTranslationController extends AdminAbstractController {
 
         Field entityType = new Field();
         entityType.setName("entityType");
-        entityType.setValue(TranslatedEntity.getInstance(form.getCeilingEntity()).getFriendlyType());
+
+        String ceilingEntity = form.getCeilingEntity();
+
+        TranslatedEntity translatedEntity = TranslatedEntity.getInstance(ceilingEntity);
+        if (translatedEntity == null && ceilingEntity.endsWith("Impl")) {
+            int pos = ceilingEntity.lastIndexOf("Impl");
+            ceilingEntity = ceilingEntity.substring(0, pos);
+            translatedEntity = TranslatedEntity.getInstance(ceilingEntity);
+        }
+        entityType.setValue(translatedEntity.getFriendlyType());
         Field fieldName = new Field();
         fieldName.setName("fieldName");
         fieldName.setValue(form.getPropertyName());
