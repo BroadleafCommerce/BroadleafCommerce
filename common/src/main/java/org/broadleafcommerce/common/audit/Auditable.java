@@ -19,9 +19,6 @@
  */
 package org.broadleafcommerce.common.audit;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,6 +26,8 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 
 @Embeddable
 public class Auditable implements Serializable {
@@ -95,6 +94,32 @@ public class Auditable implements Serializable {
 
     public void setUpdatedBy(Long updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Auditable)) return false;
+
+        Auditable auditable = (Auditable) o;
+
+        if (createdBy != null ? !createdBy.equals(auditable.createdBy) : auditable.createdBy != null) return false;
+        if (dateCreated != null ? !dateCreated.equals(auditable.dateCreated) : auditable.dateCreated != null)
+            return false;
+        if (dateUpdated != null ? !dateUpdated.equals(auditable.dateUpdated) : auditable.dateUpdated != null)
+            return false;
+        if (updatedBy != null ? !updatedBy.equals(auditable.updatedBy) : auditable.updatedBy != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = dateCreated != null ? dateCreated.hashCode() : 0;
+        result = 31 * result + (createdBy != null ? createdBy.hashCode() : 0);
+        result = 31 * result + (dateUpdated != null ? dateUpdated.hashCode() : 0);
+        result = 31 * result + (updatedBy != null ? updatedBy.hashCode() : 0);
+        return result;
     }
 
     public static class Presentation {

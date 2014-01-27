@@ -19,14 +19,14 @@
  */
 package org.broadleafcommerce.common.persistence;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
-
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
 
 /**
  * @author Jeff Fischer
@@ -44,5 +44,22 @@ public class ArchiveStatus implements Serializable, SandBoxNonProductionSkip {
 
     public void setArchived(Character archived) {
         this.archived = archived;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ArchiveStatus)) return false;
+
+        ArchiveStatus that = (ArchiveStatus) o;
+
+        if (archived != null ? !archived.equals(that.archived) : that.archived != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return archived != null ? archived.hashCode() : 0;
     }
 }

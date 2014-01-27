@@ -19,14 +19,15 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.io.Serializable;
-import java.math.BigDecimal;
+
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 
 /**
  * 
@@ -71,4 +72,25 @@ public class Weight implements Serializable {
         this.weight = weight;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Weight)) return false;
+
+        Weight weight1 = (Weight) o;
+
+        if (weight != null ? !weight.equals(weight1.weight) : weight1.weight != null) return false;
+        if (weightUnitOfMeasure != null ? !weightUnitOfMeasure.equals(weight1.weightUnitOfMeasure) : weight1
+                .weightUnitOfMeasure != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = weight != null ? weight.hashCode() : 0;
+        result = 31 * result + (weightUnitOfMeasure != null ? weightUnitOfMeasure.hashCode() : 0);
+        return result;
+    }
 }

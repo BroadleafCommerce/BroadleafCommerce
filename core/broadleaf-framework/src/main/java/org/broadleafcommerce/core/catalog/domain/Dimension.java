@@ -19,16 +19,17 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Embeddable
 public class Dimension implements Serializable {
@@ -152,5 +153,37 @@ public class Dimension implements Serializable {
         if (dimensionUnitOfMeasure != null) {
             this.dimensionUnitOfMeasure = dimensionUnitOfMeasure.getType();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Dimension)) return false;
+
+        Dimension dimension = (Dimension) o;
+
+        if (container != null ? !container.equals(dimension.container) : dimension.container != null) return false;
+        if (depth != null ? !depth.equals(dimension.depth) : dimension.depth != null) return false;
+        if (dimensionUnitOfMeasure != null ? !dimensionUnitOfMeasure.equals(dimension.dimensionUnitOfMeasure) :
+                dimension.dimensionUnitOfMeasure != null)
+            return false;
+        if (girth != null ? !girth.equals(dimension.girth) : dimension.girth != null) return false;
+        if (height != null ? !height.equals(dimension.height) : dimension.height != null) return false;
+        if (size != null ? !size.equals(dimension.size) : dimension.size != null) return false;
+        if (width != null ? !width.equals(dimension.width) : dimension.width != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = width != null ? width.hashCode() : 0;
+        result = 31 * result + (height != null ? height.hashCode() : 0);
+        result = 31 * result + (depth != null ? depth.hashCode() : 0);
+        result = 31 * result + (girth != null ? girth.hashCode() : 0);
+        result = 31 * result + (size != null ? size.hashCode() : 0);
+        result = 31 * result + (container != null ? container.hashCode() : 0);
+        result = 31 * result + (dimensionUnitOfMeasure != null ? dimensionUnitOfMeasure.hashCode() : 0);
+        return result;
     }
 }

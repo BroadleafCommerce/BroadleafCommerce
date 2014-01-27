@@ -90,4 +90,28 @@ public class AdminAuditable implements Serializable, SandBoxNonProductionSkip, A
     public void setUpdatedBy(Long updatedBy) {
         this.updatedBy = updatedBy;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AdminAuditable)) return false;
+
+        AdminAuditable that = (AdminAuditable) o;
+
+        if (createdBy != null ? !createdBy.equals(that.createdBy) : that.createdBy != null) return false;
+        if (dateCreated != null ? !dateCreated.equals(that.dateCreated) : that.dateCreated != null) return false;
+        if (dateUpdated != null ? !dateUpdated.equals(that.dateUpdated) : that.dateUpdated != null) return false;
+        if (updatedBy != null ? !updatedBy.equals(that.updatedBy) : that.updatedBy != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = dateCreated != null ? dateCreated.hashCode() : 0;
+        result = 31 * result + (createdBy != null ? createdBy.hashCode() : 0);
+        result = 31 * result + (dateUpdated != null ? dateUpdated.hashCode() : 0);
+        result = 31 * result + (updatedBy != null ? updatedBy.hashCode() : 0);
+        return result;
+    }
 }

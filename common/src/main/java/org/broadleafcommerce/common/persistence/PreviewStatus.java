@@ -45,4 +45,21 @@ public class PreviewStatus implements Serializable, Previewable {
     public void setPreview(Boolean preview) {
         isPreview = preview;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PreviewStatus)) return false;
+
+        PreviewStatus that = (PreviewStatus) o;
+
+        if (isPreview != null ? !isPreview.equals(that.isPreview) : that.isPreview != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return isPreview != null ? isPreview.hashCode() : 0;
+    }
 }
