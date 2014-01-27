@@ -148,6 +148,7 @@ public class NullCreditCardPaymentModule extends AbstractModule {
         boolean validCard = !cardType.contains("UNKNOWN");
 
         DateTime expirationDate = new DateTime(expYear, expMonth, 1, 0, 0);
+        expirationDate = expirationDate.dayOfMonth().withMaximumValue();
         boolean validDate = expirationDate.isAfterNow();
 
         boolean validCVV = !"000".equals(cvv);

@@ -380,7 +380,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @throws ServiceException 
      */
     public String completeSecureCreditCardCheckout(HttpServletRequest request, HttpServletResponse response, Model model,
-            BillingInfoForm billingForm, BindingResult result) throws CheckoutException, PricingException, ServiceException {
+            BillingInfoForm billingForm, BindingResult result) throws PricingException, ServiceException {
 
         Order cart = CartState.getCart();
         if (cart != null) {
@@ -412,9 +412,16 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
             payments.put(ccInfo, ccReference);
 
-            CheckoutResponse checkoutResponse = checkoutService.performCheckout(cart, payments);
+            CheckoutResponse checkoutResponse = null;
+            boolean checkoutError = false;
 
-            if (!checkoutResponse.getPaymentResponse().getResponseItems().get(ccInfo).getTransactionSuccess()){
+            try {
+                checkoutResponse = checkoutService.performCheckout(cart, payments);
+            } catch (CheckoutException ex) {
+                checkoutError = true;
+            }
+
+            if (checkoutError || (checkoutResponse != null && !checkoutResponse.getPaymentResponse().getResponseItems().get(ccInfo).getTransactionSuccess())){
                 populateModelWithShippingReferenceData(request, model);
                 result.rejectValue("creditCardNumber", "payment.exception", null, null);
                 return getCheckoutView();
