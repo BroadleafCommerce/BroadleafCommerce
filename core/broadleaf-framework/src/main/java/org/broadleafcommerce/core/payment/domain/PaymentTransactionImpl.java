@@ -143,7 +143,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name="FIELD_VALUE", length = Integer.MAX_VALUE - 1)
-    @CollectionTable(name="BLC_TRANS_ADDITNL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_ID"))
+    @CollectionTable(name="BLC_TRANS_ADDITNL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_TRANSACTION_ID"))
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "PaymentTransactionImpl_Additional_Fields",
         forceFreeFormKeys = true, keyPropertyFriendlyName = "PaymentTransactionImpl_Additional_Fields_Name"
