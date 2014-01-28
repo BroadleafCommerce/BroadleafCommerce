@@ -59,7 +59,7 @@ import org.hibernate.annotations.Parameter;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "URLHandlerImpl_friendyName")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class URLHandlerImpl implements URLHandler, Serializable, AdminMainEntity {
 
@@ -92,50 +92,31 @@ public class URLHandlerImpl implements URLHandler, Serializable, AdminMainEntity
     @AdminPresentation(friendlyName = "URLHandlerImpl_redirectType", order = 4, group = "URLHandlerImpl_friendyName", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.cms.url.type.URLRedirectType", groupOrder = 2, prominent = true)
     protected String urlRedirectType;
 
-
-    /* (non-Javadoc)
-          * @see org.broadleafcommerce.common.url.URLHandler#getId()
-          */
     @Override
     public Long getId() {
         return id;
     }
 
-    /* (non-Javadoc)
-          * @see org.broadleafcommerce.common.url.URLHandler#setId(java.lang.Long)
-          */
     @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    /* (non-Javadoc)
-          * @see org.broadleafcommerce.common.url.URLHandler#getIncomingURL()
-          */
     @Override
     public String getIncomingURL() {
         return incomingURL;
     }
 
-    /* (non-Javadoc)
-          * @see org.broadleafcommerce.common.url.URLHandler#setIncomingURL(java.lang.String)
-          */
     @Override
     public void setIncomingURL(String incomingURL) {
         this.incomingURL = incomingURL;
     }
 
-    /* (non-Javadoc)
-          * @see org.broadleafcommerce.common.url.URLHandler#getNewURL()
-          */
     @Override
     public String getNewURL() {
         return newURL;
     }
 
-    /* (non-Javadoc)
-          * @see org.broadleafcommerce.common.url.URLHandler#setNewURL(java.lang.String)
-          */
     @Override
     public void setNewURL(String newURL) {
         this.newURL = newURL;
