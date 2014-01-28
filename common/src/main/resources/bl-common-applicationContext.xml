@@ -45,8 +45,14 @@
     <bean id="blDirectCopyIgnorePatterns" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
-                <value>org\.apache.*</value>
-                <value>javassist.*</value>
+                <bean class="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePattern">
+                    <property name="patterns">
+                        <array>
+                            <value>org\.apache.*</value>
+                            <value>javassist.*</value>
+                        </array>
+                    </property>
+                </bean>
             </list>
         </property>
     </bean>

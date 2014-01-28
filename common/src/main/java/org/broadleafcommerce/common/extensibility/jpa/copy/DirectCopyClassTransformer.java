@@ -79,7 +79,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
     protected Map<String, String> templateTokens = new HashMap<String, String>();
 
     @Resource(name="blDirectCopyIgnorePatterns")
-    protected List<String> ignorePatterns = new ArrayList<String>();
+    protected List<DirectCopyIgnorePattern> ignorePatterns = new ArrayList<DirectCopyIgnorePattern>();
 
     public DirectCopyClassTransformer(String moduleName) {
         this.moduleName = moduleName;
@@ -120,8 +120,19 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                             "blDirectCopyTransformTokenMap via EarlyStageMergeBeanPostProcessor.");
                 }
                 boolean isValidPattern = true;
-                for (String pattern : ignorePatterns) {
-                    isValidPattern = !convertedClassName.matches(pattern);
+                List<DirectCopyIgnorePattern> matchedPatterns = new ArrayList<DirectCopyIgnorePattern>();
+                for (DirectCopyIgnorePattern pattern : ignorePatterns) {
+                    boolean isPatternMatch = false;
+                    for (String patternString : pattern.getPatterns()) {
+                        isPatternMatch = convertedClassName.matches(patternString);
+                        if (isPatternMatch) {
+                            break;
+                        }
+                    }
+                    if (isPatternMatch) {
+                        matchedPatterns.add(pattern);
+                    }
+                    isValidPattern = !(isPatternMatch && pattern.getTemplateTokenPatterns() == null);
                     if (!isValidPattern) {
                         return null;
                     }
@@ -151,7 +162,16 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                                             for (MemberValue memberValue : annot.getValue()) {
                                                 String val = ((StringMemberValue) memberValue).getValue();
                                                 if (val != null && templateTokens.containsKey(val)) {
-                                                    templates.add(templateTokens.get(val));
+                                                    templateCheck: {
+                                                        for (DirectCopyIgnorePattern matchedPattern : matchedPatterns) {
+                                                            for (String ignoreToken : matchedPattern.getTemplateTokenPatterns()) {
+                                                                if (val.matches(ignoreToken)) {
+                                                                    break templateCheck;
+                                                                }
+                                                            }
+                                                        }
+                                                        templates.add(templateTokens.get(val));
+                                                    }
                                                 }
                                             }
                                             BooleanMemberValue skipAnnot = (BooleanMemberValue) memberAnnot.getMemberValue("skipOverlaps");
@@ -461,11 +481,11 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
         this.templateTokens = templateTokens;
     }
 
-    public List<String> getIgnorePatterns() {
+    public List<DirectCopyIgnorePattern> getIgnorePatterns() {
         return ignorePatterns;
     }
 
-    public void setIgnorePatterns(List<String> ignorePatterns) {
+    public void setIgnorePatterns(List<DirectCopyIgnorePattern> ignorePatterns) {
         this.ignorePatterns = ignorePatterns;
     }
 }
