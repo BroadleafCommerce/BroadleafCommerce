@@ -135,6 +135,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
             fieldType=SupportedFieldType.MONEY)
     protected BigDecimal amount;
 
+    @Column(name = "REFERENCE_NUMBER")
     @Index(name="ORDERPAYMENT_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
     @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Reference_Number")
     protected String referenceNumber;

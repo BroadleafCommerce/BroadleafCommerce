@@ -87,7 +87,7 @@ public class PaymentLogImpl implements PaymentLog {
     @Index(name="PAYMENTLOG_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
-    @Column(name = "ORDER_PAYMENT_REFERENCE_NUMBER")
+    @Column(name = "ORDER_PAYMENT_REF_NUM")
     @Index(name="PAYMENTLOG_REFERENCE_INDEX", columnNames={"ORDER_PAYMENT_REFERENCE_NUMBER"})
     @AdminPresentation(friendlyName = "PaymentLogImpl_Payment_Ref_Number", order = 4, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected String orderPaymentReferenceNumber;
