@@ -244,7 +244,16 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                             logger.debug(String.format("Not adding field [%s]", field.getName()));
                         } else {
                             try {
-                                clazz.getDeclaredField(field.getName());
+                                CtField ctField = clazz.getDeclaredField(field.getName());
+                                String originalSignature = ctField.getSignature();
+                                String mySignature = field.getSignature();
+                                if (!originalSignature.equals(mySignature)) {
+                                    throw new IllegalArgumentException("Field with name ("+field.getName()+") and signature " +
+                                            "("+field.getSignature()+") is targeted for weaving into ("+clazz.getName()+"). " +
+                                            "An incompatible field of the same name and signature of ("+ctField.getSignature()+") " +
+                                            "already exists. The field in the target class should be updated to a different name, " +
+                                            "or made to have a matching type.");
+                                }
                                 if (xformSkipOverlaps[index]) {
                                     logger.debug(String.format("Skipping overlapped field [%s]", field.getName()));
                                     continue;
