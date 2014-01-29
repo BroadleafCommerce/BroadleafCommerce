@@ -17,9 +17,6 @@
  * limitations under the License.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;

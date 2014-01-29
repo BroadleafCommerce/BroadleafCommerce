@@ -17,9 +17,6 @@
  * limitations under the License.
  * #L%
  */
-/**
- * 
- */
 
 package org.broadleafcommerce.admin.server.service.handler;
 

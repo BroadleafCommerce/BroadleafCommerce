@@ -17,9 +17,6 @@
  * limitations under the License.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;

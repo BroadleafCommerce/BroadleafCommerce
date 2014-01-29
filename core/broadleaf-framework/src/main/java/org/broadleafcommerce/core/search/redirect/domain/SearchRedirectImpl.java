@@ -17,9 +17,6 @@
  * limitations under the License.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.core.search.redirect.domain;
 
 import org.apache.commons.logging.Log;

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,6 @@
  * limitations under the License.
  * #L%
  */
-/*
- * Broadleaf Commerce Confidential
- * _______________________________
- *
- * [2009] - [2013] Broadleaf Commerce, LLC
- * All Rights Reserved.
- *
- * NOTICE:  All information contained herein is, and remains
- * the property of Broadleaf Commerce, LLC
- * The intellectual and technical concepts contained
- * herein are proprietary to Broadleaf Commerce, LLC
- * and may be covered by U.S. and Foreign Patents,
- * patents in process, and are protected by trade secret or copyright law.
- * Dissemination of this information or reproduction of this material
- * is strictly forbidden unless prior written permission is obtained
- * from Broadleaf Commerce, LLC.
- */
-
 package org.broadleafcommerce.core.web.checkout.model;
 
 import java.io.Serializable;

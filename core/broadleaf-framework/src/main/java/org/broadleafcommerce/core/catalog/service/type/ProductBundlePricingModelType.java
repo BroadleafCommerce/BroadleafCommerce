@@ -17,9 +17,6 @@
  * limitations under the License.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.core.catalog.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
