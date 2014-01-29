@@ -19,13 +19,14 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.order.domain.Order;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public interface OfferCode extends Serializable {
+public interface OfferCode extends Status, Serializable {
 
     public Long getId() ;
 

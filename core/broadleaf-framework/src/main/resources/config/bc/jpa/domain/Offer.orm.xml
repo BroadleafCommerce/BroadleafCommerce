@@ -31,7 +31,7 @@
 
     <named-query name="BC_READ_OFFER_CODE_BY_CODE" >
         <query>SELECT offerCode FROM org.broadleafcommerce.core.offer.domain.OfferCode offerCode
-        WHERE offerCode.offerCode = :code</query>
+        WHERE offerCode.offerCode = :code AND (offerCode.archiveStatus.archived IS NULL OR offerCode.archiveStatus.archived = 'N') </query>
     </named-query>
 
     <named-query name="BC_READ_ALL_OFFERS" >
