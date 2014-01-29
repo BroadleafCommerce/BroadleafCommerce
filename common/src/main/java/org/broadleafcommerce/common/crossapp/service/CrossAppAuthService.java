@@ -54,6 +54,16 @@ public interface CrossAppAuthService {
     public static String AUTH_FROM_ADMIN_SESSION_VAR = "blAuthedFromAdmin";
 
     /**
+     * Composes a full URL that can be returned from a controller to redirect the user to the cross app authentication
+     * controller endpoint on the site application.
+     * 
+     * @param forwardUrl (not URL encoded)
+     * @param rolesToContrib
+     * @return the redirect url
+     */
+    public String getRedirectUrlForSiteAuth(String forwardUrl, List<String> rolesToContrib);
+
+    /**
      * @see #generateTokenForSiteAuth(Long, List)
      * @param adminUserId
      * @return the generated token

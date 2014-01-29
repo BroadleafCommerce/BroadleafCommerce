@@ -90,7 +90,7 @@ public abstract class BroadleafAbstractController {
         }
 
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (brc.isAdminMode()) {
+        if (brc.getSandBox() != null) {
             List<DeepLink> links = service.getLinks(item);
             if (links.size() == 1) {
                 model.addObject("adminDeepLink", links.get(0));

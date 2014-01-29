@@ -19,12 +19,15 @@
  */
 package org.broadleafcommerce.common.web.expression;
 
-import java.util.Date;
-
 import org.apache.commons.beanutils.PropertyUtils;
+import org.broadleafcommerce.common.crossapp.service.CrossAppAuthService;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.Date;
 
 
 /**
@@ -34,6 +37,10 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
  */
 public class BRCVariableExpression implements BroadleafVariableExpression {
     
+    @Autowired(required = false)
+    @Qualifier("blCrossAppAuthService")
+    protected CrossAppAuthService crossAppAuthService;
+
     @Override
     public String getName() {
         return "brc";
@@ -62,14 +69,14 @@ public class BRCVariableExpression implements BroadleafVariableExpression {
         }
         return null;
     }
+
+    public boolean isCsrMode() {
+        return crossAppAuthService == null ? false : crossAppAuthService.isAuthedFromAdmin();
+    }
     
-    public boolean isAdminMode() {
+    public boolean isSandboxMode() {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (brc == null) {
-            return false;
-        } else {
-            return brc.isAdminMode();
-        }
+        return (brc == null) ? false : (brc.getSandBox() != null);
     }
 
 }

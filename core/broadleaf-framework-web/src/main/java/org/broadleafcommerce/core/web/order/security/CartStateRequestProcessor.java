@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.crossapp.service.CrossAppAuthService;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -33,6 +34,8 @@ import org.broadleafcommerce.core.web.service.UpdateCartService;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.broadleafcommerce.profile.web.core.security.CustomerStateRequestProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -81,6 +84,10 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
     @Resource(name = "blCustomerStateRequestProcessor")
     protected CustomerStateRequestProcessor customerStateRequestProcessor;
 
+    @Autowired(required = false)
+    @Qualifier("blCrossAppAuthService")
+    protected CrossAppAuthService crossAppAuthService;
+
     protected static String cartRequestAttributeName = "cart";
     
     protected static String anonymousCartSessionAttributeName = "anonymousCart";
@@ -128,6 +135,11 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
     }
     
     public boolean mergeCartNeeded(Customer customer, WebRequest request) {
+        // When the user is a CSR, we want to disable cart merging
+        if (crossAppAuthService != null && crossAppAuthService.isAuthedFromAdmin()) {
+            return false;
+        }
+
         Customer anonymousCustomer = customerStateRequestProcessor.getAnonymousCustomer(request);
         return (anonymousCustomer != null && customer.getId() != null && !customer.getId().equals(anonymousCustomer.getId()));
     }

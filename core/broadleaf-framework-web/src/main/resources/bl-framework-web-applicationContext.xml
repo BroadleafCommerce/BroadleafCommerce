@@ -107,6 +107,7 @@
                 <bean class="org.broadleafcommerce.common.web.expression.BRCVariableExpression" />
                 <bean class="org.broadleafcommerce.common.web.expression.PropertiesVariableExpression" />
                 <bean class="org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression"/>
+                <bean class="org.broadleafcommerce.profile.web.core.expression.CustomerVariableExpression"/>
             </list>
         </property>
     </bean>

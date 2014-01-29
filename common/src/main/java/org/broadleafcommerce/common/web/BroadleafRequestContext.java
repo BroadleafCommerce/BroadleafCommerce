@@ -376,10 +376,6 @@ public class BroadleafRequestContext {
         this.adminUserId = adminUserId;
     }
 
-    public boolean isAdminMode() {
-        return getSandBox() != null;
-    }
-
     /**
      * Intended for internal use only
      */
