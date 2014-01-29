@@ -87,6 +87,7 @@
                 <ref bean="blRemoveFacetValuesLinkProcessor" />
                 <ref bean="blToggleFacetLinkProcessor" />
                 <ref bean="blOnePageCheckoutProcessor" />
+                <ref bean="blConfigVariableProcessor" />
                 <ref bean="blResourceBundleProcessor" />
                 <ref bean="blDataDrivenEnumerationProcessor" />
                 <ref bean="blTransparentRedirectCreditCardFormProcessor" />
