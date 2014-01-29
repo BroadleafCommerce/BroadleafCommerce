@@ -19,6 +19,19 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -49,19 +62,6 @@ import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse
 import org.hibernate.Session;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -158,8 +158,6 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     Date date = (Date) populateValueRequest.getFieldManager().getFieldValue(instance, populateValueRequest.getProperty().getName());
                     String oldValue = null;
                     if (date != null) {
-                        //don't resolve seconds
-                        date.setSeconds(0);
                         oldValue = populateValueRequest.getDataFormatProvider().getSimpleDateFormatter().format(date);
                     }
                     prop.setOriginalValue(oldValue);
