@@ -93,7 +93,6 @@
             <list>
                 <value>classpath:/messages/ContentManagementMessages</value>
                 <value>classpath:/messages/GeneratedMessagesEntityCMS</value>
-                <value>classpath:/messages/SandBoxMessages</value>
             </list>
         </property>
     </bean>
