@@ -434,7 +434,7 @@ public class CustomerServiceImpl implements CustomerService {
         return response;
     }
     
-    private CustomerForgotPasswordSecurityToken checkPasswordResetToken(String token, GenericResponse response) {
+    protected CustomerForgotPasswordSecurityToken checkPasswordResetToken(String token, GenericResponse response) {
         if (token == null || "".equals(token)) {
             response.addErrorCode("invalidToken");
         }
