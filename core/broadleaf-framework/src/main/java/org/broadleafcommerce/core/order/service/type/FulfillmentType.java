@@ -42,8 +42,6 @@ public class FulfillmentType implements Serializable, BroadleafEnumerationType {
     public static final FulfillmentType PHYSICAL_PICKUP = new FulfillmentType("PHYSICAL_PICKUP", "Physical Pickup");
     public static final FulfillmentType PHYSICAL_PICKUP_OR_SHIP = new FulfillmentType("PHYSICAL_PICKUP_OR_SHIP", "Physical Pickup or Ship");
     public static final FulfillmentType GIFT_CARD = new FulfillmentType("GIFT_CARD", "Gift Card");
-    @Deprecated
-    public static final FulfillmentType SHIPPING = new FulfillmentType("SHIPPING", "Shipping");
 
     public static FulfillmentType getInstance(final String type) {
         return TYPES.get(type);

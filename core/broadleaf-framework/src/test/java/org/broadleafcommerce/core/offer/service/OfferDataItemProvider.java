@@ -395,7 +395,7 @@ public class OfferDataItemProvider {
         fg1.setPrimary(true);
         fg1.setRetailShippingPrice(new Money(10D));
         fg1.setShippingPrice(new Money(10D));
-        fg1.setType(FulfillmentType.SHIPPING);
+        fg1.setType(FulfillmentType.PHYSICAL_SHIP);
         fg1.setOrder(order);
         
         FulfillmentGroupItem fgItem1 = new FulfillmentGroupItemImpl();
@@ -438,7 +438,7 @@ public class OfferDataItemProvider {
         fg2.setPrimary(true);
         fg2.setRetailShippingPrice(new Money(20D));
         fg2.setShippingPrice(new Money(20D));
-        fg2.setType(FulfillmentType.SHIPPING);
+        fg2.setType(FulfillmentType.PHYSICAL_SHIP);
         fg2.setOrder(order);
         
         FulfillmentGroupItem fgItem2 = new FulfillmentGroupItemImpl();
@@ -600,7 +600,7 @@ public class OfferDataItemProvider {
         fg1.setPrimary(true);
         fg1.setRetailShippingPrice(new Money(10D));
         fg1.setShippingPrice(new Money(10D));
-        fg1.setType(FulfillmentType.SHIPPING);
+        fg1.setType(FulfillmentType.PHYSICAL_SHIP);
         fg1.setOrder(order);
 
         FulfillmentGroupItem fgItem1 = new FulfillmentGroupItemImpl();
@@ -643,7 +643,7 @@ public class OfferDataItemProvider {
         fg2.setPrimary(true);
         fg2.setRetailShippingPrice(new Money(20D));
         fg2.setShippingPrice(new Money(20D));
-        fg2.setType(FulfillmentType.SHIPPING);
+        fg2.setType(FulfillmentType.PHYSICAL_SHIP);
         fg2.setOrder(order);
 
         FulfillmentGroupItem fgItem2 = new FulfillmentGroupItemImpl();
