@@ -41,6 +41,7 @@ import javax.persistence.Table;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyAdornedTargetCollection;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -120,6 +121,16 @@ public class AdminPermissionImpl implements AdminPermission {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<AdminPermissionQualifiedEntity> qualifiedEntities = new ArrayList<AdminPermissionQualifiedEntity>();
+
+    @OneToMany(targetEntity = AdminPermissionXrefImpl.class, mappedBy = "permission", orphanRemoval = true)
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    @ClonePolicyAdornedTargetCollection(unowned = true)
+    protected List<AdminPermissionXref> allChildPermissionXrefs = new ArrayList<AdminPermissionXref>(10);
+    
+    @Column(name = "IS_FRIENDLY")
+    protected Boolean isFriendly = Boolean.FALSE;
 
     @Override
     public Long getId() {
@@ -231,5 +242,18 @@ public class AdminPermissionImpl implements AdminPermission {
         }
 
         return clone;
+    }
+
+    @Override
+    public List<AdminPermissionXref> getAllChildPermissions() {
+        return allChildPermissionXrefs;
+    }
+
+    @Override
+    public Boolean isFriendly() {
+        if(isFriendly == null) {
+            return false;
+        }
+        return isFriendly;
     }
 }

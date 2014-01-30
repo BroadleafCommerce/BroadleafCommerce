@@ -70,31 +70,39 @@
     <named-query name="BC_COUNT_PERMISSIONS_FOR_USER_BY_TYPE_AND_CEILING_ENTITY" >
         <query>SELECT COUNT(adminPermission)
                FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermission adminPermission
+               LEFT OUTER JOIN adminPermission.allChildPermissionXrefs childPermissionXref
+               LEFT OUTER JOIN childPermissionXref.childPermission.qualifiedEntities childQualifiedEntity
                LEFT OUTER JOIN adminPermission.qualifiedEntities qualifiedEntity
                LEFT OUTER JOIN adminPermission.allRoles role
                LEFT OUTER JOIN role.allUsers roleUser
                LEFT OUTER JOIN adminPermission.allUsers permissionUser
                WHERE (roleUser = :adminUser OR permissionUser = :adminUser) AND
-                     (adminPermission.type = :type OR adminPermission.type = 'ALL') AND
-                     qualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity
+                     (adminPermission.type = :type OR adminPermission.type = 'ALL' OR 
+                     childPermissionXref.childPermission.type = :type OR childPermissionXref.childPermission.type = 'ALL') AND
+                     (qualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity OR childQualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity)
         </query>
     </named-query>
 
     <named-query name="BC_COUNT_BY_PERMISSION_AND_CEILING_ENTITY" >
         <query>SELECT COUNT(adminPermission)
                FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermission adminPermission
+               LEFT OUTER JOIN adminPermission.allChildPermissionXrefs childPermissionXref
+               LEFT OUTER JOIN childPermissionXref.childPermission.qualifiedEntities childQualifiedEntity
                LEFT OUTER JOIN adminPermission.qualifiedEntities qualifiedEntity
                WHERE adminPermission.name IN (:permissionNames) AND
-                     qualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity
+                     (qualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity OR childQualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity)
         </query>
     </named-query>
 
     <named-query name="BC_COUNT_PERMISSIONS_BY_TYPE_AND_CEILING_ENTITY" >
         <query>SELECT COUNT(adminPermission)
                FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermission adminPermission
+               LEFT OUTER JOIN adminPermission.allChildPermissionXrefs childPermissionXref
+               LEFT OUTER JOIN childPermissionXref.childPermission.qualifiedEntities childQualifiedEntity
                JOIN adminPermission.qualifiedEntities qualifiedEntity
-               WHERE (adminPermission.type = :type OR adminPermission.type = 'ALL') AND
-                     qualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity
+               WHERE (adminPermission.type = :type OR adminPermission.type = 'ALL' OR
+                     childPermissionXref.childPermission.type = :type OR childPermissionXref.childPermission.type = 'ALL') AND
+                     (qualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity OR childQualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity)
         </query>
     </named-query>
 
