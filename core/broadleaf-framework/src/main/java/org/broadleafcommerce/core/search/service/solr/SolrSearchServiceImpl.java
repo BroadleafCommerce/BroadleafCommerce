@@ -352,9 +352,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // Query solr
         QueryResponse response;
         List<SolrDocument> responseDocuments;
+        int numResults = 0;
         try {
             response = SolrContext.getServer().query(solrQuery);
             responseDocuments = getResponseDocuments(response);
+            numResults = (int) response.getResults().getNumFound();
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace(response.toString());
@@ -377,7 +379,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         ProductSearchResult result = new ProductSearchResult();
         result.setFacets(facets);
         result.setProducts(products);
-        setPagingAttributes(result, responseDocuments, searchCriteria);
+        setPagingAttributes(result, numResults, searchCriteria);
         return result;
     }
     
@@ -598,9 +600,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param response
      * @param searchCriteria
      */
-    public void setPagingAttributes(ProductSearchResult result, List<SolrDocument> responseDocuments,
-            ProductSearchCriteria searchCriteria) {
-        result.setTotalResults(responseDocuments.size());
+    public void setPagingAttributes(ProductSearchResult result, int numResults, ProductSearchCriteria searchCriteria) {
+        result.setTotalResults(numResults);
         result.setPage(searchCriteria.getPage());
         result.setPageSize(searchCriteria.getPageSize());
     }
