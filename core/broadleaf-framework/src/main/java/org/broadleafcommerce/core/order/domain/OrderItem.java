@@ -156,7 +156,6 @@ public interface OrderItem extends Serializable, Cloneable {
     Money getPrice();
 
     /**
-     * @deprecated
      * Calling this method is the same as calling the following:
      * 
      * {@link #setRetailPrice(Money)}
@@ -169,10 +168,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @param price
      */
-    @Deprecated
     void setPrice(Money price);
-
-
 
     /**
      * The quantity of this {@link OrderItem}.

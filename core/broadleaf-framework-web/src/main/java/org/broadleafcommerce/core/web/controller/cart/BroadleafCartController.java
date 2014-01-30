@@ -19,11 +19,13 @@
  */
 package org.broadleafcommerce.core.web.controller.cart;
 
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
+import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
@@ -299,5 +301,13 @@ public class BroadleafCartController extends AbstractCartController {
     public String getCartPageRedirect() {
         return cartPageRedirect;
     }
+    
+    public Map<String, String> handleIllegalCartOpException(IllegalCartOperationException ex) {
+        Map<String, String> returnMap = new HashMap<String, String>();
+        returnMap.put("error", "illegalCartOperation");
+        returnMap.put("exception", BLCMessageUtils.getMessage(ex.getType()));
+        return returnMap;
+    }
+    
 
 }

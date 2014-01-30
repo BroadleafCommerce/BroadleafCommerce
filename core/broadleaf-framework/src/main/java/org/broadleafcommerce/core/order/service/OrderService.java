@@ -37,7 +37,6 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -508,5 +507,13 @@ public interface OrderService {
      * @param log the Log to use to print a debug-level message
      */
     public void printOrder(Order order, Log log);
+
+    /**
+     * Invokes the extension handler of the same name to provide the ability for a module to throw an exception
+     * and interrupt a cart operation.
+     * 
+     * @param cart
+     */
+    public void preValidateCartOperation(Order cart);
 
 }

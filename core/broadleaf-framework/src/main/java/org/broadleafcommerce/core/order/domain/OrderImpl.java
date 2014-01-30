@@ -281,9 +281,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Column(name = "TAX_OVERRIDE")
     protected Boolean taxOverride;
 
-    @Column(name = "SHIPPING_OVERRIDE")
-    protected Boolean shippingOverride;
-
     @Transient
     protected List<ActivityMessageDTO> orderMessages;
 
@@ -688,16 +685,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Override
     public void setTaxOverride(Boolean taxOverride) {
         this.taxOverride = taxOverride;
-    }
-
-    @Override
-    public Boolean getShippingOverride() {
-        return shippingOverride == null ? false : shippingOverride;
-    }
-
-    @Override
-    public void setShippingOverride(Boolean shippingOverride) {
-        this.shippingOverride = shippingOverride;
     }
 
     @Override

@@ -54,6 +54,12 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
      */
     public static final OrderStatus SUBMITTED = new OrderStatus("SUBMITTED", "Submitted");
     public static final OrderStatus CANCELLED = new OrderStatus("CANCELLED", "Cancelled");
+    
+    /**
+     * Used when a CSR has locked a cart to act on behalf of a customer
+     */
+    public static final OrderStatus CSR_OWNED = new OrderStatus("CSR_OWNED", "Owned by CSR");
+
 
     public static OrderStatus getInstance(final String type) {
         return TYPES.get(type);

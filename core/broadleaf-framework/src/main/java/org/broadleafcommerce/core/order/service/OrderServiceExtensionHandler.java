@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -31,5 +32,7 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 public interface OrderServiceExtensionHandler extends ExtensionHandler {
     
     public ExtensionResultStatusType attachAdditionalDataToNewNamedCart(Customer customer, Order cart);
+
+    public ExtensionResultStatusType preValidateCartOperation(Order cart, ExtensionResultHolder erh);
     
 }

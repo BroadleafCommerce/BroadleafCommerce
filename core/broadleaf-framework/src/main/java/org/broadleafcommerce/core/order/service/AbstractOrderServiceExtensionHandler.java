@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -32,6 +33,10 @@ public abstract class AbstractOrderServiceExtensionHandler extends AbstractExten
         OrderServiceExtensionHandler {
     
     public ExtensionResultStatusType attachAdditionalDataToNewNamedCart(Customer customer, Order cart) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    public ExtensionResultStatusType preValidateCartOperation(Order cart, ExtensionResultHolder erh) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
     

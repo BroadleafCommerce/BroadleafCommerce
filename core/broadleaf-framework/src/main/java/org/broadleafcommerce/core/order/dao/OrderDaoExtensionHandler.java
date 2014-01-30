@@ -33,6 +33,8 @@ import java.util.List;
 public interface OrderDaoExtensionHandler extends ExtensionHandler {
     
     public ExtensionResultStatusType attachAdditionalDataToNewCart(Customer customer, Order cart);
+
+    public ExtensionResultStatusType processPostSaveNewCart(Customer customer, Order cart);
     
     public ExtensionResultStatusType applyAdditionalOrderLookupFilter(Customer customer, String name, List<Order> orders);
 

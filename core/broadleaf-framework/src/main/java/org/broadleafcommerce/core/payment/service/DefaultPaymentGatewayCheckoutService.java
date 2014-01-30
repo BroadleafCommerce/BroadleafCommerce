@@ -51,11 +51,11 @@ import org.broadleafcommerce.profile.core.service.StateService;
 import org.mortbay.log.Log;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -103,8 +103,8 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         Long orderId = Long.parseLong(responseDTO.getOrderId());
         Order order = orderService.findOrderById(orderId);
         
-        if (!OrderStatus.IN_PROCESS.equals(order.getStatus())) {
-            throw new IllegalArgumentException("Cannont apply another payment to an Order that is not IN_PROCESS");
+        if (!OrderStatus.IN_PROCESS.equals(order.getStatus()) && !OrderStatus.CSR_OWNED.equals(order.getStatus())) {
+            throw new IllegalArgumentException("Cannot apply another payment to an Order that is not IN_PROCESS or CSR_OWNED");
         }
         
         Customer customer = order.getCustomer();

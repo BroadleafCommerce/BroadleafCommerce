@@ -35,6 +35,10 @@ public class AbstractOrderDaoExtensionHandler extends AbstractExtensionHandler i
     public ExtensionResultStatusType attachAdditionalDataToNewCart(Customer customer, Order cart) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
+    public ExtensionResultStatusType processPostSaveNewCart(Customer customer, Order cart) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
     
     public ExtensionResultStatusType applyAdditionalOrderLookupFilter(Customer customer, String name, List<Order> orders) {
         return ExtensionResultStatusType.NOT_HANDLED;

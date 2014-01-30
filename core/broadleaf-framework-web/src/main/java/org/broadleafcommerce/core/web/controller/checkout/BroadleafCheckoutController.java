@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
@@ -38,10 +39,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * In charge of performing the various checkout operations
@@ -66,6 +68,12 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
     public String checkout(HttpServletRequest request, HttpServletResponse response, Model model,
                            RedirectAttributes redirectAttributes) {
         Order cart = CartState.getCart();
+        
+        try {
+            orderService.preValidateCartOperation(cart);
+        } catch (IllegalCartOperationException ex) {
+            model.addAttribute("cartRequiresLock", true);
+        }
 
         if (!(cart instanceof NullOrderImpl)) {
             model.addAttribute("orderMultishipOptions",

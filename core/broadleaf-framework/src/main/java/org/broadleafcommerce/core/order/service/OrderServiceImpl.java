@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.order.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
@@ -45,6 +46,7 @@ import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
+import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
@@ -333,6 +335,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional("blTransactionManager")
     public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
+        preValidateCartOperation(order);
         Set<Offer> addedOffers = offerService.getUniqueOffersFromOrder(order);
         //TODO: give some sort of notification that adding the offer code to the order was unsuccessful
         if (!order.getAddedOfferCodes().contains(offerCode) && !addedOffers.contains(offerCode.getOffer())) {
@@ -505,6 +508,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(value = "blTransactionManager", rollbackFor = { AddToCartException.class })
     public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
         Order order = findOrderById(orderId);
+        preValidateCartOperation(order);
         if (automaticallyMergeLikeItems) {
             OrderItem item = findMatchingItem(order, orderItemRequestDTO);
             if (item != null) {
@@ -552,6 +556,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
     public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
+        preValidateCartOperation(findOrderById(orderId));
         if (orderItemRequestDTO.getQuantity() == 0) {
             return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
         }
@@ -569,6 +574,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {RemoveFromCartException.class})
     public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
+        preValidateCartOperation(findOrderById(orderId));
         try {
             OrderItem oi = orderItemService.readOrderItemById(orderItemId);
             if (CollectionUtils.isNotEmpty(oi.getChildOrderItems())) {
@@ -828,6 +834,17 @@ public class OrderServiceImpl implements OrderService {
             .addSeparator();
         
         log.debug(tc.toString());
+    }
+    
+    @Override
+    public void preValidateCartOperation(Order cart) {
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().preValidateCartOperation(cart, erh);
+        if (erh.getThrowable() instanceof IllegalCartOperationException) {
+            throw ((IllegalCartOperationException) erh.getThrowable());
+        } else if (erh.getThrowable() != null) {
+            throw new RuntimeException(erh.getThrowable());
+        }
     }
 
 }

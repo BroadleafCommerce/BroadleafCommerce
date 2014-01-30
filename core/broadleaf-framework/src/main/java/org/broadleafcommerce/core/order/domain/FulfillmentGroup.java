@@ -326,5 +326,17 @@ public interface FulfillmentGroup extends Serializable {
     public List<DiscreteOrderItem> getDiscreteOrderItems();
     
     public Money getFulfillmentGroupAdjustmentsValue();
+
+    /**
+     * @return whether or not to override the shipping calculation
+     */
+    public Boolean getShippingOverride();
+
+    /**
+     * Sets whether or not to override the shipping calculation
+     * 
+     * @param shippingOverride
+     */
+    public void setShippingOverride(Boolean shippingOverride);
     
 }
