@@ -376,8 +376,8 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                                     break checkId;
                                 }
                             }
-                            //throw new IllegalArgumentException("Unable to update the rule of type (" + memberType.getName() +
-                                    //") because an update was requested for id (" + dto.getId() + "), which does not exist.");
+                            throw new IllegalArgumentException("Unable to update the rule of type (" + memberType.getName() +
+                                    ") because an update was requested for id (" + dto.getId() + "), which does not exist.");
                         }
                     } else {
                         //Create a new Criteria
