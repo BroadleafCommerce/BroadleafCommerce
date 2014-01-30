@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.common.presentation;
 
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 
 
 /**
@@ -56,6 +56,7 @@ public @interface AdminPresentation {
      * determine if this field should be disabled based on the specified level.
      * 
      * @return the security level
+     * @deprecated not supported
      */
     String securityLevel() default "";
     
@@ -69,7 +70,7 @@ public @interface AdminPresentation {
     int order() default 99999;
     
     /**
-     * Optional - required only if you want to order the appearance of this field as it relates to other fields in a
+     * Optional - required only if you want to order the appearance of this field as it relates to other fields in a grid.
      * Note that this field will only be relevant if {@link #prominent()} is also set to true.
      * 
      * @return
@@ -125,6 +126,7 @@ public @interface AdminPresentation {
      * Specify whether a group is collapsed by default in the admin UI.
      *
      * @return whether or not the group is collapsed by default
+     * @deprecated not supported
      */
     boolean groupCollapsed() default false;
     
