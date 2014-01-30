@@ -591,7 +591,7 @@ public class SkuImpl implements Sku {
             if (hasDefaultSku()) {
                 return lookupDefaultSku().isAvailable();
             }
-            return null;
+            return true;
         }
         return available == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
@@ -694,7 +694,7 @@ public class SkuImpl implements Sku {
                 LOG.debug("sku, " + id + ", inactive due to date");
             }
         }
-        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
+        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true) && isAvailable();
     }
 
     @Override
@@ -708,7 +708,7 @@ public class SkuImpl implements Sku {
                 LOG.debug("sku, " + id + ", inactive due to category being inactive");
             }
         }
-        return this.isActive() && (product == null || product.isActive()) && (category == null || category.isActive());
+        return this.isActive() && (product == null || product.isActive()) && (category == null || category.isActive()) && isAvailable();
     }
 
     @Override
