@@ -93,6 +93,12 @@ public class PersistenceManagerEventHandlerAdapter implements PersistenceManager
     }
 
     @Override
+    public PersistenceManagerEventHandlerResponse processValidationError(PersistenceManager persistenceManager, Entity entity, PersistencePackage persistencePackage) throws ServiceException {
+        return new PersistenceManagerEventHandlerResponse().
+                        withStatus(PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.NOT_HANDLED);
+    }
+
+    @Override
     public int getOrder() {
         return LOWEST_PRECEDENCE;
     }

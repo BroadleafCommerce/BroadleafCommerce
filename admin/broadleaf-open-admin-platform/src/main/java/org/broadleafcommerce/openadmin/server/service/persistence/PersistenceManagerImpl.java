@@ -377,21 +377,29 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         //check to see if there is a custom handler registered
         //execute the root PersistencePackage
         Entity response;
-        checkRoot: {
-            //if there is a validation exception in the root check, let it bubble, as we need a valid, persisted
-            //entity to execute the subPackage code later
-            for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
-                if (handler.canHandleAdd(persistencePackage)) {
-                    if (!handler.willHandleSecurity(persistencePackage)) {
-                        adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
+        try {
+            checkRoot: {
+                //if there is a validation exception in the root check, let it bubble, as we need a valid, persisted
+                //entity to execute the subPackage code later
+                for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
+                    if (handler.canHandleAdd(persistencePackage)) {
+                        if (!handler.willHandleSecurity(persistencePackage)) {
+                            adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
+                        }
+                        response = handler.add(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                        break checkRoot;
                     }
-                    response = handler.add(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
-                    break checkRoot;
                 }
+                adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
+                PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
+                response = myModule.add(persistencePackage);
             }
-            adminRemoteSecurityService.securityCheck(persistencePackage.getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
-            PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
-            response = myModule.add(persistencePackage);
+        } catch (ServiceException e) {
+            if (e.getCause() instanceof ValidationException) {
+                response = ((ValidationException) e.getCause()).getEntity();
+            } else {
+                throw e;
+            }
         }
 
         if (!MapUtils.isEmpty(persistencePackage.getSubPackages())) {
@@ -431,6 +439,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     }
                 } catch (ValidationException e) {
                     subPackage.getValue().setEntity(e.getEntity());
+                } catch (ServiceException e) {
+                    if (e.getCause() instanceof ValidationException) {
+                        response = ((ValidationException) e.getCause()).getEntity();
+                    } else {
+                        throw e;
+                    }
                 }
             }
             
@@ -445,10 +459,32 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
 
         if (response.isValidationFailure()) {
-            throw new ValidationException(response, "The entity has failed validation");
+            PersistenceResponse validationResponse = executeValidationProcessors(persistencePackage, new PersistenceResponse().withEntity(response));
+            throw new ValidationException(validationResponse.getEntity(), "The entity has failed validation");
         }
 
         return executePostAddHandlers(persistencePackage, new PersistenceResponse().withEntity(response));
+    }
+
+    protected PersistenceResponse executeValidationProcessors(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
+        for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
+            PersistenceManagerEventHandlerResponse response = handler.processValidationError(this,
+                    persistenceResponse.getEntity(), persistencePackage);
+            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
+                persistenceResponse.setEntity(response.getEntity());
+                if (!MapUtils.isEmpty(response.getAdditionalData())) {
+                    persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
+                }
+                break;
+            } else if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED==response.getStatus()) {
+                persistenceResponse.setEntity(response.getEntity());
+                if (!MapUtils.isEmpty(response.getAdditionalData())) {
+                    persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
+                }
+            }
+        }
+
+        return persistenceResponse;
     }
 
     protected PersistenceResponse executePostAddHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
@@ -517,6 +553,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         } catch (ValidationException e) {
             response = e.getEntity();
+        } catch (ServiceException e) {
+            if (e.getCause() instanceof ValidationException) {
+                response = ((ValidationException) e.getCause()).getEntity();
+            } else {
+                throw e;
+            }
         }
 
         Map<String, List<String>> subPackageValidationErrors = new HashMap<String, List<String>>();
@@ -541,6 +583,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 }
             } catch (ValidationException e) {
                 subPackage.getValue().setEntity(e.getEntity());
+            } catch (ServiceException e) {
+                if (e.getCause() instanceof ValidationException) {
+                    response = ((ValidationException) e.getCause()).getEntity();
+                } else {
+                    throw e;
+                }
             }
         }
         
@@ -554,7 +602,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         response.getValidationErrors().putAll(subPackageValidationErrors);
 
         if (response.isValidationFailure()) {
-            throw new ValidationException(response, "The entity has failed validation");
+            PersistenceResponse validationResponse = executeValidationProcessors(persistencePackage, new PersistenceResponse().withEntity(response));
+            throw new ValidationException(validationResponse.getEntity(), "The entity has failed validation");
         }
 
         return executePostUpdateHandlers(persistencePackage, new PersistenceResponse().withEntity(response));
