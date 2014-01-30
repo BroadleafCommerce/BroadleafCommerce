@@ -47,8 +47,12 @@ public class CommitTaxActivity extends BaseActivity<ProcessContext<CheckoutSeed>
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         Order order = context.getSeedData().getOrder();
-        order = taxService.commitTaxForOrder(order);
-        context.getSeedData().setOrder(order);
+
+        if (!order.getTaxOverride()) {
+            order = taxService.commitTaxForOrder(order);
+            context.getSeedData().setOrder(order);
+        }
+
         return context;
     }
 

@@ -466,4 +466,27 @@ public interface Order extends Serializable {
      */
     void setOrderMessages(List<ActivityMessageDTO> orderMessages);
 
+    /**
+     * @return whether or not to override the tax calculation
+     */
+    public Boolean getTaxOverride();
+
+    /**
+     * @return whether or not to override the shipping calculation
+     */
+    public Boolean getShippingOverride();
+
+    /**
+     * Sets whether or not to override the shipping calculation
+     * 
+     * @param shippingOverride
+     */
+    public void setShippingOverride(Boolean shippingOverride);
+
+    /**
+     * Sets whether or not to override the tax calculation
+     * @param taxOverride
+     */
+    public void setTaxOverride(Boolean taxOverride);
+
 }

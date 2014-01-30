@@ -369,4 +369,24 @@ public class NullOrderImpl implements Order {
         throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
     }
 
+    @Override
+    public Boolean getTaxOverride() {
+        return false;
+    }
+
+    @Override
+    public Boolean getShippingOverride() {
+        return false;
+    }
+
+    @Override
+    public void setShippingOverride(Boolean shippingOverride) {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+
+    @Override
+    public void setTaxOverride(Boolean taxOverride) {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+
 }

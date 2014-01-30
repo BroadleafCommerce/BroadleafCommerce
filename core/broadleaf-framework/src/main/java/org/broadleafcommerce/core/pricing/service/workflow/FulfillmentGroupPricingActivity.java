@@ -58,17 +58,20 @@ public class FulfillmentGroupPricingActivity extends BaseActivity<ProcessContext
          * 3. add FG back to order
          */
 
-        Money totalFulfillmentCharges = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
-        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            if (fulfillmentGroup != null) {
-                fulfillmentGroup = fulfillmentPricingService.calculateCostForFulfillmentGroup(fulfillmentGroup);
-                if (fulfillmentGroup.getFulfillmentPrice() != null) {
-                    totalFulfillmentCharges = totalFulfillmentCharges.add(fulfillmentGroup.getFulfillmentPrice());
+        if (!order.getShippingOverride()) {
+            Money totalFulfillmentCharges = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
+            for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+                if (fulfillmentGroup != null) {
+                    fulfillmentGroup = fulfillmentPricingService.calculateCostForFulfillmentGroup(fulfillmentGroup);
+                    if (fulfillmentGroup.getFulfillmentPrice() != null) {
+                        totalFulfillmentCharges = totalFulfillmentCharges.add(fulfillmentGroup.getFulfillmentPrice());
+                    }
                 }
             }
+            order.setTotalFulfillmentCharges(totalFulfillmentCharges);
+            context.setSeedData(order);
         }
-        order.setTotalFulfillmentCharges(totalFulfillmentCharges);
-        context.setSeedData(order);
+
         return context;
     }
 

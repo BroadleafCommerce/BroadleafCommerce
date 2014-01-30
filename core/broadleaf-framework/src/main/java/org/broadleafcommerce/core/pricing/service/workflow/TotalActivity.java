@@ -79,6 +79,10 @@ public class TotalActivity extends BaseActivity<ProcessContext<Order>> {
     }
     
     protected void setTaxSums(Order order) {
+        if (order.getTaxOverride()) {
+            return;
+        }
+
         Money orderTotalTax = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
         
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
