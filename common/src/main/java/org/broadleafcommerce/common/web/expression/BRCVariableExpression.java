@@ -71,7 +71,7 @@ public class BRCVariableExpression implements BroadleafVariableExpression {
     }
 
     public boolean isCsrMode() {
-        return crossAppAuthService == null ? false : crossAppAuthService.isAuthedFromAdmin();
+        return crossAppAuthService == null ? false : crossAppAuthService.hasCsrPermission();
     }
     
     public boolean isSandboxMode() {

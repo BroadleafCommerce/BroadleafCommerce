@@ -89,4 +89,9 @@ public interface CrossAppAuthService {
      */
     public Long getCurrentAuthedAdminId();
 
+    /**
+     * @return whether or not the user is currently authenticated from the admin and also has the CSR role
+     */
+    public boolean hasCsrPermission();
+
 }
