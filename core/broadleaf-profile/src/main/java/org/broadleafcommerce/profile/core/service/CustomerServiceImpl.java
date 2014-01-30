@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -406,11 +407,22 @@ public class CustomerServiceImpl implements CustomerService {
             String token = PasswordUtils.generateTemporaryPassword(getPasswordTokenLength());
             token = token.toLowerCase();
 
+            Object salt = getSalt(customer, token);
+
+            String saltString = null;
+            if (salt != null) {
+                saltString = Hex.encodeHexString(salt.toString().getBytes());
+            }
+
             CustomerForgotPasswordSecurityToken fpst = new CustomerForgotPasswordSecurityTokenImpl();
             fpst.setCustomerId(customer.getId());
-            fpst.setToken(encodePassword(token, null));
+            fpst.setToken(passwordEncoder.encodePassword(token, saltString));
             fpst.setCreateDate(SystemTime.asDate());
             customerForgotPasswordSecurityTokenDao.saveToken(fpst);
+
+            if (saltString != null) {
+                token = token + '-' + saltString;
+            }
 
             HashMap<String, Object> vars = new HashMap<String, Object>();
             vars.put("token", token);
@@ -439,10 +451,23 @@ public class CustomerServiceImpl implements CustomerService {
             response.addErrorCode("invalidToken");
         }
         
+        String rawToken = null;
+        String salt = null;
+
+        String[] tokens = token.split("-");
+        if (tokens.length > 2) {
+            response.addErrorCode("invalidToken");
+        } else {
+            rawToken = tokens[0].toLowerCase();
+            if (tokens.length == 2) {
+                salt = tokens[1];
+            }
+        }
+
+
         CustomerForgotPasswordSecurityToken fpst = null;
-        if (! response.getHasErrors()) {
-            token = token.toLowerCase();
-            fpst = customerForgotPasswordSecurityTokenDao.readToken(encodePassword(token, null));
+        if (!response.getHasErrors()) {
+            fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(rawToken, salt));
             if (fpst == null) {
                 response.addErrorCode("invalidToken");
             } else if (fpst.isTokenUsedFlag()) {
