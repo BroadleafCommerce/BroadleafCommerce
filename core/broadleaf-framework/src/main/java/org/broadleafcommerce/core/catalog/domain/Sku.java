@@ -173,14 +173,12 @@ public interface Sku extends Serializable {
     public void setDiscountable(Boolean discountable);
 
     /**
-     * Returns whether the Sku is available. This defaults to true. This also does not take into account the active start
-     * and end dates for the Sku. For this functionality see {@link #isActive()}
+     * Returns whether the Sku is available.
      */
     public Boolean isAvailable();
 
     /**
      * Convenience that passes through to isAvailable
-     * @see {@link #isAvailable()}
      */
     public Boolean getAvailable();
     
@@ -365,7 +363,6 @@ public interface Sku extends Serializable {
      * @return <b>true</b> if this Sku can be sorted by a machine
      * @deprecated use {@link #getIsMachineSortable()} instead since that is the correct bean notation
      */
-    @Deprecated
     public Boolean isMachineSortable();
 
     /**
@@ -380,7 +377,6 @@ public interface Sku extends Serializable {
      * @param isMachineSortable
      * @deprecated use {@link #setIsMachineSortable(Boolean)} instead since that is the correct bean notation
      */
-    @Deprecated
     public void setMachineSortable(Boolean isMachineSortable);
     
     /**
