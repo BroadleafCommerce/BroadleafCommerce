@@ -229,7 +229,15 @@ public class OfferCodeImpl implements OfferCode {
 
     @Override
     public boolean isActive() {
-        return DateUtil.isActive(offerCodeStartDate, offerCodeEndDate, true) && 'Y'!=getArchived();
+        boolean datesActive;
+        // If the start date for this offer code has not been set, just delegate to the offer to determine if the code is
+        // active rather than requiring the user to set offer code dates as well
+        if (offerCodeStartDate == null) {
+            datesActive = DateUtil.isActive(getOffer().getStartDate(), getOffer().getEndDate(), true);
+        } else {
+            datesActive = DateUtil.isActive(offerCodeStartDate, offerCodeEndDate, true);
+        }
+        return datesActive && 'Y' != getArchived();
     }
 
     @Override
