@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.order.service.MergeCartService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.service.UpdateCartService;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -91,6 +92,8 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
     protected static String cartRequestAttributeName = "cart";
     
     protected static String anonymousCartSessionAttributeName = "anonymousCart";
+
+    public static final String OVERRIDE_CART_ATTR_NAME = "_blc_overrideCartId";
         
     @Override
     public void process(WebRequest request) {
@@ -102,13 +105,14 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
             return;
         }
 
-        Order cart = null;
-        if (mergeCartNeeded(customer, request)) {
+        Order cart = getOverrideCart(request);
+
+        if (cart == null && mergeCartNeeded(customer, request)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Merge cart required, calling mergeCart " + customer.getId());
             }
             cart = mergeCart(customer, request);
-        } else {
+        } else if (cart == null) {
             cart = orderService.findCartForCustomer(customer);
         }
 
@@ -132,6 +136,19 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
         ruleMap.put("cart", cart);
         request.setAttribute(BLC_RULE_MAP_PARAM, ruleMap, WebRequest.SCOPE_REQUEST);
 
+    }
+    
+    public Order getOverrideCart(WebRequest request) {
+        Long orderId = (Long) request.getAttribute(OVERRIDE_CART_ATTR_NAME, WebRequest.SCOPE_GLOBAL_SESSION);
+        Order cart = orderService.findOrderById(orderId);
+
+        if (cart == null || 
+                cart.getStatus().equals(OrderStatus.SUBMITTED) || 
+                cart.getStatus().equals(OrderStatus.CANCELLED)) {
+            return null;
+        }
+
+        return cart;
     }
     
     public boolean mergeCartNeeded(Customer customer, WebRequest request) {
