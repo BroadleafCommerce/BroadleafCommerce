@@ -591,7 +591,7 @@ public class SkuImpl implements Sku {
             if (hasDefaultSku()) {
                 return lookupDefaultSku().isAvailable();
             }
-            return null;
+            return true;
         }
         return available == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
