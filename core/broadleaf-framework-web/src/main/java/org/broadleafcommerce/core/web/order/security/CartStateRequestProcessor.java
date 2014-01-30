@@ -71,7 +71,7 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
 
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
-    private String mergeCartResponseKey = "bl_merge_cart_response";
+    private final String mergeCartResponseKey = "bl_merge_cart_response";
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -140,12 +140,15 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
     
     public Order getOverrideCart(WebRequest request) {
         Long orderId = (Long) request.getAttribute(OVERRIDE_CART_ATTR_NAME, WebRequest.SCOPE_GLOBAL_SESSION);
-        Order cart = orderService.findOrderById(orderId);
-
-        if (cart == null || 
-                cart.getStatus().equals(OrderStatus.SUBMITTED) || 
-                cart.getStatus().equals(OrderStatus.CANCELLED)) {
-            return null;
+        Order cart = null;
+        if (orderId != null) {
+            cart = orderService.findOrderById(orderId);
+    
+            if (cart == null || 
+                    cart.getStatus().equals(OrderStatus.SUBMITTED) || 
+                    cart.getStatus().equals(OrderStatus.CANCELLED)) {
+                return null;
+            }
         }
 
         return cart;
