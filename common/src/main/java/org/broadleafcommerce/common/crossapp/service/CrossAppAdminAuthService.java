@@ -19,7 +19,7 @@
  */
 package org.broadleafcommerce.common.crossapp.service;
 
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.List;
 
 /**
  * A service responsible for allowing secure authentication for a user between the admin and site applications.
@@ -28,39 +28,39 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * to the user and he must present it in a timely manner to the site application to associate his session as authenticated
  * from the admin applicaiton.
  * 
- * @see CrossAppAdminAuthService
+ * @see CrossAppAuthService
  * @author Andre Azzolini (apazzolini)
  */
-public interface CrossAppAuthService {
-
-    public static String AUTH_FROM_ADMIN_URL_PARAM = "blAuthToken";
-    public static String AUTH_FROM_ADMIN_SESSION_VAR = "blAuthedFromAdmin";
+public interface CrossAppAdminAuthService {
 
     /**
-     * Consumes an authentication token for the given user id and token. This method will additionally register the
-     * current session (acquired from the {@link RedirectAttributes} argument) as having an admin authentication for the
-     * given adminUserId.
+     * Composes a full URL that can be returned from a controller to redirect the user to the cross app authentication
+     * controller endpoint on the site application.
+     * 
+     * @param forwardUrl (not URL encoded)
+     * @param rolesToContrib
+     * @return the redirect url
+     */
+    public String getRedirectUrlForSiteAuth(String forwardUrl, List<String> rolesToContrib);
+
+    /**
+     * @see #generateTokenForSiteAuth(Long, List)
+     * @param adminUserId
+     * @return the generated token
+     */
+    public String generateTokenForSiteAuth(Long adminUserId);
+
+    /**
+     * Returns a randomly generated String that the user can then include in a request from the site application to
+     * associate his site session with an admin user.
+     * 
+     * If the rolesToContrib parameter is not null, the roles in that list will be added to the site user when the
+     * token is claimed.
      * 
      * @param adminUserId
-     * @param token
-     * @param ra
-     * @throws IllegalArgumentException
+     * @param rolesToContrib
+     * @return
      */
-    public void useSiteAuthToken(Long adminUserId, String token) throws IllegalArgumentException;
-
-    /**
-     * @return whether or not the user is currently authenticated from the admin
-     */
-    public boolean isAuthedFromAdmin();
-
-    /**
-     * @return the id of the currently authenticated admin user. Returns null if there is no currently authenticated user
-     */
-    public Long getCurrentAuthedAdminId();
-
-    /**
-     * @return whether or not the user is currently authenticated from the admin and also has the CSR role
-     */
-    public boolean hasCsrPermission();
+    public String generateTokenForSiteAuth(Long adminUserId, List<String> rolesToContrib);
 
 }
