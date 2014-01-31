@@ -54,6 +54,4 @@ public interface AdminPermission extends Serializable {
     
     public Set<AdminRole> getAllRoles();
     public void setAllRoles(Set<AdminRole> allRoles);
-    public List<AdminPermission> getAllChildPermissions();
-    public Boolean isFriendly();
 }
