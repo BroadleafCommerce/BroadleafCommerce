@@ -91,12 +91,10 @@ public class AdminPermissionImpl implements AdminPermission {
 
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINPERM_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "AdminPermissionImpl_Name", order=1, group = "AdminPermissionImpl_Permission", prominent=true)
     protected String name;
 
     @Column(name = "PERMISSION_TYPE", nullable=false)
     @Index(name="ADMINPERM_TYPE_INDEX", columnNames={"PERMISSION_TYPE"})
-    @AdminPresentation(friendlyName = "AdminPermissionImpl_Permission_Type", order = 3, group = "AdminPermissionImpl_Permission", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.openadmin.server.security.service.type.PermissionType", prominent = true)
     protected String type;
 
     @Column(name = "DESCRIPTION", nullable=false)
