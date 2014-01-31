@@ -33,6 +33,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.springframework.beans.factory.annotation.Value;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
@@ -68,10 +69,7 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
         return BLCSystemProperty.resolveSystemProperty("googleAnalytics.affiliation");
     }
     
-    /**
-     * This will force the domain to 127.0.0.1 which is useful to determine if the Google Analytics tag is sending
-     * a request to Google
-     */
+    @Value("${googleAnalytics.testLocal}")
     protected boolean testLocal = false;
 
     /**
@@ -114,6 +112,7 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
 
         sb.append("var _gaq = _gaq || [];\n");
         sb.append("_gaq.push(['_setAccount', '" + webPropertyId + "']);");
+
         sb.append("_gaq.push(['_trackPageview']);");
         
         if (testLocal) {

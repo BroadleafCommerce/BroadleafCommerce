@@ -20,6 +20,9 @@
 package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.template.TemplateType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -52,7 +55,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author bpolster
  */
-public class BroadleafCategoryController extends BroadleafAbstractController implements Controller {
+public class BroadleafCategoryController extends BroadleafAbstractController implements Controller, TemplateTypeAware {
     
     protected static String defaultCategoryView = "catalog/category";
     protected static String CATEGORY_ATTRIBUTE_NAME = "category";  
@@ -142,6 +145,23 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
 
     protected SearchService getSearchService() {
         return searchService;
+    }
+
+    @Override
+    public String getExpectedTemplateName(HttpServletRequest request) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null) {
+            Category category = (Category) context.getRequest().getAttribute(CATEGORY_ATTRIBUTE_NAME);
+            if (category != null && category.getDisplayTemplate() != null) {
+                return category.getDisplayTemplate();
+            }
+        }
+        return getDefaultCategoryView();
+    }
+
+    @Override
+    public TemplateType getTemplateType(HttpServletRequest request) {
+        return TemplateType.CATEGORY;
     }
 
 }

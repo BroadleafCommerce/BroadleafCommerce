@@ -19,10 +19,7 @@
  */
 package org.broadleafcommerce.common.web;
 
-import org.broadleafcommerce.common.template.TemplateType;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Adds some convenience methods to the Spring AbstractHandlerMapping for
@@ -32,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
  * 
  * @author bpolster
  */
-public abstract class BLCAbstractHandlerMapping extends AbstractHandlerMapping implements TemplateTypeAware {
+public abstract class BLCAbstractHandlerMapping extends AbstractHandlerMapping {
     protected String controllerName;
 
     @Override
@@ -61,26 +58,4 @@ public abstract class BLCAbstractHandlerMapping extends AbstractHandlerMapping i
     public void setControllerName(String controllerName) {
         this.controllerName = controllerName;
     }
-
-    @Override
-    /**
-     * Often, the HandlerMapping knows the template that will be served.   For example, the ProductController in the 
-     * core framework knows that the desired template is product.getDisplayTemplate().
-     * 
-     */
-    public String getExpectedTemplateName(HttpServletRequest request) {
-        return null;
-    }
-
-    @Override
-    /**
-     * Override to extend the template type for customer types.   BLC community returns
-     * TemplateType.PRODUCT, PAGE, CATEGORY, etc.
-     * 
-     * If not overridden in subclass, returns TemplateType.OTHER.
-     */
-    public TemplateType getTemplateType(HttpServletRequest request) {
-        return TemplateType.OTHER;
-    }
-
 }

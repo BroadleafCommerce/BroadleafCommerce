@@ -22,6 +22,9 @@ package org.broadleafcommerce.cms.web.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.cms.web.PageHandlerMapping;
 import org.broadleafcommerce.common.page.dto.PageDTO;
+import org.broadleafcommerce.common.template.TemplateType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +41,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author bpolster
  */
-public class BroadleafPageController extends BroadleafAbstractController implements Controller {    
+public class BroadleafPageController extends BroadleafAbstractController implements Controller, TemplateTypeAware {
+
     protected static String MODEL_ATTRIBUTE_NAME="page";    
     
     @Autowired(required = false)
@@ -67,4 +71,20 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
         addDeepLink(model, deepLinkService, page);
         return model;
     }
+
+    @Override
+    public String getExpectedTemplateName(HttpServletRequest request) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null) {
+            PageDTO page = (PageDTO) request.getAttribute(PageHandlerMapping.PAGE_ATTRIBUTE_NAME);
+            return page.getTemplatePath();
+        }
+        return "";
+    }
+
+    @Override
+    public TemplateType getTemplateType(HttpServletRequest request) {
+        return TemplateType.PAGE;
+    }
+
 }

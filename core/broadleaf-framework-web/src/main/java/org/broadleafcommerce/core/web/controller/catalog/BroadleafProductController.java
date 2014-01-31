@@ -19,8 +19,12 @@
  */
 package org.broadleafcommerce.core.web.controller.catalog;
 
+import org.broadleafcommerce.common.template.TemplateType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
+import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
 import org.hibernate.tool.hbm2x.StringUtils;
@@ -38,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author bpolster
  */
-public class BroadleafProductController extends BroadleafAbstractController implements Controller {
+public class BroadleafProductController extends BroadleafAbstractController implements Controller, TemplateTypeAware {
     
     protected String defaultProductView = "catalog/product";
     protected static String MODEL_ATTRIBUTE_NAME = "product";    
@@ -73,4 +77,21 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         this.defaultProductView = defaultProductView;
     }
     
+    @Override
+    public String getExpectedTemplateName(HttpServletRequest request) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null) {
+            Category category = (Category) context.getRequest().getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
+            if (category != null && category.getDisplayTemplate() != null) {
+                return category.getDisplayTemplate();
+            }
+        }
+        return getDefaultProductView();
+    }
+
+    @Override
+    public TemplateType getTemplateType(HttpServletRequest request) {
+        return TemplateType.PRODUCT;
+    }
+
 }

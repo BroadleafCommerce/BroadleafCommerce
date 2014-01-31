@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.core.web.catalog;
 
-import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -64,23 +63,6 @@ public class CategoryHandlerMapping extends BLCAbstractHandlerMapping {
             }
         }
         return null;
-    }
-
-    @Override
-    public String getExpectedTemplateName(HttpServletRequest request) {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null) {
-            Category category = (Category) context.getRequest().getAttribute(CURRENT_CATEGORY_ATTRIBUTE_NAME);
-            if (category != null && category.getDisplayTemplate() != null) {
-                return category.getDisplayTemplate();
-            }
-        }
-        return getDefaultTemplateName();
-    }
-
-    @Override
-    public TemplateType getTemplateType(HttpServletRequest request) {
-        return TemplateType.CATEGORY;
     }
 
     public String getDefaultTemplateName() {
