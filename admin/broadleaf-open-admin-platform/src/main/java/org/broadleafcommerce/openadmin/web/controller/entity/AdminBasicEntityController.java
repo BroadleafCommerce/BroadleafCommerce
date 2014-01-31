@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
+import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
@@ -76,7 +77,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -554,7 +554,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             String idProp = ((BasicFieldMetadata) md).getForeignKeyProperty();
             String displayProp = ((BasicFieldMetadata) md).getForeignKeyDisplayValueProperty();
 
-            List<String> filterValues = Arrays.asList(ids.split(FILTER_VALUE_SEPARATOR_REGEX));
+            List<String> filterValues = BLCArrayUtils.asList(ids.split(FILTER_VALUE_SEPARATOR_REGEX));
             ppr.addFilterAndSortCriteria(new FilterAndSortCriteria(idProp, filterValues));
             
             DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
