@@ -27,7 +27,6 @@
         <mapping-file>config/bc/jpa/domain/Admin.orm.xml</mapping-file>
         <class>org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl</class>
-        <class>org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionXrefImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionQualifiedEntityImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl</class>

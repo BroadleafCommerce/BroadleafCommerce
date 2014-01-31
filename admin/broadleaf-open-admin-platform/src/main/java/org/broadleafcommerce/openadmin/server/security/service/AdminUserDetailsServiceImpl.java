@@ -25,7 +25,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
-import org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionXref;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.springframework.dao.DataAccessException;
@@ -55,8 +54,8 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
         for (AdminRole role : adminUser.getAllRoles()) {
             for (AdminPermission permission : role.getAllPermissions()) {
                 if(permission.isFriendly()) {
-                    for (AdminPermissionXref permissionXref : permission.getAllChildPermissions()) {
-                        authorities.add(new SimpleGrantedAuthority(permissionXref.getChildPermission().getName()));
+                    for (AdminPermission childPermission : permission.getAllChildPermissions()) {
+                        authorities.add(new SimpleGrantedAuthority(childPermission.getName()));
                     }
                 } else {
                     authorities.add(new SimpleGrantedAuthority(permission.getName()));
@@ -65,8 +64,8 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
         }
         for (AdminPermission permission : adminUser.getAllPermissions()) {
             if(permission.isFriendly()) {
-                for (AdminPermissionXref permissionXref : permission.getAllChildPermissions()) {
-                    authorities.add(new SimpleGrantedAuthority(permissionXref.getChildPermission().getName()));
+                for (AdminPermission childPermission : permission.getAllChildPermissions()) {
+                    authorities.add(new SimpleGrantedAuthority(childPermission.getName()));
                 }
             } else {
                 authorities.add(new SimpleGrantedAuthority(permission.getName()));
