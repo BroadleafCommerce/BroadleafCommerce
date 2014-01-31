@@ -61,8 +61,9 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
             extensionManager.getProxy().resolveProperty(name, holder);
-            if (holder.getResult() != null) {
-                return (String) holder.getResult();
+            Object result = holder.getContextMap().get("newValue");
+            if (result != null) {
+                return result.toString();
             }
         }
 
