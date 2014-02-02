@@ -24,7 +24,6 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
-import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
 import org.hibernate.tool.hbm2x.StringUtils;
@@ -81,9 +80,9 @@ public class BroadleafProductController extends BroadleafAbstractController impl
     public String getExpectedTemplateName(HttpServletRequest request) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null) {
-            Category category = (Category) context.getRequest().getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
-            if (category != null && category.getDisplayTemplate() != null) {
-                return category.getDisplayTemplate();
+            Product product = (Product) context.getRequest().getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
+            if (product != null && product.getDisplayTemplate() != null) {
+                return product.getDisplayTemplate();
             }
         }
         return getDefaultProductView();

@@ -23,16 +23,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,6 +37,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
@@ -62,6 +53,16 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author bpolster
@@ -172,6 +173,12 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             } else {
                 return new ArrayList<StructuredContentDTO>();
             }
+        }
+
+        ExtensionResultHolder resultHolder = new ExtensionResultHolder();
+        extensionManager.getProxy().modifyStructuredContentDtoList(structuredContentList, resultHolder);
+        if (resultHolder.getResult() != null) {
+            structuredContentList = (List<StructuredContentDTO>) resultHolder.getResult();
         }
 
         Iterator<StructuredContentDTO> structuredContentIterator = structuredContentList.iterator();

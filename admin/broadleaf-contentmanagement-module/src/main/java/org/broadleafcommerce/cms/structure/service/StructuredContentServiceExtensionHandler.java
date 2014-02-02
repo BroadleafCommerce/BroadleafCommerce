@@ -21,9 +21,11 @@ package org.broadleafcommerce.cms.structure.service;
 
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 
+import java.util.List;
 
 /**
  * Extension handler for the {@link StructuredContentService}
@@ -49,5 +51,18 @@ public interface StructuredContentServiceExtensionHandler extends ExtensionHandl
      * @see {@link StructuredContentServiceImpl#buildStructuredContentDTO(StructuredContent, boolean)}
      */
     public ExtensionResultStatusType populateAdditionalStructuredContentFields(StructuredContent sc, StructuredContentDTO dto, boolean secure);
+
     
+    /**
+     * Allows an extension handler to modify the list of structured content items.   For example to alter the order of the
+     * passed in list.   
+     * 
+     * The {@link ExtensionResultHolder} if non null should contain a replacement list to use. 
+     * 
+     * @param structuredContentList
+     * @param resultHolder
+     * @return
+     */
+    public ExtensionResultStatusType modifyStructuredContentDtoList(List<StructuredContentDTO> structuredContentList,
+            ExtensionResultHolder resultHolder);
 }
