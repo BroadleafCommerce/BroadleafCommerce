@@ -526,16 +526,23 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     }
     
     /**
+     * @deprecated in favor of {@link #attachSectionSpecificInfo(PersistencePackageRequest, Map)}
+     */
+    protected void attachSectionSpecificInfo(PersistencePackageRequest ppr) {
+        
+    }
+
+    /**
      * A hook method that is invoked every time the {@link #getSectionPersistencePackageRequest(String)} method is invoked.
      * This allows specialized controllers to hook into every request and manipulate the persistence package request as
      * desired.
      * 
      * @param ppr
      */
-    protected void attachSectionSpecificInfo(PersistencePackageRequest ppr) {
-        
+    protected void attachSectionSpecificInfo(PersistencePackageRequest ppr, Map<String, String> pathVars) {
+        attachSectionSpecificInfo(ppr);
     }
-    
+
     /**
      * Obtains the requested start index parameter
      * 
@@ -589,22 +596,40 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     }
 
     /**
+     * @deprecated in favor of {@link #getSectionPersistencePackageRequest(String, List, Map)}
+     */
+    protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, List<SectionCrumb> sectionCrumbs) {
+        return getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, null);
+    }
+
+    /**
      * Returns a PersistencePackageRequest for the given sectionClassName. Will also invoke the 
      * {@link #getSectionCustomCriteria()} and {@link #attachSectionSpecificInfo(PersistencePackageRequest)} to allow
      * specialized controllers to manipulate the request for every action in this controller.
      * 
      * @param sectionClassName
-     * @return the PersistencePacakageRequest
+     * @param sectionCrumbs
+     * @param pathVars
+     * @return
      */
-    protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, List<SectionCrumb> sectionCrumbs) {
+    protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, 
+            List<SectionCrumb> sectionCrumbs, Map<String, String> pathVars) {
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(sectionClassName)
                 .withCustomCriteria(getSectionCustomCriteria())
                 .withSectionCrumbs(sectionCrumbs);
 
-        attachSectionSpecificInfo(ppr);
+        attachSectionSpecificInfo(ppr, pathVars);
         
         return ppr;
+    }
+
+    /**
+     * @deprecated in favor of {@link #getSectionPersistencePackageRequest(String, MultiValueMap, List, Map)}
+     */
+    protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, 
+            MultiValueMap<String, String> requestParams, List<SectionCrumb> sectionCrumbs) {
+        return getSectionPersistencePackageRequest(sectionClassName, requestParams, sectionCrumbs, null);
     }
 
     /**
@@ -616,7 +641,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @return the PersistencePacakageRequest
      */
     protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, 
-            MultiValueMap<String, String> requestParams, List<SectionCrumb> sectionCrumbs) {
+            MultiValueMap<String, String> requestParams, List<SectionCrumb> sectionCrumbs, Map<String, String> pathVars) {
         FilterAndSortCriteria[] fascs = getCriteria(requestParams);
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(sectionClassName)
@@ -626,7 +651,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                 .withMaxIndex(getMaxIndex(requestParams))
                 .withSectionCrumbs(sectionCrumbs);
 
-        attachSectionSpecificInfo(ppr);
+        attachSectionSpecificInfo(ppr, pathVars);
 
         return ppr;
     }
