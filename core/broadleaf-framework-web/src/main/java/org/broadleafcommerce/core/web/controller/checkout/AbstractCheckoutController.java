@@ -141,9 +141,6 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
     protected OrderInfoFormValidator orderInfoFormValidator;
 
     /* Extension Managers */
-    @Resource(name = "blOrderPaymentServiceExtensionManager")
-    protected OrderPaymentServiceExtensionManager paymentInfoServiceExtensionManager;
-
     @Resource(name = "blCheckoutControllerExtensionManager")
     protected BroadleafCheckoutControllerExtensionManager checkoutControllerExtensionManager;
 
