@@ -17,7 +17,7 @@
       th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
       
     <span style="display: none;" id="previewurl" 
-        th:attr="data-href=@{/sandbox/preview(ceilingEntity=*{ceilingEntityClassname}, id=*{id})}" />
+        th:attr="data-href=@{/sandbox/preview(ceilingEntity=*{ceilingEntityClassname}, id=*{id}, directPreview=true)}" />
 
     <input type="hidden" th:field="*{ceilingEntityClassname}" />
     <input type="hidden" th:field="*{entityType}" />
