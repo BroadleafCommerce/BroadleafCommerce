@@ -83,16 +83,16 @@ public class TotalActivity extends BaseActivity<ProcessContext<Order>> {
             Money zeroMoney = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
 
             for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-                fg.setTaxes(null);
+                fg.getTaxes().clear();
                 fg.setTotalTax(zeroMoney);
                 
                 for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
-                    fgi.setTaxes(null);
+                    fgi.getTaxes().clear();
                     fgi.setTotalTax(zeroMoney);
                 }
                 
                 for (FulfillmentGroupFee fee : fg.getFulfillmentGroupFees()) {
-                    fee.setTaxes(null);
+                    fee.getTaxes().clear();
                     fee.setTotalTax(zeroMoney);
                 }
 

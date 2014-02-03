@@ -241,7 +241,10 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     @Override
     public List<TaxDetail> getTaxes() {
-        return this.taxes;
+        if (taxes == null) {
+            taxes = new ArrayList<TaxDetail>();
+        }
+        return taxes;
     }
 
     @Override
