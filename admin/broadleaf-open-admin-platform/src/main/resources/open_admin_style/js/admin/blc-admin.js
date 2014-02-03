@@ -254,6 +254,7 @@ var BLCAdmin = (function($) {
     	    
     	    $modal.find('.modal-header h3').text(header);
     	    $modal.find('.modal-body').text(message);
+    	    $modal.find('.modal-body').css('padding-bottom', '20px');
     	    
             this.showElementAsModal($modal);
     	},
