@@ -19,13 +19,19 @@
  */
 package org.broadleafcommerce.openadmin.server.security.handler;
 
+import java.io.Serializable;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
@@ -33,9 +39,11 @@ import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.springframework.stereotype.Component;
 
 /**
@@ -56,6 +64,14 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
         return canHandleAdd(persistencePackage);
+    }
+    
+    @Override
+    public Boolean canHandleFetch(PersistencePackage persistencePackage) {
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        String[] criteria = persistencePackage.getCustomCriteria();
+        return ArrayUtils.isEmpty(criteria) && AdminPermissionImpl.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+
     }
 
     @Override
@@ -118,5 +134,33 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            //get the default properties from Sku and its subclasses
+            Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(AdminPermissionImpl.class.getName(), persistencePerspective);
+            List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, originalProps);
+            
+            List<Serializable> records = helper.getPersistentRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
+            Iterator<Serializable> itr = records.iterator();
+            
+            while(itr.hasNext()) {
+                AdminPermissionImpl perm = (AdminPermissionImpl)itr.next();
+                if(!perm.isFriendly()) {
+                    itr.remove();
+                }
+            }
+            Entity[] payload = helper.getRecords(originalProps, records);
+            return new DynamicResultSet(payload, records.size());
+        } catch (Exception e) {
+            throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
+        }
+    }
+    
+    
 
 }

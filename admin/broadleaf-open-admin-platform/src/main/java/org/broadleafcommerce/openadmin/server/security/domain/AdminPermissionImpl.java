@@ -46,7 +46,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.hibernate.annotations.BatchSize;
@@ -91,12 +90,10 @@ public class AdminPermissionImpl implements AdminPermission {
 
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINPERM_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "AdminPermissionImpl_Name", order=1, group = "AdminPermissionImpl_Permission", prominent=true)
     protected String name;
 
     @Column(name = "PERMISSION_TYPE", nullable=false)
     @Index(name="ADMINPERM_TYPE_INDEX", columnNames={"PERMISSION_TYPE"})
-    @AdminPresentation(friendlyName = "AdminPermissionImpl_Permission_Type", order = 3, group = "AdminPermissionImpl_Permission", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.openadmin.server.security.service.type.PermissionType", prominent = true)
     protected String type;
 
     @Column(name = "DESCRIPTION", nullable=false)
@@ -120,6 +117,15 @@ public class AdminPermissionImpl implements AdminPermission {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<AdminPermissionQualifiedEntity> qualifiedEntities = new ArrayList<AdminPermissionQualifiedEntity>();
+
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
+    @JoinTable(name = "BLC_ADMIN_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"), inverseJoinColumns = @JoinColumn(name = "CHILD_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    protected List<AdminPermission> allChildPermissions = new ArrayList<AdminPermission>();
+    
+    @Column(name = "IS_FRIENDLY")
+    protected Boolean isFriendly = Boolean.FALSE;
 
     @Override
     public Long getId() {
@@ -231,5 +237,18 @@ public class AdminPermissionImpl implements AdminPermission {
         }
 
         return clone;
+    }
+
+    @Override
+    public List<AdminPermission> getAllChildPermissions() {
+        return allChildPermissions;
+    }
+
+    @Override
+    public Boolean isFriendly() {
+        if(isFriendly == null) {
+            return false;
+        }
+        return isFriendly;
     }
 }
