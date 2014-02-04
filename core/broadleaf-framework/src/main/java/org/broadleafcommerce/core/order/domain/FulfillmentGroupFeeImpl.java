@@ -174,9 +174,6 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     
     @Override
     public List<TaxDetail> getTaxes() {
-        if (taxes == null) {
-            taxes = new ArrayList<TaxDetail>();
-        }
         return taxes;
     }
 
