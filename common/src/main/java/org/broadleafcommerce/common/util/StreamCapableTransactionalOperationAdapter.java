@@ -24,8 +24,15 @@ package org.broadleafcommerce.common.util;
  */
 public abstract class StreamCapableTransactionalOperationAdapter implements StreamCapableTransactionalOperation {
 
+    protected Object[] pagedItems;
+
     @Override
     public void pagedExecute(Object[] param) throws Throwable {
+        //do nothing
+    }
+
+    @Override
+    public void executeAfterCommit(Object[] param) {
         //do nothing
     }
 
@@ -42,5 +49,13 @@ public abstract class StreamCapableTransactionalOperationAdapter implements Stre
     @Override
     public Long retrieveTotalCount() {
         return null;
+    }
+
+    public Object[] getPagedItems() {
+        return pagedItems;
+    }
+
+    public void setPagedItems(Object[] pagedItems) {
+        this.pagedItems = pagedItems;
     }
 }

@@ -30,4 +30,6 @@ public interface StreamCapableTransactionalOperation extends TransactionalOperat
 
     Long retrieveTotalCount();
 
+    void executeAfterCommit(Object[] param);
+
 }

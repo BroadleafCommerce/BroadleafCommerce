@@ -77,12 +77,12 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
         StreamCapableTransactionalOperation operation = new StreamCapableTransactionalOperationAdapter() {
             @Override
             public void execute() throws Throwable {
-                Object[] items = streamOperation.retrievePage(holder.getVal(), pageSize);
-                streamOperation.pagedExecute(items);
-                if (((Collection) items[0]).size() == 0) {
+                pagedItems = streamOperation.retrievePage(holder.getVal(), pageSize);
+                streamOperation.pagedExecute(pagedItems);
+                if (((Collection) pagedItems[0]).size() == 0) {
                     holder.setVal(totalCount.intValue());
                 } else {
-                    holder.setVal(holder.getVal() + ((Collection) items[0]).size());
+                    holder.setVal(holder.getVal() + ((Collection) pagedItems[0]).size());
                 }
             }
         };
@@ -93,6 +93,7 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
                 //to clear the level 1 cache after each iteration so that we don't run out of heap
                 em.clear();
             }
+            streamOperation.executeAfterCommit(((StreamCapableTransactionalOperationAdapter) operation).getPagedItems());
         }
     }
 
