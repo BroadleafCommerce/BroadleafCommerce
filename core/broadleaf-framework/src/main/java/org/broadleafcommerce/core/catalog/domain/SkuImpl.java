@@ -310,7 +310,7 @@ public class SkuImpl implements Sku {
         inverseJoinColumns = @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID",referencedColumnName = "PRODUCT_OPTION_VALUE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
-    @ClonePolicyCollection
+    @ClonePolicyCollection(deepClone = false)
     protected List<ProductOptionValue> productOptionValues = new ArrayList<ProductOptionValue>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuFeeImpl.class)
