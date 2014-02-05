@@ -122,8 +122,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
             solrServer = tempDir.getAbsolutePath();
         }
-
-        File solrXml = copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrServer, "solr-default.xml");
+        
+        File solrXml = new File(new File(solrServer), "solr.xml");
+        if (!solrXml.exists()) {
+            copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrXml);
+        }
 
         LOG.debug(String.format("Using [%s] as solrhome", solrServer));
         LOG.debug(String.format("Using [%s] as solr.xml", solrXml.getAbsoluteFile()));
@@ -157,8 +160,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         SolrContext.setReindexServer(reindexServer);
     }
 
-    public File copyConfigToSolrHome(InputStream configIs, String parentDir, String configFileSimpleName) throws IOException {
-        File destFile = new File(new File(parentDir), configFileSimpleName);
+    public void copyConfigToSolrHome(InputStream configIs, File destFile) throws IOException {
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
         try {
@@ -190,8 +192,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                 }
             }
         }
-
-        return destFile;
     }
 
     public SolrSearchServiceImpl(SolrServer solrServer) {
