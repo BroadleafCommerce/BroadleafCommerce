@@ -346,34 +346,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
             entityForm.getTabs().add(auditTab);
         }
 
-        boolean readable = false;
-        for (Property property : cmd.getProperties()) {
-            FieldMetadata fieldMetadata = property.getMetadata();
-            if (fieldMetadata instanceof BasicFieldMetadata) {
-                if (!((BasicFieldMetadata) fieldMetadata).getReadOnly()) {
-                    readable = true;
-                    break;
-                }
-            } else {
-                if (((CollectionMetadata) fieldMetadata).isMutable()) {
-                    readable = true;
-                    break;
-                }
-            }
-        }
-        if (!readable) {
-            entityForm.setReadOnly();
-        }
-
-        // If the user does not have edit permissions, we will go ahead and make the form read only to prevent confusion
-        try {
-            adminRemoteSecurityService.securityCheck(sectionClassName, EntityOperationType.UPDATE);
-        } catch (ServiceException e) {
-            if (e instanceof SecurityServiceException) {
-                entityForm.setReadOnly();
-            }
-        }
-
         if (isAjaxRequest(request)) {
             entityForm.setReadOnly();
             model.addAttribute("viewType", "modal/entityView");

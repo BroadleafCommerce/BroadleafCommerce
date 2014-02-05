@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaDto;
@@ -52,6 +53,8 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
+import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
@@ -102,6 +105,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    @Resource(name="blAdminSecurityRemoteService")
+    protected SecurityVerifier adminRemoteSecurityService;
 
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
             VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN 
@@ -545,9 +551,41 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         setEntityFormFields(ef, Arrays.asList(cmd.getProperties()));
         
+        setReadOnlyState(ef, cmd);
+        
         populateDropdownToOneFields(ef, cmd);
         
         extensionManager.getProxy().modifyUnpopulatedEntityForm(ef);
+    }
+    
+    protected void setReadOnlyState(EntityForm entityForm, ClassMetadata cmd) {
+        boolean readOnly = true;
+        for (Property property : cmd.getProperties()) {
+            FieldMetadata fieldMetadata = property.getMetadata();
+            if (fieldMetadata instanceof BasicFieldMetadata) {
+                if (!((BasicFieldMetadata) fieldMetadata).getReadOnly()) {
+                    readOnly = false;
+                    break;
+                }
+            } else {
+                if (((CollectionMetadata) fieldMetadata).isMutable()) {
+                    readOnly = false;
+                    break;
+                }
+            }
+        }
+        if (!readOnly) {
+            entityForm.setReadOnly();
+        }
+
+        // If the user does not have edit permissions, we will go ahead and make the form read only to prevent confusion
+        try {
+            adminRemoteSecurityService.securityCheck(entityForm.getCeilingEntityClassname(), EntityOperationType.UPDATE);
+        } catch (ServiceException e) {
+            if (e instanceof SecurityServiceException) {
+                entityForm.setReadOnly();
+            }
+        }
     }
     
     @Override
