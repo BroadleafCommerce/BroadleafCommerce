@@ -560,6 +560,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     
     protected void setReadOnlyState(EntityForm entityForm, ClassMetadata cmd) {
         boolean readOnly = true;
+        
+        // If all of the fields are read only, we'll mark the form as such
         for (Property property : cmd.getProperties()) {
             FieldMetadata fieldMetadata = property.getMetadata();
             if (fieldMetadata instanceof BasicFieldMetadata) {
@@ -574,17 +576,18 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 }
             }
         }
-        if (!readOnly) {
-            entityForm.setReadOnly();
-        }
 
         // If the user does not have edit permissions, we will go ahead and make the form read only to prevent confusion
         try {
             adminRemoteSecurityService.securityCheck(entityForm.getCeilingEntityClassname(), EntityOperationType.UPDATE);
         } catch (ServiceException e) {
             if (e instanceof SecurityServiceException) {
-                entityForm.setReadOnly();
+                readOnly = true;
             }
+        }
+
+        if (readOnly) {
+            entityForm.setReadOnly();
         }
     }
     
