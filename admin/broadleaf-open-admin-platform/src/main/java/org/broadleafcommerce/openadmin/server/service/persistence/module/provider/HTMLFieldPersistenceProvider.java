@@ -64,13 +64,16 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             String requestedValue = populateValueRequest.getRequestedValue();
             String fixedValue = fixAssetPathsForStorage(requestedValue);
 
+            boolean dirty = checkDirtyState(populateValueRequest, instance, fixedValue);
+            populateValueRequest.getProperty().setIsDirty(dirty);
+
             populateValueRequest.getFieldManager().setFieldValue(instance,
                     populateValueRequest.getProperty().getName(), fixedValue);
 
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
-        return FieldProviderResponse.HANDLED;
+        return FieldProviderResponse.HANDLED_BREAK;
     }
 
     @Override
@@ -89,7 +92,7 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             property.setValue(val);
             property.setDisplayValue(extractValueRequest.getDisplayVal());
         }
-        return FieldProviderResponse.HANDLED;
+        return FieldProviderResponse.HANDLED_BREAK;
     }
 
     /**
