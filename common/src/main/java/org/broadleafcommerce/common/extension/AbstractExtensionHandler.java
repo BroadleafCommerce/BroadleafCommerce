@@ -20,6 +20,7 @@
 package org.broadleafcommerce.common.extension;
 
 
+
 /**
  * Base {@link ExtensionHandler} class that provide basic extension handler properties including
  * priority (which drives the execution order of handlers) and enabled (which if false informs the
@@ -53,4 +54,5 @@ public abstract class AbstractExtensionHandler implements ExtensionHandler {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+    
 }

@@ -19,25 +19,23 @@
  */
 package org.broadleafcommerce.admin.web.controller;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
-import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.catalog.dao.CategoryDaoExtensionHandler;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.openadmin.web.controller.AdminTranslationControllerExtensionHandler;
+import org.broadleafcommerce.openadmin.web.controller.AbstractAdminTranslationControllerExtensionHandler;
 import org.broadleafcommerce.openadmin.web.controller.AdminTranslationControllerExtensionManager;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blAdminProductTranslationExtensionHandler")
-public class AdminProductTranslationExtensionHandler extends AbstractExtensionHandler implements AdminTranslationControllerExtensionHandler {
+public class AdminProductTranslationExtensionHandler extends AbstractAdminTranslationControllerExtensionHandler {
     
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
@@ -47,15 +45,8 @@ public class AdminProductTranslationExtensionHandler extends AbstractExtensionHa
 
     @PostConstruct
     public void init() {
-        boolean shouldAdd = true;
-        for (AdminTranslationControllerExtensionHandler h : extensionManager.getHandlers()) {
-            if (h instanceof AdminProductTranslationExtensionHandler) {
-                shouldAdd = false;
-                break;
-            }
-        }
-        if (shouldAdd) {
-            extensionManager.getHandlers().add(this);
+        if (isEnabled()) {
+            extensionManager.registerHandler(this);
         }
     }
     
