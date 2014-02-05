@@ -179,9 +179,8 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     }
 
     protected void populateBillTo(Order order, PaymentRequestDTO requestDTO) {
-        List<OrderPayment> payments = order.getPayments();
-        for (OrderPayment payment : payments) {
-            if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
+        for (OrderPayment payment : order.getPayments()) {
+            if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
                 Address billAddress = payment.getBillingAddress();
                 String stateAbbr = null;
                 String countryAbbr = null;

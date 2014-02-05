@@ -76,14 +76,16 @@ public class AdjustOrderPaymentsActivity extends BaseActivity<ProcessContext<Ord
         OrderPayment unconfirmedThirdParty = null;
         Money appliedPaymentsWithoutThirdParty = Money.ZERO;
         for (OrderPayment payment : order.getPayments()) {
-            PaymentTransaction initialTransaction = payment.getInitialTransaction();
+            if (payment.isActive()) {
+                PaymentTransaction initialTransaction = payment.getInitialTransaction();
 
-            if (initialTransaction != null &&
-                    PaymentTransactionType.UNCONFIRMED.equals(initialTransaction.getType()) &&
-                    PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType()))  {
-                unconfirmedThirdParty = payment;
-            } else if (payment.isActive() && payment.getAmount() != null) {
-                appliedPaymentsWithoutThirdParty.add(payment.getAmount());
+                if (initialTransaction != null &&
+                        PaymentTransactionType.UNCONFIRMED.equals(initialTransaction.getType()) &&
+                        PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType()))  {
+                    unconfirmedThirdParty = payment;
+                } else if (payment.isActive() && payment.getAmount() != null) {
+                    appliedPaymentsWithoutThirdParty.add(payment.getAmount());
+                }
             }
 
         }
