@@ -133,10 +133,14 @@ public class TranslationDaoImpl implements TranslationDao {
         Class<?> clazz = entityConfiguration.lookupEntityClass(entity.getType());
 
         ExtensionResultHolder erh = new ExtensionResultHolder();
-        Long id = Long.parseLong(entityId);
-        ExtensionResultStatusType result = extensionManager.getProxy().overrideRequestedId(erh, em, clazz, id);
-        if (result.equals(ExtensionResultStatusType.HANDLED)) {
-            return String.valueOf((Long) erh.getResult());
+        try {
+            Long id = Long.parseLong(entityId);
+            ExtensionResultStatusType result = extensionManager.getProxy().overrideRequestedId(erh, em, clazz, id);
+            if (result.equals(ExtensionResultStatusType.HANDLED)) {
+                return String.valueOf((Long) erh.getResult());
+            }
+        } catch (NumberFormatException e) {
+            // The ID was not a Long, which means we can't override it. We'll return the default value below.
         }
 
         return entityId;
