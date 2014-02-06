@@ -119,8 +119,8 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @Column(name = "ORDER_PAYMENT_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderImpl.class, optional = false)
-    @JoinColumn(name = "ORDER_ID")
+    @ManyToOne(targetEntity = OrderImpl.class, optional = true)
+    @JoinColumn(name = "ORDER_ID", nullable = true)
     @Index(name="ORDERPAYMENT_ORDER_INDEX", columnNames={"ORDER_ID"})
     @AdminPresentation(excluded = true)
     protected Order order;

@@ -25,17 +25,18 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.ListIterator;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.List;
+import java.util.ListIterator;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -48,7 +49,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Resource(name = "blCustomerDao")
     protected CustomerDao customerDao;
-    
+
     @Resource(name = "blOrderDaoExtensionManager")
     protected OrderDaoExtensionManager extensionManager;
 
@@ -69,6 +70,17 @@ public class OrderDaoImpl implements OrderDao {
         if (!em.contains(salesOrder)) {
             salesOrder = readOrderById(salesOrder.getId());
         }
+
+        //need to null out the reference to the Order for all the OrderPayments
+        //as they are not deleted but Archived.
+        for (OrderPayment payment : salesOrder.getPayments()) {
+            payment.setOrder(null);
+            payment.setArchived('Y');
+            for (PaymentTransaction transaction : payment.getTransactions()) {
+                transaction.setArchived('Y');
+            }
+        }
+
         em.remove(salesOrder);
     }
 
