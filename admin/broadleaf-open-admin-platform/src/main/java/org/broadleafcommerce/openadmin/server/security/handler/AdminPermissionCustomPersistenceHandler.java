@@ -145,6 +145,7 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(AdminPermissionImpl.class.getName(), persistencePerspective);
             List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, originalProps);
             
+            cto.setMaxResults(500);
             List<Serializable> records = helper.getPersistentRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
             Iterator<Serializable> itr = records.iterator();
             
