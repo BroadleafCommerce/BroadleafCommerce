@@ -214,7 +214,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, null, null);
-        ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs))
+        ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, pathVars))
                 .getDynamicResultSet().getClassMetaData();
 
         // If the entity type isn't specified, we need to determine if there are various polymorphic types for this entity.
@@ -287,7 +287,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         entityFormValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
-            ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(entityForm.getEntityType(), sectionCrumbs)).getDynamicResultSet().getClassMetaData();
+            ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(entityForm.getEntityType(), sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
             entityForm.clearFieldsMap();
             formService.populateEntityForm(cmd, entity, entityForm, sectionCrumbs);
 
@@ -346,34 +346,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
             entityForm.getTabs().add(auditTab);
         }
 
-        boolean readable = false;
-        for (Property property : cmd.getProperties()) {
-            FieldMetadata fieldMetadata = property.getMetadata();
-            if (fieldMetadata instanceof BasicFieldMetadata) {
-                if (!((BasicFieldMetadata) fieldMetadata).getReadOnly()) {
-                    readable = true;
-                    break;
-                }
-            } else {
-                if (((CollectionMetadata) fieldMetadata).isMutable()) {
-                    readable = true;
-                    break;
-                }
-            }
-        }
-        if (!readable) {
-            entityForm.setReadOnly();
-        }
-
-        // If the user does not have edit permissions, we will go ahead and make the form read only to prevent confusion
-        try {
-            adminRemoteSecurityService.securityCheck(sectionClassName, EntityOperationType.UPDATE);
-        } catch (ServiceException e) {
-            if (e instanceof SecurityServiceException) {
-                entityForm.setReadOnly();
-            }
-        }
-
         if (isAjaxRequest(request)) {
             entityForm.setReadOnly();
             model.addAttribute("viewType", "modal/entityView");
@@ -408,7 +380,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, pathVars);
 
         extractDynamicFormFields(entityForm);
         
@@ -598,7 +570,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs)).getDynamicResultSet().getClassMetaData();
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         BasicFieldMetadata md = (BasicFieldMetadata) collectionProperty.getMetadata();
 
@@ -634,7 +606,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ClassMetadata mainMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         
-        ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs);
+        ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
 
         // Next, we must get the new list grid that represents this collection
@@ -698,7 +670,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName,
-                sectionCrumbs)).getDynamicResultSet().getClassMetaData();
+                sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
@@ -775,7 +747,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs)).getDynamicResultSet().getClassMetaData();
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         
         if (StringUtils.isBlank(entityForm.getEntityType())) {
@@ -785,7 +757,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             }
         }
 
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
         
         // First, we must save the collection entity
@@ -994,7 +966,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs)).getDynamicResultSet().getClassMetaData();
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
         SectionCrumb nextCrumb = new SectionCrumb();
@@ -1008,7 +980,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             sectionCrumbs.add(nextCrumb);
         }
 
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
         Entity parentEntity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
 
         ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
@@ -1163,10 +1135,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs)).getDynamicResultSet().getClassMetaData();
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
 
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
         
         // First, we must save the collection entity
@@ -1213,11 +1185,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs)).getDynamicResultSet().getClassMetaData();
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
         
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
         Entity parentEntity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
         
         ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
@@ -1273,12 +1245,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs)).getDynamicResultSet().getClassMetaData();
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
 
         String priorKey = request.getParameter("key");
         
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
 
         // First, we must remove the collection entity

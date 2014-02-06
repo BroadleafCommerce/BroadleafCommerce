@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -54,6 +55,8 @@ import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementPro
 import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -66,9 +69,6 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is a Thymeleaf Processor that aids in rendering a dynamic One Page Checkout screen.
@@ -287,13 +287,22 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
             }
         }
 
+        //Toggle the Payment Info Section based on what payments were applied to the order
+        //(e.g. Third Party Account (i.e. PayPal Express) or Gift Cards/Customer Credit)
+        Money orderTotalAfterAppliedPayments = CartState.getCart().getTotalAfterAppliedPayments();
         if (orderContainsThirdPartyPayment) {
             showBillingInfoSection = false;
+            showAllPaymentMethods = false;
+        } else if (orderTotalAfterAppliedPayments != null
+                && orderTotalAfterAppliedPayments.isZero()){
+            //If all the applied payments (e.g. gift cards) cover the entire amount
+            //we don't need to show all payment method options.
             showAllPaymentMethods = false;
         }
 
         localVars.put("showBillingInfoSection", showBillingInfoSection);
         localVars.put("showAllPaymentMethods", showAllPaymentMethods);
+        localVars.put("orderContainsThirdPartyPayment", orderContainsThirdPartyPayment);
 
         //The Sections are all initialized to INACTIVE view
         List<CheckoutSectionDTO> drawnSections = new LinkedList<CheckoutSectionDTO>();

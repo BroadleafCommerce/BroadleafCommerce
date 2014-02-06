@@ -154,7 +154,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
     protected void copyBillingAddressToShippingAddress(Order order, ShippingInfoForm shippingInfoForm) {
         if (order.getPayments() != null) {
             for (OrderPayment payment : order.getPayments()) {
-                if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
+                if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
                     Address billing = payment.getBillingAddress();
                     if (billing != null) {
                         Address shipping = addressService.create();

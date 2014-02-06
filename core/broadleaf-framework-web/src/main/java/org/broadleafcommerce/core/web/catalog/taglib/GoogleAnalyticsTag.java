@@ -21,11 +21,13 @@ package org.broadleafcommerce.core.web.catalog.taglib;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -104,16 +106,23 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
         sb.append("_gaq.push(['_trackPageview']);");
         
         if (order != null) {
-            Address paymentAddress = order.getPayments().get(0).getBillingAddress();
+            Address paymentAddress = null;
+            for (OrderPayment payment : order.getPayments())  {
+                if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
+                    paymentAddress = payment.getBillingAddress();
+                }
+            }
 
             sb.append("_gaq.push(['_addTrans','" + order.getId() + "'");
             sb.append(",'" + order.getName() + "'");
             sb.append(",'" + order.getTotal() + "'");
             sb.append(",'" + order.getTotalTax() + "'");
             sb.append(",'" + order.getTotalShipping() + "'");
-            sb.append(",'" + paymentAddress.getCity() + "'");
-            sb.append(",'" + paymentAddress.getState().getName() + "'");
-            sb.append(",'" + paymentAddress.getCountry().getName() + "'");
+            if (paymentAddress != null) {
+                sb.append(",'" + paymentAddress.getCity() + "'");
+                sb.append(",'" + paymentAddress.getState().getName() + "'");
+                sb.append(",'" + paymentAddress.getCountry().getName() + "'");
+            }
             sb.append("]);");
 
             for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {

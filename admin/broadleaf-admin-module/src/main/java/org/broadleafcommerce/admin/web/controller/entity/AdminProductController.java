@@ -19,13 +19,6 @@
  */
 package org.broadleafcommerce.admin.web.controller.entity;
 
-import java.net.URLDecoder;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -56,6 +49,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.net.URLDecoder;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * Handles admin operations for the {@link Product} entity. Editing a product requires custom criteria in order to properly
  * invoke the {@link ProductCustomPersistenceHandler}
@@ -84,11 +84,11 @@ public class AdminProductController extends AdminBasicEntityController {
     }
     
     protected String showAddAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
-            String id) throws Exception {
+            String id, Map<String, String> pathVars) throws Exception {
         String collectionField = "additionalSkus";
         String mainClassName = getClassNameForSection(SECTION_KEY);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, SECTION_KEY, id);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs)).getDynamicResultSet().getClassMetaData();
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
         
@@ -164,14 +164,13 @@ public class AdminProductController extends AdminBasicEntityController {
     }
     
     protected String showUpdateAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
-            String id,
-            String collectionItemId) throws Exception {
+            String id, String collectionItemId, Map<String, String> pathVars) throws Exception {
         String collectionField = "additionalSkus";
         
         // Find out metadata for the additionalSkus property
         String mainClassName = getClassNameForSection(SECTION_KEY);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, SECTION_KEY, id);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs)).getDynamicResultSet().getClassMetaData();
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
@@ -219,7 +218,7 @@ public class AdminProductController extends AdminBasicEntityController {
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
         if ("additionalSkus".equals(collectionField)) {
-            return showUpdateAdditionalSku(request, response, model, id, collectionItemId);
+            return showUpdateAdditionalSku(request, response, model, id, collectionItemId, pathVars);
         }
         return super.showUpdateCollectionItem(request, response, model, pathVars, id, collectionField, collectionItemId);
     }
@@ -232,7 +231,7 @@ public class AdminProductController extends AdminBasicEntityController {
             @PathVariable(value="collectionField") String collectionField,
             @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
         if ("additionalSkus".equals(collectionField)) {
-            return showAddAdditionalSku(request, response, model, id);
+            return showAddAdditionalSku(request, response, model, id, pathVars);
         } 
         return super.showAddCollectionItem(request, response, model, pathVars, id, collectionField, requestParams);
     }

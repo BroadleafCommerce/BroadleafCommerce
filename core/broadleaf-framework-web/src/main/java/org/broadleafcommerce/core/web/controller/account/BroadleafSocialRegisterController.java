@@ -21,6 +21,10 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.core.order.domain.NullOrderImpl;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
 import org.springframework.social.connect.Connection;
@@ -69,7 +73,7 @@ public class BroadleafSocialRegisterController extends BroadleafRegisterControll
     //Calls ProviderSignInUtils.handlePostSignUp() after a successful registration
     public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors,
                                   HttpServletRequest request, HttpServletResponse response, Model model)
-            throws ServiceException {
+            throws ServiceException, PricingException {
         if (isUseEmailForLogin()) {
             Customer customer = registerCustomerForm.getCustomer();
             customer.setUsername(customer.getEmailAddress());
@@ -86,6 +90,13 @@ public class BroadleafSocialRegisterController extends BroadleafRegisterControll
             // The next line needs to use the customer from the input form and not the customer returned after registration
             // so that we still have the unencoded password for use by the authentication mechanism.
             loginService.loginCustomer(registerCustomerForm.getCustomer());
+
+            // Need to ensure that the Cart on CartState is owned by the newly registered customer.
+            Order cart = CartState.getCart();
+            if (cart != null && !(cart instanceof NullOrderImpl) && cart.getEmailAddress() == null) {
+                cart.setEmailAddress(newCustomer.getEmailAddress());
+                orderService.save(cart, false);
+            }
 
             String redirectUrl = registerCustomerForm.getRedirectUrl();
             if (StringUtils.isNotBlank(redirectUrl) && redirectUrl.contains(":")) {

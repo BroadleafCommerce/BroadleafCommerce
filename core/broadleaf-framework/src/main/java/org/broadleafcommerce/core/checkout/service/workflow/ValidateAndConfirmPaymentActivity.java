@@ -95,52 +95,54 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         // as well as transctions that we are about to confirm here
         List<PaymentTransaction> confirmedTransactions = new ArrayList<PaymentTransaction>();
         for (OrderPayment payment : order.getPayments()) {
-            for (PaymentTransaction tx : payment.getTransactions()) {
-                if (PaymentTransactionType.UNCONFIRMED.equals(tx.getType())) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Transaction " + tx.getId() + " is not confirmed. Proceeding to confirm transaction.");
-                    }
-                    
-                    // Cannot confirm anything here if there is no provider
-                    if (paymentConfigurationServiceProvider == null) {
-                        String msg = "There are unconfirmed payment transactions on this payment but no payment gateway" +
-                                " configuration or transaction confirmation service configured";
-                        LOG.error(msg);
-                        throw new CheckoutException(msg, context.getSeedData());
-                    }
-                    
-                    PaymentGatewayConfigurationService cfg = paymentConfigurationServiceProvider.getGatewayConfigurationService(tx.getOrderPayment().getGatewayType());
-                    PaymentResponseDTO responseDTO = cfg.getTransactionConfirmationService()
-                            .confirmTransaction(orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx));
+            if (payment.isActive()) {
+                for (PaymentTransaction tx : payment.getTransactions()) {
+                    if (PaymentTransactionType.UNCONFIRMED.equals(tx.getType())) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Transaction " + tx.getId() + " is not confirmed. Proceeding to confirm transaction.");
+                        }
 
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Transaction Confirmation Raw Response: " +  responseDTO.getRawResponse());
-                    }
+                        // Cannot confirm anything here if there is no provider
+                        if (paymentConfigurationServiceProvider == null) {
+                            String msg = "There are unconfirmed payment transactions on this payment but no payment gateway" +
+                                    " configuration or transaction confirmation service configured";
+                            LOG.error(msg);
+                            throw new CheckoutException(msg, context.getSeedData());
+                        }
 
-                    if (responseDTO.isSuccessful()) {
-                        PaymentTransaction transaction = orderPaymentService.createTransaction();
-                        transaction.setAmount(responseDTO.getAmount());
-                        transaction.setRawResponse(responseDTO.getRawResponse());
-                        transaction.setSuccess(responseDTO.isSuccessful());
-                        transaction.setType(responseDTO.getPaymentTransactionType());
-                        transaction.setParentTransaction(tx);
-                        transaction.setOrderPayment(payment);
-                        transaction.setAdditionalFields(responseDTO.getResponseMap());
-                        confirmedTransactions.add(transaction);
-                        additionalTransactions.put(payment, transaction);
-                    } else {
-                        // Since there was a problems processing the 
-                        String msg = "Transaction confirmation attempt with id: " + tx.getId() + " was unsuccessful";
-                        LOG.error(msg);
-                        throw new CheckoutException(msg, context.getSeedData());
+                        PaymentGatewayConfigurationService cfg = paymentConfigurationServiceProvider.getGatewayConfigurationService(tx.getOrderPayment().getGatewayType());
+                        PaymentResponseDTO responseDTO = cfg.getTransactionConfirmationService()
+                                .confirmTransaction(orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx));
+
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Transaction Confirmation Raw Response: " +  responseDTO.getRawResponse());
+                        }
+
+                        if (responseDTO.isSuccessful()) {
+                            PaymentTransaction transaction = orderPaymentService.createTransaction();
+                            transaction.setAmount(responseDTO.getAmount());
+                            transaction.setRawResponse(responseDTO.getRawResponse());
+                            transaction.setSuccess(responseDTO.isSuccessful());
+                            transaction.setType(responseDTO.getPaymentTransactionType());
+                            transaction.setParentTransaction(tx);
+                            transaction.setOrderPayment(payment);
+                            transaction.setAdditionalFields(responseDTO.getResponseMap());
+                            confirmedTransactions.add(transaction);
+                            additionalTransactions.put(payment, transaction);
+                        } else {
+                            // Since there was a problems processing the
+                            String msg = "Transaction confirmation attempt with id: " + tx.getId() + " was unsuccessful";
+                            LOG.error(msg);
+                            throw new CheckoutException(msg, context.getSeedData());
+                        }
+                    } else if (PaymentTransactionType.AUTHORIZE.equals(tx.getType()) ||
+                            PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType())) {
+                        // After each transaction is confirmed, associate the new list of confirmed transactions to the rollback state. This has the added
+                        // advantage of being able to invoke the rollback handler if there is an exception thrown at some point while confirming multiple
+                        // transactions. This is outside of the transaction confirmation block in order to capture transactions
+                        // that were already confirmed prior to this activity running
+                        confirmedTransactions.add(tx);
                     }
-                } else if (PaymentTransactionType.AUTHORIZE.equals(tx.getType()) ||
-                        PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType())) {
-                    // After each transaction is confirmed, associate the new list of confirmed transactions to the rollback state. This has the added
-                    // advantage of being able to invoke the rollback handler if there is an exception thrown at some point while confirming multiple
-                    // transactions. This is outside of the transaction confirmation block in order to capture transactions
-                    // that were already confirmed prior to this activity running
-                    confirmedTransactions.add(tx);
                 }
             }
         }
@@ -159,8 +161,10 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         // Add authorize and authorize_and_capture; there should only be one or the other in the payment
         Money paymentSum = new Money(BigDecimal.ZERO);
         for (OrderPayment payment : order.getPayments()) {
-            paymentSum = paymentSum.add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE))
+            if (payment.isActive()) {
+                paymentSum = paymentSum.add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE))
                                .add(payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE));
+            }
         }
         
         if (paymentSum.lessThan(order.getTotal())) {

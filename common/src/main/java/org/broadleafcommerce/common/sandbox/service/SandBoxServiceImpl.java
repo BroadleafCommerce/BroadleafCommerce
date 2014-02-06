@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
-import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -75,15 +74,16 @@ public class SandBoxServiceImpl implements SandBoxService {
         
         returnList.addAll(authorBoxes);
 
-        for (SandBox candidateBox : candidateBoxes) {
+        for (SandBox cb : candidateBoxes) {
             boolean match = false;
             for (SandBox authorBox : authorBoxes) {
-                if (authorBox.getParentSandBox().getId().equals(candidateBox.getId())) {
+                if (authorBox.getId().equals(cb.getId()) || 
+                        (authorBox.getParentSandBox() != null && authorBox.getParentSandBox().getId().equals(cb.getId()))) {
                     match = true;
                 }
             }
             if (!match) {
-                returnList.add(candidateBox);
+                returnList.add(cb);
             }
         }
         

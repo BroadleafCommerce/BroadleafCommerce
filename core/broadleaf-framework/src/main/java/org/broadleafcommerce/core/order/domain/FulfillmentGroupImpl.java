@@ -555,9 +555,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     
     @Override
     public List<TaxDetail> getTaxes() {
-        if (taxes == null) {
-            taxes = new ArrayList<TaxDetail>();
-        }
         return taxes;
     }
 

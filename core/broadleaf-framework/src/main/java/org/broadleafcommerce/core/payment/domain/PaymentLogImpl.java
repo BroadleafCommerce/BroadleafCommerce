@@ -47,6 +47,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * @deprecated - payment logs should now be captured as raw responses in Payment Transaction line items
+ */
+@Deprecated
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAYMENT_LOG")

@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections.MapUtils;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -186,19 +187,11 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
     }
 
     protected Address getBillingAddress(Order order) {
-        OrderPayment paymentInfo = null;
-        if (order.getPayments().size() > 0) {
-            paymentInfo = order.getPayments().get(0);
-        }
-
         Address address = null;
-        if (paymentInfo == null || paymentInfo.getBillingAddress() == null) {
-            // in this case, no payment info object on the order or no billing
-            // information received due to external payment gateway
-            address = order.getFulfillmentGroups().get(0).getAddress();
-        } else {
-            // then the address must exist on the payment info
-            address = paymentInfo.getBillingAddress();
+        for (OrderPayment payment : order.getPayments())  {
+            if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
+                address = payment.getBillingAddress();
+            }
         }
 
         return address;
