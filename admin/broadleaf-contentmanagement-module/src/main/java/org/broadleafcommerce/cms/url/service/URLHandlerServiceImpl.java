@@ -23,21 +23,24 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.url.dao.URLHandlerDao;
 import org.broadleafcommerce.cms.url.domain.NullURLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandler;
+import org.broadleafcommerce.cms.url.domain.URLHandlerDTO;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.codehaus.jackson.map.util.LRUMap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -57,6 +60,8 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     protected StatisticsService statisticsService;
     
     protected Cache urlHandlerCache;
+
+    protected LRUMap<String, Pattern> urlPatternMap = new LRUMap<String, Pattern>(10, 2000);
 
     /**
      * Checks the passed in URL to determine if there is a matching URLHandler.
@@ -120,27 +125,44 @@ public class URLHandlerServiceImpl implements URLHandlerService {
         return key;
     }
     
-    protected URLHandler lookupHandlerFromCache(String requestURI)  {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        String[] keys = CacheManager.getInstance().getCacheNames();
-        URLHandler handler = null;
-        String key = buildKey(context.getSandBox(), requestURI);
-        if (context.isProductionSandBox()) {
-            handler = getUrlHandlerFromCache(key);
-        }
-        if (handler == null) {
-            handler = findURLHandlerByURIInternal(requestURI);
-            //only handle null, non-hits. Otherwise, let level 2 cache handle it
-            if (context.isProductionSandBox() && handler instanceof NullURLHandler) {
-                getUrlHandlerCache().put(new Element(key, handler));
+    protected URLHandler checkForMatches(String requestURI) {
+        URLHandler currentHandler = null;
+        try {
+            List<URLHandler> urlHandlers = findAllURLHandlers();
+            for (URLHandler urlHandler : urlHandlers) {
+                currentHandler = urlHandler;
+                Pattern p = urlPatternMap.get(urlHandler.getIncomingURL());
+                if (p == null) {
+                    p = Pattern.compile(urlHandler.getIncomingURL());
+                    urlPatternMap.put(urlHandler.getIncomingURL(), p);
+                }
+                Matcher m = p.matcher(requestURI);
+                if (m.find()) {
+                    String newUrl = m.replaceFirst(urlHandler.getNewURL());
+                    if (newUrl.equals(urlHandler.getNewURL())) {
+                        return urlHandler;
+                    } else {
+                        return new URLHandlerDTO(newUrl, urlHandler.getUrlRedirectType());
+                    }
+                }
+
+            }
+        } catch (RuntimeException re) {
+            if (currentHandler != null) {
+                // We don't want an invalid regex to cause tons of logging                
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Error parsing URL Handler (incoming =" + currentHandler.getIncomingURL() + "), outgoing = ( "
+                            + currentHandler.getNewURL() + "), " + requestURI);
+                }
             }
         }
 
-        if (handler == null || handler instanceof NullURLHandler) {
-            return null;
-        } else {
-            return handler;
-        }
+
+        return null;
+    }
+
+    protected URLHandler lookupHandlerFromCache(String requestURI)  {
+        return checkForMatches(requestURI);
     }
     
     protected URLHandler getUrlHandlerFromCache(String key) {
@@ -157,9 +179,8 @@ public class URLHandlerServiceImpl implements URLHandlerService {
         URLHandler urlHandler = urlHandlerDao.findURLHandlerByURI(uri);
         if (urlHandler != null) {
             return urlHandler;
-        } else {
-            return NULL_URL_HANDLER;
         }
+        return null;
     }
 
 }
