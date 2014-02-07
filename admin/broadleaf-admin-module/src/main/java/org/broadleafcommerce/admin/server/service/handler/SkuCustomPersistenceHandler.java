@@ -34,6 +34,7 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
@@ -533,7 +534,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         //Get the list of product option value ids that were selected from the form
         List<Long> productOptionValueIds = new ArrayList<Long>();
         for (Property property : getProductOptionProperties(entity)) {
-            productOptionValueIds.add(Long.parseLong(property.getValue()));
+            Long propId = Long.parseLong(property.getValue());
+            productOptionValueIds.add(propId);
+            property.setIsDirty(true);
         }
 
         //remove the current list of product option values from the Sku
@@ -543,13 +546,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
 
         //Associate the product option values from the form with the Sku
-        List<ProductOption> productOptions = adminInstance.getProduct().getProductOptions();
-        for (ProductOption option : productOptions) {
-            for (ProductOptionValue value : option.getAllowedValues()) {
-                if (productOptionValueIds.contains(value.getId())) {
-                    adminInstance.getProductOptionValues().add(value);
-                }
-            }
+        for (Long id : productOptionValueIds) {
+            //Simply find the changed ProductOptionValues directly - seems to work better with sandboxing code
+            adminInstance.getProductOptionValues().add((ProductOptionValue) dynamicEntityDao.find(ProductOptionValueImpl.class, id));
         }
     }
 
