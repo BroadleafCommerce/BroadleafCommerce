@@ -117,9 +117,9 @@ public class ProductDaoImpl implements ProductDao {
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
         Root<ProductImpl> product = criteria.from(ProductImpl.class);
 
-        product.fetch("defaultSku", JoinType.LEFT);
+        FetchParent fetchParent = product.fetch("defaultSku", JoinType.LEFT);
         if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
-            product.fetch("skuMedia", JoinType.LEFT);
+            fetchParent.fetch("skuMedia", JoinType.LEFT);
         }
         criteria.select(product);
 
