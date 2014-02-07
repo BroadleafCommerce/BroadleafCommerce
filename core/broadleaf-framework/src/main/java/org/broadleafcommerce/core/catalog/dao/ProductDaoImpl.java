@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.DialectHelper;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
@@ -55,6 +56,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.FetchParent;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -84,6 +86,9 @@ public class ProductDaoImpl implements ProductDao {
     @Resource(name = "blProductDaoExtensionManager")
     protected ProductDaoExtensionManager extensionManager;
 
+    @Resource(name = "blDialectHelper")
+    protected DialectHelper dialectHelper;
+
     protected Long currentDateResolution = 10000L;
     protected Date cachedDate = SystemTime.asDate();
 
@@ -111,13 +116,20 @@ public class ProductDaoImpl implements ProductDao {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
         Root<ProductImpl> product = criteria.from(ProductImpl.class);
-        product.fetch("defaultSku", JoinType.LEFT).fetch("skuMedia", JoinType.LEFT);
+
+        product.fetch("defaultSku", JoinType.LEFT);
+        if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
+            product.fetch("skuMedia", JoinType.LEFT);
+        }
         criteria.select(product);
 
         // We only want results that match the product IDs
         criteria.where(product.get("id").as(Long.class).in(
                 sandBoxHelper.mergeCloneIds(em, ProductImpl.class,
-                        productIds.toArray(new Long[productIds.size()])))).distinct(true);
+                        productIds.toArray(new Long[productIds.size()]))));
+        if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
+            criteria.distinct(true);
+        }
 
         TypedQuery<Product> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);

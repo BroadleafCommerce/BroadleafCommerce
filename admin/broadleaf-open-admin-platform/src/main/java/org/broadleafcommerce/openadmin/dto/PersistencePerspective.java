@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 
 import java.io.Serializable;
@@ -63,7 +64,9 @@ public class PersistencePerspective implements Serializable {
 
     public void setAdditionalNonPersistentProperties(String[] additionalNonPersistentProperties) {
         this.additionalNonPersistentProperties = additionalNonPersistentProperties;
-        Arrays.sort(this.additionalNonPersistentProperties);
+        if (!ArrayUtils.isEmpty(this.additionalNonPersistentProperties)) {
+            Arrays.sort(this.additionalNonPersistentProperties);
+        }
     }
 
     public ForeignKey[] getAdditionalForeignKeys() {
@@ -72,11 +75,13 @@ public class PersistencePerspective implements Serializable {
 
     public void setAdditionalForeignKeys(ForeignKey[] additionalForeignKeys) {
         this.additionalForeignKeys = additionalForeignKeys;
-        Arrays.sort(this.additionalForeignKeys, new Comparator<ForeignKey>() {
-            public int compare(ForeignKey o1, ForeignKey o2) {
-                return o1.getManyToField().compareTo(o2.getManyToField());
-            }
-        });
+        if (!ArrayUtils.isEmpty(this.additionalForeignKeys)) {
+            Arrays.sort(this.additionalForeignKeys, new Comparator<ForeignKey>() {
+                public int compare(ForeignKey o1, ForeignKey o2) {
+                    return o1.getManyToField().compareTo(o2.getManyToField());
+                }
+            });
+        }
     }
 
     public OperationTypes getOperationTypes() {
@@ -155,7 +160,9 @@ public class PersistencePerspective implements Serializable {
     @Deprecated
     public void setExcludeFields(String[] excludeManyToOneFields) {
         this.excludeFields = excludeManyToOneFields;
-        Arrays.sort(this.excludeFields);
+        if (!ArrayUtils.isEmpty(this.excludeFields)) {
+            Arrays.sort(this.excludeFields);
+        }
     }
 
     /**
@@ -178,7 +185,9 @@ public class PersistencePerspective implements Serializable {
     @Deprecated
     public void setIncludeFields(String[] includeManyToOneFields) {
         this.includeFields = includeManyToOneFields;
-        Arrays.sort(this.includeFields);
+        if (!ArrayUtils.isEmpty(this.includeFields)) {
+            Arrays.sort(this.includeFields);
+        }
     }
 
     public String getConfigurationKey() {
