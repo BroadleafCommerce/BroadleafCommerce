@@ -207,6 +207,12 @@ div.field-label.inline {
 	margin-top: 0;
 }
 
+.entity-form-actions .ajax-loader {
+	vertical-align: middle;
+	display: none;
+	padding: 10px 0 9px;
+}
+
 .breadcrumb-container .entity-form-actions {
 	position: absolute;
 	line-height: 37px;

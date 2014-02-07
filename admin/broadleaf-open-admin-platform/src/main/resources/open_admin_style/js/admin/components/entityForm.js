@@ -42,9 +42,13 @@ $(document).ready(function() {
 	});
 	
 	$('body').on('click', 'button.submit-button', function(event) {
-            $('body').click(); // Defocus any current elements in case they need to act prior to form submission
+        $('body').click(); // Defocus any current elements in case they need to act prior to form submission
 	    var $form = BLCAdmin.getForm($(this));
 	    $form.submit();
+
+	    $(this).hide();
+	    $(this).closest('.entity-form-actions').find('img.ajax-loader').show();
+
 		event.preventDefault();
 	});
 	
@@ -84,6 +88,8 @@ $(document).ready(function() {
     			    }
     			}
     			BLCAdmin.initializeFields($('.modal .modal-body .tabs-content'));
+        	    BLCAdmin.currentModal().find('.submit-button').show();
+        	    BLCAdmin.currentModal().find('img.ajax-loader').hide();
     	    });
         }
 		return false;

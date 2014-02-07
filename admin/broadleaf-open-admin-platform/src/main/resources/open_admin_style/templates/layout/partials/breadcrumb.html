@@ -27,6 +27,7 @@
             th:classappend="${action.buttonClass}">
             <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
         </button>
+        <img th:src="@{/img/admin/ajax-loader.gif}" class="ajax-loader" />
     </div>
 
     <div class="clear"></div>
