@@ -218,7 +218,9 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         if (cart.getPayments() != null) {
             for (OrderPayment payment : cart.getPayments()) {
                 if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
-                    billingForm.setAddress(payment.getBillingAddress());
+                    if (payment.getBillingAddress() != null) {
+                        billingForm.setAddress(payment.getBillingAddress());
+                    }
                 }
             }
         }
