@@ -225,6 +225,11 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
 
     @Override
+    public List<AdminUser> readAdminUsersByEmail(String email) {
+        return adminUserDao.readAdminUserByEmail(email);
+    }
+
+    @Override
     public List<AdminUser> readAllAdminUsers() {
         return adminUserDao.readAllAdminUsers();
     }
