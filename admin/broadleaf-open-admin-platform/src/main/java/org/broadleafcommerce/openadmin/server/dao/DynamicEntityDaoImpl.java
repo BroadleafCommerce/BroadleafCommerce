@@ -30,7 +30,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -54,6 +53,7 @@ import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -119,9 +119,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
 
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
-    protected int getCacheEntityMetaDataTtl() {
-        return BLCSystemProperty.resolveIntSystemProperty("cache.entity.dao.metadata.ttl");
-    }
+    @Value("${cache.entity.dao.metadata.ttl}")
+    protected int cacheEntityMetaDataTtl;
 
     protected long lastCacheFlushTime = System.currentTimeMillis();
 
@@ -186,7 +185,6 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     }
 
     protected boolean useCache() {
-        int cacheEntityMetaDataTtl = getCacheEntityMetaDataTtl();
         if (cacheEntityMetaDataTtl < 0) {
             return true;
         }

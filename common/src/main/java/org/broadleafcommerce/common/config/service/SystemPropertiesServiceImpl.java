@@ -85,30 +85,17 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     }
 
     protected void addPropertyToCache(String propertyName, String propertyValue) {
-        if (!isInSandbox()) {
-            String key = buildKey(propertyName);
-            getSystemPropertyCache().put(new Element(key, propertyValue));
-        }
+        String key = buildKey(propertyName);
+        getSystemPropertyCache().put(new Element(key, propertyValue));
     }
 
     protected String getPropertyFromCache(String propertyName) {
-        if (!isInSandbox()) {
-            String key = buildKey(propertyName);
-            Element cacheElement = getSystemPropertyCache().get(key);
-            if (cacheElement != null && cacheElement.getObjectValue() != null) {
-                return (String) cacheElement.getObjectValue();
-            }
+        String key = buildKey(propertyName);
+        Element cacheElement = getSystemPropertyCache().get(key);
+        if (cacheElement != null && cacheElement.getObjectValue() != null) {
+            return (String) cacheElement.getObjectValue();
         }
         return null;
-    }
-
-    protected boolean isInSandbox() {
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (brc != null) {
-            return brc.getSandBox() != null;
-        } else {
-            return false;
-        }
     }
 
     /**
