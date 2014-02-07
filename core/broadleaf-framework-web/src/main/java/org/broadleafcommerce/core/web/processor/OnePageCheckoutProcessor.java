@@ -200,7 +200,9 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
             FulfillmentOption fulfillmentOption = firstShippableFulfillmentGroup.getFulfillmentOption();
             if (fulfillmentOption != null) {
                 //if the cart has already has fulfillment information
-                shippingForm.setAddress(firstShippableFulfillmentGroup.getAddress());
+                if (firstShippableFulfillmentGroup.getAddress()!=null) {
+                    shippingForm.setAddress(firstShippableFulfillmentGroup.getAddress());
+                }
                 shippingForm.setFulfillmentOption(fulfillmentOption);
                 shippingForm.setFulfillmentOptionId(fulfillmentOption.getId());
             } else {
