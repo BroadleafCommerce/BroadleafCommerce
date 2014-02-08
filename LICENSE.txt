@@ -1,9 +1,10 @@
 /*
- * #%L
- * BroadleafCommerce Custom Field
- * %%
- * Copyright (C) 2009 - 2014 Broadleaf Commerce
- * %%
+ * Broadleaf Commerce Confidential
+ * _______________________________
+ *
+ * [2009] - [2013] Broadleaf Commerce, LLC
+ * All Rights Reserved.
+ *
  * NOTICE:  All information contained herein is, and remains
  * the property of Broadleaf Commerce, LLC
  * The intellectual and technical concepts contained
@@ -13,20 +14,4 @@
  * Dissemination of this information or reproduction of this material
  * is strictly forbidden unless prior written permission is obtained
  * from Broadleaf Commerce, LLC.
- * #L%
  */
-
-package com.broadleafcommerce.customfield.service;
-
-import com.broadleafcommerce.customfield.domain.CustomField;
-
-import java.util.List;
-
-/**
- * @author Jeff Fischer
- */
-public interface CustomFieldService {
-    CustomField findById(Long id);
-
-    List<CustomField> findByTargetEntityName(String targetEntityName);
-}

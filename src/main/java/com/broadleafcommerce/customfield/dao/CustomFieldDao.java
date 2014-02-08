@@ -1,10 +1,9 @@
 /*
- * Broadleaf Commerce Confidential
- * _______________________________
- *
- * [2009] - [2013] Broadleaf Commerce, LLC
- * All Rights Reserved.
- *
+ * #%L
+ * BroadleafCommerce Custom Field
+ * %%
+ * Copyright (C) 2009 - 2014 Broadleaf Commerce
+ * %%
  * NOTICE:  All information contained herein is, and remains
  * the property of Broadleaf Commerce, LLC
  * The intellectual and technical concepts contained
@@ -14,6 +13,7 @@
  * Dissemination of this information or reproduction of this material
  * is strictly forbidden unless prior written permission is obtained
  * from Broadleaf Commerce, LLC.
+ * #L%
  */
 
 package com.broadleafcommerce.customfield.dao;
